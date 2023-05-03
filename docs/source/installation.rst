@@ -108,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge esmpy=8.2.0
+   $ conda install -c conda-forge esmpy>=8.0.0
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.14.0``):
+   you want to install, e.g. ``3.15.0``):
 
    .. code-block:: console
 
@@ -190,7 +190,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.8 or newer.
+* `Python <https://www.python.org/>`_, 3.8.0 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.22.0 or newer.
 
@@ -243,18 +243,19 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
-  8.0.0 or up to 8.2.0. This is easily installed via conda with
+* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
+  named `ESMF` with the old module name also being accepted for import,
+  version 8.0.0 or newer. This is easily installed via conda with
 
   .. code-block:: console
 
-     $ conda install -c conda-forge esmpy=8.2.0
+     $ conda install -c conda-forge esmpy>=8.0.0
 
   or may be installed from source.
 
 .. rubric:: Convolution filters, derivatives and relative vorticity
 
-* `scipy <https://pypi.org/project/scipy>`_, version 1.1.0 or newer.
+* `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
 .. rubric:: Subspacing based on N-dimensional construct cells (N > 1)
             containing a given value

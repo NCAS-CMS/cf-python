@@ -12,7 +12,7 @@ from cfdm.mixin import NetCDFMixin
 class CFANetCDF(NetCDFMixin):
     """Mixin class for CFA-netCDF.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     """
 
@@ -23,7 +23,7 @@ class CFANetCDF(NetCDFMixin):
         ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_aggregated_data`,
                      `cfa_has_aggregated_data`,
@@ -74,7 +74,7 @@ class CFANetCDF(NetCDFMixin):
         ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_del_aggregated_data`,
                      `cfa_has_aggregated_data`,
@@ -132,7 +132,7 @@ class CFANetCDF(NetCDFMixin):
         ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_del_aggregated_data`,
                      `cfa_get_aggregated_data`,
@@ -190,7 +190,7 @@ class CFANetCDF(NetCDFMixin):
         character and contains no others, the name is assumed to be in
         the root group.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_del_aggregated_data`,
                      `cfa_get_aggregated_data`,
@@ -254,7 +254,7 @@ class CFANetCDF(NetCDFMixin):
     def cfa_clear_file_substitutions(self):
         """Remove all of the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_del_file_substitution`,
                      `cfa_file_substitutions`,
@@ -298,7 +298,7 @@ class CFANetCDF(NetCDFMixin):
     def cfa_del_file_substitution(self, base):
         """Remove a CFA-netCDF file name substitution.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_file_substitutions`,
@@ -359,7 +359,7 @@ class CFANetCDF(NetCDFMixin):
     def cfa_file_substitutions(self):
         """Return the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,
@@ -406,7 +406,7 @@ class CFANetCDF(NetCDFMixin):
     def cfa_has_file_substitutions(self):
         """Whether any CFA-netCDF file name substitutions have been set.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,
@@ -451,7 +451,7 @@ class CFANetCDF(NetCDFMixin):
     def cfa_update_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,

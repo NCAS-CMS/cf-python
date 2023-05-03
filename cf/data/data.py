@@ -1244,7 +1244,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _cfa_del_write(self):
         """Set the CFA write status of the data to `False`.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_write`, `_cfa_set_write`
 
@@ -1259,7 +1259,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _cfa_set_term(self, value):
         """Set the CFA aggregation instruction term status.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_term`, `cfa_set_term`
 
@@ -1324,7 +1324,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 element values will be kept but all other components
                 will be removed.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -1547,7 +1547,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         possible to write the data as an aggregation variable to a
         CFA-netCDF file.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_write`, `cfa_set_write`,
                      `_cfa_del_write`, `cf.read`, `cf.write`,
@@ -1797,7 +1797,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [ 4  5  6  7]
          [ 8  9 10 11]]
 
-        Equivalant ways to create indices for the four bins ``[-inf, 2),
+        Equivalent ways to create indices for the four bins ``[-inf, 2),
         [2, 6), [6, 10), [10, inf)``
 
         >>> e = d.digitize([2, 6, 10])
@@ -1807,7 +1807,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [1 1 2 2]
          [2 2 3 3]]
 
-        Equivalant ways to create indices for the two bins ``(2, 6], (6, 10]``
+        Equivalent ways to create indices for the two bins ``(2, 6], (6, 10]``
 
         >>> e = d.digitize([2, 6, 10], upper=True, open_ends=False)
         >>> e = d.digitize([[2, 6], [6, 10]], upper=True, open_ends=False)
@@ -2509,7 +2509,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         If True then the data represents that of a non-standard CFA
         aggregation instruction variable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_set_term`
 
@@ -2533,7 +2533,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         possible to write the data as an aggregation variable to a
         CFA-netCDF file.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
 
@@ -2556,7 +2556,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         If True then the data represents that of a non-standard CFA
         aggregation instruction variable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_term`
 
@@ -2585,7 +2585,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         possible to write the data as an aggregation variable to a
         CFA-netCDF file.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `cfa_get_write`, `cf.read`, `cf.write`
 
@@ -6419,7 +6419,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         All data definitions that reference files are additionally
         referenced from the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `del_file_location`, `file_locations`
 
@@ -8624,7 +8624,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         Returns the locations of any files that may be required to
         deliver the computed data array.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `del_file_location`
 
@@ -9206,7 +9206,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def chunk_indices(self):
         """Return indices that define each dask compute chunk.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `chunks`
 
@@ -9618,7 +9618,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         All data definitions that reference files will have references
         to files in the given location removed from them.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `file_locations`
 
@@ -11324,7 +11324,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def todict(self, optimize_graph=True):
         """Return a dictionary of the dask graph key/value pairs.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `to_dask_array`, `tolist`
 

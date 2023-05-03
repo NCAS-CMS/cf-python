@@ -83,7 +83,7 @@ class CFANetCDFArray(NetCDFArray):
                 names. Each key must be specified with the ``${...}``
                 syntax, for instance ``{'${base}': 'sub'}``.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             term: `str`, optional
                 The name of a non-standard aggregation instruction
@@ -99,7 +99,7 @@ class CFANetCDFArray(NetCDFArray):
                 *Parameter example:*
                   ``address='cfa_tracking_id', term='tracking_id'``
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             {{init source: optional}}
 
@@ -360,7 +360,7 @@ class CFANetCDFArray(NetCDFArray):
     def get_term(self, default=ValueError()):
         """The CFA aggregation instruction term for the data, if set.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 

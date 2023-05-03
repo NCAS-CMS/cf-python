@@ -137,7 +137,7 @@ def regrid(
             the regridded field is masked.
 
             The default value has been chosen empirically as the
-            smallest value that produces the same masks as ESMF for
+            smallest value that produces the same masks as esmpy for
             the use cases defined in the cf test suite.
 
             **Linear regridding**

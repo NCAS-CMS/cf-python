@@ -16,7 +16,7 @@ class FileArrayMixin:
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         """
         return (
@@ -58,7 +58,7 @@ class FileArrayMixin:
     def del_file_location(self, location):
         """Remove reference to files in the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -119,7 +119,7 @@ class FileArrayMixin:
     def file_locations(self):
         """The locations of the files, any of which may contain the data.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -154,7 +154,7 @@ class FileArrayMixin:
         All existing files are additionally referenced from the given
         location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 

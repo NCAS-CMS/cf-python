@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -131,7 +131,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/domain.py#L13-L1052"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.0/cfdm/domain.py#L13-L1052"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.properties.Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
 <p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
@@ -685,6 +685,39 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+</section>
+<section id="cfa">
+<h2>CFA<a class="headerlink" href="#cfa" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.add_file_location.html#cf.Domain.add_file_location" title="cf.Domain.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
+<td><p>Add a new file location in-place.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.cfa_clear_file_substitutions.html#cf.Domain.cfa_clear_file_substitutions" title="cf.Domain.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
+<td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.cfa_del_file_substitution.html#cf.Domain.cfa_del_file_substitution" title="cf.Domain.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
+<td><p>Remove a CFA-netCDF file name substitution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.cfa_file_substitutions.html#cf.Domain.cfa_file_substitutions" title="cf.Domain.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
+<td><p>Return the CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.cfa_update_file_substitutions.html#cf.Domain.cfa_update_file_substitutions" title="cf.Domain.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
+<td><p>Set CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.del_file_location.html#cf.Domain.del_file_location" title="cf.Domain.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
+<td><p>Remove a file location in-place.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.file_locations.html#cf.Domain.file_locations" title="cf.Domain.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
+<td><p>The locations of files containing parts of the components data.</p></td>
+</tr>
+</tbody>
+</table>
 <section id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
@@ -921,11 +954,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -403,6 +403,23 @@ NetCDF
    ~cf.Index.nc_has_sample_dimension
    ~cf.Index.nc_set_sample_dimension
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Index.add_file_location
+   ~cf.Index.cfa_clear_file_substitutions
+   ~cf.Index.cfa_del_file_substitution
+   ~cf.Index.cfa_file_substitutions
+   ~cf.Index.cfa_update_file_substitutions
+   ~cf.Index.del_file_location
+   ~cf.Index.file_locations
 
 Aliases
 -------

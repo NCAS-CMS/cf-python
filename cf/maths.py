@@ -1,6 +1,5 @@
 from . import Units
-from .data.data import Data
-from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+from .functions import _DEPRECATION_ERROR_FUNCTION
 
 
 def relative_vorticity(
@@ -8,6 +7,10 @@ def relative_vorticity(
 ):
     """Calculate the relative vorticity using centred finite
     differences.
+
+    Deprecated at version 3.15.1 and is no longer available. Use
+    function `cf.curl_xy` instead. Note that `cf.curl_xy` uses a more
+    accurate spherical polar coordinates formula.
 
     The relative vorticity of wind defined on a Cartesian domain (such
     as a plane projection) is defined as
@@ -81,140 +84,12 @@ def relative_vorticity(
             differences.
 
     """
-    if cyclic:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "relative_vorticity",
-            {"cyclic": cyclic},
-            "Use the 'wrap' keyword instead",
-        )  # pragma: no cover
-
-    # Get the standard names of u and v
-    u_std_name = u.get_property("standard_name", None)
-    v_std_name = v.get_property("standard_name", None)
-
-    # Copy u and v
-    u = u.copy()
-    v = v.copy()
-
-    # Get the X and Y coordinates
-    u_x_key, u_x = u.dimension_coordinate("X", default=(None, None), item=True)
-    u_y_key, u_y = u.dimension_coordinate("Y", default=(None, None), item=True)
-    v_x_key, v_x = v.dimension_coordinate("X", default=(None, None), item=True)
-    v_y_key, v_y = v.dimension_coordinate("Y", default=(None, None), item=True)
-    if u_x is None:
-        raise ValueError("No unique u-wind X dimension coordinate")
-
-    if u_y is None:
-        raise ValueError("No unique u-wind Y dimension coordinate")
-
-    if v_x is None:
-        raise ValueError("No unique v-wind X dimension coordinate")
-
-    if v_y is None:
-        raise ValueError("No unique v-wind Y dimension coordinate")
-
-    if not u_x.equals(v_x) or not u_y.equals(v_y):
-        raise ValueError("u and v must be on the same grid.")
-
-    # Check for lat/long
-    is_latlong = (u_x.Units.islongitude and u_y.Units.islatitude) or (
-        u_x.units == "degrees" and u_y.units == "degrees"
-    )
-
-    # Check for cyclicity
-    if wrap is None:
-        if is_latlong:
-            wrap = u.iscyclic(u_x_key)
-        else:
-            wrap = False
-
-    # Find the relative vorticity
-    if is_latlong:
-        # Save the units of the X and Y coordinates
-        x_units = u_x.Units
-        y_units = u_y.Units
-
-        # Change the units of the lat/longs to radians
-        radians = Units("radians")
-        u_x.Units = radians
-        u_y.Units = radians
-        v_x.Units = radians
-        v_y.Units = radians
-
-        # Find cos and tan of latitude
-        cos_lat = u_y.cos()
-        tan_lat = u_y.tan()
-
-        # Reshape for broadcasting
-        u_shape = [1] * u.ndim
-        u_y_axis = u.get_data_axes(u_y_key)[0]
-        u_y_index = u.get_data_axes().index(u_y_axis)
-        u_shape[u_y_index] = u_y.size
-
-        v_shape = [1] * v.ndim
-        v_y_axis = u.get_data_axes(v_y_key)[0]
-        v_y_index = v.get_data_axes().index(v_y_axis)
-        v_shape[v_y_index] = v_y.size
-
-        # Calculate the correction term
-        corr = u.copy()
-        corr *= tan_lat.array.reshape(u_shape)
-
-        # Calculate the derivatives
-        v.derivative(
-            v_x_key,
-            wrap=wrap,
-            one_sided_at_boundary=one_sided_at_boundary,
-            inplace=True,
-        )
-        v.data /= cos_lat.array.reshape(v_shape)
-        u.derivative(
-            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
-        )
-
-        radius = Data.asdata(radius).squeeze()
-        radius.dtype = float
-        if radius.size != 1:
-            raise ValueError(f"Multiple radii: radius={radius!r}")
-
-        if not radius.Units:
-            radius.override_units(Units("metres"), inplace=True)
-        elif not radius.Units.equivalent(Units("metres")):
-            raise ValueError(f"Invalid units for radius: {radius.Units!r}")
-
-        # Calculate the relative vorticity. Do v-(u-corr) rather than
-        # v-u+corr to be nice with coordinate reference corner cases.
-        rv = v - (u - corr)
-        rv.data /= radius
-
-        # Convert the units of latitude and longitude to canonical units
-        rv.dimension_coordinate("X").Units = x_units
-        rv.dimension_coordinate("Y").Units = y_units
-
-    else:
-        v.derivative(
-            v_x_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
-        )
-        u.derivative(
-            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True
-        )
-
-        rv = v - u
-
-    # Convert the units of relative vorticity to canonical units
-    rv.Units = Units("s-1")
-
-    # Set the standard name if appropriate and delete the long_name
-    if (u_std_name == "eastward_wind" and v_std_name == "northward_wind") or (
-        u_std_name == "x_wind" and v_std_name == "y_wind"
-    ):
-        rv.standard_name = "atmosphere_relative_vorticity"
-    else:
-        rv.del_property("standard_name", None)
-
-    rv.del_property("long_name", None)
-
-    return rv
+    _DEPRECATION_ERROR_FUNCTION(
+        "relative_vorticity",
+        message="Use function 'cf.curl_xy` instead. Note that 'cf.curl_xy' uses a more accurate spherical polar coordinates formula.",
+        version="3.15.1",
+        removed_at="5.0.0",
+    )  # pragman: no cover
 
 
 def histogram(*digitized):
@@ -400,6 +275,9 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
     Cartesian (e.g. plane projection) or spherical polar coordinate
     systems.
 
+    Note that the curl of the horizontal wind field is the relative
+    vorticity.
+
     The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
     coordinates is given by:
 
@@ -519,24 +397,36 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
     fx = fx.copy()
     fy = fy.copy()
 
-    x_key, x_coord = fy.dimension_coordinate(
+    fx_x_key, fx_x_coord = fx.dimension_coordinate(
         "X", item=True, default=(None, None)
     )
-    y_key, y_coord = fx.dimension_coordinate(
+    fx_y_key, fx_y_coord = fx.dimension_coordinate(
+        "Y", item=True, default=(None, None)
+    )
+    fy_x_key, fy_x_coord = fy.dimension_coordinate(
+        "X", item=True, default=(None, None)
+    )
+    fy_y_key, fy_y_coord = fy.dimension_coordinate(
         "Y", item=True, default=(None, None)
     )
 
-    if x_coord is None:
-        raise ValueError("'fy' field has no unique 'X' dimension coordinate")
+    if fx_x_coord is None:
+        raise ValueError("'fx' field has no unique 'X' dimension coordinate")
 
-    if y_coord is None:
+    if fx_y_coord is None:
         raise ValueError("'fx' field has no unique 'Y' dimension coordinate")
 
-    if x_wrap is None:
-        x_wrap = fx.iscyclic(x_key)
+    if fy_x_coord is None:
+        raise ValueError("'fy' field has no unique 'X' dimension coordinate")
 
-    x_units = x_coord.Units
-    y_units = y_coord.Units
+    if fy_y_coord is None:
+        raise ValueError("'fy' field has no unique 'Y' dimension coordinate")
+
+    if x_wrap is None:
+        x_wrap = fx.iscyclic(fy_x_key)
+
+    x_units = fy_x_coord.Units
+    y_units = fx_y_coord.Units
 
     # Check for spherical polar coordinates
     latlon = (x_units.islongitude and y_units.islatitude) or (
@@ -550,39 +440,48 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
         # Convert latitude and longitude units to radians, so that the
         # units of the result are nice.
         radians = Units("radians")
-        x_coord.Units = radians
-        y_coord.Units = radians
+        fx_x_coord.Units = radians
+        fx_y_coord.Units = radians
+        fy_x_coord.Units = radians
+        fy_y_coord.Units = radians
+
+        # Ensure that the lat and lon dimension coordinates have
+        # standard names, so that metadata-aware broadcasting works as
+        # expected when all of their units are radians.
+        fx_x_coord.standard_name = "longitude"
+        fx_y_coord.standard_name = "latitude"
+        fy_x_coord.standard_name = "longitude"
+        fy_y_coord.standard_name = "latitude"
 
         # Get theta as a field that will broadcast to f, and adjust
         # its values so that theta=0 is at the north pole.
-        theta = pi / 2 - fx.convert(y_key, full_domain=True)
+        theta = pi / 2 - fx.convert(fx_y_key, full_domain=True)
         sin_theta = theta.sin()
 
         r = fx.radius(default=radius)
 
         term1 = (fx * sin_theta).derivative(
-            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            fx_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
-
         term2 = fy.derivative(
-            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            fy_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
         c = (term1 - term2) / (sin_theta * r)
 
-        # Reset latitude and longitude coordinate units
-        c.dimension_coordinate("X").Units = x_units
-        c.dimension_coordinate("Y").Units = y_units
+        # Set output latitude and longitude coordinate units
+        c.dimension_coordinate("longitude").Units = x_units
+        c.dimension_coordinate("latitude").Units = y_units
     else:
         # --------------------------------------------------------
         # Cartesian coordinates
         # --------------------------------------------------------
         dfy_dx = fy.derivative(
-            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            fy_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
         dfx_dy = fx.derivative(
-            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            fx_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
 
         c = dfy_dx - dfx_dy
@@ -723,24 +622,36 @@ def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
     fx = fx.copy()
     fy = fy.copy()
 
-    x_key, x_coord = fx.dimension_coordinate(
+    fx_x_key, fx_x_coord = fx.dimension_coordinate(
         "X", item=True, default=(None, None)
     )
-    y_key, y_coord = fy.dimension_coordinate(
+    fx_y_key, fx_y_coord = fx.dimension_coordinate(
+        "Y", item=True, default=(None, None)
+    )
+    fy_x_key, fy_x_coord = fy.dimension_coordinate(
+        "X", item=True, default=(None, None)
+    )
+    fy_y_key, fy_y_coord = fy.dimension_coordinate(
         "Y", item=True, default=(None, None)
     )
 
-    if x_coord is None:
+    if fx_x_coord is None:
         raise ValueError("'fx' field has no unique 'X' dimension coordinate")
 
-    if y_coord is None:
+    if fx_y_coord is None:
+        raise ValueError("'fx' field has no unique 'Y' dimension coordinate")
+
+    if fy_x_coord is None:
+        raise ValueError("'fy' field has no unique 'X' dimension coordinate")
+
+    if fy_y_coord is None:
         raise ValueError("'fy' field has no unique 'Y' dimension coordinate")
 
     if x_wrap is None:
-        x_wrap = fx.iscyclic(x_key)
+        x_wrap = fx.iscyclic(fx_x_key)
 
-    x_units = x_coord.Units
-    y_units = y_coord.Units
+    x_units = fx_x_coord.Units
+    y_units = fy_y_coord.Units
 
     # Check for spherical polar coordinates
     latlon = (x_units.islongitude and y_units.islatitude) or (
@@ -751,47 +662,52 @@ def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
         # ------------------------------------------------------------
         # Spherical polar coordinates
         # ------------------------------------------------------------
-        # Convert latitude and longitude units to radians, so that
-        # the units of the result are nice.
+        # Convert latitude and longitude units to radians, so that the
+        # units of the result are nice.
         radians = Units("radians")
-        x_coord.Units = radians
-        y_coord.Units = radians
+        fx_x_coord.Units = radians
+        fx_y_coord.Units = radians
+        fy_x_coord.Units = radians
+        fy_y_coord.Units = radians
+
+        # Ensure that the lat and lon dimension coordinates have
+        # standard names, so that metadata-aware broadcasting works as
+        # expected when all of their units are radians.
+        fx_x_coord.standard_name = "longitude"
+        fx_y_coord.standard_name = "latitude"
+        fy_x_coord.standard_name = "longitude"
+        fy_y_coord.standard_name = "latitude"
 
         # Get theta as a field that will broadcast to f, and adjust
         # its values so that theta=0 is at the north pole.
-        theta = pi / 2 - fy.convert(y_key, full_domain=True)
+        theta = pi / 2 - fy.convert(fy_y_key, full_domain=True)
         sin_theta = theta.sin()
 
         r = fx.radius(default=radius)
 
-        # r_sin_theta = sin_theta * r
-
-        term1 = (
-            fx.derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
-            )
-            # / r_sin_theta
+        term1 = fx.derivative(
+            fx_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
         term2 = (fy * sin_theta).derivative(
-            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
-        )  # / r_sin_theta
+            fy_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+        )
 
-        d = (term1 + term2) / (sin_theta * r)  # r_sin_theta
+        d = (term1 + term2) / (sin_theta * r)
 
-        # Reset latitude and longitude coordinate units
-        d.dimension_coordinate("X").Units = x_units
-        d.dimension_coordinate("Y").Units = y_units
+        # Set output latitude and longitude coordinate units
+        d.dimension_coordinate("longitude").Units = x_units
+        d.dimension_coordinate("latitude").Units = y_units
     else:
         # ------------------------------------------------------------
         # Cartesian coordinates
         # ------------------------------------------------------------
         term1 = fx.derivative(
-            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            fx_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
         term2 = fy.derivative(
-            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            fy_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
 
         d = term1 + term2

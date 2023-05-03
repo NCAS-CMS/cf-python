@@ -26,7 +26,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.NetCDFArray.close" href="../method/cf.NetCDFArray.close.html" />
+    <link rel="next" title="cf.NetCDFArray.add_file_location" href="../method/cf.NetCDFArray.add_file_location.html" />
     <link rel="prev" title="cf.Data.ispartitioned" href="../attribute/cf.Data.ispartitioned.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -92,7 +92,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
       <li>Previous: <a href="../attribute/cf.Data.ispartitioned.html" title="previous chapter">cf.Data.ispartitioned</a></li>
-      <li>Next: <a href="../method/cf.NetCDFArray.close.html" title="next chapter">cf.NetCDFArray.close</a></li>
+      <li>Next: <a href="../method/cf.NetCDFArray.add_file_location.html" title="next chapter">cf.NetCDFArray.add_file_location</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -131,42 +131,20 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.NetCDFArray">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">ncvar=None</em>, <em class="sig-param">varid=None</em>, <em class="sig-param">group=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">units=False</em>, <em class="sig-param">calendar=False</em>, <em class="sig-param">missing_values=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/data/array/netcdfarray.py#L11-L40"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.array.mixin.filearraymixin.FileArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.netcdfarray.NetCDFArray</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">address=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">units=False</em>, <em class="sig-param">calendar=False</em>, <em class="sig-param">missing_values=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/data/array/netcdfarray.py#L11-L43"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.array.mixin.filearraymixin.FileArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.array.mixin.arraymixin.ArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.netcdfarray.NetCDFArray</span></code></p>
 <p>An array stored in a netCDF file.</p>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the netCDF file containing the array.</p>
+<dt>filename: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the netCDF file(s) containing the array.</p>
 </dd>
-<dt>ncvar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the netCDF variable containing the
-array. Required unless <em>varid</em> is set.</p>
-</dd>
-<dt>varid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The UNIDATA netCDF interface ID of the variable
-containing the array. Required if <em>ncvar</em> is not set,
-ignored if <em>ncvar</em> is set.</p>
-</dd>
-<dt>group: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the netCDF4 group to which the netCDF variable
-belongs. By default, or if <em>group</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or an
-empty sequence, it assumed to be in the root
-group. The last element in the sequence is the name of
-the group in which the variable lies, with other
-elements naming any parent groups (excluding the root
-group).</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>To specify that a variable is in the root group:
-<code class="docutils literal notranslate"><span class="pre">group=()</span></code> or <code class="docutils literal notranslate"><span class="pre">group=None</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p>To specify that a variable is in the group ‘/forecasts’:
-<code class="docutils literal notranslate"><span class="pre">group=['forecasts']</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p>To specify that a variable is in the group
-‘/forecasts/model2’: <code class="docutils literal notranslate"><span class="pre">group=['forecasts',</span> <span class="pre">'model2']</span></code></p>
-</dd>
-</dl>
+<dt>address: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The identity of the netCDF variable in each file
+defined by <em>filename</em>. Either a netCDF variable name
+or an integer netCDF variable ID.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.6.0</p>
+<p><span class="versionmodified added">New in version TODOCFAVER.</span></p>
 </div>
 </dd>
 <dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><p>The data type of the array in the netCDF file. May be
@@ -232,6 +210,12 @@ parameters are not deep copied.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
+<dt>ncvar:  Deprecated at version 1.10.1.0</dt><dd><p>Use the <em>address</em> parameter instead.</p>
+</dd>
+<dt>varid:  Deprecated at version 1.10.1.0</dt><dd><p>Use the <em>address</em> parameter instead.</p>
+</dd>
+<dt>group: Deprecated at version 1.10.1.0</dt><dd><p>Use the <em>address</em> parameter instead.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -244,29 +228,53 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.close.html#cf.NetCDFArray.close" title="cf.NetCDFArray.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.add_file_location.html#cf.NetCDFArray.add_file_location" title="cf.NetCDFArray.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
+<td><p>Add a new file location.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.close.html#cf.NetCDFArray.close" title="cf.NetCDFArray.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
 <td><p>Close the dataset containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.copy.html#cf.NetCDFArray.copy" title="cf.NetCDFArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.copy.html#cf.NetCDFArray.copy" title="cf.NetCDFArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy of the array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_address.html#cf.NetCDFArray.get_address" title="cf.NetCDFArray.get_address"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_address</span></code></a></p></td>
-<td><p>The address in the file of the variable.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.del_file_location.html#cf.NetCDFArray.del_file_location" title="cf.NetCDFArray.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
+<td><p>Remove reference to files in the given location.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_calendar.html#cf.NetCDFArray.get_calendar" title="cf.NetCDFArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
-<td><p>The calendar of the array.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.file_locations.html#cf.NetCDFArray.file_locations" title="cf.NetCDFArray.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
+<td><p>The locations of the files, any of which may contain the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_compression_type.html#cf.NetCDFArray.get_compression_type" title="cf.NetCDFArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
-<td><p>Returns the array’s compression type.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_filename.html#cf.NetCDFArray.get_filename" title="cf.NetCDFArray.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.filename.html#cf.NetCDFArray.filename" title="cf.NetCDFArray.filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></a></p></td>
 <td><p>The name of the file containing the array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_filenames.html#cf.NetCDFArray.get_filenames" title="cf.NetCDFArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
-<td><p>Return the names of any files containing the data array.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_address.html#cf.NetCDFArray.get_address" title="cf.NetCDFArray.get_address"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_address</span></code></a></p></td>
+<td><p>The name of the file containing the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_group.html#cf.NetCDFArray.get_group" title="cf.NetCDFArray.get_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_group</span></code></a></p></td>
-<td><p>The netCDF4 group structure of the netCDF variable.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_addresses.html#cf.NetCDFArray.get_addresses" title="cf.NetCDFArray.get_addresses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_addresses</span></code></a></p></td>
+<td><p>Return the names of the data addresses in the files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_format.html#cf.NetCDFArray.get_format" title="cf.NetCDFArray.get_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_format</span></code></a></p></td>
+<td><p>The format of the files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_formats.html#cf.NetCDFArray.get_formats" title="cf.NetCDFArray.get_formats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_formats</span></code></a></p></td>
+<td><p>Return the format of the files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_calendar.html#cf.NetCDFArray.get_calendar" title="cf.NetCDFArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
+<td><p>The calendar of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_compression_type.html#cf.NetCDFArray.get_compression_type" title="cf.NetCDFArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
+<td><p>Returns the array’s compression type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_filename.html#cf.NetCDFArray.get_filename" title="cf.NetCDFArray.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a></p></td>
+<td><p>The name of the file containing the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_filenames.html#cf.NetCDFArray.get_filenames" title="cf.NetCDFArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the names of files containing the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.NetCDFArray.get_group</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_groups.html#cf.NetCDFArray.get_groups" title="cf.NetCDFArray.get_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_groups</span></code></a></p></td>
+<td><p>The netCDF4 group structure of a netCDF variable.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_mask.html#cf.NetCDFArray.get_mask" title="cf.NetCDFArray.get_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask</span></code></a></p></td>
 <td><p>Whether or not to automatically mask the data.</p></td>
@@ -274,8 +282,8 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_missing_values.html#cf.NetCDFArray.get_missing_values" title="cf.NetCDFArray.get_missing_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_missing_values</span></code></a></p></td>
 <td><p>The missing value indicators from the netCDF variable.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_ncvar.html#cf.NetCDFArray.get_ncvar" title="cf.NetCDFArray.get_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ncvar</span></code></a></p></td>
-<td><p>The name of the netCDF variable containing the array.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.NetCDFArray.get_ncvar</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_subspace.html#cf.NetCDFArray.get_subspace" title="cf.NetCDFArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></p></td>
 <td><p>Return a subspace, defined by indices, of a numpy array.</p></td>
@@ -283,14 +291,17 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_units.html#cf.NetCDFArray.get_units" title="cf.NetCDFArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
 <td><p>The units of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.get_varid.html#cf.NetCDFArray.get_varid" title="cf.NetCDFArray.get_varid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_varid</span></code></a></p></td>
-<td><p>The UNIDATA netCDF interface ID of the array’s variable.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.NetCDFArray.get_varid</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.open.html#cf.NetCDFArray.open" title="cf.NetCDFArray.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a></p></td>
-<td><p>Returns an open dataset containing the data array.</p></td>
+<td><p>Return an open file object containing the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.to_memory.html#cf.NetCDFArray.to_memory" title="cf.NetCDFArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.NetCDFArray.Units.html#cf.NetCDFArray.Units" title="cf.NetCDFArray.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the array.</p></td>
 </tr>
 </tbody>
 </table>
@@ -305,16 +316,16 @@ parameters are not deep copied.</p>
 <td><p>Return an independent numpy array containing the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.NetCDFArray.dtype.html#cf.NetCDFArray.dtype" title="cf.NetCDFArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>Data-type of the data elements.</p></td>
+<td><p>Data-type of the array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.NetCDFArray.file_address.html#cf.NetCDFArray.file_address" title="cf.NetCDFArray.file_address"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_address</span></code></a></p></td>
-<td><p>The file name and address.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.NetCDFArray.file_address</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.NetCDFArray.ndim.html#cf.NetCDFArray.ndim" title="cf.NetCDFArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>Number of array dimensions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.NetCDFArray.shape.html#cf.NetCDFArray.shape" title="cf.NetCDFArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
-<td><p>Tuple of array dimension sizes.</p></td>
+<td><p>Shape of the array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.NetCDFArray.size.html#cf.NetCDFArray.size" title="cf.NetCDFArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>Number of elements in the array.</p></td>
@@ -346,11 +357,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

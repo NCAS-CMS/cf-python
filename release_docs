@@ -22,7 +22,7 @@ elif [[ $1 = "archive" ]] ; then
   dir=$PWD/docs/$version
 elif [[ $1 = "dev" ]] ; then
   # For testing: creates separate dir and does not (git) commit. DOES
-  # NOT deletes an existing .doctrees subdirectory, meaning that
+  # NOT delete an existing .doctrees subdirectory, meaning that
   # untouched source files (.py or .rst) might not get rebuilt, even
   # if conf.py or other styling files have been modified.
   dir=$PWD/docs/dev

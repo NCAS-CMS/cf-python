@@ -1610,7 +1610,7 @@ class PropertiesData(Properties):
         All data definitions that reference files are additionally
         referenced from the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `del_file_location`, `file_locations`
 
@@ -2526,7 +2526,7 @@ class PropertiesData(Properties):
     def cfa_update_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -2549,7 +2549,7 @@ class PropertiesData(Properties):
     def cfa_clear_file_substitutions(self, inplace=False):
         """Remove all of the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -2578,7 +2578,7 @@ class PropertiesData(Properties):
     ):
         """Remove a CFA-netCDF file name substitution.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -2599,7 +2599,7 @@ class PropertiesData(Properties):
     ):
         """Return the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3049,7 +3049,7 @@ class PropertiesData(Properties):
         All data definitions that reference files will have references
         to files in the given location removed from them.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `file_locations`
 
@@ -3411,7 +3411,7 @@ class PropertiesData(Properties):
         Returns the locations of any files that may be required to
         deliver the computed data array.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `del_file_location`
 

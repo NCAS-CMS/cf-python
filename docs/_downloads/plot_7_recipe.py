@@ -19,7 +19,7 @@ f = cf.read("~/recipes/realization/PRMSL.1941_mem*.nc")[0:5]
 print(f)
 
 # %%
-# 3. The desciption of one of the fields from the list shows ``'realization'`` as a property by which the members of the model ensemble are labelled:
+# 3. The description of one of the fields from the list shows ``'realization'`` as a property by which the members of the model ensemble are labelled:
 
 f[1].dump()
 

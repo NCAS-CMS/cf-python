@@ -48,7 +48,6 @@ Mathematical operations
    cf.curl_xy
    cf.div_xy
    cf.histogram
-   cf.relative_vorticity
    cf.ATOL
    cf.RTOL
    
@@ -192,6 +191,7 @@ Deprecated
    cf.of_fraction
    cf.open_files
    cf.open_files_threshold_exceeded
+   cf.relative_vorticity
    cf.set_performance
    cf.COLLAPSE_PARALLEL_MODE
    cf.FM_THRESHOLD

@@ -179,7 +179,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 *ncvar* must be the value of the term in the
                 ``aggregation_data`` attribute.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -625,7 +625,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 *ncvar* must be the value of the non-standard term in
                 the ``aggregation_data`` attribute.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -699,7 +699,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 *ncvar* must be the value of the non-standard term in
                 the ``aggregation_data`` attribute.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             ncvar: `str`
                 The name of the CFA-netCDF aggregated variable. See
@@ -815,7 +815,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
           the same domain axes as the parent field construct.
           Constructs are never created for `Domain` instances.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -898,7 +898,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CFA-netCDF ``aggregated_data`` attribute.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -966,7 +966,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _cfa_conform_array(self, array):
         """Conform an array so that it is suitable for CFA processing.
 
-        .. versionadded: TODOCFAVER
+        .. versionadded: 3.15.0
 
         :Parameters:
 

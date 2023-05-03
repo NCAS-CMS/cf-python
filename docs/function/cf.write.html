@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/read_write/write.py#L11-L746"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa=False</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">cfa_options=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/read_write/write.py#L16-L832"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -203,8 +203,8 @@ described by any of the following: ‘<code class="docutils literal notranslate"
 <dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output file. One of:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 45%" />
-<col style="width: 55%" />
+<col style="width: 46%" />
+<col style="width: 54%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>fmt</em></p></th>
@@ -213,12 +213,12 @@ described by any of the following: ‘<code class="docutils literal notranslate"
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code></p></td>
-<td><p>NetCDF4 format file. This is the
-default.</p></td>
+<td><p>NetCDF4 format file. This is
+the default.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF4_CLASSIC'</span></code></p></td>
-<td><p>NetCDF4 classic format file (see
-below)</p></td>
+<td><p>NetCDF4 classic format file
+(see below)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code></p></td>
 <td><p>NetCDF3 classic format file
@@ -235,19 +235,22 @@ file</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code></p></td>
 <td><p>NetCDF3 64-bit offset format
-file with extensions (see below)</p></td>
+file with extensions (see
+below)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'CFA'</span></code> or <code class="docutils literal notranslate"><span class="pre">'CFA4'</span></code></p></td>
-<td><p>CFA-netCDF4 format file</p></td>
+<td><p>Deprecated at version
+3.15.0.  See the <em>cfa</em>
+parameter.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'CFA3'</span></code></p></td>
-<td><p>CFA-netCDF3 classic format file</p></td>
+<td><p>Deprecated at version
+3.15.0.  See the <em>cfa</em>
+parameter.</p></td>
 </tr>
 </tbody>
 </table>
 <p>By default the format is <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>.</p>
-<p>All formats support large files (i.e. those greater than
-2GB) except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
 4.4.0 or newer of the C library (use <a class="reference internal" href="cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a> to
 see which version if the netCDF-C library is in use). It
@@ -422,39 +425,6 @@ a netCDF data variable attribute</p>
 external to the named external file. Ignored if there are
 no such constructs.</p>
 </dd>
-<dt>cfa_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>A dictionary giving parameters for configuring the output
-CFA-netCDF file:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 82%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Key</p></th>
-<th class="head"><p>Value</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'base'</span></code></p></td>
-<td><ul class="simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) then file names
-within CFA-netCDF files are stored with
-absolute paths.</p></li>
-<li><p>If set to an empty string then file names
-within CFA-netCDF files are given relative to
-the directory or URL base containing the
-output CFA-netCDF file.</p></li>
-<li><p>If set to a string then file names within
-CFA-netCDF files are given relative to the
-directory or URL base described by the
-value. For example: <code class="docutils literal notranslate"><span class="pre">'../archive'</span></code>.</p></li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>By default no parameters are specified.</p>
-</dd>
 <dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The endian-ness of the output file. Valid values are
 <code class="docutils literal notranslate"><span class="pre">'little'</span></code>, <code class="docutils literal notranslate"><span class="pre">'big'</span></code> or <code class="docutils literal notranslate"><span class="pre">'native'</span></code>. By default the
 output is native endian. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
@@ -506,8 +476,6 @@ data more easily compressible.  Ignored if the <em>compress</em>
 parameter is <code class="docutils literal notranslate"><span class="pre">0</span></code> (which is its default value). See the
 <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
 details.</p>
-<p>This parameter replaces the deprecated <em>no_shuffle</em>
-parameter.</p>
 </dd>
 <dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify data type conversions to be applied prior to
 writing data to disk. This may be useful as a means of
@@ -686,12 +654,93 @@ constructs: <code class="docutils literal notranslate"><span class="pre">omit_da
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
 </div>
 </dd>
-<dt>HDF_chunksizes: deprecated at version 3.0.0</dt><dd><p>HDF chunk sizes may be set for individual constructs prior
-to writing, instead. See <a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a>.</p>
+<dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True or a (possibly empty) dictionary then write the
+constructs as CFA-netCDF aggregation variables, where
+possible and where requested.</p>
+<p>The netCDF format of the CFA-netCDF file is determined by
+the <em>fmt</em> parameter, as usual.</p>
+<p>If <em>cfa</em> is a dictionary then it is used to configure the
+CFA write process. The default options when CFA writing is
+enabled are <code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">'field',</span> <span class="pre">'absolute_paths':</span>
+<span class="pre">True,</span> <span class="pre">'strict':</span> <span class="pre">True,</span> <span class="pre">'substitutions':</span> <span class="pre">{}}</span></code>, and the
+dictionary may have any subset of the following key/value
+pairs to override these defaults:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'constructs'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>The types of construct to be written as CFA-netCDF
+aggregation variables. By default only field constructs
+are written as CFA-netCDF aggregation variables.</p>
+<p>The types may be given as a (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, which
+may take any of the values allowed by the <em>omit_data</em>
+parameter. Alternatively, the same types may be given as
+keys to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> whose values specify the number of
+dimensions that a construct must also have if it is to
+be written as a CFA-netCDF aggregation variable. A value
+of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> means no restriction on the number of
+dimensions, which is equivalent to a value of
+<code class="docutils literal notranslate"><span class="pre">cf.ge(0)</span></code>.</p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>Equivalent ways to only write cell measure constructs
+as CFA-netCDF aggregation variables:
+<code class="docutils literal notranslate"><span class="pre">'cell_measure</span></code>, <code class="docutils literal notranslate"><span class="pre">['cell_measure']</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'cell_measure':</span> <span class="pre">None}</span></code>, <code class="docutils literal notranslate"><span class="pre">{'cell_measure':</span>
+<span class="pre">cf.ge(0)}</span></code></p>
 </dd>
-<dt>no_shuffle: deprecated at version 3.0.0</dt><dd><p>Use keyword <em>shuffle</em> instead.</p>
+<dt><em>Example:</em></dt><dd><p>Equivalent ways to only write field and auxiliary
+coordinate constructs as CFA-netCDF aggregation
+variables: <code class="docutils literal notranslate"><span class="pre">('field',</span> <span class="pre">'auxiliary_coordinate')</span></code> and
+<code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">None,</span> <span class="pre">'auxiliary_coordinate':</span> <span class="pre">None}</span></code>.</p>
 </dd>
-<dt>unlimited: deprecated at version 3.0.0</dt><dd><p>Use method <a class="reference internal" href="../method/cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis.nc_set_unlimited</span></code></a> instead.</p>
+<dt><em>Example:</em></dt><dd><p>Equivalent ways to only write two-dimensional
+auxiliary coordinate constructs as CFA-netCDF
+aggregation variables: <code class="docutils literal notranslate"><span class="pre">{'auxiliary_coordinate':</span>
+<span class="pre">2}</span></code> and <code class="docutils literal notranslate"><span class="pre">{'auxiliary_coordinate':</span> <span class="pre">cf.eq(2)}</span></code>.</p>
+</dd>
+<dt><em>Example:</em></dt><dd><p>Only write auxiliary coordinate constructs with two or
+more dimensions as CFA-netCDF variables, and also all
+field constructs: <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">None,</span>
+<span class="pre">'auxiliary_coordinate':</span> <span class="pre">cf.ge(2)}</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'absolute_paths'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<p>How to write fragment file names. Set to True (the
+default) for them to be written as fully qualified URIs,
+or else set to False for them to be written as local
+paths relative to the location of the CFA-netCDF file
+being created.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'strict'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<p>If True (the default) then an exception is raised if it
+is not possible to create a CFA aggregation variable
+from data identified by the <code class="docutils literal notranslate"><span class="pre">'constructs'</span></code> option. If
+False then a normal CF-netCDF variable will be written
+in this case.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'substitutions'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<p>A dictionary whose key/value pairs define text
+substitutions to be applied to the fragment file
+names. Each key may be specified with or without the
+<code class="docutils literal notranslate"><span class="pre">${...}</span></code> syntax. For instance, the following are
+equivalent: <code class="docutils literal notranslate"><span class="pre">{'base':</span> <span class="pre">'sub'}</span></code>, <code class="docutils literal notranslate"><span class="pre">{'${base}':</span> <span class="pre">'sub'}</span></code>.
+The substitutions are used in conjunction with, and take
+precedence over, any that are also defined on individual
+constructs (see <a class="reference internal" href="../method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions" title="cf.Data.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cfa_update_file_substitutions</span></code></a>
+for details).</p>
+<p>Substitutions are stored in the output file by the
+<code class="docutils literal notranslate"><span class="pre">substitutions</span></code> attribute of the <code class="docutils literal notranslate"><span class="pre">file</span></code> CFA
+aggregation instruction variable.</p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'base':</span> <span class="pre">'file:///data/'}</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.0.</span></p>
+</div>
+</dd>
+<dt>cfa_options: Deprecated at version 3.15.0</dt><dd><p>Use the <em>cfa</em> parameter instead.</p>
 </dd>
 </dl>
 </dd>
@@ -726,11 +775,11 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -265,7 +265,7 @@ class _Meta:
             field_ancillaries: (sequence of) `str`, optional
                 See `cf.aggregate` for details.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             copy: `bool` optional
                 If False then do not copy fields prior to aggregation.
@@ -1535,7 +1535,7 @@ class _Meta:
         construct that spans a new independent size 1 domain axis of
         the field, and the property is deleted.
 
-         ... versionadded:: TODOCFAVER
+         ... versionadded:: 3.15.0
 
         :Parameters:
 
@@ -1594,7 +1594,7 @@ class _Meta:
         If a domain construct is being aggregated then it is always
         returned unchanged.
 
-         ... versionadded:: TODOCFAVER
+         ... versionadded:: 3.15.0
 
         :Parameters:
 
@@ -1902,7 +1902,7 @@ def aggregate(
             constant value of the property, and the property itself is
             deleted.
 
-            .. versionadded:: TODOCFAVER
+            .. versionadded:: 3.15.0
 
         no_overlap:
             Use the *overlap* parameter instead.

@@ -661,7 +661,7 @@ def read(
               *Example:*
                 ``{'base': 'file:///data/'}``
 
-            .. versionadded:: TODOCFAVER
+            .. versionadded:: 3.15.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -1100,7 +1100,7 @@ def _read_a_file(
         cfa_options: `dict`, optional
             See `cf.read` for details.
 
-            .. versionadded:: TODOCFAVER
+            .. versionadded:: 3.15.0
 
     :Returns:
 

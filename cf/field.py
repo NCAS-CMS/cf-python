@@ -3684,7 +3684,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Remove all of the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3711,7 +3711,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Remove a CFA-netCDF file name substitution.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -3740,7 +3740,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def cfa_file_substitutions(self, constructs=True):
         """Return the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3771,7 +3771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         All data definitions that reference files will have references
         to files in the given location removed from them.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `file_locations`
 
@@ -3812,7 +3812,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Set CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -3985,7 +3985,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `derivative`, `grad_xy`, `iscyclic`, `cf.div_xy`
+        .. seealso:: `derivative`, `grad_xy`, `iscyclic`,
+                     `cf.curl_xy`, `cf.div_xy`
 
         :Parameters:
 
@@ -4084,6 +4085,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -4112,8 +4119,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = term1 + term2
 
             # Reset latitude and longitude coordinate units
-            f.dimension_coordinate("X").Units = x_units
-            f.dimension_coordinate("Y").Units = y_units
+            f.dimension_coordinate("longitude").Units = x_units
+            f.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates
@@ -11698,7 +11705,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Returns the locations of any files that may be required to
         deliver the computed data array.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `del_file_location`
 
@@ -12468,6 +12475,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -12488,11 +12501,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             # Reset latitude and longitude coordinate units
-            X.dimension_coordinate("X").Units = x_units
-            X.dimension_coordinate("Y").Units = y_units
+            X.dimension_coordinate("longitude").Units = x_units
+            X.dimension_coordinate("latitude").Units = y_units
 
-            Y.dimension_coordinate("X").Units = x_units
-            Y.dimension_coordinate("Y").Units = y_units
+            Y.dimension_coordinate("longitude").Units = x_units
+            Y.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates
@@ -14130,7 +14143,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         All data definitions that reference files are additionally
         referenced from the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `del_file_location`, `file_locations`
 

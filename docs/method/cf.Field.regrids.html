@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -132,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/field.py#L13907-L14182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/field.py#L14162-L14437"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Regrid the field to a new latitude and longitude grid.</p>
 <p>Regridding is the process of interpolating the field data
 values while preserving the qualities of the original data,
@@ -184,17 +184,17 @@ axes. In these special cases an exception will be raised if
 the source data mask does not meet this requirement.</p>
 <p><strong>Implementation</strong></p>
 <p>The interpolation is carried out using regridding weights
-calculated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> package, a Python interface to the
+calculated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> package, a Python interface to the
 Earth System Modeling Framework (ESMF) regridding utility:
-<a href="#id5"><span class="problematic" id="id6">`https://earthsystemmodeling.org/regrid`_</span></a>. Outside of <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>,
+<a href="#id5"><span class="problematic" id="id6">`https://earthsystemmodeling.org/regrid`_</span></a>. Outside of <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>,
 these weights are then modified for masked cells (if required)
 and the regridded data are created as the dot product of the
-weights with the source data. (Note that whilst the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>
+weights with the source data. (Note that whilst the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>
 package is able to also create the regridded data from its
 weights, this feature can’t be integrated with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 framework that underpins the field’s data.)</p>
 <p><strong>Logging</strong></p>
-<p>Whether <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> logging is enabled or not is determined by
+<p>Whether <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> logging is enabled or not is determined by
 <a class="reference internal" href="../function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>. If it is logging takes place after every
 call. By default logging is disabled.</p>
 <div class="versionadded">
@@ -379,7 +379,7 @@ vertices collapse to leave a cell as either a line or
 a point) are skipped, not producing a
 result. Otherwise an error will be produced if
 degenerate cells are found, that will be present in
-the ESMF log files.</p>
+the esmpy log files.</p>
 <p>For all other regridding methods, degenerate cells are
 always skipped, regardless of the value of
 <em>ignore_degenerate</em>.</p>
@@ -416,7 +416,7 @@ might only be non-zero as a result of rounding errors,
 the <em>min_weight</em> parameter controls whether or a not
 cell in the regridded field is masked.</p>
 <p>The default value has been chosen empirically as the
-smallest value that produces the same masks as ESMF
+smallest value that produces the same masks as esmpy
 for the use cases defined in the cf test suite.</p>
 <p>Define w_ji as the multiplicative weight that defines
 how much of Vs_i (the value in source grid cell i)
@@ -521,11 +521,11 @@ operation was in-place or the regridding operator if
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

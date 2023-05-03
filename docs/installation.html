@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.14.1 for version 1.10 of the CF conventions.</p>
+<p>Version 3.15.0 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id19"><strong>Operating systems</strong></a></p></li>
@@ -214,7 +214,7 @@ visualisation package</a>, run</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id18" title="Permalink to this code">¶</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cf-python<span class="w"> </span>cf-plot<span class="w"> </span>udunits2
-<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">esmpy</span><span class="o">=</span><span class="m">8</span>.2.0
+<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy&gt;<span class="o">=</span><span class="m">8</span>.0.0
 </pre></div>
 </div>
 </div>
@@ -230,7 +230,7 @@ properly, although the defaults are usually sufficient.</p>
 <ol class="arabic">
 <li><p>Download the cf package from <a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p></li>
 <li><p>Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
-you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.14.0</span></code>):</p>
+you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.15.0</span></code>):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tar<span class="w"> </span>zxvf<span class="w"> </span>cf-python-&lt;version&gt;.tar.gz
 <span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cf-python-&lt;version&gt;
 </pre></div>
@@ -279,14 +279,14 @@ files</span></a>, and</p></li>
 <section id="required">
 <span id="id10"></span><h3><a class="toc-backref" href="#id27">Required</a><a class="headerlink" href="#required" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.8 or newer.</p></li>
+<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.8.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, 1.22.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/dask/">dask</a>, 2022.12.1 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.5.4 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.0 or newer
 (note that this package may be installed with netCDF4).</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.10.0.3 or up to,
-but not including, 1.10.1.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.10.1.0 or up to,
+but not including, 1.10.2.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.5 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/packaging/">packaging</a>, version 20.0 or newer.</p></li>
@@ -318,9 +318,10 @@ optional. This to facilitate cf-python being installed in restricted
 environments for which these features are not required.</p>
 <p class="rubric">Regridding</p>
 <ul>
-<li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a>, version
-8.0.0 or up to 8.2.0. This is easily installed via conda with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">esmpy</span><span class="o">=</span><span class="m">8</span>.2.0
+<li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">esmpy</a>, previously
+named <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> with the old module name also being accepted for import,
+version 8.0.0 or newer. This is easily installed via conda with</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy&gt;<span class="o">=</span><span class="m">8</span>.0.0
 </pre></div>
 </div>
 <p>or may be installed from source.</p>
@@ -328,7 +329,7 @@ environments for which these features are not required.</p>
 </ul>
 <p class="rubric">Convolution filters, derivatives and relative vorticity</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://pypi.org/project/scipy">scipy</a>, version 1.1.0 or newer.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/scipy">scipy</a>, version 1.10.0 or newer.</p></li>
 </ul>
 <p class="rubric">Subspacing based on N-dimensional construct cells (N &gt; 1)
 containing a given value</p>
@@ -362,11 +363,11 @@ or newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

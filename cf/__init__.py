@@ -74,7 +74,7 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.10"
-__date__ = "2023-04-??"
+__date__ = "2023-04-27"
 __version__ = "3.15.0"
 
 _requires = (
@@ -103,7 +103,11 @@ from packaging.version import Version
 import importlib.util
 import platform
 
-_found_ESMF = bool(importlib.util.find_spec("ESMF"))
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
+_found_esmpy = bool(
+    importlib.util.find_spec("esmpy") or importlib.util.find_spec("ESMF")
+)
 
 try:
     import netCDF4
@@ -181,7 +185,7 @@ if Version(numpy.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.4"
+_minimum_vn = "3.3.5"
 if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
@@ -199,7 +203,7 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2022.02.1"
+_minimum_vn = "2022.12.1"
 if Version(dask.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
@@ -207,7 +211,7 @@ if Version(dask.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of Python
-_minimum_vn = "3.7.0"
+_minimum_vn = "3.8.0"
 if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
