@@ -5577,7 +5577,7 @@ class PropertiesData(Properties):
 
         if not data.Units:
             units = self.Units
-            if units is not None:
+            if units:
                 if copy:
                     copy = False
                     data = data.override_units(units, inplace=False)
