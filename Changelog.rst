@@ -3,6 +3,8 @@ version 3.15.1
 
 **2023-05-??**
 
+* Performance improvements to `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/640)
 * Changed dependency: ``cfunits>=3.3.6``
 
  ----
@@ -16,8 +18,6 @@ version 3.15.0
   (https://github.com/NCAS-CMS/cf-python/issues/451,
   https://github.com/NCAS-CMS/cf-python/issues/475,
   https://github.com/NCAS-CMS/cf-python/issues/637)
-* Performance improvements to `cf.aggregate`
-  (https://github.com/NCAS-CMS/cf-python/issues/598)
 * New function: `cf.CFA`
 * New method: `cf.Data.get_cfa_write`
 * New method: `cf.Data.set_cfa_write`

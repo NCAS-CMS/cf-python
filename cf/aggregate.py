@@ -1066,21 +1066,23 @@ class _Meta:
         return var_units
 
     def canonical_cell_methods(self, rtol=None, atol=None):
-        """Updates the canonical cell methods.
-
-        Updates the canonical cell methods for those in `self.field`.
+        """Get the canonical cell methods for the field.
 
         :Parameters:
 
-            atol: `float`, optional
-                The absolute tolerance for numerical comparisons.
+            atol: `float`
+                The tolerance on absolute differences between real
+                numbers.
 
-            rtol: `float`, optional
-                The relative tolerance for numerical comparisons.
+            rtol: `float`
+                The tolerance on relative differences between real
+                numbers.
 
         :Returns:
 
-            `CellMethods` or `None`
+            `tuple` of `CellMethods`
+                Canonical forms of the cell methods. If there are no
+                cell methods then an empty `tuple` is returned.
 
         """
         canonical_cell_methods = self.canonical.cell_methods
@@ -1089,7 +1091,7 @@ class _Meta:
             "cell_method", todict=True
         )
         if not cell_methods:
-            return
+            return ()
 
         cms = []
         for cm in cell_methods.values():
@@ -2436,11 +2438,12 @@ def aggregate(
                     # (rather than just two at a time) is MUCH
                     # better. i.e. X=da.conatnenate([a, b, c, d, e])
                     # is much faster than X=da.concatenate([a, b]);
-                    # X=da.concatenate([X, c]); etc.
+                    # X=da.concatenate([X, c]); etc. When aggregating
+                    # O(100) fields the speed-up is considerable.
                     #
                     # This refactoring away from pair-wise
                     # concatenation will need more effort than is
-                    # possible at this time (April 2023), and so is
+                    # possible at this time (v3.15.1), and so is
                     # postponed for now.
                     # ------------------------------------------------
 
@@ -3541,7 +3544,6 @@ def _aggregate_2_fields(
                 relaxed_units=relaxed_units,
                 copy=copy,
             )
-            #            data = Data.zeros(data.shape, dtype=data.dtype) # ppp
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
                 data = Data.concatenate(
@@ -3557,7 +3559,6 @@ def _aggregate_2_fields(
                     relaxed_units=relaxed_units,
                     copy=copy,
                 )
-                #                data = Data.zeros(data.shape, dtype=data.dtype) # ppp
                 construct0.bounds.set_data(data, copy=False)
         else:
             # The fields are decreasing along the aggregating axis
@@ -3570,7 +3571,6 @@ def _aggregate_2_fields(
                 relaxed_units=relaxed_units,
                 copy=copy,
             )
-            #            data = Data.zeros(data.shape, dtype=data.dtype) # ppp
             construct0.set_data(data)
             if construct0.has_bounds():
                 data = Data.concatenate(
@@ -3586,7 +3586,6 @@ def _aggregate_2_fields(
                     relaxed_units=relaxed_units,
                     copy=copy,
                 )
-                #                data = Data.zeros(data.shape, dtype=data.dtype) # ppp
                 construct0.bounds.set_data(data)
 
     # ----------------------------------------------------------------
