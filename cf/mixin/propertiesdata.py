@@ -5208,19 +5208,6 @@ class PropertiesData(Properties):
 
         return v
 
-    @_inplace_enabled(default=True)
-    def optimize_graph(self):
-        """TODO"""
-        return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "optimize_graph",
-            inplace=True,
-        )
-
-    #        data = v.get_data(None, units=None, _fill_value=None))
-    #        if data is not None:
-    #            data.optimize_graph()
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):

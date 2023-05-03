@@ -5,7 +5,7 @@ version 3.15.1
 
 * Changed dependency: ``cfunits>=3.3.6``
 
-----
+ ----
   
 version 3.15.0
 --------------

@@ -808,7 +808,7 @@ class UMField:
 
         # The STASH code has been set in the PP header, so try to find
         # its standard_name from the conversion table
-        stash_records = stash2standard_name.get((submodel, stash), None)
+        stash_records = _stash2standard_name.get((submodel, stash), None)
 
         um_Units = None
         um_condition = None
@@ -3289,204 +3289,6 @@ class UMField:
         return dc
 
 
-#    @_manage_log_level_via_verbose_attr
-#    def z_reference_coordinate(self, axiscode):
-#        """Create and return the Z reference coordinates."""
-#        logger.info(
-#            "Creating Z reference coordinates from BRLEV"
-#        )  # pragma: no cover
-#
-#        array = np.array(
-#            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
-#        )
-#
-#        LBVC = self.lbvc
-#        atol = self.atol
-#
-#        key = (axiscode, LBVC, array)
-#        dc = _cached_z_reference_coordinate.get(key, None)
-#
-#        if dc is not None:
-#            copy = True
-#        else:
-#            if not 128 <= LBVC <= 139:
-#                bounds = []
-#                for rec in self.z_recs:
-#                    BRLEV = rec.real_hdr.item(brlev)
-#                    BRSVD1 = rec.real_hdr.item(brsvd1)
-#
-#                    if abs(BRSVD1 - BRLEV) >= atol:
-#                        bounds = None
-#                        break
-#
-#                    bounds.append((BRLEV, BRSVD1))
-#            else:
-#                bounds = None
-#
-#            if bounds:
-#                bounds = np.array((bounds,), dtype=float)
-#
-#            dc = self.implementation.initialise_DimensionCoordinate()
-#            dc = self.coord_data(
-#                dc,
-#                array,
-#                bounds,
-#                units=_axiscode_to_Units.setdefault(axiscode, None),
-#            )
-#            dc = self.coord_axis(dc, axiscode)
-#            dc = self.coord_names(dc, axiscode)
-#
-#            if not dc.get("positive", True):  # ppp
-#                dc.flip(i=True)
-#
-#            _cached_z_reference_coordinate[key] = dc
-#            copy = False
-#
-#        self.implementation.set_dimension_coordinate(
-#            self.field,
-#            dc,
-#            axes=[_axis["z"]],
-#            copy=copy,
-#            autocyclic=_autocyclic_false,
-#        )
-#
-#        return dc
-#
-#
-# _stash2standard_name = {}
-#
-# def load_stash2standard_name(table=None, delimiter='!', merge=True):
-#     '''Load a STASH to standard name conversion table.
-#
-# :Parameters:
-#
-#     table: `str`, optional
-#         Use the conversion table at this file location. By default the
-#         table will be looked for at
-#         ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
-#
-#     delimiter: `str`, optional
-#         The delimiter of the table columns. By default, ``!`` is taken
-#         as the delimiter.
-#
-#     merge: `bool`, optional
-#         If *table* is None then *merge* is taken as False, regardless
-#         of its given value.
-#
-# :Returns:
-#
-#     `None`
-#
-# *Examples*
-#
-# >>> load_stash2standard_name()
-# >>> load_stash2standard_name('my_table.txt')
-# >>> load_stash2standard_name('my_table2.txt', ',')
-# >>> load_stash2standard_name('my_table3.txt', merge=True)
-# >>> load_stash2standard_name('my_table4.txt', merge=False)
-#
-#     '''
-#     # 0  Model
-#     # 1  STASH code
-#     # 2  STASH name
-#     # 3  units
-#     # 4  valid from UM vn
-#     # 5  valid to   UM vn
-#     # 6  standard_name
-#     # 7  CF extra info
-#     # 8  PP extra info
-#
-#     if table is None:
-#         # Use default conversion table
-#         merge = False
-#         package_path = os.path.dirname(__file__)
-#         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-#
-#     lines = csv.reader(open(table, 'r'),
-#                        delimiter=delimiter, skipinitialspace=True)
-#
-#     raw_list = []
-#     [raw_list.append(line) for line in lines]
-#
-#     # Get rid of comments
-#     for line in raw_list[:]:
-#         if line[0].startswith('#'):
-#             raw_list.pop(0)
-#             continue
-#         break
-#
-#     # Convert to a dictionary which is keyed by (submodel, STASHcode)
-#     # tuples
-#
-#     (model, stash, name,
-#      units,
-#      valid_from, valid_to,
-#      standard_name, cf, pp) = list(range(9))
-#
-#     stash2sn = {}
-#     for x in raw_list:
-#         key = (int(x[model]), int(x[stash]))
-#
-#         if not x[units]:
-#             x[units] = None
-#
-#         try:
-#             cf_info = {}
-#             if x[cf]:
-#                 for d in x[7].split():
-#                     if d.startswith('height='):
-#                         cf_info['height'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                         if cf_info['height'] == '':
-#                             cf_info['height'][1] = '1'
-#
-#                     if d.startswith('below_'):
-#                         cf_info['below'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                        if cf_info['below'] == '':
-#                             cf_info['below'][1] = '1'
-#
-#                     if d.startswith('where_'):
-#                         cf_info['where'] = d.replace('where_', 'where ', 1)
-#                     if d.startswith('over_'):
-#                         cf_info['over'] = d.replace('over_', 'over ', 1)
-#
-#             x[cf] = cf_info
-#         except IndexError:
-#             pass
-#
-#         try:
-#             x[valid_from] = float(x[valid_from])
-#         except ValueError:
-#             x[valid_from] = None
-#
-#         try:
-#             x[valid_to] = float(x[valid_to])
-#         except ValueError:
-#             x[valid_to] = None
-#
-#         x[pp] = x[pp].rstrip()
-#
-#         line = (x[name:],)
-#
-#         if key in stash2sn:
-#             stash2sn[key] += line
-#         else:
-#             stash2sn[key] = line
-#
-#     if not merge:
-#         _stash2standard_name.clear()
-#
-#     _stash2standard_name.update(stash2sn)
-
-
-# ---------------------------------------------------------------------
-# Create the STASH code to standard_name conversion dictionary
-# ---------------------------------------------------------------------
-load_stash2standard_name()
-stash2standard_name = _stash2standard_name
-
-
 class UMRead(cfdm.read_write.IORead):
     """A container for instantiating Fields from a UM fields file."""
 
@@ -3577,6 +3379,13 @@ class UMRead(cfdm.read_write.IORead):
         >>> f = read('*/file[0-9].pp', um_version=708)
 
         """
+        if not _stash2standard_name:
+            # --------------------------------------------------------
+            # Create the STASH code to standard_name conversion
+            # dictionary
+            # --------------------------------------------------------
+            load_stash2standard_name()
+
         if endian:
             byte_ordering = endian + "_endian"
         else:
@@ -3598,9 +3407,6 @@ class UMRead(cfdm.read_write.IORead):
 
         f = self.file_open(filename)
 
-        # Clear caches
-        #        _cached_data.clear()
-
         info = is_log_level_info(logger)
 
         um = [
@@ -3620,9 +3426,6 @@ class UMRead(cfdm.read_write.IORead):
             )
             for var in f.vars
         ]
-
-        # Clear caches
-        #        _cached_data.clear()
 
         self.file_close()
 

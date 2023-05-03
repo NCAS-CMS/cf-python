@@ -4,10 +4,9 @@ from dataclasses import dataclass
 from dataclasses import field as dataclasses_field
 from operator import itemgetter
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-from dask.base import collections_to_dsk, tokenize
+from dask.base import tokenize
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .data import Data
@@ -77,45 +76,65 @@ _no_units = Units()
 @dataclass()
 class _HFLCache:
     """A cache for coordinate and cell measure hashes, first and last
-    values and first and last cell bounds."""
+    values and first and last cell bounds.
+
+     **Examples**
+
+    >>> print(h)
+    _HFLCache(
+        hash_map={
+            'd5888e04e7409f4770cbdee3': 'd5888e04e7409f4770cbdee3',
+            'c0736bd479cc6889865c11c0': 'c0736bd479cc6889865c11c0',
+            'bb4458b7bf091fe2a90b9bbe': 'bb4458b7bf091fe2a90b9bbe',
+            'bfa820175fabd4972b03ac2f': 'bfa820175fabd4972b03ac2f',
+            'a28d8e98a795155f74703fb1': 'a28d8e98a795155f74703fb1',
+            'c740442fa201fcebe826995e': 'c740442fa201fcebe826995e',
+            'c957a7929dd40d008078a3aa': 'c957a7929dd40d008078a3aa'
+        },
+        hash_to_data={
+            ((2, 2), <Units: degrees_north>): {'c0736bd479cc6889865c11c0': <CF Data(2, 2): [[-90.0, ..., -30.0]] degrees_north>},
+            ((8, 2), <Units: degrees_east>): {'bfa820175fabd4972b03ac2f: <CF Data(8, 2): [[0.0, ..., 360.0]] degrees_east>},
+            ((3, 2), <Units: degrees_north>): {'c957a7929dd40d008078a3aa': <CF Data(3, 2): [[-30.0, ..., 90.0]] degrees_north>}
+        },
+        hash_to_data_bounds={
+            ((2,), <Units: degrees_north>): {'d5888e04e7409f4770cbdee3': <CF Data(2): [-75.0, -45.0] degrees_north>},
+            ((8,), <Units: degrees_east>): {'bb4458b7bf091fe2a90b9bbe': <CF Data(8): [22.5, ..., 337.5] degrees_east>},
+            ((1,), <Units: days since 2018-12-01>): {'a28d8e98a795155f74703fb1': <CF Data(1): [2019-01-01 00:00:00]>},
+            ((3,), <Units: degrees_north>): {'c740442fa201fcebe826995e': <CF Data(3): [0.0, 45.0, 75.0] degrees_north>}
+        },
+        fl={
+            'd5888e04e7409f4770cbdee3': (-75.0, -45.0),
+            'bb4458b7bf091fe2a90b9bbe': (22.5, 337.5),
+            'a28d8e98a795155f74703fb1': (31.0, 31.0),
+            'c740442fa201fcebe826995e': (0.0, 75.0)},
+        flb={
+            'c0736bd479cc6889865c11c0': ([-90.0, -60.0], [-60.0, -30.0]),
+            'bfa820175fabd4972b03ac2f': ([0.0, 45.0], [315.0, 360.0]),
+            'c957a7929dd40d008078a3aa': ([-30.0, 30.0], [60.0, 90.0])
+        }
+    )
+
+    """
 
     # Store mappings of equivalent Data hashes. This links Data
     # objects that are equal but have different hashes, such as
     # cf.Data(1, 'day since 2002-01-01') and cf.Data(366, 'day since
     # 2001-01-01').
-    #
-    # E.g. {'5752f': '5752f', 'd34re': '5752f', '865x4': 'xx45y'}
     hash_map: dict = dataclasses_field(default_factory=dict)
 
     # Store non-coordinate-bounds Data objects, separated into groups
     # of (shape, canonical units) and then keyed by unique hashes.
-    #
-    # E.g.
-    # {((12,), <CF Units: m>)): {'d34re': <CF Data(12): >
-    #                            '865x4': <CF Data(12): >},
-    #  ((1,),  <CF Units: s>)): {'12g67': <CF Data(1): >}}
     hash_to_data: dict = dataclasses_field(default_factory=dict)
 
     # Store coordinate bounds Data objects, separated into groups of
     # (shape, canonical units) and then keyed by unique hashes.
-    #
-    # E.g.
-    # {((12, 2), <CF Units: m>): {'kljsd': <CF Data(12, 2): >
-    #                             'o8t3g': <CF Data(12, 2): >},
-    #  ((1, 2),  <CF Units: s>): {'7v7gl': <CF Data(1 ,2): >}}
     hash_to_data_bounds: dict = dataclasses_field(default_factory=dict)
 
     # The first and last values of non-coordinate-bounds Data objects.
-    #
-    # E.g. {'238f5': (-89.375, 89.375),
-    #       '39c81': (0.0, 358.75)}
     fl: dict = dataclasses_field(default_factory=dict)
 
     # The sorted first and last cell bounds of coordinate bounds Data
     # objects.
-    #
-    # E.g. {'08d99': ([-90.0, -88.75], [88.75, 90.0]),
-    #       '6c0e0': ([-0.625, 0.625], [358.125, 359.375])}
     flb: dict = dataclasses_field(default_factory=dict)
 
 
@@ -123,7 +142,44 @@ class _HFLCache:
 class _Canonical:
     """Storage canonical versions of metadata construct attributes.
 
-    .. versionaddedd:: 3.15.0
+    .. versionaddedd:: 3.15.1
+
+    **Examples**
+
+    >>> print(c)
+    _Canonical(
+        axes={
+            ('auxiliary_coordinate', 2): {
+                'latitude': ('grid_latitude', 'grid_longitude'),
+                'longitude': ('grid_longitude', 'grid_latitude')
+            },
+            ('field_ancillary', 2): {'air_temperature standard_error': ('grid_latitude', 'grid_longitude')},
+            ('domain_ancillary', 1): {
+                ('standard_name:atmosphere_hybrid_height_coordinate', 'a'): ('atmosphere_hybrid_height_coordinate',),
+                ('standard_name:atmosphere_hybrid_height_coordinate', 'b'): ('atmosphere_hybrid_height_coordinate',)
+            },
+            ('domain_ancillary', 2): {('standard_name:atmosphere_hybrid_height_coordinate', 'orog'): ('grid_latitude', 'grid_longitude')},
+            ('cell_measure', 2): {'area': ('grid_longitude', 'grid_latitude')}
+        },
+        units={
+            'qwerty': [<Units: K>],
+            'time': [<Units: days since 2018-12-01>],
+            'grid_latitude': [<Units: degrees>],
+            'grid_longitude': [<Units: degrees>],
+            'latitude': [<Units: degrees_N>],
+            'longitude': [<Units: degrees_E>],
+            'air_temperature standard_error': [<Units: K>],
+            ('standard_name:atmosphere_hybrid_height_coordinate', 'a'): [<Units: m>],
+            ('standard_name:atmosphere_hybrid_height_coordinate', 'orog'): [<Units: m>],
+            'measure:area': [<Units: km2>]
+        },
+        cell_methods=[
+            (
+                <CF CellMethod: area: mean>,
+                <CF CellMethod: time: maximum>
+            )
+        ]
+    )
 
     """
 
@@ -275,6 +331,16 @@ class _Meta:
                 fields are never to accessed again (such as in this case:
                 ``f = cf.aggregate(f)``) then setting *copy* to False can
                 reduce the time taken for aggregation.
+
+            canonical: `_Canonical`
+                Canonical versions of metadata construct attributes.
+
+                .. versionaddedd:: 3.15.1
+
+            info: `bool`
+                True if the log level is ``'INFO'`` (``2``).
+
+                .. versionaddedd:: 3.15.1
 
         """
         self._bool = False
@@ -516,8 +582,8 @@ class _Meta:
                         self.message = (
                             "axis "
                             f"{f.constructs.domain_axis_identity(axis)!r} "
-                            "has no netCDF dimension name"
-                        )  # TODO
+                            "has no identity"
+                        )
 
                     return
 
@@ -909,7 +975,7 @@ class _Meta:
     def canonical_axes(self, variable, identity, axes):
         """Return a construct's canonical axes.
 
-        .. versionadded:: 3.15.0
+        .. versionadded:: 3.15.1
 
         :Parameters:
 
@@ -946,8 +1012,10 @@ class _Meta:
         :Parameters:
 
             variable: Construct
+                The construct for which to get the canonical units.
 
             identity: `str`
+                The construct's identity.
 
             relaxed_units: `bool`
                 See the `aggregate` function for details.
@@ -998,13 +1066,17 @@ class _Meta:
         return var_units
 
     def canonical_cell_methods(self, rtol=None, atol=None):
-        """Updates the `_canonical_cell_methods` attribute.
+        """Updates the canonical cell methods.
+
+        Updates the canonical cell methods for those in `self.field`.
 
         :Parameters:
 
-            atol: `float`
+            atol: `float`, optional
+                The absolute tolerance for numerical comparisons.
 
-            rtol: `float`
+            rtol: `float`, optional
+                The relative tolerance for numerical comparisons.
 
         :Returns:
 
@@ -1025,7 +1097,7 @@ class _Meta:
             cm = cm.sorted()
             cms.append(cm)
 
-        for canonical_cms in canonical_cell_methods:  # TODO
+        for canonical_cms in canonical_cell_methods:
             if len(cms) != len(canonical_cms):
                 continue
 
@@ -1434,7 +1506,6 @@ class _Meta:
                 ("measure", msr[units]["measure"]),
                 ("units", units.formatted(definition=True)),
                 ("axes", msr[units]["canonical_axes"]),
-                #                ("axes", msr[units]["axes"]),
                 ("external", msr[units]["external"]),
             )
             for units in sorted(msr)
@@ -1450,7 +1521,6 @@ class _Meta:
                     "units",
                     domain_anc[identity]["units"].formatted(definition=True),
                 ),
-                #                ("axes", domain_anc[identity]["axes"]),
                 ("axes", domain_anc[identity]["canonical_axes"]),
             )
             for identity in sorted(domain_anc)
@@ -2340,7 +2410,7 @@ def aggregate(
                         verbose=verbose,
                         concatenate=concatenate,
                         relaxed_units=relaxed_units,
-                        copy=copy,  # (copy or not exclude),
+                        copy=copy,
                     )
 
                     if not m0:
@@ -2358,18 +2428,21 @@ def aggregate(
                         unaggregatable = True
                         break
 
-                    # TODO: As a further performance improvement,
-                    #       concatenation of multiple fields at a time
-                    #       (rather than just 2) is MUCH
-                    #       better. i.e. t = da.conatnenate([a, b, c,
-                    #       d, e], axis=0) is very much faster than t
-                    #       = da.concatenate([a, b], axis=0; t =
-                    #       da.concatenate([t, c], axis=0; etc.
+                    # ------------------------------------------------
+                    # TODOAGG:
                     #
-                    #       This refactor away from pair-wise
-                    #       concatenation will need more effort than
-                    #       is possible at this time (April 2023), and
-                    #       so is postponed for now.
+                    # As a further performance improvement,
+                    # concatenation of multiple fields at a time
+                    # (rather than just two at a time) is MUCH
+                    # better. i.e. X=da.conatnenate([a, b, c, d, e])
+                    # is much faster than X=da.concatenate([a, b]);
+                    # X=da.concatenate([X, c]); etc.
+                    #
+                    # This refactoring away from pair-wise
+                    # concatenation will need more effort than is
+                    # possible at this time (April 2023), and so is
+                    # postponed for now.
+                    # ------------------------------------------------
 
                 m[:] = [m0]
 
@@ -2412,18 +2485,6 @@ def aggregate(
     return output_constructs
 
 
-def todict(m):
-    f = m.field
-    f.data.optmize_graph()
-    dx = f.to_dask_array()
-    dsk = collections_to_dsk((dx,), optimize_graph=True)
-    dx2 = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-    f.data._set_dask(dx2)
-
-    for c in f.constructs.filter_by_data(todict=True).values():
-        c.data.optmize_graph()
-
-
 # --------------------------------------------------------------------
 # Initialise the status
 # --------------------------------------------------------------------
@@ -2448,6 +2509,8 @@ def _create_hash_and_first_values(
         `None`
 
     """
+    # The canonical direction for each axis, keyed by the axis
+    # identity.
     canonical_direction = {}
 
     for m in meta:
@@ -2509,22 +2572,24 @@ def _create_hash_and_first_values(
 
                 direction = dim_coord.direction()
                 if identity in canonical_direction:
-                    null_sort = direction == canonical_direction[identity]
+                    needs_sorting = direction != canonical_direction[identity]
                 else:
-                    null_sort = True
+                    needs_sorting = False
                     canonical_direction[identity] = direction
 
-                if null_sort:
-                    sort_indices = slice(None)
-                else:
+                if needs_sorting:
                     sort_indices = slice(None, None, -1)
+                else:
+                    sort_indices = slice(None)
+
             else:
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity["keys"][0]
+                # '.data.compute()' is faster than '.array'
                 sort_indices = np.argsort(constructs[aux].data.compute())
                 m_sort_keys[axis] = aux
-                null_sort = False
+                needs_sorting = True
 
             m_sort_indices[axis] = sort_indices
 
@@ -2543,7 +2608,7 @@ def _create_hash_and_first_values(
                     coord,
                     canonical_units,
                     sort_indices,
-                    null_sort,
+                    needs_sorting,
                     True,
                     False,
                     hfl_cache,
@@ -2563,7 +2628,7 @@ def _create_hash_and_first_values(
                             coord.bounds,
                             canonical_units,
                             sort_indices,
-                            null_sort,
+                            needs_sorting,
                             False,
                             True,
                             hfl_cache,
@@ -2579,7 +2644,7 @@ def _create_hash_and_first_values(
                             coord.bounds,
                             canonical_units,
                             sort_indices,
-                            null_sort,
+                            needs_sorting,
                             False,
                             False,
                             hfl_cache,
@@ -2618,16 +2683,14 @@ def _create_hash_and_first_values(
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     coord = coord.transpose(iaxes)
 
-                sort_indices, null_sort = _sort_indices_null_sort(
-                    m, canonical_axes
-                )
+                sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
 
                 # Get the hash of the data array
                 h = _get_hfl(
                     coord,
                     canonical_units,
                     sort_indices,
-                    null_sort,
+                    needs_sorting,
                     False,
                     False,
                     hfl_cache,
@@ -2641,7 +2704,7 @@ def _create_hash_and_first_values(
                         coord.bounds,
                         canonical_units,
                         sort_indices,
-                        null_sort,
+                        needs_sorting,
                         False,
                         False,
                         hfl_cache,
@@ -2673,7 +2736,7 @@ def _create_hash_and_first_values(
                         iaxes = [axes.index(axis) for axis in canonical_axes]
                         cell_measure = cell_measure.transpose(iaxes)
 
-                    sort_indices, null_sort = _sort_indices_null_sort(
+                    sort_indices, needs_sorting = _sort_indices(
                         m, canonical_axes
                     )
 
@@ -2682,7 +2745,7 @@ def _create_hash_and_first_values(
                         cell_measure,
                         canonical_units,
                         sort_indices,
-                        null_sort,
+                        needs_sorting,
                         False,
                         False,
                         hfl_cache,
@@ -2715,16 +2778,14 @@ def _create_hash_and_first_values(
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     field_anc = field_anc.transpose(iaxes)
 
-                sort_indices, null_sort = _sort_indices_null_sort(
-                    m, canonical_axes
-                )
+                sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
 
                 # Get the hash of the data array
                 h = _get_hfl(
                     field_anc,
                     canonical_units,
                     sort_indices,
-                    null_sort,
+                    needs_sorting,
                     False,
                     False,
                     hfl_cache,
@@ -2755,16 +2816,14 @@ def _create_hash_and_first_values(
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     domain_anc = domain_anc.transpose(iaxes)
 
-                sort_indices, null_sort = _sort_indices_null_sort(
-                    m, canonical_axes
-                )
+                sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
 
                 # Get the hash of the data array
                 h = _get_hfl(
                     domain_anc,
                     canonical_units,
                     sort_indices,
-                    null_sort=null_sort,
+                    needs_sorting,
                     first_and_last_values=False,
                     first_and_last_bounds=False,
                     hfl_cache=hfl_cache,
@@ -2778,7 +2837,7 @@ def _create_hash_and_first_values(
                         domain_anc.bounds,
                         canonical_units,
                         sort_indices,
-                        null_sort=null_sort,
+                        needs_sorting,
                         first_and_last_values=False,
                         first_and_last_bounds=False,
                         hfl_cache=hfl_cache,
@@ -2794,10 +2853,10 @@ def _create_hash_and_first_values(
         m.cell_values = True
 
 
-def _sort_indices_null_sort(m, canonical_axes):
+def _sort_indices(m, canonical_axes):
     """The sort indices for axes, and whether or not to use them.
 
-    .. versionadded:: 3.15.0
+    .. versionadded:: 3.15.1
 
     :Parameters:
 
@@ -2816,15 +2875,15 @@ def _sort_indices_null_sort(m, canonical_axes):
     """
     canonical_axes = [m.id_to_axis[identity] for identity in canonical_axes]
     sort_indices = tuple([m.sort_indices[axis] for axis in canonical_axes])
-    null_sort = sort_indices == (slice(None),) * len(sort_indices)
-    return sort_indices, null_sort
+    needs_sorting = sort_indices != (slice(None),) * len(sort_indices)
+    return sort_indices, needs_sorting
 
 
 def _get_hfl(
     v,
     canonical_units,
     sort_indices,
-    null_sort,
+    needs_sorting,
     first_and_last_values,
     first_and_last_bounds,
     hfl_cache,
@@ -2834,19 +2893,47 @@ def _get_hfl(
     """Return the hash value, and optionally first and last values or
     bounds.
 
-    The overall aim of this method is to minimise number of call to
-    `Data.equals`.
+    The performance this function depends on minimising number of
+    calls to `Data.compute` and `Data.equals`.
 
     :Parameters:
 
-        v: Metadata construct
+        v: Construct
+            Coordiante or cell measure construct.
+
+        canonical_units: `Units`
+            The canonical units for *v*.
+
+        sort_indices: `tuple`
+            The indices that will sort *v* to have canonical element
+            order.
+
+        needs_sorting: `bool`
+            True if the data needs sorting to a canonical element
+            order.
+
+        first_and_last_values: `bool`
+            Whether or not to return the first and last values.
+
+        first_and_last_bounds: `bool`
+            Whether or not to return the first and last cell bounds
+            values.
+
+        hfl_cache: `_HFLCache`
+            The cache of coordinate and cell measure hashes, first and
+            last values and first and last cell bounds.
+
+        rtol: `float` or `None`
+            The relative tolerance for numerical comparisons.
+
+        atol: `float` or `None`
+            The absolute tolerance for numerical comparisons.
 
     :Returns:
 
         `str` or 3-`tuple`
-            A unique representative value for the coordinates and cell
-            measures, in a tuple with the first and last cell values
-            or bounds if either is requested.
+            A unique hash value for the data with, if requested, the
+            first and last cell values or bounds.
 
     """
     d = v.get_data(None, _units=False, _fill_value=False)
@@ -2858,13 +2945,17 @@ def _get_hfl(
 
     d.Units = canonical_units
 
-    if not null_sort and d.size > 1:
+    if needs_sorting:
         d = d[sort_indices]
 
     hash_map = hfl_cache.hash_map
+
+    # Get a hash value for the data
     try:
+        # Fast
         hash_value = d.get_deterministic_name()
     except ValueError:
+        # Slow
         hash_value = tokenize(d.compute())
 
     if hash_value in hash_map:
@@ -2947,9 +3038,14 @@ def _group_fields(meta, axis, info=False):
         axis: `str`
             The name of the axis to group for aggregation.
 
+        info: `bool`
+            True if the log level is ``'INFO'`` (``2``).
+
+            .. versionaddedd:: 3.15.1
+
     :Returns:
 
-        `list` of cf.FieldList
+        `list` of `FieldList`
 
     """
     axes = meta[0].axis_ids
@@ -3217,6 +3313,7 @@ def _ok_coordinate_arrays(
             number_of_1d_aux_coord_values = 0
             for m in meta:
                 aux = m.axis[axis]["keys"][i]
+                # '.data.compute()' is faster than '.array'
                 array = m.field.constructs[aux].data.compute()
                 set_of_1d_aux_coord_values.update(array)
                 number_of_1d_aux_coord_values += array.size
