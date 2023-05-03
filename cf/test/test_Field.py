@@ -2572,6 +2572,21 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.argmax(axis="foo")
 
+    def test_Field_argmin(self):
+        """Test the `argmin` Field method."""
+        f = cf.example_field(2)
+        i = f.argmin("T")
+        self.assertEqual(i.shape, f.shape[1:])
+
+        i = f.argmin(unravel=True)
+        self.assertIsInstance(i, tuple)
+        g = f[i]
+        self.assertEqual(g.shape, (1, 1, 1))
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            f.argmin(axis="foo")
+
     def test_Field_subspace(self):
         f = self.f
 

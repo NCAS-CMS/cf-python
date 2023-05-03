@@ -1,3 +1,11 @@
+version 3.15.1
+--------------
+
+**2023-05-??**
+
+* New methods: `cf.Data.argmin`, `cf.Field.argmin`
+  (https://github.com/NCAS-CMS/cf-python/issues/577)
+
 version 3.15.0
 --------------
 
