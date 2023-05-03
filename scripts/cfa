@@ -1496,7 +1496,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         # ------------------------------------------------------------
         if view is None and one_to_one:
             outfile = re_sub("(\.pp|\.nc|\.nca)$", ".nc", infile)
-            if write_options["cfa"]:
+            if write_options.get("cfa"):
                 outfile += "a"
 
             if directory is not None:

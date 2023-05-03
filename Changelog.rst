@@ -1,3 +1,13 @@
+version 3.15.1
+--------------
+
+**2023-05-??**
+
+* Fix bug when using the ``-d`` option to the `cfa` script 
+  (https://github.com/NCAS-CMS/cf-python/issues/649)
+
+----
+
 version 3.15.0
 --------------
 
