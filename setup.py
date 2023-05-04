@@ -129,7 +129,7 @@ From version 3.14.0, the ``cf`` package uses `Dask
 Recipes
 =======
 
-https://ncas-cms.github.io/cf-python/recipes.html
+https://ncas-cms.github.io/cf-python/recipes
 
 Tutorial
 ========
