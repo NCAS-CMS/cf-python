@@ -61,7 +61,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="In this recipe we will calculate and plot monthly and annual global mean temperature timeseries...">
+    <div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="Collapse, Lineplot">
 
 .. only:: html
 
@@ -77,7 +77,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="In this recipe we will calculate and plot the global average temperature anomalies.">
+    <div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="Collapse, Lineplot, Subspace">
 
 .. only:: html
 
@@ -93,7 +93,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="In this recipe, we will plot the global mean temperature spatially.">
+    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">
 
 .. only:: html
 
@@ -109,7 +109,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer regrid" tooltip="In this recipe, we will regrid two different datasets with different resolutions. An example us...">
+    <div class="sphx-glr-thumbcontainer regrid" tooltip="Regrid">
 
 .. only:: html
 
@@ -125,7 +125,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="In this recipe we will plot wind vectors, derived from northward and eastward wind components, ...">
+    <div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="Subspace, Contourmap">
 
 .. only:: html
 
@@ -141,7 +141,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regu...">
+    <div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="Regrid, Contourmap">
 
 .. only:: html
 
@@ -157,7 +157,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="In this recipe, we will plot the members of a model ensemble.">
+    <div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="Aggregate, Lineplot, Subspace">
 
 .. only:: html
 
@@ -173,7 +173,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset fo...">
+    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">
 
 .. only:: html
 
@@ -190,7 +190,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer histogram" tooltip="In this recipe, we will be creating a joint histogram of PM2.5 mass concentration and 2-metre t...">
+    <div class="sphx-glr-thumbcontainer histogram" tooltip="Histogram">
 
 .. only:: html
 
