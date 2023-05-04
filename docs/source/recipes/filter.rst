@@ -49,6 +49,7 @@ Click on the keywords below to filter the recipes according to their function:
        <button data-filter="aggregate">Aggregate</button>
        <button data-filter="collapse">Collapse</button>
        <button data-filter="contourmap">Contourmap</button>
+       <button data-filter="histogram">Histogram</button>
        <button data-filter="lineplot">Lineplot</button>
        <button data-filter="regrid">Regrid</button>
        <button data-filter="subspace">Subspace</button>
@@ -60,7 +61,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="In this recipe we will calculate and plot monthly and annual global mean temperature timeseries...">
+    <div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="Collapse, Lineplot">
 
 .. only:: html
 
@@ -76,7 +77,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="In this recipe we will calculate and plot the global average temperature anomalies.">
+    <div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="Collapse, Lineplot, Subspace">
 
 .. only:: html
 
@@ -92,7 +93,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="In this recipe, we will plot the global mean temperature spatially.">
+    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">
 
 .. only:: html
 
@@ -108,7 +109,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer regrid" tooltip="In this recipe, we will regrid two different datasets with different resolutions. An example us...">
+    <div class="sphx-glr-thumbcontainer regrid" tooltip="Regrid">
 
 .. only:: html
 
@@ -124,7 +125,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="In this recipe we will plot wind vectors, derived from northward and eastward wind components, ...">
+    <div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="Subspace, Contourmap">
 
 .. only:: html
 
@@ -140,7 +141,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regu...">
+    <div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="Regrid, Contourmap">
 
 .. only:: html
 
@@ -156,7 +157,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="In this recipe, we will plot the members of a model ensemble.">
+    <div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="Aggregate, Lineplot, Subspace">
 
 .. only:: html
 
@@ -172,7 +173,7 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset fo...">
+    <div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">
 
 .. only:: html
 
@@ -184,6 +185,23 @@ Click on the keywords below to filter the recipes according to their function:
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Plotting statistically significant temperature trends with stippling</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer histogram" tooltip="Histogram">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_9_recipe_thumb.png
+    :alt: Plotting a joint histogram
+
+  :ref:`sphx_glr_recipes_plot_9_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plotting a joint histogram</div>
     </div>
 
 .. raw:: html
@@ -201,6 +219,7 @@ Click on the keywords below to filter the recipes according to their function:
    /recipes/plot_6_recipe
    /recipes/plot_7_recipe
    /recipes/plot_8_recipe
+   /recipes/plot_9_recipe
 
 .. only:: html
 
