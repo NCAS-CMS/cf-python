@@ -49,6 +49,7 @@ Click on the keywords below to filter the recipes according to their function:
        <button data-filter="aggregate">Aggregate</button>
        <button data-filter="collapse">Collapse</button>
        <button data-filter="contourmap">Contourmap</button>
+       <button data-filter="histogram">Histogram</button>
        <button data-filter="lineplot">Lineplot</button>
        <button data-filter="regrid">Regrid</button>
        <button data-filter="subspace">Subspace</button>
@@ -186,6 +187,23 @@ Click on the keywords below to filter the recipes according to their function:
       <div class="sphx-glr-thumbnail-title">Plotting statistically significant temperature trends with stippling</div>
     </div>
 
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer histogram" tooltip="In this recipe, we will be creating a joint histogram of PM2.5 mass concentration and 2-metre t...">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_9_recipe_thumb.png
+    :alt: Plotting a joint histogram
+
+  :ref:`sphx_glr_recipes_plot_9_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plotting a joint histogram</div>
+    </div>
+
 .. raw:: html
 
     </div>
@@ -201,6 +219,7 @@ Click on the keywords below to filter the recipes according to their function:
    /recipes/plot_6_recipe
    /recipes/plot_7_recipe
    /recipes/plot_8_recipe
+   /recipes/plot_9_recipe
 
 .. only:: html
 
