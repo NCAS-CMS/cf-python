@@ -47,19 +47,19 @@ v2 = v.subspace(T=jan_2023)[:, 0, :, :]
 # 6. The relative vorticity is calculated using `cf.curl_xy
 # <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ and
 # plotted using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_.
-# Setting ``radius="earth"`` in the the `cf.curl_xy
-# <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ function
-# takes into account the Earth's spherical geometry when calculating the
-# spatial derivatives in the horizontal directions, leading to a more accurate
-# representation of the relative vorticity:
+# Since the horizontal coordinates are latitude and latitude, the `cf.curl_xy
+# <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ function automatically
+# accounts for the Earth's spherical geometry when calculating the
+# spatial derivatives in the horizontal directions, and for this it requires the Earth's radius. In this case the radius is not 
+# stored in the wind fields, so must be provided by setting ``radius="earth"`` keyword parameter:
 
 rv = cf.curl_xy(u2, v2, radius="earth")
 cfp.con(rv, lines=False, title="Relative Vorticity")
 
 # %%
-# 7. Although the X axis is cyclic, it is not recognised as one, owing to the 
-# fact that the bounds are missing. This results in discontinuities in the 
-# calculated vorticity field on the plot. The cyclicity could either be set on 
+# 7. Although the X axis is cyclic, it is not recognised as such, owing to the 
+# fact that the longitude coordinate bounds are missing. This results in discontinuities in the 
+# calculated vorticity field on the plot at the wrap-around location of 0 degrees east. . The cyclicity could either be set on 
 # the field itself or just in the curl command  by setting ``'x_wrap=True'`` 
 # while calculating the relative vorticity. Setting ``rv.units = "s-1"``, 
 # ensures that the units of the relative vorticity field are consistent with 
