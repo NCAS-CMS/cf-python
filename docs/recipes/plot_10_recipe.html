@@ -208,14 +208,14 @@ representation of the relative vorticity:</p>
 <a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_10_recipe_001.png" srcset="../_images/sphx_glr_plot_10_recipe_001.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p>7. The discontinuities in the calculated vorticity field along the periodic
-boundary conditions in the longitudinal direction (wrap-around of data at 0°
-longitude and 180° longitude) is a result of the X axis not being cyclic.
-This can be corrected by setting <code class="docutils literal notranslate"><span class="pre">'x_wrap=True'</span></code> while calculating the
-relative vorticity. Setting <code class="docutils literal notranslate"><span class="pre">rv.units</span> <span class="pre">=</span> <span class="pre">&quot;s-1&quot;</span></code>, ensures that the units of
-the relative vorticity field are consistent with the calculation and the
-physical interpretation of the quantity:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u2</span><span class="o">.</span><span class="n">iscyclic</span></a><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<img src="../_images/sphx_glr_plot_10_recipe_001.png" srcset="../_images/sphx_glr_plot_10_recipe_001.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p>7. Although the X axis is cyclic, it is not recognised as one, owing to the
+fact that the bounds are missing. This results in discontinuities in the
+calculated vorticity field on the plot. The cyclicity could either be set on
+the field itself or just in the curl command  by setting <code class="docutils literal notranslate"><span class="pre">'x_wrap=True'</span></code>
+while calculating the relative vorticity. Setting <code class="docutils literal notranslate"><span class="pre">rv.units</span> <span class="pre">=</span> <span class="pre">&quot;s-1&quot;</span></code>,
+ensures that the units of the relative vorticity field are consistent with
+the calculation and the physical interpretation of the quantity:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">())</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>False
@@ -238,7 +238,7 @@ Dimension coords: long_name=time(1) = [2023-01-01 00:00:00] gregorian
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_10_recipe_002.png" srcset="../_images/sphx_glr_plot_10_recipe_002.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.504 seconds)</p>
+<img src="../_images/sphx_glr_plot_10_recipe_002.png" srcset="../_images/sphx_glr_plot_10_recipe_002.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.288 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-10-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_10_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_10_recipe.py</span></code></a></p>

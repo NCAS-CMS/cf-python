@@ -57,15 +57,15 @@ rv = cf.curl_xy(u2, v2, radius="earth")
 cfp.con(rv, lines=False, title="Relative Vorticity")
 
 # %%
-# 7. The discontinuities in the calculated vorticity field along the periodic
-# boundary conditions in the longitudinal direction (wrap-around of data at 0°
-# longitude and 180° longitude) is a result of the X axis not being cyclic.
-# This can be corrected by setting ``'x_wrap=True'`` while calculating the
-# relative vorticity. Setting ``rv.units = "s-1"``, ensures that the units of
-# the relative vorticity field are consistent with the calculation and the
-# physical interpretation of the quantity:
+# 7. Although the X axis is cyclic, it is not recognised as one, owing to the 
+# fact that the bounds are missing. This results in discontinuities in the 
+# calculated vorticity field on the plot. The cyclicity could either be set on 
+# the field itself or just in the curl command  by setting ``'x_wrap=True'`` 
+# while calculating the relative vorticity. Setting ``rv.units = "s-1"``, 
+# ensures that the units of the relative vorticity field are consistent with 
+# the calculation and the physical interpretation of the quantity:
 
-u2.iscyclic("X")
+print(v.coordinate("X").has_bounds())
 
 # %%
 
