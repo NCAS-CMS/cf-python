@@ -5,6 +5,10 @@ version 3.15.1
 
 * New methods: `cf.Data.argmin`, `cf.Field.argmin`
   (https://github.com/NCAS-CMS/cf-python/issues/577)
+* Fix bug when using the ``-d`` option to the `cfa` script 
+  (https://github.com/NCAS-CMS/cf-python/issues/649)
+
+----
 
 version 3.15.0
 --------------
