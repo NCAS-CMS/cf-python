@@ -2476,21 +2476,21 @@ class DataTest(unittest.TestCase):
 
     def test_Data_argmax(self):
         """Test the `argmax` Data method."""
-        d = cf.Data(np.arange(120).reshape(4, 5, 6))
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
 
-        self.assertEqual(d.argmax().array, 119)
+        self.assertEqual(d.argmax().array, 23)
 
         index = d.argmax(unravel=True)
-        self.assertEqual(index, (3, 4, 5))
-        self.assertEqual(d[index].array, 119)
+        self.assertEqual(index, (1, 2, 3))
+        self.assertEqual(d[index].array, 23)
 
         e = d.argmax(axis=1)
-        self.assertEqual(e.shape, (4, 6))
+        self.assertEqual(e.shape, (2, 4))
         self.assertTrue(
-            e.equals(cf.Data.full(shape=(4, 6), fill_value=4, dtype=int))
+            e.equals(cf.Data.full(shape=(2, 4), fill_value=2, dtype=int))
         )
 
-        self.assertEqual(d[d.argmax(unravel=True)].array, 119)
+        self.assertEqual(d[d.argmax(unravel=True)].array, 23)
 
         d = cf.Data([0, 4, 2, 3, 4])
         self.assertEqual(d.argmax().array, 1)
@@ -2498,6 +2498,31 @@ class DataTest(unittest.TestCase):
         # Bad axis
         with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
+
+    def test_Data_argmin(self):
+        """Test the `argmin` Data method."""
+        d = cf.Data(np.arange(23, -1, -1).reshape(2, 3, 4))
+
+        self.assertEqual(d.argmin().array, 23)
+
+        index = d.argmin(unravel=True)
+        self.assertEqual(index, (1, 2, 3))
+        self.assertEqual(d[index].array, 0)
+
+        e = d.argmin(axis=1)
+        self.assertEqual(e.shape, (2, 4))
+        self.assertTrue(
+            e.equals(cf.Data.full(shape=(2, 4), fill_value=2, dtype=int))
+        )
+
+        self.assertEqual(d[d.argmin(unravel=True)].array, 0)
+
+        d = cf.Data([4, 0, 2, 3, 0])
+        self.assertEqual(d.argmin().array, 1)
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            d.argmin(axis=d.ndim)
 
     def test_Data_percentile_median(self):
         """Test the `percentile` and `median` Data methods."""
