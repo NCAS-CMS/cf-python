@@ -2500,7 +2500,7 @@ class DataTest(unittest.TestCase):
             d.argmax(axis=d.ndim)
 
     def test_Data_argmin(self):
-        """Test the `argmin Data method."""
+        """Test the `argmin` Data method."""
         d = cf.Data(np.arange(23, -1, -1).reshape(2, 3, 4))
 
         self.assertEqual(d.argmin().array, 23)
