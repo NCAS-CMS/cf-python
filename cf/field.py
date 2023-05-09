@@ -11826,7 +11826,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         If the data index is returned as a `tuple` (see the *unravel*
         parameter) then all delayed operations are computed.
 
-        .. seealso:: `where`, `cf.Data.argmax`
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `argmin`, `where`, `cf.Data.argmax`
 
         :Parameters:
 
@@ -11900,6 +11902,97 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             axis = self.get_data_axes().index(axis)
 
         return self.data.argmax(axis=axis, unravel=unravel)
+
+    def argmin(self, axis=None, unravel=False):
+        """Return the indices of the minimum values along an axis.
+
+        If no axis is specified then the returned index locates the
+        minimum of the whole data.
+
+        In case of multiple occurrences of the minimum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `argmax`, `where`, `cf.Data.argmin`
+
+        :Parameters:
+
+            axis: optional
+                Select the domain axis over which to locate the
+                minimum values, defined by the domain axis that would
+                be selected by passing the given *axis* to a call of
+                the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis
+                construct returned by ``f.domain_axis('X')`` is
+                selected.
+
+                By default the minimum over the flattened data is
+                located.
+
+            unravel: `bool`, optional
+                If True then when locating the minimum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the minima over a subset of the axes.
+
+        :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the minimum, or minima.
+
+        **Examples**
+
+        >>> f = cf.example_field(2)
+        >>> print(f)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        Find the T axis indices of the minimum at each X-Y location:
+
+        >>> i = f.argmin('T')
+        >>> print(i.array)
+        [[ 5 14  4 32 11 34  9 27]
+         [10  7  4 21 11 10  3 33]
+         [21 33  1 30 26  8 33  4]
+         [15 10 12 19 23 20 30 25]
+         [28 33 31 11 15 12  9  7]]
+
+        Find the coordinates of the global minimum value, showing that
+        it occurs on 1960-03-16 12:00:00 at location 292.5 degrees
+        east, -45.0 degrees north:
+
+        >>> g = f[f.argmin(unravel=True)]
+        >>> print(g)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K
+        Cell methods    : area: mean
+        Dimension coords: time(1) = [1960-03-16 12:00:00]
+                        : latitude(1) = [-45.0] degrees_north
+                        : longitude(1) = [292.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        See `cf.Data.argmin` for further examples.
+
+        """
+        if axis is not None:
+            axis = self.domain_axis(axis, key=True)
+            axis = self.get_data_axes().index(axis)
+
+        return self.data.argmin(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
