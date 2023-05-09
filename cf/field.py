@@ -4248,7 +4248,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull_graph=False):
+    def concatenate(
+        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -4272,6 +4274,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             `Field`
@@ -4283,7 +4302,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return fields.copy()
 
         field0 = fields[0]
-        out = field0.copy()
+        if copy:
+            out = field0.copy()
 
         if len(fields) == 1:
             return out
@@ -4292,6 +4312,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
             cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
         )
 
         # Change the domain axis size
@@ -4337,6 +4359,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     constructs,
                     axis=construct_axes.index(dim),
                     cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
                 )
             except ValueError:
                 # Couldn't concatenate this construct, so remove it from

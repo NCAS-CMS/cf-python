@@ -1463,7 +1463,14 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=False):
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`
@@ -1476,17 +1483,41 @@ class PropertiesDataBounds(PropertiesData):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} objects, prior to the concatenation, thereby
+                ensuring that the input constructs are not changed by
+                the concatenation process. If False then some or all
+                input constructs might be changed in-place, but the
+                concatenation process will be faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             TODO
 
         """
         variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
 
         if len(variables) == 1:
-            return variable0.copy()
+            return variable0
 
-        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
@@ -1494,6 +1525,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_bounds() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1503,6 +1536,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_interior_ring(interior_ring, copy=False)
 

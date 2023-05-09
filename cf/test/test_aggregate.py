@@ -336,7 +336,7 @@ class aggregateTest(unittest.TestCase):
         c = cf.aggregate([a, b], field_ancillaries="foo")
         self.assertEqual(len(c), 1)
         c = c[0]
-        self.assertTrue(len(c.field_ancillaries()), 1)
+        self.assertEqual(len(c.field_ancillaries()), 1)
 
         anc = c.field_ancillary()
         self.assertEqual(anc.shape, c.shape)

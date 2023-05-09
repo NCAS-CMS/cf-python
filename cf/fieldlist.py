@@ -25,7 +25,9 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    def concatenate(self, axis=0, cull_graph=False):
+    def concatenate(
+        self, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join the sequence of fields within the field list together.
 
         This is different to `cf.aggregate` because it does not
@@ -46,6 +48,22 @@ class FieldList(mixin.FieldDomainList, ConstructList):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the Field
+                constructs, prior to the concatenation, thereby
+                ensuring that the input constructs are not changed by
+                the concatenation process. If False then some or all
+                input constructs might be changed in-place, but the
+                concatenation process will be faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             `Field`
@@ -53,7 +71,13 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 the fields contained in the input field list.
 
         """
-        return self[0].concatenate(self, axis=axis, cull_graph=cull_graph)
+        return self[0].concatenate(
+            self,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
 
     def select_by_naxes(self, *naxes):
         """Select field constructs by property.
