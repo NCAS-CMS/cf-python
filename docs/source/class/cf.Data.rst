@@ -458,6 +458,7 @@ Searching
    :template: method.rst
 
    ~cf.Data.argmax
+   ~cf.Data.argmin
    ~cf.Data.where
 	      
 Counting

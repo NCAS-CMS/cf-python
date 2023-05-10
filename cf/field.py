@@ -3985,7 +3985,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `derivative`, `grad_xy`, `iscyclic`, `cf.div_xy`
+        .. seealso:: `derivative`, `grad_xy`, `iscyclic`,
+                     `cf.curl_xy`, `cf.div_xy`
 
         :Parameters:
 
@@ -4084,6 +4085,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -4112,8 +4119,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = term1 + term2
 
             # Reset latitude and longitude coordinate units
-            f.dimension_coordinate("X").Units = x_units
-            f.dimension_coordinate("Y").Units = y_units
+            f.dimension_coordinate("longitude").Units = x_units
+            f.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates
@@ -4241,7 +4248,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull_graph=False):
+    def concatenate(
+        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -4265,6 +4274,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             `Field`
@@ -4276,7 +4302,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return fields.copy()
 
         field0 = fields[0]
-        out = field0.copy()
+        if copy:
+            out = field0.copy()
 
         if len(fields) == 1:
             return out
@@ -4285,6 +4312,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
             cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
         )
 
         # Change the domain axis size
@@ -4330,6 +4359,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     constructs,
                     axis=construct_axes.index(dim),
                     cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
                 )
             except ValueError:
                 # Couldn't concatenate this construct, so remove it from
@@ -11819,7 +11850,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         If the data index is returned as a `tuple` (see the *unravel*
         parameter) then all delayed operations are computed.
 
-        .. seealso:: `where`, `cf.Data.argmax`
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `argmin`, `where`, `cf.Data.argmax`
 
         :Parameters:
 
@@ -11893,6 +11926,97 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             axis = self.get_data_axes().index(axis)
 
         return self.data.argmax(axis=axis, unravel=unravel)
+
+    def argmin(self, axis=None, unravel=False):
+        """Return the indices of the minimum values along an axis.
+
+        If no axis is specified then the returned index locates the
+        minimum of the whole data.
+
+        In case of multiple occurrences of the minimum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `argmax`, `where`, `cf.Data.argmin`
+
+        :Parameters:
+
+            axis: optional
+                Select the domain axis over which to locate the
+                minimum values, defined by the domain axis that would
+                be selected by passing the given *axis* to a call of
+                the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis
+                construct returned by ``f.domain_axis('X')`` is
+                selected.
+
+                By default the minimum over the flattened data is
+                located.
+
+            unravel: `bool`, optional
+                If True then when locating the minimum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the minima over a subset of the axes.
+
+        :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the minimum, or minima.
+
+        **Examples**
+
+        >>> f = cf.example_field(2)
+        >>> print(f)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        Find the T axis indices of the minimum at each X-Y location:
+
+        >>> i = f.argmin('T')
+        >>> print(i.array)
+        [[ 5 14  4 32 11 34  9 27]
+         [10  7  4 21 11 10  3 33]
+         [21 33  1 30 26  8 33  4]
+         [15 10 12 19 23 20 30 25]
+         [28 33 31 11 15 12  9  7]]
+
+        Find the coordinates of the global minimum value, showing that
+        it occurs on 1960-03-16 12:00:00 at location 292.5 degrees
+        east, -45.0 degrees north:
+
+        >>> g = f[f.argmin(unravel=True)]
+        >>> print(g)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K
+        Cell methods    : area: mean
+        Dimension coords: time(1) = [1960-03-16 12:00:00]
+                        : latitude(1) = [-45.0] degrees_north
+                        : longitude(1) = [292.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        See `cf.Data.argmin` for further examples.
+
+        """
+        if axis is not None:
+            axis = self.domain_axis(axis, key=True)
+            axis = self.get_data_axes().index(axis)
+
+        return self.data.argmin(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
@@ -12468,6 +12592,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -12488,11 +12618,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             # Reset latitude and longitude coordinate units
-            X.dimension_coordinate("X").Units = x_units
-            X.dimension_coordinate("Y").Units = y_units
+            X.dimension_coordinate("longitude").Units = x_units
+            X.dimension_coordinate("latitude").Units = y_units
 
-            Y.dimension_coordinate("X").Units = x_units
-            Y.dimension_coordinate("Y").Units = y_units
+            Y.dimension_coordinate("longitude").Units = x_units
+            Y.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates

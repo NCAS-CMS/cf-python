@@ -1,5 +1,3 @@
-:orphan:
-
 cf.Datum.get_parameter
 ======================
 

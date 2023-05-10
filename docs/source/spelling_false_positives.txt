@@ -10,6 +10,7 @@ analyse
 Analyse
 anc
 ancs
+Ankit
 arccos
 arccosh
 arcsin
@@ -34,6 +35,7 @@ auxiliarycoordinate
 auxs
 azimuthal
 basenames
+Bhandekar
 bilinear
 Bilinear
 bipole
@@ -94,6 +96,7 @@ coords
 coprime
 cosh
 crs
+CSR
 ctype
 cumsum
 curvilinear
@@ -148,7 +151,7 @@ durations
 El
 endian
 eq
-Equivalant
+esmpy
 et
 etc
 extrema
@@ -187,6 +190,7 @@ getslice
 ggroup
 gregorian
 gt
+Hallouin
 Hankin
 hardmask
 Hartnett
@@ -371,6 +375,7 @@ runid
 runtime
 rxor
 scikit
+scipy
 sd
 Sebastián
 setdefault
@@ -385,6 +390,7 @@ spatiotemporal
 sqrt
 src
 st
+std
 stderr
 stdout
 stereographic
@@ -412,6 +418,7 @@ tas
 tempdir
 TEMPDIR
 th
+Thibault
 TimeDuration
 timeseries
 timeSeries

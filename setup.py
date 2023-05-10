@@ -129,7 +129,7 @@ From version 3.14.0, the ``cf`` package uses `Dask
 Recipes
 =======
 
-https://ncas-cms.github.io/cf-python/recipes.html
+https://ncas-cms.github.io/cf-python/recipes
 
 Tutorial
 ========
@@ -300,13 +300,14 @@ setup(
     packages=[
         "cf",
         "cf.mixin",
+        "cf.mixin2",
         "cf.data",
         "cf.data.array",
         "cf.data.array.abstract",
         "cf.data.array.mixin",
         "cf.data.collapse",
         "cf.data.fragment",
-        "cf.data.fragment.abstract",
+        "cf.data.fragment.mixin",
         "cf.data.mixin",
         "cf.docstring",
         "cf.read_write",

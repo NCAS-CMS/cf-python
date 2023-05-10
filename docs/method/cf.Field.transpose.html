@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -132,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.transpose<a class="headerlink" href="#cf-field-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.transpose">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">items=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/field.py#L11748-L11847"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">items=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/field.py#L11961-L12060"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <p>By default the order of the axes is reversed, but any ordering may
 be specified by selecting the axes of the output in the required
@@ -157,7 +157,7 @@ the domain axis construct returned by
 provided, or if no axes are specified then the axis order
 is reversed.</p>
 </dd>
-<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True then metadata constructs are also transposed so
+<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then metadata constructs are also transposed so
 that their axes are in the same relative order as in the
 transposed data array of the field. By default metadata
 constructs are not altered.</p>
@@ -200,11 +200,11 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
