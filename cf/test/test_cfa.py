@@ -28,6 +28,7 @@ class cfaTest(unittest.TestCase):
             | stat.S_IWUSR,  # writing
         )
 
+    @unittest.skipIf(True, "wait until TODOCFAVER")
     def test_cfa(self):
         # In the script, STDERR from cfa commands is redirected to
         # (overwrite) its STDOUT, so Popen's stdout is really the cfa

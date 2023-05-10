@@ -433,7 +433,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
             self.assertTrue(
                 any(
-                    "Data: Different array values (atol=0.005, rtol=0)"
+                    "Data: Different array values (atol=0.005, rtol=0.0)"
                     in log_msg
                     for log_msg in catch.output
                 )
@@ -1220,6 +1220,12 @@ class DataTest(unittest.TestCase):
             f._get_cached_elements(),
             {0: d.first_element(), -1: e.last_element()},
         )
+
+        # Test deterministic
+        self.assertTrue(f.has_deterministic_name())
+        e._update_deterministic(False)
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertFalse(f.has_deterministic_name())
 
     def test_Data__contains__(self):
         """Test containment checking against Data."""
@@ -4358,6 +4364,12 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             del d.Units
 
+        # Adjusted cached values
+        d = cf.Data([1000, 2000, 3000], "m")
+        repr(d)
+        d.Units = cf.Units("km")
+        self.assertEqual(d._get_cached_elements(), {0: 1.0, 1: 2.0, -1: 3.0})
+
     def test_Data_get_data(self):
         """Test the `get_data` Data method."""
         d = cf.Data(9)
@@ -4560,6 +4572,38 @@ class DataTest(unittest.TestCase):
 
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
+
+    def test_Data_has_deterministic_name(self):
+        """Test Data.has_deterministic_name"""
+        d = cf.Data([1, 2], "m")
+        e = cf.Data([4, 5], "km")
+        self.assertTrue(d.has_deterministic_name())
+        self.assertTrue(e.has_deterministic_name())
+        self.assertTrue((d + e).has_deterministic_name())
+        self.assertTrue((d + e.array).has_deterministic_name())
+        self.assertFalse((d + e.to_dask_array()).has_deterministic_name())
+
+        d._update_deterministic(False)
+        self.assertFalse(d.has_deterministic_name())
+        self.assertFalse((d + e).has_deterministic_name())
+
+    def test_Data_get_deterministic_name(self):
+        """Test Data.get_deterministic_name"""
+        d = cf.Data([1, 2], "m")
+        e = d.copy()
+        e.Units = cf.Units("metre")
+        self.assertEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        e = d + 1 - 1
+        self.assertNotEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        d._update_deterministic(False)
+        with self.assertRaises(ValueError):
+            d.get_deterministic_name()
 
     def test_Data_cfa_aggregated_data(self):
         """Test `Data` CFA aggregated_data methods"""
