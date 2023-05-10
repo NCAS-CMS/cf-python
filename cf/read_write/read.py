@@ -6,7 +6,6 @@ from numbers import Integral
 from os.path import isdir
 from re import Pattern
 
-from cfdm import is_log_level_info
 from numpy.ma.core import MaskError
 
 from ..aggregate import aggregate as cf_aggregate
@@ -779,11 +778,10 @@ def read(
     # Manage input parameters where contradictions are possible:
     if cdl_string and fmt:
         if fmt == "CDL":
-            if is_log_level_info(logger):
-                logger.info(
-                    "It is not necessary to set the cf.read fmt as 'CDL' when "
-                    "cdl_string is True, since that implies CDL is the format."
-                )  # pragma: no cover
+            logger.info(
+                "It is not necessary to set the cf.read fmt as 'CDL' when "
+                "cdl_string is True, since that implies CDL is the format."
+            )  # pragma: no cover
         else:
             raise ValueError(
                 "cdl_string can only be True when the format is CDL, though "
@@ -796,8 +794,6 @@ def read(
             f"Can't set follow_symlinks={follow_symlinks!r} "
             f"when recursive={recursive!r}"
         )
-
-    info = is_log_level_info(logger)
 
     # Parse the 'cfa' parameter
     if cfa is None:
@@ -909,8 +905,7 @@ def read(
             files2 = files3
 
         for filename in files2:
-            if info:
-                logger.info(f"File: {filename}")  # pragma: no cover
+            logger.info(f"File: {filename}")  # pragma: no cover
 
             if um:
                 ftype = "UM"
@@ -970,11 +965,10 @@ def read(
             field_counter = len(out)
             file_counter += 1
 
-    if info:
-        logger.info(
-            f"Read {field_counter} field{_plural(field_counter)} from "
-            f"{file_counter} file{_plural(file_counter)}"
-        )  # pragma: no cover
+    logger.info(
+        f"Read {field_counter} field{_plural(field_counter)} from "
+        f"{file_counter} file{_plural(file_counter)}"
+    )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Aggregate the output fields/domains
@@ -985,11 +979,10 @@ def read(
         out = cf_aggregate(out, **aggregate_options)
 
         n = len(out)  # pragma: no cover
-        if info:
-            logger.info(
-                f"{org_len} input field{_plural(org_len)} aggregated into "
-                f"{n} field{ _plural(n)}"
-            )  # pragma: no cover
+        logger.info(
+            f"{org_len} input field{_plural(org_len)} aggregated into "
+            f"{n} field{ _plural(n)}"
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name

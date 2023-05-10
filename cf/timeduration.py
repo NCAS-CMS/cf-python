@@ -3,7 +3,6 @@ import operator
 from collections import namedtuple
 
 import numpy
-from cfdm import is_log_level_info
 
 from .cfdatetime import dt as cf_dt
 from .cfdatetime import elements
@@ -1163,16 +1162,12 @@ class TimeDuration:
         if self is other:
             return True
 
-        message = is_log_level_info(logger)
-
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Different type: "
-                    f"{other.__class__.__name__}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Different type: %s"
+                % (self.__class__.__name__, other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
@@ -1182,21 +1177,18 @@ class TimeDuration:
         d1 = other__dict__.pop("duration", None)
 
         if not d0.equals(d1):
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Different durations: "
-                    f"{d0!r}, {d1!r}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Different durations: %r, %r"
+                % (self.__class__.__name__, d0, d1)
+            )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Different default date-time "
-                    f"elements: {self__dict__!r} != {other__dict__!r}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Different default date-time elements: "
+                "%r != %r"
+                % (self.__class__.__name__, self__dict__, other__dict__)
+            )  # pragma: no cover
             return False
 
         return True
@@ -1275,16 +1267,12 @@ class TimeDuration:
         if self is other:
             return True
 
-        message = is_log_level_info(logger)
-
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Different type: "
-                    f"{other.__class__.__name__}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Different type: %s"
+                % (self.__class__.__name__, other.__class__.__name__)
+            )  # pragma: no cover
             return False
 
         self__dict__ = self.__dict__.copy()
@@ -1293,21 +1281,18 @@ class TimeDuration:
         d0 = self__dict__.pop("duration", None)
         d1 = other__dict__.pop("duration", None)
         if d0 != d0:
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Non-equivalent durations: "
-                    f"{d0!r}, {d1!r}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Non-equivalent durations: %r, %r"
+                % (self.__class__.__name__, d0, d1)
+            )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if message:
-                logger.info(
-                    f"{self.__class__.__name__}: Non-equivalent default "
-                    f"date-time elements: {self__dict__} != {other__dict__}"
-                )  # pragma: no cover
-
+            logger.info(
+                "%s: Non-equivalent default date-time elements: "
+                "%r != %r"
+                % (self.__class__.__name__, self__dict__, other__dict__)
+            )  # pragma: no cover
             return False
 
         return True

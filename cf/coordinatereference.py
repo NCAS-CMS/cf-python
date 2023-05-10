@@ -1,7 +1,6 @@
 import logging
 
 import cfdm
-from cfdm import is_log_level_info
 
 from . import CoordinateConversion, Datum
 from .constants import cr_canonical_units, cr_coordinates, cr_default_values
@@ -371,25 +370,21 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if is_log_level_info(logger):
-                logger.info(
-                    f"{self.__class__.__name__}: Different types "
-                    f"({self.__class__.__name__!r} != "
-                    f"{other.__class__.__name__!r})"
-                )  # pragma: no cover
-
+            logger.info(
+                f"{self.__class__.__name__}: Different types "
+                f"({self.__class__.__name__!r} != "
+                f"{other.__class__.__name__!r})"
+            )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
         # Check the name
         # ------------------------------------------------------------
         if self.identity() != other.identity():
-            if is_log_level_info(logger):
-                logger.info(
-                    f"{self.__class__.__name__}: Different identities "
-                    f"({self.identity()!r} != {other.identity()!r})"
-                )  # pragma: no cover
-
+            logger.info(
+                f"{self.__class__.__name__}: Different identities "
+                f"({self.identity()!r} != {other.identity()!r})"
+            )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -398,23 +393,19 @@ class CoordinateReference(cfdm.CoordinateReference):
         ancillaries0 = self.coordinate_conversion.domain_ancillaries()
         ancillaries1 = other.coordinate_conversion.domain_ancillaries()
         if set(ancillaries0) != set(ancillaries1):
-            if is_log_level_info(logger):
-                logger.info(
-                    f"{self.__class__.__name__}: Non-equivalent domain "
-                    "ancillary terms"
-                )  # pragma: no cover
-
+            logger.info(
+                f"{self.__class__.__name__}: Non-equivalent domain ancillary "
+                "terms"
+            )  # pragma: no cover
             return False
 
         # Check that if one term is None then so is the other
         for term, value0 in ancillaries0.items():
             if (value0 is None) != (ancillaries1[term] is None):
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"{self.__class__.__name__}: Non-equivalent domain "
-                        f"ancillary-valued term {term!r}"
-                    )  # pragma: no cover
-
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent domain "
+                    f"ancillary-valued term {term!r}"
+                )  # pragma: no cover
                 return False
 
         # ------------------------------------------------------------
@@ -446,12 +437,10 @@ class CoordinateReference(cfdm.CoordinateReference):
                 value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"{self.__class__.__name__}: Non-equivalent "
-                        f"coordinate conversion parameter-valued term {term!r}"
-                    )  # pragma: no cover
-
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent coordinate "
+                    f"conversion parameter-valued term {term!r}"
+                )  # pragma: no cover
                 return False
 
         parameters0 = self.datum.parameters()
@@ -474,12 +463,10 @@ class CoordinateReference(cfdm.CoordinateReference):
                 value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"{self.__class__.__name__}: Non-equivalent datum "
-                        f"parameter-valued term {term!r}"
-                    )  # pragma: no cover
-
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent datum "
+                    f"parameter-valued term {term!r}"
+                )  # pragma: no cover
                 return False
 
         # Still here?

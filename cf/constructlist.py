@@ -1,7 +1,6 @@
 import logging
 
 import cfdm
-from cfdm import is_log_level_info
 
 from .decorators import (
     _deprecated_kwarg_check,
@@ -507,23 +506,19 @@ class ConstructList(list, Container, cfdm.Container):
             if not isinstance(other, self.__class__):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
-            if is_log_level_info(logger):
-                logger.info(
-                    f"{self.__class__.__name__}: Incompatible type: "
-                    f"{other.__class__.__name__}"
-                )  # pragma: no cover
-
+            logger.info(
+                f"{self.__class__.__name__}: Incompatible type: "
+                f"{other.__class__.__name__}"
+            )  # pragma: no cover
             return False
 
         # Check that there are equal numbers of constructs
         len_self = len(self)
         if len_self != len(other):
-            if is_log_level_info(logger):
-                logger.info(
-                    f"{self.__class__.__name__}: Different numbers of "
-                    f"constructs: {len_self}, {len(other)}"
-                )  # pragma: no cover
-
+            logger.info(
+                f"{self.__class__.__name__}: Different numbers of constructs: "
+                f"{len_self}, {len(other)}"
+            )  # pragma: no cover
             return False
 
         if not unordered or len_self == 1:
@@ -542,12 +537,10 @@ class ConstructList(list, Container, cfdm.Container):
                     ignore_type=ignore_type,
                     verbose=verbose,
                 ):
-                    if is_log_level_info(logger):
-                        logger.info(
-                            f"{self.__class__.__name__}: Different constructs "
-                            f"at element {i}: {f!r}, {g!r}"
-                        )  # pragma: no cover
-
+                    logger.info(
+                        f"{self.__class__.__name__}: Different constructs at "
+                        f"element {i}: {f!r}, {g!r}"
+                    )  # pragma: no cover
                     return False
         else:
             # ----------------------------------------------------
@@ -564,13 +557,10 @@ class ConstructList(list, Container, cfdm.Container):
 
             # Check that there are the same identities
             if set(self_identity) != set(other_identity):
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"{self.__class__.__name__}: Different sets of "
-                        "identities: "
-                        f"{set(self_identity)}, {set(other_identity)}"
-                    )  # pragma: no cover
-
+                logger.info(
+                    f"{self.__class__.__name__}: Different sets of "
+                    f"identities: {set(self_identity)}, {set(other_identity)}"
+                )  # pragma: no cover
                 return False
 
             # Check that there are the same number of variables
@@ -578,13 +568,11 @@ class ConstructList(list, Container, cfdm.Container):
             for identity, fl in self_identity.items():
                 gl = other_identity[identity]
                 if len(fl) != len(gl):
-                    if is_log_level_info(logger):
-                        logger.info(
-                            f"{self.__class__.__name__}: Different numbers of "
-                            f"{identity!r} {fl[0].__class__.__name__}s: "
-                            f"{len(fl)}, {len(gl)}"
-                        )  # pragma: no cover
-
+                    logger.info(
+                        f"{self.__class__.__name__}: Different numbers of "
+                        f"{identity!r} {fl[0].__class__.__name__}s: "
+                        f"{len(fl)}, {len(gl)}"
+                    )  # pragma: no cover
                     return False
 
             # For each identity, check that there are matching pairs
@@ -611,12 +599,10 @@ class ConstructList(list, Container, cfdm.Container):
                             break
 
                 if not found_match:
-                    if is_log_level_info(logger):
-                        logger.info(
-                            f"{self.__class__.__name__}: No "
-                            f"{g.__class__.__name__} equal to: {f!r}"
-                        )  # pragma: no cover
-
+                    logger.info(
+                        f"{self.__class__.__name__}: No "
+                        f"{g.__class__.__name__} equal to: {f!r}"
+                    )  # pragma: no cover
                     return False
 
         # ------------------------------------------------------------

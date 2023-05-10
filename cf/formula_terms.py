@@ -1,6 +1,5 @@
 import logging
 
-from cfdm import is_log_level_debug, is_log_level_detail
 from cfdm.core import DocstringRewriteMeta
 
 from .constants import (
@@ -148,11 +147,9 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
             var = None
 
         if var is not None:
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"Formula term {term!r}:\n"
-                    f"{var.dump(display=False, _level=1)}"
-                )  # pragma: no cover
+            logger.detail(
+                f"Formula term {term!r}:\n{var.dump(display=False, _level=1)}"
+            )  # pragma: no cover
 
             valid_standard_names = formula_terms_standard_names[standard_name][
                 term
@@ -216,11 +213,10 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
                 bounds = f._Bounds(data=f._Data((0.0, 0.0), units))
                 var.set_bounds(bounds)
 
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"Formula term {term!r} (default):\n"
-                    f"{var.dump(display=False, _level=1)}"
-                )  # pragma: no cover
+            logger.detail(
+                f"Formula term {term!r} (default):\n"
+                f"{var.dump(display=False, _level=1)}"
+            )  # pragma: no cover
 
         return var, key
 
@@ -258,10 +254,9 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
             # ------------------------------------------------------------
             # There is a unique computed standard name for this formula
             # ------------------------------------------------------------
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"computed_standard_name: {computed_standard_name!r}"
-                )  # pragma: no cover
+            logger.detail(
+                f"computed_standard_name: {computed_standard_name!r}"
+            )  # pragma: no cover
 
             return computed_standard_name
 
@@ -316,14 +311,11 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
                 )
                 break
 
-        if is_log_level_detail(logger):
-            logger.detail(
-                "computed_standard_name: {}".format(
-                    repr(computed_standard_name)
-                    if computed_standard_name
-                    else ""
-                )
-            )  # pragma: no cover
+        logger.detail(
+            "computed_standard_name: {}".format(
+                repr(computed_standard_name) if computed_standard_name else ""
+            )
+        )  # pragma: no cover
 
         return computed_standard_name
 
@@ -360,8 +352,7 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
             axis = f.get_data_axes(key)
             break
 
-        if is_log_level_detail(logger):
-            logger.detail(f"Vertical axis: {axis!r}")  # pragma: no cover
+        logger.detail(f"Vertical axis: {axis!r}")  # pragma: no cover
 
         return axis
 
@@ -425,11 +416,10 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
 
             eta_axes = eta_axes2
 
-        if is_log_level_debug(logger):
-            logger.debug(
-                f"Transposed domain ancillary 'eta': {eta!r}\n"
-                f"Transposed domain ancillary 'eta' axes: {eta_axes!r}"
-            )  # pragma: no cover
+        logger.debug(
+            f"Transposed domain ancillary 'eta': {eta!r}\n"
+            f"Transposed domain ancillary 'eta' axes: {eta_axes!r}"
+        )  # pragma: no cover
 
         return eta, eta_axes
 
@@ -498,10 +488,9 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
 
             computed_axes = tuple([computed_axes[i] for i in iaxes])
 
-        if is_log_level_detail(logger):
-            logger.detail(
-                f"Non-parametric coordinate axes: {computed_axes!r}"
-            )  # pragma: no cover
+        logger.detail(
+            f"Non-parametric coordinate axes: {computed_axes!r}"
+        )  # pragma: no cover
 
         return computed, computed_axes
 
@@ -2106,10 +2095,9 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
         )
 
         if standard_name is not None:
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"standard_name: {standard_name!r}"
-                )  # pragma: no cover
+            logger.detail(
+                f"standard_name: {standard_name!r}"
+            )  # pragma: no cover
 
             if standard_name in cls.standard_names:
                 # --------------------------------------------------------

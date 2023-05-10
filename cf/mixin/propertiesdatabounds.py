@@ -1,7 +1,6 @@
 import logging
 
 import numpy as np
-from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
 from ..data.data import _DEFAULT_CHUNKS
@@ -83,13 +82,12 @@ class PropertiesDataBounds(PropertiesData):
             findices = tuple(indices)
 
         cname = self.__class__.__name__
-        if is_log_level_debug(logger):
-            logger.debug(
-                f"{cname}.__getitem__: shape    = {self.shape}\n"
-                f"{cname}.__getitem__: indices2 = {indices2}\n"
-                f"{cname}.__getitem__: indices  = {indices}\n"
-                f"{cname}.__getitem__: findices = {findices}"
-            )  # pragma: no cover
+        logger.debug(
+            f"{cname}.__getitem__: shape    = {self.shape}\n"
+            f"{cname}.__getitem__: indices2 = {indices2}\n"
+            f"{cname}.__getitem__: indices  = {indices}\n"
+            f"{cname}.__getitem__: findices = {findices}"
+        )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
@@ -134,11 +132,10 @@ class PropertiesDataBounds(PropertiesData):
                         mask.insert_dimension(-1) for mask in findices[1]
                     ]
 
-                if is_log_level_debug(logger):
-                    logger.debug(
-                        f"{self.__class__.__name__}.__getitem__: findices for "
-                        f"bounds = {tuple(findices)}"
-                    )  # pragma: no cover
+                logger.debug(
+                    f"{self.__class__.__name__}.__getitem__: findices for "
+                    f"bounds = {tuple(findices)}"
+                )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
 
@@ -620,12 +617,9 @@ class PropertiesDataBounds(PropertiesData):
         if hasbounds != (other_bounds is not None):
             # TODO: add traceback
             # TODO: improve message below
-
-            if is_log_level_info(logger):
-                logger.info(
-                    "One has bounds, the other does not"
-                )  # pragma: no cover
-
+            logger.info(
+                "One has bounds, the other does not"
+            )  # pragma: no cover
             return False
 
         try:
@@ -644,10 +638,8 @@ class PropertiesDataBounds(PropertiesData):
         if not super()._equivalent_data(
             other, rtol=rtol, atol=atol, verbose=verbose
         ):
-            if is_log_level_info(logger):
-                # TODO: improve message below
-                logger.info("Non-equivalent data arrays")  # pragma: no cover
-
+            # TODO: improve message below
+            logger.info("Non-equivalent data arrays")  # pragma: no cover
             return False
 
         if hasbounds:
@@ -655,12 +647,10 @@ class PropertiesDataBounds(PropertiesData):
             if not self_bounds._equivalent_data(
                 other_bounds, rtol=rtol, atol=atol, verbose=verbose
             ):
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"{self.__class__.__name__}: Non-equivalent bounds "
-                        f"data: {self_bounds.data!r}, {other_bounds.data!r}"
-                    )  # pragma: no cover
-
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent bounds data: "
+                    f"{self_bounds.data!r}, {other_bounds.data!r}"
+                )  # pragma: no cover
                 return False
 
         # Still here? Then the data are equivalent.
@@ -1463,7 +1453,7 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=False):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`

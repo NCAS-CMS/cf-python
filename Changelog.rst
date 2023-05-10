@@ -3,13 +3,10 @@ version 3.15.1
 
 **2023-05-??**
 
-* Performance improvements to `cf.aggregate`
-  (https://github.com/NCAS-CMS/cf-python/issues/640)
 * New methods: `cf.Data.argmin`, `cf.Field.argmin`
   (https://github.com/NCAS-CMS/cf-python/issues/577)
 * Fix bug when using the ``-d`` option to the `cfa` script 
   (https://github.com/NCAS-CMS/cf-python/issues/649)
-* Changed dependency: ``cfunits>=3.3.6``
 
 ----
 
@@ -65,7 +62,7 @@ version 3.14.1
   (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
 * Changed dependency: ``cfunits>=3.3.5``
-* Changed dependency: ``8.0.0<=ESMPY<8.2.0``
+* Changed dependency: ``8.0.0<=ESMPYcfdm<8.2.0``
 
 ----
 

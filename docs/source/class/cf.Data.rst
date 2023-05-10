@@ -599,8 +599,6 @@ Miscellaneous
    ~cf.Data.get_filenames
    ~cf.Data.get_original_filenames
    ~cf.Data.source
-   ~cf.Data.source.get_deterministic_name
-   ~cf.Data.source.has_deterministic_name
 
 .. rubric:: Attributes
 

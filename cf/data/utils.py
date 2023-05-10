@@ -563,77 +563,71 @@ def scalar_masked_array(dtype=float):
 def conform_units(value, units, message=None):
     """Conform units.
 
-        If *value* has units defined by its `Units` attribute then
+    If *value* has units defined by its `Units` attribute then
 
-        * If the value units are equal to *units* then *value* is returned
-          unchanged;
+    * If the value units are equal to *units* then *value* is returned
+      unchanged;
 
-        * If the value units are equivalent to *units* then a copy of
-          *value* converted to *units* is returned;
+    * If the value units are equivalent to *units* then a copy of
+      *value* converted to *units* is returned;
 
-        * If the value units are not equivalent to *units* then an
-          exception is raised.
+    * If the value units are not equivalent to *units* then an
+      exception is raised.
 
-        In all other cases *value* is returned unchanged.
+    In all other cases *value* is returned unchanged.
 
-        .. versionadded:: 3.14.0
+    .. versionadded:: 3.14.0
 
-        :Parameters:
+    :Parameters:
 
-            value:
-                The value whose units are to be conformed to *units*.
+        value:
+            The value whose units are to be conformed to *units*.
 
-            units: `Units`
-                The units to conform to.
+        units: `Units`
+            The units to conform to.
 
-            message: `str`, optional
-                If the value units are not equivalent to *units* then use
-                this message when the exception is raised. By default a
-                message that is independent of the calling context is
-                used.
+        message: `str`, optional
+            If the value units are not equivalent to *units* then use
+            this message when the exception is raised. By default a
+            message that is independent of the calling context is
+            used.
 
-        :Returns:
+    **Examples**
 
-                The
-    *value* with conformed units.
-
-        **Examples**
-
-        >>> cf.data.utils.conform_units(1, cf.Units('m'))
-        1
-        >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('m'))
-        [1, 2, 3]
-        >>> import numpy as np
-        >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('m'))
-        array([1, 2, 3])
-        >>> cf.data.utils.conform_units('string', cf.Units('m'))
-        'string'
-        >>> d = cf.Data([1, 2] , 'm')
-        >>> cf.data.utils.conform_units(d, cf.Units('m'))
-        <CF Data(2): [1, 2] m>
-        >>> d = cf.Data([1, 2] , 'km')
-        >>> cf.data.utils.conform_units(d, cf.Units('m'))
-        <CF Data(2): [1000.0, 2000.0] m>
-        >>> cf.data.utils.conform_units(d, cf.Units('s'))
-        Traceback (most recent call last):
-            ...
-        ValueError: Units <Units: km> are incompatible with units <Units: s>
-        >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
-        Traceback (most recent call last):
-            ...
-        ValueError: My message
+    >>> cf.data.utils.conform_units(1, cf.Units('m'))
+    1
+    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('m'))
+    [1, 2, 3]
+    >>> import numpy as np
+    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('m'))
+    array([1, 2, 3])
+    >>> cf.data.utils.conform_units('string', cf.Units('m'))
+    'string'
+    >>> d = cf.Data([1, 2] , 'm')
+    >>> cf.data.utils.conform_units(d, cf.Units('m'))
+    <CF Data(2): [1, 2] m>
+    >>> d = cf.Data([1, 2] , 'km')
+    >>> cf.data.utils.conform_units(d, cf.Units('m'))
+    <CF Data(2): [1000.0, 2000.0] m>
+    >>> cf.data.utils.conform_units(d, cf.Units('s'))
+    Traceback (most recent call last):
+        ...
+    ValueError: Units <Units: km> are incompatible with units <Units: s>
+    >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
+    Traceback (most recent call last):
+        ...
+    ValueError: My message
 
     """
     value_units = getattr(value, "Units", None)
-    if value_units is None or value_units == units:
+    if value_units is None:
         return value
 
     if value_units.equivalent(units):
-        value = value.copy()
-        value.Units = units
-        return value
-
-    if value_units and units:
+        if value_units != units:
+            value = value.copy()
+            value.Units = units
+    elif value_units and units:
         if message is None:
             message = (
                 f"Units {value_units!r} are incompatible with units {units!r}"

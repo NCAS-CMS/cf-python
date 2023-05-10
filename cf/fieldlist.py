@@ -25,7 +25,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    def concatenate(self, axis=0, cull_graph=False):
+    def concatenate(self, axis=0, cull_graph=True):
         """Join the sequence of fields within the field list together.
 
         This is different to `cf.aggregate` because it does not
