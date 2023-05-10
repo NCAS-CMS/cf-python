@@ -2399,21 +2399,54 @@ def aggregate(
                 # ----------------------------------------------------
                 # Still here? Then pass through the fields
                 # ----------------------------------------------------
+
                 # Initialise the dictionary that will contain the data
-                # arrays that will need concatenating
+                # arrays that will need concatenating. E.g.
+                #
+                # {'field': {
+                #    1: [
+                #      <CF Data(5, 2): [[0.007, ..., 0.029]] 1>,
+                #      <CF Data(5, 6): [[0.023, ..., 0.066]] 1>
+                #    ]
+                #  },
+                #  'dimension_coordinate': {
+                #    ('dimensioncoordinate0', 0): [
+                #      <CF DimensionCoordinate: longitude(2) degreesE>,
+                #      <CF DimensionCoordinate: longitude(6) degreesE>
+                #    ]
+                #  },
+                #  'auxiliary_coordinate': {},
+                #  'cell_interface': {},
+                #  'cell_measure': {},
+                #  'domain_ancillary': {},
+                #  'domain_topology': {},
+                #  'field_ancillary': {},
+                # }
+                #
+                # In general, the keys of the nested dictionaries are
+                # `(key, iaxis)`, where `key` is the construct
+                # identifier in the aggregated field and `iaxis` is
+                # the position of the aggregation axis in the
+                # constructs being aggregated. The values of the
+                # nested dictionaries are the ordered lists of
+                # constructs to be concatenated.
+                #
+                # The exception to this is the 'field' nested
+                # dictionary, whose key is is the position of the
+                # aggregation axis in the field's data, and whose
+                # values are the Data objects to be concatenated.
                 data_concatenation = {
                     "field": {},
-                    "dimension_coordinate": {},
                     "auxiliary_coordinate": {},
+                    "dimension_coordinate": {},
                     "cell_measure": {},
                     "domain_ancillary": {},
                     "field_ancillary": {},
+                    "domain_topology": {},  # UGRID
+                    "cell_interface": {},  # UGRID
                 }
 
                 m0 = m[0].copy()
-                #                if copy:
-                #                    m0 = m0.copy()
-
                 for m1 in m[1:]:
                     m0 = _aggregate_2_fields(
                         m0,
@@ -2442,57 +2475,61 @@ def aggregate(
                         unaggregatable = True
                         break
 
-                    # ------------------------------------------------
-                    # TODOAGG:
+                if not unaggregatable:
+                    # -------------------------------------------------
+                    # The aggregation along this axis was successful
+                    # for this sub-group, so concatenate all of the
+                    # data arrays.
                     #
-                    # As a further performance improvement,
-                    # concatenation of multiple fields at a time
-                    # (rather than just two at a time) is MUCH
-                    # better. i.e. X=da.conatnenate([a, b, c, d, e])
-                    # is much faster than X=da.concatenate([a, b]);
-                    # X=da.concatenate([X, c]); etc. When aggregating
-                    # O(100) fields the speed-up is considerable.
+                    # The concatenation is done here so that all
+                    # arrays can concatenated at once. With Dask, this
+                    # is faster than the old code (pre-3.15.1) which
+                    # effectively did N-1 partial concatenations
+                    # inside the `_aggregate_2_fields` function when
+                    # aggregating N arrays. The old method scaled
+                    # poorly with N. Old-method concatenation timings
+                    # *for a single aggregated array* for N = 10, 100,
+                    # 100, 2000 were (in seconds)
                     #
-                    # This refactoring away from pair-wise
-                    # concatenation will need more effort than is
-                    # possible at this time (v3.15.1), and so is
-                    # postponed for now.
+                    #   0.0012 , 0.019 , 0.55 , 2.1
+                    #
+                    # compared with current method timings of
+                    #
+                    #   0.00035, 0.0012, 0.013, 0.064
                     # ------------------------------------------------
+                    field = m0.field
+                    field_arrays = data_concatenation.pop("field")
+                    if field_arrays:
+                        # Concatenate the field data
+                        iaxis, arrays = field_arrays.popitem()
+                        data = Data.concatenate(
+                            arrays,
+                            iaxis,
+                            relaxed_units=relaxed_units,
+                            copy=copy,
+                        )
+                        field.set_data(data, set_axes=False, copy=False)
+
+                    # Concatenate the metadata construct data
+                    for construct_type, value in data_concatenation.items():
+                        for (key, iaxis), constructs in value.items():
+                            c = constructs[0].concatenate(
+                                constructs,
+                                iaxis,
+                                relaxed_units=relaxed_units,
+                                copy=copy,
+                            )
+                            field.set_construct(
+                                c,
+                                axes=field.get_data_axes(key),
+                                key=key,
+                                copy=False,
+                            )
 
                 m[:] = [m0]
 
             if unaggregatable:
                 break
-
-            # --------------------------------------------------------
-            # Concatenate all data along the aggregation axis
-            # --------------------------------------------------------
-            field = m0.field
-            field_arrays = data_concatenation.pop("field")
-            if field_arrays:
-                # Concatenate the field data
-                iaxis, arrays = field_arrays.popitem()
-                data = Data.concatenate(
-                    arrays,
-                    iaxis,
-                    relaxed_units=relaxed_units,
-                    copy=copy,
-                )
-                field.set_data(data, set_axes=False, copy=False)
-
-            # Concatenate the metadata construct data
-            for construct_type, value in data_concatenation.items():
-                #                print(construct_type, value)
-                for (key, iaxis), constructs in value.items():
-                    c = constructs[0].concatenate(
-                        constructs,
-                        iaxis,
-                        relaxed_units=relaxed_units,
-                        #                        copy=copy,
-                    )
-                    field.set_construct(
-                        c, axes=field.get_data_axes(key), key=key, copy=False
-                    )
 
             # --------------------------------------------------------
             # Still here? Then the aggregation along this axis was
@@ -3412,9 +3449,11 @@ def _aggregate_2_fields(
         verbose: `int` or `str` or `None`, optional
             See the `cf.aggregate` function for details.
 
-    :Returns:
+        data_concatenation: `dict`
+            The dictionary that contains the data arrays for each
+            construct type that will need concatenating.
 
-        out: `_Meta` or `bool`
+            .. versionadded:: 3.15.1
 
     """
     a_identity = m0.a_identity
