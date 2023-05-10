@@ -2,12 +2,12 @@
 Calculating and plotting the relative vorticity
 ===============================================
 
-Vorticity, the microscopic measure of rotation in a fluid, is a vector field 
-defined as the curl of velocity 
-`(James R. Holton, Gregory J. Hakim, An Introduction to Dynamic Meteorology, 
-2013, Elsevier : Academic Press p95-125) 
-<https://www.sciencedirect.com/science/article/pii/B9780123848666000040>`_. 
-In this recipe, we will be calculating and plotting the relative vorticity 
+Vorticity, the microscopic measure of rotation in a fluid, is a vector field
+defined as the curl of velocity
+`(James R. Holton, Gregory J. Hakim, An Introduction to Dynamic Meteorology,
+2013, Elsevier : Academic Press p95-125)
+<https://www.sciencedirect.com/science/article/pii/B9780123848666000040>`_.
+In this recipe, we will be calculating and plotting the relative vorticity
 from the wind components.
 """
 
@@ -25,12 +25,12 @@ print(f)
 
 # %%
 # 3. Select wind components and look at their contents:
-u = f[1]
+u = f.select_field("eastward_wind")
 print(u)
 
 # %%
 
-v = f[2]
+v = f.select_field("northward_wind")
 print(v)
 
 # %%
@@ -38,41 +38,59 @@ print(v)
 jan_2023 = cf.year(2023) & cf.month(1)
 
 # %%
-# 5. The wind components are subspaced for January 2023 while selecting one of 
-# the `experiment version` dimensions:
-u2 = u.subspace(T=jan_2023)[:, 0, :, :]
-v2 = v.subspace(T=jan_2023)[:, 0, :, :]
-
-# %%
-# 6. The relative vorticity is calculated using `cf.curl_xy
+# 5. The relative vorticity is calculated using `cf.curl_xy
 # <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ and
 # plotted using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_.
-# Setting ``radius="earth"`` in the the `cf.curl_xy
-# <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ function
-# takes into account the Earth's spherical geometry when calculating the
-# spatial derivatives in the horizontal directions, leading to a more accurate
-# representation of the relative vorticity:
+# The ``with cf.relaxed_identities(True)`` context manager statement prevents
+# the curl opereration broadcasting across the two ``expver`` dimensions because
+# it can't be certain that they are the same as they lack the standardised
+# metadata. Setting
+# ``cf.relaxed_identities(True)`` allows the ``long_name`` to be treated
+# as standardised metadata. Since the horizontal coordinates are latitude and
+# longitude, the
+# `cf.curl_xy <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_
+# function automatically accounts for the Earth's spherical geometry when
+# calculating the spatial derivatives in the horizontal directions, and for this
+# it requires the Earth's radius. In this case the radius is not stored in the
+# wind fields, so must be provided by setting ``radius="earth"`` keyword
+# parameter. While plotting, the relative vorticity is subspaced for January
+# 2023 and one of the `experiment versions` using the dictionary unpacking
+# operator (``**``) as there is an equal to sign in the identifier
+# (``"long_name=expver"``):
 
-rv = cf.curl_xy(u2, v2, radius="earth")
-cfp.con(rv, lines=False, title="Relative Vorticity")
+with cf.relaxed_identities(True):
+    rv = cf.curl_xy(u, v, radius="earth")
+
+cfp.con(
+    rv.subspace(T=jan_2023, **{"long_name=expver": 1}),
+    lines=False,
+    title="Relative Vorticity",
+)
 
 # %%
-# 7. Although the X axis is cyclic, it is not recognised as one, owing to the 
-# fact that the bounds are missing. This results in discontinuities in the 
-# calculated vorticity field on the plot. The cyclicity could either be set on 
-# the field itself or just in the curl command  by setting ``'x_wrap=True'`` 
-# while calculating the relative vorticity. Setting ``rv.units = "s-1"``, 
-# ensures that the units of the relative vorticity field are consistent with 
+# 6. Although the X axis is cyclic, it is not recognised as such, owing to the
+# fact that the longitude coordinate bounds are missing. This results in
+# discontinuities in the calculated vorticity field on the plot at the
+# wrap-around location of 0 degrees east. The cyclicity could either be set on
+# the field itself or just in the curl command  by setting ``'x_wrap=True'``
+# while calculating the relative vorticity. Setting ``rv.units = "s-1"``,
+# ensures that the units of the relative vorticity field are consistent with
 # the calculation and the physical interpretation of the quantity:
 
 print(v.coordinate("X").has_bounds())
 
 # %%
 
-rv = cf.curl_xy(u2, v2, x_wrap=True, radius="earth")
+with cf.relaxed_identities(True):
+    rv = cf.curl_xy(u, v, x_wrap=True, radius="earth")
+
 rv.units = "s-1"
 print(rv)
 
 # %%
 
-cfp.con(rv, lines=False, title="Relative Vorticity")
+cfp.con(
+    rv.subspace(T=jan_2023, **{"long_name=expver": 1}),
+    lines=False,
+    title="Relative Vorticity",
+)

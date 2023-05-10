@@ -160,7 +160,7 @@ from the wind components.</p>
 <ol class="arabic simple" start="3">
 <li><p>Select wind components and look at their contents:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a> <span class="o">=</span> <a href="../method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">f</span><span class="o">.</span><span class="n">select_field</span></a><span class="p">(</span><span class="s1">&#39;eastward_wind&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -173,7 +173,7 @@ Dimension coords: long_name=time(3) = [2023-01-01 00:00:00, 2023-02-01 00:00:00,
                 : long_name=longitude(1440) = [0.0, ..., 359.75] degrees_east
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a> <span class="o">=</span> <a href="../method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">f</span><span class="o">.</span><span class="n">select_field</span></a><span class="p">(</span><span class="s1">&#39;northward_wind&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -192,25 +192,38 @@ Dimension coords: long_name=time(3) = [2023-01-01 00:00:00, 2023-02-01 00:00:00,
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">jan_2023</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">year</span><span class="p">(</span><span class="mi">2023</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">cf</span><span class="o">.</span><span class="n">month</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>5. The wind components are subspaced for January 2023 while selecting one of
-the <cite>experiment version</cite> dimensions:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u2</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">jan_2023</span></a><span class="p">)[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v2</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">jan_2023</span></a><span class="p">)[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-</pre></div>
-</div>
-<p>6. The relative vorticity is calculated using <a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html">cf.curl_xy</a> and
+<p>5. The relative vorticity is calculated using <a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html">cf.curl_xy</a> and
 plotted using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>.
-Setting <code class="docutils literal notranslate"><span class="pre">radius=&quot;earth&quot;</span></code> in the the <a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html">cf.curl_xy</a> function
-takes into account the Earth’s spherical geometry when calculating the
-spatial derivatives in the horizontal directions, leading to a more accurate
-representation of the relative vorticity:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">curl_xy</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u2</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v2</span></a><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
-<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span><span class="p">)</span>
+The <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">cf.relaxed_identities(True)</span></code> context manager statement prevents
+the curl opereration broadcasting across the two <code class="docutils literal notranslate"><span class="pre">expver</span></code> dimensions because
+it can’t be certain that they are the same as they lack the standardised
+metadata. Setting
+<code class="docutils literal notranslate"><span class="pre">cf.relaxed_identities(True)</span></code> allows the <code class="docutils literal notranslate"><span class="pre">long_name</span></code> to be treated
+as standardised metadata. Since the horizontal coordinates are latitude and
+longitude, the
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html">cf.curl_xy</a>
+function automatically accounts for the Earth’s spherical geometry when
+calculating the spatial derivatives in the horizontal directions, and for this
+it requires the Earth’s radius. In this case the radius is not stored in the
+wind fields, so must be provided by setting <code class="docutils literal notranslate"><span class="pre">radius=&quot;earth&quot;</span></code> keyword
+parameter. While plotting, the relative vorticity is subspaced for January
+2023 and one of the <cite>experiment versions</cite> using the dictionary unpacking
+operator (<code class="docutils literal notranslate"><span class="pre">**</span></code>) as there is an equal to sign in the identifier
+(<code class="docutils literal notranslate"><span class="pre">&quot;long_name=expver&quot;</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cf</span><span class="o">.</span><span class="n">relaxed_identities</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">curl_xy</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">rv</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">jan_2023</span></a><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;long_name=expver&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_10_recipe_001.png" srcset="../_images/sphx_glr_plot_10_recipe_001.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p>7. Although the X axis is cyclic, it is not recognised as one, owing to the
-fact that the bounds are missing. This results in discontinuities in the
-calculated vorticity field on the plot. The cyclicity could either be set on
+<img src="../_images/sphx_glr_plot_10_recipe_001.png" srcset="../_images/sphx_glr_plot_10_recipe_001.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p>6. Although the X axis is cyclic, it is not recognised as such, owing to the
+fact that the longitude coordinate bounds are missing. This results in
+discontinuities in the calculated vorticity field on the plot at the
+wrap-around location of 0 degrees east. The cyclicity could either be set on
 the field itself or just in the curl command  by setting <code class="docutils literal notranslate"><span class="pre">'x_wrap=True'</span></code>
 while calculating the relative vorticity. Setting <code class="docutils literal notranslate"><span class="pre">rv.units</span> <span class="pre">=</span> <span class="pre">&quot;s-1&quot;</span></code>,
 ensures that the units of the relative vorticity field are consistent with
@@ -221,24 +234,30 @@ the calculation and the physical interpretation of the quantity:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>False
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">curl_xy</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u2</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v2</span></a><span class="p">,</span> <span class="n">x_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">cf</span><span class="o">.</span><span class="n">relaxed_identities</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">curl_xy</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a><span class="p">,</span> <span class="n">x_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+
 <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;s-1&quot;</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=Horizontal curl of (eastward_wind, northward_wind) (ncvar%u)
 -----------------------------------------------------------------------------
-Data            : long_name=Horizontal curl of (eastward_wind, northward_wind)(long_name=time(1), long_name=expver(1), latitude(721), longitude(1440)) s-1
-Dimension coords: long_name=time(1) = [2023-01-01 00:00:00] gregorian
-                : long_name=expver(1) = [1]
+Data            : long_name=Horizontal curl of (eastward_wind, northward_wind)(long_name=time(3), long_name=expver(2), latitude(721), longitude(1440)) s-1
+Dimension coords: long_name=time(3) = [2023-01-01 00:00:00, 2023-02-01 00:00:00, 2023-03-01 00:00:00] gregorian
+                : long_name=expver(2) = [1, 5]
                 : latitude(721) = [90.0, ..., -90.0] degrees_north
                 : longitude(1440) = [0.0, ..., 359.75] degrees_east
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rv</span></a><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">rv</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">jan_2023</span></a><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;long_name=expver&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_10_recipe_002.png" srcset="../_images/sphx_glr_plot_10_recipe_002.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.288 seconds)</p>
+<img src="../_images/sphx_glr_plot_10_recipe_002.png" srcset="../_images/sphx_glr_plot_10_recipe_002.png" alt="plot 10 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  6.892 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-10-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_10_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_10_recipe.py</span></code></a></p>
@@ -258,7 +277,7 @@ Dimension coords: long_name=time(1) = [2023-01-01 00:00:00] gregorian
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-05-05.
+      &copy;2023, NCAS | Page built on 2023-05-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
