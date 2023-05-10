@@ -1119,6 +1119,13 @@ class _Meta:
 
         return cms
 
+    def cellsizes(self, dim):
+        cellsize = dim.cellsize
+        max_size = cellsize.max()
+        min_size = cellsize.min()
+        if max_cellsize == min_cellsize:
+            return cf.eq(
+    
     def cell_measure_has_data_and_units(self, msr):
         """True only if a cell measure has both data and units.
 
