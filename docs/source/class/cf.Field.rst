@@ -241,6 +241,7 @@ Data
    :template: method.rst
 
    ~cf.Field.argmax
+   ~cf.Field.argmin
    ~cf.Field.where
 
 Miscellaneous data operations

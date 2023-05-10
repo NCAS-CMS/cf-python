@@ -2,7 +2,7 @@
 Plotting a joint histogram
 ==========================
 
-In this recipe, we will be creating a joint histogram of PM2.5 mass 
+In this recipe, we will be creating a joint histogram of PM2.5 mass
 concentration and 2-metre temperature.
 """
 
@@ -38,7 +38,7 @@ temp_field.get_property("units")
 # %%
 # 5. Digitize the PM2.5 mass concentration and 2-metre temperature fields.
 # This step counts the number of values in each of the 10 equally sized bins
-# spanning the range of the values. The ``'return_bins=True'`` argument makes 
+# spanning the range of the values. The ``'return_bins=True'`` argument makes
 # sure that the calculated bins are also returned:
 pm25_indices, pm25_bins = pm25_field.digitize(10, return_bins=True)
 temp_indices, temp_bins = temp_field.digitize(10, return_bins=True)
@@ -69,7 +69,7 @@ temp_grid, pm25_grid = np.meshgrid(temp_bin_centers, pm25_bin_centers)
 # <https://ncas-cms.github.io/cf-python/method/cf.Field.unique.html>`_ to get
 # the unique data array values and show the bin boundaries as ticks on the
 # plot. ``'style='plain'`` in `matplotlib.axes.Axes.ticklabel_format
-# <https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.ticklabel_format.html>`_ 
+# <https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.ticklabel_format.html>`_
 # disables the scientific notation on the y-axis:
 plt.pcolormesh(temp_grid, pm25_grid, histogram_data, cmap="viridis")
 plt.xlabel("2-metre Temperature (degC)")

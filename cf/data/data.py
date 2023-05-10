@@ -5850,6 +5850,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         If the data index is returned as a `tuple` (see the *unravel*
         parameter) then all delayed operations are computed.
 
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `argmin`
+
         :Parameters:
 
             axis: `int`, optional
@@ -5878,7 +5882,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> a = d.argmax()
         >>> a
         <CF Data(): 5>
-        >>> a.array
+        >>> print(a.array)
         5
 
         >>> index = d.argmax(unravel=True)
@@ -5903,12 +5907,96 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> print(d.array)
         [[0 1 2]
          [3 5 5]]
-        >>> d.argmax(1)
+        >>> d.argmax(axis=1)
         <CF Data(2): [2, 1]>
 
         """
         dx = self.to_dask_array()
         a = dx.argmax(axis=axis)
+
+        if unravel and (axis is None or self.ndim <= 1):
+            # Return a multidimensional index tuple
+            return tuple(np.array(da.unravel_index(a, self.shape)))
+
+        return type(self)(a)
+
+    def argmin(self, axis=None, unravel=False):
+        """Return the indices of the minimum values along an axis.
+
+        If no axis is specified then the returned index locates the
+        minimum of the whole data.
+
+        In case of multiple occurrences of the minimum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `argmax`
+
+        :Parameters:
+
+            axis: `int`, optional
+                The specified axis over which to locate the minimum
+                values. By default the minimum over the flattened data
+                is located.
+
+            unravel: `bool`, optional
+                If True then when locating the minimum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the minima over a subset of the axes.
+
+        :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the minimum, or minima.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(5, -1, -1).reshape(2, 3))
+        >>> print(d.array)
+        [[5 4 3]
+         [2 1 0]]
+        >>> a = d.argmin()
+        >>> a
+        <CF Data(): 5>
+        >>> print(a.array)
+        5
+
+        >>> index = d.argmin(unravel=True)
+        >>> index
+        (1, 2)
+        >>> d[index]
+        <CF Data(1, 1): [[0]]>
+
+        >>> d.argmin(axis=0)
+        <CF Data(3): [1, 1, 1]>
+        >>> d.argmin(axis=1)
+        <CF Data(2): [2, 2]>
+
+        Only the location of the first occurrence is returned:
+
+        >>> d = cf.Data([4, 0, 2, 3, 0])
+        >>> d.argmin()
+        <CF Data(): 1>
+
+        >>> d = cf.Data(np.arange(5, -1, -1).reshape(2, 3))
+        >>> d[1, 1] = 0
+        >>> print(d.array)
+        [[5 4 3]
+         [2 0 0]]
+        >>> d.argmin(axis=1)
+        <CF Data(2): [2, 1]>
+
+        """
+        dx = self.to_dask_array()
+        a = dx.argmin(axis=axis)
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
