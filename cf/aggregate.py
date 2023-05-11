@@ -471,6 +471,17 @@ class _Meta:
         else:
             self.coordrefs = list(refs.values())
 
+        if cellsize:
+            cellsize2 = {}
+            for identity, conditions in cellsize.items():
+                key = f.dimension_coordinate(identity, key=True, default=None)
+                if key is not None:
+                    cellsize2[key] = conditions
+
+                for size in conditions:
+                    if not getattr(size, 'Units', None):
+                        raise ValueError("TODO move this test to def aggregate")
+                    
         for axis, domain_axis in f.domain_axes(todict=True).items():
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -516,44 +527,58 @@ class _Meta:
                     ]
                 }
 
-                ccc = None
-                for identity, conditions in cellsize.items():
-                    key = f.dimension_coordinate(
-                        identity,
-                        filter_by_axis=(axis,),
-                        key=True,
-                        default=None,
-                    )
-                    if key != dim_coord_key:
-                        continue
+                if cellsize:
+                    conditions2 = []
+                    for identity, conditions in cellsize.items():
+                        key = f.dimension_coordinate(
+                            identity, filter_by_axis=(axis,),
+                            key=True, default=None)
+                        
+                        if key is not None:
+                            dim_cellsizes = dim_coord.cellsize                 
+                            cellsize_Units = cellsizes.Units
+                            for size in conditions:
+                                if not size.Units.equivalent(cellsize_Units):
+                                    raise ValueError("TODO")
+                                
+                                size = size.copy()
+                                size.Units = dim_cellsize_Units
+                                conditions2.append(size)
 
-                    # Still here? Then there are cellsize conditions
-                    # that we can apply to this dimension coordinate
+                            break
+
+                    dim_cellsizes = dim_cellsizes.persist()                   
+                    for size in conditions2:    
+                        if (dim_cellsizes == size).all():
+                            ccc = size
+                            break
+
+                        
+                            
+                ccc = None
+                conditions = cellsize2.get(dim_coord_key)
+                if conditions:
+                    dim_cellsizes = dim_coord.cellsize.persist()
+                    dim_cellsizes_Units = dim_cellsizes.Units
+                    
                     u = units
                     if u.isreftime:
                         u = Units(u._units_since_reftime)
 
-                    dim_cellsizes = dim_coord.cellsize.persist()
-                    dim_cellsizes_Units = dim_cellsizes.Units
-                    for size in conditions:
-                        if u and not u.equivalent(dim_cellsizes_Units):
-                            continue
-
-                        try:
-                            match = (dim_cellsizes == size).all()
+                    conditions2 = []
+                    for size in conditions:                     
+                        try:                            
+                            size = size.copy()
+                            size.Units = u
+                        except AttributeError:
+                            size = Data(x, units=u)
                         except ValueError:
-                            # 'dim_cellsizes' and 'size' have
-                            # incompatible units
-                            match = False
+                            raise ValueError("TODO")
 
-                        if match:
-                            # All dimension coordinate cell sizes
-                            # match 'size'
-                            try:
-                                size.Units = u
-                            except AttributeError:
-                                size = Data(x, units=u)
-
+                        conditions2.append(size)
+                        
+                    for size in conditions2:    
+                        if (dim_cellsizes == size).all():
                             ccc = size
                             break
 
