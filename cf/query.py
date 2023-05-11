@@ -415,6 +415,26 @@ class Query:
         return self._operator
 
     @property
+    def Units(self):
+        """TODOAGG
+
+        .. versionadded:: TODOAGGVER
+
+        **Examples**
+        
+        TODOAGG
+
+        """
+        try:
+            return self._value.Units
+        except AttributeError:
+            return Units()
+
+    @Units.setter
+    def Units(self, value):
+        self.set_condition_units(value)        
+        
+    @property
     def value(self):
         """The value of the condition encapsulated by the query.
 
