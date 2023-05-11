@@ -502,6 +502,61 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
+                cellsize = {
+                    "T": [
+                        1,
+                        cf.Data(30),
+                        cf.Data(360, "d"),
+                        cf.eq(30 * 24, "hour"),
+                        cf.wi(28, 31),
+                        cf.wi(28, 31, units="d"),
+                        cf.set([28, 29, 30, 31], units="d"),
+                        cf.set([28, 29, 30, 31], units="d"),
+                        cf.D(30),
+                    ]
+                }
+
+                ccc = None
+                for identity, conditions in cellsize.items():
+                    key = f.dimension_coordinate(
+                        identity,
+                        filter_by_axis=(axis,),
+                        key=True,
+                        default=None,
+                    )
+                    if key != dim_coord_key:
+                        continue
+
+                    # Still here? Then there are cellsize conditions
+                    # that we can apply to this dimension coordinate
+                    u = units
+                    if u.isreftime:
+                        u = Units(u._units_since_reftime)
+
+                    dim_cellsizes = dim_coord.cellsize.persist()
+                    dim_cellsizes_Units = dim_cellsizes.Units
+                    for size in conditions:
+                        if u and not u.equivalent(dim_cellsizes_Units):
+                            continue
+
+                        try:
+                            match = (dim_cellsizes == size).all()
+                        except ValueError:
+                            # 'dim_cellsizes' and 'size' have
+                            # incompatible units
+                            match = False
+
+                        if match:
+                            # All dimension coordinate cell sizes
+                            # match 'size'
+                            try:
+                                size.Units = u
+                            except AttributeError:
+                                size = Data(x, units=u)
+
+                            ccc = size
+                            break
+
                 info_dim.append(
                     {
                         "identity": dim_identity,
@@ -510,6 +565,7 @@ class _Meta:
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": dim_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(axis),
+                        "cellsize": ccc,
                     }
                 )
 
@@ -1124,8 +1180,8 @@ class _Meta:
         max_size = cellsize.max()
         min_size = cellsize.min()
         if max_cellsize == min_cellsize:
-            return cf.eq(
-    
+            return cf.eq()
+
     def cell_measure_has_data_and_units(self, msr):
         """True only if a cell measure has both data and units.
 
@@ -1180,7 +1236,7 @@ class _Meta:
 
         :Parameters:
 
-            coord: Coordinate construct
+            coord: `Coordinate`
 
             axes: sequence of `str`, optional
                 Specifiers for the axes the coordinate must span. By
