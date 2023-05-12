@@ -245,6 +245,28 @@ class Query:
 
         self._NotImplemented_RHS_Data_op = True
 
+    def __dask_tokenize__(self):
+        """Return a hashable value fully representative of the object.
+
+        .. versionadded:: TODOAGGVER
+
+        """
+        if not self._compound:
+            value = self._value
+            if isinstance(value, Data):
+                value = (
+                    value.tolist(),
+                    value.Units.formatted(definition=True),
+                )
+
+            return (self.__class__, self._operator, self._attr, value)
+
+        return (
+            self._compound[0].__dask_tokenize__(),
+            self._bitwise_operator,
+            self._compound[1].__dask_tokenize__(),
+        )
+
     def __deepcopy__(self, memo):
         """Used if copy.deepcopy is called on the variable."""
         return self.copy()
@@ -331,10 +353,16 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
-        if value0 is None or value1 is None or value0 != value1:
+        if value0 is None or value1 is None:
             new._value = None
         else:
-            new._value = deepcopy(value0)
+            try:
+                if value0 == value1:
+                    new._value = deepcopy(value0)
+                else:
+                    new._value = None
+            except ValueError:
+                 new._value = None
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -363,22 +391,19 @@ class Query:
 
         """
         attr = ".".join(self._attr)
-
         if not self._compound:
-            out = f"{attr}({self._operator} {self._value!s})"
-        else:
-            bitwise_operator = repr(self._bitwise_operator)
-            if "and_" in bitwise_operator:
-                bitwise_operator = "&"
-            elif "or_" in bitwise_operator:
-                bitwise_operator = "|"
+            return f"{attr}({self._operator} {self._value!s})"
 
-            out = (
-                f"{attr}[{self._compound[0]} {bitwise_operator} "
-                f"{self._compound[1]}]"
-            )
+        bitwise_operator = repr(self._bitwise_operator)
+        if "and_" in bitwise_operator:
+            bitwise_operator = "&"
+        elif "or_" in bitwise_operator:
+            bitwise_operator = "|"
 
-        return out
+        return (
+            f"{attr}[{self._compound[0]} {bitwise_operator} "
+            f"{self._compound[1]}]"
+        )
 
     @property
     def attr(self):
@@ -421,7 +446,7 @@ class Query:
         .. versionadded:: TODOAGGVER
 
         **Examples**
-        
+
         TODOAGG
 
         """
@@ -432,8 +457,8 @@ class Query:
 
     @Units.setter
     def Units(self, value):
-        self.set_condition_units(value)        
-        
+        self.set_condition_units(value)
+
     @property
     def value(self):
         """The value of the condition encapsulated by the query.

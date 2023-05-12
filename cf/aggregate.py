@@ -471,17 +471,6 @@ class _Meta:
         else:
             self.coordrefs = list(refs.values())
 
-#        if cellsize:
-#            cellsize2 = {}
-#            for identity, conditions in cellsize.items():
-#                key = f.dimension_coordinate(identity, key=True, default=None)
-#                if key is not None:
-#                    cellsize2[key] = conditions
-#
-#                for size in conditions:
-#                    if not getattr(size, 'Units', None):
-#                        raise ValueError("TODO move this test to def aggregate")
-                    
         for axis, domain_axis in f.domain_axes(todict=True).items():
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -521,19 +510,21 @@ class _Meta:
                         cf.eq(30 * 24, "hour"),
                         cf.wi(28, 31),
                         cf.wi(28, 31, "d"),
-                        cf.set([28, 29, 30, 31],"d"),
+                        cf.set([28, 29, 30, 31], "d"),
                         cf.D(30),
                     ]
                 }
 
-                            
                 ccc = None
                 if cellsize:
                     dim_cellsizes = None
                     for identity, conditions in cellsize.items():
-                        if f.dimension_coordinate(
-                                identity, filter_by_axis=(axis,),
-                                default=None) is None:
+                        if (
+                            f.dimension_coordinate(
+                                identity, filter_by_axis=(axis,), default=None
+                            )
+                            is None
+                        ):
                             continue
 
                         # Still here? Then the dimension coordinate
@@ -542,23 +533,12 @@ class _Meta:
                         dim_cellsizes = dim_coord.cellsize.persist()
                         cellsize_units = dim_cellsizes.Units
                         for size in conditions:
-                            # Check that 'size' units have/haven't
-                            # been defined, as appropriate.
-                            if getattr(size, 'Units', None):
-                                if not cellsize_units:
-                                    continue
-                            elif cellsize_units:
+                            if not cellsize_units.equivalent(
+                                getattr(size, "Units", Units())
+                            ):
                                 continue
 
-                            try:
-                                match = (dim_cellsizes == size).all()
-                            except ValueError:
-                                # A ValueError is raised if 'size' has
-                                # non-equivalent units to
-                                # 'dim_cellsizes'
-                                match = False
-                        
-                            if match:
+                            if (dim_cellsizes == size).all():
                                 # All of the dimension coordinate's
                                 # cell sizes match the size given by
                                 # one of this condition
@@ -616,6 +596,7 @@ class _Meta:
                         "hasdata": aux_coord.has_data(),
                         "hasbounds": aux_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(key),
+                        "cellsize": None,
                     }
                 )
 
@@ -1535,6 +1516,7 @@ class _Meta:
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
+                ("cellsize", axis[identity]["cellsize"]),
                 ("size", axis[identity]["size"]),
             )
             for identity in self.axis_ids
@@ -1630,6 +1612,15 @@ class _Meta:
             Domain_ancillaries=Domain_ancillaries,
             Field_ancillaries=Field_ancillaries,
         )
+
+    def _hash_cellsize(self, cellsize):
+        """TODOAGGVER"""
+        if isinstance(cellsize, Data):
+            return tokenize(
+                cellsize.tolist(), cellsize.Units.formatted(definition=True)
+            )
+
+        return tokenize(cellsize)
 
     def find_coordrefs(self, key):
         """Return all the coordinate references that point to a
@@ -2183,14 +2174,14 @@ def aggregate(
     elif not ignore:
         ignore = _signature_properties
 
-#    # CHeck that all cell sizes have 
-#    if cellsize:
-#        for identity, sizes in cellsize.items():
-#            for size in size:
-#                if not getattr(size, 'Units', None):
-#                    raise ValueError("TODO")
-#
-                
+    #    # CHeck that all cell sizes have
+    #    if cellsize:
+    #        for identity, sizes in cellsize.items():
+    #            for size in size:
+    #                if not getattr(size, 'Units', None):
+    #                    raise ValueError("TODO")
+    #
+
     unaggregatable = False
     status = 0
 
