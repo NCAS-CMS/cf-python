@@ -471,16 +471,16 @@ class _Meta:
         else:
             self.coordrefs = list(refs.values())
 
-        if cellsize:
-            cellsize2 = {}
-            for identity, conditions in cellsize.items():
-                key = f.dimension_coordinate(identity, key=True, default=None)
-                if key is not None:
-                    cellsize2[key] = conditions
-
-                for size in conditions:
-                    if not getattr(size, 'Units', None):
-                        raise ValueError("TODO move this test to def aggregate")
+#        if cellsize:
+#            cellsize2 = {}
+#            for identity, conditions in cellsize.items():
+#                key = f.dimension_coordinate(identity, key=True, default=None)
+#                if key is not None:
+#                    cellsize2[key] = conditions
+#
+#                for size in conditions:
+#                    if not getattr(size, 'Units', None):
+#                        raise ValueError("TODO move this test to def aggregate")
                     
         for axis, domain_axis in f.domain_axes(todict=True).items():
             # List some information about each 1-d coordinate which
@@ -538,10 +538,18 @@ class _Meta:
 
                         # Still here? Then the dimension coordinate
                         # matches the identity given by one of the
-                        # keys of the 'cellsize' dictionary
+                        # keys of the 'cellsize' dictionary.
                         dim_cellsizes = dim_coord.cellsize.persist()
-                        cellsize_Units = dim_cellsizes.Units
+                        cellsize_units = dim_cellsizes.Units
                         for size in conditions:
+                            # Check that 'size' units have/haven't
+                            # been defined, as appropriate.
+                            if getattr(size, 'Units', None):
+                                if not cellsize_units:
+                                    continue
+                            elif cellsize_units:
+                                continue
+
                             try:
                                 match = (dim_cellsizes == size).all()
                             except ValueError:
@@ -1176,13 +1184,6 @@ class _Meta:
         canonical_cell_methods.append(cms)
 
         return cms
-
-    def cellsizes(self, dim):
-        cellsize = dim.cellsize
-        max_size = cellsize.max()
-        min_size = cellsize.min()
-        if max_cellsize == min_cellsize:
-            return cf.eq()
 
     def cell_measure_has_data_and_units(self, msr):
         """True only if a cell measure has both data and units.
@@ -2182,18 +2183,13 @@ def aggregate(
     elif not ignore:
         ignore = _signature_properties
 
-    if cellsize:
-        cellsize2 = {}
-        for identity, sizes in cellsize.items():
-            for size in sizes
-            key = f.dimension_coordinate(identity, key=True, default=None)
-            if key is not None:
-                cellsize2[key] = conditions
-                
-            for size in conditions:
-                if not getattr(size, 'Units', None):
-                    raise ValueError("TODO")
-
+#    # CHeck that all cell sizes have 
+#    if cellsize:
+#        for identity, sizes in cellsize.items():
+#            for size in size:
+#                if not getattr(size, 'Units', None):
+#                    raise ValueError("TODO")
+#
                 
     unaggregatable = False
     status = 0
