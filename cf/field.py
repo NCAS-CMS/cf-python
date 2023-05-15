@@ -6107,7 +6107,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"    Weights: {weights}\n",
                 f"    Number of indexed ({', '.join(names)}) bins: "
                 f"{unique_indices.shape[1]}\n"
-                f"    ({', '.join(names)}) bin indices:"  # DCH
+                f"    ({', '.join(names)}) bin indices:",  # DCH
             )  # pragma: no cover
 
         # Loop round unique collections of bin indices

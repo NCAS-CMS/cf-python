@@ -2400,40 +2400,43 @@ def aggregate(
                 # ----------------------------------------------------
 
                 # Initialise the dictionary that will contain the data
-                # arrays that will need concatenating. E.g.
-                #
-                # {'field': {
-                #    1: [
-                #      <CF Data(5, 2): [[0.007, ..., 0.029]] 1>,
-                #      <CF Data(5, 6): [[0.023, ..., 0.066]] 1>
-                #    ]
-                #  },
-                #  'dimension_coordinate': {
-                #    ('dimensioncoordinate0', 0): [
-                #      <CF DimensionCoordinate: longitude(2) degreesE>,
-                #      <CF DimensionCoordinate: longitude(6) degreesE>
-                #    ]
-                #  },
-                #  'auxiliary_coordinate': {},
-                #  'cell_interface': {},
-                #  'cell_measure': {},
-                #  'domain_ancillary': {},
-                #  'domain_topology': {},
-                #  'field_ancillary': {},
-                # }
-                #
-                # In general, the keys of the nested dictionaries are
-                # `(key, iaxis)`, where `key` is the construct
-                # identifier in the aggregated field and `iaxis` is
-                # the position of the aggregation axis in the
-                # constructs being aggregated. The values of the
-                # nested dictionaries are the ordered lists of
-                # constructs to be concatenated.
-                #
-                # The exception to this is the 'field' nested
-                # dictionary, whose key is is the position of the
-                # aggregation axis in the field's data, and whose
-                # values are the Data objects to be concatenated.
+                # arrays that will need concatenating.
+                """This dictionary will contain, e.g.
+
+                {'field': {
+                   1: [
+                     <CF Data(5, 2): [[0.007, ..., 0.029]] 1>,
+                     <CF Data(5, 6): [[0.023, ..., 0.066]] 1>
+                   ]
+                 },
+                 'dimension_coordinate': {
+                   ('dimensioncoordinate0', 0): [
+                     <CF DimensionCoordinate: longitude(2) degreesE>,
+                     <CF DimensionCoordinate: longitude(6) degreesE>
+                   ]
+                 },
+                 'auxiliary_coordinate': {},
+                 'cell_interface': {},
+                 'cell_measure': {},
+                 'domain_ancillary': {},
+                 'domain_topology': {},
+                 'field_ancillary': {},
+                }
+
+                In general, the keys of the nested dictionaries are
+                `(key, iaxis)`, where `key` is the construct
+                identifier in the aggregated field and `iaxis` is the
+                position of the aggregation axis in the constructs
+                being aggregated. The values of the nested
+                dictionaries are the ordered lists of constructs to be
+                concatenated.
+
+                The exception to this is the 'field' nested
+                dictionary, whose key is is the position of the
+                aggregation axis in the field's data, and whose values
+                are the Data objects to be concatenated.
+
+                """
                 data_concatenation = {
                     "field": {},
                     "auxiliary_coordinate": {},
