@@ -645,7 +645,6 @@ class UMField:
         self.real_hdr_dtype = rec0.real_hdr.dtype
         int_hdr = int_hdr.tolist()
 
-        self.real_hdr_dtype = rec0.real_hdr.dtype
         real_hdr = rec0.real_hdr.tolist()
         self.int_hdr = int_hdr
         self.real_hdr = real_hdr
