@@ -402,7 +402,7 @@ class Flags:
 
             elif hasattr(other, attr):
                 if is_log_level_info(logger):
-                    print(
+                    logger.info(
                         f"{self.__class__.__name__}: Different attributes: "
                         f"{attr[1:]}"
                     )  # pragma: no cover
