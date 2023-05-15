@@ -2943,7 +2943,7 @@ def _sort_indices(m, canonical_axes):
     :Parameters:
 
         m: `_Meta`
-            The meta object ofr a `Field` or `Domain`
+            The meta object for a `Field` or `Domain`
 
         canonical_axes: `tuple` of `str`
             The canonical axis identities.
