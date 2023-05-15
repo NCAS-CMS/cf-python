@@ -2158,11 +2158,10 @@ def aggregate(
 
             if info:
                 # Note: deliberately no gap between 'has' and '{exclude}'
-                if info:
-                    logger.info(
-                        f"Unaggregatable {f!r} has{exclude} been output: "
-                        f"{meta.message}"
-                    )
+                logger.info(
+                    f"Unaggregatable {f!r} has{exclude} been output: "
+                    f"{meta.message}"
+                )
 
             if not exclude:
                 # This field does not have a structural signature, so
