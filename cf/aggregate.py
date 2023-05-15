@@ -338,7 +338,7 @@ class _Meta:
                 .. versionaddedd:: 3.15.1
 
             info: `bool`
-                True if the log level is ``'INFO'`` (``2``).
+                True if the log level is ``'INFO'`` (``2``) or higher.
 
                 .. versionaddedd:: 3.15.1
 
@@ -3120,7 +3120,7 @@ def _group_fields(meta, axis, info=False):
             The name of the axis to group for aggregation.
 
         info: `bool`
-            True if the log level is ``'INFO'`` (``2``).
+            True if the log level is ``'INFO'`` (``2``) or higher.
 
             .. versionaddedd:: 3.15.1
 
