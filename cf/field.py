@@ -10540,7 +10540,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if debug:
                 logger.debug(
-                    "Non-parametric coordinates construct key: {key!r}\n"
+                    f"Non-parametric coordinates construct key: {key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
