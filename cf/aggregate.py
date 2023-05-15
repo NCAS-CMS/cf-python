@@ -78,7 +78,7 @@ class _HFLCache:
     """A cache for coordinate and cell measure hashes, first and last
     values and first and last cell bounds.
 
-     **Examples**
+    **Examples**
 
     >>> print(h)
     _HFLCache(
