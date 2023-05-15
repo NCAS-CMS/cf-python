@@ -986,7 +986,7 @@ class _Meta:
                 The construct identity.
 
             axes: `tuple`
-                The identities of the constriuct axes, in the order
+                The identities of the construct axes, in the order
                 that applies to the construct.
 
         :Returns:
