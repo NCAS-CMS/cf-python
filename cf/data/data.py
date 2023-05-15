@@ -11773,21 +11773,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    #    def optimize_graph(self):
-    #        """Remove unnecessary tasks from the dask graph in-place.
-    #
-    #        .. versionadded:: 3.15.1
-    #
-    #        .. seealso:: `todict`
-    #
-    #        """
-    #        d = _inplace_enabled_define_and_cleanup(self)
-    #        dx = d.to_dask_array()
-    #        dsk = collections_to_dsk((dx,), optimize_graph=True)
-    #        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-    #        d._set_dask(dx, clear=_NONE)
-    #        return d
-
     @classmethod
     def zeros(
         cls,
