@@ -6103,12 +6103,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # DCH
         if debug:
-            logger.debug(f"    Weights: {weights}")  # pragma: no cover
             logger.debug(
+                f"    Weights: {weights}\n",
                 f"    Number of indexed ({', '.join(names)}) bins: "
-                f"{unique_indices.shape[1]}"
-            )  # pragma: no cover
-            logger.debug(
+                f"{unique_indices.shape[1]}\n"
                 f"    ({', '.join(names)}) bin indices:"  # DCH
             )  # pragma: no cover
 
