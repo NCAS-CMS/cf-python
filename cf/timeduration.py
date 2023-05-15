@@ -1163,11 +1163,11 @@ class TimeDuration:
         if self is other:
             return True
 
-        message = is_log_level_info(logger)
+        info = is_log_level_info(logger)
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Different type: "
                     f"{other.__class__.__name__}"
@@ -1182,7 +1182,7 @@ class TimeDuration:
         d1 = other__dict__.pop("duration", None)
 
         if not d0.equals(d1):
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Different durations: "
                     f"{d0!r}, {d1!r}"
@@ -1191,7 +1191,7 @@ class TimeDuration:
             return False
 
         if self__dict__ != other__dict__:
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Different default date-time "
                     f"elements: {self__dict__!r} != {other__dict__!r}"
@@ -1275,11 +1275,11 @@ class TimeDuration:
         if self is other:
             return True
 
-        message = is_log_level_info(logger)
+        info = is_log_level_info(logger)
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Different type: "
                     f"{other.__class__.__name__}"
@@ -1293,7 +1293,7 @@ class TimeDuration:
         d0 = self__dict__.pop("duration", None)
         d1 = other__dict__.pop("duration", None)
         if d0 != d0:
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Non-equivalent durations: "
                     f"{d0!r}, {d1!r}"
@@ -1302,7 +1302,7 @@ class TimeDuration:
             return False
 
         if self__dict__ != other__dict__:
-            if message:
+            if info:
                 logger.info(
                     f"{self.__class__.__name__}: Non-equivalent default "
                     f"date-time elements: {self__dict__} != {other__dict__}"
