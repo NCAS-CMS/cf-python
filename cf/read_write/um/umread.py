@@ -3131,7 +3131,7 @@ class UMField:
                 The data.
 
             units: `Units
-                The units
+                The units.
 
             fill_value: scalar
                 The fill value.
