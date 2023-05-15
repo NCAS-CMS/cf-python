@@ -3728,7 +3728,7 @@ def _aggregate_2_fields(
                         prop, f"{value0} :AGGREGATED: {value1}"
                     )
                 else:
-                    parent0.set_property(prop, " :AGGREGATED: {value1}")
+                    parent0.set_property(prop, f" :AGGREGATED: {value1}")
         else:
             if value0 is not None:
                 parent0.del_property(prop)
