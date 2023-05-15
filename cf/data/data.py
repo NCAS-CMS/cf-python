@@ -6268,7 +6268,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """Get the deterministic name for the data.
 
         If there is a deterministic name then the data array may be
-        assumed to be "equal" to that of another `Data` object with
+        assumed to be 'equal' to that of another `Data` object with
         the same deterministic name. This measure of equality is
         different to that applied by the `equals` method in that NaN
         and inf values are, in effect, always considered equal.
