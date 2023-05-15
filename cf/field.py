@@ -9608,7 +9608,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses.
             #
             # Use cull_graph=True to prevent dask failures arising
-            # concatenating graphs with lots of unused nodes.
+            # from concatenating graphs with lots of unused nodes.
             # --------------------------------------------------------
             try:
                 f = self.concatenate(fl, axis=iaxis, cull_graph=True)
