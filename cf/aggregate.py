@@ -2974,7 +2974,7 @@ def _get_hfl(
     """Return the hash value, and optionally first and last values or
     bounds.
 
-    The performance this function depends on minimising number of
+    The performance of this function depends on minimising number of
     calls to `Data.compute` and `Data.equals`.
 
     :Parameters:
