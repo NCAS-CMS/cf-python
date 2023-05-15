@@ -594,8 +594,7 @@ def conform_units(value, units, message=None):
 
         :Returns:
 
-                The
-    *value* with conformed units.
+                The *value* with conformed units.
 
         **Examples**
 
