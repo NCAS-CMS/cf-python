@@ -251,21 +251,23 @@ class Query:
         .. versionadded:: TODOAGGVER
 
         """
-        if not self._compound:
-            value = self._value
-            if isinstance(value, Data):
-                value = (
-                    value.tolist(),
-                    value.Units.formatted(definition=True),
-                )
+        if self._compound:
+            return (
+                self._compound[0].__dask_tokenize__(),
+                self._bitwise_operator,
+                self._compound[1].__dask_tokenize__(),
+            )
 
-            return (self.__class__, self._operator, self._attr, value)
+        value = self._value
+        if isinstance(value, Data):
+            value = (
+                value.tolist(),
+                value.Units.formatted(definition=True),
+            )
+        else:
+            value = (value,)
 
-        return (
-            self._compound[0].__dask_tokenize__(),
-            self._bitwise_operator,
-            self._compound[1].__dask_tokenize__(),
-        )
+        return (self.__class__, self._operator, self._attr) + value
 
     def __deepcopy__(self, memo):
         """Used if copy.deepcopy is called on the variable."""
@@ -296,8 +298,8 @@ class Query:
         """The binary bitwise operation ``&``
 
         Combine two queries with a logical And operation. If the
-        `!value` of both queries is the same then it will be retained on
-        the compound query.
+        `!value` of both queries is the same then it will be retained
+        on the compound query.
 
         x.__and__(y) <==> x&y
 
@@ -314,11 +316,18 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
-        if value0 is None or value1 is None or value0 != value1:
-            new._value = None
-        else:
-            new._value = deepcopy(value0)
+        new_value = None
+        if value0 is not None and value1 is not None:
+            try:
+                if (value0 == value1).all():
+                    new_value = deepcopy(value0)
+            except AttributeError:
+                if value0 == value1:
+                    new_value = deepcopy(value0)
+            except ValueError:
+                pass
 
+        new._value = new_value
         new._NotImplemented_RHS_Data_op = True
 
         return new
@@ -335,8 +344,8 @@ class Query:
         """The binary bitwise operation ``|``
 
         Combine two queries with a logical Or operation. If the
-        `!value` of both queries is the same then it will be retained on
-        the compound query.
+        `!value` of both queries is the same then it will be retained
+        on the compound query.
 
         x.__or__(y) <==> x|y
 
@@ -353,17 +362,18 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
-        if value0 is None or value1 is None:
-            new._value = None
-        else:
+        new_value = None
+        if value0 is not None and value1 is not None:
             try:
+                if (value0 == value1).all():
+                    new_value = deepcopy(value0)
+            except AttributeError:
                 if value0 == value1:
-                    new._value = deepcopy(value0)
-                else:
-                    new._value = None
+                    new_value = deepcopy(value0)
             except ValueError:
-                 new._value = None
+                pass
 
+        new._value = new_value
         new._NotImplemented_RHS_Data_op = True
 
         return new

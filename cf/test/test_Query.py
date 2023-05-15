@@ -5,6 +5,7 @@ import re
 import unittest
 
 import numpy
+from dask.base import tokenize
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -587,6 +588,21 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(s.value, 9)
         self.assertFalse(s == 9)
 
+        q = cf.set(cf.Data([1])) & cf.set(cf.Data([1]))
+        self.assertEqual(q.value, cf.Data([1]))
+
+        q = cf.set([1]) & cf.set(cf.Data([1]))
+        self.assertEqual(q.value, [1])
+
+        q = cf.set([1, 2]) & cf.set(cf.Data([1]))
+        self.assertIsNone(q._value)
+
+        q = cf.set([1]) & cf.set(cf.Data([1, 2]))
+        self.assertIsNone(q._value)
+
+        q = cf.set(cf.Data([1, 2, 3])) & cf.set(cf.Data([1, 2]))
+        self.assertIsNone(q._value)
+
     def test_Query__or__(self):
         q = cf.eq(9)
         r = cf.gt(11)
@@ -601,6 +617,41 @@ class QueryTest(unittest.TestCase):
         s = q | r
         self.assertEqual(s.value, 9)
         self.assertFalse(s == 8)
+
+        q = cf.set(cf.Data([1])) | cf.set(cf.Data([1]))
+        self.assertEqual(q.value, cf.Data([1]))
+
+        q = cf.set([1]) | cf.set(cf.Data([1]))
+        self.assertEqual(q.value, [1])
+
+        q = cf.set([1, 2]) | cf.set(cf.Data([1]))
+        self.assertIsNone(q._value)
+
+        q = cf.set([1]) | cf.set(cf.Data([1, 2]))
+        self.assertIsNone(q._value)
+
+        q = cf.set(cf.Data([1, 2, 3])) | cf.set(cf.Data([1, 2]))
+        self.assertIsNone(q._value)
+
+    def test_Query__dask_tokenize__(self):
+        for q in (
+            cf.eq(9),
+            cf.lt(9, "km"),
+            cf.wi(2, 5, "km"),
+            cf.set([1, 2, 3]),
+            cf.set([1, 2, 3], "km"),
+            cf.ge(7, attr="year"),
+            cf.ge(7, attr="upper_bounds.month", units="K"),
+            cf.eq(8) & cf.le(7, "km"),
+            cf.wo(2, 5, attr="day") | cf.set(cf.Data([1, 2], "km")),
+            cf.eq(8) | cf.lt(9) & cf.ge(10),
+        ):
+            self.assertEqual(tokenize(q), tokenize(q.copy()))
+
+        self.assertEqual(tokenize(cf.eq(9, "km")), tokenize(cf.eq(9, "1000m")))
+        self.assertNotEqual(
+            tokenize(cf.eq(9, "km")), tokenize(cf.eq(9000, "m"))
+        )
 
 
 if __name__ == "__main__":

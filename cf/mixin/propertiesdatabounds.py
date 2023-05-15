@@ -846,7 +846,13 @@ class PropertiesDataBounds(PropertiesData):
         else:
             data = self.get_data(None)
             if data is not None:
-                return Data.zeros(self.shape, units=self.Units)
+                units = self.Units
+                units_since_reftime = units._units_since_reftime
+                if units_since_reftime is not None:
+                    # Convert to "difference" units
+                    units = Units(units_since_reftime)
+
+                return Data.zeros(self.shape, units=units)
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data"

@@ -1685,6 +1685,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
 
+        units_since_reftime = self.Units._units_since_reftime
+        if units_since_reftime is not None:
+            # Convert to "difference" units
+            d.override_units(Units(units_since_reftime), inplace=True)
+
         return d
 
     @_inplace_enabled(default=False)
