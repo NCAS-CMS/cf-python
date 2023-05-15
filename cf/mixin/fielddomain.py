@@ -475,7 +475,7 @@ class FieldDomain:
 
                 if debug:
                     logger.debug(
-                        f"  index        = {index}\n" f"  ind          = {ind}"
+                        f"  index        = {index}\n  ind          = {ind}"
                     )  # pragma: no cover
 
                 # Put the index into the correct place in the list of
