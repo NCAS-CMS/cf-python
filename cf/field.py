@@ -1313,7 +1313,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if debug:
             logger.debug(
-                "\nrefs_to_add_from_field1={refs_to_add_from_field1}"
+                f"\nrefs_to_add_from_field1={refs_to_add_from_field1}"
             )  # pragma: no cover
 
         for ref in refs_to_add_from_field1:
