@@ -140,7 +140,7 @@ class _HFLCache:
 
 @dataclass()
 class _Canonical:
-    """Storage canonical versions of metadata construct attributes.
+    """Storage for canonical versions of metadata construct attributes.
 
     .. versionaddedd:: 3.15.1
 
