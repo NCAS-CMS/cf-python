@@ -8605,7 +8605,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def has_deterministic_name(self):
         """Whether there is a deterministic name for the data.
 
-        See ``get_deterministic_name` for details.
+        See `get_deterministic_name` for details.
 
         .. versionadded:: 3.15.1
 
