@@ -6259,7 +6259,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-                `Data`
+            `Data`
 
         """
         return self
