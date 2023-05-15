@@ -3110,7 +3110,7 @@ def _get_hfl(
 
 
 def _group_fields(meta, axis, info=False):
-    """Return a FieldList of the potentially aggregatable fields.
+    """Return groups of potentially aggregatable fields.
 
     :Parameters:
 
@@ -3126,7 +3126,9 @@ def _group_fields(meta, axis, info=False):
 
     :Returns:
 
-        `list` of `FieldList`
+        `list`
+            A list of groups of potentially aggregatable fields. Each
+            group is represented by a `list` of `_Meta` objects.
 
     """
     axes = meta[0].axis_ids
