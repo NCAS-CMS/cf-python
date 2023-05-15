@@ -2481,7 +2481,7 @@ def aggregate(
                     # data arrays.
                     #
                     # The concatenation is done here so that all
-                    # arrays can concatenated at once. With Dask, this
+                    # arrays can be concatenated at once. With Dask, this
                     # is faster than the old code (pre-3.15.1) which
                     # effectively did N-1 partial concatenations
                     # inside the `_aggregate_2_fields` function when
