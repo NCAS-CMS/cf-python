@@ -384,6 +384,20 @@ class TimeDuration:
         """Returns a `numpy` array representing the time duration."""
         return self.duration.__array__(*dtype)
 
+    def __dask_tokenize__(self):
+        """Return a hashable value fully representative of the object.
+
+        .. versionadded:: TODOAGGVER
+
+        """
+        duration = self.duration
+        return (
+            self.__class__,
+            duration.tolist(),
+            duration.Units.formatted(definition=True),
+            self.offset,
+        )
+
     def __data__(self):
         """Returns a new reference to the `!duration` attribute."""
         return self.duration

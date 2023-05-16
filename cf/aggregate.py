@@ -249,7 +249,7 @@ class _Meta:
         canonical=None,
         info=False,
         field_ancillaries=(),
-        cellsizes=None,
+        cells=None,
         copy=True,
     ):
         """**initialisation**
@@ -504,8 +504,8 @@ class _Meta:
                 )
 
                 cell_diff = (None, None)
-                if cellsizes is not None:
-                    for identity, conditions in cellsizes.items():
+                if cells is not None:
+                    for identity, conditions in cells.items():
                         key = f.dimension_coordinate(
                             identity,
                             filter_by_axis=(axis,),
@@ -516,10 +516,10 @@ class _Meta:
                         if key != dim_coord_key:
                             continue
 
-                        # Still here? Then this dimension coordinate
+                        # Still here? Then the dimension coordinate
                         # matches the identity given by one of the
-                        # keys of the 'cellsizes' dictionary. So loop
-                        # round the cooresponding conditions to see if
+                        # keys of the 'cells' dictionary. So loop
+                        # round the corresponding conditions to see if
                         # the dimension coordinate values match any of
                         # them.
                         dim_coord.persist(inplace=True)
@@ -529,11 +529,11 @@ class _Meta:
 
                         dim_cell = None
                         dim_diff = None
-                        for cell, diff in conditions:
+                        for size, diff in conditions:
                             if (
-                                cell is not None
+                                size is not None
                                 and not cellsize_units.equivalent(
-                                    getattr(cell, "Units", Units())
+                                    getattr(size, "Units", Units())
                                 )
                             ):
                                 continue
@@ -545,16 +545,21 @@ class _Meta:
                                 )
                             ):
                                 continue
-   
-                            # Still here? Then this dimension
+
+                            # Still here? Then the dimension
                             # coordinate's cell size/diff units are
                             # equivalent to those of the given
-                            # conditions.
-                            if cell is not None:
+                            # conditions, so check whether or not the
+                            # cell sizes and/or diffs match their
+                            # respective conditions
+                            if size is not None:
                                 if dim_cell is None:
                                     dim_cell = cellsize.persist()
 
-                                if not (dim_cell == cell).all():
+                                if not (dim_cell == size).all():
+                                    # The dimension coordinate's cell
+                                    # sizes do not all match the
+                                    # 'cell' condition
                                     continue
 
                             if diff is not None:
@@ -562,12 +567,15 @@ class _Meta:
                                     dim_diff = dim_coord.diff().persist()
 
                                 if not (dim_diff == diff).all():
+                                    # The dimension coordinate's diffs
+                                    # do not all match the 'diff'
+                                    # condition
                                     continue
-     
-                            # Still here? Then this dimension
-                            # coordinate's cell sizes/diffs match
-                            # those of the given conditions.
-                            cell_diff = (cell, diff)
+
+                            # Still here? Then the dimension
+                            # coordinate's cell sizes and/or diffs
+                            # match those of the given conditions.
+                            cell_diff = (size, diff)
                             break
 
                         break
@@ -683,7 +691,6 @@ class _Meta:
             else:
                 self.axis[identity]["dim_coord_index"] = None
 
-
             # Store the axis size, which will be None unless we
             # identified the dimension solely by its netCDF dimension
             # name.
@@ -692,8 +699,9 @@ class _Meta:
             self.id_to_axis[identity] = axis
             self.axis_to_id[axis] = identity
 
-            import pprint
-            pprint.pprint (self.axis[identity])
+        #            import pprint
+        #
+        #            pprint.pprint(self.axis[identity])
         # Create a sorted list of the axes' canonical identities
         #
         # For example: ['latitude', 'longitude', 'time']
@@ -1645,7 +1653,7 @@ class _Meta:
             Domain_ancillaries=Domain_ancillaries,
             Field_ancillaries=Field_ancillaries,
         )
-         
+
     def _signature_cell_diff(self, cell_diff):
         """TODOAGGVER
 
@@ -1667,9 +1675,9 @@ class _Meta:
                 out.extend((None, None))
             else:
                 out.extend((repr(x), self._tokenize(x)))
-                
+
         return tuple(out)
-        
+
     def _tokenize(self, x):
         """TODOAGGVER
 
@@ -1877,7 +1885,7 @@ def aggregate(
     shared_nc_domain=False,
     field_identity=None,
     field_ancillaries=None,
-    cellsizes=None,
+    cells=None,
     info=False,
 ):
     """Aggregate field constructs into as few field constructs as
@@ -2255,40 +2263,39 @@ def aggregate(
     elif not ignore:
         ignore = _signature_properties
 
-    # Parse cellsizes
-    if not (cellsizes is None or isinstance(cellsizes, dict)):
-        raise TypeError("'cellsizes' parameter must be None or a dict")
+    # Parse cells
+    if not (cells is None or isinstance(cells, dict)):
+        raise TypeError("'cells' parameter must be None or a dict")
 
-    if cellsizes:
+    if cells:
         # Make sure that the each dictionary value is a sequence of
-        # conditions
-        cellsizes = cellsizes.copy()
-        for key, conditions in cellsizes.items():
+        # conditions, and that each individual condition is a 2-tuple.
+        cells = cells.copy()
+        for key, conditions in cells.items():
             if hasattr(conditions, "size"):
                 # E.g. cf.Data(30, 'days') -> (cf.Data(30, 'days'),)
-                cellsizes[key] = (conditions,)
+                conditions = (conditions,)
             else:
                 try:
-                    cellsizes[key] = tuple(conditions)
+                    conditions = tuple(conditions)
                 except TypeError:
                     # E.g. 3 -> (3,)
                     # E.g. cf.eq(24, 'd') -> (cf.eq(24, 'd'),)
                     # E.g. cf.D(31) -> (cf.D(31),)
-                    cellsizes[key] = (conditions,)
+                    conditions = (conditions,)
 
-        for key, conditions in cellsizes.items():
             c = []
             for condition in conditions:
                 try:
                     cell, diff = condition[:2]
-                except (TypeError, ValueError):
+                except (TypeError, IndexError, ValueError):
                     cell, diff = condition, None
 
                 c.append((cell, diff))
 
-            cellsizes[key] = c
+            cells[key] = c
 
-    print (cellsizes)  # dch
+    print("cells=", cells)  # dch
 
     unaggregatable = False
     status = 0
@@ -2322,7 +2329,7 @@ def aggregate(
             canonical=canonical,
             info=info,
             field_ancillaries=field_ancillaries,
-            cellsizes=cellsizes,
+            cells=cells,
             copy=copy,
         )
 

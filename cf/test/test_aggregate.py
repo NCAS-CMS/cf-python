@@ -343,6 +343,55 @@ class aggregateTest(unittest.TestCase):
         self.assertTrue((anc[:2] == "bar_a").all())
         self.assertTrue((anc[2:] == "bar_b").all())
 
+    def test_aggregate_cells(self):
+        f = cf.example_field(0)
+        fl = (f[:2], f[2], f[3:])
+
+        for cells in (
+            None,
+            {"Y": cf.lt(100, "degrees_north")},
+            {"Y": cf.wi(30, 60, "degrees_north")},
+            {"Y": cf.set([30, 60], "degrees_north")},
+            {"Y": (None, cf.set([30, 45], "degrees_north"))},
+            {
+                "Y": (
+                    cf.wi(30, 60, "degrees_north"),
+                    cf.set([30, 45], "degrees_north"),
+                )
+            },
+        ):
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+
+        for cells in (
+                {"Y": cf.wi(39, 60, 'km')},
+                {"foo": 34},
+            {"T": cf.D(0)},
+            {"T": cf.Data(0, "days")},
+            {"T": cf.Data(99, "days")},
+            {"T": cf.Data([99], "days")},
+        ):
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+
+        for cells in (
+                {'Y': cf.eq(30, 'degreeN')},
+                {'Y': cf.Data(60, 'degrees_N')},):
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
+
+        # 2-d aggregation
+        fl2 = []
+        for g in fl:
+            fl2.extend((g[:, :3], g[:, 3:]))
+
+        for cells in (
+            None,
+            {"Y": cf.wi(30, 60, "degrees_north")},
+            {"X": cf.Data(45, "degrees_east")},
+            {
+                "Y": cf.wi(30, 60, "degrees_north"),
+                "X": cf.eq(45, "degrees_east"),
+            },
+        ):
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
