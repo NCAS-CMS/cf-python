@@ -23,7 +23,7 @@ from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
 from .functions import flat
 from .functions import rtol as cf_rtol
-from .query import gt
+from .query import gt, wi
 from .units import Units
 
 logger = logging.getLogger(__name__)
@@ -503,17 +503,13 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
-                cell_diff = (None, None)
-                if cells is not None:
+                # Check for cell conditions
+                cell = None
+                diff = None
+                if cells:
+                    dim = f.dimension_coordinates(filter_by_axis=(axis,))
                     for identity, conditions in cells.items():
-                        key = f.dimension_coordinate(
-                            identity,
-                            filter_by_axis=(axis,),
-                            key=True,
-                            default=None,
-                        )
-
-                        if key != dim_coord_key:
+                        if not dim(identity):
                             continue
 
                         # Still here? Then the dimension coordinate
@@ -521,63 +517,54 @@ class _Meta:
                         # keys of the 'cells' dictionary. So loop
                         # round the corresponding conditions to see if
                         # the dimension coordinate values match any of
-                        # them.
+                        # them, and then break.
                         dim_coord.persist(inplace=True)
-
                         cellsize = dim_coord.cellsize
                         cellsize_units = cellsize.Units
-
                         dim_cell = None
                         dim_diff = None
-                        for size, diff in conditions:
-                            if (
-                                size is not None
-                                and not cellsize_units.equivalent(
-                                    getattr(size, "Units", Units())
-                                )
-                            ):
-                                continue
 
-                            if (
-                                diff is not None
-                                and not cellsize_units.equivalent(
-                                    getattr(diff, "Units", Units())
-                                )
+                        cell = None
+                        diff = None
+                        for condition in conditions:
+                            cell = None
+                            c = condition.get("cell")
+                            if c is not None and cellsize_units.equivalent(
+                                getattr(c, "Units", Units())
                             ):
-                                continue
-
-                            # Still here? Then the dimension
-                            # coordinate's cell size/diff units are
-                            # equivalent to those of the given
-                            # conditions, so check whether or not the
-                            # cell sizes and/or diffs match their
-                            # respective conditions
-                            if size is not None:
                                 if dim_cell is None:
                                     dim_cell = cellsize.persist()
 
-                                if not (dim_cell == size).all():
-                                    # The dimension coordinate's cell
-                                    # sizes do not all match the
-                                    # 'cell' condition
+                                if (dim_cell == c).all():
+                                    # The dimension coordinates match
+                                    # the 'cell' condition
+                                    cell = c
+                                else:
+                                    diff = None
                                     continue
 
-                            if diff is not None:
+                            diff = None
+                            c = condition.get("diff")
+                            if c is not None and cellsize_units.equivalent(
+                                getattr(c, "Units", Units())
+                            ):
                                 if dim_diff is None:
-                                    dim_diff = dim_coord.diff().persist()
+                                    dim_diff = dim_coord.data.diff().persist()
 
-                                if not (dim_diff == diff).all():
-                                    # The dimension coordinate's diffs
-                                    # do not all match the 'diff'
-                                    # condition
+                                if (dim_diff == c).all():
+                                    # The dimension coordinates match
+                                    # the 'diff' condition
+                                    diff = c
+                                else:
+                                    cell = None
                                     continue
 
-                            # Still here? Then the dimension
-                            # coordinate's cell sizes and/or diffs
-                            # match those of the given conditions.
-                            cell_diff = (size, diff)
-                            break
+                            if cell is not None or diff is not None:
+                                # We've found a matching condition
+                                break
 
+                        del dim_cell
+                        del dim_diff
                         break
 
                 info_dim.append(
@@ -588,8 +575,8 @@ class _Meta:
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": dim_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(axis),
-                        "cell": cell_diff[0],
-                        "diff": cell_diff[1],
+                        "cell": cell,
+                        "diff": diff,
                     }
                 )
 
@@ -2122,6 +2109,11 @@ def aggregate(
 
             .. versionadded:: 3.15.0
 
+        cells: `dict` or `None`
+            TODOAGG
+
+            .. versionadded:: TODOAGGAVER
+
         no_overlap:
             Use the *overlap* parameter instead.
 
@@ -2268,32 +2260,10 @@ def aggregate(
         raise TypeError("'cells' parameter must be None or a dict")
 
     if cells:
-        # Make sure that the each dictionary value is a sequence of
-        # conditions, and that each individual condition is a 2-tuple.
         cells = cells.copy()
-        for key, conditions in cells.items():
-            if hasattr(conditions, "size"):
-                # E.g. cf.Data(30, 'days') -> (cf.Data(30, 'days'),)
-                conditions = (conditions,)
-            else:
-                try:
-                    conditions = tuple(conditions)
-                except TypeError:
-                    # E.g. 3 -> (3,)
-                    # E.g. cf.eq(24, 'd') -> (cf.eq(24, 'd'),)
-                    # E.g. cf.D(31) -> (cf.D(31),)
-                    conditions = (conditions,)
-
-            c = []
-            for condition in conditions:
-                try:
-                    cell, diff = condition[:2]
-                except (TypeError, IndexError, ValueError):
-                    cell, diff = condition, None
-
-                c.append((cell, diff))
-
-            cells[key] = c
+        for key, conditions in tuple(cells.items()):
+            if isinstance(conditions, dict):
+                cells[key] = (conditions,)
 
     print("cells=", cells)  # dch
 
@@ -2752,6 +2722,22 @@ def aggregate(
 # Initialise the status
 # --------------------------------------------------------------------
 aggregate.status = 0
+
+
+def climatology_cells():
+    return {
+        "T": (
+            {"cell": Data(1, "hour")},
+            {"diff": Data(1, "hour")},
+            {"cell": Data(3, "hour")},
+            {"diff": Data(3, "hour")},
+            {"cell": Data(6, "hour")},
+            {"diff": Data(6, "hour")},
+            {"cell": Data(1, "day")},
+            {"cell": wi(28, 31, "day")},
+            {"cell": wi(360, 366, "day")},
+        )
+    }
 
 
 def _create_hash_and_first_values(
@@ -3469,7 +3455,7 @@ def _ok_coordinate_arrays(
         meta: `list` of `_Meta`
 
         axis: `str`
-            Find the canonical identity of the aggregating axis.
+            The canonical identity of the aggregating axis.
 
         overlap: `bool`
             See the `cf.aggregate` function for details.
@@ -3483,6 +3469,8 @@ def _ok_coordinate_arrays(
     :Returns:
 
         `bool`
+            `True` if and only if the aggregating 1-d coordinates of
+            the aggregating axis are all aggregatable.
 
     **Examples**
 
@@ -3562,6 +3550,34 @@ def _ok_coordinate_arrays(
                                 f"({m0.last_bounds[axis][1]} < "
                                 f"{m1.first_bounds[axis][0]})"
                             )
+
+                        return False
+        else:
+            diff = m.axis[axis]["diff"][dim_coord_index0]
+            if diff is not None:
+                # ----------------------------------------------------
+                # The dimension coordinates do not have bounds, but
+                # the spacing of the coordinates has been
+                # specified. Therefore, make sure that the given
+                # spacing also applies between two adjacent domains.
+                # ----------------------------------------------------
+                units = m.axis[axis]["units"][dim_coord_index0]
+                for m0, m1 in zip(meta[:-1], meta[1:]):
+                    dim_coord_index0 = m0.axis[axis]["dim_coord_index"]
+                    dim_coord_index1 = m1.axis[axis]["dim_coord_index"]
+                    print(
+                        m1.first_values[axis][dim_coord_index0],
+                        m0.last_values[axis][dim_coord_index1],
+                    )
+                    dim_diff = (
+                        m1.first_values[axis][dim_coord_index0]
+                        - m0.last_values[axis][dim_coord_index1]
+                    )
+                    dim_diff = Data(dim_diff, units="days")  # diff.Units)
+                    print(dim_diff, dim_diff == diff)
+                    if dim_diff != diff:
+                        if info:
+                            meta[0].message = "something"
 
                         return False
 

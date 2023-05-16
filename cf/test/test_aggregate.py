@@ -349,49 +349,52 @@ class aggregateTest(unittest.TestCase):
 
         for cells in (
             None,
-            {"Y": cf.lt(100, "degrees_north")},
-            {"Y": cf.wi(30, 60, "degrees_north")},
-            {"Y": cf.set([30, 60], "degrees_north")},
-            {"Y": (None, cf.set([30, 45], "degrees_north"))},
+            {"Y": {"cell": cf.lt(100, "degrees_north")}},
+            {"Y": {"cell": cf.gt(100, "degrees_north")}},
+            {"Y": {"cell": cf.wi(30, 60, "degrees_north")}},
+            {"Y": {"cell": cf.set([30, 60], "degrees_north")}},
+            {"Y": {"diff": cf.set([30, 45], "degrees_north")}},
             {
-                "Y": (
-                    cf.wi(30, 60, "degrees_north"),
-                    cf.set([30, 45], "degrees_north"),
-                )
+                "Y": {
+                    "cell": cf.wi(30, 60, "degrees_north"),
+                    "diff": cf.set([30, 45], "degrees_north"),
+                }
             },
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
         for cells in (
-                {"Y": cf.wi(39, 60, 'km')},
-                {"foo": 34},
-            {"T": cf.D(0)},
-            {"T": cf.Data(0, "days")},
-            {"T": cf.Data(99, "days")},
-            {"T": cf.Data([99], "days")},
+            {"Y": {"cell": cf.wi(39, 60, "km")}},
+            {"foo": {"cell": 34}},
+            {"T": {"cell": cf.D(0)}},
+            {"T": {"cell": cf.Data(0, "days")}},
+            {"T": {"cell": cf.Data(99, "days")}},
+            {"T": {"cell": cf.Data([99], "days")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
         for cells in (
-                {'Y': cf.eq(30, 'degreeN')},
-                {'Y': cf.Data(60, 'degrees_N')},):
+            {"Y": {"cell": cf.eq(30, "degreeN")}},
+            {"Y": {"cell": cf.Data(60, "degrees_N")}},
+        ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
 
         # 2-d aggregation
-        fl2 = []
+        fl_2d = []
         for g in fl:
-            fl2.extend((g[:, :3], g[:, 3:]))
+            fl_2d.extend((g[:, :3], g[:, 3:]))
 
         for cells in (
             None,
-            {"Y": cf.wi(30, 60, "degrees_north")},
-            {"X": cf.Data(45, "degrees_east")},
+            {"Y": {"cell": cf.wi(30, 60, "degrees_north")}},
+            {"X": {"cell": cf.Data(45, "degrees_east")}},
             {
-                "Y": cf.wi(30, 60, "degrees_north"),
-                "X": cf.eq(45, "degrees_east"),
+                "Y": {"cell": cf.wi(30, 60, "degrees_north")},
+                "X": {"cell": cf.eq(45, "degrees_east")},
             },
         ):
-            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+            self.assertEqual(len(cf.aggregate(fl_2d, cells=cells)), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
