@@ -3,7 +3,6 @@ import operator
 from collections import namedtuple
 
 import numpy
-from cfdm import is_log_level_info
 
 from .cfdatetime import dt as cf_dt
 from .cfdatetime import elements

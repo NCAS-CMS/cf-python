@@ -624,15 +624,14 @@ def conform_units(value, units, message=None):
 
     """
     value_units = getattr(value, "Units", None)
-    if value_units is None or value_units == units:
+    if value_units is None:
         return value
 
     if value_units.equivalent(units):
-        value = value.copy()
-        value.Units = units
-        return value
-
-    if value_units and units:
+        if value_units != units:
+            value = value.copy()
+            value.Units = units
+    elif value_units and units:
         if message is None:
             message = (
                 f"Units {value_units!r} are incompatible with units {units!r}"

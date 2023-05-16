@@ -51,6 +51,7 @@ Click on the keywords below to filter the recipes according to their function:
        <button data-filter="contourmap">Contourmap</button>
        <button data-filter="histogram">Histogram</button>
        <button data-filter="lineplot">Lineplot</button>
+       <button data-filter="maths">Mathematical Operations</button>
        <button data-filter="regrid">Regrid</button>
        <button data-filter="subspace">Subspace</button>
    </div>
@@ -206,6 +207,23 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip=" Subspace, Contourmap, Mathematical Operations">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_10_recipe_thumb.png
+    :alt: Calculating and plotting the relative vorticity
+
+  :ref:`sphx_glr_recipes_plot_10_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Calculating and plotting the relative vorticity</div>
+    </div>
+
+
+.. raw:: html
+
     </div>
 
 .. toctree::
@@ -220,7 +238,7 @@ Click on the keywords below to filter the recipes according to their function:
    /recipes/plot_7_recipe
    /recipes/plot_8_recipe
    /recipes/plot_9_recipe
-
+   /recipes/plot_10_recipe
 .. only:: html
 
   .. container:: sphx-glr-footer sphx-glr-footer-gallery
