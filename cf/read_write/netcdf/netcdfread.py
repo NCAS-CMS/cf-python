@@ -202,7 +202,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if data.npartitions == 1:
                 data._cfa_set_write(True)
 
-            self._cache_data_elements(data, ncvar)
+            if self.implementation.get_construct_type(construct) != "field":
+                # Only cache values from non-field data, on the
+                # assumption that field data is, in general, so large
+                # that finding the cached values takes too long. See
+                # method `_cache_data_elements` for details.
+                self._cache_data_elements(data, ncvar)
 
             return data
 
@@ -338,9 +343,38 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if array.dtype is None:
             # The array is based on a netCDF VLEN variable, and
             # therefore has unknown data type. To find the correct
-            # data type (e.g. "|S7"), we need to read the data into
-            # memory.
-            array = array[...]
+            # data type (e.g. "<U7"), we need to read the entire array
+            # from its netCDF variable into memory to find the longest
+            # string.
+            g = self.read_vars
+            if g["has_groups"]:
+                group, name = self._netCDF4_group(
+                    g["variable_grouped_dataset"][ncvar], ncvar
+                )
+                variable = group.variables.get(name)
+            else:
+                variable = g["variables"].get(ncvar)
+
+            array = variable[...]
+
+            string_type = isinstance(array, str)
+            if string_type:
+                # A netCDF string type scalar variable comes out as Python
+                # str object, so convert it to a numpy array.
+                array = np.array(array, dtype=f"U{len(array)}")
+
+            if not variable.ndim:
+                # NetCDF4 has a thing for making scalar size 1
+                # variables into 1d arrays
+                array = array.squeeze()
+
+            if not string_type:
+                # A N-d (N>=1) netCDF string type variable comes out
+                # as a numpy object array, so convert it to numpy
+                # string array.
+                array = array.astype("U", copy=False)
+                # NetCDF4 doesn't auto-mask VLEN variables
+                array = np.ma.where(array == "", np.ma.masked, array)
 
         # Parse dask chunks
         chunks = self._parse_chunks(ncvar)
@@ -419,8 +453,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.
 
-        Updates *data* in-place to store its first, second and last
-        element values inside its ``custom`` dictionary.
+        Updates *data* in-place to store its first, second,
+        penultimate, and last element values (as appropriate).
+
+        These values are used by, amongst other things,
+        `cf.Data.equals`, `cf.aggregate` and for inspection.
 
         Doing this here is quite cheap because only the individual
         elements are read from the already-open file, as opposed to
@@ -452,6 +489,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `None`
 
         """
+        if data.data.get_compression_type():
+            # Don't get cached elements from arrays compressed by
+            # convention, as they'll likely be wrong.
+            return
+
         g = self.read_vars
 
         # Get the netCDF4.Variable for the data
@@ -464,25 +506,83 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             variable = g["variables"].get(ncvar)
 
         # Get the required element values
-        size = variable.size
-        if size == 1:
-            value = variable[(slice(0, 1, 1),) * variable.ndim]
-            values = (value, None, value)
-        elif size == 3:
-            values = variable[...].flatten()
-        else:
-            ndim = variable.ndim
+        size = data.size
+        ndim = data.ndim
+
+        char = False
+        if variable.ndim == ndim + 1:
+            dtype = variable.dtype
+            if dtype is not str and dtype.kind in "SU":
+                # This variable is a netCDF classic style char array
+                # with a trailing dimension that needs to be collapsed
+                char = True
+
+        if ndim == 1:
+            # Also cache the second element for 1-d data, on the
+            # assumption that they may well be dimension coordinate
+            # data.
+            if size == 1:
+                indices = (0, -1)
+                value = variable[...]
+                values = (value, value)
+            elif size == 2:
+                indices = (0, 1, -1)
+                value = variable[-1:]
+                values = (variable[:1], value, value)
+            else:
+                indices = (0, 1, -1)
+                values = (variable[:1], variable[1:2], variable[-1:])
+        elif ndim == 2 and data.shape[-1] == 2:
+            # Assume that 2-d data with a last dimension of size 2
+            # contains coordinate bounds, for which it is useful to
+            # cache the upper and lower bounds of the the first and
+            # last cells.
+            indices = (0, 1, -2, -1)
+            ndim1 = ndim - 1
             values = (
-                variable[(slice(0, 1, 1),) * ndim],
-                None,
+                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            )
+            if data.size == 2:
+                values = values + values
+            else:
+                values += (
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
+                )
+        elif size == 1:
+            indices = (0, -1)
+            value = variable[...]
+            values = (value, value)
+        elif size == 3:
+            indices = (0, 1, -1)
+            if char:
+                values = variable[...].reshape(3, variable.shape[-1])
+            else:
+                values = variable[...].flatten()
+        else:
+            indices = (0, -1)
+            values = (
+                variable[(slice(0, 1),) * ndim],
                 variable[(slice(-1, None, 1),) * ndim],
             )
 
         # Create a dictionary of the element values
         elements = {}
-        for element, value in zip((0, 1, -1), values):
-            if value is None:
-                continue
+        for index, value in zip(indices, values):
+            if char:
+                # Variable is a netCDF classic style char array, so
+                # collapse (by concatenation) the outermost (fastest
+                # varying) dimension. E.g. [['a','b','c']] becomes
+                # ['abc']
+                if value.dtype.kind == "U":
+                    value = value.astype("S")
+
+                a = netCDF4.chartostring(value)
+                shape = a.shape
+                a = np.array([x.rstrip() for x in a.flat])
+                a = np.reshape(a, shape)
+                value = np.ma.masked_where(a == "", a)
 
             if np.ma.is_masked(value):
                 value = np.ma.masked
@@ -498,7 +598,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     # a Python scalar.
                     pass
 
-            elements[element] = value
+            elements[index] = value
 
         # Store the elements in the data object
         data._set_cached_elements(elements)

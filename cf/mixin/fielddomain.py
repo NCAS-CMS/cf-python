@@ -3,6 +3,7 @@ from numbers import Integral
 
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
 from ..decorators import (
@@ -159,10 +160,12 @@ class FieldDomain:
         ref1 = field1.coordinate_references(todict=True)[key1]
 
         if not ref0.equivalent(ref1, rtol=rtol, atol=atol, verbose=verbose):
-            logger.info(
-                f"{self.__class__.__name__}: Non-equivalent coordinate "
-                f"references ({ref0!r}, {ref1!r})"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent coordinate "
+                    f"references ({ref0!r}, {ref1!r})"
+                )  # pragma: no cover
+
             return False
 
         # Compare the domain ancillaries
@@ -244,6 +247,8 @@ class FieldDomain:
                  empty if the *ancillary_mask* parameter is False.
 
         """
+        debug = is_log_level_debug(logger)
+
         compress = mode == "compress"
         envelope = mode == "envelope"
         full = mode == "full"
@@ -299,11 +304,12 @@ class FieldDomain:
 
             unique_axes.update(axes)
 
-        logger.debug(
-            f"  parsed       = {parsed!r}\n"
-            f"  unique_axes  = {unique_axes!r}\n"
-            f"  n_axes       = {n_axes!r}"
-        )  # pragma: no cover
+        if debug:
+            logger.debug(
+                f"  parsed       = {parsed!r}\n"
+                f"  unique_axes  = {unique_axes!r}\n"
+                f"  n_axes       = {n_axes!r}"
+            )  # pragma: no cover
 
         if len(unique_axes) < n_axes:
             raise ValueError(
@@ -336,9 +342,10 @@ class FieldDomain:
 
             item_axes = axes[0]
 
-            logger.debug(
-                f"  item_axes    = {item_axes!r}\n  keys         = {keys!r}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"  item_axes    = {item_axes!r}\n  keys         = {keys!r}"
+                )  # pragma: no cover
 
             if n_axes == 1:
                 # ----------------------------------------------------
@@ -351,19 +358,22 @@ class FieldDomain:
                 value = points[0]
                 identity = identities[0]
 
-                logger.debug(
-                    f"  {n_items} 1-d constructs: {constructs!r}\n"
-                    f"  axis         = {axis!r}\n"
-                    f"  value        = {value!r}\n"
-                    f"  identity     = {identity!r}"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"  {n_items} 1-d constructs: {constructs!r}\n"
+                        f"  axis         = {axis!r}\n"
+                        f"  value        = {value!r}\n"
+                        f"  identity     = {identity!r}"
+                    )  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, np.ndarray)):
                     # 1-d CASE 1: Value is already an index, e.g. [0],
                     #             [7,4,2], slice(0,4,2),
                     #             numpy.array([2,4,7]), [True, False,
                     #             True]
-                    logger.debug("  1-d CASE 1:")  # pragma: no cover
+
+                    if debug:
+                        logger.debug("  1-d CASE 1:")  # pragma: no cover
 
                     index = value
 
@@ -384,7 +394,8 @@ class FieldDomain:
                     # 1-d CASE 2: Axis is cyclic and subspace
                     #             criterion is a 'within' or 'without'
                     #             Query instance
-                    logger.debug("  1-d CASE 2:")  # pragma: no cover
+                    if debug:
+                        logger.debug("  1-d CASE 2:")  # pragma: no cover
 
                     if item.increasing:
                         anchor0 = value.value[0]
@@ -441,7 +452,8 @@ class FieldDomain:
 
                 elif item is not None:
                     # 1-d CASE 3: All other 1-d cases
-                    logger.debug("  1-d CASE 3:")  # pragma: no cover
+                    if debug:
+                        logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     index = item == value
                     index = index.data.to_dask_array()
@@ -477,10 +489,11 @@ class FieldDomain:
                 # ----------------------------------------------------
                 # N-d constructs
                 # ----------------------------------------------------
-                logger.debug(
-                    f"  {n_items} N-d constructs: {constructs!r}\n"
-                    f"  {len(points)} points        : {points!r}\n"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"  {n_items} N-d constructs: {constructs!r}\n"
+                        f"  {len(points)} points        : {points!r}\n"
+                    )  # pragma: no cover
 
                 # Make sure that each N-d item has the same axis order
                 transposed_constructs = []
@@ -495,9 +508,11 @@ class FieldDomain:
 
                     transposed_constructs.append(construct)
 
-                logger.debug(
-                    f"  transposed N-d constructs: {transposed_constructs!r}"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        "  transposed N-d constructs: "
+                        f"{transposed_constructs!r}"
+                    )  # pragma: no cover
 
                 # Find where each construct matches its value
                 item_matches = [
@@ -517,9 +532,11 @@ class FieldDomain:
                 else:
                     ind = np.where(item_match)
 
-                logger.debug(
-                    f"  item_match  = {item_match}\n" f"  ind         = {ind}"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"  item_match  = {item_match}\n"
+                        f"  ind         = {ind}"
+                    )  # pragma: no cover
 
                 for i in ind:
                     if not i.size:
@@ -651,7 +668,11 @@ class FieldDomain:
                 create_mask = False
 
             # Create an ancillary mask for these axes
-            logger.debug(f"  create_mask  = {create_mask}")  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"  create_mask  = {create_mask}"
+                )  # pragma: no cover
+
             if create_mask:
                 mask[canonical_axes] = _create_ancillary_mask_component(
                     mask_component_shape, ind, compress
@@ -659,7 +680,8 @@ class FieldDomain:
 
         indices = {"indices": indices, "mask": mask}
 
-        logger.debug(f"  indices      = {indices!r}")  # pragma: no cover
+        if debug:
+            logger.debug(f"  indices      = {indices!r}")  # pragma: no cover
 
         # Return the indices and ancillary masks
         return indices
@@ -1630,7 +1652,7 @@ class FieldDomain:
                 coordinates, otherwise it is assumed to have the same
                 units as the dimension coordinates.
 
-            config: `dict`
+            config: `dict`, optional
                 Additional parameters for optimising the
                 operation. See the code for details.
 

@@ -2,6 +2,7 @@ import logging
 from copy import deepcopy
 
 import numpy as np
+from cfdm import is_log_level_info
 
 from .decorators import (
     _deprecated_kwarg_check,
@@ -405,13 +406,7 @@ class Flags:
                         f"{self.__class__.__name__}: Different attributes: "
                         f"{attr[1:]}"
                     )  # pragma: no cover
-                    return False
 
-            elif hasattr(other, attr):
-                print(
-                    "%s: Different attributes: %s"
-                    % (self.__class__.__name__, attr[1:])
-                )  # pragma: no cover
                 return False
 
         return True

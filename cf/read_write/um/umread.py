@@ -8,7 +8,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-from cfdm import Constructs
+from cfdm import Constructs, is_log_level_info
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -35,11 +35,13 @@ logger = logging.getLogger(__name__)
 
 _cached_runid = {}
 _cached_latlon = {}
-_cached_time = {}
 _cached_ctime = {}
 _cached_size_1_height_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
+_cached_regular_array = {}
+_cached_regular_bounds = {}
+_cached_data = {}
 
 # --------------------------------------------------------------------
 # Constants
@@ -488,6 +490,7 @@ class UMField:
         verbose=None,
         implementation=None,
         select=None,
+        info=False,
         **kwargs,
     ):
         """**Initialisation**
@@ -543,6 +546,8 @@ class UMField:
 
         """
         self._bool = False
+
+        self.info = info
 
         self.implementation = implementation
 
@@ -637,8 +642,9 @@ class UMField:
 
         int_hdr = rec0.int_hdr
         self.int_hdr_dtype = int_hdr.dtype
-
+        self.real_hdr_dtype = rec0.real_hdr.dtype
         int_hdr = int_hdr.tolist()
+
         real_hdr = rec0.real_hdr.tolist()
         self.int_hdr = int_hdr
         self.real_hdr = real_hdr
@@ -801,7 +807,7 @@ class UMField:
 
         # The STASH code has been set in the PP header, so try to find
         # its standard_name from the conversion table
-        stash_records = stash2standard_name.get((submodel, stash), None)
+        stash_records = _stash2standard_name.get((submodel, stash), None)
 
         um_Units = None
         um_condition = None
@@ -1086,7 +1092,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": Data(360.0, units=xc.Units),
+                        "period": self.get_data(np.array(360.0), xc.Units),
                     },
                 )
 
@@ -1230,21 +1236,24 @@ class UMField:
 
         # "a" domain ancillary
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float  # Zsea
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,  # Zsea
         )
         bounds0 = np.array(
             [rec.real_hdr[brlev] for rec in self.z_recs],  # Zsea lower
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(self.field, da)
+        axis_key = self.implementation.set_domain_axis(
+            self.field, da, copy=False
+        )
         _axis["z"] = axis_key
 
         ac = self.implementation.initialise_DomainAncillary()
@@ -1311,13 +1320,16 @@ class UMField:
 
         # "b" domain ancillary
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1368,19 +1380,22 @@ class UMField:
         field = self.field
 
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[brlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd1] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd1] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(field, da)
+        axisZ = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axisZ
 
         # ac = AuxiliaryCoordinate()
@@ -1398,13 +1413,16 @@ class UMField:
         )
 
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1483,7 +1501,7 @@ class UMField:
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(field, da)
+        axis_key = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axis_key
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -1689,15 +1707,13 @@ class UMField:
 
         """
         if array is not None:
-            array = Data(array, units=units, fill_value=fill_value)
-            array._cfa_set_write(True)
-            self.implementation.set_data(c, array, copy=False)
+            data = self.get_data(array, units, fill_value)
+            self.implementation.set_data(c, data, copy=False)
 
         if bounds is not None:
-            bounds_data = Data(bounds, units=units, fill_value=fill_value)
-            bounds_data._cfa_set_write(True)
+            data = self.get_data(bounds, units, fill_value, bounds=True)
             bounds = self.implementation.initialise_Bounds()
-            self.implementation.set_data(bounds, bounds_data, copy=False)
+            self.implementation.set_data(bounds, data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
 
         return c
@@ -1893,7 +1909,8 @@ class UMField:
             `Data`
 
         """
-        logger.info("Creating data:")  # pragma: no cover
+        if self.info:
+            logger.info("Creating data:")  # pragma: no cover
 
         LBROW = self.lbrow
         LBNPT = self.lbnpt
@@ -2079,10 +2096,10 @@ class UMField:
             fill_value = None
 
         # Create the dask array
-        array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
+        dx = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
         # Create the Data object
-        data = Data(array, units=um_Units, fill_value=fill_value)
+        data = Data(dx, units=um_Units, fill_value=fill_value)
         data._cfa_set_write(True)
 
         self.data = data
@@ -2421,19 +2438,6 @@ class UMField:
             # Int or float
             return rec.get_type_and_num_words()[0]
 
-    #            rec_file = rec.file
-    #            # data_type = rec_file.c_interface.get_type_and_length(
-    #            data_type = rec_file.c_interface.get_type_and_num_words(
-    #                rec.int_hdr)[0]
-    #            if data_type == 'int':
-    #                # Integer
-    #                data_type = 'int%d' % (rec_file.word_size * 8)
-    #            else:
-    #                # Float
-    #                data_type = 'float%d' % (rec_file.word_size * 8)
-    #
-    #        return np.dtype(data_type)
-
     def printfdr(self, display=False):
         """Print out the contents of PP field headers.
 
@@ -2475,7 +2479,7 @@ class UMField:
         dc.id = "UM_pseudolevel"
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisP = self.implementation.set_domain_axis(self.field, da)
+        axisP = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["p"] = axisP
 
         self.implementation.set_dimension_coordinate(
@@ -2543,7 +2547,7 @@ class UMField:
         dc = _cached_size_1_height_coordinate.get(key, None)
 
         da = self.implementation.initialise_DomainAxis(size=1)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         if dc is not None:
@@ -2716,7 +2720,7 @@ class UMField:
             climatology = False
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["t"] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2763,7 +2767,7 @@ class UMField:
         # Note that `axis` might not be "t". For instance, it could be
         # "y" if the time coordinates are coming from extra data.
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis[axis] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -3011,11 +3015,12 @@ class UMField:
             axiscode: `int`
 
             axis: `str`
-                'x' or 'y'
+                Which type of coordinate to create: ``'x'`` or
+                ``'y'``.
 
         :Returns:
 
-            `str, `DimensionCoordinate`
+            (`str`, `DimensionCoordinate`)
 
         """
         X = axiscode in (11, -11)
@@ -3031,7 +3036,9 @@ class UMField:
             size = self.lbnpt
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["x"] = axis_key
         else:
             delta = self.bdy
@@ -3039,7 +3046,9 @@ class UMField:
             size = self.lbrow
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["y"] = axis_key
 
             autocyclic = _autocyclic_false
@@ -3053,12 +3062,15 @@ class UMField:
                 while origin + delta * size < -360.0:
                     origin += 360.0
 
-            array = np.arange(
-                origin + delta,
-                origin + delta * (size + 0.5),
-                delta,
-                dtype=float,
-            )
+            array = _cached_regular_array.get((origin, delta, size))
+            if array is None:
+                array = np.arange(
+                    origin + delta,
+                    origin + delta * (size + 0.5),
+                    delta,
+                    dtype=float,
+                )
+                _cached_regular_array[(origin, delta, size)] = array
 
             # Create the coordinate bounds
             if axiscode in (13, 31, 40, 99):
@@ -3070,10 +3082,13 @@ class UMField:
                 # 99 = Other
                 bounds = None
             else:
-                delta_by_2 = 0.5 * delta
-                bounds = self.create_bounds_array(
-                    array - delta_by_2, array + delta_by_2
-                )
+                bounds = _cached_regular_bounds.get((origin, delta, size))
+                if bounds is None:
+                    delta_by_2 = 0.5 * delta
+                    bounds = self.create_bounds_array(
+                        array - delta_by_2, array + delta_by_2
+                    )
+                    _cached_regular_bounds[(origin, delta, size)] = bounds
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
@@ -3088,13 +3103,13 @@ class UMField:
 
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, bounds, units=units)
-        dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
+        dc = self.coord_positive(dc, axiscode, axis_key)
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = Data(360.0, units=units)
+            autocyclic["period"] = self.get_data(np.array(360.0), units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
 
@@ -3222,9 +3237,11 @@ class UMField:
             `DimensionCoordinate`
 
         """
-        logger.info(
-            "Creating Z coordinates and bounds from BLEV, BRLEV and " "BRSVD1:"
-        )  # pragma: no cover
+        if self.info:
+            logger.info(
+                "Creating Z coordinates and bounds from BLEV, BRLEV and "
+                "BRSVD1:"
+            )  # pragma: no cover
 
         z_recs = self.z_recs
         array = tuple([rec.real_hdr.item(blev) for rec in z_recs])
@@ -3235,19 +3252,18 @@ class UMField:
         if _coord_positive.get(axiscode, None) == "down":
             bounds0, bounds1 = bounds1, bounds0
 
-        copy = False
-        array = np.array(array, dtype=float)
-        bounds0 = np.array(bounds0, dtype=float)
-        bounds1 = np.array(bounds1, dtype=float)
+        array = np.array(array, dtype=self.real_hdr_dtype)
+        bounds0 = np.array(bounds0, dtype=self.real_hdr_dtype)
+        bounds1 = np.array(bounds1, dtype=self.real_hdr_dtype)
         bounds = self.create_bounds_array(bounds0, bounds1)
 
-        if (bounds0 == bounds1).all():
+        if (bounds0 == bounds1).all() or np.allclose(bounds.min(), _pp_rmdi):
             bounds = None
         else:
             bounds = self.create_bounds_array(bounds0, bounds1)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -3265,147 +3281,11 @@ class UMField:
             self.field,
             dc,
             axes=[_axis["z"]],
-            copy=copy,
+            copy=False,
             autocyclic=_autocyclic_false,
         )
 
-        logger.info("    " + dc.dump(display=False))  # pragma: no cover
-
         return dc
-
-
-# _stash2standard_name = {}
-#
-# def load_stash2standard_name(table=None, delimiter='!', merge=True):
-#     '''Load a STASH to standard name conversion table.
-#
-# :Parameters:
-#
-#     table: `str`, optional
-#         Use the conversion table at this file location. By default the
-#         table will be looked for at
-#         ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
-#
-#     delimiter: `str`, optional
-#         The delimiter of the table columns. By default, ``!`` is taken
-#         as the delimiter.
-#
-#     merge: `bool`, optional
-#         If *table* is None then *merge* is taken as False, regardless
-#         of its given value.
-#
-# :Returns:
-#
-#     `None`
-#
-# *Examples*
-#
-# >>> load_stash2standard_name()
-# >>> load_stash2standard_name('my_table.txt')
-# >>> load_stash2standard_name('my_table2.txt', ',')
-# >>> load_stash2standard_name('my_table3.txt', merge=True)
-# >>> load_stash2standard_name('my_table4.txt', merge=False)
-#
-#     '''
-#     # 0  Model
-#     # 1  STASH code
-#     # 2  STASH name
-#     # 3  units
-#     # 4  valid from UM vn
-#     # 5  valid to   UM vn
-#     # 6  standard_name
-#     # 7  CF extra info
-#     # 8  PP extra info
-#
-#     if table is None:
-#         # Use default conversion table
-#         merge = False
-#         package_path = os.path.dirname(__file__)
-#         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-#
-#     lines = csv.reader(open(table, 'r'),
-#                        delimiter=delimiter, skipinitialspace=True)
-#
-#     raw_list = []
-#     [raw_list.append(line) for line in lines]
-#
-#     # Get rid of comments
-#     for line in raw_list[:]:
-#         if line[0].startswith('#'):
-#             raw_list.pop(0)
-#             continue
-#         break
-#
-#     # Convert to a dictionary which is keyed by (submodel, STASHcode)
-#     # tuples
-#
-#     (model, stash, name,
-#      units,
-#      valid_from, valid_to,
-#      standard_name, cf, pp) = list(range(9))
-#
-#     stash2sn = {}
-#     for x in raw_list:
-#         key = (int(x[model]), int(x[stash]))
-#
-#         if not x[units]:
-#             x[units] = None
-#
-#         try:
-#             cf_info = {}
-#             if x[cf]:
-#                 for d in x[7].split():
-#                     if d.startswith('height='):
-#                         cf_info['height'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                         if cf_info['height'] == '':
-#                             cf_info['height'][1] = '1'
-#
-#                     if d.startswith('below_'):
-#                         cf_info['below'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                        if cf_info['below'] == '':
-#                             cf_info['below'][1] = '1'
-#
-#                     if d.startswith('where_'):
-#                         cf_info['where'] = d.replace('where_', 'where ', 1)
-#                     if d.startswith('over_'):
-#                         cf_info['over'] = d.replace('over_', 'over ', 1)
-#
-#             x[cf] = cf_info
-#         except IndexError:
-#             pass
-#
-#         try:
-#             x[valid_from] = float(x[valid_from])
-#         except ValueError:
-#             x[valid_from] = None
-#
-#         try:
-#             x[valid_to] = float(x[valid_to])
-#         except ValueError:
-#             x[valid_to] = None
-#
-#         x[pp] = x[pp].rstrip()
-#
-#         line = (x[name:],)
-#
-#         if key in stash2sn:
-#             stash2sn[key] += line
-#         else:
-#             stash2sn[key] = line
-#
-#     if not merge:
-#         _stash2standard_name.clear()
-#
-#     _stash2standard_name.update(stash2sn)
-
-
-# ---------------------------------------------------------------------
-# Create the STASH code to standard_name conversion dictionary
-# ---------------------------------------------------------------------
-load_stash2standard_name()
-stash2standard_name = _stash2standard_name
 
 
 class UMRead(cfdm.read_write.IORead):
@@ -3498,6 +3378,13 @@ class UMRead(cfdm.read_write.IORead):
         >>> f = read('*/file[0-9].pp', um_version=708)
 
         """
+        if not _stash2standard_name:
+            # --------------------------------------------------------
+            # Create the STASH code to standard_name conversion
+            # dictionary
+            # --------------------------------------------------------
+            load_stash2standard_name()
+
         if endian:
             byte_ordering = endian + "_endian"
         else:
@@ -3519,6 +3406,8 @@ class UMRead(cfdm.read_write.IORead):
 
         f = self.file_open(filename)
 
+        info = is_log_level_info(logger)
+
         um = [
             UMField(
                 var,
@@ -3532,6 +3421,7 @@ class UMRead(cfdm.read_write.IORead):
                 verbose=verbose,
                 implementation=self.implementation,
                 select=select,
+                info=info,
             )
             for var in f.vars
         ]

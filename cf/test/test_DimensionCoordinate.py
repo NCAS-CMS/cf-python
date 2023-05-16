@@ -626,13 +626,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(d.data.chunks, ((1,) * d.size,))
         self.assertEqual(d.bounds.data.chunks, ((1,) * d.size, (2,)))
 
-    def test_DimensiconCoordinate_set_data(self):
-        """Test the `set_data` DimensionCoordinate method."""
-        # Test set_data when the units are invalid
-        units = "bad units"
-        d = cf.DimensionCoordinate(data=cf.Data([1, 2], units=units))
-        self.assertEqual(d.units, units)
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

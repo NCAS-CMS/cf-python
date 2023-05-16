@@ -11,6 +11,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_info
 from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
@@ -29,6 +30,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _numpy_allclose,
     _section,
     abspath,
     atol,
@@ -446,30 +448,33 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        array = to_dask(array, chunks, **kwargs)
+        # Set whether or not we're sure that the Data instance has a
+        # determinsitic name
+        self._custom["deterministic"] = not is_dask_collection(array)
+
+        dx = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
             dt = True
 
         first_value = None
-
-        if not dt and array.dtype.kind == "O":
+        if not dt and dx.dtype.kind == "O":
             kwargs = init_options.get("first_non_missing_value", {})
-            first_value = first_non_missing_value(array, **kwargs)
+            first_value = first_non_missing_value(dx, **kwargs)
 
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
         # reference times
-        if dt and array.dtype.kind in "USO":
-            array, units = convert_to_reftime(array, units, first_value)
+        if dt and dx.dtype.kind in "USO":
+            dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, clear=_NONE)
+        self._set_dask(dx, clear=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -1559,6 +1564,42 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         self._custom["cfa_write"] = bool(status)
 
+    def _update_deterministic(self, other):
+        """Update the deterministic name status.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `get_deterministic_name`,
+                     `has_deterministic_name`
+
+        :Parameters:
+
+            other: `bool` or `Data`
+                If `False` then set the deterministic name status to
+                `False`. If `True` then do not change the
+                deterministic name status. If `Data` then set the
+                deterministic name status to `False` if and only if
+                *other* has a False deterministic name status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if other is False:
+            self._custom["deterministic"] = False
+            return
+
+        if other is True:
+            return
+
+        custom = self._custom
+        deterministic = custom["deterministic"]
+        if deterministic:
+            custom["deterministic"] = (
+                deterministic and other._custom["deterministic"]
+            )
+
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         """Calculate the n-th discrete difference along the given axis.
@@ -2375,6 +2416,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
 
+        d._update_deterministic(not is_dask_collection(q))
+
         return d
 
     @_inplace_enabled(default=False)
@@ -2578,7 +2621,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `compute` causes all delayed operations to be computed.
 
         .. versionadded:: 3.14.0
 
@@ -3607,13 +3650,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             if axes is not None:
                 self._axes = axes
 
+            self._update_deterministic(other)
             return self
+
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
             if axes is not None:
                 data0._axes = axes
 
+            data0._update_deterministic(other)
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3740,10 +3786,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         d = self.copy()
         d._set_dask(dx)
+
+        # Don't know (yet) if 'operator' has a deterministic name
+        d._update_deterministic(False)
+
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull_graph=True, relaxed_units=False):
+    def concatenate(
+        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull_graph`
@@ -3831,17 +3883,23 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             for d in data:
                 d.cull_graph()
 
-        data0 = data[0].copy()
+        data0 = data[0]
+        units0 = data0.Units
+
+        if copy:
+            data0 = data0.copy()
+            copied = True
+        else:
+            copied = False
 
         processed_data = []
-        units0 = data0.Units
         for index, data1 in enumerate(data):
-            copied = False  # to avoid making two copies in a given case
-
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
-                data1 = data1.copy()
-                copied = True
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
                 data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
@@ -3854,18 +3912,22 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             ):
                 # Allow identical invalid units to be equal
                 pass
-            elif not units0.equivalent(units1):
+            elif units0.equals(units1):
+                pass
+            elif units0.equivalent(units1):
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
+                data1.Units = units0
+            else:
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-            elif not units0.equals(units1):
-                if not copied:
-                    data1 = data1.copy()
-
-                data1.Units = units0
 
             processed_data.append(data1)
+            copied = not copy  # to avoid making two copies in a given case
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
@@ -3899,14 +3961,24 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa)
 
-        # Set the appropriate cached elements
+        # Set appropriate cached elements
         cached_elements = {}
         for i in (0, -1):
             element = processed_data[i]._get_cached_elements().get(i)
             if element is not None:
                 cached_elements[i] = element
 
-        data0._set_cached_elements(cached_elements)
+        if cached_elements:
+            data0._set_cached_elements(cached_elements)
+
+        # Set whether or not the concatenated name is deterministic
+        deterministic = True
+        for d in processed_data:
+            if not d.has_deterministic_name():
+                deterministic = False
+                break
+
+        data0._update_deterministic(deterministic)
 
         # Set the CFA-netCDF aggregated data instructions and file
         # name substitutions by combining them from all of the input
@@ -4550,16 +4622,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         except KeyError:
             pass
         else:
+            if not old_units or self.Units.equals(value):
+                self._Units = value
+                return
+
             if old_units and not old_units.equivalent(value):
                 raise ValueError(
                     f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
                     "Consider using the override_units method instead."
                 )
-
-            if not old_units or self.Units.equals(value):
-                self._Units = value
-                return
 
         dtype = self.dtype
         if dtype.kind in "iu":
@@ -4568,14 +4640,22 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             else:
                 dtype = _dtype_float
 
-        dx = self.to_dask_array()
-        dx = dx.map_blocks(
-            partial(cf_units, from_units=old_units, to_units=value),
-            dtype=dtype,
-        )
+        func = partial(cf_units, from_units=old_units, to_units=value)
 
-        # Setting equivalent units doesn't affect the CFA write status
-        self._set_dask(dx, clear=_ALL ^ _CFA)
+        dx = self.to_dask_array()
+        dx = dx.map_blocks(func, dtype=dtype)
+
+        # Setting equivalent units doesn't affect the CFA write
+        # status. Nor does it invalidate any cached values, but only
+        # because we'll adjust those, too.
+        self._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+
+        # Adjust cached values for the new units
+        cache = self._get_cached_elements()
+        if cache:
+            self._set_cached_elements(
+                {index: func(value) for index, value in cache.items()}
+            )
 
         self._Units = value
 
@@ -4960,7 +5040,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `array` causes all delayed operations to be computed. The
+        returned `numpy` array is a deep copy of that returned by
+        created `compute`.
 
         .. seealso:: `datetime_array`, `compute`, `persist`
 
@@ -7907,18 +7989,59 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # ------------------------------------------------------------
         # Check that each instance has equal array values
         # ------------------------------------------------------------
-        # Check that each instance has the same units
+        self_dx = self.to_dask_array()
+        other_dx = other.to_dask_array()
+
+        # Check that each instance has the same units. Do this before
+        # any other possible short circuits.
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
-            logger.info(
-                f"{self.__class__.__name__}: Different Units "
-                f"({self.Units!r}, {other.Units!r})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different Units "
+                    f"({self_Units!r}, {other_Units!r})"
+                )
+
             return False
 
-        self_dx = self.to_dask_array()
-        other_dx = other.to_dask_array()
+        rtol = float(rtol)
+        atol = float(atol)
+
+        # Return False if there are different cached elements. This
+        # provides a possible short circuit for that case that two
+        # arrays are not equal (but not in the case that they are).
+        cache0 = self._get_cached_elements()
+        if cache0:
+            cache1 = other._get_cached_elements()
+            if cache1 and sorted(cache0) == sorted(cache1):
+                a = []
+                b = []
+                for key, value0 in cache0.items():
+                    value1 = cache1[key]
+                    if value0 is np.ma.masked or value1 is np.ma.masked:
+                        # Don't test on masked values - this logic is
+                        # determined elsewhere.
+                        continue
+
+                    # Make sure strings are unicode
+                    try:
+                        value0 = value0.decode()
+                        value1 = value1.decode()
+                    except AttributeError:
+                        pass
+
+                    a.append(value0)
+                    b.append(value1)
+
+                if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different array "
+                            f"values (atol={atol}, rtol={rtol})"
+                        )
+
+                    return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -7931,8 +8054,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 self_dx,
                 other_dx,
                 masked_equal=True,
-                rtol=float(rtol),
-                atol=float(atol),
+                rtol=rtol,
+                atol=atol,
             )
         elif not self_is_numeric and not other_is_numeric:
             # If the array (say d) is fully masked, then the output of
@@ -7949,10 +8072,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 data_comparison = True
 
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
-            logger.info(
-                f"{self.__class__.__name__}: Different data types:"
-                f"{self_dx.dtype} != {other_dx.dtype}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types:"
+                    f"{self_dx.dtype} != {other_dx.dtype}"
+                )
+
             return False
 
         mask_comparison = da.all(
@@ -7964,10 +8089,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         result = da.logical_and(data_comparison, mask_comparison)
 
         if not result.compute():
-            logger.info(
-                f"{self.__class__.__name__}: Different array values ("
-                f"atol={atol}, rtol={rtol})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different array values ("
+                    f"atol={atol}, rtol={rtol})"
+                )
+
             return False
         else:
             return True
@@ -9077,6 +9204,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
+        d._update_deterministic(a)
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -9944,10 +10072,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             dx = da.isclose(self, y, atol=atol, rtol=rtol)
 
-            d = self.copy(array=False)
+            d = self.copy()
             d._set_dask(dx)
             d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
+            d._update_deterministic(not is_dask_collection(y))
+
             return d
 
     @_inplace_enabled(default=False)
@@ -10773,6 +10903,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             cf_where, dx, da.asanyarray(condition), x, y, d.hardmask
         )
         d._set_dask(dx)
+
+        # Don't know (yet) if 'x' and 'y' have a deterministic names
+        d._update_deterministic(False)
 
         return d
 
