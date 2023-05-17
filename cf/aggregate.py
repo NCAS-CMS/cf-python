@@ -1642,60 +1642,33 @@ class _Meta:
         )
 
     def _signature_cell_diff(self, cell_diff):
-        """TODOAGGVER
+        """TODOAGG
 
         .. versionadded:: TODOAGGVER
 
         :Parameters:
 
             cell_diff: `tuple`
-                TODOAGGVER
+                TODOAGG
 
         :Returns:
 
             `tuple`
-                TODOAGGVER
+                TODOAGG
         """
         out = []
         for x in cell_diff:
             if x is None:
                 out.extend((None, None))
-            else:
-                out.extend((repr(x), self._tokenize(x)))
+            else:                
+                if isinstance(x, Data):
+                    y = (x.tolist(), x.Units.formatted(definition=True))
+                else:
+                    y = x
+                
+                out.extend((repr(x), hash(tokenize(y))))
 
         return tuple(out)
-
-    def _tokenize(self, x):
-        """TODOAGGVER
-
-        .. versionadded:: TODOAGGVER
-
-        :Parameters:
-
-            cellsize:
-                TODOAGGVER
-
-        :Returns:
-
-            `str` or `None`
-                TODOAGGVER
-
-        **Examples**
-
-        >>> m._tokenize(None)
-        None
-        >>> m._tokenize(cf.wi(28, 31, 'day'))
-        '3439161440d40ac36cc0ffeb24cf9f6f'
-        >>> m._tokenize(cf.D(30))
-        '7ae5739e1cb2ab71eed037a7da8c4c36'
-        >>> m._tokenize(cf.Data(24, 'hours')
-        'add2bc5af6faf454edeb7cae61a2814f'
-
-        """
-        if isinstance(x, Data):
-            return tokenize(x.tolist(), x.Units.formatted(definition=True))
-
-        return tokenize(x)
 
     def find_coordrefs(self, key):
         """Return all the coordinate references that point to a
@@ -2724,20 +2697,62 @@ def aggregate(
 aggregate.status = 0
 
 
-def climatology_cells():
-    return {
-        "T": (
-            {"cell": Data(1, "hour")},
-            {"diff": Data(1, "hour")},
-            {"cell": Data(3, "hour")},
-            {"diff": Data(3, "hour")},
-            {"cell": Data(6, "hour")},
-            {"diff": Data(6, "hour")},
+def climatology_cells(hours=(1, 3, 6), hourly_instantaneous=True):
+    """TODOAGG
+
+    .. versionadded:: TODOAGGVER
+
+    .. seealso:: `cf.aggregate`
+
+    :Parameters:
+
+        hours: sequence of numbers, optional
+            TODOAGG
+
+        hourly_instantaneous: `bool`, optional
+            TODOAGG
+
+    :Returns:
+
+        `dict`
+            TODOAGG
+
+    **Examples**
+
+    >>> cf.climatology_cells()
+    {'T': [{'cell': <CF Data(): 1 hour>},
+      {'diff': <CF Data(): 1 hour>},
+      {'cell': <CF Data(): 3 hour>},
+      {'diff': <CF Data(): 3 hour>},
+      {'cell': <CF Data(): 6 hour>},
+      {'diff': <CF Data(): 6 hour>},
+      {'cell': <CF Data(): 1 day>},
+      {'cell': <CF Query: (wi [28, 31] day)>},
+      {'cell': <CF Query: (wi [360, 366] day)>}]}
+    >>> cf.climatology_cells(hours=(3, 12), hourly_instantaneous=False)
+    {'T': [{'cell': <CF Data(): 3 hour>},
+      {'cell': <CF Data(): 12 hour>},
+      {'cell': <CF Data(): 1 day>},
+      {'cell': <CF Query: (wi [28, 31] day)>},
+      {'cell': <CF Query: (wi [360, 366] day)>}]}
+
+    """
+    conditions = []
+    for h in hours:
+        c = Data(h, "hour")
+        conditions.append({"cell": c})
+        if hourly_instantaneous:
+            conditions.append({"diff": c.copy()})
+
+    conditions.extend(
+        (
             {"cell": Data(1, "day")},
             {"cell": wi(28, 31, "day")},
             {"cell": wi(360, 366, "day")},
         )
-    }
+    )
+
+    return {"T": conditions}
 
 
 def _create_hash_and_first_values(
@@ -3553,31 +3568,29 @@ def _ok_coordinate_arrays(
 
                         return False
         else:
+            # --------------------------------------------------------
+            # The dimension coordinates do not have bounds
+            # --------------------------------------------------------
             diff = m.axis[axis]["diff"][dim_coord_index0]
-            if diff is not None:
+            if contiguous and diff is not None:
                 # ----------------------------------------------------
-                # The dimension coordinates do not have bounds, but
-                # the spacing of the coordinates has been
-                # specified. Therefore, make sure that the given
+                # The spacing of the coordinates has been specified
+                # and "contiguous" coordinates have also been
+                # requested. Therefore, make sure that the given
                 # spacing also applies between two adjacent domains.
                 # ----------------------------------------------------
                 units = m.axis[axis]["units"][dim_coord_index0]
                 for m0, m1 in zip(meta[:-1], meta[1:]):
                     dim_coord_index0 = m0.axis[axis]["dim_coord_index"]
                     dim_coord_index1 = m1.axis[axis]["dim_coord_index"]
-                    print(
-                        m1.first_values[axis][dim_coord_index0],
-                        m0.last_values[axis][dim_coord_index1],
-                    )
                     dim_diff = (
                         m1.first_values[axis][dim_coord_index0]
                         - m0.last_values[axis][dim_coord_index1]
                     )
-                    dim_diff = Data(dim_diff, units="days")  # diff.Units)
-                    print(dim_diff, dim_diff == diff)
+                    dim_diff = Data(dim_diff, units=self._diff_units(units))
                     if dim_diff != diff:
                         if info:
-                            meta[0].message = "something"
+                            meta[0].message = "something TODOAGG"
 
                         return False
 
@@ -3615,6 +3628,15 @@ def _ok_coordinate_arrays(
     # ----------------------------------------------------------------
     return True
 
+def _diff_units(units):
+    """TODOAGG"""
+    if units.isreftime:
+        return Units(units._units_since_reftime)
+
+    # TODO: Think about Kelvin units in relation to
+    #       https://github.com/cf-convention/discuss/issues/101
+    
+    return units
 
 @_manage_log_level_via_verbosity
 def _aggregate_2_fields(
