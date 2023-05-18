@@ -1,0 +1,302 @@
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. _Cheat_Sheet:
+
+
+**Cheat Sheet**
+===============
+
+----
+
+Version |release| for version |version| of the CF conventions.
+
+This cheat sheet provides a summary of some key functions and methods in 
+cf-python.
+
+.. contents::
+   :local:
+   :backlinks: entry
+
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         Operation        |                                                                                How to?                                                                               |
++==========================+======================================================================================================================================================================+
+|        **Install**       | *Install cf-python as root, with any missing dependencies, and the cf-plot visualisation package using pip:*                                                         |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: console                                                                                                                                              |
+|                          |                                                                                                                                                                      |
+|                          |    $ pip install cf-python cf-plot                                                                                                                                   |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Install cf-python with all of its required and optional dependencies, and the cf-plot visualisation package using conda:*                                           |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: console                                                                                                                                              |
+|                          |                                                                                                                                                                      |
+|                          |    $ conda install -c conda-forge cf-python cf-plot udunits2 esmpy>=8.0.0                                                                                            |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|        **Import**        | *Import cf-python and cf-plot:*                                                                                                                                      |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> import cf                                                                                                                                                     |
+|                          |    >>> import cfplot as cfp                                                                                                                                          |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         **Read**         | *Read the field constructs from a single file:*                                                                                                                      |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> fl = cf.read("file.nc")                                                                                                                                    |
+|                          |       >>> fl = cf.read("umfile.pp")                                                                                                                                  |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Read the field constructs from two or more files:*                                                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> fl = cf.read(['temperature.nc', 'precipitation_flux.nc'])                                                                                                  |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Read the field constructs using the * wildcard character                                                                                                            |
+|                          | (which reads all files in the directory that match the specified pattern):*                                                                                          |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> fl = cf.read('~/file*.nc')                                                                                                                                 |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Return field constructs by selecting the elements of the resulting * wildcard file list:*                                                                           |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |        >>> fl = cf.read('~/file*.nc')[0:3]                                                                                                                           |
+|                          |        >>> fl = cf.read('~/file*nc')[-1]                                                                                                                             |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Return field constructs whose identities match the given values:*                                                                                                   |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |         >>> fl = cf.read('~/file*.nc', select='units=hPa')                                                                                                           |
+|                          |         >>> fl = cf.read('~/file*.nc', select='air_temperature')                                                                                                     |
+|                          |         >>> fl = cf.read('~/cf-python/docs/source/sample_files/file*.nc', select='ncvar%q')                                                                          |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Selecting field:**                                                                                                                                                 |
+|                          |                                                                                                                                                                      |
+|                          | *Select a field directly by index while reading the file:*                                                                                                           |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> temp = cf.read("file.nc")[0]                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          | *Select a field from a field list:*                                                                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> temp = fl.select_field('air_temperature')                                                                                                                  |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         **Write**        | *Write one or more field constructs to a netCDF file:*                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> cf.write(tas, 'temperature.nc')                                                                                                                            |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | *Convert PP and UM fields files to netCDF files:*                                                                                                                    |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> cf.write(pp, 'umfile1.nc')                                                                                                                                 |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|       **Collapse**       | **Basic collapses:**                                                                                                                                                 |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> min = f.collapse('minimum')                                                                                                                                   |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> min = f.collapse('variance')                                                                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> min = f.collapse('integral')                                                                                                                                  |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Weighted collapses:**                                                                                                                                              |
+|                          |                                                                                                                                                                      |
+|                          | *Weighted time average:*                                                                                                                                             |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> avg = f.collapse('T: mean', weights=True)                                                                                                                     |
+|                          |                                                                                                                                                                      |
+|                          | *Mean over the time and latitude axes, with weights only applied to the latitude axis:*                                                                              |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> mean_latitude = f.collapse('time: latitude: mean', weights='latitude')                                                                                        |
+|                          |                                                                                                                                                                      |
+|                          | *Weighted areal means:*                                                                                                                                              |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> mean = f.collapse('area: mean', weights=True)                                                                                                                 |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Specifying Axes:**                                                                                                                                                 |
+|                          |                                                                                                                                                                      |
+|                          | *Temporal maxima:*                                                                                                                                                   |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> max = f.collapse('maximum', axes='T')                                                                                                                         |
+|                          |                                                                                                                                                                      |
+|                          |    >>> max = f.collapse('T: maximum')                                                                                                                                |
+|                          |                                                                                                                                                                      |
+|                          | *Horizontal maximum:*                                                                                                                                                |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> max = f.collapse('maximum', axes=['X', 'Y'])                                                                                                                  |
+|                          |    >>> max = f.collapse('X: Y: maximum')                                                                                                                             |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Grouped collapses:**                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          | *Annual maxima starting 1st January:*                                                                                                                                |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> y_max = f.collapse('T: maximum', cf.Y(month=12))                                                                                                              |
+|                          |                                                                                                                                                                      |
+|                          | *December, January, February maxima:*                                                                                                                                |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> djf_max = f.collapse('T: maximum', group=cf.djf())                                                                                                            |
+|                          |                                                                                                                                                                      |
+|                          | *Maxima for each 3-month season:*                                                                                                                                    |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |    >>> seas_max = f.collapse('T: maximum', group=cf.seasons())                                                                                                       |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|       **Subspace**       | **Subspacing by index:**                                                                                                                                             |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> new = temp[:, :, 0]                                                                                                                                        |
+|                          |       >>> new = temp[0, [2, 3, 9], [4, 8]]                                                                                                                           |
+|                          |       >>> new = temp[..., [True, False, True, True, False]]                                                                                                          |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Subspacing by metadata:**                                                                                                                                          |
+|                          |                                                                                                                                                                      |
+|                          | *Subspace to a new field construct whose 'longitude' coordinate spans only 45 degrees east, with the other domain axes remaining unchanged:*                         |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> new = temp.subspace(longitude=45)                                                                                                                          |
+|                          |       >>> new = temp.subspace(X=45)                                                                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | *Subspace to a new field construct whose longitude spans only 45 degrees east and latitude spans -60 degrees north, with the other domain axes remaining unchanged:* |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> new = temp.subspace(X=45, Y=-60)                                                                                                                           |
+|                          |                                                                                                                                                                      |
+|                          | *Subspace to a new field construct whose domain spans 34 to 72 degrees north and -25 to 45 degrees east:*                                                            |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> new = temp.subspace(latitude=(cf.wi(34, 72), longitude=(cf.wi(-25, 45))                                                                                    |
+|                          |                                                                                                                                                                      |
+|                          | *Subspaces based on the time dimension:*                                                                                                                             |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> new = temp.subspace(T=cf.dt('1996-01-20')))                                                                                                                |
+|                          |       >>> jan_2023 = temp.subspace(T=cf.year(2023) & cf.month(1))                                                                                                    |
+|                          |       >>> annual_avg_61_90 = annual_global_avg.subspace(T=cf.year(cf.wi(1961, 1990)))                                                                                |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Accessing constructs** | *Select constructs by identity:*                                                                                                                                     |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> x = c('latitude')                                                                                                                                          |
+|                          |       >>> x = c.filter_by_identity('latitude')                                                                                                                       |
+|                          |                                                                                                                                                                      |
+|                          | *Select constructs by property:*                                                                                                                                     |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> d = c.filter_by_property(units='degrees_east')                                                                                                             |
+|                          |       >>> d = c.filter_by_property(long_name='height', units='m')                                                                                                    |
+|                          |                                                                                                                                                                      |
+|                          | *Select constructs by method:*                                                                                                                                       |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> d = c.filter_by_method('mean')                                                                                                                             |
+|                          |       >>> d = c.filter_by_method('mean', 'maximum')                                                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | *Select constructs by axis:*                                                                                                                                         |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> d = c.filter_by_axis('domainaxis1')                                                                                                                        |
+|                          |                                                                                                                                                                      |
+|                          | *Select constructs by type:*                                                                                                                                         |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> d = c.filter_by_type('dimension_coordinate')                                                                                                               |
+|                          |       >>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')                                                                                            |
+|                          |                                                                                                                                                                      |
+|                          | *Select constructs by netCDF variable name:*                                                                                                                         |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> d = c.filter_by_ncvar('time')                                                                                                                              |
+|                          |       >>> d = c.filter_by_ncvar('time', 'lat')                                                                                                                       |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|      **Regridding**      | **Spherical regridding:**                                                                                                                                            |
+|                          |                                                                                                                                                                      |
+|                          | *Regrid observational data to that of the model data using bilinear interpolation:*                                                                                  |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> model = cf.read('model_temp.nc')[0]                                                                                                                        |
+|                          |       >>> obs = cf.read('obs_temp.nc')[0]                                                                                                                            |
+|                          |       >>> obs_regrid = obs.regrids(model, method='linear')                                                                                                           |
+|                          |                                                                                                                                                                      |
+|                          | *Regrid observational data to that of the model data conservatively:*                                                                                                |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> obs_regrid = obs.regrids(model, method='conservative')                                                                                                     |
+|                          |                                                                                                                                                                      |
+|                          | *Regrid observational data onto two-dimensional dimension coordinates latitude and longitude using bilinear interpolation:*                                          |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> import numpy                                                                                                                                               |
+|                          |       >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))                                                                  |
+|                          |       >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))                                                                      |
+|                          |       >>> obs_regrid = obs.regrids([lat, lon], method='linear')                                                                                                      |
+|                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                          | **Cartesian regridding:**                                                                                                                                            |
+|                          |                                                                                                                                                                      |
+|                          | *Regrid the time axis ‘T’ of observational data with the linear method onto the grid specified in the dimension coordinate time:*                                    |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> time = cf.DimensionCoordinate()                                                                                                                            |
+|                          |       >>> time.standard_name='time'>>> time.set_data(cf.Data(numpy.arange(0.5, 60, 1),                                                                               |
+|                          |       ...                       units='days since 1860-01-01', calendar='360_day')                                                                                   |
+|                          |       >>> obs_regrid = obs.regridc([time], axes='T', method='linear')                                                                                                |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|      **Aggregation**     | *Aggregate all northward wind fields into a new construct:*                                                                                                          |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> v = cf.read("~/northward_wind*.nc")[0]                                                                                                                     |
+|                          |       >>> v_all = cf.aggregate(v)                                                                                                                                    |
+|                          |                                                                                                                                                                      |
+|                          | *Aggregate allowing for missing coordinate identities to be inferred:*                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          | .. code-block:: python                                                                                                                                               |
+|                          |                                                                                                                                                                      |
+|                          |       >>> f = cf.read("~/realization/PRMSL.1941_mem*.nc")[0:50]                                                                                                      |
+|                          |       >>> ensemble = cf.aggregate(f, dimension=("realization",), relaxed_identities=True)[0]                                                                         |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
