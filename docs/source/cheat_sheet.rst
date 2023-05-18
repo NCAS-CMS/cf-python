@@ -169,7 +169,7 @@ cf-python.
 |                          |                                                                                                                                                                                 |
 |                          | .. code-block:: python                                                                                                                                                          |
 |                          |                                                                                                                                                                                 |
-|                          | >>> seas_max_4 = f.collapse('T: maximum', group=cf.seasons(3, 6))                                                                                                               |
+|                          |    >>> seas_max_4 = f.collapse('T: maximum', group=cf.seasons(3, 6))                                                                                                            |
 |                          |                                                                                                                                                                                 |
 |                          | *Multiannual average of the seasonal means:*                                                                                                                                    |
 |                          |                                                                                                                                                                                 |
