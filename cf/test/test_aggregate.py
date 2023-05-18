@@ -343,20 +343,20 @@ class aggregateTest(unittest.TestCase):
         self.assertTrue((anc[:2] == "bar_a").all())
         self.assertTrue((anc[2:] == "bar_b").all())
 
-    def test_aggregate_cells(self):
+    def test_aggregate_cells_size(self):
         f = cf.example_field(0)
         fl = (f[:2], f[2], f[3:])
 
         for cells in (
             None,
-            {"Y": {"cell": cf.lt(100, "degrees_north")}},
-            {"Y": {"cell": cf.gt(100, "degrees_north")}},
-            {"Y": {"cell": cf.wi(30, 60, "degrees_north")}},
-            {"Y": {"cell": cf.set([30, 60], "degrees_north")}},
+            {"Y": {"size": cf.lt(100, "degrees_north")}},
+            {"Y": {"size": cf.gt(100, "degrees_north")}},
+            {"Y": {"size": cf.wi(30, 60, "degrees_north")}},
+            {"Y": {"size": cf.set([30, 60], "degrees_north")}},
             {"Y": {"diff": cf.set([30, 45], "degrees_north")}},
             {
                 "Y": {
-                    "cell": cf.wi(30, 60, "degrees_north"),
+                    "size": cf.wi(30, 60, "degrees_north"),
                     "diff": cf.set([30, 45], "degrees_north"),
                 }
             },
@@ -364,18 +364,18 @@ class aggregateTest(unittest.TestCase):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
         for cells in (
-            {"Y": {"cell": cf.wi(39, 60, "km")}},
-            {"foo": {"cell": 34}},
-            {"T": {"cell": cf.D(0)}},
-            {"T": {"cell": cf.Data(0, "days")}},
-            {"T": {"cell": cf.Data(99, "days")}},
-            {"T": {"cell": cf.Data([99], "days")}},
+            {"Y": {"size": cf.wi(39, 60, "km")}},
+            {"foo": {"size": 34}},
+            {"T": {"size": cf.D(0)}},
+            {"T": {"size": cf.Data(0, "days")}},
+            {"T": {"size": cf.Data(99, "days")}},
+            {"T": {"size": cf.Data([99], "days")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
         for cells in (
-            {"Y": {"cell": cf.eq(30, "degreeN")}},
-            {"Y": {"cell": cf.Data(60, "degrees_N")}},
+            {"Y": {"size": cf.eq(30, "degreeN")}},
+            {"Y": {"size": cf.Data(60, "degrees_N")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
 
@@ -386,14 +386,25 @@ class aggregateTest(unittest.TestCase):
 
         for cells in (
             None,
-            {"Y": {"cell": cf.wi(30, 60, "degrees_north")}},
-            {"X": {"cell": cf.Data(45, "degrees_east")}},
+            {"Y": {"size": cf.wi(30, 60, "degrees_north")}},
+            {"X": {"size": cf.Data(45, "degrees_east")}},
             {
-                "Y": {"cell": cf.wi(30, 60, "degrees_north")},
-                "X": {"cell": cf.eq(45, "degrees_east")},
+                "Y": {"size": cf.wi(30, 60, "degrees_north")},
+                "X": {"size": cf.eq(45, "degrees_east")},
             },
         ):
             self.assertEqual(len(cf.aggregate(fl_2d, cells=cells)), 1)
+
+        # No bounds
+        f.dimension_coordinate("Y").del_bounds()
+        fl = (f[:2], f[2], f[3:])
+        for cells in (
+            None,
+            {"Y": {"size": cf.lt(100, "degrees_north")}},
+            {"Y": {"size": cf.lt(-1, "degrees_north")}},
+        ):
+            print(cells)
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
 
 if __name__ == "__main__":

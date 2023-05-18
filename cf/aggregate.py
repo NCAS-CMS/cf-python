@@ -504,8 +504,8 @@ class _Meta:
                 )
 
                 # Check for cell conditions
-                cell = None
-                diff = None
+                cell_size = None
+                cell_diff = None
                 if cells:
                     dim = f.dimension_coordinates(filter_by_axis=(axis,))
                     for identity, conditions in cells.items():
@@ -524,11 +524,11 @@ class _Meta:
                         dim_cell = None
                         dim_diff = None
 
-                        cell = None
-                        diff = None
+                        cell_size = None
+                        cell_diff = None
                         for condition in conditions:
-                            cell = None
-                            c = condition.get("cell")
+                            cell_size = None
+                            c = condition.get("size")
                             if c is not None and cellsize_units.equivalent(
                                 getattr(c, "Units", Units())
                             ):
@@ -537,13 +537,13 @@ class _Meta:
 
                                 if (dim_cell == c).all():
                                     # The dimension coordinates match
-                                    # the 'cell' condition
-                                    cell = c
+                                    # the 'size' condition
+                                    cell_size = c
                                 else:
-                                    diff = None
+                                    cell_diff = None
                                     continue
 
-                            diff = None
+                            cell_diff = None
                             c = condition.get("diff")
                             if c is not None and cellsize_units.equivalent(
                                 getattr(c, "Units", Units())
@@ -554,12 +554,12 @@ class _Meta:
                                 if (dim_diff == c).all():
                                     # The dimension coordinates match
                                     # the 'diff' condition
-                                    diff = c
+                                    cell_diff = c
                                 else:
-                                    cell = None
+                                    cell_size = None
                                     continue
 
-                            if cell is not None or diff is not None:
+                            if cell_size is not None or cell_diff is not None:
                                 # We've found a matching condition
                                 break
 
@@ -575,8 +575,8 @@ class _Meta:
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": dim_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(axis),
-                        "cell": cell,
-                        "diff": diff,
+                        "cell_size": cell_size,
+                        "cell_diff": cell_diff,
                     }
                 )
 
@@ -617,8 +617,8 @@ class _Meta:
                         "hasdata": aux_coord.has_data(),
                         "hasbounds": aux_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(key),
-                        "cell": None,
-                        "diff": None,
+                        "cell_size": None,
+                        "cell_diff": None,
                     }
                 )
 
@@ -665,8 +665,8 @@ class _Meta:
                 "hasdata": "hasdata",
                 "hasbounds": "hasbounds",
                 "coordrefs": "coordrefs",
-                "cell": "cell",
-                "diff": "diff",
+                "cell_size": "cell_size",
+                "cell_diff": "cell_diff",
             }
             self.axis[identity] = {
                 name: tuple(i[idt] for i in info_1d_coord)
@@ -1543,8 +1543,14 @@ class _Meta:
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
-                ("cell", self._signature_cell_diff(axis[identity]["cell"])),
-                ("diff", self._signature_cell_diff(axis[identity]["diff"])),
+                (
+                    "cell_size",
+                    self._signature_cell_diff(axis[identity]["cell_size"]),
+                ),
+                (
+                    "cell_diff",
+                    self._signature_cell_diff(axis[identity]["cell_diff"]),
+                ),
                 ("size", axis[identity]["size"]),
             )
             for identity in self.axis_ids
@@ -1660,12 +1666,12 @@ class _Meta:
         for x in cell_diff:
             if x is None:
                 out.extend((None, None))
-            else:                
+            else:
                 if isinstance(x, Data):
                     y = (x.tolist(), x.Units.formatted(definition=True))
                 else:
                     y = x
-                
+
                 out.extend((repr(x), hash(tokenize(y))))
 
         return tuple(out)
@@ -2083,7 +2089,89 @@ def aggregate(
             .. versionadded:: 3.15.0
 
         cells: `dict` or `None`
-            TODOAGG
+            Provide conditions for dimension coordinate cell sizes
+            such that input field or domain constructs which match a
+            particular condition will be aggregated separately from
+            those which don't. This can be used, for instance, to
+            ensure that monthly and daily averages are not aggregated
+            together.
+
+            .. note:: Field or domain constructs that don't match any
+                      of the given conditions are still aggregated in
+                      the usual manner.
+
+            Conditions are specified in a dictionary for which each
+            key is a dimension coordinate identity with corresponding
+            value of one or more conditions on the dimemnsion
+            coordinate cell sizes.
+
+            A dimension coordinate construct is identified by passing
+            a dictionary key to an input field or domain construct's
+            `dimension_coordinate` method. For example, for a key of
+            ``'latitude'``, the dimension coordinate construct
+            returned by ``f.dimension_coordinate('latitude')`` is
+            selected. If no such dimension coordinate construct exists
+            for a given key, or if a dimension coordinate construct
+            exists but none of its conditions are passed, then no
+            special consideration is given to that axis for that field
+            or domain .
+
+            A condition defined by a dictionary value is specified by
+            a another dictionary as follows:
+
+            * A condition for the cell size (i.e. the absolute
+              difference between the cell bounds) is given as
+              ``{'size': <condition>}``.
+
+            * A condition for the cell coordinate spacing (i.e. the
+              absolute difference between two adjacent coordinate
+              values) is given as ``{'diff': <condition>}``.
+
+            In both cases, ``<condition>`` represents a `Query`,
+            `TimeDuration`, scalar `Data`, or scalar data_like
+            object. Units should be provided where applicable.
+
+            Both cell size and coordinate spacing conditions may be
+            applied simulataneously as follows: ``{'size':
+            <condition1>, 'diff': <condition2>}``.
+
+            Multiple conditions for the same dimension coordinate
+            construct may be defined by providing a sequence of
+            conditions. In this case, the conditions are tested in
+            order, and the first one to be passed (if any) defines the
+            separation.
+
+            *Parameter example*
+              Equivalent ways to separate time cells of 1 day from
+              other time cell sizes: ``{'T': {'size': cf.D()}}``,
+              ``{'T': {'size': cf.eq(1, 'd'}}``, ``{'T': {'size':
+              cf.Data(1, 'd')}}``, ``{'T': {'size': cf.h(24)}}``, etc.
+
+            *Parameter example*
+              To separate time cells of 1 month, in any calendar, from
+              other time cell sizes: ``{'T': {'size': cf.wi(28, 31,
+              'd'}}``.
+
+            *Parameter example*
+              To separate time cells of 1 day, and 30 days, from other
+              time cell sizes: ``{'T': ({'size': cf.D(1)}, {'size':
+              cf.D(30)})}``.
+
+            *Parameter example*
+              To separate time cells of 5-day running means given for
+              consecuitve days: ``{'T': ({'size': cf.D(5), 'diff':
+              cf.D(1)})}``.
+
+            *Parameter example*
+              To separate horizontal cells with size (2.5 degrees
+              north, 3.75 degrees east): ``{'Y': {'size': cf.Data(2.5,
+              'degN')}, 'X': {'size': cf.Data(3.75, 'degE')}}``.
+
+            As a convenience, the configurable `cf.climatology_cells`
+            function returns a *cells* dictionary that may be suitable
+            for climate model simulation outputs:
+
+            >>> gl = cf.aggregate(fl, cells=cf.climatology_cells())
 
             .. versionadded:: TODOAGGAVER
 
@@ -2233,6 +2321,7 @@ def aggregate(
         raise TypeError("'cells' parameter must be None or a dict")
 
     if cells:
+        # Make sure that each dictionary value is a sequence
         cells = cells.copy()
         for key, conditions in tuple(cells.items()):
             if isinstance(conditions, dict):
@@ -2720,35 +2809,35 @@ def climatology_cells(hours=(1, 3, 6), hourly_instantaneous=True):
     **Examples**
 
     >>> cf.climatology_cells()
-    {'T': [{'cell': <CF Data(): 1 hour>},
+    {'T': [{'size': <CF Data(): 1 hour>},
       {'diff': <CF Data(): 1 hour>},
-      {'cell': <CF Data(): 3 hour>},
+      {'size': <CF Data(): 3 hour>},
       {'diff': <CF Data(): 3 hour>},
-      {'cell': <CF Data(): 6 hour>},
+      {'size': <CF Data(): 6 hour>},
       {'diff': <CF Data(): 6 hour>},
-      {'cell': <CF Data(): 1 day>},
-      {'cell': <CF Query: (wi [28, 31] day)>},
-      {'cell': <CF Query: (wi [360, 366] day)>}]}
+      {'size': <CF Data(): 1 day>},
+      {'size': <CF Query: (wi [28, 31] day)>},
+      {'size': <CF Query: (wi [360, 366] day)>}]}
     >>> cf.climatology_cells(hours=(3, 12), hourly_instantaneous=False)
-    {'T': [{'cell': <CF Data(): 3 hour>},
-      {'cell': <CF Data(): 12 hour>},
-      {'cell': <CF Data(): 1 day>},
-      {'cell': <CF Query: (wi [28, 31] day)>},
-      {'cell': <CF Query: (wi [360, 366] day)>}]}
+    {'T': [{'size': <CF Data(): 3 hour>},
+      {'size': <CF Data(): 12 hour>},
+      {'size': <CF Data(): 1 day>},
+      {'size': <CF Query: (wi [28, 31] day)>},
+      {'size': <CF Query: (wi [360, 366] day)>}]}
 
     """
     conditions = []
     for h in hours:
         c = Data(h, "hour")
-        conditions.append({"cell": c})
+        conditions.append({"size": c})
         if hourly_instantaneous:
             conditions.append({"diff": c.copy()})
 
     conditions.extend(
         (
-            {"cell": Data(1, "day")},
-            {"cell": wi(28, 31, "day")},
-            {"cell": wi(360, 366, "day")},
+            {"size": Data(1, "day")},
+            {"size": wi(28, 31, "day")},
+            {"size": wi(360, 366, "day")},
         )
     )
 
@@ -3513,13 +3602,23 @@ def _ok_coordinate_arrays(
             ):
                 # Found overlap
                 if info:
+                    units = m.axis[axis]["units"][dim_coord_index0]
+                    data0l = Data(
+                        m0.first_values[axis][dim_coord_index0], units
+                    )
+                    data0u = Data(
+                        m0.last_values[axis][dim_coord_index0], units
+                    )
+                    data1l = Data(
+                        m1.first_values[axis][dim_coord_index1], units
+                    )
+                    data1u = Data(
+                        m1.last_values[axis][dim_coord_index1], units
+                    )
                     meta[0].message = (
                         f"{m.axis[axis]['ids'][dim_coord_index]!r} "
-                        "dimension coordinate ranges overlap: "
-                        f"[{m0.first_values[axis][dim_coord_index0]}, "
-                        f"{m0.last_values[axis][dim_coord_index0]}], "
-                        f"[{m1.first_values[axis][dim_coord_index1]}, "
-                        f"{m1.last_values[axis][dim_coord_index1]}]"
+                        "dimension coordinate ranges overlap "
+                        f"([{data0l}, {data0u}], [{data1l}, {data1u}])"
                     )
 
                 return False
@@ -3538,12 +3637,14 @@ def _ok_coordinate_arrays(
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
                         if info:
+                            units = m.axis[axis]["units"][dim_coord_index0]
+                            data1 = Data(m1.first_bounds[axis][0], units)
+                            data0 = Data(m0.last_bounds[axis][1], units)
                             meta[0].message = (
                                 f"overlap={bool(overlap)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]!r} "
                                 "dimension coordinate bounds values overlap "
-                                f"({m1.first_bounds[axis][0]} "
-                                f"< {m0.last_bounds[axis][1]})"
+                                f"({data1} < {data0})"
                             )
 
                         return False
@@ -3557,13 +3658,14 @@ def _ok_coordinate_arrays(
                         # not contiguous with the last cell from
                         # parent0.
                         if info:
+                            units = m.axis[axis]["units"][dim_coord_index0]
+                            data0 = Data(m0.last_bounds[axis][1], units)
+                            data1 = Data(m1.first_bounds[axis][0], units)
                             meta[0].message = (
                                 f"contiguous={bool(contiguous)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]} "
                                 "dimension coordinate cells are not "
-                                "contiguous "
-                                f"({m0.last_bounds[axis][1]} < "
-                                f"{m1.first_bounds[axis][0]})"
+                                f"contiguous ({data0} < {data1})"
                             )
 
                         return False
@@ -3571,14 +3673,12 @@ def _ok_coordinate_arrays(
             # --------------------------------------------------------
             # The dimension coordinates do not have bounds
             # --------------------------------------------------------
-            diff = m.axis[axis]["diff"][dim_coord_index0]
+            diff = m.axis[axis]["cell_diff"][dim_coord_index0]
             if contiguous and diff is not None:
-                # ----------------------------------------------------
                 # The spacing of the coordinates has been specified
                 # and "contiguous" coordinates have also been
                 # requested. Therefore, make sure that the given
                 # spacing also applies between two adjacent domains.
-                # ----------------------------------------------------
                 units = m.axis[axis]["units"][dim_coord_index0]
                 for m0, m1 in zip(meta[:-1], meta[1:]):
                     dim_coord_index0 = m0.axis[axis]["dim_coord_index"]
@@ -3587,13 +3687,24 @@ def _ok_coordinate_arrays(
                         m1.first_values[axis][dim_coord_index0]
                         - m0.last_values[axis][dim_coord_index1]
                     )
-                    dim_diff = Data(dim_diff, units=self._diff_units(units))
+                    dim_diff = Data(dim_diff, units=_difference_units(units))
                     if dim_diff != diff:
+                        # Do not aggregate anything in this group
+                        # because contiguous coordinates have been
+                        # specified and the first cell from parent1
+                        # has a spacing to the last cell from parent0
+                        # that is not 'diff'.
                         if info:
-                            meta[0].message = "something TODOAGG"
+                            meta[0].message = (
+                                f"contiguous={bool(contiguous)} and "
+                                f"{m.axis[axis]['ids'][dim_coord_index]} "
+                                "dimension coordinate cells without bounds "
+                                "do not match the cell spacing of  "
+                                f"cell spacing of {diff!r} (got spacing "
+                                f"of {dim_diff})"
+                            )
 
                         return False
-
     else:
         # ------------------------------------------------------------
         # The aggregating axis does not have a dimension coordinate,
@@ -3628,15 +3739,41 @@ def _ok_coordinate_arrays(
     # ----------------------------------------------------------------
     return True
 
-def _diff_units(units):
-    """TODOAGG"""
+
+def _difference_units(units):
+    """Return difference units corresponding to position-on-scale units.
+
+    .. versionadded:: TODOAGGVER
+
+    :Parameters:
+
+        units: `Units`
+            The position-on-scale units.
+
+    :Returns:
+
+        `Units`
+            The difference units.
+
+    **Examples**
+
+    >>> _difference_units('km')
+    <Units: km>
+    >>> _difference_units('day')
+    <Units: day>
+    >>> _difference_units('hours since 2000-01-01')
+    <Units: hours>
+
+    """
     if units.isreftime:
         return Units(units._units_since_reftime)
 
-    # TODO: Think about Kelvin units in relation to
-    #       https://github.com/cf-convention/discuss/issues/101
-    
+    # TODO: Think about temperature units in relation to
+    #       https://github.com/cf-convention/discuss/issues/101,
+    #       whenever that issue is resolved.
+
     return units
+
 
 @_manage_log_level_via_verbosity
 def _aggregate_2_fields(
