@@ -21,7 +21,7 @@ cf-python.
 +--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |         Operation        |                                                                                How to?                                                                               |
 +==========================+======================================================================================================================================================================+
-|        **Install**       | *Install cf-python as root, with any missing dependencies, and the cf-plot visualisation package using pip:*                                                         |
+|        **Install**       | *Install cf-python, including any required dependencies, and the cf-plot visualisation package using pip:*                                                         |
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: console                                                                                                                                              |
 |                          |                                                                                                                                                                      |
@@ -109,11 +109,11 @@ cf-python.
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
-|                          |    >>> min = f.collapse('variance')                                                                                                                                  |
+|                          |    >>> v = f.collapse('variance')                                                                                                                                  |
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
-|                          |    >>> min = f.collapse('integral')                                                                                                                                  |
+|                          |    >>> i = f.collapse('integral', measure=True)                                                                                                                                  |
 |                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                          | **Weighted collapses:**                                                                                                                                              |
 |                          |                                                                                                                                                                      |
@@ -142,7 +142,6 @@ cf-python.
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
 |                          |    >>> max = f.collapse('maximum', axes='T')                                                                                                                         |
-|                          |                                                                                                                                                                      |
 |                          |    >>> max = f.collapse('T: maximum')                                                                                                                                |
 |                          |                                                                                                                                                                      |
 |                          | *Horizontal maximum:*                                                                                                                                                |
@@ -154,7 +153,7 @@ cf-python.
 |                          +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                          | **Grouped collapses:**                                                                                                                                               |
 |                          |                                                                                                                                                                      |
-|                          | *Annual maxima starting 1st January:*                                                                                                                                |
+|                          | *Annual maxima starting 1st December:*                                                                                                                                |
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
@@ -189,7 +188,7 @@ cf-python.
 |                          |       >>> new = temp.subspace(longitude=45)                                                                                                                          |
 |                          |       >>> new = temp.subspace(X=45)                                                                                                                                  |
 |                          |                                                                                                                                                                      |
-|                          | *Subspace to a new field construct whose longitude spans only 45 degrees east and latitude spans -60 degrees north, with the other domain axes remaining unchanged:* |
+|                          | *Subspace to a new field construct whose longitude coordinate is 45 degrees east and latitude coordinate is -60 degrees north, with the other domain axes remaining unchanged:* |
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
@@ -223,7 +222,7 @@ cf-python.
 |                          |       >>> d = c.filter_by_property(units='degrees_east')                                                                                                             |
 |                          |       >>> d = c.filter_by_property(long_name='height', units='m')                                                                                                    |
 |                          |                                                                                                                                                                      |
-|                          | *Select constructs by method:*                                                                                                                                       |
+|                          | *Select cell method constructs by method:*                                                                                                                                       |
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
@@ -256,8 +255,6 @@ cf-python.
 |                          |                                                                                                                                                                      |
 |                          | .. code-block:: python                                                                                                                                               |
 |                          |                                                                                                                                                                      |
-|                          |       >>> model = cf.read('model_temp.nc')[0]                                                                                                                        |
-|                          |       >>> obs = cf.read('obs_temp.nc')[0]                                                                                                                            |
 |                          |       >>> obs_regrid = obs.regrids(model, method='linear')                                                                                                           |
 |                          |                                                                                                                                                                      |
 |                          | *Regrid observational data to that of the model data conservatively:*                                                                                                |
@@ -285,18 +282,4 @@ cf-python.
 |                          |       >>> time.standard_name='time'>>> time.set_data(cf.Data(numpy.arange(0.5, 60, 1),                                                                               |
 |                          |       ...                       units='days since 1860-01-01', calendar='360_day')                                                                                   |
 |                          |       >>> obs_regrid = obs.regridc([time], axes='T', method='linear')                                                                                                |
-+--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|      **Aggregation**     | *Aggregate all northward wind fields into a new construct:*                                                                                                          |
-|                          |                                                                                                                                                                      |
-|                          | .. code-block:: python                                                                                                                                               |
-|                          |                                                                                                                                                                      |
-|                          |       >>> v = cf.read("~/northward_wind*.nc")[0]                                                                                                                     |
-|                          |       >>> v_all = cf.aggregate(v)                                                                                                                                    |
-|                          |                                                                                                                                                                      |
-|                          | *Aggregate allowing for missing coordinate identities to be inferred:*                                                                                               |
-|                          |                                                                                                                                                                      |
-|                          | .. code-block:: python                                                                                                                                               |
-|                          |                                                                                                                                                                      |
-|                          |       >>> f = cf.read("~/realization/PRMSL.1941_mem*.nc")[0:50]                                                                                                      |
-|                          |       >>> ensemble = cf.aggregate(f, dimension=("realization",), relaxed_identities=True)[0]                                                                         |
 +--------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
