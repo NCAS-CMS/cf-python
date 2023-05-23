@@ -4,7 +4,8 @@ Plotting the Warming Stripes
 
 In this recipe, we will plot the Warming Stripes (Climate Stripes) created by
 Professor Ed Hawkins at NCAS, University of Reading. Here we will use the
-`HadCRUT.5.0.1.0 dataset
+ensemble mean of the 
+`HadCRUT.5.0.1.0 analysis gridded data
 <https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/download.html>`_ for
 the same.
 
