@@ -26,8 +26,8 @@ print(temperature_data)
 
 # %%
 # 3. Calculate the annual mean temperature anomalies. The ``'weights=True'``
-# argument is used take the varying lengths of months into account which ensures
-# that the calculated mean is more accurate:
+# argument is used to take the varying lengths of months into account which
+# ensures that the calculated mean is more accurate:
 annual_temperature = temperature_data.collapse(
     "T: mean", weights=True, group=cf.Y()
 )
@@ -41,13 +41,12 @@ period = annual_temperature.subspace(T=cf.year(cf.wi(1850, 2022)))
 global_temperature = period.collapse("X: Y: mean")
 
 # %%
-# 6. Get the global average temperature and squeeze it to remove the size 1 axis
-#:
+# 6. Get the global average temperature and squeeze it to remove the size 1 axis:
 global_avg_temp = global_temperature.array.squeeze()
 
 # %%
 # 7. Create a normalization function that maps the interval from the minimum to 
-# the maximum temperature to the interval [0, 1] for coloring:
+# the maximum temperature to the interval [0, 1] for colouring:
 norm_global = plt.Normalize(global_avg_temp.min(), global_avg_temp.max())
 
 # %%
@@ -55,7 +54,7 @@ norm_global = plt.Normalize(global_avg_temp.min(), global_avg_temp.max())
 cmap = plt.get_cmap("RdBu_r")
 
 # %%
-# 8. Create the figure and the axes for the global plot. Loop over the selected 
+# 9. Create the figure and the axes for the global plot. Loop over the selected 
 # years, plot a colored vertical stripe for each and remove the axes:
 fig_global, ax_global = plt.subplots(figsize=(10, 2))
 
@@ -69,7 +68,7 @@ ax_global.axis("off")
 plt.show()
 
 # %%
-# 9. For the regional warming stripes, steps 5 to 8 are repeated for the 
+# 10. For the regional warming stripes, steps 5 to 9 are repeated for the 
 # specific region. Here, we define the bounding box for UK by subspacing over 
 # a domain spanning 49.9 to 59.4 degrees north and -10.5 to 1.8 degrees east:
 uk_temperature = period.subspace(X=cf.wi(-10.5, 1.8), Y=cf.wi(49.9, 59.4))
