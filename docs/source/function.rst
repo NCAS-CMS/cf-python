@@ -160,7 +160,6 @@ Miscellaneous
    cf.example_fields
    cf.example_domain
    cf.flat
-   cf.hash_array
    cf.implementation
    cf.indices_shape
    cf.inspect
@@ -187,6 +186,7 @@ Deprecated
    cf.collapse_parallel_mode
    cf.fm_threshold
    cf.free_memory_factor
+   cf.hash_array
    cf.min_total_memory
    cf.of_fraction
    cf.open_files

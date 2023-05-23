@@ -3,6 +3,8 @@ from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
+from cfdm import is_log_level_info
+
 from .data import Data
 from .decorators import (
     _deprecated_kwarg_check,
@@ -536,39 +538,54 @@ class Query:
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
         """True if two `Query` objects are the same."""
-        standard_difference_message = (
-            f"{self.__class__.__name__}: Different compound components"
-        )
         if self._compound:
             if not other._compound:
-                logger.info(standard_difference_message)  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound components"
+                    )  # pragma: no cover
+
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
-                logger.info(
-                    f"{self.__class__.__name__}: Different compound "
-                    f"operators: {self._bitwise_operator!r}, "
-                    f"{other._bitwise_operator!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound "
+                        f"operators: {self._bitwise_operator!r}, "
+                        f"{other._bitwise_operator!r}"
+                    )  # pragma: no cover
+
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
-                    logger.info(
-                        standard_difference_message
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different compound components"
+                        )  # pragma: no cover
+
                     return False
                 if not self._compound[1].equals(other._compound[0]):
-                    logger.info(
-                        standard_difference_message
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different compound components"
+                        )  # pragma: no cover
+
                     return False
             elif not self._compound[1].equals(other._compound[1]):
-                logger.info(standard_difference_message)  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound components"
+                    )  # pragma: no cover
+
                 return False
 
         elif other._compound:
-            logger.info(standard_difference_message)  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different compound components"
+                )  # pragma: no cover
+
             return False
 
         for attr in (
@@ -582,11 +599,13 @@ class Query:
                 getattr(other, attr, None),
                 verbose=verbose,
             ):
-                logger.info(
-                    f"{self.__class__.__name__}: Different {attr!r} "
-                    f"attributes: {getattr(self, attr, None)!r}, "
-                    f"{getattr(other, attr, None)!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different {attr!r} "
+                        f"attributes: {getattr(self, attr, None)!r}, "
+                        f"{getattr(other, attr, None)!r}"
+                    )  # pragma: no cover
+
                 return False
 
         return True

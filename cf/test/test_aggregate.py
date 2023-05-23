@@ -34,7 +34,7 @@ class aggregateTest(unittest.TestCase):
         g.extend([f[i] for i in range(7, f.shape[0])])
 
         g0 = g.copy()
-        self.assertTrue(g.equals(g0, verbose=-1), "g != g0")
+        self.assertTrue(g.equals(g0, verbose=2))
 
         with warnings.catch_warnings():
             # Suppress noise throughout the test fixture from:
@@ -52,18 +52,12 @@ class aggregateTest(unittest.TestCase):
             h = cf.aggregate(g, verbose=2)
 
         self.assertEqual(len(h), 1)
-
-        self.assertEqual(
-            h[0].shape,
-            (10, 9),
-            "h[0].shape = " + repr(h[0].shape) + " != (10, 9)",
-        )
-
+        self.assertEqual(h[0].shape, (10, 9))
         self.assertTrue(
             g.equals(g0, verbose=2), "g != itself after aggregation"
         )
 
-        self.assertTrue(h[0].equals(f, verbose=2), "h[0] != f")
+        self.assertTrue(h[0].equals(f, verbose=-1), "h[0] != f")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
@@ -91,9 +85,7 @@ class aggregateTest(unittest.TestCase):
             "g !=itself after the third aggregation",
         )
 
-        self.assertEqual(
-            i[0].shape, (10, 9), "i[0].shape is " + repr(i[0].shape)
-        )
+        self.assertEqual(i[0].shape, (10, 9))
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
@@ -113,9 +105,7 @@ class aggregateTest(unittest.TestCase):
             "g != itself after the fourth aggregation",
         )
 
-        self.assertEqual(
-            i[0].shape, (10, 9), "i[0].shape is " + repr(i[0].shape)
-        )
+        self.assertEqual(i[0].shape, (10, 9))
 
         q, t = cf.read(self.file)
         c = cf.read(self.file2)[0]
@@ -346,7 +336,7 @@ class aggregateTest(unittest.TestCase):
         c = cf.aggregate([a, b], field_ancillaries="foo")
         self.assertEqual(len(c), 1)
         c = c[0]
-        self.assertTrue(len(c.field_ancillaries()), 1)
+        self.assertEqual(len(c.field_ancillaries()), 1)
 
         anc = c.field_ancillary()
         self.assertEqual(anc.shape, c.shape)
