@@ -1,7 +1,6 @@
 import atexit
 import csv
 import ctypes.util
-import hashlib
 import importlib
 import os
 import platform
@@ -11,7 +10,6 @@ import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
-from marshal import dumps
 from math import isnan
 from numbers import Integral
 from os import mkdir
@@ -2630,8 +2628,11 @@ def pathjoin(path1, path2):
     return _os_path_join(path1, path2)
 
 
-def hash_array(array, algorithm=hashlib.sha1):
+def hash_array(array, algorithm=None):
     """Return a hash value of a numpy array.
+
+    Deprecated at version 3.15.0 and is no longer available. Use
+    `dask.base.tokenize` instead.
 
     The hash value is dependent on the data type and the shape of the
     array. If the array is a masked array then the hash value is
@@ -2678,30 +2679,12 @@ def hash_array(array, algorithm=hashlib.sha1):
     5950106833921144220
 
     """
-    h = algorithm()
-
-    h.update(dumps(array.dtype.name))
-    h.update(dumps(array.shape))
-
-    if np.ma.isMA(array):
-        if np.ma.is_masked(array):
-            mask = array.mask
-            if not mask.flags.c_contiguous:
-                mask = np.ascontiguousarray(mask)
-
-            h.update(mask)
-            array = array.copy()
-            array.set_fill_value()
-            array = array.filled()
-        else:
-            array = array.data
-
-    if not array.flags.c_contiguous:
-        array = np.ascontiguousarray(array)
-
-    h.update(array)
-
-    return hash(h.digest())
+    _DEPRECATION_ERROR_FUNCTION(
+        "hash_array",
+        "Use 'dask.base.tokenize' instead.",
+        version="3.15.0",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 def inspect(self):
@@ -3045,9 +3028,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
     matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
     cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
-    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfunits: 3.3.6 /home/username/cfunits/cfunits/__init__.py
     cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
-    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cfdm: 1.10.1.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
     cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
@@ -3065,9 +3048,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0
     matplotlib: 3.4.3
     cftime: 1.6.0
-    cfunits: 3.3.5
+    cfunits: 3.3.6
     cfplot: 3.1.18
-    cfdm: 1.10.0.1
+    cfdm: 1.10.1.0
     cf: 3.14.0
 
     """

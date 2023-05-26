@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
 from ..data.data import _DEFAULT_CHUNKS
@@ -82,12 +83,13 @@ class PropertiesDataBounds(PropertiesData):
             findices = tuple(indices)
 
         cname = self.__class__.__name__
-        logger.debug(
-            f"{cname}.__getitem__: shape    = {self.shape}\n"
-            f"{cname}.__getitem__: indices2 = {indices2}\n"
-            f"{cname}.__getitem__: indices  = {indices}\n"
-            f"{cname}.__getitem__: findices = {findices}"
-        )  # pragma: no cover
+        if is_log_level_debug(logger):
+            logger.debug(
+                f"{cname}.__getitem__: shape    = {self.shape}\n"
+                f"{cname}.__getitem__: indices2 = {indices2}\n"
+                f"{cname}.__getitem__: indices  = {indices}\n"
+                f"{cname}.__getitem__: findices = {findices}"
+            )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
@@ -132,10 +134,11 @@ class PropertiesDataBounds(PropertiesData):
                         mask.insert_dimension(-1) for mask in findices[1]
                     ]
 
-                logger.debug(
-                    f"{self.__class__.__name__}.__getitem__: findices for "
-                    f"bounds = {tuple(findices)}"
-                )  # pragma: no cover
+                if is_log_level_debug(logger):
+                    logger.debug(
+                        f"{self.__class__.__name__}.__getitem__: findices for "
+                        f"bounds = {tuple(findices)}"
+                    )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
 
@@ -617,9 +620,12 @@ class PropertiesDataBounds(PropertiesData):
         if hasbounds != (other_bounds is not None):
             # TODO: add traceback
             # TODO: improve message below
-            logger.info(
-                "One has bounds, the other does not"
-            )  # pragma: no cover
+
+            if is_log_level_info(logger):
+                logger.info(
+                    "One has bounds, the other does not"
+                )  # pragma: no cover
+
             return False
 
         try:
@@ -638,8 +644,10 @@ class PropertiesDataBounds(PropertiesData):
         if not super()._equivalent_data(
             other, rtol=rtol, atol=atol, verbose=verbose
         ):
-            # TODO: improve message below
-            logger.info("Non-equivalent data arrays")  # pragma: no cover
+            if is_log_level_info(logger):
+                # TODO: improve message below
+                logger.info("Non-equivalent data arrays")  # pragma: no cover
+
             return False
 
         if hasbounds:
@@ -647,10 +655,12 @@ class PropertiesDataBounds(PropertiesData):
             if not self_bounds._equivalent_data(
                 other_bounds, rtol=rtol, atol=atol, verbose=verbose
             ):
-                logger.info(
-                    f"{self.__class__.__name__}: Non-equivalent bounds data: "
-                    f"{self_bounds.data!r}, {other_bounds.data!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Non-equivalent bounds "
+                        f"data: {self_bounds.data!r}, {other_bounds.data!r}"
+                    )  # pragma: no cover
+
                 return False
 
         # Still here? Then the data are equivalent.
@@ -1453,7 +1463,14 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=True):
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`
@@ -1466,17 +1483,41 @@ class PropertiesDataBounds(PropertiesData):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} objects, prior to the concatenation, thereby
+                ensuring that the input constructs are not changed by
+                the concatenation process. If False then some or all
+                input constructs might be changed in-place, but the
+                concatenation process will be faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             TODO
 
         """
         variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
 
         if len(variables) == 1:
-            return variable0.copy()
+            return variable0
 
-        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
@@ -1484,6 +1525,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_bounds() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1493,6 +1536,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_interior_ring(interior_ring, copy=False)
 
