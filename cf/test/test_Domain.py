@@ -295,6 +295,52 @@ class DomainTest(unittest.TestCase):
     def test_Domain_size(self):
         self.assertEqual(self.d.size, 90)
 
+    def test_Domain_create_regular(self):
+        domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
+        self.assertIsInstance(domain, cf.Domain)
+
+        # Invalid inputs
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1, 2), (-90, 90, 1))
+
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1, 2))
+
+        # Test dx and dy as divisors of the range
+        domain = cf.Domain.create_regular((-180, 180, 60), (-90, 90, 45))
+        self.assertIsNotNone(domain)
+
+        x_bounds = np.linspace(-180, 180, 7)
+        y_bounds = np.linspace(-90, 90, 5)
+
+        x_points = (x_bounds[:-1] + x_bounds[1:]) / 2
+        y_points = (y_bounds[:-1] + y_bounds[1:]) / 2
+
+        longitude = domain.construct("longitude")
+        latitude = domain.construct("latitude")
+
+        self.assertTrue(np.allclose(longitude.array, x_points))
+        self.assertTrue(np.allclose(latitude.array, y_points))
+
+        # Test dx and dy not divisors of the range
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 61), (-90, 90, 46))
+
+        # Test if range difference in x_range is greater than 360
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 190, 1), (-90, 90, 1))
+
+        # Test for y_range out of bounds
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-91, 90, 1))
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-90, 91, 1))
+
+        # Test for decreasing coordinates range
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((180, -180, 1), (-90, 90, 1))
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (90, -90, 1))
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

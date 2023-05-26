@@ -2,6 +2,7 @@ from math import prod
 from os import sep
 
 import cfdm
+import numpy as np
 
 from . import mixin
 from .auxiliarycoordinate import AuxiliaryCoordinate
@@ -329,6 +330,121 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             c.del_file_location(location)
 
         return location
+
+    @classmethod
+    def create_regular(cls, x_args, y_args, bounds=True):
+        """
+        Create a new domain with the regular longitudes and latitudes.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `cf.DimensionCoordinate.create_regular`
+
+        :Parameters:
+
+            x_args: sequence of numbers
+                A sequence of three numeric values. The first two values in the 
+                sequence represent the coordinate range (see the bounds 
+                parameter for details), and the third value represents the 
+                cellsize.
+
+            y_args: sequence of numbers
+                A sequence of three numeric values. The first two values in the 
+                sequence represent the coordinate range (see the bounds 
+                parameter for details), and the third value represents the 
+                cellsize.
+
+            bounds: `bool`, optional 
+                If True (default), bounds will be created
+                for the coordinates, and the coordinate points will be the
+                midpoints of the bounds. If False, the given ranges represent
+                the coordinate points directly.
+
+        :Returns:
+
+            `Domain`
+                The newly created domain with the specified longitude and
+                latitude coordinates and bounds.
+
+        **Examples**
+
+        >>> import cf
+        >>> domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
+        >>> domain.dump()
+        --------
+        Domain:
+        --------
+
+        Domain Axis: latitude(180)
+        Domain Axis: longitude(360)
+
+        Dimension coordinate: longitude
+            standard_name = 'longitude'
+            units = 'degrees_east'
+            Data(longitude(360)) = [-179.5, ..., 179.5] degrees_east
+            Bounds:units = 'degrees_east'
+            Bounds:Data(longitude(360), 2) = [[-180.0, ..., 180.0]] degrees_east
+
+        Dimension coordinate: latitude
+            standard_name = 'latitude'
+            units = 'degrees_north'
+            Data(latitude(180)) = [-89.5, ..., 89.5] degrees_north
+            Bounds:units = 'degrees_north'
+            Bounds:Data(latitude(180), 2) = [[-90.0, ..., 90.0]] degrees_north
+
+        """
+        
+        x_args = np.array(x_args)
+        
+        if x_args.shape != (3,) or x_args.dtype.kind not in 'fi':
+            raise ValueError(
+                        "The args argument was incorrectly formatted. "
+                        f"Expected a sequence of three numbers, got {x_args}."
+                    )
+
+        y_args = np.array(y_args)
+
+        if y_args.shape != (3,) or y_args.dtype.kind not in 'fi':
+            raise ValueError(
+                        "The args argument was incorrectly formatted. "
+                        f"Expected a sequence of three numbers, got {y_args}."
+                    )
+
+        x_range, dx = (x_args[0], x_args[1]), x_args[2]
+        y_range, dy = (y_args[0], y_args[1]), y_args[2]
+
+        domain = cls()
+
+        if abs(x_range[1] - x_range[0]) > 360:
+            raise ValueError(
+                "The difference in x_range should not be greater than 360."
+            )
+
+        if y_range[0] < -90 or y_range[1] > 90:
+            raise ValueError(
+                "y_range must be within the range of -90 to 90 degrees."
+            )
+
+        longitude = domain._DimensionCoordinate.create_regular(
+            x_args, "degrees_east", "longitude", bounds=bounds
+        )
+
+        latitude = domain._DimensionCoordinate.create_regular(
+            y_args, "degrees_north", "latitude", bounds=bounds
+        )
+
+        domain_axis_longitude = domain.set_construct(
+            domain._DomainAxis(longitude.size)
+        )
+
+        domain_axis_latitude = domain.set_construct(
+            domain._DomainAxis(latitude.size)
+        )
+
+        domain.set_construct(longitude, axes=[domain_axis_longitude])
+        domain.set_construct(latitude, axes=[domain_axis_latitude])
+
+        return domain
 
     def file_locations(
         self,
