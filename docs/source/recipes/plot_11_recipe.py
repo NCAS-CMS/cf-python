@@ -61,8 +61,11 @@ cmap = plt.get_cmap("RdBu_r")
 fig_global, ax_global = plt.subplots(figsize=(10, 2))
 
 for i in range(global_avg_temp.shape[0]):
-    ax_global.axvline(
-        x=i, color=cmap(norm_global(global_avg_temp[i])), linewidth=4
+for i in range(global_avg_temp.shape[0]):
+    ax_global.axvspan(
+        xmin=i-0.5,
+        xmax=i+0.5,
+        color=cmap(norm_global(global_avg_temp[i]))
     )
 
 ax_global.axis("off")
@@ -83,7 +86,7 @@ norm_uk = plt.Normalize(uk_avg_temp.min(), uk_avg_temp.max())
 fig_uk, ax_uk = plt.subplots(figsize=(10, 2))
 
 for i in range(uk_avg_temp.shape[0]):
-    ax_uk.axvline(x=i, color=cmap(norm_uk(uk_avg_temp[i])), linewidth=4)
+    ax_uk.axvspan(xmin=i-0.5, xmax=i+0.5, color=cmap(norm_uk(uk_avg_temp[i])))
 
 ax_uk.axis("off")
 
