@@ -2,7 +2,8 @@
 Plotting the Warming Stripes
 ============================
 
-In this recipe, we will plot the Warming Stripes (Climate Stripes) created by
+In this recipe, we will plot the `Warming Stripes (Climate Stripes)
+<https://en.wikipedia.org/wiki/Warming_stripes>`_ created by
 Professor Ed Hawkins at NCAS, University of Reading. Here we will use the
 ensemble mean of the 
 `HadCRUT.5.0.1.0 analysis gridded data
