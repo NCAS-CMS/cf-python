@@ -61,7 +61,6 @@ cmap = plt.get_cmap("RdBu_r")
 fig_global, ax_global = plt.subplots(figsize=(10, 2))
 
 for i in range(global_avg_temp.shape[0]):
-for i in range(global_avg_temp.shape[0]):
     ax_global.axvspan(
         xmin=i-0.5,
         xmax=i+0.5,
