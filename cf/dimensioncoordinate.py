@@ -276,7 +276,7 @@ class DimensionCoordinate(
             `DimensionCoordinate`
                 The newly created DimensionCoordinate object.
 
-        **Examples:**
+        **Examples**
 
         >>> longitude = cf.DimensionCoordinate.create_regular(
                 (-180, 180, 1), units='degrees_east', standard_name='longitude'
@@ -304,23 +304,24 @@ class DimensionCoordinate(
         range_diff = range[1] - range[0]
         if cellsize > 0 and range_diff <= 0:
             raise ValueError(
-                "Range must be increasing for positive cellsizes."
+                f"Range ({range[0], range[1]}) must be increasing for a "
+                f"positive cellsize ({cellsize})"
             )
         elif cellsize < 0 and range_diff >= 0:
             raise ValueError(
-                "Range must be decreasing for negative cellsizes."
+                f"Range ({range[0], range[1]}) must be decreasing for a "
+                f"negative cellsize ({cellsize})"
             )
 
         if range_diff % cellsize != 0:
             raise ValueError(
-                "cellsize must be divisible by the range of the dimension."
+                f"The range of the dimension ({range_diff}) must be "
+                f"divisible by the cellsize ({cellsize})"
             )
 
         if standard_name is not None and not isinstance(standard_name, str):
             raise ValueError("standard_name must be either None or a string.")
 
-        if units is not None and not isinstance(units, str):
-            raise ValueError("units must be either None or a string.")
 
         if bounds:
             cellsize2 = cellsize / 2
@@ -335,11 +336,12 @@ class DimensionCoordinate(
         coordinate = cls(
             data = Data(points, units=units),
             properties={"standard_name": standard_name},
+            copy=False
         )
 
         if bounds:
             b = coordinate.create_bounds()
-            coordinate.set_bounds(b)
+            coordinate.set_bounds(b, copy=False)
 
         return coordinate
 
