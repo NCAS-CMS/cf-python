@@ -347,6 +347,25 @@ class DomainTest(unittest.TestCase):
         axis = d.domain_axis("X", key=True)
         self.assertEqual(d.cyclic().pop(), axis)
 
+        # Test with bounds=False
+        domain_no_bounds = cf.Domain.create_regular(
+            (-180, 180, 1), (-90, 90, 1), bounds=False
+        )
+        self.assertIsInstance(domain_no_bounds, cf.Domain)
+
+        x_points_no_bounds = np.arange(-180, 181, 1)
+        y_points_no_bounds = np.arange(-90, 91, 1)
+
+        longitude_no_bounds = domain_no_bounds.construct("longitude")
+        latitude_no_bounds = domain_no_bounds.construct("latitude")
+
+        self.assertTrue(
+            np.allclose(longitude_no_bounds.array, x_points_no_bounds)
+        )
+        self.assertTrue(
+            np.allclose(latitude_no_bounds.array, y_points_no_bounds)
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
