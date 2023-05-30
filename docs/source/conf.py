@@ -152,6 +152,7 @@ intersphinx_mapping = {
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
     "cfplot": ("https://ajheaps.github.io/cf-plot", None),
     "dask": ("https://docs.dask.org/en/latest", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
 }
 
 # This extension is meant to help with the common pattern of having

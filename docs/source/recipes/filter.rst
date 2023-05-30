@@ -224,6 +224,23 @@ Click on the keywords below to filter the recipes according to their function:
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Subspace, Collapse">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_11_recipe_thumb.png
+    :alt: Plotting the Warming Stripes
+
+  :ref:`sphx_glr_recipes_plot_11_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plotting the Warming Stripes</div>
+    </div>
+
+
+.. raw:: html
+
     </div>
 
 .. toctree::
@@ -239,6 +256,7 @@ Click on the keywords below to filter the recipes according to their function:
    /recipes/plot_8_recipe
    /recipes/plot_9_recipe
    /recipes/plot_10_recipe
+   /recipes/plot_11_recipe
 .. only:: html
 
   .. container:: sphx-glr-footer sphx-glr-footer-gallery
