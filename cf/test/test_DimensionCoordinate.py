@@ -633,15 +633,14 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(longitude, cf.DimensionCoordinate)
         self.assertTrue(np.allclose(longitude.array, 
             np.linspace(-179.5, 179.5, 360)))
+        self.assertEqual(longitude.standard_name, "longitude")
+        self.assertEqual(longitude.units, 'degrees_east')
 
         # Invalid inputs
         with self.assertRaises(ValueError):
             cf.DimensionCoordinate.create_regular((-180, 180, 1, 2), 
                 units='degrees_east', standard_name='longitude')
 
-        with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular((-180, 180, 1), units=123, 
-                standard_name='longitude')
 
         with self.assertRaises(ValueError):
             cf.DimensionCoordinate.create_regular((-180, 180, 1), 

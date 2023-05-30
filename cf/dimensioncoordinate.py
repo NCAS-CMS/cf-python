@@ -249,7 +249,7 @@ class DimensionCoordinate(
         .. versionadded:: 3.15.0
 
         :Note: This method does not set the cyclicity of the
-         `DimensionCoordinate`.
+               `DimensionCoordinate`.
 
         :Parameters:
 

@@ -435,14 +435,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         domain_axis_longitude = domain.set_construct(
             domain._DomainAxis(longitude.size)
+            copy=False
         )
 
         domain_axis_latitude = domain.set_construct(
             domain._DomainAxis(latitude.size)
+            copy=False
         )
 
-        domain.set_construct(longitude, axes=[domain_axis_longitude])
-        domain.set_construct(latitude, axes=[domain_axis_latitude])
+        domain.set_construct(longitude, axes=[domain_axis_longitude], copy=False)
+        domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
 
         return domain
 
