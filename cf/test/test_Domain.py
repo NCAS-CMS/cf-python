@@ -2,7 +2,7 @@ import datetime
 import re
 import unittest
 
-import numpy
+import numpy as np
 
 import cf
 
@@ -101,7 +101,7 @@ class DomainTest(unittest.TestCase):
         f = self.d.copy()
 
         x = f.dimension_coordinate("X")
-        x[...] = numpy.arange(0, 360, 40)
+        x[...] = np.arange(0, 360, 40)
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
@@ -213,10 +213,10 @@ class DomainTest(unittest.TestCase):
 
         # 2-d
         lon = f.auxiliary_coordinate("X")
-        lon.data[...] = numpy.arange(60, 150).reshape(9, 10)
+        lon.data[...] = np.arange(60, 150).reshape(9, 10)
 
         lat = f.auxiliary_coordinate("Y")
-        lat.data[...] = numpy.arange(-45, 45).reshape(10, 9)
+        lat.data[...] = np.arange(-45, 45).reshape(10, 9)
 
         for mode in ("compress", "envelope"):
             g = f.subspace(mode, longitude=cf.wi(92, 134))
