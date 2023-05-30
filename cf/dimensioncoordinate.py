@@ -240,9 +240,7 @@ class DimensionCoordinate(
         return _direction
 
     @classmethod
-    def create_regular(
-        cls, args, units=None, standard_name=None, bounds=True
-    ):
+    def create_regular(cls, args, units=None, standard_name=None, bounds=True):
         """
         Create a new `DimensionCoordinate` with the given range and cellsize.
 
@@ -254,15 +252,15 @@ class DimensionCoordinate(
         :Parameters:
 
             args: sequence of numbers
-                A sequence of three numeric values. The first two values in the 
-                sequence represent the coordinate range (see the bounds 
-                parameter for details), and the third value represents the 
+                A sequence of three numeric values. The first two values in the
+                sequence represent the coordinate range (see the bounds
+                parameter for details), and the third value represents the
                 cellsize.
 
             bounds: `bool`, optional
                 If True (the default) then the given range represents
                 the bounds, and the coordinate points will be the midpoints of
-                the bounds. If False, the range represents the coordinate points 
+                the bounds. If False, the range represents the coordinate points
                 directly.
 
             units: str or `Units`, optional
@@ -292,11 +290,11 @@ class DimensionCoordinate(
         """
         args = np.array(args)
 
-        if args.shape != (3,) or args.dtype.kind not in 'fi':
+        if args.shape != (3,) or args.dtype.kind not in "fi":
             raise ValueError(
-                        "The args argument was incorrectly formatted. "
-                        f"Expected a sequence of three numbers, got {args}."
-                    )
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {args}."
+            )
 
         range = (args[0], args[1])
         cellsize = args[2]
@@ -322,7 +320,6 @@ class DimensionCoordinate(
         if standard_name is not None and not isinstance(standard_name, str):
             raise ValueError("standard_name must be either None or a string.")
 
-
         if bounds:
             cellsize2 = cellsize / 2
             start = range[0] + cellsize2
@@ -334,9 +331,9 @@ class DimensionCoordinate(
         points = np.arange(start, end + cellsize, cellsize)
 
         coordinate = cls(
-            data = Data(points, units=units),
+            data=Data(points, units=units),
             properties={"standard_name": standard_name},
-            copy=False
+            copy=False,
         )
 
         if bounds:

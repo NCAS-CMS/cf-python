@@ -343,18 +343,18 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Parameters:
 
             x_args: sequence of numbers
-                A sequence of three numeric values. The first two values in the 
-                sequence represent the coordinate range (see the bounds 
-                parameter for details), and the third value represents the 
+                A sequence of three numeric values. The first two values in the
+                sequence represent the coordinate range (see the bounds
+                parameter for details), and the third value represents the
                 cellsize.
 
             y_args: sequence of numbers
-                A sequence of three numeric values. The first two values in the 
-                sequence represent the coordinate range (see the bounds 
-                parameter for details), and the third value represents the 
+                A sequence of three numeric values. The first two values in the
+                sequence represent the coordinate range (see the bounds
+                parameter for details), and the third value represents the
                 cellsize.
 
-            bounds: `bool`, optional 
+            bounds: `bool`, optional
                 If True (default), bounds will be created
                 for the coordinates, and the coordinate points will be the
                 midpoints of the bounds. If False, the given ranges represent
@@ -393,9 +393,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             Bounds:Data(latitude(180), 2) = [[-90.0, ..., 90.0]] degrees_north
 
         """
-        
+
         x_args = np.array(x_args)
-        
+
         if x_args.shape != (3,) or x_args.dtype.kind not in 'fi':
             raise ValueError(
                         "The args argument was incorrectly formatted. "

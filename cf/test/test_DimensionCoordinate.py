@@ -627,34 +627,45 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(d.bounds.data.chunks, ((1,) * d.size, (2,)))
 
     def test_DimensionCoordinate_create_regular(self):
-
-        longitude = cf.DimensionCoordinate.create_regular((-180, 180, 1), 
-            units='degrees_east', standard_name='longitude')
+        longitude = cf.DimensionCoordinate.create_regular(
+            (-180, 180, 1), units="degrees_east", standard_name="longitude"
+        )
         self.assertIsInstance(longitude, cf.DimensionCoordinate)
-        self.assertTrue(np.allclose(longitude.array, 
-            np.linspace(-179.5, 179.5, 360)))
+        self.assertTrue(
+            np.allclose(longitude.array, np.linspace(-179.5, 179.5, 360))
+        )
         self.assertEqual(longitude.standard_name, "longitude")
-        self.assertEqual(longitude.units, 'degrees_east')
+        self.assertEqual(longitude.units, "degrees_east")
 
         # Invalid inputs
         with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular((-180, 180, 1, 2), 
-                units='degrees_east', standard_name='longitude')
-
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1, 2),
+                units="degrees_east",
+                standard_name="longitude",
+            )
 
         with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular((-180, 180, 1), 
-                units='degrees_east', standard_name=123)
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1), units="degrees_east", standard_name=123
+            )
 
         # Cellsize larger than range
         with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular((-180, 180, 361), 
-                units='degrees_east', standard_name='longitude')
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 361),
+                units="degrees_east",
+                standard_name="longitude",
+            )
 
         # Cellsize not divisible by range
         with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular((-180, 180, 50), 
-                units='degrees_east', standard_name='longitude')
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 50),
+                units="degrees_east",
+                standard_name="longitude",
+            )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

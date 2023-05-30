@@ -344,8 +344,10 @@ class DomainTest(unittest.TestCase):
 
         # Test cyclicity
         d = cf.Domain.create_regular((-180, 180, 1), (90, -90, -1))
-        axis = d.domain_axis('X', key=True)
-        self.assertEqual(d.cyclic().pop(),axis)
+        axis = d.domain_axis("X", key=True)
+        self.assertEqual(d.cyclic().pop(), axis)
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
