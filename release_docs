@@ -118,6 +118,21 @@ for html_file in "${html_files[@]}"; do
     done
 done
 
+# Recipe filters
+sed -i '
+s|<div class="sphx-glr-thumbcontainer" tooltip="Vorticity, the microscopic measure of rotation in a fluid, is a vector field defined as the cur...">|<div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip=" Subspace, Contourmap, Mathematical Operations">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will plot the `Warming Stripes (Climate Stripes) &lt;https://en.wikipedia.org/w...">|<div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Subspace, Collapse">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe we will calculate and plot monthly and annual global mean temperature timeseries...">|<div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="Collapse, Lineplot">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe we will calculate and plot the global average temperature anomalies.">|<div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="Collapse, Lineplot, Subspace">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will plot the global mean temperature spatially.">|<div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will regrid two different datasets with different resolutions. An example us...">|<div class="sphx-glr-thumbcontainer regrid" tooltip="Regrid">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe we will plot wind vectors, derived from northward and eastward wind components, ...">|<div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="Subspace, Contourmap">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regu...">|<div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="Regrid, Contourmap">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will plot the members of a model ensemble.">|<div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="Aggregate, Lineplot, Subspace">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset fo...">|<div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap">|
+s|<div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will be creating a joint histogram of PM2.5 mass concentration and 2-metre t...">|<div class="sphx-glr-thumbcontainer histogram" tooltip="Histogram">|
+' $dir/recipes/index.html
+
 # Copy over our custom stylesheet. It is referenced in the HTML docs
 # files but Sphinx with alabaster theme doesn't seem to (?) provide a
 # means to transfer it to the created _static dir via the build itself
