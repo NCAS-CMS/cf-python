@@ -271,7 +271,7 @@ html_theme = "alabaster"  # 'default' #'haiku' #'default'
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-    "show_related": "true",
+    "show_related": "false",
     "sidebar_collapse": "false",
     "fixed_sidebar": "true",
     "page_width": "85%",
