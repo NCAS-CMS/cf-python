@@ -12,7 +12,8 @@
 Version |release| for version |version| of the CF conventions.
 
 This cheat sheet provides a summary of some key functions and methods in 
-cf-python.
+cf-python (also available as a printable PDF for 
+:download:`pdf <../_downloads/cheatsheet.pdf>`).
 
 .. contents::
    :local:
@@ -75,7 +76,7 @@ cf-python.
 |                                                                                  |         >>> fl = cf.read('~/file*.nc', select='air_temperature')                                                                                                                |
 |                                                                                  |         >>> fl = cf.read('~/cf-python/docs/source/sample_files/file*.nc', select='ncvar%q')                                                                                     |
 |                                                                                  +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                                                                                  | **Selecting fields:**                                                                                                                                                           |
+|                                                                                  | **Selecting field:**                                                                                                                                                            |
 |                                                                                  |                                                                                                                                                                                 |
 |                                                                                  | *Select a field directly by index while reading the file:*                                                                                                                      |
 |                                                                                  |                                                                                                                                                                                 |
@@ -235,7 +236,7 @@ cf-python.
 |                                                                                  |       >>> d = f.dimension_coordinate(units='degrees_east')                                                                                                                      |
 |                                                                                  |       >>> d = f.dimension_coordinate(long_name='height', units='m')                                                                                                             |
 |                                                                                  |                                                                                                                                                                                 |
-|                                                                                  | *Select cell method constructs by method:*                                                                                                                                      |
+|                                                                                  | *Select constructs by cell method:*                                                                                                                                             |
 |                                                                                  |                                                                                                                                                                                 |
 |                                                                                  | .. code-block:: python                                                                                                                                                          |
 |                                                                                  |                                                                                                                                                                                 |
