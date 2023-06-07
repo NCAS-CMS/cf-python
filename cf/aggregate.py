@@ -503,10 +503,13 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
-                # Check for cell conditions
+                # The cellsize and coordinate spacing that forms part
+                # of the signature
                 cell_size = None
                 cell_diff = None
+                
                 if cells:
+                    # Check for cell conditions
                     dim = f.dimension_coordinates(filter_by_axis=(axis,))
                     for identity, conditions in cells.items():
                         if not dim(identity):
@@ -514,20 +517,24 @@ class _Meta:
 
                         # Still here? Then the dimension coordinate
                         # matches the identity given by one of the
-                        # keys of the 'cells' dictionary. So loop
-                        # round the corresponding conditions to see if
-                        # the dimension coordinate values match any of
-                        # them, and then break.
+                        # keys of the 'cells' dictionary.
+                        #
+                        # Loop round the corresponding conditions to
+                        # see if the dimension coordinate values match
+                        # any of them, and then break.
                         dim_coord.persist(inplace=True)
                         cellsize = dim_coord.cellsize
                         cellsize_units = cellsize.Units
+
+                        # The dimension corodinates' cellsize and diff
+                        # arrays
                         dim_cell = None
                         dim_diff = None
 
-                        cell_size = None
-                        cell_diff = None
                         for condition in conditions:
                             cell_size = None
+                            cell_diff = None
+
                             c = condition.get("size")
                             if c is not None and cellsize_units.equivalent(
                                 getattr(c, "Units", Units())
@@ -540,10 +547,8 @@ class _Meta:
                                     # the 'size' condition
                                     cell_size = c
                                 else:
-                                    cell_diff = None
                                     continue
 
-                            cell_diff = None
                             c = condition.get("diff")
                             if c is not None and cellsize_units.equivalent(
                                 getattr(c, "Units", Units())
@@ -1545,11 +1550,11 @@ class _Meta:
                 ("coordrefs", axis[identity]["coordrefs"]),
                 (
                     "cell_size",
-                    self._signature_cell_diff(axis[identity]["cell_size"]),
+                    self._signature_cell(axis[identity]["cell_size"]),
                 ),
                 (
                     "cell_diff",
-                    self._signature_cell_diff(axis[identity]["cell_diff"]),
+                    self._signature_cell(axis[identity]["cell_diff"]),
                 ),
                 ("size", axis[identity]["size"]),
             )
@@ -1647,7 +1652,7 @@ class _Meta:
             Field_ancillaries=Field_ancillaries,
         )
 
-    def _signature_cell_diff(self, cell_diff):
+    def _signature_cell(self, cell_diff):
         """TODOAGG
 
         .. versionadded:: TODOAGGVER
@@ -1937,11 +1942,11 @@ def aggregate(
             does not have bounds. See also the *contiguous* parameter.
 
         contiguous: `bool`, optional
-            If True then require that aggregated field constructs
-            have adjacent dimension coordinate construct cells which
+            If True then require that aggregated field constructs have
+            adjacent dimension coordinate construct cells which
             overlap or share common boundary values. Ignored for a
             dimension coordinate construct that does not have
-            bounds. See also the *overlap* parameter.
+            bounds. See also the *overlap* and *cells* parameters.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2090,31 +2095,32 @@ def aggregate(
 
         cells: `dict` or `None`
             Provide conditions for dimension coordinate cell sizes
-            such that input field or domain constructs which match a
-            particular condition will be aggregated separately from
-            those which don't. This can be used, for instance, to
-            ensure that monthly and daily averages are not aggregated
-            together.
+            such that input field or domain constructs whose dimension
+            coordinates match a particular condition will be
+            aggregated separately from those which don't. This can be
+            used, for instance, to ensure that monthly and daily
+            averages are not aggregated together.
 
             .. note:: Field or domain constructs that don't match any
                       of the given conditions are still aggregated in
                       the usual manner.
 
             Conditions are specified in a dictionary for which each
-            key is a dimension coordinate identity with corresponding
+            key is a dimension coordinate identity, with corresponding
             value of one or more conditions on the dimemnsion
-            coordinate cell sizes.
+            coordinate cell sizes and/or coordiante spacings.
 
-            A dimension coordinate construct is identified by passing
-            a dictionary key to an input field or domain construct's
-            `dimension_coordinate` method. For example, for a key of
-            ``'latitude'``, the dimension coordinate construct
-            returned by ``f.dimension_coordinate('latitude')`` is
-            selected. If no such dimension coordinate construct exists
-            for a given key, or if a dimension coordinate construct
-            exists but none of its conditions are passed, then no
-            special consideration is given to that axis for that field
-            or domain .
+            Dimension coordinate constructs are identified by passing
+            each key of the *cells* dictionary to an input field or
+            domain construct's `dimension_coordinate` method. For
+            example, for a key of ``'latitude'``, the dimension
+            coordinate construct returned by
+            ``f.dimension_coordinate('latitude')`` is selected. If no
+            such dimension coordinate construct exists for a given
+            key, or if a dimension coordinate construct exists but
+            none of its conditions are passed, then no special
+            consideration is given to that axis for that field or
+            domain .
 
             A condition defined by a dictionary value is specified by
             a another dictionary as follows:
@@ -2131,9 +2137,9 @@ def aggregate(
             `TimeDuration`, scalar `Data`, or scalar data_like
             object. Units should be provided where applicable.
 
-            Both cell size and coordinate spacing conditions may be
-            applied simulataneously as follows: ``{'size':
-            <condition1>, 'diff': <condition2>}``.
+            Cell size and coordinate spacing conditions may be applied
+            simulataneously as follows: ``{'size': <condition1>,
+            'diff': <condition2>}``.
 
             Multiple conditions for the same dimension coordinate
             construct may be defined by providing a sequence of
@@ -2141,37 +2147,44 @@ def aggregate(
             order, and the first one to be passed (if any) defines the
             separation.
 
+            If a dimension has no bounds and a coordinate spacing
+            condition has been set, then also setting the *contiguous*
+            parameter to `True` will ensure that the coordinate
+            spacing between input fields or domains also meets the
+            same condition.
+
+            As a convenience, the configurable `cf.climatology_cells`
+            function returns a *cells* dictionary that may be suitable
+            for climate model simulation outputs:
+
+            >>> x = cf.aggregate(fl, cells=cf.climatology_cells())
+
             *Parameter example*
               Equivalent ways to separate time cells of 1 day from
               other time cell sizes: ``{'T': {'size': cf.D()}}``,
-              ``{'T': {'size': cf.eq(1, 'd'}}``, ``{'T': {'size':
-              cf.Data(1, 'd')}}``, ``{'T': {'size': cf.h(24)}}``, etc.
+              ``{'T': {'size': cf.eq(1, 'day'}}``, ``{'T': {'size':
+              cf.Data(1, 'day')}}``, ``{'T': {'size': cf.h(24)}}``,
+              etc.
 
             *Parameter example*
               To separate time cells of 1 month, in any calendar, from
               other time cell sizes: ``{'T': {'size': cf.wi(28, 31,
-              'd'}}``.
+              'day'}}``.
 
             *Parameter example*
-              To separate time cells of 1 day, and 30 days, from other
-              time cell sizes: ``{'T': ({'size': cf.D(1)}, {'size':
-              cf.D(30)})}``.
+              To separate time cells of 1 day, and of 30 days, from
+              other time cell sizes: ``{'T': [{'size': cf.D(1)},
+              {'size': cf.D(30)}]}``.
 
             *Parameter example*
               To separate time cells of 5-day running means given for
-              consecuitve days: ``{'T': ({'size': cf.D(5), 'diff':
+              consecutive days: ``{'T': ({'size': cf.D(5), 'diff':
               cf.D(1)})}``.
 
             *Parameter example*
               To separate horizontal cells with size (2.5 degrees
               north, 3.75 degrees east): ``{'Y': {'size': cf.Data(2.5,
               'degN')}, 'X': {'size': cf.Data(3.75, 'degE')}}``.
-
-            As a convenience, the configurable `cf.climatology_cells`
-            function returns a *cells* dictionary that may be suitable
-            for climate model simulation outputs:
-
-            >>> gl = cf.aggregate(fl, cells=cf.climatology_cells())
 
             .. versionadded:: TODOAGGAVER
 
@@ -2316,9 +2329,12 @@ def aggregate(
     elif not ignore:
         ignore = _signature_properties
 
-    # Parse cells
+    # Parse the cells keyword parameter
     if not (cells is None or isinstance(cells, dict)):
-        raise TypeError("'cells' parameter must be None or a dict")
+        raise TypeError(
+            "'cells' parameter must be None or a dict. "
+            f"Got {type(cells)}"
+        )
 
     if cells:
         # Make sure that each dictionary value is a sequence
@@ -3704,7 +3720,7 @@ def _ok_coordinate_arrays(
                                 "dimension coordinate cells without bounds "
                                 "do not match the cell spacing of  "
                                 f"cell spacing of {diff!r} (got spacing "
-                                f"of {dim_diff})"
+                                f"{dim_diff!r})"
                             )
 
                         return False
