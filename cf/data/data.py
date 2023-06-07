@@ -6264,7 +6264,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-                `Data`
+            `Data`
 
         """
         return self
@@ -6273,7 +6273,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """Get the deterministic name for the data.
 
         If there is a deterministic name then the data array may be
-        assumed to be "equal" to that of another `Data` object with
+        assumed to be 'equal' to that of another `Data` object with
         the same deterministic name. This measure of equality is
         different to that applied by the `equals` method in that NaN
         and inf values are, in effect, always considered equal.
@@ -8610,7 +8610,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def has_deterministic_name(self):
         """Whether there is a deterministic name for the data.
 
-        See ``get_deterministic_name` for details.
+        See `get_deterministic_name` for details.
 
         .. versionadded:: 3.15.1
 
@@ -11777,21 +11777,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
-
-    #    def optimize_graph(self):
-    #        """Remove unnecessary tasks from the dask graph in-place.
-    #
-    #        .. versionadded:: 3.15.1
-    #
-    #        .. seealso:: `todict`
-    #
-    #        """
-    #        d = _inplace_enabled_define_and_cleanup(self)
-    #        dx = d.to_dask_array()
-    #        dsk = collections_to_dsk((dx,), optimize_graph=True)
-    #        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-    #        d._set_dask(dx, clear=_NONE)
-    #        return d
 
     @classmethod
     def zeros(

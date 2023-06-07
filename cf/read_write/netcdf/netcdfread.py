@@ -470,8 +470,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         doesn't scale well with array size (i.e. it takes
         disproportionally longer for larger arrays). Such arrays are
         usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so it should be be considered
-        to not call this method for field constructs.
+        need to know any array values, so this method should be used
+        with caution, if at all, on field construct data.
 
         .. versionadded:: 3.14.0
 

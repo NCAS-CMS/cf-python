@@ -115,7 +115,8 @@ class Flags:
             return self._flag_values
         except AttributeError:
             raise AttributeError(
-                "'%s' has no attribute 'flag_values'" % self.__class__.__name__
+                f"{self.__class__.__name__!r} has no attribute "
+                "'flag_values'"
             )
 
     @flag_values.setter
@@ -130,8 +131,8 @@ class Flags:
             del self._flag_values
         except AttributeError:
             raise AttributeError(
-                "Can't delete '%s' attribute 'flag_values'"
-                % self.__class__.__name__
+                f"Can't delete {self.__class__.__name__!r} attribute "
+                "'flag_values'"
             )
 
     # ----------------------------------------------------------------
@@ -157,8 +158,8 @@ class Flags:
             return self._flag_masks
         except AttributeError:
             raise AttributeError(
-                "'%s' object has no attribute 'flag_masks'"
-                % self.__class__.__name__
+                f"{self.__class__.__name__!r} object has no attribute "
+                "'flag_masks'"
             )
 
     @flag_masks.setter
@@ -174,8 +175,8 @@ class Flags:
             del self._flag_masks
         except AttributeError:
             raise AttributeError(
-                "Can't delete '%s' attribute 'flag_masks'"
-                % self.__class__.__name__
+                f"Can't delete {self.__class__.__name__!r} attribute "
+                "'flag_masks'"
             )
 
     @property
@@ -209,8 +210,8 @@ class Flags:
             return self._flag_meanings
         except AttributeError:
             raise AttributeError(
-                "'%s' object has no attribute 'flag_meanings'"
-                % self.__class__.__name__
+                f"{self.__class__.__name__!r} object has no attribute "
+                "'flag_meanings'"
             )
 
     @flag_meanings.setter
@@ -228,23 +229,24 @@ class Flags:
             del self._flag_meanings
         except AttributeError:
             raise AttributeError(
-                "Can't delete '%s' attribute 'flag_meanings'"
-                % self.__class__.__name__
+                f"Can't delete {self.__class__.__name__!r} attribute "
+                "'flag_meanings'"
             )
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
         string = []
         if hasattr(self, "flag_values"):
-            string.append("flag_values=%s" % str(self.flag_values))
+            string.append(f"flag_values={self.flag_values}")
 
         if hasattr(self, "flag_masks"):
-            string.append("flag_masks=%s" % str(self.flag_masks))
+            string.append(f"flag_masks={self.flag_masks}")
 
         if hasattr(self, "flag_meanings"):
-            string.append("flag_meanings=%s" % str(self.flag_meanings))
+            string.append(f"flag_meanings={self.flag_meanings}")
 
-        return "<CF %s: %s>" % (self.__class__.__name__, ", ".join(string))
+        x = ", ".join(string)
+        return f"<CF {self.__class__.__name__}: {x}>"
 
     def copy(self):
         """Return a deep copy.
@@ -283,12 +285,12 @@ class Flags:
         indent0 = "    " * _level
         indent1 = "    " * (_level + 1)
 
-        string = ["%sFlags:" % indent0]
+        string = [f"{indent0}Flags:"]
 
         for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             value = getattr(self, attr, None)
             if value is not None:
-                string.append("%s%s = %s" % (indent1, attr[1:], list(value)))
+                string.append(f"{indent1}{attr[1:]} = {list(value)}")
 
         return "\n".join(string)
 
@@ -350,13 +352,10 @@ class Flags:
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if is_log_level_info(logger):
+                cls = self.__class__.__name__
                 logger.info(
-                    "%s: Different type: %s, %s"
-                    % (
-                        self.__class__.__name__,
-                        self.__class__.__name__,
-                        other.__class__.__name__,
-                    )
+                    f"{cls}: Different type: "
+                    f"{cls}, {other.__class__.__name__}"
                 )  # pragma: no cover
 
             return False
@@ -376,8 +375,8 @@ class Flags:
                 if not hasattr(other, attr):
                     if is_log_level_info(logger):
                         logger.info(
-                            "%s: Different attributes: %s"
-                            % (self.__class__.__name__, attr[1:])
+                            f"{self.__class__.__name__}: "
+                            f"Different attributes: {attr[1:]}"
                         )  # pragma: no cover
 
                     return False
@@ -394,18 +393,18 @@ class Flags:
                     verbose=verbose,
                 ):
                     if is_log_level_info(logger):
-                        print(
-                            "%s: Different '%s': %r, %r"
-                            % (self.__class__.__name__, attr[1:], x, y)
+                        logger.info(
+                            f"{self.__class__.__name__}: Different "
+                            f"{attr[1:]!r}: {x!r}, {y!r}"
                         )  # pragma: no cover
 
                     return False
 
             elif hasattr(other, attr):
                 if is_log_level_info(logger):
-                    print(
-                        "%s: Different attributes: %s"
-                        % (self.__class__.__name__, attr[1:])
+                    logger.info(
+                        f"{self.__class__.__name__}: Different attributes: "
+                        f"{attr[1:]}"
                     )  # pragma: no cover
 
                 return False

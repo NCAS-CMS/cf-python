@@ -78,7 +78,7 @@ class _HFLCache:
     """A cache for coordinate and cell measure hashes, first and last
     values and first and last cell bounds.
 
-     **Examples**
+    **Examples**
 
     >>> print(h)
     _HFLCache(
@@ -140,7 +140,7 @@ class _HFLCache:
 
 @dataclass()
 class _Canonical:
-    """Storage canonical versions of metadata construct attributes.
+    """Storage for canonical versions of metadata construct attributes.
 
     .. versionaddedd:: 3.15.1
 
@@ -339,7 +339,7 @@ class _Meta:
                 .. versionaddedd:: 3.15.1
 
             info: `bool`
-                True if the log level is ``'INFO'`` (``2``).
+                True if the log level is ``'INFO'`` (``2``) or higher.
 
                 .. versionaddedd:: 3.15.1
 
@@ -1060,7 +1060,7 @@ class _Meta:
                 The construct identity.
 
             axes: `tuple`
-                The identities of the constriuct axes, in the order
+                The identities of the construct axes, in the order
                 that applies to the construct.
 
         :Returns:
@@ -2371,11 +2371,10 @@ def aggregate(
 
             if info:
                 # Note: deliberately no gap between 'has' and '{exclude}'
-                if info:
-                    logger.info(
-                        f"Unaggregatable {f!r} has{exclude} been output: "
-                        f"{meta.message}"
-                    )
+                logger.info(
+                    f"Unaggregatable {f!r} has{exclude} been output: "
+                    f"{meta.message}"
+                )
 
             if not exclude:
                 # This field does not have a structural signature, so
@@ -2614,7 +2613,9 @@ def aggregate(
                 # ----------------------------------------------------
 
                 # Initialise the dictionary that will contain the data
-                # arrays that will need concatenating. E.g.
+                # arrays that will need concatenating.
+                #
+                # This dictionary will contain, e.g.
                 #
                 # {'field': {
                 #    1: [
@@ -2695,7 +2696,7 @@ def aggregate(
                     # data arrays.
                     #
                     # The concatenation is done here so that all
-                    # arrays can concatenated at once. With Dask, this
+                    # arrays can be concatenated at once. With Dask, this
                     # is faster than the old code (pre-3.15.1) which
                     # effectively did N-1 partial concatenations
                     # inside the `_aggregate_2_fields` function when
@@ -3214,7 +3215,7 @@ def _sort_indices(m, canonical_axes):
     :Parameters:
 
         m: `_Meta`
-            The meta object ofr a `Field` or `Domain`
+            The meta object for a `Field` or `Domain`
 
         canonical_axes: `tuple` of `str`
             The canonical axis identities.
@@ -3246,7 +3247,7 @@ def _get_hfl(
     """Return the hash value, and optionally first and last values or
     bounds.
 
-    The performance this function depends on minimising number of
+    The performance of this function depends on minimising number of
     calls to `Data.compute` and `Data.equals`.
 
     :Parameters:
@@ -3382,7 +3383,7 @@ def _get_hfl(
 
 
 def _group_fields(meta, axis, info=False):
-    """Return a FieldList of the potentially aggregatable fields.
+    """Return groups of potentially aggregatable fields.
 
     :Parameters:
 
@@ -3392,13 +3393,15 @@ def _group_fields(meta, axis, info=False):
             The name of the axis to group for aggregation.
 
         info: `bool`
-            True if the log level is ``'INFO'`` (``2``).
+            True if the log level is ``'INFO'`` (``2``) or higher.
 
             .. versionaddedd:: 3.15.1
 
     :Returns:
 
-        `list` of `FieldList`
+        `list`
+            A list of groups of potentially aggregatable fields. Each
+            group is represented by a `list` of `_Meta` objects.
 
     """
     axes = meta[0].axis_ids
@@ -4083,7 +4086,7 @@ def _aggregate_2_fields(
                         prop, f"{value0} :AGGREGATED: {value1}"
                     )
                 else:
-                    parent0.set_property(prop, " :AGGREGATED: {value1}")
+                    parent0.set_property(prop, f" :AGGREGATED: {value1}")
         else:
             if value0 is not None:
                 parent0.del_property(prop)

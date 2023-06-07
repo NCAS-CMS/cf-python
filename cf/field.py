@@ -1313,7 +1313,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if debug:
             logger.debug(
-                "\nrefs_to_add_from_field1={refs_to_add_from_field1}"
+                f"\nrefs_to_add_from_field1={refs_to_add_from_field1}"
             )  # pragma: no cover
 
         for ref in refs_to_add_from_field1:
@@ -6103,13 +6103,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # DCH
         if debug:
-            logger.debug(f"    Weights: {weights}")  # pragma: no cover
             logger.debug(
+                f"    Weights: {weights}\n",
                 f"    Number of indexed ({', '.join(names)}) bins: "
-                f"{unique_indices.shape[1]}"
-            )  # pragma: no cover
-            logger.debug(
-                f"    ({', '.join(names)}) bin indices:"  # DCH
+                f"{unique_indices.shape[1]}\n"
+                f"    ({', '.join(names)}) bin indices:",  # DCH
             )  # pragma: no cover
 
         # Loop round unique collections of bin indices
@@ -9610,7 +9608,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses.
             #
             # Use cull_graph=True to prevent dask failures arising
-            # concatenating graphs with lots of unused nodes.
+            # from concatenating graphs with lots of unused nodes.
             # --------------------------------------------------------
             try:
                 f = self.concatenate(fl, axis=iaxis, cull_graph=True)
@@ -10542,7 +10540,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if debug:
                 logger.debug(
-                    "Non-parametric coordinates construct key: {key!r}\n"
+                    f"Non-parametric coordinates construct key: {key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
