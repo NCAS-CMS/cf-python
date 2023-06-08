@@ -316,8 +316,10 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
+        units0 = getattr(value0, 'Units', Units())
+        units1 = getattr(value1, 'Units', Units())
         new_value = None
-        if value0 is not None and value1 is not None:
+        if value0 is not None and value1 is not None and units0.equivalent(units1):
             try:
                 if (value0 == value1).all():
                     new_value = deepcopy(value0)
@@ -451,20 +453,67 @@ class Query:
 
     @property
     def Units(self):
-        """TODOAGG
+        """Return the units of the query.
 
         .. versionadded:: TODOAGGVER
 
+        :Returns:
+
+            `Units`
+                The units of the query value(s).
+
         **Examples**
 
-        TODOAGG
+        >>> cf.eq(9).Units
+        <Units: >
+        >>> cf.eq(9, 'm s-1').Units
+        <Units: m s-1>
+        >>> cf.eq(cf.Data(9, 'km')).Units
+        <Units: km>
+
+        >>> (cf.eq(9) | cf.gt(10)).Units
+        <Units: >
+        >>> (cf.eq(9, 'm') | cf.gt(10, 'm')).Units
+        <Units: >
+        cf.Units())
+        >>> (cf.eq(9, 'm') | cf.gt(9, 'm')).Units
+        <Units: m>
+        >>> (cf.eq(9, 'm') | cf.gt(45, 'm')).Units
+        <Units: m>
+
+        >>> (cf.eq(9, 'm') | cf.gt(45)).Units
+        AttributeError: <CF Query: [(eq 9 m) | (gt 45)]> has indeterminate units
+        >>> (cf.eq(9, 'm') | cf.gt(9, 'day')).Units
+        AttributeError: <CF Query: [(eq 9 m) | (gt 9 day)]> has indeterminate units
 
         """
-        try:
-            return self._value.Units
-        except AttributeError:
-            return Units()
+        value = self._value
+        if value is not None:            
+            try:
+                return value.Units
+            except AttributeError:
+                return Units()
+            
+        # Still here? Then ...
+        compound = self._compound
+        if compound:            
+            q0, q1 = compound            
+            units0 = getattr(q0, 'Units', Units())
+            units1 = getattr(q1, 'Units', Units())
+            if not units0:
+                if not units1:
+                    return Units()
 
+                return units1
+
+            if not units1:
+                return units0
+            
+            if units0.equivalent(units1):
+                return units0
+
+        raise AttributeError(f"{self!r} has indeterminate units")
+    
     @Units.setter
     def Units(self, value):
         self.set_condition_units(value)

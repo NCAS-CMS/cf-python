@@ -1685,9 +1685,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
 
+        # Convert to "difference" units
+        #
+        # TODO: Think about temperature units in relation to
+        #       https://github.com/cf-convention/discuss/issues/101,
+        #       whenever that issue is resolved.
         units_since_reftime = self.Units._units_since_reftime
         if units_since_reftime is not None:
-            # Convert to "difference" units
             d.override_units(Units(units_since_reftime), inplace=True)
 
         return d

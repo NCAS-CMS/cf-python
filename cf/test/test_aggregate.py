@@ -343,68 +343,236 @@ class aggregateTest(unittest.TestCase):
         self.assertTrue((anc[:2] == "bar_a").all())
         self.assertTrue((anc[2:] == "bar_b").all())
 
-    def test_aggregate_cells_size(self):
+    def test_aggregate_cells(self):
+        """Test the 'cells' keyword of cf.aggregate"""
         f = cf.example_field(0)
         fl = (f[:2], f[2], f[3:])
 
+        # 1-d aggregation resulting in one field
         for cells in (
             None,
-            {"Y": {"size": cf.lt(100, "degrees_north")}},
-            {"Y": {"size": cf.gt(100, "degrees_north")}},
-            {"Y": {"size": cf.wi(30, 60, "degrees_north")}},
-            {"Y": {"size": cf.set([30, 60], "degrees_north")}},
-            {"Y": {"diff": cf.set([30, 45], "degrees_north")}},
+            {"Y": {"cellsize": cf.lt(100, "degrees_north")}},
+            {"Y": {"cellsize": cf.gt(100, "degrees_north")}},
+            {"Y": {"cellsize": cf.wi(30, 60, "degrees_north")}},
+            {"Y": {"cellsize": cf.set([30, 60], "degrees_north")}},
+            {"Y": {"spacing": cf.set([30, 45], "degrees_north")}},
             {
                 "Y": {
-                    "size": cf.wi(30, 60, "degrees_north"),
-                    "diff": cf.set([30, 45], "degrees_north"),
+                    "cellsize": cf.wi(30, 60, "degrees_north"),
+                    "spacing": cf.set([30, 45], "degrees_north"),
                 }
             },
         ):
-            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1, cells)
 
         for cells in (
-            {"Y": {"size": cf.wi(39, 60, "km")}},
-            {"foo": {"size": 34}},
-            {"T": {"size": cf.D(0)}},
-            {"T": {"size": cf.Data(0, "days")}},
-            {"T": {"size": cf.Data(99, "days")}},
-            {"T": {"size": cf.Data([99], "days")}},
+            {"Y": {"cellsize": cf.wi(39, 60, "km")}},
+            {"foo": {"cellsize": 34}},
+            {"T": {"cellsize": cf.D(0)}},
+            {"T": {"cellsize": cf.Data(0, "days")}},
+            {"T": {"cellsize": cf.Data(99, "days")}},
+            {"T": {"cellsize": cf.Data([99], "days")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
+        # 1-d aggregation resulting in two fields
         for cells in (
-            {"Y": {"size": cf.eq(30, "degreeN")}},
-            {"Y": {"size": cf.Data(60, "degrees_N")}},
+            {"Y": {"cellsize": cf.eq(30, "degreeN")}},
+            {"Y": {"cellsize": cf.Data(60, "degrees_N")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
 
-        # 2-d aggregation
+        # 2-d aggregation resulting in one field
         fl_2d = []
         for g in fl:
             fl_2d.extend((g[:, :3], g[:, 3:]))
 
         for cells in (
             None,
-            {"Y": {"size": cf.wi(30, 60, "degrees_north")}},
-            {"X": {"size": cf.Data(45, "degrees_east")}},
+            {"Y": {"cellsize": cf.wi(30, 60, "degrees_north")}},
+            {"X": {"cellsize": cf.Data(45, "degrees_east")}},
             {
-                "Y": {"size": cf.wi(30, 60, "degrees_north")},
-                "X": {"size": cf.eq(45, "degrees_east")},
+                "Y": {"cellsize": cf.wi(30, 60, "degrees_north")},
+                "X": {"cellsize": cf.eq(45, "degrees_east")},
             },
         ):
             self.assertEqual(len(cf.aggregate(fl_2d, cells=cells)), 1)
 
-        # No bounds
-        f.dimension_coordinate("Y").del_bounds()
-        fl = (f[:2], f[2], f[3:])
+        #  1-d aggregation with no bounds resulting in one field
+        g = f.copy()
+        g.dimension_coordinate("Y").del_bounds()
+        fl = (g[:2], g[2], g[3:])
         for cells in (
             None,
-            {"Y": {"size": cf.lt(100, "degrees_north")}},
-            {"Y": {"size": cf.lt(-1, "degrees_north")}},
+            {"Y": {"cellsize": cf.lt(100, "degrees_north")}},
+            {"Y": {"cellsize": cf.lt(-1, "degrees_north")}},
         ):
-            print(cells)
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+
+        # 1-d aggregation: 'diff' condition depends on 'contiguous'
+        h = f.copy()
+        fl = [h[..., :3], h[..., 4], h[..., 5:]]  # Miss out h[..., [3]]
+        cells = {"X": {"spacing": cf.Data(45, "degreeE")}}
+        # Aggregates
+        self.assertEqual(
+            len(cf.aggregate(fl, cells=cells, contiguous=False)), 1
+        )
+        # Does not aggregate
+        self.assertEqual(
+            len(cf.aggregate(fl, cells=cells, contiguous=True)), 3
+        )
+
+        # Climatology cells
+        f = cf.example_field(2)
+        g = f.copy()
+        g.dimension_coordinate("T").override_units(
+            "hours since 1960-01-01", inplace=1
+        )
+        self.assertEqual(len(cf.aggregate([f[:12], f[12:], g])), 3)
+        self.assertEqual(
+            len(
+                cf.aggregate([f[:12], f[12:], g], cells=cf.climatology_cells())
+            ),
+            2,
+        )
+
+    def test_climatology_cells(self):
+        """Test cf.climatology_cells"""
+        self.assertIsInstance(cf.climatology_cells(), dict)
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False, months=False, days=(), hours=(), seconds=()
+            ),
+            {"T": []},
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False, months=False, days=(), hours=(), seconds=(1,)
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "second")},
+                    {"spacing": cf.Data(1, "second")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False,
+                months=False,
+                days=(),
+                hours=(),
+                seconds=(1,),
+                seconds_instantaneous=False,
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "second")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False, months=False, days=(), hours=(), minutes=(1,)
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "minute")},
+                    {"spacing": cf.Data(1, "minute")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False,
+                months=False,
+                days=(),
+                hours=(),
+                minutes=(1,),
+                minutes_instantaneous=False,
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "minute")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False, months=False, days=(), hours=(1,)
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "hour")},
+                    {"spacing": cf.Data(1, "hour")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False,
+                months=False,
+                days=(),
+                hours=(1,),
+                hours_instantaneous=False,
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "hour")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False, months=False, days=(1,), hours=()
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "day")},
+                ]
+            },
+        )
+
+        self.assertEqual(
+            cf.climatology_cells(
+                years=False,
+                months=False,
+                days=(1,),
+                hours=(),
+                days_instantaneous=True,
+            ),
+            {
+                "T": [
+                    {"cellsize": cf.Data(1, "day")},
+                    {"spacing": cf.Data(1, "day")},
+                ]
+            },
+        )
+
+        cells = cf.climatology_cells(
+            years=False,
+            days=(),
+            hours=(),
+        )
+        condition = cells["T"][0]["cellsize"]
+        self.assertTrue(condition.equals(cf.wi(28, 31, "day")))
+
+        cells = cf.climatology_cells(
+            years=True,
+            months=False,
+            days=(),
+            hours=(),
+        )
+        condition = cells["T"][0]["cellsize"]
+        self.assertTrue(condition.equals(cf.wi(360, 366, "day")))
 
 
 if __name__ == "__main__":

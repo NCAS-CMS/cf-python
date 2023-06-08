@@ -654,6 +654,26 @@ class QueryTest(unittest.TestCase):
         )
 
 
+    def test_Query_Units(self):
+        self.assertEqual(cf.eq(9).Units, cf.Units())
+        self.assertEqual(cf.eq(9, 'm s-1').Units, cf.Units('m s-1'))
+        self.assertEqual(cf.eq(cf.Data(9, 'km')).Units, cf.Units('km'))
+
+        self.assertEqual((cf.eq(9) | cf.gt(9)).Units, cf.Units())
+        self.assertEqual((cf.eq(9) | cf.gt(45)).Units, cf.Units())
+        self.assertEqual((cf.eq(9, 'm') | cf.gt(9, 'm')).Units, cf.Units('m'))
+        self.assertEqual((cf.eq(9, 'm') | cf.gt(45, 'm')).Units, cf.Units('m'))
+
+        with self.assertRaises(AttributeError):
+            (cf.eq(9, 'm') | cf.gt(9, 'day')).Units
+        
+        with self.assertRaises(AttributeError):
+            self.assertEqual((cf.eq(9, 'm') | cf.gt(9)).Units, cf.Units('m'))
+           
+        with self.assertRaises(AttributeError):
+            self.assertEqual((cf.eq(9) | cf.gt(45, 'm')).Units, cf.Units('m'))
+           
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

@@ -846,6 +846,11 @@ class PropertiesDataBounds(PropertiesData):
         else:
             data = self.get_data(None)
             if data is not None:
+                # Convert to "difference" units
+                #
+                # TODO: Think about temperature units in relation to
+                #       https://github.com/cf-convention/discuss/issues/101,
+                #       whenever that issue is resolved.
                 units = self.Units
                 units_since_reftime = units._units_since_reftime
                 if units_since_reftime is not None:
