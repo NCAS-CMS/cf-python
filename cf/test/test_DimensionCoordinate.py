@@ -666,13 +666,15 @@ class DimensionCoordinateTest(unittest.TestCase):
                 standard_name="longitude",
             )
 
-    	# Test decreasing case
+        # Test decreasing case
         longitude_decreasing = cf.DimensionCoordinate.create_regular(
             (180, -180, -1), units="degrees_east", standard_name="longitude"
         )
         self.assertIsInstance(longitude_decreasing, cf.DimensionCoordinate)
         self.assertTrue(
-            np.allclose(longitude_decreasing.array, np.linspace(179.5, -179.5, 360))
+            np.allclose(
+                longitude_decreasing.array, np.linspace(179.5, -179.5, 360)
+            )
         )
         self.assertEqual(longitude_decreasing.standard_name, "longitude")
         self.assertEqual(longitude_decreasing.units, "degrees_east")
@@ -680,17 +682,26 @@ class DimensionCoordinateTest(unittest.TestCase):
         # Decreasing range with positive delta
         with self.assertRaises(ValueError):
             cf.DimensionCoordinate.create_regular((180, -180, 1))
-            
+
         # Test decreasing case and bounds=False
         longitude_decreasing_no_bounds = cf.DimensionCoordinate.create_regular(
-            (180, -180, -1), units="degrees_east", standard_name="longitude", bounds=False
+            (180, -180, -1),
+            units="degrees_east",
+            standard_name="longitude",
+            bounds=False,
         )
-        self.assertIsInstance(longitude_decreasing_no_bounds, cf.DimensionCoordinate)
+        self.assertIsInstance(
+            longitude_decreasing_no_bounds, cf.DimensionCoordinate
+        )
         self.assertFalse(longitude_decreasing_no_bounds.has_bounds())
         self.assertTrue(
-            np.allclose(longitude_decreasing_no_bounds.array, np.arange(180, -181, -1))
+            np.allclose(
+                longitude_decreasing_no_bounds.array, np.arange(180, -181, -1)
+            )
         )
-        self.assertEqual(longitude_decreasing_no_bounds.standard_name, "longitude")
+        self.assertEqual(
+            longitude_decreasing_no_bounds.standard_name, "longitude"
+        )
         self.assertEqual(longitude_decreasing_no_bounds.units, "degrees_east")
 
 

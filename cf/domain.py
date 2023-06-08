@@ -393,19 +393,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         x_args = np.array(x_args)
 
-        if x_args.shape != (3,) or x_args.dtype.kind not in 'fi':
+        if x_args.shape != (3,) or x_args.dtype.kind not in "fi":
             raise ValueError(
-                        "The args argument was incorrectly formatted. "
-                        f"Expected a sequence of three numbers, got {x_args}."
-                    )
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {x_args}."
+            )
 
         y_args = np.array(y_args)
 
-        if y_args.shape != (3,) or y_args.dtype.kind not in 'fi':
+        if y_args.shape != (3,) or y_args.dtype.kind not in "fi":
             raise ValueError(
-                        "The args argument was incorrectly formatted. "
-                        f"Expected a sequence of three numbers, got {y_args}."
-                    )
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {y_args}."
+            )
 
         x_range = x_args[0:2]
         y_range = y_args[0:2]
@@ -431,16 +431,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         )
 
         domain_axis_longitude = domain.set_construct(
-            domain._DomainAxis(longitude.size),
-            copy=False
+            domain._DomainAxis(longitude.size), copy=False
         )
 
         domain_axis_latitude = domain.set_construct(
-            domain._DomainAxis(latitude.size),
-            copy=False
+            domain._DomainAxis(latitude.size), copy=False
         )
 
-        domain.set_construct(longitude, axes=[domain_axis_longitude], copy=False)
+        domain.set_construct(
+            longitude, axes=[domain_axis_longitude], copy=False
+        )
         domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
 
         return domain

@@ -9,7 +9,6 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 # 1. Import cf-python, cf-plot and numpy:
 
 import cfplot as cfp
-import numpy as np
 
 import cf
 
@@ -46,13 +45,13 @@ cfp.mapset(resolution="50m", proj="rotated")
 cfp.con(gust.subspace(T=test), lines=False)
 
 # %%
-# 8. Create dimension coordinates for the destination grid with the latitude and 
-# longitude values for Europe. `cf.Domain.create_regular 
+# 8. Create dimension coordinates for the destination grid with the latitude and
+# longitude values for Europe. `cf.Domain.create_regular
 # <https://ncas-cms.github.io/cf-python/docs/method/cf.Domain.create_regular.html>`_
-# method is used to 
-# create a regular grid with longitudes and latitudes. Spherical regridding is 
-# then performed on the gust variable by passing the target domain as argument. 
-# The method also takes an argument ``'linear'`` which specifies the type of 
+# method is used to
+# create a regular grid with longitudes and latitudes. Spherical regridding is
+# then performed on the gust variable by passing the target domain as argument.
+# The method also takes an argument ``'linear'`` which specifies the type of
 # regridding method to use. The description of the ``regridded_data`` is finally
 # printed to show properties of all its constructs:
 
