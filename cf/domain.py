@@ -410,8 +410,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                         f"Expected a sequence of three numbers, got {y_args}."
                     )
 
-        x_range, dx = (x_args[0], x_args[1]), x_args[2]
-        y_range, dy = (y_args[0], y_args[1]), y_args[2]
+        x_range = x_args[0:2]
+        y_range = y_args[0:2]
 
         domain = cls()
 
