@@ -118,6 +118,21 @@ for html_file in "${html_files[@]}"; do
     done
 done
 
+# Recipe filters
+while IFS= read -r href; do
+  IFS= read -r div
+  awk -v href="$href" -v div="$div" '
+  {
+    if ($0 ~ href) {
+      gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+    }
+    print prev
+    prev = $0
+  }
+  END {print prev}
+  ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
+done < source/recipes/recipe_list.txt
+
 # Copy over our custom stylesheet. It is referenced in the HTML docs
 # files but Sphinx with alabaster theme doesn't seem to (?) provide a
 # means to transfer it to the created _static dir via the build itself
