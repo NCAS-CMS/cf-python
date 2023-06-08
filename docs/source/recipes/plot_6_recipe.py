@@ -9,7 +9,6 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 # 1. Import cf-python, cf-plot and numpy:
 
 import cfplot as cfp
-import numpy as np
 
 import cf
 
@@ -46,22 +45,18 @@ cfp.mapset(resolution="50m", proj="rotated")
 cfp.con(gust.subspace(T=test), lines=False)
 
 # %%
-# 8. Create dimension coordinates for the destination grid with the latitude and longitude values for Europe. `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ generates evenly spaced values between the specified latitude and longitude range. Bounds of the target longitude and target latitude are created and spherical regridding is then performed on the gust variable by passing the target latitude and target longitude as arguments. The method also takes an argument ``'linear'`` which specifies the type of regridding method to use. The description of the ``regridded_data`` is finally printed to show properties of all its constructs:
+# 8. Create dimension coordinates for the destination grid with the latitude and
+# longitude values for Europe. `cf.Domain.create_regular
+# <https://ncas-cms.github.io/cf-python/docs/method/cf.Domain.create_regular.html>`_
+# method is used to
+# create a regular grid with longitudes and latitudes. Spherical regridding is
+# then performed on the gust variable by passing the target domain as argument.
+# The method also takes an argument ``'linear'`` which specifies the type of
+# regridding method to use. The description of the ``regridded_data`` is finally
+# printed to show properties of all its constructs:
 
-target_latitude = cf.DimensionCoordinate(
-    data=cf.Data(np.linspace(34, 72, num=10), "degrees_north")
-)
-target_longitude = cf.DimensionCoordinate(
-    data=cf.Data(np.linspace(-25, 45, num=10), "degrees_east")
-)
-
-lon_bounds = target_longitude.create_bounds()
-lat_bounds = target_latitude.create_bounds()
-
-target_longitude.set_bounds(lon_bounds)
-target_latitude.set_bounds(lat_bounds)
-
-regridded_data = gust.regrids((target_latitude, target_longitude), "linear")
+target_domain = cf.Domain.create_regular((-25, 45, 10), (32, 72, 10))
+regridded_data = gust.regrids(target_domain, "linear")
 regridded_data.dump()
 
 # %%
