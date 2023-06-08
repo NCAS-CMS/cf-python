@@ -374,17 +374,14 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         --------
         Domain:
         --------
-
         Domain Axis: latitude(180)
         Domain Axis: longitude(360)
-
         Dimension coordinate: longitude
             standard_name = 'longitude'
             units = 'degrees_east'
             Data(longitude(360)) = [-179.5, ..., 179.5] degrees_east
             Bounds:units = 'degrees_east'
             Bounds:Data(longitude(360), 2) = [[-180.0, ..., 180.0]] degrees_east
-
         Dimension coordinate: latitude
             standard_name = 'latitude'
             units = 'degrees_north'

@@ -176,6 +176,7 @@ Miscellaneous
    ~cf.Domain.apply_masking
    ~cf.Domain.climatological_time_axes
    ~cf.Domain.copy
+   ~cf.Domain.create_regular   
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs

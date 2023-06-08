@@ -47,7 +47,9 @@ cfp.con(gust.subspace(T=test), lines=False)
 
 # %%
 # 8. Create dimension coordinates for the destination grid with the latitude and 
-# longitude values for Europe. `cf.Domain.create_regular` method is used to 
+# longitude values for Europe. `cf.Domain.create_regular 
+# <https://ncas-cms.github.io/cf-python/docs/method/cf.Domain.create_regular.html>`_
+# method is used to 
 # create a regular grid with longitudes and latitudes. Spherical regridding is 
 # then performed on the gust variable by passing the target domain as argument. 
 # The method also takes an argument ``'linear'`` which specifies the type of 
