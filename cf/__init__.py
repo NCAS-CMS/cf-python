@@ -169,7 +169,7 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.6.0"
+_minimum_vn = "1.6.2"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "

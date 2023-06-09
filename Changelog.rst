@@ -3,6 +3,8 @@ version 3.15.1
 
 **2023-06-09**
 
+* New documentation cheat sheet
+  (https://github.com/NCAS-CMS/cf-python/issues/591)
 * Performance improvements to `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/640)
 * New methods: `cf.Data.argmin`, `cf.Field.argmin`
@@ -20,6 +22,7 @@ version 3.15.1
   missing standard names
   (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Changed dependency: ``cfunits>=3.3.6``
+* Changed dependency: ``cftime>=1.6.2``
 
 ----
 
