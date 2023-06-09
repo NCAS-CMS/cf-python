@@ -1,7 +1,0 @@
-cf.FieldAncillary.cosh
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.cosh

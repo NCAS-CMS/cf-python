@@ -1,7 +1,0 @@
-cf.List.__imod__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__imod__

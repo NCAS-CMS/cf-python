@@ -1,7 +1,0 @@
-cf.CellMeasure.__rand__
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__rand__

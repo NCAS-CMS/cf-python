@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.__radd__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.__radd__

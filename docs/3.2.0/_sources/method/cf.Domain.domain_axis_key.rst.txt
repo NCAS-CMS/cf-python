@@ -1,7 +1,0 @@
-cf.Domain.domain_axis_key
-=========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Domain.domain_axis_key

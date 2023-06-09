@@ -1,7 +1,0 @@
-cf.Data.last_element
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.last_element

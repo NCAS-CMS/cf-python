@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.uncompress
-=================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.uncompress

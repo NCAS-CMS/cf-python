@@ -1,7 +1,0 @@
-cf.CellMethod.dump
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.dump

@@ -1,7 +1,0 @@
-cf.FieldList.clear
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.clear

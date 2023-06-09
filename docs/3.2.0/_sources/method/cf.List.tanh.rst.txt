@@ -1,7 +1,0 @@
-cf.List.tanh
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.tanh

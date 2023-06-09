@@ -1,7 +1,0 @@
-cf.List.sd
-==========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.sd

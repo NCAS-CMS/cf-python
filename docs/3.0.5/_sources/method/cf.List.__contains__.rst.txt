@@ -1,7 +1,0 @@
-cf.List.__contains__
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__contains__

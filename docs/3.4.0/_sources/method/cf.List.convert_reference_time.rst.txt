@@ -1,7 +1,0 @@
-cf.List.convert_reference_time
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.convert_reference_time

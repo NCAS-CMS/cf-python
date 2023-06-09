@@ -1,7 +1,0 @@
-cf.List.rint
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.rint

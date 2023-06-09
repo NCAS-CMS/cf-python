@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.round
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.round

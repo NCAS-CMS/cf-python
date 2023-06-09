@@ -1,7 +1,0 @@
-cf.Index.units
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Index.units

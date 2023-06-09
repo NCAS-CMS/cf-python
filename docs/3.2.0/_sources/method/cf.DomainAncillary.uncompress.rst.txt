@@ -1,7 +1,0 @@
-cf.DomainAncillary.uncompress
-=============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.uncompress

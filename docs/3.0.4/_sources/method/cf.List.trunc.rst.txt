@@ -1,7 +1,0 @@
-cf.List.trunc
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.trunc

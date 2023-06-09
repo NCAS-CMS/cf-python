@@ -1,7 +1,0 @@
-cf.Count.hour
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Count.hour

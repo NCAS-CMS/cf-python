@@ -1,7 +1,0 @@
-cf.Datum.nc_del_variable
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Datum.nc_del_variable

@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.__contains__
-===================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.__contains__

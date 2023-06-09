@@ -1,7 +1,0 @@
-cf.List.mean
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.mean

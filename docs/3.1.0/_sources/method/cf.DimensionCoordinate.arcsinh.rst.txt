@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.arcsinh
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.arcsinh

@@ -1,7 +1,0 @@
-cf.List.__imul__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__imul__

@@ -1,7 +1,0 @@
-cf.Count.round
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.round
