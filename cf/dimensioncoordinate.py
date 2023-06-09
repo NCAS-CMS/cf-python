@@ -239,6 +239,109 @@ class DimensionCoordinate(
 
         return _direction
 
+    @classmethod
+    def create_regular(cls, args, units=None, standard_name=None, bounds=True):
+        """
+        Create a new `DimensionCoordinate` with the given range and cellsize.
+
+        .. versionadded:: 3.15.0
+
+        :Note: This method does not set the cyclicity of the
+               `DimensionCoordinate`.
+
+        :Parameters:
+
+            args: sequence of numbers
+                A sequence of three numeric values. The first two values in the
+                sequence represent the coordinate range (see the bounds
+                parameter for details), and the third value represents the
+                cellsize.
+
+            bounds: `bool`, optional
+                If True (the default) then the given range represents
+                the bounds, and the coordinate points will be the midpoints of
+                the bounds. If False, the range represents the coordinate points
+                directly.
+
+            units: str or `Units`, optional
+                The units of the new `DimensionCoordinate` object.
+
+            standard_name: str, optional
+                The standard_name of the `DimensionCoordinate` object.
+
+        :Returns:
+
+            `DimensionCoordinate`
+                The newly created DimensionCoordinate object.
+
+        **Examples**
+
+        >>> longitude = cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1), units='degrees_east', standard_name='longitude'
+            )
+        >>> longitude.dump()
+        Dimension coordinate: longitude
+            standard_name = 'longitude'
+            units = 'degrees_east'
+            Data(360) = [-179.5, ..., 179.5] degrees_east
+            Bounds:units = 'degrees_east'
+            Bounds:Data(360, 2) = [[-180.0, ..., 180.0]] degrees_east
+
+        """
+        args = np.array(args)
+
+        if args.shape != (3,) or args.dtype.kind not in "fi":
+            raise ValueError(
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {args}."
+            )
+
+        range = (args[0], args[1])
+        cellsize = args[2]
+
+        range_diff = range[1] - range[0]
+        if cellsize > 0 and range_diff <= 0:
+            raise ValueError(
+                f"Range ({range[0], range[1]}) must be increasing for a "
+                f"positive cellsize ({cellsize})"
+            )
+        elif cellsize < 0 and range_diff >= 0:
+            raise ValueError(
+                f"Range ({range[0], range[1]}) must be decreasing for a "
+                f"negative cellsize ({cellsize})"
+            )
+
+        if range_diff % cellsize != 0:
+            raise ValueError(
+                f"The range of the dimension ({range_diff}) must be "
+                f"divisible by the cellsize ({cellsize})"
+            )
+
+        if standard_name is not None and not isinstance(standard_name, str):
+            raise ValueError("standard_name must be either None or a string.")
+
+        if bounds:
+            cellsize2 = cellsize / 2
+            start = range[0] + cellsize2
+            end = range[1] - cellsize2
+        else:
+            start = range[0]
+            end = range[1]
+
+        points = np.arange(start, end + cellsize, cellsize)
+
+        coordinate = cls(
+            data=Data(points, units=units),
+            properties={"standard_name": standard_name},
+            copy=False,
+        )
+
+        if bounds:
+            b = coordinate.create_bounds()
+            coordinate.set_bounds(b, copy=False)
+
+        return coordinate
+
     def create_bounds(
         self, bound=None, cellsize=None, flt=0.5, max=None, min=None
     ):

@@ -359,6 +359,7 @@ Miscellaneous
 
    ~cf.DimensionCoordinate.concatenate
    ~cf.DimensionCoordinate.copy
+   ~cf.DimensionCoordinate.create_regular
    ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
