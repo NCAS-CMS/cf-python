@@ -1,3 +1,5 @@
+:orphan:
+
 cf.DomainAncillary.del_bounds
 =============================
 

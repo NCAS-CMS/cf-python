@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Converting from rotated latitude-longitude to regular latitude-longitude &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting members of a model ensemble" href="plot_07_recipe.html" />
+    <link rel="prev" title="Plotting wind vectors overlaid on precipitation data" href="plot_05_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_05_recipe.html" title="previous chapter">Plotting wind vectors overlaid on precipitation data</a></li>
+      <li>Next: <a href="plot_07_recipe.html" title="next chapter">Plotting members of a model ensemble</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-06-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="converting-from-rotated-latitude-longitude-to-regular-latitude-longitude">
+<span id="sphx-glr-recipes-plot-06-recipe-py"></span><h1>Converting from rotated latitude-longitude to regular latitude-longitude<a class="headerlink" href="#converting-from-rotated-latitude-longitude-to-regular-latitude-longitude" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regular latitude-longitude destination domain.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python, cf-plot and numpy:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read the field constructs using read function:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/au952a.pd20510414.pp&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;CF Field: id%UM_m01s03i463_vn1006(time(8), grid_latitude(432), grid_longitude(444))&gt;]
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Select the field by index and print its description to show properties of all constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gust</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gust</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-----------------------------------------------------------
+Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
+-----------------------------------------------------------
+Conventions = &#39;CF-1.10&#39;
+_FillValue = -1073741824.0
+history = &#39;Converted from UM/PP by cf-python v3.15.1&#39;
+lbproc = &#39;8192&#39;
+lbtim = &#39;122&#39;
+long_name = &#39;WIND GUST&#39;
+runid = &#39;aaaaa&#39;
+source = &#39;UM vn1006&#39;
+stash_code = &#39;3463&#39;
+submodel = &#39;1&#39;
+um_stash_source = &#39;m01s03i463&#39;
+
+Data(time(8), grid_latitude(432), grid_longitude(444)) = [[[5.587890625, ..., 5.1376953125]]]
+
+Cell Method: time(8): maximum
+
+Domain Axis: grid_latitude(432)
+Domain Axis: grid_longitude(444)
+Domain Axis: height(1)
+Domain Axis: time(8)
+
+Dimension coordinate: time
+    axis = &#39;T&#39;
+    calendar = &#39;360_day&#39;
+    standard_name = &#39;time&#39;
+    units = &#39;days since 2051-1-1&#39;
+    Data(time(8)) = [2051-04-14 01:30:00, ..., 2051-04-14 22:30:00] 360_day
+    Bounds:calendar = &#39;360_day&#39;
+    Bounds:units = &#39;days since 2051-1-1&#39;
+    Bounds:Data(time(8), 2) = [[2051-04-14 00:00:00, ..., 2051-04-15 00:00:00]] 360_day
+
+Dimension coordinate: height
+    axis = &#39;Z&#39;
+    positive = &#39;up&#39;
+    standard_name = &#39;height&#39;
+    units = &#39;m&#39;
+    Data(height(1)) = [-1.0] m
+
+Dimension coordinate: grid_latitude
+    axis = &#39;Y&#39;
+    standard_name = &#39;grid_latitude&#39;
+    units = &#39;degrees&#39;
+    Data(grid_latitude(432)) = [-24.474999085068703, ..., 22.93500065803528] degrees
+    Bounds:units = &#39;degrees&#39;
+    Bounds:Data(grid_latitude(432), 2) = [[-24.52999908477068, ..., 22.990000657737255]] degrees
+
+Dimension coordinate: grid_longitude
+    axis = &#39;X&#39;
+    standard_name = &#39;grid_longitude&#39;
+    units = &#39;degrees&#39;
+    Data(grid_longitude(444)) = [-29.47499145567417, ..., 19.255008280277252] degrees
+    Bounds:units = &#39;degrees&#39;
+    Bounds:Data(grid_longitude(444), 2) = [[-29.52999145537615, ..., 19.31000827997923]] degrees
+
+Auxiliary coordinate: latitude
+    standard_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(grid_latitude(432), grid_longitude(444)) = [[20.576467692711244, ..., 66.90225185059428]] degrees_north
+    Bounds:units = &#39;degrees_north&#39;
+    Bounds:Data(grid_latitude(432), grid_longitude(444), 4) = [[[20.50585365074419, ..., 66.82752183591474]]] degrees_north
+
+Auxiliary coordinate: longitude
+    standard_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(grid_latitude(432), grid_longitude(444)) = [[-10.577446822867152, ..., 68.72895292160315]] degrees_east
+    Bounds:units = &#39;degrees_east&#39;
+    Bounds:Data(grid_latitude(432), grid_longitude(444), 4) = [[[-10.602339269012642, ..., 68.7357360850507]]] degrees_east
+
+Coordinate reference: grid_mapping_name:rotated_latitude_longitude
+    Coordinate conversion:grid_mapping_name = rotated_latitude_longitude
+    Coordinate conversion:grid_north_pole_latitude = 39.25
+    Coordinate conversion:grid_north_pole_longitude = 198.0
+    Dimension Coordinate: grid_longitude
+    Dimension Coordinate: grid_latitude
+    Auxiliary Coordinate: longitude
+    Auxiliary Coordinate: latitude
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Access the time coordinate of the gust field and retrieve the datetime values of the time coordinate:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gust</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[cftime.Datetime360Day(2051, 4, 14, 1, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 4, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 7, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 10, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 13, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 16, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 19, 30, 0, 0, has_year_zero=True)
+ cftime.Datetime360Day(2051, 4, 14, 22, 30, 0, 0, has_year_zero=True)]
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Create a new instance of the <cite>cf.dt</cite> class with a specified year, month, day, hour, minute, second and microsecond. Then store the result in the variable <code class="docutils literal notranslate"><span class="pre">test</span></code>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a> <span class="o">=</span> <a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><span class="mi">2051</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2051-04-14 01:30:00
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Plot the wind gust by creating a subspace for the specified variable <code class="docutils literal notranslate"><span class="pre">test</span></code> using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here <a class="reference external" href="http://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to set the mapping parameters like setting the map resolution to 50m:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gust</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_06_recipe_001.png" srcset="../_images/sphx_glr_plot_06_recipe_001.png" alt="plot 06 recipe" class = "sphx-glr-single-img"/><ol class="arabic simple" start="7">
+<li><p>To see the rotated pole data on the native grid, the above steps are repeated and projection is set to rotated in <a class="reference external" href="http://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="s2">&quot;rotated&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gust</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_06_recipe_002.png" srcset="../_images/sphx_glr_plot_06_recipe_002.png" alt="plot 06 recipe" class = "sphx-glr-single-img"/><p>8. Create dimension coordinates for the destination grid with the latitude and
+longitude values for Europe. <a class="reference external" href="https://ncas-cms.github.io/cf-python/docs/method/cf.Domain.create_regular.html">cf.Domain.create_regular</a>
+method is used to
+create a regular grid with longitudes and latitudes. Spherical regridding is
+then performed on the gust variable by passing the target domain as argument.
+The method also takes an argument <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> which specifies the type of
+regridding method to use. The description of the <code class="docutils literal notranslate"><span class="pre">regridded_data</span></code> is finally
+printed to show properties of all its constructs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target_domain</span> <span class="o">=</span> <a href="../method/cf.Domain.create_regular.html#cf.Domain.create_regular" title="cf.Domain.create_regular" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">cf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">create_regular</span></a><span class="p">((</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">regridded_data</span></a> <span class="o">=</span> <a href="../method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gust</span><span class="o">.</span><span class="n">regrids</span></a><span class="p">(</span><span class="n">target_domain</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+<a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">regridded_data</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-----------------------------------------------------------
+Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
+-----------------------------------------------------------
+Conventions = &#39;CF-1.10&#39;
+_FillValue = -1073741824.0
+history = &#39;Converted from UM/PP by cf-python v3.15.1&#39;
+lbproc = &#39;8192&#39;
+lbtim = &#39;122&#39;
+long_name = &#39;WIND GUST&#39;
+runid = &#39;aaaaa&#39;
+source = &#39;UM vn1006&#39;
+stash_code = &#39;3463&#39;
+submodel = &#39;1&#39;
+um_stash_source = &#39;m01s03i463&#39;
+
+Data(time(8), latitude(4), longitude(7)) = [[[--, ..., 8.474036970621848]]]
+
+Cell Method: time(8): maximum
+
+Domain Axis: height(1)
+Domain Axis: latitude(4)
+Domain Axis: longitude(7)
+Domain Axis: time(8)
+
+Dimension coordinate: time
+    axis = &#39;T&#39;
+    calendar = &#39;360_day&#39;
+    standard_name = &#39;time&#39;
+    units = &#39;days since 2051-1-1&#39;
+    Data(time(8)) = [2051-04-14 01:30:00, ..., 2051-04-14 22:30:00] 360_day
+    Bounds:calendar = &#39;360_day&#39;
+    Bounds:units = &#39;days since 2051-1-1&#39;
+    Bounds:Data(time(8), 2) = [[2051-04-14 00:00:00, ..., 2051-04-15 00:00:00]] 360_day
+
+Dimension coordinate: height
+    axis = &#39;Z&#39;
+    positive = &#39;up&#39;
+    standard_name = &#39;height&#39;
+    units = &#39;m&#39;
+    Data(height(1)) = [-1.0] m
+
+Dimension coordinate: longitude
+    standard_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(longitude(7)) = [-20.0, ..., 40.0] degrees_east
+    Bounds:units = &#39;degrees_east&#39;
+    Bounds:Data(longitude(7), 2) = [[-25.0, ..., 45.0]] degrees_east
+
+Dimension coordinate: latitude
+    standard_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(latitude(4)) = [37.0, ..., 67.0] degrees_north
+    Bounds:units = &#39;degrees_north&#39;
+    Bounds:Data(latitude(4), 2) = [[32.0, ..., 72.0]] degrees_north
+</pre></div>
+</div>
+<ol class="arabic simple" start="9">
+<li><p>Step 6 is similarly repeated for the <code class="docutils literal notranslate"><span class="pre">regridded_data</span></code> to plot the wind gust on a regular latitude-longitude domain:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">regridded_data</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_06_recipe_003.png" srcset="../_images/sphx_glr_plot_06_recipe_003.png" alt="plot 06 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  26.021 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-06-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_06_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_06_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_06_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_06_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-06-09.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

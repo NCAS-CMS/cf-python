@@ -1,3 +1,5 @@
+:orphan:
+
 cf.CellMethod.del_qualifier
 ===========================
 

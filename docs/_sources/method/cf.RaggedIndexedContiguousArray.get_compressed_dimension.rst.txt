@@ -1,3 +1,5 @@
+:orphan:
+
 cf.RaggedIndexedContiguousArray.get_compressed_dimension
 ========================================================
 

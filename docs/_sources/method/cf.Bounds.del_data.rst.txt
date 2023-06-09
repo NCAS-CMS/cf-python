@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Bounds.del_data
 ==================
 

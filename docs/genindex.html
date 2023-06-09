@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.1</a></h1>
 
 
 
@@ -73,7 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
@@ -82,6 +82,7 @@
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -2030,6 +2031,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.argmax.html#cf.Field.argmax">(cf.Field method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.argmin.html#cf.Data.argmin">argmin() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.argmin.html#cf.Field.argmin">(cf.Field method)</a>
+</li>
+      </ul></li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array">array (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2131,8 +2138,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.Count.attributes.html#cf.Count.attributes">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.DimensionCoordinate.attributes.html#cf.DimensionCoordinate.attributes">(cf.DimensionCoordinate method)</a>
-</li>
         <li><a href="method/cf.DomainAncillary.attributes.html#cf.DomainAncillary.attributes">(cf.DomainAncillary method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.attributes.html#cf.FieldAncillary.attributes">(cf.FieldAncillary method)</a>
@@ -2170,12 +2175,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate">(cf.Field method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates">auxiliary_coordinates (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.auxiliary_coordinates.html#cf.Field.auxiliary_coordinates">(cf.Field attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates">auxiliary_coordinates() (cf.Domain method)</a>
 
       <ul>
@@ -2197,11 +2196,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       </ul></li>
       <li><a href="attribute/cf.CellMethod.axes.html#cf.CellMethod.axes">axes (cf.CellMethod attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.axes.html#cf.Field.axes">(cf.Field attribute)</a>
 </li>
-      </ul></li>
       <li><a href="method/cf.Domain.axes.html#cf.Domain.axes">axes() (cf.Domain method)</a>
 
       <ul>
@@ -2342,12 +2337,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
       <ul>
         <li><a href="method/cf.Field.cell_measure.html#cf.Field.cell_measure">(cf.Field method)</a>
-</li>
-      </ul></li>
-      <li><a href="attribute/cf.Domain.cell_measures.html#cf.Domain.cell_measures">cell_measures (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.cell_measures.html#cf.Field.cell_measures">(cf.Field attribute)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Domain.cell_measures.html#cf.Domain.cell_measures">cell_measures() (cf.Domain method)</a>
@@ -2523,8 +2512,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       <li><a href="method/cf.Data.change_calendar.html#cf.Data.change_calendar">change_calendar() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.CoordinateReference.change_identifiers.html#cf.CoordinateReference.change_identifiers">change_identifiers() (cf.CoordinateReference method)</a>
-</li>
-      <li><a href="attribute/cf.Field.chunk.html#cf.Field.chunk">chunk (cf.Field attribute)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.chunk.html#cf.AuxiliaryCoordinate.chunk">chunk() (cf.AuxiliaryCoordinate method)</a>
 
@@ -2732,6 +2719,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.compressed_dimensions.html#cf.RaggedIndexedContiguousArray.compressed_dimensions">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Data.compute.html#cf.Data.compute">compute (cf.Data attribute)</a>
 </li>
       <li><a href="method/cf.Field.compute_vertical_coordinates.html#cf.Field.compute_vertical_coordinates">compute_vertical_coordinates() (cf.Field method)</a>
@@ -2762,8 +2751,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.concatenate.html#cf.List.concatenate">(cf.List class method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Data.concatenate_data.html#cf.Data.concatenate_data">concatenate_data() (cf.Data class method)</a>
 </li>
       <li><a href="class/cf.Configuration.html#cf.Configuration">Configuration (class in cf)</a>
@@ -2914,12 +2901,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.coordinate_reference_domain_axes.html#cf.Field.coordinate_reference_domain_axes">(cf.Field method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Domain.coordinate_references.html#cf.Domain.coordinate_references">coordinate_references (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.coordinate_references.html#cf.Field.coordinate_references">(cf.Field attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.Domain.coordinate_references.html#cf.Domain.coordinate_references">coordinate_references() (cf.Domain method)</a>
 
       <ul>
@@ -2930,12 +2911,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="class/cf.CoordinateReference.html#cf.CoordinateReference">CoordinateReference (class in cf)</a>
 </li>
-      <li><a href="attribute/cf.Domain.coordinates.html#cf.Domain.coordinates">coordinates (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.coordinates.html#cf.Field.coordinates">(cf.Field attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.CoordinateReference.coordinates.html#cf.CoordinateReference.coordinates">coordinates() (cf.CoordinateReference method)</a>
 
       <ul>
@@ -3060,26 +3035,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.cosh.html#cf.List.cosh">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.AuxiliaryCoordinate.count.html#cf.AuxiliaryCoordinate.count">count (cf.AuxiliaryCoordinate attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Bounds.count.html#cf.Bounds.count">(cf.Bounds attribute)</a>
-</li>
-        <li><a href="attribute/cf.CellMeasure.count.html#cf.CellMeasure.count">(cf.CellMeasure attribute)</a>
-</li>
-        <li><a href="attribute/cf.Count.count.html#cf.Count.count">(cf.Count attribute)</a>
-</li>
-        <li><a href="attribute/cf.DimensionCoordinate.count.html#cf.DimensionCoordinate.count">(cf.DimensionCoordinate attribute)</a>
-</li>
-        <li><a href="attribute/cf.DomainAncillary.count.html#cf.DomainAncillary.count">(cf.DomainAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.FieldAncillary.count.html#cf.FieldAncillary.count">(cf.FieldAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.Index.count.html#cf.Index.count">(cf.Index attribute)</a>
-</li>
-        <li><a href="attribute/cf.List.count.html#cf.List.count">(cf.List attribute)</a>
-</li>
-      </ul></li>
       <li><a href="class/cf.Count.html#cf.Count">Count (class in cf)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.count.html#cf.AuxiliaryCoordinate.count">count() (cf.AuxiliaryCoordinate method)</a>
@@ -3106,26 +3061,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.count.html#cf.Index.count">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.count.html#cf.List.count">(cf.List method)</a>
-</li>
-      </ul></li>
-      <li><a href="attribute/cf.AuxiliaryCoordinate.count_masked.html#cf.AuxiliaryCoordinate.count_masked">count_masked (cf.AuxiliaryCoordinate attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Bounds.count_masked.html#cf.Bounds.count_masked">(cf.Bounds attribute)</a>
-</li>
-        <li><a href="attribute/cf.CellMeasure.count_masked.html#cf.CellMeasure.count_masked">(cf.CellMeasure attribute)</a>
-</li>
-        <li><a href="attribute/cf.Count.count_masked.html#cf.Count.count_masked">(cf.Count attribute)</a>
-</li>
-        <li><a href="attribute/cf.DimensionCoordinate.count_masked.html#cf.DimensionCoordinate.count_masked">(cf.DimensionCoordinate attribute)</a>
-</li>
-        <li><a href="attribute/cf.DomainAncillary.count_masked.html#cf.DomainAncillary.count_masked">(cf.DomainAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.FieldAncillary.count_masked.html#cf.FieldAncillary.count_masked">(cf.FieldAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.Index.count_masked.html#cf.Index.count_masked">(cf.Index attribute)</a>
-</li>
-        <li><a href="attribute/cf.List.count_masked.html#cf.List.count_masked">(cf.List attribute)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.count_masked.html#cf.AuxiliaryCoordinate.count_masked">count_masked() (cf.AuxiliaryCoordinate method)</a>
@@ -3156,6 +3091,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds">create_bounds() (cf.DimensionCoordinate method)</a>
 </li>
+      <li><a href="method/cf.DimensionCoordinate.create_regular.html#cf.DimensionCoordinate.create_regular">create_regular() (cf.DimensionCoordinate class method)</a>
+
+      <ul>
+        <li><a href="method/cf.Domain.create_regular.html#cf.Domain.create_regular">(cf.Domain class method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.creation_commands.html#cf.AuxiliaryCoordinate.creation_commands">creation_commands() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -3642,12 +3583,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate">(cf.Field method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates">dimension_coordinates (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.dimension_coordinates.html#cf.Field.dimension_coordinates">(cf.Field attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates">dimension_coordinates() (cf.Domain method)</a>
 
       <ul>
@@ -3708,12 +3643,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.domain_anc.html#cf.Field.domain_anc">(cf.Field method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Domain.domain_ancillaries.html#cf.Domain.domain_ancillaries">domain_ancillaries (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.domain_ancillaries.html#cf.Field.domain_ancillaries">(cf.Field attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.CoordinateConversion.domain_ancillaries.html#cf.CoordinateConversion.domain_ancillaries">domain_ancillaries() (cf.CoordinateConversion method)</a>
 
       <ul>
@@ -3732,12 +3661,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
       <ul>
         <li><a href="method/cf.Field.domain_ancs.html#cf.Field.domain_ancs">(cf.Field method)</a>
-</li>
-      </ul></li>
-      <li><a href="attribute/cf.Domain.domain_axes.html#cf.Domain.domain_axes">domain_axes (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.domain_axes.html#cf.Field.domain_axes">(cf.Field attribute)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Constructs.domain_axes.html#cf.Constructs.domain_axes">domain_axes() (cf.Constructs method)</a>
@@ -3827,8 +3750,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.Data.dtvarray.html#cf.Data.dtvarray">(cf.Data method)</a>
 </li>
-        <li><a href="method/cf.DimensionCoordinate.dtvarray.html#cf.DimensionCoordinate.dtvarray">(cf.DimensionCoordinate method)</a>
-</li>
         <li><a href="method/cf.DomainAncillary.dtvarray.html#cf.DomainAncillary.dtvarray">(cf.DomainAncillary method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.dtvarray.html#cf.FieldAncillary.dtvarray">(cf.FieldAncillary method)</a>
@@ -3886,8 +3807,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CoordinateReference.dump.html#cf.CoordinateReference.dump">(cf.CoordinateReference method)</a>
 </li>
         <li><a href="method/cf.Count.dump.html#cf.Count.dump">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.Data.dump.html#cf.Data.dump">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump">(cf.DimensionCoordinate method)</a>
 </li>
@@ -4090,8 +4009,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.Field.field_anc.html#cf.Field.field_anc">field_anc() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.field_ancillaries.html#cf.Field.field_ancillaries">field_ancillaries (cf.Field attribute)</a>
-</li>
       <li><a href="method/cf.Field.field_ancillaries.html#cf.Field.field_ancillaries">field_ancillaries() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Field.field_ancillary.html#cf.Field.field_ancillary">field_ancillary() (cf.Field method)</a>
@@ -4130,8 +4047,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.NetCDFArray.file_locations.html#cf.NetCDFArray.file_locations">(cf.NetCDFArray method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.NetCDFArray.filename.html#cf.NetCDFArray.filename">filename (cf.NetCDFArray attribute)</a>
-</li>
       <li><a href="method/cf.NetCDFArray.filename.html#cf.NetCDFArray.filename">filename() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.files.html#cf.AuxiliaryCoordinate.files">files() (cf.AuxiliaryCoordinate method)</a>
@@ -4196,10 +4111,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.Constructs.filters_applied.html#cf.Constructs.filters_applied">filters_applied() (cf.Constructs method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Data.first_element.html#cf.Data.first_element">first_element() (cf.Data method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Data.fits_in_memory.html#cf.Data.fits_in_memory">fits_in_memory() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.Data.fits_in_one_chunk_in_memory.html#cf.Data.fits_in_one_chunk_in_memory">fits_in_one_chunk_in_memory() (cf.Data method)</a>
@@ -4904,6 +4819,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.DomainAncillary.has_part_node_count.html#cf.DomainAncillary.has_part_node_count">(cf.DomainAncillary method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.AuxiliaryCoordinate.has_property.html#cf.AuxiliaryCoordinate.has_property">has_property() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -4928,8 +4845,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.has_property.html#cf.List.has_property">(cf.List method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.CellMethod.has_qualifier.html#cf.CellMethod.has_qualifier">has_qualifier() (cf.CellMethod method)</a>
 </li>
       <li><a href="method/cf.DomainAxis.has_size.html#cf.DomainAxis.has_size">has_size() (cf.DomainAxis method)</a>
@@ -4952,8 +4867,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CoordinateReference.hasbounds.html#cf.CoordinateReference.hasbounds">(cf.CoordinateReference method)</a>
 </li>
         <li><a href="method/cf.Count.hasbounds.html#cf.Count.hasbounds">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.hasbounds.html#cf.DimensionCoordinate.hasbounds">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.hasbounds.html#cf.DomainAncillary.hasbounds">(cf.DomainAncillary method)</a>
 </li>
@@ -4978,8 +4891,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CellMeasure.hasdata.html#cf.CellMeasure.hasdata">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.hasdata.html#cf.Count.hasdata">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.hasdata.html#cf.DimensionCoordinate.hasdata">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.hasdata.html#cf.DomainAncillary.hasdata">(cf.DomainAncillary method)</a>
 </li>
@@ -5271,8 +5182,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.Count.inspect.html#cf.Count.inspect">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.Data.inspect.html#cf.Data.inspect">(cf.Data method)</a>
-</li>
         <li><a href="method/cf.DimensionCoordinate.inspect.html#cf.DimensionCoordinate.inspect">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.inspect.html#cf.DomainAncillary.inspect">(cf.DomainAncillary method)</a>
@@ -5308,6 +5217,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="method/cf.TimeDuration.interval.html#cf.TimeDuration.interval">interval() (cf.TimeDuration method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.CellMethod.intervals.html#cf.CellMethod.intervals">intervals (cf.CellMethod attribute)</a>
 </li>
       <li><a href="method/cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter">inverse_filter() (cf.Constructs method)</a>
@@ -5318,8 +5229,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.DimensionCoordinate.is_climatology.html#cf.DimensionCoordinate.is_climatology">(cf.DimensionCoordinate method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.TimeDuration.is_day_factor.html#cf.TimeDuration.is_day_factor">is_day_factor() (cf.TimeDuration method)</a>
 </li>
       <li><a href="attribute/cf.Data.is_masked.html#cf.Data.is_masked">is_masked (cf.Data attribute)</a>
@@ -5329,8 +5238,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       <ul>
         <li><a href="attribute/cf.DimensionCoordinate.isauxiliary.html#cf.DimensionCoordinate.isauxiliary">(cf.DimensionCoordinate attribute)</a>
 </li>
-        <li><a href="attribute/cf.Field.isauxiliary.html#cf.Field.isauxiliary">(cf.Field attribute)</a>
-</li>
       </ul></li>
       <li><a href="method/cf.Bounds.isauxiliary.html#cf.Bounds.isauxiliary">isauxiliary() (cf.Bounds method)</a>
 
@@ -5338,8 +5245,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CellMeasure.isauxiliary.html#cf.CellMeasure.isauxiliary">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.isauxiliary.html#cf.Count.isauxiliary">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.isauxiliary.html#cf.DimensionCoordinate.isauxiliary">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.isauxiliary.html#cf.DomainAncillary.isauxiliary">(cf.DomainAncillary method)</a>
 </li>
@@ -5387,8 +5292,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       <ul>
         <li><a href="attribute/cf.DimensionCoordinate.isdimension.html#cf.DimensionCoordinate.isdimension">(cf.DimensionCoordinate attribute)</a>
 </li>
-        <li><a href="attribute/cf.Field.isdimension.html#cf.Field.isdimension">(cf.Field attribute)</a>
-</li>
       </ul></li>
       <li><a href="method/cf.Bounds.isdimension.html#cf.Bounds.isdimension">isdimension() (cf.Bounds method)</a>
 
@@ -5396,8 +5299,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CellMeasure.isdimension.html#cf.CellMeasure.isdimension">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.isdimension.html#cf.Count.isdimension">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.isdimension.html#cf.DimensionCoordinate.isdimension">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.isdimension.html#cf.DomainAncillary.isdimension">(cf.DomainAncillary method)</a>
 </li>
@@ -5423,8 +5324,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.Count.isdomainancillary.html#cf.Count.isdomainancillary">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.DimensionCoordinate.isdomainancillary.html#cf.DimensionCoordinate.isdomainancillary">(cf.DimensionCoordinate method)</a>
-</li>
         <li><a href="method/cf.DomainAncillary.isdomainancillary.html#cf.DomainAncillary.isdomainancillary">(cf.DomainAncillary method)</a>
 </li>
         <li><a href="method/cf.Field.isdomainancillary.html#cf.Field.isdomainancillary">(cf.Field method)</a>
@@ -5449,8 +5348,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.Count.isfieldancillary.html#cf.Count.isfieldancillary">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.DimensionCoordinate.isfieldancillary.html#cf.DimensionCoordinate.isfieldancillary">(cf.DimensionCoordinate method)</a>
-</li>
         <li><a href="method/cf.DomainAncillary.isfieldancillary.html#cf.DomainAncillary.isfieldancillary">(cf.DomainAncillary method)</a>
 </li>
         <li><a href="method/cf.Field.isfieldancillary.html#cf.Field.isfieldancillary">(cf.Field method)</a>
@@ -5464,16 +5361,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="attribute/cf.TimeDuration.isint.html#cf.TimeDuration.isint">isint (cf.TimeDuration attribute)</a>
 </li>
-      <li><a href="attribute/cf.Data.ismasked.html#cf.Data.ismasked">ismasked (cf.Data attribute)</a>
-</li>
       <li><a href="method/cf.Data.ismasked.html#cf.Data.ismasked">ismasked() (cf.Data method)</a>
 </li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.ismeasure.html#cf.AuxiliaryCoordinate.ismeasure">ismeasure (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
         <li><a href="attribute/cf.DimensionCoordinate.ismeasure.html#cf.DimensionCoordinate.ismeasure">(cf.DimensionCoordinate attribute)</a>
-</li>
-        <li><a href="attribute/cf.Field.ismeasure.html#cf.Field.ismeasure">(cf.Field attribute)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Bounds.ismeasure.html#cf.Bounds.ismeasure">ismeasure() (cf.Bounds method)</a>
@@ -5482,8 +5375,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.CellMeasure.ismeasure.html#cf.CellMeasure.ismeasure">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.ismeasure.html#cf.Count.ismeasure">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.ismeasure.html#cf.DimensionCoordinate.ismeasure">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.ismeasure.html#cf.DomainAncillary.ismeasure">(cf.DomainAncillary method)</a>
 </li>
@@ -5772,28 +5663,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="method/cf.Data.mask_fpe.html#cf.Data.mask_fpe">mask_fpe() (cf.Data static method)</a>
 </li>
-      <li><a href="attribute/cf.AuxiliaryCoordinate.mask_invalid.html#cf.AuxiliaryCoordinate.mask_invalid">mask_invalid (cf.AuxiliaryCoordinate attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Bounds.mask_invalid.html#cf.Bounds.mask_invalid">(cf.Bounds attribute)</a>
-</li>
-        <li><a href="attribute/cf.CellMeasure.mask_invalid.html#cf.CellMeasure.mask_invalid">(cf.CellMeasure attribute)</a>
-</li>
-        <li><a href="attribute/cf.Count.mask_invalid.html#cf.Count.mask_invalid">(cf.Count attribute)</a>
-</li>
-        <li><a href="attribute/cf.DimensionCoordinate.mask_invalid.html#cf.DimensionCoordinate.mask_invalid">(cf.DimensionCoordinate attribute)</a>
-</li>
-        <li><a href="attribute/cf.DomainAncillary.mask_invalid.html#cf.DomainAncillary.mask_invalid">(cf.DomainAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.Field.mask_invalid.html#cf.Field.mask_invalid">(cf.Field attribute)</a>
-</li>
-        <li><a href="attribute/cf.FieldAncillary.mask_invalid.html#cf.FieldAncillary.mask_invalid">(cf.FieldAncillary attribute)</a>
-</li>
-        <li><a href="attribute/cf.Index.mask_invalid.html#cf.Index.mask_invalid">(cf.Index attribute)</a>
-</li>
-        <li><a href="attribute/cf.List.mask_invalid.html#cf.List.mask_invalid">(cf.List attribute)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.mask_invalid.html#cf.AuxiliaryCoordinate.mask_invalid">mask_invalid() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -6932,8 +6801,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="attribute/cf.RegridOperator.parameters.html#cf.RegridOperator.parameters">parameters (cf.RegridOperator attribute)</a>
-</li>
       <li><a href="method/cf.CoordinateConversion.parameters.html#cf.CoordinateConversion.parameters">parameters() (cf.CoordinateConversion method)</a>
 
       <ul>
@@ -8342,14 +8209,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="attribute/cf.DimensionCoordinate.Units.html#cf.DimensionCoordinate.Units">(cf.DimensionCoordinate attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.DimensionCoordinate.units.html#cf.DimensionCoordinate.units">units (cf.DimensionCoordinate attribute)</a>
 
       <ul>
         <li><a href="attribute/cf.Domain.units.html#cf.Domain.units">(cf.Domain attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.DomainAncillary.Units.html#cf.DomainAncillary.Units">Units (cf.DomainAncillary attribute)</a>
 </li>
       <li><a href="attribute/cf.DomainAncillary.units.html#cf.DomainAncillary.units">units (cf.DomainAncillary attribute)</a>
@@ -8406,8 +8273,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Count.unsafe_array.html#cf.Count.unsafe_array">(cf.Count method)</a>
 </li>
         <li><a href="method/cf.Data.unsafe_array.html#cf.Data.unsafe_array">(cf.Data method)</a>
-</li>
-        <li><a href="method/cf.DimensionCoordinate.unsafe_array.html#cf.DimensionCoordinate.unsafe_array">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.unsafe_array.html#cf.DomainAncillary.unsafe_array">(cf.DomainAncillary method)</a>
 </li>
@@ -8776,11 +8641,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-06-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

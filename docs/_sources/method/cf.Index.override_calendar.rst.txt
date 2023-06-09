@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Index.override_calendar
 ==========================
 

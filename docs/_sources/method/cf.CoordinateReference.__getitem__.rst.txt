@@ -1,3 +1,5 @@
+:orphan:
+
 cf.CoordinateReference.__getitem__
 ==================================
 
