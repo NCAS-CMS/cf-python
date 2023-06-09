@@ -413,11 +413,11 @@ class aggregateTest(unittest.TestCase):
         h = f.copy()
         fl = [h[..., :3], h[..., 4], h[..., 5:]]  # Miss out h[..., [3]]
         cells = {"X": {"spacing": cf.Data(45, "degreeE")}}
-        # Aggregates
+        # .. aggregates with contiguous=False
         self.assertEqual(
             len(cf.aggregate(fl, cells=cells, contiguous=False)), 1
         )
-        # Does not aggregate
+        # ... does not aggregate with contiguous=True
         self.assertEqual(
             len(cf.aggregate(fl, cells=cells, contiguous=True)), 3
         )
@@ -435,6 +435,11 @@ class aggregateTest(unittest.TestCase):
             ),
             2,
         )
+
+        # Bad condition units
+        for condition in (cf.M(1), cf.Y(1)):
+            with self.assertRaises(ValueError):
+                cf.aggregate(fl, cells={"T": {"cellsize": condition}})
 
     def test_climatology_cells(self):
         """Test cf.climatology_cells"""

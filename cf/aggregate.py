@@ -2150,21 +2150,24 @@ def aggregate(
             .. versionadded:: 3.15.0
 
         cells: `dict` or `None`, optional
-            Provide conditions for dimension coordinate cell such that
-            input field or domain constructs whose dimension
-            coordinates match given conditions will be aggregated
+            Provide conditions for dimension coordinate cells such
+            that input field or domain constructs whose dimension
+            coordinates match particular conditions will be aggregated
             separately from those which don't. This can be used, for
             example, to ensure that monthly and daily averages are not
             aggregated together.
 
-            .. note:: Field or domain constructs that don't match any
-                      of the given conditions are aggregated in the
-                      usual manner.
+            Field or domain constructs that don't match any of the
+            given conditions are aggregated in the usual manner.
 
             Conditions are specified in a dictionary for which each
             key is a dimension coordinate identity, with corresponding
             value of one or more conditions on the dimension
-            coordinate cell sizes and/or coordinate spacings.
+            coordinate cell sizes and/or coordinate spacings. For
+            instance, the *cells* dictionary ``{'T': {'cellsize':
+            cf.D()}}`` will cause fields or domains with time
+            coordinates whose cells span 1 day (e.g. fields of daily
+            mean data) to be aggregated separately from all others.
 
             A dictionary key selects a dimension coordinate construct
             from each input field or domain construct by passing the
@@ -2174,11 +2177,15 @@ def aggregate(
             selected. If no such dimension coordinate construct
             exists, or if a dimension coordinate construct exists but
             none of its conditions are passed, then no special
-            consideration is given to that axis for that field or
-            domain.
+            aggregation consideration is given to that axis for that
+            field or domain. The dictionary may have any number of
+            keys, defining conditions for any number of dimension
+            coordinates. If multiple keys match the identity of the
+            same dimension coordinate construct then the first
+            encountered when iterating through the dictionary is used.
 
             A dictionary value defines the dimension coordinate
-            conditions as one, or an ordered sequnce of, the
+            conditions as one, or an ordered sequence of, the
             following:
 
             * A condition for the cell size (i.e. the absolute
@@ -2196,8 +2203,8 @@ def aggregate(
             In all cases, ``<condition1>`` and ``<condition2>`` must
             each be one of a `Query`, `TimeDuration`, scalar `Data`,
             or scalar data_like object. Units must be provided where
-            applicable, as other the condition's value is assumed to
-            be dimensionless.
+            applicable, since dimensionless conditions will not match
+            cells that have physical dimensions.
 
             Multiple conditions for the same dimension coordinate
             construct may be defined by providing an ordered sequence
@@ -2205,12 +2212,12 @@ def aggregate(
             order, and the first one to be passed (if any) defines the
             aggregation separation.
 
-            If a coordinate spacing condition has been met then, by
-            default, this does not apply to the spacing between
+            If a coordinate spacing condition has been met then the
+            default is that this does not apply to the spacing between
             adjacent coordinates from different input fields or
             domains. However, if the *contiguous* parameter is `True`
-            then it will be the case that aggregated fields will have
-            that coordinate spacing throughout.
+            then aggregated fields will have the specified coordinate
+            spacing throughout.
 
             As a convenience, the configurable `cf.climatology_cells`
             function returns a *cells* dictionary that may be suitable
@@ -2398,11 +2405,24 @@ def aggregate(
         )
 
     if cells:
-        # Make sure that each dictionary value is a sequence
+        # Make sure that each dictionary value is a sequence and all
+        # conditions have acceptable units
         cells = cells.copy()
         for key, conditions in tuple(cells.items()):
             if isinstance(conditions, dict):
-                cells[key] = (conditions,)
+                conditions = (conditions,)
+                cells[key] = conditions
+
+            for condition in conditions:
+                for c in condition.values():
+                    units = getattr(c, "Units", Units())
+                    if units.iscalendartime:
+                        raise ValueError(
+                            f"Can't define cell condition {c!r} with "
+                            f"calendar time units of {units!r}. "
+                            "Consider redefining the condition to be a "
+                            "number of days (e.g. with 'cf.eq' or 'cf.wi')."
+                        )
 
     unaggregatable = False
     status = 0
@@ -2878,11 +2898,11 @@ def climatology_cells(
 
     For aggregating climate model simulation outputs, returns a
     dictionary that may be suitable for separating the time axis
-    aggregation into commonly used temporal frquencies.
+    aggregation into commonly used temporal frequencies.
 
-    The frequency conditions are configurable with the parameters, and
-    further customisation may be applied by manually adding conditions
-    to the returned dictionary.
+    The temporal frequency conditions are configurable via the
+    parameters, and further customisation may be applied by manually
+    adding conditions to the returned dictionary.
 
     .. versionadded:: TODOAGGVER
 
@@ -2892,27 +2912,34 @@ def climatology_cells(
 
         years: `bool`, optional
             If True, the default, then include a condition for
-            calendar year cell sizes.
+            calendar year cell sizes, i.e. any number of days between
+            360 and 366.
 
         months: `bool`, optional
             If True, the default, then include a condition for
-            calendar month cell sizes.
+            calendar month cell sizes i.e. any number of days between
+            28 and 31.
 
         days: sequence of numbers, optional
-            Include conditions for cell sizes with the given number of
-            days. May be an empty sequence.
+            Include conditions for cell sizes for each number of days
+            in the sequence. May be an empty sequence. By default
+            *days* is ``(1,)``.
 
         hours: sequence of numbers, optional
-            Include conditions for cell sizes with the given number of
-            hours. May be an empty sequence.
+            Include conditions for cell sizes for each number of hours
+            in the sequence. May be an empty sequence. By default
+            *hours* is ``(1, 3, 6)``.
 
         minutes: sequence of numbers, optional
-            Include conditions for cell sizes with the given number of
-            minutes. May be an empty sequence.
+            Include conditions for cell sizes for each number of
+            minutes in the sequence. May be an empty sequence. By
+            default *hours* is ``()``.
 
         seconds: sequence of numbers, optional
-            Include conditions for cell sizes with the given number of
-            seconds. May be an empty sequence.
+            Include conditions for cell sizes for each number of
+            seconds in the sequence. May be an empty sequence. By
+            default *hours* is ``()``.
+
 
         days_instantaneous: `bool`, optional
             If True, then also include conditions for cell coordinate
@@ -2953,16 +2980,16 @@ def climatology_cells(
 
     >>> cells = cf.climatology_cells(
     ...     years=False,
-    ...     hours=(3, 12),
+    ...     hours=(12, 3),
     ...     days=(),
     ...     hours_instantaneous=False
     ... )
     >>> cells
-    {'T': [{'cellsize': <CF Data(): 3 hour>},
+    {'T': ["cells{'cellsize': <CF Data(): 3 hour>},
       {'cellsize': <CF Data(): 12 hour>},
       {'cellsize': <CF Query: (wi [28, 31] day)>}]}
 
-    Add a condition that separates decadal data:
+    Add a condition that aggregates decadal data separately:
 
     >>> cells['T'].append({'cellsize': cf.wi(3600, 3660, 'day')})
     >>> cells
@@ -2974,29 +3001,21 @@ def climatology_cells(
     """
     conditions = []
 
-    for s in seconds:
-        c = Data(s, "second")
-        conditions.append({"cellsize": c})
-        if seconds_instantaneous:
-            conditions.append({"spacing": c.copy()})
-
-    for m in minutes:
-        c = Data(m, "minute")
-        conditions.append({"cellsize": c})
-        if minutes_instantaneous:
-            conditions.append({"spacing": c.copy()})
-
-    for h in hours:
-        c = Data(h, "hour")
-        conditions.append({"cellsize": c})
-        if hours_instantaneous:
-            conditions.append({"spacing": c.copy()})
-
-    for d in days:
-        c = Data(d, "day")
-        conditions.append({"cellsize": c})
-        if days_instantaneous:
-            conditions.append({"spacing": c.copy()})
+    for values, units, inst in zip(
+        (seconds, minutes, hours, days),
+        ("second", "minute", "hour", "day"),
+        (
+            seconds_instantaneous,
+            minutes_instantaneous,
+            hours_instantaneous,
+            days_instantaneous,
+        ),
+    ):
+        for value in sorted(values):
+            c = Data(value, units)
+            conditions.append({"cellsize": c})
+            if inst:
+                conditions.append({"spacing": c.copy()})
 
     if months:
         conditions.append({"cellsize": wi(28, 31, "day")})
