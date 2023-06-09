@@ -1,7 +1,0 @@
-cf.Count.valid_min
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Count.valid_min

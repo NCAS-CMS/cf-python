@@ -1,7 +1,0 @@
-cf.CoordinateReference.change_identifiers
-=========================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CoordinateReference.change_identifiers

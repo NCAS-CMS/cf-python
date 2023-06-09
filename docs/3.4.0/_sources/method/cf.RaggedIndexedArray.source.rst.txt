@@ -1,7 +1,0 @@
-cf.RaggedIndexedArray.source
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedIndexedArray.source

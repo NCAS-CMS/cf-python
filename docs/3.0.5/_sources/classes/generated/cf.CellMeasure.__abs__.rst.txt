@@ -1,7 +1,0 @@
-cf.CellMeasure.__abs__
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__abs__

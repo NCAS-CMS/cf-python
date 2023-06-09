@@ -1,7 +1,0 @@
-cf.Index.__rmul__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.__rmul__

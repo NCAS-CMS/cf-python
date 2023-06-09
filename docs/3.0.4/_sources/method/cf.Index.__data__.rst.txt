@@ -1,7 +1,0 @@
-cf.Index.__data__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.__data__

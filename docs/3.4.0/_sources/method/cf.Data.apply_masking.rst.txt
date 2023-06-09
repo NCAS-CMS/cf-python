@@ -1,7 +1,0 @@
-cf.Data.apply_masking
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.apply_masking

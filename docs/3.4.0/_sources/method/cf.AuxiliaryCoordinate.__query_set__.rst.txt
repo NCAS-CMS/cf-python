@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.__query_set__
-====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.__query_set__

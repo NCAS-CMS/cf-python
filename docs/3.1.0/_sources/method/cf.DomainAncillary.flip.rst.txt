@@ -1,7 +1,0 @@
-cf.DomainAncillary.flip
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.flip

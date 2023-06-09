@@ -1,7 +1,0 @@
-cf.RaggedIndexedArray.to_memory
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedIndexedArray.to_memory

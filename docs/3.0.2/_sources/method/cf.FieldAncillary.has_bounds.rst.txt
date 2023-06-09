@@ -1,7 +1,0 @@
-cf.FieldAncillary.has_bounds
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.has_bounds

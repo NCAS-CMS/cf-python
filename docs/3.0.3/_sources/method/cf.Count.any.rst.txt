@@ -1,7 +1,0 @@
-cf.Count.any
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.any

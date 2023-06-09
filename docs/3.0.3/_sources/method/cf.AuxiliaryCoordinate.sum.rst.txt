@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.sum
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.sum

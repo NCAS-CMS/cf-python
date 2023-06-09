@@ -1,7 +1,0 @@
-cf.Count.properties
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.properties

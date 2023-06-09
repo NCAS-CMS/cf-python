@@ -1,7 +1,0 @@
-cf.Data.ones
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.ones

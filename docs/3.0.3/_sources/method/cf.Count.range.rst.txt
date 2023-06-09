@@ -1,7 +1,0 @@
-cf.Count.range
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.range

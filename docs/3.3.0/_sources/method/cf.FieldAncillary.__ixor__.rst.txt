@@ -1,7 +1,0 @@
-cf.FieldAncillary.__ixor__
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.__ixor__

@@ -1,7 +1,0 @@
-cf.List.__iadd__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__iadd__

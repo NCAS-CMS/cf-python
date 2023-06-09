@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.tan
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.tan

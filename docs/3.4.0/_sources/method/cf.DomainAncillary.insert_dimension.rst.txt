@@ -1,7 +1,0 @@
-cf.DomainAncillary.insert_dimension
-===================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.insert_dimension

@@ -1,7 +1,0 @@
-cf.Bounds.add_offset
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Bounds.add_offset

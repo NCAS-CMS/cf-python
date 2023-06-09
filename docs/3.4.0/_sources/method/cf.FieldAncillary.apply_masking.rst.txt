@@ -1,7 +1,0 @@
-cf.FieldAncillary.apply_masking
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.apply_masking

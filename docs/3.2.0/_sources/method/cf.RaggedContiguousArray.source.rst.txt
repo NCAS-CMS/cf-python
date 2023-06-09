@@ -1,7 +1,0 @@
-cf.RaggedContiguousArray.source
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedContiguousArray.source

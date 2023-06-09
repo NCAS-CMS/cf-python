@@ -1,7 +1,0 @@
-cf.Index.__rxor__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.__rxor__

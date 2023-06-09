@@ -1,7 +1,0 @@
-cf.CellMeasure.__eq__
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__eq__

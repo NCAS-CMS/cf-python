@@ -1,7 +1,0 @@
-cf.List.swapaxes
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.swapaxes

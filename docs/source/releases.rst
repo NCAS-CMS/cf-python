@@ -16,34 +16,34 @@ Documentation for all versions of cf.
 **CF-1.10**
 -----------
 
-* `Version 3.15.0 <https://ncas-cms.github.io/cf-python/3.15.0>`_ (2023-04-27)
-* `Version 3.14.1 <https://ncas-cms.github.io/cf-python/3.14.1>`_ (2023-03-10)
-* `Version 3.14.0 <https://ncas-cms.github.io/cf-python/3.14.0>`_ (2023-01-31 *first Dask release*)
+* `Version 3.15.0 <https://ncas-cms.github.io/cf-python-docs/3.15.0>`_ (2023-04-27)
+* `Version 3.14.1 <https://ncas-cms.github.io/cf-python-docs/3.14.1>`_ (2023-03-10)
+* `Version 3.14.0 <https://ncas-cms.github.io/cf-python-docs/3.14.0>`_ (2023-01-31 *first Dask release*)
 
 ----
 
 **CF-1.9**
 ----------
 
-* `Version 3.13.1 <https://ncas-cms.github.io/cf-python/3.13.1>`_ (2022-10-17 *last LAMA release*)
-* `Version 3.13.0 <https://ncas-cms.github.io/cf-python/3.13.0>`_ (2022-06-23)
-* `Version 3.12.0 <https://ncas-cms.github.io/cf-python/3.12.0>`_ (2022-01-18)
-* `Version 3.11.0 <https://ncas-cms.github.io/cf-python/3.11.0>`_ (2021-10-08)
+* `Version 3.13.1 <https://ncas-cms.github.io/cf-python-docs/3.13.1>`_ (2022-10-17 *last LAMA release*)
+* `Version 3.13.0 <https://ncas-cms.github.io/cf-python-docs/3.13.0>`_ (2022-06-23)
+* `Version 3.12.0 <https://ncas-cms.github.io/cf-python-docs/3.12.0>`_ (2022-01-18)
+* `Version 3.11.0 <https://ncas-cms.github.io/cf-python-docs/3.11.0>`_ (2021-10-08)
 
 ----
 
 **CF-1.8**
 ----------
 
-* `version 3.10.0 <https://ncas-cms.github.io/cf-python/3.10.0>`_ (2021-06-10)
-* `version 3.9.0 <https://ncas-cms.github.io/cf-python/3.9.0>`_ (2021-05-25)
-* `version 3.8.0 <https://ncas-cms.github.io/cf-python/3.8.0>`_ (2020-12-18)
-* `version 3.7.0 <https://ncas-cms.github.io/cf-python/3.7.0>`_ (2020-10-13)
-* `version 3.6.0 <https://ncas-cms.github.io/cf-python/3.6.0>`_ (2020-07-24)
-* `version 3.5.0 <https://ncas-cms.github.io/cf-python/3.5.0>`_ (2020-06-09)
-* `version 3.4.0 <https://ncas-cms.github.io/cf-python/3.4.0>`_ (2020-04-30)
-* `version 3.3.0 <https://ncas-cms.github.io/cf-python/3.3.0>`_ (2020-04-20)
-* `version 3.2.0 <https://ncas-cms.github.io/cf-python/3.2.0>`_ (2020-04-01)
+* `version 3.10.0 <https://ncas-cms.github.io/cf-python-docs/3.10.0>`_ (2021-06-10)
+* `version 3.9.0 <https://ncas-cms.github.io/cf-python-docs/3.9.0>`_ (2021-05-25)
+* `version 3.8.0 <https://ncas-cms.github.io/cf-python-docs/3.8.0>`_ (2020-12-18)
+* `version 3.7.0 <https://ncas-cms.github.io/cf-python-docs/3.7.0>`_ (2020-10-13)
+* `version 3.6.0 <https://ncas-cms.github.io/cf-python-docs/3.6.0>`_ (2020-07-24)
+* `version 3.5.0 <https://ncas-cms.github.io/cf-python-docs/3.5.0>`_ (2020-06-09)
+* `version 3.4.0 <https://ncas-cms.github.io/cf-python-docs/3.4.0>`_ (2020-04-30)
+* `version 3.3.0 <https://ncas-cms.github.io/cf-python-docs/3.3.0>`_ (2020-04-20)
+* `version 3.2.0 <https://ncas-cms.github.io/cf-python-docs/3.2.0>`_ (2020-04-01)
 
 ----
 
@@ -51,14 +51,14 @@ Documentation for all versions of cf.
 ----------
 
 
-* `version 3.1.0 <https://ncas-cms.github.io/cf-python/3.1.0>`_ (2020-01-17)
-* `version 3.0.6 <https://ncas-cms.github.io/cf-python/3.0.6>`_	(2019-11-27)
-* `version 3.0.5 <https://ncas-cms.github.io/cf-python/3.0.5>`_	(2019-11-14)
-* `version 3.0.4 <https://ncas-cms.github.io/cf-python/3.0.4>`_	(2019-11-08)
-* `version 3.0.3 <https://ncas-cms.github.io/cf-python/3.0.3>`_	(2019-11-01)
-* `version 3.0.2 <https://ncas-cms.github.io/cf-python/3.0.2>`_	(2019-10-31)
-* `version 3.0.1 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (2019-10-01)
-* `version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (2019-10-01 *first Python 3 release*)
+* `version 3.1.0 <https://ncas-cms.github.io/cf-python-docs/3.1.0>`_ (2020-01-17)
+* `version 3.0.6 <https://ncas-cms.github.io/cf-python-docs/3.0.6>`_	(2019-11-27)
+* `version 3.0.5 <https://ncas-cms.github.io/cf-python-docs/3.0.5>`_	(2019-11-14)
+* `version 3.0.4 <https://ncas-cms.github.io/cf-python-docs/3.0.4>`_	(2019-11-08)
+* `version 3.0.3 <https://ncas-cms.github.io/cf-python-docs/3.0.3>`_	(2019-11-01)
+* `version 3.0.2 <https://ncas-cms.github.io/cf-python-docs/3.0.2>`_	(2019-10-31)
+* `version 3.0.1 <https://ncas-cms.github.io/cf-python-docs/3.0.0>`_ (2019-10-01)
+* `version 3.0.0 <https://ncas-cms.github.io/cf-python-docs/3.0.0>`_ (2019-10-01 *first Python 3 release*)
 * `version 2.3.8 <https://cfpython.bitbucket.io/docs/latest>`_ (2019-10-07 *last Python 2 release*)
 * `version 2.3.0 <http://cfpython.bitbucket.io/docs/2.3.0/index.html>`_ (2018-10-22)
 * `version 2.2.8 <http://cfpython.bitbucket.io/docs/2.2.8/index.html>`_ (2018-08-28)

@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.clear_properties
-=======================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.clear_properties

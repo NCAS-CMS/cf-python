@@ -1,7 +1,0 @@
-cf.Data.diff
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.diff

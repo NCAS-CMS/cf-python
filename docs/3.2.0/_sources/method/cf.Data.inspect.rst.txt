@@ -1,7 +1,0 @@
-cf.Data.inspect
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.inspect

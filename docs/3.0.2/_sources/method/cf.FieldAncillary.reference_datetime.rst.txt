@@ -1,7 +1,0 @@
-cf.FieldAncillary.reference_datetime
-====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.reference_datetime

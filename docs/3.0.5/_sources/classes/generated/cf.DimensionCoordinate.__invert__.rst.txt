@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.__invert__
-=================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.__invert__
