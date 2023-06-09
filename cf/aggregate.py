@@ -514,21 +514,20 @@ class _Meta:
                     dims = f.dimension_coordinates(filter_by_axis=(axis,))
                     for identity, conditions in cells.items():
                         if not dims(identity):
+                            # The dimension coordinate does not match
+                            # the identity given by this key of the
+                            # 'cells' dictionary.
                             continue
 
-                        # Still here? Then the dimension coordinate
-                        # matches the identity given by one of the
-                        # keys of the 'cells' dictionary.
-                        #
-                        # Loop round the corresponding conditions to
-                        # see if the dimension coordinate values match
-                        # one of them.
+                        # Still here? Then loop round the conditions
+                        # to see if the dimension coordinate values
+                        # match one of them.
                         dim_coord.persist(inplace=True)
                         dim_cellsize = dim_coord.cellsize
-                        dim_cellsize_units = dim_cellsize.Units
+                        difference_units = dim_cellsize.Units
 
-                        # The dimension coordinates' cellsize and
-                        # spacing arrays
+                        # Initialise the dimension coordinates
+                        # cellsize and spacing arrays
                         dim_cell = None
                         dim_diff = None
 
@@ -536,25 +535,22 @@ class _Meta:
                             cellsize = None
                             spacing = None
 
+                            # Find out if the coordinates match a
+                            # cellsize condition
                             c = condition.get("cellsize")
-                            if (
-                                c is not None
-                                and dim_cellsize_units.equivalent(
-                                    getattr(c, "Units", Units())
-                                )
+                            if c is not None and difference_units.equivalent(
+                                getattr(c, "Units", Units())
                             ):
                                 if dim_cell is None:
                                     dim_cell = dim_cellsize.persist()
 
-                                # Find out if the coordinates match
-                                # the cellsize condition
                                 try:
                                     match = (dim_cell == c).all()
                                 except ValueError:
-                                    # The comparison could fail if the
-                                    # condition is hiding incompatible
-                                    # units, which could be the case
-                                    # for compound `Query` conditions.
+                                    # The comparison could fail if 'c'
+                                    # is hiding incompatible units,
+                                    # which could be the case for
+                                    # compound `Query` conditions.
                                     match = False
 
                                 if match:
@@ -562,25 +558,22 @@ class _Meta:
                                 else:
                                     continue
 
+                            # Find out if the coordinates match a
+                            # spacing condition
                             c = condition.get("spacing")
-                            if (
-                                c is not None
-                                and dim_cellsize_units.equivalent(
-                                    getattr(c, "Units", Units())
-                                )
+                            if c is not None and difference_units.equivalent(
+                                getattr(c, "Units", Units())
                             ):
                                 if dim_diff is None:
                                     dim_diff = dim_coord.data.diff().persist()
 
-                                # Find out if the coordinates match
-                                # the spacing condition
                                 try:
                                     match = (dim_diff == c).all()
                                 except ValueError:
-                                    # The comparison could fail if the
-                                    # condition is hiding incompatible
-                                    # units, which could be the case
-                                    # for compound `Query` conditions.
+                                    # The comparison could fail if 'c'
+                                    # is hiding incompatible units,
+                                    # which could be the case for
+                                    # compound `Query` conditions.
                                     match = False
 
                                 if match:
@@ -1594,11 +1587,11 @@ class _Meta:
                 ("coordrefs", axis[identity]["coordrefs"]),
                 (
                     "cellsize",
-                    self._signature_cell(axis[identity]["cellsize"]),
+                    self._tokenise_cell_condition(axis[identity]["cellsize"]),
                 ),
                 (
                     "spacing",
-                    self._signature_cell(axis[identity]["spacing"]),
+                    self._tokenise_cell_condition(axis[identity]["spacing"]),
                 ),
                 ("size", axis[identity]["size"]),
             )
@@ -1696,8 +1689,8 @@ class _Meta:
             Field_ancillaries=Field_ancillaries,
         )
 
-    def _signature_cell(self, cellsize_or_spacing):
-        """TODOAGG
+    def _tokenise_cell_condition(self, cellsize_or_spacing):
+        """Create deterministic tokens for cell conditions.
 
         .. versionadded:: TODOAGGVER
 
@@ -1706,22 +1699,20 @@ class _Meta:
         :Parameters:
 
             cellsize_or_spacing: `tuple`
-                TODOAGG
+                Sequence of coordinate cell size or coordinate spacing
+                conditions.
 
         :Returns:
 
-            `tuple`
-                TODOAGG
+            `tuple` of `str`
+                Sequence of deterministic tokens for each condition.
 
         **Examples**
 
-        >>> x = cf.Data(45, 'degreeE')
-        >>> _signature_cell(x)
-        ('<CF Data(): 45 degreeE>', -766304752477142474))
-
-        >>> x = cf.wi(40, 50, 'degreeE')
-        >>> _signature_cell(x)
-        ('<CF Query: (wi [40, 50] degreeE)>', -2432529281105727826))
+        >>> _tokenise_cell_condition((cf.Data(45, 'degreeE'),)
+        ('asduygsaerf7834rguw3guyaec',)
+        >>> _tokenise_cell_condition((5, cf.wi(40, 50, 'degreeE')))
+        ('8976345789234we78622348905', '983efunws89e7dyh93784')
 
         """
         out = []
