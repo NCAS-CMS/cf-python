@@ -1,7 +1,0 @@
-cf.List.T
-=========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.List.T

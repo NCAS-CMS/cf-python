@@ -1,7 +1,0 @@
-cf.Field.replace_construct
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.replace_construct

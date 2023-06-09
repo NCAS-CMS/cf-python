@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.floor
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.floor

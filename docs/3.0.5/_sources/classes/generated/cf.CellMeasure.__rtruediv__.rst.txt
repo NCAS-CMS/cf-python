@@ -1,7 +1,0 @@
-cf.CellMeasure.__rtruediv__
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__rtruediv__

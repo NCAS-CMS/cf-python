@@ -1,7 +1,0 @@
-cf.CoordinateReference.del_datum
-================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CoordinateReference.del_datum

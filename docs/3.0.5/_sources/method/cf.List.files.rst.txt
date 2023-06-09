@@ -1,7 +1,0 @@
-cf.List.files
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.files

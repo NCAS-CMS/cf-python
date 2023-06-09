@@ -1,7 +1,0 @@
-cf.List.dump
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.dump

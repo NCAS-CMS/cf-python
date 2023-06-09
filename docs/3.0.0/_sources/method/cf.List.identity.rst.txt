@@ -1,7 +1,0 @@
-cf.List.identity
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.identity

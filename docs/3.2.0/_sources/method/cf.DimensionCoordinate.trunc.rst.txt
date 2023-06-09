@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.trunc
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.trunc

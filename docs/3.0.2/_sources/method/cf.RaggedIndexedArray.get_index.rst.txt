@@ -1,7 +1,0 @@
-cf.RaggedIndexedArray.get_index
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedIndexedArray.get_index

@@ -1,7 +1,0 @@
-cf.CellMethod.equivalent
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.equivalent

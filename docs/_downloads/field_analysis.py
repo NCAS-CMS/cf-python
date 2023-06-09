@@ -135,23 +135,15 @@ print(b)
 c = a.regrids(b, method='conservative')
 print(c)
 import numpy
-lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
-lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-c = a.regrids([lat, lon], method='linear')
-time = cf.DimensionCoordinate()
-time.standard_name='time'
-time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
-                      units='days since 1860-01-01', calendar='360_day'))
+domain = cf.Domain.create_regular((0, 360, 5.0), (-90, 90, 2.5))
+c = a.regrids(domain, method='linear')
+time = cf.DimensionCoordinate.create_regular(
+     (0.5, 60.5, 1),
+     units=cf.Units("days since 1860-01-01", calendar="360_day"),
+     standard_name="time",
+     )
 time
 c = a.regridc([time], axes='T', method='linear')
-try:
-    c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
-except Exception:
-    pass
-bounds = time.create_bounds()
-time.set_bounds(bounds)
-c = a.regridc([time], axes='T', method='conservative')
-print(c)
 v = cf.read('vertical.nc')[0]
 print(v)
 z_p = v.construct('Z')
@@ -272,7 +264,3 @@ r = q.convolution_filter(exponential_window, axis='Y')
 print(r.array)
 r = q.derivative('X')
 r = q.derivative('Y', one_sided_at_boundary=True)
-u, v = cf.read('wind_components.nc')
-zeta = cf.relative_vorticity(u, v)
-print(zeta)
-print(zeta.array.round(8))

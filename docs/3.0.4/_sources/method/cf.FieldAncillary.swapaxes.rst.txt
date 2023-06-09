@@ -1,7 +1,0 @@
-cf.FieldAncillary.swapaxes
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.swapaxes

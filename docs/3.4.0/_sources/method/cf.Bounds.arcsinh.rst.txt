@@ -1,7 +1,0 @@
-cf.Bounds.arcsinh
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.arcsinh

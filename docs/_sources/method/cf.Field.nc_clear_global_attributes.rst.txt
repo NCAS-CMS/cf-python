@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Field.nc_clear_global_attributes
 ===================================
 

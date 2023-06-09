@@ -1,7 +1,0 @@
-cf.Index.sin
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.sin

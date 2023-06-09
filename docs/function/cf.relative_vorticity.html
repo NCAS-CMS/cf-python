@@ -26,8 +26,8 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.ATOL" href="cf.ATOL.html" />
-    <link rel="prev" title="cf.histogram" href="cf.histogram.html" />
+    <link rel="next" title="cf.set_performance" href="cf.set_performance.html" />
+    <link rel="prev" title="cf.open_files_threshold_exceeded" href="cf.open_files_threshold_exceeded.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
 
 
 
@@ -75,7 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -91,8 +92,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.histogram.html" title="previous chapter">cf.histogram</a></li>
-      <li>Next: <a href="cf.ATOL.html" title="next chapter">cf.ATOL</a></li>
+      <li>Previous: <a href="cf.open_files_threshold_exceeded.html" title="previous chapter">cf.open_files_threshold_exceeded</a></li>
+      <li>Next: <a href="cf.set_performance.html" title="next chapter">cf.set_performance</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -130,9 +131,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.relative_vorticity<a class="headerlink" href="#cf-relative-vorticity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.relative_vorticity">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relative_vorticity</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=6371229.0</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/maths.py#L6-L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relative_vorticity</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=6371229.0</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.1/cf/maths.py#L5-L92"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the relative vorticity using centred finite
 differences.</p>
+<p>Deprecated at version 3.15.1 and is no longer available. Use
+function <a class="reference internal" href="cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> instead. Note that <a class="reference internal" href="cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> uses a more
+accurate spherical polar coordinates formula.</p>
 <p>The relative vorticity of wind defined on a Cartesian domain (such
 as a plane projection) is defined as</p>
 <blockquote>
@@ -212,11 +216,11 @@ differences.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-06-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

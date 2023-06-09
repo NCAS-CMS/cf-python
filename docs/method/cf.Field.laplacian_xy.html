@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
 
 
 
@@ -75,7 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -132,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.laplacian_xy<a class="headerlink" href="#cf-field-laplacian-xy" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.laplacian_xy">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">laplacian_xy</code><span class="sig-paren">(</span><em class="sig-param">x_wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/field.py#L3912-L4105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.laplacian_xy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">laplacian_xy</code><span class="sig-paren">(</span><em class="sig-param">x_wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.1/cf/field.py#L3946-L4146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.laplacian_xy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the Laplacian in X-Y coordinates.</p>
 <p>The horizontal Laplacian of a scalar function is calculated
 from a field that has dimension coordinates of X and Y, in
@@ -169,7 +170,8 @@ where a centred finite difference could not be calculated.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>, <a class="reference internal" href="cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>, <a class="reference internal" href="../function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a></p>
+<p><a class="reference internal" href="cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>, <a class="reference internal" href="cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>,
+<a class="reference internal" href="../function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a>, <a class="reference internal" href="../function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -255,11 +257,11 @@ default value of 6371229 metres.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-06-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -1,7 +1,0 @@
-cf.FieldList.select_field
-=========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.select_field

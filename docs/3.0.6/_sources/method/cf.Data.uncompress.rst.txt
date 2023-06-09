@@ -1,7 +1,0 @@
-cf.Data.uncompress
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.uncompress

@@ -1,7 +1,0 @@
-cf.List.__rxor__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__rxor__

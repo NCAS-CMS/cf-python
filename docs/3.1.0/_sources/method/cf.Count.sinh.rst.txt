@@ -1,7 +1,0 @@
-cf.Count.sinh
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.sinh

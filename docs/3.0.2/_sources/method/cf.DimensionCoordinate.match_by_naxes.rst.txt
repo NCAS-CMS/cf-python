@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.match_by_naxes
-=====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.match_by_naxes

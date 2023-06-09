@@ -1,7 +1,0 @@
-cf.DomainAncillary.round
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.round

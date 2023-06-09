@@ -1,3 +1,5 @@
+:orphan:
+
 cf.CoordinateReference.has_coordinate
 =====================================
 

@@ -1,7 +1,0 @@
-cf.List.where
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.where

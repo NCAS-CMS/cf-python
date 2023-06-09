@@ -1,7 +1,0 @@
-cf.DomainAncillary.transpose
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.transpose

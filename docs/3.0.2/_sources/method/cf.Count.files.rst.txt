@@ -1,7 +1,0 @@
-cf.Count.files
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.files

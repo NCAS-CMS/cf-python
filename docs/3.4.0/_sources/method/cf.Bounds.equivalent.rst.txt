@@ -1,7 +1,0 @@
-cf.Bounds.equivalent
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.equivalent

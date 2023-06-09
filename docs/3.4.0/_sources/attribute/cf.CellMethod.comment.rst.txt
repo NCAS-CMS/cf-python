@@ -1,7 +1,0 @@
-cf.CellMethod.comment
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.CellMethod.comment

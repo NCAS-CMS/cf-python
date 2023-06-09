@@ -1,7 +1,0 @@
-cf.FieldAncillary.__rshift__
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.__rshift__

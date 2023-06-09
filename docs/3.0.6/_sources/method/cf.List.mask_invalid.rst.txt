@@ -1,7 +1,0 @@
-cf.List.mask_invalid
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.mask_invalid

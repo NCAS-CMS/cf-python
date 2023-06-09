@@ -1,7 +1,0 @@
-cf.List.__ror__
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__ror__

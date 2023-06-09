@@ -1,7 +1,0 @@
-cf.Index.floor
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.floor

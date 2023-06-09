@@ -1,7 +1,0 @@
-cf.Index.copy
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.copy

@@ -1,7 +1,0 @@
-cf.CellMeasure.__ixor__
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__ixor__

@@ -1,7 +1,0 @@
-cf.DomainAncillary.sin
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.sin

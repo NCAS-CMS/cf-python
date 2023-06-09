@@ -1,7 +1,0 @@
-cf.Field.has_property
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.has_property

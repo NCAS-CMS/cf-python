@@ -1,7 +1,0 @@
-cf.DomainAncillary.__floordiv__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.__floordiv__

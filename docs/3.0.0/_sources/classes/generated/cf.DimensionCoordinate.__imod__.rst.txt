@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.__imod__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.__imod__

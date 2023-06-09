@@ -1,7 +1,0 @@
-cf.CellMeasure.__rmod__
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__rmod__

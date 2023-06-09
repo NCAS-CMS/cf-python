@@ -1,3 +1,5 @@
+:orphan:
+
 cf.DimensionCoordinate.__data__
 ===============================
 

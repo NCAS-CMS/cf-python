@@ -1,7 +1,0 @@
-cf.Field.convolution_filter
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.convolution_filter

@@ -1,7 +1,0 @@
-cf.Data.standard_deviation
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.standard_deviation
