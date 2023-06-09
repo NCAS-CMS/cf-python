@@ -546,9 +546,18 @@ class _Meta:
                                 if dim_cell is None:
                                     dim_cell = dim_cellsize.persist()
 
-                                if (dim_cell == c).all():
-                                    # The dimension coordinates match
-                                    # the 'cellsize' condition
+                                # Find out if the coordinates match
+                                # the cellsize condition
+                                try:
+                                    match = (dim_cell == c).all()
+                                except ValueError:
+                                    # The comparison could fail if the
+                                    # condition is hiding incompatible
+                                    # units, which could be the case
+                                    # for compound `Query` conditions.
+                                    match = False
+
+                                if match:
                                     cellsize = c
                                 else:
                                     continue
@@ -563,9 +572,18 @@ class _Meta:
                                 if dim_diff is None:
                                     dim_diff = dim_coord.data.diff().persist()
 
-                                if (dim_diff == c).all():
-                                    # The dimension coordinates match
-                                    # the 'spacing' condition
+                                # Find out if the coordinates match
+                                # the spacing condition
+                                try:
+                                    match = (dim_diff == c).all()
+                                except ValueError:
+                                    # The comparison could fail if the
+                                    # condition is hiding incompatible
+                                    # units, which could be the case
+                                    # for compound `Query` conditions.
+                                    match = False
+
+                                if match:
                                     spacing = c
                                 else:
                                     continue
