@@ -5,7 +5,7 @@ Plotting the Warming Stripes
 In this recipe, we will plot the `Warming Stripes (Climate Stripes)
 <https://en.wikipedia.org/wiki/Warming_stripes>`_ created by
 Professor Ed Hawkins at NCAS, University of Reading. Here we will use the
-ensemble mean of the 
+ensemble mean of the
 `HadCRUT.5.0.1.0 analysis gridded data
 <https://www.metoffice.gov.uk/hadobs/hadcrut5/data/current/download.html>`_ for
 the same.
@@ -47,7 +47,7 @@ global_temperature = period.collapse("X: Y: mean")
 global_avg_temp = global_temperature.array.squeeze()
 
 # %%
-# 7. Create a normalization function that maps the interval from the minimum to 
+# 7. Create a normalization function that maps the interval from the minimum to
 # the maximum temperature to the interval [0, 1] for colouring:
 norm_global = plt.Normalize(global_avg_temp.min(), global_avg_temp.max())
 
@@ -56,15 +56,13 @@ norm_global = plt.Normalize(global_avg_temp.min(), global_avg_temp.max())
 cmap = plt.get_cmap("RdBu_r")
 
 # %%
-# 9. Create the figure and the axes for the global plot. Loop over the selected 
+# 9. Create the figure and the axes for the global plot. Loop over the selected
 # years, plot a colored vertical stripe for each and remove the axes:
 fig_global, ax_global = plt.subplots(figsize=(10, 2))
 
 for i in range(global_avg_temp.shape[0]):
     ax_global.axvspan(
-        xmin=i-0.5,
-        xmax=i+0.5,
-        color=cmap(norm_global(global_avg_temp[i]))
+        xmin=i - 0.5, xmax=i + 0.5, color=cmap(norm_global(global_avg_temp[i]))
     )
 
 ax_global.axis("off")
@@ -72,8 +70,8 @@ ax_global.axis("off")
 plt.show()
 
 # %%
-# 10. For the regional warming stripes, steps 5 to 9 are repeated for the 
-# specific region. Here, we define the bounding box for UK by subspacing over 
+# 10. For the regional warming stripes, steps 5 to 9 are repeated for the
+# specific region. Here, we define the bounding box for UK by subspacing over
 # a domain spanning 49.9 to 59.4 degrees north and -10.5 to 1.8 degrees east:
 uk_temperature = period.subspace(X=cf.wi(-10.5, 1.8), Y=cf.wi(49.9, 59.4))
 uk_avg_temperature = uk_temperature.collapse("X: Y: mean")
@@ -85,7 +83,9 @@ norm_uk = plt.Normalize(uk_avg_temp.min(), uk_avg_temp.max())
 fig_uk, ax_uk = plt.subplots(figsize=(10, 2))
 
 for i in range(uk_avg_temp.shape[0]):
-    ax_uk.axvspan(xmin=i-0.5, xmax=i+0.5, color=cmap(norm_uk(uk_avg_temp[i])))
+    ax_uk.axvspan(
+        xmin=i - 0.5, xmax=i + 0.5, color=cmap(norm_uk(uk_avg_temp[i]))
+    )
 
 ax_uk.axis("off")
 
