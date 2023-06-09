@@ -82,14 +82,15 @@ fi
 
 cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
-for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py
+for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py cheatsheet.pdf
 do
   # Remove the hash string component added by GitHub to the link
   # where the resources are hosted (GH changes it to something like
   # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
   sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
     $dir/tutorial.html \
-    $dir/analysis.html
+    $dir/analysis.html \
+    $dir/cheat_sheet.html
     # all pages referencing these resources must be added to this list
 done
 
@@ -117,6 +118,21 @@ for html_file in "${html_files[@]}"; do
         sed -i "s|href=\".*\/${recipe_file##*/}\"|href=\"../_downloads/${recipe_file##*/}\"|g" "$html_file"
     done
 done
+
+# Recipe filters
+while IFS= read -r href; do
+  IFS= read -r div
+  awk -v href="$href" -v div="$div" '
+  {
+    if ($0 ~ href) {
+      gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+    }
+    print prev
+    prev = $0
+  }
+  END {print prev}
+  ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
+done < source/recipes/recipe_list.txt
 
 # Copy over our custom stylesheet. It is referenced in the HTML docs
 # files but Sphinx with alabaster theme doesn't seem to (?) provide a

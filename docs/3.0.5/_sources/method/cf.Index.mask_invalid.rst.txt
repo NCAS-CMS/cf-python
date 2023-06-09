@@ -1,7 +1,0 @@
-cf.Index.mask_invalid
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.mask_invalid

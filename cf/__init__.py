@@ -74,8 +74,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.10"
-__date__ = "2023-04-27"
-__version__ = "3.15.0"
+__date__ = "2023-06-09"
+__version__ = "3.15.1"
 
 _requires = (
     "numpy",
@@ -169,7 +169,7 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.6.0"
+_minimum_vn = "1.6.2"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "

@@ -64,6 +64,10 @@ p.caption {
 }
 
 
+div.relations {
+    display: none;
+}
+
 
 div.sphinxsidebar a {
     color: #444;
@@ -415,7 +419,9 @@ table.footnote td {
 }
 
 dl {
-    margin: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
     padding: 0;
 }
 

@@ -1,7 +1,0 @@
-cf.CellMeasure.cosh
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.cosh

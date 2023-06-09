@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
 
 
 
@@ -75,7 +75,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -131,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.NetCDFArray">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">address=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">units=False</em>, <em class="sig-param">calendar=False</em>, <em class="sig-param">missing_values=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/data/array/netcdfarray.py#L11-L43"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">NetCDFArray</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">address=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">units=False</em>, <em class="sig-param">calendar=False</em>, <em class="sig-param">missing_values=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.1/cf/data/array/netcdfarray.py#L11-L43"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.array.mixin.filearraymixin.FileArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.array.mixin.arraymixin.ArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.netcdfarray.NetCDFArray</span></code></p>
 <p>An array stored in a netCDF file.</p>
 <p><strong>Initialisation</strong></p>
@@ -144,7 +145,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 defined by <em>filename</em>. Either a netCDF variable name
 or an integer netCDF variable ID.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version TODOCFAVER.</span></p>
+<p><span class="versionmodified added">New in version 1.10.1.0.</span></p>
 </div>
 </dd>
 <dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><p>The data type of the array in the netCDF file. May be
@@ -357,11 +358,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-06-09.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

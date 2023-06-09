@@ -1,7 +1,0 @@
-cf.Index.exp
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.exp

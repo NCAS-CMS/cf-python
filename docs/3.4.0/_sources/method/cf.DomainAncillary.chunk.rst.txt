@@ -1,7 +1,0 @@
-cf.DomainAncillary.chunk
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.chunk

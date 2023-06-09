@@ -1,7 +1,0 @@
-cf.RaggedIndexedArray.get_compressed_axes
-=========================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedIndexedArray.get_compressed_axes

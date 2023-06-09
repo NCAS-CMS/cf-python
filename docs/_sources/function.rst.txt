@@ -48,7 +48,6 @@ Mathematical operations
    cf.curl_xy
    cf.div_xy
    cf.histogram
-   cf.relative_vorticity
    cf.ATOL
    cf.RTOL
    
@@ -161,7 +160,6 @@ Miscellaneous
    cf.example_fields
    cf.example_domain
    cf.flat
-   cf.hash_array
    cf.implementation
    cf.indices_shape
    cf.inspect
@@ -188,10 +186,12 @@ Deprecated
    cf.collapse_parallel_mode
    cf.fm_threshold
    cf.free_memory_factor
+   cf.hash_array
    cf.min_total_memory
    cf.of_fraction
    cf.open_files
    cf.open_files_threshold_exceeded
+   cf.relative_vorticity
    cf.set_performance
    cf.COLLAPSE_PARALLEL_MODE
    cf.FM_THRESHOLD

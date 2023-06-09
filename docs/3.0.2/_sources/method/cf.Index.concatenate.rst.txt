@@ -1,7 +1,0 @@
-cf.Index.concatenate
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.concatenate

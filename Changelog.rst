@@ -1,15 +1,28 @@
 version 3.15.1
 --------------
 
-**2023-05-??**
+**2023-06-09**
 
+* New documentation cheat sheet
+  (https://github.com/NCAS-CMS/cf-python/issues/591)
 * Performance improvements to `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/640)
 * New methods: `cf.Data.argmin`, `cf.Field.argmin`
   (https://github.com/NCAS-CMS/cf-python/issues/577)
+* Deprecate `cf.relative_vorticity` in favour of `cf.curl_xy`
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Fix bug when using the ``-d`` option to the `cfa` script 
   (https://github.com/NCAS-CMS/cf-python/issues/649)
+* Fix the return tppe from `cf.example_fields`
+  (https://github.com/NCAS-CMS/cf-python/pull/654)
+* Fix `set_data` when the units are invalid
+  (https://github.com/NCAS-CMS/cf-python/pull/646)
+* Fix `cf.Field.laplacian_xy`, cf.Field.grad_xy`, `cf.curl_xy` and
+  `cf.div_xy` to work in cases when the dimension coordinates are
+  missing standard names
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Changed dependency: ``cfunits>=3.3.6``
+* Changed dependency: ``cftime>=1.6.2``
 
 ----
 

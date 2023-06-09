@@ -1,7 +1,0 @@
-cf.Index.mid_range
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.mid_range

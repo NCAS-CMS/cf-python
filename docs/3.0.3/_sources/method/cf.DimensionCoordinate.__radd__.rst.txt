@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.__radd__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.__radd__

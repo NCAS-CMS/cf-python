@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.flatten
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.flatten

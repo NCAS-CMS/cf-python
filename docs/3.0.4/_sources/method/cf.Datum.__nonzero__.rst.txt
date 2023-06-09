@@ -1,7 +1,0 @@
-cf.Datum.__nonzero__
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Datum.__nonzero__

@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Domain.set_data_axes
 =======================
 

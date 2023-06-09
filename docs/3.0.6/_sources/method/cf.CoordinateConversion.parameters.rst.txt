@@ -1,7 +1,0 @@
-cf.CoordinateConversion.parameters
-==================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CoordinateConversion.parameters

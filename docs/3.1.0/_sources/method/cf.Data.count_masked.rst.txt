@@ -1,7 +1,0 @@
-cf.Data.count_masked
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.count_masked

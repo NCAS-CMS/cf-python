@@ -1,7 +1,0 @@
-cf.Index.transpose
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.transpose

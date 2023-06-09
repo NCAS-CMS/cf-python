@@ -1,7 +1,0 @@
-cf.Field.radius
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.radius

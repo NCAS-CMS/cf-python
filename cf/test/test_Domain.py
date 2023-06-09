@@ -2,7 +2,7 @@ import datetime
 import re
 import unittest
 
-import numpy
+import numpy as np
 
 import cf
 
@@ -101,7 +101,7 @@ class DomainTest(unittest.TestCase):
         f = self.d.copy()
 
         x = f.dimension_coordinate("X")
-        x[...] = numpy.arange(0, 360, 40)
+        x[...] = np.arange(0, 360, 40)
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
@@ -213,10 +213,10 @@ class DomainTest(unittest.TestCase):
 
         # 2-d
         lon = f.auxiliary_coordinate("X")
-        lon.data[...] = numpy.arange(60, 150).reshape(9, 10)
+        lon.data[...] = np.arange(60, 150).reshape(9, 10)
 
         lat = f.auxiliary_coordinate("Y")
-        lat.data[...] = numpy.arange(-45, 45).reshape(10, 9)
+        lat.data[...] = np.arange(-45, 45).reshape(10, 9)
 
         for mode in ("compress", "envelope"):
             g = f.subspace(mode, longitude=cf.wi(92, 134))
@@ -294,6 +294,77 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_size(self):
         self.assertEqual(self.d.size, 90)
+
+    def test_Domain_create_regular(self):
+        domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
+        self.assertIsInstance(domain, cf.Domain)
+
+        # Invalid inputs
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1, 2), (-90, 90, 1))
+
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1, 2))
+
+        # Test dx and dy as divisors of the range
+        domain = cf.Domain.create_regular((-180, 180, 60), (-90, 90, 45))
+        self.assertIsNotNone(domain)
+
+        x_bounds = np.linspace(-180, 180, 7)
+        y_bounds = np.linspace(-90, 90, 5)
+
+        x_points = (x_bounds[:-1] + x_bounds[1:]) / 2
+        y_points = (y_bounds[:-1] + y_bounds[1:]) / 2
+
+        longitude = domain.construct("longitude")
+        latitude = domain.construct("latitude")
+
+        self.assertTrue(np.allclose(longitude.array, x_points))
+        self.assertTrue(np.allclose(latitude.array, y_points))
+
+        # Test dx and dy not divisors of the range
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 61), (-90, 90, 46))
+
+        # Test if range difference in x_range is greater than 360
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 190, 1), (-90, 90, 1))
+
+        # Test for y_range out of bounds
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-91, 90, 1))
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (-90, 91, 1))
+
+        # Test for decreasing coordinates range
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((180, -180, 1), (-90, 90, 1))
+        with self.assertRaises(ValueError):
+            cf.Domain.create_regular((-180, 180, 1), (90, -90, 1))
+
+        # Test cyclicity
+        d = cf.Domain.create_regular((-180, 180, 1), (90, -90, -1))
+        axis = d.domain_axis("X", key=True)
+        self.assertEqual(d.cyclic().pop(), axis)
+
+        # Test with bounds=False
+        domain_no_bounds = cf.Domain.create_regular(
+            (-180, 180, 1), (-90, 90, 1), bounds=False
+        )
+        self.assertIsInstance(domain_no_bounds, cf.Domain)
+
+        x_points_no_bounds = np.arange(-180, 181, 1)
+        y_points_no_bounds = np.arange(-90, 91, 1)
+
+        longitude_no_bounds = domain_no_bounds.construct("longitude")
+        latitude_no_bounds = domain_no_bounds.construct("latitude")
+
+        self.assertTrue(
+            np.allclose(longitude_no_bounds.array, x_points_no_bounds)
+        )
+        self.assertTrue(
+            np.allclose(latitude_no_bounds.array, y_points_no_bounds)
+        )
 
 
 if __name__ == "__main__":

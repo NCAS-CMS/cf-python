@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Plotting statistically significant temperature trends with stippling &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting a joint histogram" href="plot_09_recipe.html" />
+    <link rel="prev" title="Plotting members of a model ensemble" href="plot_07_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_07_recipe.html" title="previous chapter">Plotting members of a model ensemble</a></li>
+      <li>Next: <a href="plot_09_recipe.html" title="next chapter">Plotting a joint histogram</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-08-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="plotting-statistically-significant-temperature-trends-with-stippling">
+<span id="sphx-glr-recipes-plot-08-recipe-py"></span><h1>Plotting statistically significant temperature trends with stippling<a class="headerlink" href="#plotting-statistically-significant-temperature-trends-with-stippling" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset for two different time periods. The plotted maps also include stippling, which is used to highlight areas where the temperature trends are statistically significant.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python, cf-plot, numpy and scipy.stats:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Three functions are defined:</p></li>
+</ol>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">linear_trend(data,</span> <span class="pre">time_axis)</span></code>: This function calculates the linear regression slope and p-value for the input data along the time axis. It takes two arguments: <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, which represents the temperature anomalies or any other data you want to analyse, and <code class="docutils literal notranslate"><span class="pre">'time_axis'</span></code>, which represents the corresponding time points for the data. The function uses the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html">stats.linregress</a> method from the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/stats.html">scipy.stats</a> library to calculate the slope and p-value of the linear regression. It returns these two values as a tuple:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">linear_trend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a><span class="p">):</span>
+    <span class="n">slope</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html#scipy.stats.linregress" title="scipy.stats.linregress" class="sphx-glr-backref-module-scipy-stats sphx-glr-backref-type-py-function"><span class="n">stats</span><span class="o">.</span><span class="n">linregress</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">slope</span><span class="p">,</span> <span class="n">p_value</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create_trend_stipple_obj(temp_data,</span> <span class="pre">input_data)</span></code>: This function creates a new object with the input data provided and <em>collapses</em> the time dimension by taking the mean. It takes two arguments: <code class="docutils literal notranslate"><span class="pre">'temp_data'</span></code>, which represents the temperature data object, and <code class="docutils literal notranslate"><span class="pre">'input_data'</span></code>, which is the data to be set in the new object. The function creates a copy of the <code class="docutils literal notranslate"><span class="pre">'temp_data'</span></code> object by selecting the first element using index and <em>squeezes</em> it to remove the size 1 axis. It then sets the input data with the <code class="docutils literal notranslate"><span class="pre">'Y'</span></code> (latitude) and <code class="docutils literal notranslate"><span class="pre">'X'</span></code> (longitude) axes, and then <em>collapses</em> the time dimension using the <code class="docutils literal notranslate"><span class="pre">&quot;T:</span> <span class="pre">mean&quot;</span></code> operation:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_trend_stipple_obj</span><span class="p">(</span><span class="n">temp_data</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+    <span class="n">trend_stipple_obj</span> <span class="o">=</span> <span class="n">temp_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    <span class="n">trend_stipple_obj</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">trend_stipple_obj</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">process_subsets(subset_mask)</span></code>: This function processes the subsets of data by applying the <code class="docutils literal notranslate"><span class="pre">linear_trend</span></code> function along a specified axis. It takes one argument, <code class="docutils literal notranslate"><span class="pre">'subset_mask'</span></code>, which is a boolean mask representing the time points to be considered in the analysis. The function first extracts the masked subset of data and then applies the <code class="docutils literal notranslate"><span class="pre">linear_trend</span></code> function along the time axis (axis 0) using the <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.apply_along_axis.html">numpy.ma.apply_along_axis</a> function. The result is an array containing the slope and p-value for each grid point in the dataset:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_subsets</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_mask</span></a><span class="p">):</span>
+    <span class="n">subset_data</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">masked_data</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_mask</span></a><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+    <span class="k">return</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.apply_along_axis.html#numpy.ma.apply_along_axis" title="numpy.ma.apply_along_axis" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">apply_along_axis</span></a><span class="p">(</span>
+        <span class="n">linear_trend</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">subset_data</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_mask</span></a><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Read the field constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_data</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span>
+    <span class="s2">&quot;~/recipes/HadCRUT.5.0.1.0.analysis.anomalies.ensemble_mean.nc&quot;</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_data</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=blended air_temperature_anomaly over land with sea_water_temperature_anomaly (ncvar%tas_mean)
+--------------------------------------------------------------------------------------------------------------
+Data            : long_name=blended air_temperature_anomaly over land with sea_water_temperature_anomaly(time(2079), latitude(36), longitude(72)) K
+Cell methods    : area: mean (interval: 5.0 degrees_north) time(2079): mean (interval: 1 month) realization(1): mean
+Dimension coords: time(2079) = [1850-01-16 12:00:00, ..., 2023-03-16 12:00:00] gregorian
+                : latitude(36) = [-87.5, ..., 87.5] degrees_north
+                : longitude(72) = [-177.5, ..., 177.5] degrees_east
+                : realization(1) = [100] 1
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Calculate the annual mean temperature anomalies. The <code class="docutils literal notranslate"><span class="pre">'weights=True'</span></code> argument is used take the varying lengths of months into account which ensures that the calculated mean is more accurate. A masked array is created for the annual mean temperature anomalies, masking any invalid values:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_temperature</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temperature_data</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span>
+    <span class="s2">&quot;T: mean&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><a href="../function/cf.Y.html#cf.Y" title="cf.Y" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">Y</span></a><span class="p">()</span>
+<span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">annual_temperature</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">array</span>
+<a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">masked_data</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.masked_invalid.html#numpy.ma.masked_invalid" title="numpy.ma.masked_invalid" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span></a><span class="p">(</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">annual_temperature</span><span class="o">.</span><span class="n">array</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Define two time periods for analysis: 1850-2020 and 1980-2020, along with a significance level (alpha) of 0.05:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_periods</span></a> <span class="o">=</span> <span class="p">[(</span><span class="mi">1850</span><span class="p">,</span> <span class="mi">2020</span><span class="p">,</span> <span class="s2">&quot;sub_1850_2020&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1980</span><span class="p">,</span> <span class="mi">2020</span><span class="p">,</span> <span class="s2">&quot;sub_1980_2020&quot;</span><span class="p">)]</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">alpha</span></a> <span class="o">=</span> <span class="mf">0.05</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Loop through the time periods, processing the subsets, calculating trend p-values, and creating stipple objects. For each time period, the script calculates the trends and p-values using the <code class="docutils literal notranslate"><span class="pre">process_subsets</span></code> function. If the p-value is less than the significance level (alpha = 0.05), a stippling mask is created. The script then creates a new object for the trend and stippling mask using the <code class="docutils literal notranslate"><span class="pre">create_trend_stipple_obj</span></code> function:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">start</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">end</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_periods</span></a><span class="p">:</span>
+    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_mask</span></a> <span class="o">=</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a> <span class="o">&gt;=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">start</span></a><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time_axis</span></a> <span class="o">&lt;=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">end</span></a><span class="p">)</span>
+    <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_trend_pvalue</span></a> <span class="o">=</span> <span class="n">process_subsets</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_mask</span></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="o">+</span> <span class="s2">&quot;_trend_pvalue&quot;</span><span class="p">]</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_trend_pvalue</span></a>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="o">+</span> <span class="s2">&quot;_stipple&quot;</span><span class="p">]</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_trend_pvalue</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">alpha</span></a>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="o">+</span> <span class="s2">&quot;_trend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_trend_stipple_obj</span><span class="p">(</span>
+        <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_data</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">subset_trend_pvalue</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="o">+</span> <span class="s2">&quot;_stipple_obj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_trend_stipple_obj</span><span class="p">(</span>
+        <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_data</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prefix</span></a> <span class="o">+</span> <span class="s2">&quot;_stipple&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>7. Create two plots - one for the 1850-2020 time period and another for the 1980-2020 time period using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>.
+The results are multiplied by 10 so that each plot displays the temperature trend in K/decade with stippling to indicate areas where the trend is statistically significant (p-value &lt; 0.05).
+Here <a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to define the parts of the plot area with two rows and one column, and setting the bottom margin to 0.2.
+It is closed by <a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gpos.html">cfplot.gpos</a> is used to set the plotting position of both the plots;
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to set the map projection to Robinson;
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/cscale.html">cfplot.cscale</a> is used to choose one of the colour maps amongst many available;
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/levs.html">cfplot.levs</a> is used to set the contour levels;
+and <a class="reference external" href="http://ajheaps.github.io/cf-plot/stipple.html">cfplot.stipple</a> is used to add stippling to show statistically significant areas:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;temp_19lev&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;sub_1850_2020_trend&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Temperature Trend 1850-2020&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/stipple.html#cfplot.stipple" title="cfplot.stipple" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">stipple</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;sub_1850_2020_stipple_obj&quot;</span><span class="p">],</span>
+    <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;temp_19lev&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;sub_1980_2020_trend&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Temperature Trend 1980-2020&quot;</span><span class="p">,</span>
+    <span class="n">colorbar_position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+    <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+    <span class="n">colorbar_title</span><span class="o">=</span><span class="s2">&quot;K/decade&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/stipple.html#cfplot.stipple" title="cfplot.stipple" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">stipple</span></a><span class="p">(</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">results</span></a><span class="p">[</span><span class="s2">&quot;sub_1980_2020_stipple_obj&quot;</span><span class="p">],</span>
+    <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_08_recipe_001.png" srcset="../_images/sphx_glr_plot_08_recipe_001.png" alt="plot 08 recipe" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Warning - boolean data found - converting to integers
+
+
+
+
+
+
+Warning - boolean data found - converting to integers
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  19.013 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-08-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_08_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_08_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_08_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_08_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-06-09.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

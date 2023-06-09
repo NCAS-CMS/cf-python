@@ -1,7 +1,0 @@
-cf.Field.match_by_property
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.match_by_property

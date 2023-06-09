@@ -1,7 +1,0 @@
-cf.Index.sample_size
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.sample_size

@@ -1,7 +1,0 @@
-cf.DomainAncillary.__isub__
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.__isub__

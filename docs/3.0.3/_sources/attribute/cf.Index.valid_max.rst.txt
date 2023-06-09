@@ -1,7 +1,0 @@
-cf.Index.valid_max
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Index.valid_max

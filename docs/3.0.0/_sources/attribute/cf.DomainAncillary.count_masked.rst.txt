@@ -1,7 +1,0 @@
-cf.DomainAncillary.count_masked
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.DomainAncillary.count_masked

@@ -1,7 +1,0 @@
-cf.FieldAncillary.set_property
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.set_property

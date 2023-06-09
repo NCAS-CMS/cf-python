@@ -1,7 +1,0 @@
-cf.List.properties
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.properties

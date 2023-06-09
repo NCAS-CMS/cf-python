@@ -1,7 +1,0 @@
-cf.CellMeasure.clear_properties
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.clear_properties

@@ -1,7 +1,0 @@
-cf.List.__rshift__
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__rshift__

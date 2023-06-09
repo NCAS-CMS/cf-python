@@ -1,7 +1,0 @@
-cf.CellMeasure.__query_wi__
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__query_wi__

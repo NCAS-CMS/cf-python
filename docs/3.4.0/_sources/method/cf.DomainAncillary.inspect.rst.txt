@@ -1,7 +1,0 @@
-cf.DomainAncillary.inspect
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.inspect

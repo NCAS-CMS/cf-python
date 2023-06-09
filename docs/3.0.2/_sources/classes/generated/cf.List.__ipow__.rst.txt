@@ -1,7 +1,0 @@
-cf.List.__ipow__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__ipow__

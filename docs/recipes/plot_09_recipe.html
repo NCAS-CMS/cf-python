@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Plotting a joint histogram &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculating and plotting the relative vorticity" href="plot_10_recipe.html" />
+    <link rel="prev" title="Plotting statistically significant temperature trends with stippling" href="plot_08_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.1</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_08_recipe.html" title="previous chapter">Plotting statistically significant temperature trends with stippling</a></li>
+      <li>Next: <a href="plot_10_recipe.html" title="next chapter">Calculating and plotting the relative vorticity</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-09-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="plotting-a-joint-histogram">
+<span id="sphx-glr-recipes-plot-09-recipe-py"></span><h1>Plotting a joint histogram<a class="headerlink" href="#plotting-a-joint-histogram" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will be creating a joint histogram of PM2.5 mass
+concentration and 2-metre temperature.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python, numpy and matplotlib.pyplot:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read the field constructs using read function:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/levtype_sfc.nc&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;CF Field: long_name=Total Aerosol Optical Depth at 550nm(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) ~&gt;,
+ &lt;CF Field: mass_concentration_of_pm10_ambient_aerosol_particles_in_air(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) kg m**-3&gt;,
+ &lt;CF Field: mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) kg m**-3&gt;,
+ &lt;CF Field: long_name=2 metre temperature(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) K&gt;]
+</pre></div>
+</div>
+<p>3. Select the PM2.5 mass concentration and 2-metre temperature fields by
+index and print the description to show properties of all constructs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_field</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">pm25_field</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------------
+Field: mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air (ncvar%pm2p5)
+---------------------------------------------------------------------------------
+Conventions = &#39;CF-1.6&#39;
+_FillValue = -32767
+history = &#39;2023-05-02 11:17:49 GMT by grib_to_netcdf-2.25.1: /opt/ecmwf/mars-
+           client/bin/grib_to_netcdf.bin -S param -o /cache/tmp/4e68aba0-50a9-
+           4f06-947c-9fc7444b7838-adaptor.mars.internal-1683026269.508034-
+           23606-13-tmp.nc /cache/tmp/4e68aba0-50a9-4f06-947c-9fc7444b7838-
+           adaptor.mars.internal-1683026265.2095394-23606-10-tmp.grib&#39;
+long_name = &#39;Particulate matter d &lt;= 2.5 um&#39;
+missing_value = -32767
+standard_name = &#39;mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air&#39;
+units = &#39;kg m**-3&#39;
+
+Data(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) = [[[1.5032209791448226e-10, ..., 1.1372701346394527e-10]]] kg m**-3
+
+Domain Axis: long_name=latitude(241)
+Domain Axis: long_name=longitude(480)
+Domain Axis: long_name=time(6)
+
+Dimension coordinate: long_name=time
+    calendar = &#39;gregorian&#39;
+    long_name = &#39;time&#39;
+    units = &#39;hours since 1900-01-01 00:00:00.0&#39;
+    Data(long_name=time(6)) = [2022-01-01 00:00:00, ..., 2022-06-01 00:00:00] gregorian
+
+Dimension coordinate: long_name=latitude
+    long_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(long_name=latitude(241)) = [90.0, ..., -90.0] degrees_north
+
+Dimension coordinate: long_name=longitude
+    long_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(long_name=longitude(480)) = [0.0, ..., 359.25] degrees_east
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_field</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp_field</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>------------------------------------------------
+Field: long_name=2 metre temperature (ncvar%t2m)
+------------------------------------------------
+Conventions = &#39;CF-1.6&#39;
+_FillValue = -32767
+history = &#39;2023-05-02 11:17:49 GMT by grib_to_netcdf-2.25.1: /opt/ecmwf/mars-
+           client/bin/grib_to_netcdf.bin -S param -o /cache/tmp/4e68aba0-50a9-
+           4f06-947c-9fc7444b7838-adaptor.mars.internal-1683026269.508034-
+           23606-13-tmp.nc /cache/tmp/4e68aba0-50a9-4f06-947c-9fc7444b7838-
+           adaptor.mars.internal-1683026265.2095394-23606-10-tmp.grib&#39;
+long_name = &#39;2 metre temperature&#39;
+missing_value = -32767
+units = &#39;K&#39;
+
+Data(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) = [[[247.0076398602821, ..., 226.25710500984027]]] K
+
+Domain Axis: long_name=latitude(241)
+Domain Axis: long_name=longitude(480)
+Domain Axis: long_name=time(6)
+
+Dimension coordinate: long_name=time
+    calendar = &#39;gregorian&#39;
+    long_name = &#39;time&#39;
+    units = &#39;hours since 1900-01-01 00:00:00.0&#39;
+    Data(long_name=time(6)) = [2022-01-01 00:00:00, ..., 2022-06-01 00:00:00] gregorian
+
+Dimension coordinate: long_name=latitude
+    long_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(long_name=latitude(241)) = [90.0, ..., -90.0] degrees_north
+
+Dimension coordinate: long_name=longitude
+    long_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(long_name=longitude(480)) = [0.0, ..., 359.25] degrees_east
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Convert the units to degree celsius for the temperature field:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../attribute/cf.Field.units.html#cf.Field.units" title="cf.Field.units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">temp_field</span><span class="o">.</span><span class="n">units</span></a> <span class="o">=</span> <span class="s2">&quot;degC&quot;</span>
+<a href="../method/cf.Field.get_property.html#cf.Field.get_property" title="cf.Field.get_property" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp_field</span><span class="o">.</span><span class="n">get_property</span></a><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;degC&#39;
+</pre></div>
+</div>
+<p>5. Digitize the PM2.5 mass concentration and 2-metre temperature fields.
+This step counts the number of values in each of the 10 equally sized bins
+spanning the range of the values. The <code class="docutils literal notranslate"><span class="pre">'return_bins=True'</span></code> argument makes
+sure that the calculated bins are also returned:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_indices</span></a><span class="p">,</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bins</span></a> <span class="o">=</span> <a href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">pm25_field</span><span class="o">.</span><span class="n">digitize</span></a><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_indices</span></a><span class="p">,</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bins</span></a> <span class="o">=</span> <a href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp_field</span><span class="o">.</span><span class="n">digitize</span></a><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Create a joint histogram of the digitized fields:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">joint_histogram</span></a> <span class="o">=</span> <a href="../function/cf.histogram.html#cf.histogram" title="cf.histogram" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">histogram</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_indices</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_indices</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>Get histogram data from the <code class="docutils literal notranslate"><span class="pre">joint_histogram</span></code>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">histogram_data</span></a> <span class="o">=</span> <a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">joint_histogram</span><span class="o">.</span><span class="n">array</span></a>
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><p>Calculate bin centers for PM2.5 and temperature bins:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bin_centers</span></a> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bins</span></a><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bin_centers</span></a> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bins</span></a><span class="p">]</span>
+</pre></div>
+</div>
+<p>9. Create grids for PM2.5 and temperature bins using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.meshgrid.html">numpy.meshgrid</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_grid</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_grid</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.meshgrid.html#numpy.meshgrid" title="numpy.meshgrid" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bin_centers</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bin_centers</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p>10. Plot the joint histogram using <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html">matplotlib.pyplot.pcolormesh</a>. Use <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.unique.html">cf.Field.unique</a> to get
+the unique data array values and show the bin boundaries as ticks on the
+plot. <code class="docutils literal notranslate"><span class="pre">'style='plain'</span></code> in <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.ticklabel_format.html">matplotlib.axes.Axes.ticklabel_format</a>
+disables the scientific notation on the y-axis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html#matplotlib.pyplot.pcolormesh" title="matplotlib.pyplot.pcolormesh" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_grid</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_grid</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">histogram_data</span></a><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s2">&quot;2-metre Temperature (degC)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s2">&quot;PM2.5 Mass Concentration (kg m**-3)&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xticks.html#matplotlib.pyplot.xticks" title="matplotlib.pyplot.xticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xticks</span></a><span class="p">(</span><a href="../method/cf.Data.unique.html#cf.Data.unique" title="cf.Data.unique" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp_bins</span><span class="o">.</span><span class="n">unique</span></a><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.yticks.html#matplotlib.pyplot.yticks" title="matplotlib.pyplot.yticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">yticks</span></a><span class="p">(</span><a href="../method/cf.Data.unique.html#cf.Data.unique" title="cf.Data.unique" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">pm25_bins</span><span class="o">.</span><span class="n">unique</span></a><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html#matplotlib.pyplot.colorbar" title="matplotlib.pyplot.colorbar" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span></a><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;Joint Histogram of PM2.5 and 2-metre Temperature&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.ticklabel_format.html#matplotlib.pyplot.ticklabel_format" title="matplotlib.pyplot.ticklabel_format" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span></a><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_09_recipe_001.png" srcset="../_images/sphx_glr_plot_09_recipe_001.png" alt="Joint Histogram of PM2.5 and 2-metre Temperature" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.676 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-09-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_09_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_09_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_09_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_09_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-06-09.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

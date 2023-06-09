@@ -1,7 +1,0 @@
-cf.Data.creation_commands
-=========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.creation_commands

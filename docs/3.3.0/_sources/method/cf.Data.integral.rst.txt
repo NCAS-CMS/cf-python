@@ -1,7 +1,0 @@
-cf.Data.integral
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.integral
