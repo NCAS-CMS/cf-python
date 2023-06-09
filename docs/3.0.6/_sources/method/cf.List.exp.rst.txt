@@ -1,7 +1,0 @@
-cf.List.exp
-===========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.exp

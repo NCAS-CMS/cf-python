@@ -1,7 +1,0 @@
-cf.Data.full
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.full

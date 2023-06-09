@@ -1,7 +1,0 @@
-cf.CellMethod.inspect
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.inspect

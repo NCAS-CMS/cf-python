@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.inspect
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.inspect

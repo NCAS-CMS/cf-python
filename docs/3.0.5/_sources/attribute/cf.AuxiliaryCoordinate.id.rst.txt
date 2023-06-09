@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.id
-=========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.AuxiliaryCoordinate.id

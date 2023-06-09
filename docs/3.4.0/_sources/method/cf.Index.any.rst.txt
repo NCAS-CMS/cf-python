@@ -1,7 +1,0 @@
-cf.Index.any
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.any

@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.arccosh
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.arccosh

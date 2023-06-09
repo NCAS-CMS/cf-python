@@ -1,7 +1,0 @@
-cf.CellMethod.get_qualifier
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.get_qualifier

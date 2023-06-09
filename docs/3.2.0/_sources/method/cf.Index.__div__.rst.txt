@@ -1,7 +1,0 @@
-cf.Index.__div__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.__div__

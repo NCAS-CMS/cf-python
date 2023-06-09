@@ -1,7 +1,0 @@
-cf.Count.equals
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.equals

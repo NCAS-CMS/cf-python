@@ -1,7 +1,0 @@
-cf.FieldList.__add__
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.__add__

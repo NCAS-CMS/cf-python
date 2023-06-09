@@ -1,7 +1,0 @@
-cf.Bounds.dump
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.dump

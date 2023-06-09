@@ -1,7 +1,0 @@
-cf.List.arctanh
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.arctanh

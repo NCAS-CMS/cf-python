@@ -1,7 +1,0 @@
-cf.Index.set_data
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.set_data

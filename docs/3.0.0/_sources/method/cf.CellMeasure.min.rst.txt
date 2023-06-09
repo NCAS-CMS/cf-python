@@ -1,7 +1,0 @@
-cf.CellMeasure.min
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.min

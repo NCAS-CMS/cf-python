@@ -1,7 +1,0 @@
-cf.FieldList.__rmul__
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.__rmul__

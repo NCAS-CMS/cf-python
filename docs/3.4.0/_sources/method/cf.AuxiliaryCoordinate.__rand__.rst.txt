@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.__rand__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.__rand__

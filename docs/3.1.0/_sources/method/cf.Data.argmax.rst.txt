@@ -1,7 +1,0 @@
-cf.Data.argmax
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.argmax

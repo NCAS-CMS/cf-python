@@ -1,7 +1,0 @@
-cf.Data.dumps
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.dumps

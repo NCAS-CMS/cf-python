@@ -1,7 +1,0 @@
-cf.List.arccosh
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.arccosh

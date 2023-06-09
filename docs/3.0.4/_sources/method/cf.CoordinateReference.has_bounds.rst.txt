@@ -1,7 +1,0 @@
-cf.CoordinateReference.has_bounds
-=================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CoordinateReference.has_bounds

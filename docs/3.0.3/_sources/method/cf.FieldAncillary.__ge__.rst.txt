@@ -1,7 +1,0 @@
-cf.FieldAncillary.__ge__
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.__ge__

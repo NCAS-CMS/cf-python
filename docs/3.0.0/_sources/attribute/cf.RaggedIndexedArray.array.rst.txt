@@ -1,7 +1,0 @@
-cf.RaggedIndexedArray.array
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.RaggedIndexedArray.array

@@ -1,7 +1,0 @@
-cf.Count.__ior__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.__ior__

@@ -1,7 +1,0 @@
-cf.CellMethod.intervals
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.CellMethod.intervals

@@ -1,7 +1,0 @@
-cf.Count.__array__
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.__array__

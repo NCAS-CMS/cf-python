@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.creation_commands
-========================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.creation_commands

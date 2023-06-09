@@ -1,7 +1,0 @@
-cf.CellMethod.over
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.CellMethod.over

@@ -1,7 +1,0 @@
-cf.Data.sinh
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.sinh

@@ -1,7 +1,0 @@
-cf.Data.cumsum
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.cumsum

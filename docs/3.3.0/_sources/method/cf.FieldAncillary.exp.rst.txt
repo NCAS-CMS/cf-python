@@ -1,7 +1,0 @@
-cf.FieldAncillary.exp
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.exp

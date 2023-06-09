@@ -1,7 +1,0 @@
-cf.CellMethod.del_qualifier
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.del_qualifier
