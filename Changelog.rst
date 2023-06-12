@@ -1,3 +1,13 @@
+version ?.?.?
+--------------
+
+**2023-??-??**
+
+* New keyword parameter to `cf.aggregate`: ``cells``
+  (https://github.com/NCAS-CMS/cf-python/issues/452)
+
+----
+
 version 3.15.1
 --------------
 
@@ -13,7 +23,7 @@ version 3.15.1
   (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Fix bug when using the ``-d`` option to the `cfa` script 
   (https://github.com/NCAS-CMS/cf-python/issues/649)
-* Fix the return tppe from `cf.example_fields`
+* Fix the return type from `cf.example_fields`
   (https://github.com/NCAS-CMS/cf-python/pull/654)
 * Fix `set_data` when the units are invalid
   (https://github.com/NCAS-CMS/cf-python/pull/646)

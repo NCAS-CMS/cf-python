@@ -371,7 +371,9 @@ class TimeDuration:
         self._NotImplemented_RHS_Data_op = True
 
     def __abs__(self):
-        """x.__abs__() <==> abs(x)
+        """The unary arithmetic operation ``abs``
+
+        x.__abs__() <==> abs(x)
 
         .. versionadded:: 1.4
 
@@ -407,7 +409,9 @@ class TimeDuration:
         return self.copy()
 
     def __neg__(self):
-        """x.__neg__() <==> -x.
+        """The unary arithmetic operation ``-``
+
+        x.__neg__() <==> -x.
 
         .. versionadded:: 1.4
 
@@ -425,15 +429,27 @@ class TimeDuration:
         return bool(self.duration)
 
     def __int__(self):
-        """x.__int__() <==> int(x)"""
+        """Called to implement the built-in function `int`
+
+        x.__int__() <==> int(x)
+
+        """
         return int(self.duration)
 
     def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
         return f"<CF {self.__class__.__name__}: {self}>"
 
     def __str__(self):
-        """x.__str__() <==> str(x)"""
+        """ "Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         yyy = [
             x if y is None else f"{y:0>2}"
             for x, y in zip(("Y", "M", "D", "h", "m", "s"), self.offset)

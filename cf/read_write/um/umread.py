@@ -2000,7 +2000,7 @@ class UMField:
 
                 indices = [(i, rec) for i, rec in enumerate(recs)]
 
-                if z_axis in self.down_axes:
+                if nz > 1 and z_axis in self.down_axes:
                     indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
                 for i, rec in indices:

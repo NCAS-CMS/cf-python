@@ -550,6 +550,7 @@ class _Meta:
                                 if cellsize_data is None:
                                     cellsize_data = dim_cellsize.persist()
 
+                                print(repr(condition), repr(dim_coord))
                                 try:
                                     match = (cellsize_data == c).all()
                                 except ValueError:
@@ -575,6 +576,7 @@ class _Meta:
                                         dim_coord.data.diff().persist()
                                     )
 
+                                print("DIFF", repr(condition))
                                 try:
                                     match = (spacing_data == c).all()
                                 except ValueError:
@@ -1961,10 +1963,12 @@ def aggregate(
     the *ncvar_identities* parameter forces field and metadata
     constructs to be identified by their netCDF file variable names.
 
+    .. seealso:: `cf.read`, `cf.climatology_cells`
+
     :Parameters:
 
-        fields: `FieldList` or sequence of `Field`
-            The field constructs to aggregate.
+        fields: sequence of `Field`, or sequence of `Domain`
+            The field or domain constructs to aggregate.
 
         verbose: `int` or `str` or `None`, optional
             If an integer from ``-1`` to ``3``, or an equivalent string
@@ -2025,10 +2029,10 @@ def aggregate(
                       ignored for dimension coordinate constructs that
                       do not have bounds. However, if a coordinate
                       spacing condition defined by the *cells*
-                      parameter is met, then setting *contiguous* to
-                      True ensures that the aggregated fields will
+                      parameter is passed, then setting *contiguous*
+                      to True ensures that the aggregated fields will
                       have the specified coordinate spacing
-                      throughout.
+                      throughout, whether or not bounds are present.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2207,8 +2211,9 @@ def aggregate(
             field or domain. The dictionary may have any number of
             keys, defining conditions for any number of dimension
             coordinates. If multiple keys match the identity of the
-            same dimension coordinate construct then the first
-            encountered when iterating through the dictionary is used.
+            same dimension coordinate construct then the conditions
+            corresponding to first such key encountered when iterating
+            through the dictionary are used.
 
             A dictionary value defines the dimension coordinate
             conditions as one, or an ordered sequence of, the
@@ -2223,14 +2228,17 @@ def aggregate(
               values) is given as ``{'spacing': <condition2>}``.
 
             * Simulataneous conditions for the cell size and the cell
-              coordinate spacing ``{'cellsize': <condition1>,
+              coordinate spacing given as ``{'cellsize': <condition1>,
               'spacing': <condition2>}``.
+        ..
 
-            In all cases, ``<condition1>`` and ``<condition2>`` must
-            each be one of a `Query`, `TimeDuration`, scalar `Data`,
-            or scalar data_like object. Units must be provided where
-            applicable, since dimensionless conditions will not match
-            cells that have physical dimensions.
+            where ``<condition1>`` and ``<condition2>`` must each be
+            one of a `Query`, `TimeDuration`, scalar `Data`, or scalar
+            data_like object.
+
+            Units must be provided on the cnditions where applicable,
+            since dimensionless conditions will not match cells that
+            have physical dimensions.
 
             Multiple conditions for the same dimension coordinate
             construct may be defined by providing an ordered sequence
@@ -2243,11 +2251,11 @@ def aggregate(
             largest data arrays, as these arrays will get tested less
             often.
 
-            If a coordinate spacing condition has been met then the
-            default is that this does not apply to the spacing between
-            adjacent coordinates from different input fields or
-            domains. However, if the *contiguous* parameter is `True`
-            then aggregated fields will have the specified coordinate
+            If a coordinate spacing condition has been met then, by
+            default, it does not apply to the spacing between adjacent
+            coordinates from different input fields or domains.
+            However, if the *contiguous* parameter is `True` then
+            aggregated fields will have the specified coordinate
             spacing throughout.
 
             As a convenience, the configurable `cf.climatology_cells`
@@ -2256,6 +2264,30 @@ def aggregate(
             simulation outputs:
 
             >>> x = cf.aggregate(fl, cells=cf.climatology_cells())
+
+            **Performance**
+
+            The testing of the conditions requires has a computational
+            overhead, as well as an I/O overhead if the dimension
+            coordinate data are on disk.
+
+            It is not best practice to define a condition which always
+            passes (or fails) for all input fields. For instance, if
+            it is known that all of the input fields are daily means,
+            then providing a time cell size condition of 1 day
+            (e.g. with ``{'T': {'cellsize': cf.D()}}``) will not
+            change the aggregation, but will slow the process down.
+
+            When setting a sequence of conditions for the same
+            dimension coordinate construct, performance will be
+            improved if the conditions towards the beginning of the
+            sequence are those that are expected to be passed by the
+            dimension coordinate constructs with the largest data
+            arrays. This because is the conditions are tested in order
+            until a condition to passes, and subsequent conditions are
+            not tested. Therefore, this strategy will minimise the
+            amount of the most expensive tests, i.e. those on the
+            largest data.
 
             *Parameter example*
               Equivalent ways to separate time cells of 1 day from
@@ -2926,7 +2958,7 @@ def climatology_cells(
     minutes_instantaneous=True,
     seconds_instantaneous=True,
 ):
-    """Return a climatological *cells* dictionary for `cf.aggregate`.
+    """Return a climatological cells dictionary for `cf.aggregate`.
 
     Returns a dictionary of temporal frequency conditions that can be
     passed to the *cells* parameter of `cf.aggregate`, and which may
@@ -2936,9 +2968,13 @@ def climatology_cells(
 
     The temporal frequency conditions are configurable via parameters,
     and further customisation may be applied by manually adding
-    conditions to the returned dictionary.
+    conditions to, or removing them from, the returned dictionary.
 
     **Performance**
+
+    Any conditions that that do not match any of fields being
+    aggregated will still be tested against the dimension coordinate
+    constructs, which will slow down the aggregation process.
 
     The returned conditions are ordered from the highest to lowest
     temporal frequencies, so that dimension coordinates with the

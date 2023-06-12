@@ -30,6 +30,7 @@ Aggregation
    :template: function.rst
 
    cf.aggregate
+   cf.climatology_cells
 
 .. _functions-mathematical-operations:
 

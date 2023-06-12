@@ -458,7 +458,7 @@ class Query:
         :Returns:
 
             `Units`
-                The units of the query value(s).
+                The units of the query value.
 
         **Examples**
 
