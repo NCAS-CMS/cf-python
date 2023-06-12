@@ -23,7 +23,7 @@ from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
 from .functions import flat
 from .functions import rtol as cf_rtol
-from .query import gt, wi
+from .query import gt
 from .units import Units
 
 logger = logging.getLogger(__name__)
@@ -338,6 +338,12 @@ class _Meta:
 
                 .. versionaddedd:: 3.15.1
 
+            cells: `dict` or `None`, optional
+                Conditions for dimension coordinate cells. See the
+                *cells* parameter of `cf.aggregate` for details.
+
+                .. versionaddedd:: TODOAGGVER
+
             info: `bool`
                 True if the log level is ``'INFO'`` (``2``) or higher.
 
@@ -503,8 +509,8 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
-                # The cellsize and coordinate spacing conditions that
-                # form part of the signature
+                # Initialise the cellsize and coordinate spacing
+                # conditions that form part of the signature
                 cellsize = None
                 spacing = None
 
@@ -528,8 +534,8 @@ class _Meta:
 
                         # Initialise the dimension coordinates
                         # cellsize and spacing arrays
-                        dim_cell = None
-                        dim_diff = None
+                        cellsize_data = None
+                        spacing_data = None
 
                         for condition in conditions:
                             cellsize = None
@@ -541,11 +547,11 @@ class _Meta:
                             if c is not None and difference_units.equivalent(
                                 getattr(c, "Units", Units())
                             ):
-                                if dim_cell is None:
-                                    dim_cell = dim_cellsize.persist()
+                                if cellsize_data is None:
+                                    cellsize_data = dim_cellsize.persist()
 
                                 try:
-                                    match = (dim_cell == c).all()
+                                    match = (cellsize_data == c).all()
                                 except ValueError:
                                     # The comparison could fail if 'c'
                                     # is hiding incompatible units,
@@ -564,11 +570,13 @@ class _Meta:
                             if c is not None and difference_units.equivalent(
                                 getattr(c, "Units", Units())
                             ):
-                                if dim_diff is None:
-                                    dim_diff = dim_coord.data.diff().persist()
+                                if spacing_data is None:
+                                    spacing_data = (
+                                        dim_coord.data.diff().persist()
+                                    )
 
                                 try:
-                                    match = (dim_diff == c).all()
+                                    match = (spacing_data == c).all()
                                 except ValueError:
                                     # The comparison could fail if 'c'
                                     # is hiding incompatible units,
@@ -585,8 +593,8 @@ class _Meta:
                                 # We've found a matching condition
                                 break
 
-                        del dim_cell
-                        del dim_diff
+                        del cellsize_data
+                        del spacing_data
                         break
 
                 info_dim.append(
@@ -2990,6 +2998,8 @@ def climatology_cells(
       {'cellsize': <CF Query: (wi [3600, 3660] day)>}]}
 
     """
+    from .query import wi
+
     conditions = []
 
     for values, units, inst in zip(
