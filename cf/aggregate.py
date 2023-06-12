@@ -550,7 +550,6 @@ class _Meta:
                                 if cellsize_data is None:
                                     cellsize_data = dim_cellsize.persist()
 
-                                print(repr(condition), repr(dim_coord))
                                 try:
                                     match = (cellsize_data == c).all()
                                 except ValueError:
@@ -576,7 +575,6 @@ class _Meta:
                                         dim_coord.data.diff().persist()
                                     )
 
-                                print("DIFF", repr(condition))
                                 try:
                                     match = (spacing_data == c).all()
                                 except ValueError:
