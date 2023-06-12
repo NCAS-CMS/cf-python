@@ -713,6 +713,19 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_chunks(self):
+        """Regridding of chunked axes"""
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
+        )
+        dst, src = cf.read(filename, chunks={"latitude": 20, "longitude": 30})
+        self.assertEqual(src.data.numblocks, (1, 2, 2))
+        self.assertEqual(dst.data.numblocks, (1, 4, 4))
+
+        d0 = src.regrids(dst, method="linear")
+        self.assertEqual(d0.data.numblocks, (1, 1, 1))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

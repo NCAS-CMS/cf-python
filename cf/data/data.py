@@ -3739,8 +3739,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         numblocks = dx.numblocks
         if not all(numblocks[i] == 1 for i in regrid_axes):
             chunks = [
-                (-1,) if i in regrid_axes else c
-                for i, c in enumerate(dx.chunks)
+                -1 if i in regrid_axes else c for i, c in enumerate(dx.chunks)
             ]
             dx = dx.rechunk(chunks)
 
