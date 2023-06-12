@@ -852,10 +852,8 @@ class PropertiesDataBounds(PropertiesData):
                 #       https://github.com/cf-convention/discuss/issues/101,
                 #       whenever that issue is resolved.
                 units = self.Units
-                units_since_reftime = units._units_since_reftime
-                if units_since_reftime is not None:
-                    # Convert to "difference" units
-                    units = Units(units_since_reftime)
+                if units.isreftime:
+                    units = Units(units._units_since_reftime)
 
                 return Data.zeros(self.shape, units=units)
 

@@ -436,6 +436,12 @@ class aggregateTest(unittest.TestCase):
             2,
         )
 
+        with self.assertRaises(TypeError):
+            cf.aggregate(fl, cells=9)
+
+        with self.assertRaises(TypeError):
+            cf.aggregate(fl, cells=[9])
+
         # Bad condition units
         for condition in (cf.M(1), cf.Y(1)):
             with self.assertRaises(ValueError):

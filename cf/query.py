@@ -489,9 +489,11 @@ class Query:
             except AttributeError:
                 return Units()
 
-        # Still here? Then ...
         compound = self._compound
         if compound:
+            # Still here? Then we have compund units with no common
+            # value, so see if the units of each embedded query are
+            # equivalent.
             q0, q1 = compound
             units0 = getattr(q0, "Units", Units())
             units1 = getattr(q1, "Units", Units())

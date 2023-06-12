@@ -1690,9 +1690,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # TODO: Think about temperature units in relation to
         #       https://github.com/cf-convention/discuss/issues/101,
         #       whenever that issue is resolved.
-        units_since_reftime = self.Units._units_since_reftime
-        if units_since_reftime is not None:
-            d.override_units(Units(units_since_reftime), inplace=True)
+        units = self.Units
+        if units.isreftime:
+            units = Units(units._units_since_reftime)
+            d.override_units(units, inplace=True)
 
         return d
 

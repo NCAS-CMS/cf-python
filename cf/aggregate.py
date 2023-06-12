@@ -532,8 +532,8 @@ class _Meta:
                         dim_cellsize = dim_coord.cellsize
                         difference_units = dim_cellsize.Units
 
-                        # Initialise the dimension coordinates
-                        # cellsize and spacing arrays
+                        # Initialise the dimension coordinate
+                        # construct's cellsize and spacing data
                         cellsize_data = None
                         spacing_data = None
 
@@ -1057,7 +1057,18 @@ class _Meta:
         return "\n".join(strings)
 
     def coordinate_values(self):
-        """Create a report listing coordinate cell values and bounds."""
+        """Create a report listing coordinate cell values and bounds.
+
+        This is passed to the logger if the verbosity is high enough.
+
+        .. seealso:: `print_info`
+
+        :Returns:
+
+            `str`
+                The report.
+
+        """
         string = ["First cell: " + str(self.first_values)]
         string.append("Last cell:  " + str(self.last_values))
         string.append("First cell bounds: " + str(self.first_bounds))
@@ -1068,7 +1079,16 @@ class _Meta:
     def cell_conditions(self):
         """Create a report describing the cell conditions.
 
+        This is passed to the logger if the verbosity is high enough.
+
         .. versionadded:: TODOAGGVER
+
+        .. seealso:: `print_info`
+
+        :Returns:
+
+            `str`
+                The report.
 
         """
         string = []
@@ -1080,7 +1100,7 @@ class _Meta:
                 for c in axis[identity][condition]:
                     if c is not None:
                         string.append(
-                            f"{self._signature_cell((c,))[0]}: "
+                            f"{self.tokenise_cell_condition((c,))[0]}: "
                             f"Coordinate {condition} condition {c!r}"
                         )
 
@@ -1595,11 +1615,11 @@ class _Meta:
                 ("coordrefs", axis[identity]["coordrefs"]),
                 (
                     "cellsize",
-                    self._tokenise_cell_condition(axis[identity]["cellsize"]),
+                    self.tokenise_cell_condition(axis[identity]["cellsize"]),
                 ),
                 (
                     "spacing",
-                    self._tokenise_cell_condition(axis[identity]["spacing"]),
+                    self.tokenise_cell_condition(axis[identity]["spacing"]),
                 ),
                 ("size", axis[identity]["size"]),
             )
@@ -1697,7 +1717,7 @@ class _Meta:
             Field_ancillaries=Field_ancillaries,
         )
 
-    def _tokenise_cell_condition(self, cellsize_or_spacing):
+    def tokenise_cell_condition(self, cellsize_or_spacing):
         """Create deterministic tokens for cell conditions.
 
         .. versionadded:: TODOAGGVER
@@ -1706,21 +1726,22 @@ class _Meta:
 
         :Parameters:
 
-            cellsize_or_spacing: `tuple`
+            cellsize_or_spacing: sequence
                 Sequence of coordinate cell size or coordinate spacing
                 conditions.
 
         :Returns:
 
-            `tuple` of `str`
-                Sequence of deterministic tokens for each condition.
+            `tuple`
+                Sequence of the deterministic token for each
+                condition.
 
         **Examples**
 
-        >>> _tokenise_cell_condition((cf.Data(45, 'degreeE'),)
-        ('asduygsaerf7834rguw3guyaec',)
-        >>> _tokenise_cell_condition((5, cf.wi(40, 50, 'degreeE')))
-        ('8976345789234we78622348905', '983efunws89e7dyh93784')
+        >>> m.tokenise_cell_condition((cf.Data(45, 'degreeE'),)
+        ('542935362dc5399b91e045384a1b84d6',)
+        >>> m.tokenise_cell_condition((5, cf.wi(40, 50, 'degreeE')))
+        ('ce9a05dd6ec76c6a6d171b0c055f3127', '8e0216a9a17a20b6620c6502bb45dec9')
 
         """
         out = []
@@ -1998,10 +2019,16 @@ def aggregate(
         contiguous: `bool`, optional
             If True then require that aggregated field constructs have
             adjacent dimension coordinate construct cells which
-            overlap or share common boundary values. Ignored for a
-            dimension coordinate construct that does not have
-            bounds. The *cells* parameter may modify this
-            behaviour. See also the *overlap* parameters.
+            overlap or share common boundary values.
+
+            .. note:: In general, the *contiguous* parameter is
+                      ignored for dimension coordinate constructs that
+                      do not have bounds. However, if a coordinate
+                      spacing condition defined by the *cells*
+                      parameter is met, then setting *contiguous* to
+                      True ensures that the aggregated fields will
+                      have the specified coordinate spacing
+                      throughout.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2209,7 +2236,12 @@ def aggregate(
             construct may be defined by providing an ordered sequence
             of conditions. In this case, the conditions are tested in
             order, and the first one to be passed (if any) defines the
-            aggregation separation.
+            aggregation separation. A consequence of this is that
+            performance will be improved if the conditions towards the
+            beginning of the sequence are those that are expected to
+            be met by the dimension coordinate constructs with the
+            largest data arrays, as these arrays will get tested less
+            often.
 
             If a coordinate spacing condition has been met then the
             default is that this does not apply to the spacing between
@@ -2397,10 +2429,10 @@ def aggregate(
     elif not ignore:
         ignore = _signature_properties
 
-    # Parse the cells keyword parameter
+    # Parse the 'cells' keyword parameter
     if not (cells is None or isinstance(cells, dict)):
         raise TypeError(
-            "'cells' parameter must be None or a dict. " f"Got {type(cells)}"
+            f"'cells' parameter must be None or a dict. Got {type(cells)}"
         )
 
     if cells:
@@ -2420,7 +2452,8 @@ def aggregate(
                             f"Can't define cell condition {c!r} with "
                             f"calendar time units of {units!r}. "
                             "Consider redefining the condition to be a "
-                            "number of days (e.g. with 'cf.eq' or 'cf.wi')."
+                            "number of days (e.g. with 'cf.eq', 'cf.wi', "
+                            "'cf.Data', etc.)."
                         )
 
     unaggregatable = False
@@ -2893,15 +2926,24 @@ def climatology_cells(
     minutes_instantaneous=True,
     seconds_instantaneous=True,
 ):
-    """Return a climatological `cf.aggregate` *cells* dictionary.
+    """Return a climatological *cells* dictionary for `cf.aggregate`.
 
-    For aggregating climate model simulation outputs, returns a
-    dictionary that may be suitable for separating the time axis
-    aggregation into commonly used temporal frequencies.
+    Returns a dictionary of temporal frequency conditions that can be
+    passed to the *cells* parameter of `cf.aggregate`, and which may
+    be suitable for separating time axis aggregations into the
+    commonly used temporal frequencies typically created by climate
+    models.
 
-    The temporal frequency conditions are configurable via the
-    parameters, and further customisation may be applied by manually
-    adding conditions to the returned dictionary.
+    The temporal frequency conditions are configurable via parameters,
+    and further customisation may be applied by manually adding
+    conditions to the returned dictionary.
+
+    **Performance**
+
+    The returned conditions are ordered from the highest to lowest
+    temporal frequencies, so that dimension coordinates with the
+    largest data arrays are tested the fewest number of times. See the
+    *cells* parameter of `cf.aggregate` for details.
 
     .. versionadded:: TODOAGGVER
 
@@ -2910,35 +2952,32 @@ def climatology_cells(
     :Parameters:
 
         years: `bool`, optional
-            If True, the default, then include a condition for
-            calendar year cell sizes, i.e. any number of days between
-            360 and 366.
+            If True, the default, then include a condition for year
+            cell sizes, i.e. any number of days between 360 and 366.
 
         months: `bool`, optional
-            If True, the default, then include a condition for
-            calendar month cell sizes i.e. any number of days between
-            28 and 31.
+            If True, the default, then include a condition for month
+            cell sizes i.e. any number of days between 28 and 31.
 
         days: sequence of numbers, optional
-            Include conditions for cell sizes for each number of days
-            in the sequence. May be an empty sequence. By default
-            *days* is ``(1,)``.
+            Include a condition a cell size for each number of days in
+            the sequence. May be an empty sequence. By default the
+            sequence is ``(1,)``.
 
         hours: sequence of numbers, optional
-            Include conditions for cell sizes for each number of hours
-            in the sequence. May be an empty sequence. By default
-            *hours* is ``(1, 3, 6)``.
+            Include a condition for a cell size for each number of
+            hours in the sequence. May be an empty sequence. By
+            default the sequence is ``(1, 3, 6)``.
 
         minutes: sequence of numbers, optional
-            Include conditions for cell sizes for each number of
+            Include a condition for a cell size for each number of
             minutes in the sequence. May be an empty sequence. By
-            default *hours* is ``()``.
+            default the sequence is ``()``.
 
         seconds: sequence of numbers, optional
-            Include conditions for cell sizes for each number of
+            Include a condition for a cell size for each number of
             seconds in the sequence. May be an empty sequence. By
-            default *hours* is ``()``.
-
+            default the sequence is ``()``.
 
         days_instantaneous: `bool`, optional
             If True, then also include conditions for cell coordinate
@@ -2988,7 +3027,7 @@ def climatology_cells(
       {'cellsize': <CF Data(): 12 hour>},
       {'cellsize': <CF Query: (wi [28, 31] day)>}]}
 
-    Add a condition that aggregates decadal data separately:
+    Add a condition that separately aggregates decadal data:
 
     >>> cells['T'].append({'cellsize': cf.wi(3600, 3660, 'day')})
     >>> cells
@@ -3866,21 +3905,23 @@ def _ok_coordinate_arrays(
                 for m0, m1 in zip(meta[:-1], meta[1:]):
                     dim_coord_index0 = m0.axis[axis]["dim_coord_index"]
                     dim_coord_index1 = m1.axis[axis]["dim_coord_index"]
-                    dim_diff = (
-                        m1.first_values[axis][dim_coord_index0]
-                        - m0.last_values[axis][dim_coord_index1]
+                    data0 = m0.last_values[axis][dim_coord_index1]
+                    data1 = m1.first_values[axis][dim_coord_index0]
+                    dim_diff = Data(
+                        data1 - data0, units=_difference_units(units)
                     )
-                    dim_diff = Data(dim_diff, units=_difference_units(units))
                     if dim_diff != diff:
                         # Do not aggregate anything in this group
                         if info:
+                            data0 = Data(data0, units)
+                            data1 = Data(data1, units)
                             meta[0].message = (
                                 f"contiguous={bool(contiguous)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]} "
-                                "dimension coordinate cells without bounds "
-                                "do not match the cell spacing of  "
-                                f"cell spacing of {diff!r} (got spacing "
-                                f"{dim_diff!r})"
+                                "dimension coordinate cells do not match "
+                                f"the cell spacing condition between fields "
+                                f"({data1!r} - {data0!r} = {dim_diff!r}) "
+                                f"!= {diff!r}"
                             )
 
                         return False
