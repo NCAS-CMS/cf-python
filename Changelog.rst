@@ -1,3 +1,13 @@
+version ?.?.?
+--------------
+
+**2023-??-??**
+
+* Fix bug that caused `cf.read` to fail for some PP data with a single
+  vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
+  
+----
+
 version 3.15.1
 --------------
 
