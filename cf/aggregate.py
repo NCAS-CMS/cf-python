@@ -220,7 +220,7 @@ class _Meta:
             "Flags",
             "Coordinate_references",
             "Axes",
-            "dim_coord_index",
+            #            "dim_coord_index",
             "Nd_coordinates",
             "Cell_measures",
             "Domain_ancillaries",
@@ -499,9 +499,10 @@ class _Meta:
                 # 1-d dimension coordinate
                 # ----------------------------------------------------
                 dim_identity = self.coord_has_identity_and_data(dim_coord)
-
                 if dim_identity is None:
                     return
+
+                hasbounds = dim_coord.has_bounds()
 
                 # Find the canonical units for this dimension
                 # coordinate
@@ -547,11 +548,17 @@ class _Meta:
                             if c is not None and difference_units.equivalent(
                                 getattr(c, "Units", Units())
                             ):
-                                if cellsize_data is None:
+                                if hasbounds and cellsize_data is None:
                                     cellsize_data = dim_cellsize.persist()
 
                                 try:
-                                    match = (cellsize_data == c).all()
+                                    if hasbounds:
+                                        match = (cellsize_data == c).all()
+                                    else:
+                                        # Dimension coordinates
+                                        # without bounds have zero
+                                        # cells sizes
+                                        match = bool(0 == c)
                                 except ValueError:
                                     # The comparison could fail if 'c'
                                     # is hiding incompatible units,
@@ -603,7 +610,7 @@ class _Meta:
                         "key": dim_coord_key,
                         "units": units,
                         "hasdata": dim_coord.has_data(),
-                        "hasbounds": dim_coord.has_bounds(),
+                        "hasbounds": hasbounds,
                         "coordrefs": self.find_coordrefs(axis),
                         "cellsize": cellsize,
                         "spacing": spacing,
@@ -1141,12 +1148,27 @@ class _Meta:
         ndim = getattr(variable, "ndim", None)
         c = self.canonical.axes.setdefault((variable.construct_type, ndim), {})
 
+        #        canonical_axes = c.get(identity)
+        #        if canonical_axes is None:
+        #            c[identity] = axes
+        #            return axes
+        #        return canonical_axes
+
         canonical_axes = c.get(identity)
         if canonical_axes is None:
-            canonical_axes = axes
-            c[identity] = canonical_axes
+            # Set the first canonical axes for this identity
+            c[identity] = [axes]
+            return axes
 
-        return canonical_axes
+        set_axes = set(axes)
+        for ca in canonical_axes:
+            # Return existing canonical axes for this identity
+            if set(ca) == set_axes:
+                return ca
+
+        # Add new canonical axes for this identity
+        c[identity].append(axes)
+        return axes
 
     def canonical_units(self, variable, identity, relaxed_units=False):
         """Get the canonical units.
@@ -1247,7 +1269,9 @@ class _Meta:
 
             equivalent = True
             for cm, canonical_cm in zip(cms, canonical_cms):
-                if not cm.equivalent(canonical_cm, rtol=rtol, atol=atol):
+                if not cm.equivalent(
+                    canonical_cm, rtol=rtol, atol=atol, verbose=1
+                ):
                     equivalent = False
                     break
 
@@ -1533,7 +1557,6 @@ class _Meta:
 
         """
         string = []
-
         for key, value in self.signature._asdict().items():
             string.append(f"-> {key}: {value!r}")
 
@@ -1622,18 +1645,22 @@ class _Meta:
                     self.tokenise_cell_condition(axis[identity]["spacing"]),
                 ),
                 ("size", axis[identity]["size"]),
+                (
+                    "has_dim_coord",
+                    axis[identity]["dim_coord_index"] is not None,
+                ),
             )
             for identity in self.axis_ids
         ]
         Axes = tuple(x)
 
-        # Whether or not each axis has a dimension coordinate
-        x = [
-            False if axis[identity]["dim_coord_index"] is None else True
-            for identity in self.axis_ids
-        ]
-
-        dim_coord_index = tuple(x)
+        #        # Whether or not each axis has a dimension coordinate
+        #        x = [
+        #            (identity, False if axis[identity]["dim_coord_index"] is None else True)
+        #            for identity in self.axis_ids
+        #        ]
+        #
+        #        dim_coord = tuple(x)
 
         # N-d auxiliary coordinates
         nd_aux = self.nd_aux
@@ -1710,7 +1737,7 @@ class _Meta:
             Flags=Flags,
             Coordinate_references=Coordinate_references,
             Axes=Axes,
-            dim_coord_index=dim_coord_index,
+            #            dim_coord_index=dim_coord_index,
             Nd_coordinates=Nd_coordinates,
             Cell_measures=Cell_measures,
             Domain_ancillaries=Domain_ancillaries,
@@ -2296,25 +2323,30 @@ def aggregate(
 
             *Parameter example*
               To separate time cells of 1 month, in any calendar, from
-              other time cell sizes: ``{'T': {'cellsize': cf.wi(28,
-              31, 'day'}}``.
+              other time cell sizes:
+              ``{'T': {'cellsize': cf.wi(28, 31, 'day'}}``.
 
             *Parameter example*
               To separate time cells of 5-day running means given for
-              consecutive days: ``{'T': {'cellsize': cf.D(5),
-              'spacing': cf.D(1)}}``.
+              consecutive days:
+              ``{'T': {'cellsize': cf.D(5), 'spacing': cf.D(1)}}``.
 
             *Parameter example*
               To separate horizontal cells with size (2.5 degrees
-              north, 3.75 degrees east): ``{'Y': {'cellsize':
-              cf.Data(2.5, 'degreeN')}, 'X': {'cellsize':
-              cf.Data(3.75, 'degreeE')}}``.
+              north, 3.75 degrees east):
+              ``{'Y': {'cellsize': cf.Data(2.5, 'degreeN')},
+              'X': {'cellsize': cf.Data(3.75, 'degreeE')}}``.
 
             *Parameter example*
               To aggregate time cells of 1 day separately and time
               cells of 30 days separately, a sequence of two cell size
-              conditions are provided: ``{'T': [{'cellsize': cf.D(1)},
-              {'cellsize': cf.D(30)}]}``.
+              conditions are provided:
+              ``{'T': [{'cellsize': cf.D(1)}, {'cellsize': cf.D(30)}]}``.
+
+            *Parameter example*
+              To aggregate 6 hourly time cells without bounds, specify
+              a cellsize of zero:
+              ``{'T': {'cellsize': cf.h(0), 'spacing': cf.h(6)}}``.
 
             .. versionadded:: TODOAGGAVER
 
@@ -2769,6 +2801,7 @@ def aggregate(
                 # Still here? Then pass through the fields
                 # ----------------------------------------------------
 
+                # ----------------------------------------------------
                 # Initialise the dictionary that will contain the data
                 # arrays that will need concatenating.
                 #
@@ -2806,6 +2839,7 @@ def aggregate(
                 # dictionary, whose key is is the position of the
                 # aggregation axis in the field's data, and whose
                 # values are the Data objects to be concatenated.
+                # ----------------------------------------------------
                 data_concatenation = {
                     "field": {},
                     "auxiliary_coordinate": {},
@@ -3041,11 +3075,11 @@ def climatology_cells(
 
     >>> cf.climatology_cells()
     {'T': [{'cellsize': <CF Data(): 1 hour>},
-      {'spacing': <CF Data(): 1 hour>},
+      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 1 hour>},
       {'cellsize': <CF Data(): 3 hour>},
-      {'spacing': <CF Data(): 3 hour>},
+      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 3 hour>},
       {'cellsize': <CF Data(): 6 hour>},
-      {'spacing': <CF Data(): 6 hour>},
+      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 6 hour>},
       {'cellsize': <CF Data(): 1 day>},
       {'cellsize': <CF Query: (wi [28, 31] day)>},
       {'cellsize': <CF Query: (wi [360, 366] day)>}]}
@@ -3089,7 +3123,8 @@ def climatology_cells(
             c = Data(value, units)
             conditions.append({"cellsize": c})
             if inst:
-                conditions.append({"spacing": c.copy()})
+                z = Data(0, units)
+                conditions.append({"cellsize": z, "spacing": c.copy()})
 
     if months:
         conditions.append({"cellsize": wi(28, 31, "day")})
@@ -3288,7 +3323,7 @@ def _create_hash_and_first_values(
                 canonical_axes = aux["canonical_axes"]
                 if axes != canonical_axes:
                     # Transpose the N-d auxilliary coordinate so that
-                    # it has the canonical axes
+                    # it has the canonical axis order
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     coord = coord.transpose(iaxes)
 
@@ -3341,7 +3376,7 @@ def _create_hash_and_first_values(
                     cell_measure = constructs[key]
                     if axes != canonical_axes:
                         # Transpose the cell measure so that it has
-                        # the canonnical axes
+                        # the canonnical axis order
                         iaxes = [axes.index(axis) for axis in canonical_axes]
                         cell_measure = cell_measure.transpose(iaxes)
 
@@ -3383,7 +3418,7 @@ def _create_hash_and_first_values(
                 canonical_axes = anc["canonical_axes"]
                 if axes != canonical_axes:
                     # Transpose the field ancillary so that it has the
-                    # canonical axes
+                    # canonical axis order
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     field_anc = field_anc.transpose(iaxes)
 
@@ -3420,8 +3455,8 @@ def _create_hash_and_first_values(
                 axes = anc["axes"]
                 canonical_axes = anc["canonical_axes"]
                 if axes != canonical_axes:
-                    # Transpose the field ancillary so that it has the
-                    # canonical axes
+                    # Transpose the domain ancillary so that it has
+                    # the canonical axis order
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     domain_anc = domain_anc.transpose(iaxes)
 

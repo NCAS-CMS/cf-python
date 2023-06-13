@@ -465,7 +465,10 @@ class aggregateTest(unittest.TestCase):
             {
                 "T": [
                     {"cellsize": cf.Data(1, "second")},
-                    {"spacing": cf.Data(1, "second")},
+                    {
+                        "cellsize": cf.Data(0, "second"),
+                        "spacing": cf.Data(1, "second"),
+                    },
                 ]
             },
         )
@@ -482,18 +485,6 @@ class aggregateTest(unittest.TestCase):
             {
                 "T": [
                     {"cellsize": cf.Data(1, "second")},
-                ]
-            },
-        )
-
-        self.assertEqual(
-            cf.climatology_cells(
-                years=False, months=False, days=(), hours=(), minutes=(1,)
-            ),
-            {
-                "T": [
-                    {"cellsize": cf.Data(1, "minute")},
-                    {"spacing": cf.Data(1, "minute")},
                 ]
             },
         )
@@ -521,7 +512,10 @@ class aggregateTest(unittest.TestCase):
             {
                 "T": [
                     {"cellsize": cf.Data(1, "hour")},
-                    {"spacing": cf.Data(1, "hour")},
+                    {
+                        "cellsize": cf.Data(0, "hour"),
+                        "spacing": cf.Data(1, "hour"),
+                    },
                 ]
             },
         )
@@ -563,7 +557,10 @@ class aggregateTest(unittest.TestCase):
             {
                 "T": [
                     {"cellsize": cf.Data(1, "day")},
-                    {"spacing": cf.Data(1, "day")},
+                    {
+                        "cellsize": cf.Data(0, "day"),
+                        "spacing": cf.Data(1, "day"),
+                    },
                 ]
             },
         )
