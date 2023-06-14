@@ -220,7 +220,6 @@ class _Meta:
             "Flags",
             "Coordinate_references",
             "Axes",
-            #            "dim_coord_index",
             "Nd_coordinates",
             "Cell_measures",
             "Domain_ancillaries",
@@ -1148,25 +1147,25 @@ class _Meta:
         ndim = getattr(variable, "ndim", None)
         c = self.canonical.axes.setdefault((variable.construct_type, ndim), {})
 
-        #        canonical_axes = c.get(identity)
-        #        if canonical_axes is None:
-        #            c[identity] = axes
-        #            return axes
-        #        return canonical_axes
-
         canonical_axes = c.get(identity)
         if canonical_axes is None:
-            # Set the first canonical axes for this identity
+            # There are no canonical axes yet for this identity, so
+            # set canonical axes as this variable's axes.
             c[identity] = [axes]
             return axes
 
+        # Still here? Then there are already one or more canonical
+        # axes for this identity.
         set_axes = set(axes)
         for ca in canonical_axes:
-            # Return existing canonical axes for this identity
             if set(ca) == set_axes:
+                # We can use these canonical axes, since they have the
+                # same names as the variable's axes.
                 return ca
 
-        # Add new canonical axes for this identity
+        # Still here? Then none of the existing canonical axes apply
+        # to this variable, so add the variable's axes as new
+        # canonical axes.
         c[identity].append(axes)
         return axes
 
@@ -1636,6 +1635,7 @@ class _Meta:
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
+                ("size", axis[identity]["size"]),    
                 (
                     "cellsize",
                     self.tokenise_cell_condition(axis[identity]["cellsize"]),
@@ -1643,24 +1643,12 @@ class _Meta:
                 (
                     "spacing",
                     self.tokenise_cell_condition(axis[identity]["spacing"]),
-                ),
-                ("size", axis[identity]["size"]),
-                (
-                    "has_dim_coord",
-                    axis[identity]["dim_coord_index"] is not None,
-                ),
+                ),            
+                ("dim_coord_index", axis[identity]["dim_coord_index"]),
             )
             for identity in self.axis_ids
         ]
         Axes = tuple(x)
-
-        #        # Whether or not each axis has a dimension coordinate
-        #        x = [
-        #            (identity, False if axis[identity]["dim_coord_index"] is None else True)
-        #            for identity in self.axis_ids
-        #        ]
-        #
-        #        dim_coord = tuple(x)
 
         # N-d auxiliary coordinates
         nd_aux = self.nd_aux
@@ -1737,7 +1725,6 @@ class _Meta:
             Flags=Flags,
             Coordinate_references=Coordinate_references,
             Axes=Axes,
-            #            dim_coord_index=dim_coord_index,
             Nd_coordinates=Nd_coordinates,
             Cell_measures=Cell_measures,
             Domain_ancillaries=Domain_ancillaries,
