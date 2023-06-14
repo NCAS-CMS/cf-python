@@ -1311,7 +1311,7 @@ the dataset, may subsequently be applied manually with the
 The `~Field.apply_masking` method of the field construct utilises as
 many of the ``missing_value``, ``_FillValue``, ``valid_min``,
 ``valid_max``, and ``valid_range`` properties as are present and may
-be used on any construct, not just those that have been read from
+be used on any construct, not only those that have been read from
 datasets.
     
 ----
@@ -1337,7 +1337,7 @@ indexing rules
 the only differences being:
 
 * An integer index *i* specified for a dimension reduces the size of
-  this dimension to unity, taking just the *i*\ -th element, but keeps
+  this dimension to unity, taking only the *i*\ -th element, but keeps
   the dimension itself, so that the rank of the array is not reduced.
 
 ..

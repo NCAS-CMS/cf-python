@@ -331,7 +331,7 @@ In all collapses, missing data array elements are accounted for in the
 calculation.
 
 Any collapse method that involves a calculation (such as calculating a
-mean), as opposed to just selecting a value (such as finding a
+mean), as opposed to only selecting a value (such as finding a
 maximum), will return a field containing double precision floating
 point numbers. If this is not desired then the data type can be reset
 after the collapse with the `~Field.dtype` attribute of the field
