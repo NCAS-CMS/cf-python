@@ -38,7 +38,7 @@ to new datasets.This is so that datasets that are partially conformant
 may nonetheless be modified in memory.
 
 .. code-block:: python
-   :caption: *A simple example of reading a field construct from a
+   :caption: *A basic example of reading a field construct from a
              file and inspecting it.*
 
    >>> import cf
@@ -114,8 +114,8 @@ manipulation and can:
 -----------------
 
 
-Powerful, flexible, and very simple to produce visualisations of field
-constructs are available with the `cfplot` package, that is installed
+Powerful and flexible visualisations of field
+constructs are available with the `cfplot` package that is installed
 separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
 See the `cfplot gallery

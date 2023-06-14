@@ -190,7 +190,7 @@ available pool of processing elements, which execute the tasks in
 parallel until the final result has been computed.
 
 The following example creates a visualisation of the task graph for a
-simple data computation over four chunks:
+basic data computation over four chunks:
 
 .. code-block:: python
    :caption: *Visualising the task graph for a lazy computation.*
