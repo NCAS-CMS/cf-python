@@ -1851,9 +1851,9 @@ contains the selected metadata constructs.
    Constructs:
    {'cellmethod1': <CF CellMethod: domainaxis3: maximum>}
 
-As each of these methods returns a `cf.Constructs` instance, it is
-easy to perform further filters on their results:
-   
+As each of these methods returns a `cf.Constructs` instance, further
+filters can be performed directly on their results:
+
 .. code-block:: python
    :caption: *Make selections from previous selections.*
 	     
@@ -4220,8 +4220,8 @@ additional conventions.
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
-they exist). The setting of bespoke netCDF names is, however, easily
-done with the :ref:`netCDF interface <NetCDF-interface>`.
+they exist). The setting of bespoke netCDF names is, however, possible
+with the :ref:`netCDF interface <NetCDF-interface>`.
 
 .. code-block:: python
    :caption: *Set netCDF variable and dimension names for the field
@@ -6206,7 +6206,7 @@ file:
    >>> print(count_variable.array)
    [3 7 5 9]
 
-The timeseries for the second station is easily selected by indexing
+The timeseries for the second station is selected by indexing
 the "station" axis of the field construct:
 
 .. code-block:: python
@@ -6236,8 +6236,8 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-Perhaps the easiest way to create a compressed field construct is to
-create the equivalent uncompressed field construct and then compress
+Perhaps the most direct way to create a compressed field construct is
+to create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs as required.
    
@@ -6466,7 +6466,7 @@ file:
 
 
 Subspaces based on the uncompressed axes of the field construct are
-easily created:
+created:
 
 .. code-block:: python
    :caption: *Get subspaces based on indices of the uncompressed
@@ -6666,7 +6666,7 @@ written to disk as netCDF files with `cf.write`.
 
 Alternatively, the ``cfa`` command line tool may be used with PP and UM
 fields files in exactly the same way as netCDF files. This provides a
-view of PP and UM fields files as CF field constructs, and also easily
+view of PP and UM fields files as CF field constructs, and also
 converts PP and UM fields files to netCDF datasets on disk.
 
 .. code-block:: console

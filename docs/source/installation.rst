@@ -77,7 +77,7 @@ Udunits
 
 Udunits (a C library that provides support for units of physical
 quantities) is a required dependency that is not installed by ``pip``,
-but it is easily installed in a ``conda`` environment:
+but it can be installed in a ``conda`` environment:
 
 .. code-block:: console
 

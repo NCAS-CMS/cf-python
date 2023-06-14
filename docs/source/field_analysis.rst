@@ -1584,7 +1584,7 @@ pressure coordinates after the regridding operation.
    Coord references: grid_mapping_name:rotated_latitude_longitude
 
 Note that the `~Field.replace_construct` method of the field construct
-is used to easily replace the vertical dimension coordinate construct,
+is used to directly replace the vertical dimension coordinate construct,
 without having to manually match up the corresponding domain axis
 construct and construct key.
 
