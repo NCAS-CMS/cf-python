@@ -44,9 +44,9 @@ The cf package is only for Python 3.8 or newer.
 cf is in the Python package index: https://pypi.org/project/cf-python
 
 To install cf and its :ref:`required dependencies <Required>` (apart
-from :ref:`Udunits <Udunits>`, and there are also has some
+from :ref:`Udunits <Udunits>`, and there are also some
 :ref:`optional dependencies <Optional>` which are **not**
-automatically installed via ``pip``) run, for example :
+automatically installed via ``pip``) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -83,7 +83,7 @@ but it can be installed in a ``conda`` environment:
 
    $ conda install -c conda-forge udunits2
 
-Alternatively, Udunits is often available in from operating system
+Alternatively, Udunits is often available from operating system
 software download managers, or may be installed from source.
     
 Note that :ref:`some environment variables might also need setting
@@ -102,7 +102,7 @@ details.
 
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
-visualisation package <http://ajheaps.github.io/cf-plot>`_, run
+visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
 
 .. code-block:: console
    :caption: *Install with conda.*
@@ -170,7 +170,7 @@ properly, although the defaults are usually sufficient.
 ---------------
 
 During installation the ``cfa`` command line utility is also
-installed, which
+installed, which:
 
 * :ref:`generates text descriptions of field constructs contained in
   files <File-inspection-with-cfa>`, and

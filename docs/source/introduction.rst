@@ -120,7 +120,7 @@ separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
-range plotting possibilities with example code.
+of plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png
 
