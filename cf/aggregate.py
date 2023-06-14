@@ -21,7 +21,7 @@ from .fieldancillary import FieldAncillary
 from .fieldlist import FieldList
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
-from .functions import flat
+from .functions import configuration, flat
 from .functions import rtol as cf_rtol
 from .query import gt
 from .units import Units
@@ -509,105 +509,108 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
-                # Initialise the cellsize and coordinate spacing
-                # conditions that form part of the signature
-                cellsize = None
-                spacing = None
+                # Check for cell conditions that apply to this
+                # dimension coordinate construct
+                cellsize, spacing = self.cellsize_spacing(
+                    cells, dim_coord, axis, hasbounds, rtol=rtol, atol=atol
+                )
 
-                if cells:
-                    # Check for cell conditions that apply to this
-                    # dimension coordinate construct
-                    dims = f.dimension_coordinates(filter_by_axis=(axis,))
-                    for identity, conditions in cells.items():
-                        if not dims(identity):
-                            # The dimension coordinate does not match
-                            # the identity given by this key of the
-                            # 'cells' dictionary.
-                            continue
-
-                        # Still here? Then loop round the conditions
-                        # to see if the dimension coordinate values
-                        # match one of them.
-                        dim_coord.persist(inplace=True)
-                        dim_cellsize = dim_coord.cellsize
-                        difference_units = dim_cellsize.Units
-
-                        # Initialise the dimension coordinate
-                        # construct's cellsize and spacing data
-                        cellsize_data = None
-                        spacing_data = None
-
-                        for condition in conditions:
-                            cellsize = None
-                            spacing = None
-
-                            # Find out if the coordinates match a
-                            # cellsize condition
-                            c = condition.get("cellsize")
-                            if c is not None and difference_units.equivalent(
-                                getattr(c, "Units", Units())
-                            ):
-                                if hasbounds and cellsize_data is None:
-                                    cellsize_data = dim_cellsize.array
-                                #                                    cellsize_data = dim_cellsize.persist()
-
-                                try:
-                                    if hasbounds:
-                                        match = (cellsize_data == c).all()
-                                    else:
-                                        # Dimension coordinates
-                                        # without bounds have zero
-                                        # cell sizes
-                                        match = 0 == c
-                                except ValueError:
-                                    # The comparison could fail if 'c'
-                                    # is hiding incompatible units,
-                                    # which could be the case for
-                                    # compound `Query` conditions.
-                                    match = False
-
-                                print("cell", c, repr(match))
-                                if match:
-                                    cellsize = c
-                                else:
-                                    continue
-
-                            # Find out if the coordinates match a
-                            # spacing condition
-                            c = condition.get("spacing")
-                            if c is not None and difference_units.equivalent(
-                                getattr(c, "Units", Units())
-                            ):
-                                if spacing_data is None:
-                                    spacing_data = dim_coord.data.diff().array
-                                    spacing_data = (
-                                        dim_coord.data.diff().persist()
-                                    )
-
-                                try:
-                                    match = (spacing_data == c).all()
-                                except ValueError:
-                                    # The comparison could fail if 'c'
-                                    # is hiding incompatible units,
-                                    # which could be the case for
-                                    # compound `Query` conditions.
-                                    print("hmm")
-                                    match = False
-
-                                print("diff", c, repr(match))
-                                if match:
-                                    spacing = c
-                                else:
-                                    continue
-
-                            if cellsize is not None or spacing is not None:
-                                # We've found a matching condition
-                                print("FOUND")
-                                break
-
-                        del cellsize_data
-                        del spacing_data
-                        break
+                #                # Initialise the cellsize and coordinate spacing
+                #                # conditions that form part of the signature
+                #                cellsize = None
+                #                spacing = None
+                #
+                #                if cells:
+                #                    # Check for cell conditions that apply to this
+                #                    # dimension coordinate construct
+                #                    dims = f.dimension_coordinates(filter_by_axis=(axis,))
+                #                    for identity, conditions in cells.items():
+                #                        if not dims(identity):
+                #                            # The dimension coordinate does not match
+                #                            # the identity given by this key of the
+                #                            # 'cells' dictionary.
+                #                            continue
+                #
+                #                        # Still here? Then loop round the conditions
+                #                        # to see if the dimension coordinate values
+                #                        # match one of them.
+                #                        dim_coord.persist(inplace=True)
+                #                        dim_cellsize = dim_coord.cellsize
+                #                        difference_units = dim_cellsize.Units
+                #
+                #                        # Initialise the dimension coordinate
+                #                        # construct's cellsize and spacing data
+                #                        cellsize_data = None
+                #                        spacing_data = None
+                #
+                #                        for condition in conditions:
+                #                            cellsize = None
+                #                            spacing = None
+                #
+                #                            # Find out if the coordinates match a
+                #                            # cellsize condition
+                #                            c = condition.get("cellsize")
+                #                            if c is not None and difference_units.equivalent(
+                #                                getattr(c, "Units", Units())
+                #                            ):
+                #                                if hasbounds and cellsize_data is None:
+                #                                    cellsize_data = dim_cellsize.persist()
+                #
+                #                                try:
+                #                                    if hasbounds:
+                #                                        match = (cellsize_data == c).all()
+                #                                    else:
+                #                                        # Dimension coordinates
+                #                                        # without bounds have zero
+                #                                        # cell sizes
+                #                                        match = 0 == c
+                #                                except ValueError:
+                #                                    # The comparison could fail if 'c'
+                #                                    # is hiding incompatible units,
+                #                                    # which could be the case for
+                #                                    # compound `Query` conditions.
+                #                                    match = False
+                #
+                #                                print("cell", c, repr(match))
+                #                                if match:
+                #                                    cellsize = c
+                #                                else:
+                #                                    continue
+                #
+                #                            # Find out if the coordinates match a
+                #                            # spacing condition
+                #                            c = condition.get("spacing")
+                #                            if c is not None and difference_units.equivalent(
+                #                                getattr(c, "Units", Units())
+                #                            ):
+                #                                if spacing_data is None:
+                #                                    spacing_data = (
+                #                                        dim_coord.data.diff().persist()
+                #                                    )
+                #
+                #                                try:
+                #                                    match = (spacing_data == c).all()
+                #                                except ValueError:
+                #                                    # The comparison could fail if 'c'
+                #                                    # is hiding incompatible units,
+                #                                    # which could be the case for
+                #                                    # compound `Query` conditions.
+                #                                    match = False
+                #
+                #                                print("diff", c, repr(match))
+                #                                if match:
+                #                                    spacing = c
+                #                                else:
+                #                                    continue
+                #
+                #                            if cellsize is not None or spacing is not None:
+                #                                # We've found a matching condition
+                #                                print("FOUND")
+                #                                break
+                #
+                #                        del cellsize_data
+                #                        del spacing_data
+                #                        break
 
                 info_dim.append(
                     {
@@ -1067,6 +1070,107 @@ class _Meta:
             )
 
         return "\n".join(strings)
+
+    def cellsize_spacing(
+        self, cells, dim_coord, axis, hasbounds, rtol=None, atol=None
+    ):
+        """TODOAGG"""
+        if not cells:
+            return (None, None)
+
+        # Initialise the cellsize and coordinate spacing
+        # conditions that form part of the signature
+        cellsize = None
+        spacing = None
+
+        with configuration(rtol=rtol, atol=atol):
+            # Check for cell conditions that apply to the dimension
+            # coordinate construct. Do this with the values of rtol
+            # and atol set by `cf.aggregate`.
+            dims = self.field.dimension_coordinates(filter_by_axis=(axis,))
+            for identity, conditions in cells.items():
+                if not dims(identity):
+                    # The dimension coordinate does not match the
+                    # identity given by this key of the 'cells'
+                    # dictionary.
+                    continue
+
+                # Still here? Then loop round the conditions to see if
+                # the dimension coordinate values match one of them.
+                dim_coord.persist(inplace=True)
+                dim_cellsize = dim_coord.cellsize
+                difference_units = dim_cellsize.Units
+
+                # Initialise the dimension coordinate construct's
+                # cellsize and spacing data
+                cellsize_data = None
+                spacing_data = None
+
+                for condition in conditions:
+                    cellsize = None
+                    spacing = None
+
+                    # Find out if the coordinates match a cellsize
+                    # condition
+                    c = condition.get("cellsize")
+                    if c is not None and difference_units.equivalent(
+                        getattr(c, "Units", Units())
+                    ):
+                        if hasbounds and cellsize_data is None:
+                            cellsize_data = dim_cellsize.persist()
+
+                        try:
+                            if hasbounds:
+                                match = (cellsize_data == c).all()
+                            else:
+                                # Dimension coordinates without bounds
+                                # have zero cell sizes
+                                match = 0 == c
+                        except ValueError:
+                            # The comparison could fail if 'c' is
+                            # hiding incompatible units, which could
+                            # be the case for compound `Query`
+                            # conditions.
+                            match = False
+
+                        print("cell", c, repr(match))
+                        if match:
+                            cellsize = c
+                        else:
+                            continue
+
+                    # Find out if the coordinates match a spacing
+                    # condition
+                    c = condition.get("spacing")
+                    if c is not None and difference_units.equivalent(
+                        getattr(c, "Units", Units())
+                    ):
+                        if spacing_data is None:
+                            spacing_data = dim_coord.data.diff().persist()
+
+                        try:
+                            match = (spacing_data == c).all()
+                        except ValueError:
+                            # The comparison could fail if 'c' is
+                            # hiding incompatible units, which could
+                            # be the case for compound `Query`
+                            # conditions.
+                            match = False
+
+                        print("diff", c, repr(match))
+                        if match:
+                            spacing = c
+                        else:
+                            continue
+
+                    if cellsize is not None or spacing is not None:
+                        # We've found a matching condition
+                        print("FOUND")
+                        break
+
+                break
+
+        return (cellsize, spacing)
 
     def coordinate_values(self):
         """Create a report listing coordinate cell values and bounds.
@@ -2201,8 +2305,9 @@ def aggregate(
             Provide conditions for dimension coordinate cells such
             that input field or domain constructs whose dimension
             coordinates match particular conditions will be aggregated
-            separately from those which don't. This can be used, for
-            example, to ensure that monthly and daily averages are not
+            separately from those which don't. All other aggregation
+            criteria apply as normal. This can be used, for instance,
+            to ensure that monthly and daily averages are not
             aggregated together.
 
             Field or domain constructs that don't match any of the
@@ -2253,6 +2358,13 @@ def aggregate(
             where ``<condition1>`` and ``<condition2>`` must each be
             one of a `Query`, `TimeDuration`, scalar `Data`, or scalar
             data_like object.
+
+            .. note:: Using a `cf.isclose` query condition in place of
+                      a condition defined by a `Data`, `TimeDuration`,
+                      or data_like object, or by `cf.eq`, allows the
+                      sensitivity to rounding errors and floating
+                      point precision to be controlled. See also the
+                      *rtol* and *atol* parameters.
 
             Units must be provided on the cnditions where applicable,
             since dimensionless conditions will not match cells that
@@ -3098,7 +3210,7 @@ def climatology_cells(
       {'cellsize': <CF Query: (wi [3600, 3660] day)>}]}
 
     """
-    from .query import wi
+    from .query import isclose, wi
 
     conditions = []
 
@@ -3113,11 +3225,11 @@ def climatology_cells(
         ),
     ):
         for value in sorted(values):
-            c = Data(value, units)
+            c = isclose(Data(value, units))
             conditions.append({"cellsize": c})
             if inst:
-                z = Data(0, units)
-                conditions.append({"cellsize": z, "spacing": c.copy()})
+                zero = isclose(Data(0, units))
+                conditions.append({"cellsize": zero, "spacing": c.copy()})
 
     if months:
         conditions.append({"cellsize": wi(28, 31, "day")})

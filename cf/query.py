@@ -3,6 +3,7 @@ from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
+import numpy as np
 from cfdm import is_log_level_info
 
 from .data import Data
@@ -16,8 +17,10 @@ from .functions import (
     _DEPRECATION_ERROR_FUNCTION,
     _DEPRECATION_ERROR_FUNCTION_KWARGS,
 )
+from .functions import atol as cf_atol
 from .functions import equals as _equals
 from .functions import inspect as _inspect
+from .functions import rtol as cf_rtol
 from .units import Units
 
 logger = logging.getLogger(__name__)
@@ -27,7 +30,7 @@ builtin_set = set
 
 
 class Query:
-    '''Encapsulate a condition for subsequent evaluation.
+    """Encapsulate a condition for subsequent evaluation.
 
     A condition that may be applied to any object may be stored in a
     `Query` object. A `Query` object encapsulates a condition, such as
@@ -54,19 +57,20 @@ class Query:
     The following operators are supported when constructing `Query`
     instances:
 
-    =========  ===================================
-    Operator   Description
-    =========  ===================================
-    ``'lt'``   A "strictly less than" condition
-    ``'le'``   A "less than or equal" condition
-    ``'gt'``   A "strictly greater than" condition
-    ``'ge'``   A "greater than or equal" condition
-    ``'eq'``   An "equal" condition
-    ``'ne'``   A "not equal" condition
-    ``'wi'``   A "within a range" condition
-    ``'wo'``   A "without a range" condition
-    ``'set'``  A "member of set" condition
-    =========  ===================================
+    =============  ===================================
+    Operator       Description
+    =============  ===================================
+    ``'lt'``       A "strictly less than" condition
+    ``'le'``       A "less than or equal" condition
+    ``'gt'``       A "strictly greater than" condition
+    ``'ge'``       A "greater than or equal" condition
+    ``'eq'``       An "equal" condition
+    ``'ne'``       A "not equal" condition
+    ``'wi'``       A "within a range" condition
+    ``'wo'``       A "without a range" condition
+    ``'set'``      A "member of set" condition
+    ``'isclose'``  An "is close" condition
+    =============  ===================================
 
     **Compound queries**
 
@@ -158,23 +162,14 @@ class Query:
     `__query_wi__`          Called when a ``'wi'`` condition is evaluated
     `__query_wo__`          Called when a ``'wo'`` condition is evaluated
     `__query_set__`         Called when a ``'set'`` condition is evaluated
+    `__query_isclose__`     Called when an ``'isclose'`` condition is
+                            evaluated.
     ======================  ==============================================
 
-    In all cases the query value is the only, mandatory argument of
-    the method.
-
-       >>> class myList(list):
-       ...     pass
-       ...
-       >>> class myList_with_override(list):
-       ...     def __query_lt__(self, value):
-       ...         """Apply the < operator element-wise"""
-       ...         return type(self)([x < value for x in self])
-       ...
-       >>> c == myList([1, 2, 3])
-       TypeError: '<' not supported between instances of 'myList' and 'int'
-       >>> c == myList_with_override([1, 2, 3])
-       [True, False, False]
+    In general, each method must have the query value as it's only
+    parameter. The only excecption is for `__query_isclose__`, which
+    also requires the absolute and relative numerical tolerances
+    provided by the *atol* and *rtol* keyword parameters.
 
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
@@ -184,12 +179,35 @@ class Query:
     method is automatically a `Data` object that attaches the units to
     the value.
 
-    '''
+    For example:
+
+       >>> class myList(list):
+       ...     pass
+       ...
+       >>> class myList_with_interface(list):
+       ...     def __query_lt__(self, value):
+       ...         return type(self)([x < value for x in self])
+       ...
+       >>> c == myList([1, 2, 3])
+       TypeError: '<' not supported between instances of 'myList' and 'int'
+       >>> c == myList_with_interface([1, 2, 3])
+       [True, False, False]
+
+    """
 
     isquery = True
 
     @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
-    def __init__(self, operator, value, units=None, attr=None, exact=True):
+    def __init__(
+        self,
+        operator,
+        value,
+        units=None,
+        attr=None,
+        exact=True,
+        rtol=None,
+        atol=None,
+    ):
         """**Initialisation**
 
         :Parameters:
@@ -215,6 +233,23 @@ class Query:
                 of the "bounds" attribute is specified as
                 ``'bounds.month'``. See also the `addattr` method.
 
+            rtol: number, optional
+                Only applicable to the ``'isclose'`` operator. The
+                tolerance on relative numerical differences. If
+                `None`, the default, then the value returned at
+                evaluation time by the `cf.rtol` function is used.
+
+                .. versionadded:: TODOAGGVER
+
+            atol: number, optional
+                Only applicable to the ``'isclose'`` operator. The
+                tolerance on absolute numerical differences. If
+                `None`, the default, then the value returned at
+                evaluation time by the `cf.atol` function is used.set
+                by the `cf.atol` function.
+
+                .. versionadded:: TODOAGGVER
+
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
 
@@ -225,9 +260,9 @@ class Query:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError(
-                    f"'{value_units}' and '{Units(units)}' are not equivalent "
-                    f"units therefore the query does not make physical "
-                    "sense."
+                    f"'{value_units}' and '{Units(units)}' are not "
+                    f"equivalent units therefore the query does not make "
+                    "physical sense."
                 )
 
         self._operator = operator
@@ -244,6 +279,16 @@ class Query:
         self.query_type = operator
 
         self._NotImplemented_RHS_Data_op = True
+
+        if rtol is not None or atol is not None:
+            if operator != "isclose":
+                raise ValueError(
+                    "Can only set the 'rtol' and 'atol' parameters"
+                    "for the 'isclose' operator"
+                )
+
+            self._rtol = rtol
+            self._atol = atol
 
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
@@ -401,8 +446,21 @@ class Query:
 
         """
         attr = ".".join(self._attr)
-        if not self._compound:
-            return f"{attr}({self._operator} {self._value!s})"
+        operator = self._operator
+        compound = self._compound
+        if not compound:
+            out = f"{attr}({operator} {self._value!s}"
+            if operator == "isclose":
+                rtol = self.rtol
+                if rtol is not None:
+                    out += f" rtol={rtol}"
+
+                atol = self.atol
+                if atol is not None:
+                    out += f" atol={atol}"
+
+            out += ")"
+            return out
 
         bitwise_operator = repr(self._bitwise_operator)
         if "and_" in bitwise_operator:
@@ -410,10 +468,37 @@ class Query:
         elif "or_" in bitwise_operator:
             bitwise_operator = "|"
 
-        return (
-            f"{attr}[{self._compound[0]} {bitwise_operator} "
-            f"{self._compound[1]}]"
-        )
+        return f"{attr}[{compound[0]} {bitwise_operator} {compound[1]}]"
+
+    @property
+    def atol(self):
+        """The tolerance on absolute numerical differences.
+
+        For the ``'isclose'`` operator, returns the tolerance on
+        absolute numerical differences. If `None` then the value
+        returned at evaluation time by the `cf.atol` function is used.
+
+        Ignored in the evaluations of all other operators.
+
+        .. versionadded:: TODOAGGVER
+
+        """
+        return getattr(self, "_atol", None)
+
+    @property
+    def rtol(self):
+        """The tolerance on relative numerical differences.
+
+        For the ``'isclose'`` operator, returns the tolerance on
+        relative numerical differences. If `None` then the value
+        returned at evaluation time by the `cf.rtol` function is used.
+
+        Ignored in the evaluations of all other operators.
+
+        .. versionadded:: TODOAGGVER
+
+        """
+        return getattr(self, "_rtol", None)
 
     @property
     def attr(self):
@@ -869,24 +954,19 @@ class Query:
                 return out
 
         if operator == "isclose":
-            rtol = self._rtol
-            atol = self._atol
+            rtol = self.rtol
+            atol = self.atol
+            if atol is None:
+                atol = cf_atol().value
+
+            if rtol is None:
+                rtol = cf_rtol().value
 
             _isclose = getattr(x, "__query_isclose__", None)
             if _isclose is not None:
                 return _isclose(value, rtol=rtol, atol=atol)
 
             return np.isclose(x, value, rtol=rtol, atol=atol)
-
-    @property
-    def _atol(self):
-        """Return the current value of the `cf.atol` function."""
-        return atol().value
-
-    @property
-    def _rtol(self):
-        """Return the current value of the `cf.rtol` function."""
-        return rtol().value
 
     def inspect(self):
         """Inspect the object for debugging.
@@ -1073,7 +1153,7 @@ def lt(value, units=None, attr=None):
     """A `Query` object for a "strictly less than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.le`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1134,7 +1214,7 @@ def le(value, units=None, attr=None):
     """A `Query` object for a "less than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1178,7 +1258,7 @@ def gt(value, units=None, attr=None):
     """A `Query` object for a "strictly greater than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1222,7 +1302,7 @@ def ge(value, units=None, attr=None):
     """A `Query` object for a "greater than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.gt`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1274,7 +1354,7 @@ def eq(value, units=None, attr=None, exact=True):
     """A `Query` object for an "equal" condition.
 
     .. seealso:: `cf.contains`, `cf.ge`, `cf.gt`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1334,7 +1414,7 @@ def ne(value, units=None, attr=None, exact=True):
     """A `Query` object for a "not equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1382,11 +1462,77 @@ def ne(value, units=None, attr=None, exact=True):
     return Query("ne", value, units=units, attr=attr)
 
 
+def isclose(value, units=None, attr=None, rtol=None, atol=None):
+    """A `Query` object for an "is close" condition.
+
+    .. versionadded:: TODOAGGVER
+
+    .. seealso:: `cf.contains`, `cf.eq`, `cf.ne`, `cf.ge`, `cf.gt`,
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+
+    :Parameters:
+
+        value:
+            The value to be used in the isclose test. May be any
+            numerical object that can be operated on with
+            ``np.isclose``. This includes scalar `cf.Data` or Dask
+            arrays (which may use their own 'isclose'
+            implementations).
+
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
+
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+
+        rtol: number, optional
+            The tolerance on relative numerical differences. If
+            `None`, the default, then the value returned at evaluation
+            time by the `cf.rtol` function is used.
+
+        atol: number, optional
+            The tolerance on absolute numerical differences. If
+            `None`, the default, then the value returned at evaluation
+            time by the `cf.atol` function is used.
+
+    :Returns:
+
+        `Query`
+            The query object.
+
+    **Examples**
+
+    >>> q = cf.isclose(9)
+    >>> q
+    <CF Query: (isclose 9)>
+    >>> q.evaluate(9.000001)
+    False
+
+    >>> q = cf.isclose(9, rtol=0.001, atol=0.01)
+    >>> q
+    <CF Query: (isclose 9 rtol=0.001 atol=0.01)>
+    >>> q.evaluate(9.000001)
+    True
+
+    """
+    return Query(
+        "isclose", value, units=units, attr=attr, rtol=rtol, atol=atol
+    )
+
+
 def wi(value0, value1, units=None, attr=None):
     """A `Query` object for a "within a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.set`, `cf.wo`
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1433,7 +1579,7 @@ def wo(value0, value1, units=None, attr=None):
     """A `Query` object for a "without a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.isclose`
 
     :Parameters:
 
@@ -1480,7 +1626,7 @@ def set(values, units=None, attr=None, exact=True):
     """A `Query` object for a "member of set" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`
+                 `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 

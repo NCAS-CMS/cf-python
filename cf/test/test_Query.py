@@ -668,6 +668,35 @@ class QueryTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             (cf.eq(9, "m") | cf.gt(9, "day")).Units
 
+    def test_Query_isclose(self):
+        q = cf.isclose(9)
+        self.assertIsNone(q.atol)
+        self.assertIsNone(q.rtol)
+        self.assertTrue(9, q)
+        self.assertNotEqual(9.000001, q)
+
+        d = cf.Data([9, 9.000001], "m")
+        self.assertFalse((d == q).all())
+
+        atol = 0.001
+        rtol = 0.0001
+        q = cf.isclose(9, atol=atol, rtol=rtol)
+        self.assertEqual(q.atol, atol)
+        self.assertEqual(q.rtol, rtol)
+        self.assertTrue(9, q)
+        self.assertTrue(9.000001, q)
+        self.assertNotEqual(9.1, q)
+
+        self.assertTrue((d == q).all())
+
+        q = cf.eq(9)
+        self.assertIsNone(q.atol)
+        self.assertIsNone(q.rtol)
+
+        # Can't set atol and rtol unless operation is 'isclose'
+        with self.assertRaises(ValueError):
+            cf.Query("eq", 9, atol=atol, rtol=rtol)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

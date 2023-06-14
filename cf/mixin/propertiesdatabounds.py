@@ -403,7 +403,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._unary_operation("__pos__", bounds=True)
 
     def __query_isclose__(self, value, rtol=None, atol=None):
-        """TODOAGG ??? should we do bounds?"""
+        """TODOAGG"""
         return self._apply_superclass_data_oper(
             self.copy(),
             "isclose",

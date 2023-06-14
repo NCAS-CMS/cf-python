@@ -281,6 +281,7 @@ from .query import (
     ge,
     eq,
     ne,
+    isclose,
     contain,
     contains,
     wi,

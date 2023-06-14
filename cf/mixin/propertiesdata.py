@@ -540,9 +540,14 @@ class PropertiesData(Properties):
 
     def __query_isclose__(self, value, rtol=None, atol=None):
         """TODOAGG"""
-        return self._apply_data_oper(
-            self.copy(), "isclose", (value,), rtol=rtol, atol=atol
-        )
+        data = self.get_data(None, _fill_value=None)
+        if data is None:
+            raise ValueError(
+                "Can't apply '__query_isclose__' to a "
+                f"{self.__class__.__name__} object with no data: {self!r}"
+            )
+
+        data.isclose(value, rtol=rtol, atol=atol)
 
     def _binary_operation(self, y, method):
         """Implement binary arithmetic and comparison operations.

@@ -378,7 +378,7 @@ class aggregateTest(unittest.TestCase):
         # 1-d aggregation resulting in two fields
         for cells in (
             {"Y": {"cellsize": cf.eq(30, "degreeN")}},
-            {"Y": {"cellsize": cf.Data(60, "degrees_N")}},
+            {"Y": {"cellsize": cf.isclose(60, "degrees_N")}},
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
 
@@ -390,10 +390,10 @@ class aggregateTest(unittest.TestCase):
         for cells in (
             None,
             {"Y": {"cellsize": cf.wi(30, 60, "degrees_north")}},
-            {"X": {"cellsize": cf.Data(45, "degrees_east")}},
+            {"X": {"cellsize": cf.isclose(45, "degrees_east")}},
             {
                 "Y": {"cellsize": cf.wi(30, 60, "degrees_north")},
-                "X": {"cellsize": cf.eq(45, "degrees_east")},
+                "X": {"cellsize": cf.isclose(45, "degrees_east")},
             },
         ):
             self.assertEqual(len(cf.aggregate(fl_2d, cells=cells)), 1)
