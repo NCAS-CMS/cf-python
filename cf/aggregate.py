@@ -548,7 +548,8 @@ class _Meta:
                                 getattr(c, "Units", Units())
                             ):
                                 if hasbounds and cellsize_data is None:
-                                    cellsize_data = dim_cellsize.persist()
+                                    cellsize_data = dim_cellsize.array
+                                #                                    cellsize_data = dim_cellsize.persist()
 
                                 try:
                                     if hasbounds:
@@ -556,8 +557,8 @@ class _Meta:
                                     else:
                                         # Dimension coordinates
                                         # without bounds have zero
-                                        # cells sizes
-                                        match = bool(0 == c)
+                                        # cell sizes
+                                        match = 0 == c
                                 except ValueError:
                                     # The comparison could fail if 'c'
                                     # is hiding incompatible units,
@@ -565,6 +566,7 @@ class _Meta:
                                     # compound `Query` conditions.
                                     match = False
 
+                                print("cell", c, repr(match))
                                 if match:
                                     cellsize = c
                                 else:
@@ -577,6 +579,7 @@ class _Meta:
                                 getattr(c, "Units", Units())
                             ):
                                 if spacing_data is None:
+                                    spacing_data = dim_coord.data.diff().array
                                     spacing_data = (
                                         dim_coord.data.diff().persist()
                                     )
@@ -588,8 +591,10 @@ class _Meta:
                                     # is hiding incompatible units,
                                     # which could be the case for
                                     # compound `Query` conditions.
+                                    print("hmm")
                                     match = False
 
+                                print("diff", c, repr(match))
                                 if match:
                                     spacing = c
                                 else:
@@ -597,6 +602,7 @@ class _Meta:
 
                             if cellsize is not None or spacing is not None:
                                 # We've found a matching condition
+                                print("FOUND")
                                 break
 
                         del cellsize_data
@@ -1635,7 +1641,7 @@ class _Meta:
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
-                ("size", axis[identity]["size"]),    
+                ("size", axis[identity]["size"]),
                 (
                     "cellsize",
                     self.tokenise_cell_condition(axis[identity]["cellsize"]),
@@ -1643,7 +1649,7 @@ class _Meta:
                 (
                     "spacing",
                     self.tokenise_cell_condition(axis[identity]["spacing"]),
-                ),            
+                ),
                 ("dim_coord_index", axis[identity]["dim_coord_index"]),
             )
             for identity in self.axis_ids

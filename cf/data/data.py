@@ -4491,6 +4491,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return self._unary_operation("__pos__")
 
+    def __query_isclose__(self, value, rtol=None, atol=None):
+        """TODOAGG"""
+        return self.isclose(value, rtol=rtol, atol=atol)
+
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------

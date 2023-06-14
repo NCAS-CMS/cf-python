@@ -538,9 +538,12 @@ class PropertiesData(Properties):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol=None, atol=None):
+        """TODOAGG"""
+        return self._apply_data_oper(
+            self.copy(), "isclose", (value,), rtol=rtol, atol=atol
+        )
+
     def _binary_operation(self, y, method):
         """Implement binary arithmetic and comparison operations.
 

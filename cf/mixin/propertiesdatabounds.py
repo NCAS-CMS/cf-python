@@ -402,9 +402,17 @@ class PropertiesDataBounds(PropertiesData):
         """
         return self._unary_operation("__pos__", bounds=True)
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol=None, atol=None):
+        """TODOAGG ??? should we do bounds?"""
+        return self._apply_superclass_data_oper(
+            self.copy(),
+            "isclose",
+            (value,),
+            bounds=False,
+            rtol=rtol,
+            atol=atol,
+        )
+
     def _binary_operation(self, other, method, bounds=True):
         """Implement binary arithmetic and comparison operations.
 

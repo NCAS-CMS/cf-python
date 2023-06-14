@@ -868,6 +868,26 @@ class Query:
 
                 return out
 
+        if operator == "isclose":
+            rtol = self._rtol
+            atol = self._atol
+
+            _isclose = getattr(x, "__query_isclose__", None)
+            if _isclose is not None:
+                return _isclose(value, rtol=rtol, atol=atol)
+
+            return np.isclose(x, value, rtol=rtol, atol=atol)
+
+    @property
+    def _atol(self):
+        """Return the current value of the `cf.atol` function."""
+        return atol().value
+
+    @property
+    def _rtol(self):
+        """Return the current value of the `cf.rtol` function."""
+        return rtol().value
+
     def inspect(self):
         """Inspect the object for debugging.
 
