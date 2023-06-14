@@ -71,6 +71,7 @@ Condition constructors
    cf.wi
    cf.wo
    cf.set
+   cf.isclose
 
 .. rubric:: Date-time conditions
    

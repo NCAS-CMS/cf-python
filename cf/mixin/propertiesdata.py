@@ -539,7 +539,7 @@ class PropertiesData(Properties):
         return self._unary_operation("__pos__")
 
     def __query_isclose__(self, value, rtol=None, atol=None):
-        """TODOAGG"""
+        """Query interface method for an "is close" condition."""
         data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(

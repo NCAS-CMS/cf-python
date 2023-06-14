@@ -1074,7 +1074,44 @@ class _Meta:
     def cellsize_spacing(
         self, cells, dim_coord, axis, hasbounds, rtol=None, atol=None
     ):
-        """TODOAGG"""
+        """Return the coordinate cell size and spacing conditions.
+
+        .. versionadded:: TODOAGGVER
+
+        :Parameters:
+
+            cells: `dict` or `None`, optional
+                Conditions for dimension coordinate cells. See the
+                *cells* parameter of `cf.aggregate` for details.
+
+            dim_coord: `DimensionCoordinate`
+                The dimension coordinate construct.
+
+            axis: `str`
+                The identifier of the dimension coordinate construct's
+                axis.
+
+            hasbounds: `bool`
+                Whether or not the dimension coordinate construct has
+                bounds.
+
+            rtol: number, optional
+                The tolerance on relative differences between real
+                numbers. The default value is set by the `cf.rtol`
+                function.
+
+            atol: number, optional
+                The tolerance on absolute differences between real
+                numbers. The default value is set by the `cf.atol`
+                function.
+
+        :Returns:
+
+            2-`tuple`
+                The coordinate cell size and spacing conditions,
+                either of which may be `None`
+
+        """
         if not cells:
             return (None, None)
 
@@ -1085,8 +1122,11 @@ class _Meta:
 
         with configuration(rtol=rtol, atol=atol):
             # Check for cell conditions that apply to the dimension
-            # coordinate construct. Do this with the values of rtol
-            # and atol set by `cf.aggregate`.
+            # coordinate construct.
+            #
+            # Do this in the context of the values of rtol and atol
+            # defined by `cf.aggregate`. These value might get used by
+            # 'isclose' query conditions.
             dims = self.field.dimension_coordinates(filter_by_axis=(axis,))
             for identity, conditions in cells.items():
                 if not dims(identity):
@@ -1133,7 +1173,6 @@ class _Meta:
                             # conditions.
                             match = False
 
-                        print("cell", c, repr(match))
                         if match:
                             cellsize = c
                         else:
@@ -1157,7 +1196,6 @@ class _Meta:
                             # conditions.
                             match = False
 
-                        print("diff", c, repr(match))
                         if match:
                             spacing = c
                         else:
@@ -1165,7 +1203,6 @@ class _Meta:
 
                     if cellsize is not None or spacing is not None:
                         # We've found a matching condition
-                        print("FOUND")
                         break
 
                 break
@@ -2360,11 +2397,12 @@ def aggregate(
             data_like object.
 
             .. note:: Using a `cf.isclose` query condition in place of
-                      a condition defined by a `Data`, `TimeDuration`,
-                      or data_like object, or by `cf.eq`, allows the
-                      sensitivity to rounding errors and floating
-                      point precision to be controlled. See also the
-                      *rtol* and *atol* parameters.
+                      a condition defined by a `TimeDuration`, scalar
+                      `Data` object, scalar data_like object, or a
+                      `cf.eq` query allows the sensitivity of the
+                      condition to rounding errors and floating point
+                      precision to be controlled. See also the *rtol*
+                      and *atol* parameters.
 
             Units must be provided on the cnditions where applicable,
             since dimensionless conditions will not match cells that
@@ -2397,16 +2435,16 @@ def aggregate(
 
             **Performance**
 
-            The testing of the conditions requires has a computational
+            The testing of the conditions has a computational
             overhead, as well as an I/O overhead if the dimension
             coordinate data are on disk.
 
-            It is not best practice to define a condition which always
-            passes (or fails) for all input fields. For instance, if
-            it is known that all of the input fields are daily means,
-            then providing a time cell size condition of 1 day
-            (e.g. with ``{'T': {'cellsize': cf.D()}}``) will not
-            change the aggregation, but will slow the process down.
+            It is not best practice to define a condition which passes
+            (fails) for every input field. For instance, if it is
+            known that all of the input fields are daily means, then
+            providing a time cell size condition of 1 day (e.g. with
+            ``{'T': {'cellsize': cf.D()}}``) will not change the
+            aggregation, but will slow the process down.
 
             When setting a sequence of conditions for the same
             dimension coordinate construct, performance will be
@@ -2420,11 +2458,13 @@ def aggregate(
             largest data.
 
             *Parameter example*
+
               Equivalent ways to separate time cells of 1 day from
               other time cell sizes: ``{'T': {'cellsize': cf.D()}}``,
               ``{'T': {'cellsize': cf.eq(1, 'day'}}``, ``{'T':
               {'cellsize': cf.Data(1, 'day')}}``, ``{'T': {'cellsize':
-              cf.h(24)}}``, etc.
+              cf.h(24)}}``, ``{'T': {'cellsize': cf.isclose(1,
+              'day'}}``, etc.
 
             *Parameter example*
               To separate time cells of 1 month, in any calendar, from
@@ -2449,9 +2489,9 @@ def aggregate(
               ``{'T': [{'cellsize': cf.D(1)}, {'cellsize': cf.D(30)}]}``.
 
             *Parameter example*
-              To aggregate 6 hourly time cells without bounds, specify
-              a cellsize of zero:
-              ``{'T': {'cellsize': cf.h(0), 'spacing': cf.h(6)}}``.
+              To aggregate 6 hourly instantaneous time cells, specify
+              a cellsize of zero: ``{'T': {'cellsize': cf.h(0),
+              'spacing': cf.h(6)}}``.
 
             .. versionadded:: TODOAGGAVER
 
@@ -3179,13 +3219,16 @@ def climatology_cells(
     **Examples**
 
     >>> cf.climatology_cells()
-    {'T': [{'cellsize': <CF Data(): 1 hour>},
-      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 1 hour>},
-      {'cellsize': <CF Data(): 3 hour>},
-      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 3 hour>},
-      {'cellsize': <CF Data(): 6 hour>},
-      {'cellsize': <CF Data(): 0 hour>, 'spacing': <CF Data(): 6 hour>},
-      {'cellsize': <CF Data(): 1 day>},
+    {'T': [{'cellsize': <CF Query: (isclose 1 hour)>},
+      {'cellsize': <CF Query: (isclose 0 hour)>,
+       'spacing': <CF Query: (isclose 1 hour)>},
+      {'cellsize': <CF Query: (isclose 3 hour)>},
+      {'cellsize': <CF Query: (isclose 0 hour)>,
+       'spacing': <CF Query: (isclose 3 hour)>},
+      {'cellsize': <CF Query: (isclose 6 hour)>},
+      {'cellsize': <CF Query: (isclose 0 hour)>,
+       'spacing': <CF Query: (isclose 6 hour)>},
+      {'cellsize': <CF Query: (isclose 1 day)>},
       {'cellsize': <CF Query: (wi [28, 31] day)>},
       {'cellsize': <CF Query: (wi [360, 366] day)>}]}
 
@@ -3196,16 +3239,16 @@ def climatology_cells(
     ...     hours_instantaneous=False
     ... )
     >>> cells
-    {'T': ["cells{'cellsize': <CF Data(): 3 hour>},
-      {'cellsize': <CF Data(): 12 hour>},
+    {'T': [{'cellsize': <CF Query: (isclose 3 hour)>},
+      {'cellsize': <CF Query: (isclose 12 hour)>},
       {'cellsize': <CF Query: (wi [28, 31] day)>}]}
 
     Add a condition that separately aggregates decadal data:
 
     >>> cells['T'].append({'cellsize': cf.wi(3600, 3660, 'day')})
     >>> cells
-    {'T': [{'cellsize': <CF Data(): 3 hour>},
-      {'cellsize': <CF Data(): 12 hour>},
+    {'T': [{'cellsize': <CF Query: (isclose 3 hour)>},
+      {'cellsize': <CF Query: (isclose 12 hour)>},
       {'cellsize': <CF Query: (wi [28, 31] day)>},
       {'cellsize': <CF Query: (wi [3600, 3660] day)>}]}
 
@@ -4155,6 +4198,11 @@ def _difference_units(units):
     <Units: km>
     >>> _difference_units('day')
     <Units: day>
+    >>> _difference_units('K')
+    <Units: K>
+    >>> _difference_units('degC')
+    <Units: degC>
+
     >>> _difference_units('hours since 2000-01-01')
     <Units: hours>
 

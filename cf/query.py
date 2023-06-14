@@ -450,14 +450,13 @@ class Query:
         compound = self._compound
         if not compound:
             out = f"{attr}({operator} {self._value!s}"
-            if operator == "isclose":
-                rtol = self.rtol
-                if rtol is not None:
-                    out += f" rtol={rtol}"
+            rtol = self.rtol
+            if rtol is not None:
+                out += f" rtol={rtol}"
 
-                atol = self.atol
-                if atol is not None:
-                    out += f" atol={atol}"
+            atol = self.atol
+            if atol is not None:
+                out += f" atol={atol}"
 
             out += ")"
             return out
@@ -1474,10 +1473,8 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
 
         value:
             The value to be used in the isclose test. May be any
-            numerical object that can be operated on with
-            ``np.isclose``. This includes scalar `cf.Data` or Dask
-            arrays (which may use their own 'isclose'
-            implementations).
+            scalar `cf.Data` object, or else any numerical object that
+            can be operated on with ``np.isclose``.
 
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
@@ -1515,10 +1512,22 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
     <CF Query: (isclose 9)>
     >>> q.evaluate(9.000001)
     False
+    >>> with cf.configuration(rtol=0.001, atol=0.01):
+    ...     print(q.evaluate(9.000001))
+    ...
+    True
+    >>> q.evaluate(9.000001)
+    False
 
     >>> q = cf.isclose(9, rtol=0.001, atol=0.01)
     >>> q
     <CF Query: (isclose 9 rtol=0.001 atol=0.01)>
+    >>> q.evaluate(9.000001)
+    True
+
+    >>> q = cf.isclose(9, atol=0.01)
+    >>> q
+    <CF Query: (isclose 9 atol=0.01)>
     >>> q.evaluate(9.000001)
     True
 
