@@ -867,16 +867,49 @@ class Query:
         operator = self._operator
         value = self._value
 
-        standard_regex_error_msg = (
-            f"Can't perform regular expression search on a non-string: {x!r}"
-        )
+        # TODO: Once Python 3.9 is no longer supported, this is a good
+        #       candidate for PEP 622 – Structural Pattern Matching
+        #       (https://peps.python.org/pep-0622)
+
+        if operator == "gt":
+            _gt = getattr(x, "__query_gt__", None)
+            if _gt is not None:
+                return _gt(value)
+
+            return x > value
+
+        if operator == "wi":
+            _wi = getattr(x, "__query_wi__", None)
+            if _wi is not None:
+                return _wi(value)
+
+            return (x >= value[0]) & (x <= value[1])
+
+        if operator == "isclose":
+            rtol = self.rtol
+            atol = self.atol
+            if atol is None:
+                atol = cf_atol().value
+
+            if rtol is None:
+                rtol = cf_rtol().value
+
+            _isclose = getattr(x, "__query_isclose__", None)
+            if _isclose is not None:
+                return _isclose(value, rtol=rtol, atol=atol)
+
+            return np.isclose(x, value, rtol=rtol, atol=atol)
+
         if operator == "eq":
             try:
                 return bool(value.search(x))
             except AttributeError:
                 return x == value
             except TypeError:
-                raise ValueError(standard_regex_error_msg)
+                raise ValueError(
+                    "Can't perform regular expression search on a "
+                    f"non-string: {x!r}"
+                )
 
         if operator == "ne":
             try:
@@ -884,7 +917,10 @@ class Query:
             except AttributeError:
                 return x != value
             except TypeError:
-                raise ValueError(standard_regex_error_msg)
+                raise ValueError(
+                    "Can't perform regular expression search on a "
+                    f"non-string: {x!r}"
+                )
 
         if operator == "lt":
             _lt = getattr(x, "__query_lt__", None)
@@ -913,13 +949,6 @@ class Query:
                 return _ge(value)
 
             return x >= value
-
-        if operator == "wi":
-            _wi = getattr(x, "__query_wi__", None)
-            if _wi is not None:
-                return _wi(value)
-
-            return (x >= value[0]) & (x <= value[1])
 
         if operator == "wo":
             _wo = getattr(x, "__query_wo__", None)
@@ -951,21 +980,6 @@ class Query:
                     out |= x == v
 
                 return out
-
-        if operator == "isclose":
-            rtol = self.rtol
-            atol = self.atol
-            if atol is None:
-                atol = cf_atol().value
-
-            if rtol is None:
-                rtol = cf_rtol().value
-
-            _isclose = getattr(x, "__query_isclose__", None)
-            if _isclose is not None:
-                return _isclose(value, rtol=rtol, atol=atol)
-
-            return np.isclose(x, value, rtol=rtol, atol=atol)
 
     def inspect(self):
         """Inspect the object for debugging.

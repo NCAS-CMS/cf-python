@@ -363,7 +363,7 @@ class aggregateTest(unittest.TestCase):
                 }
             },
         ):
-            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1, cells)
+            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
 
         for cells in (
             {"Y": {"cellsize": cf.wi(39, 60, "km")}},
@@ -443,7 +443,7 @@ class aggregateTest(unittest.TestCase):
             cf.aggregate(fl, cells=[9])
 
         # Bad condition units
-        for condition in (cf.M(1), cf.Y(1)):
+        for condition in (cf.M(2), cf.Y(2)):
             with self.assertRaises(ValueError):
                 cf.aggregate(fl, cells={"T": {"cellsize": condition}})
 
@@ -571,7 +571,7 @@ class aggregateTest(unittest.TestCase):
             hours=(),
         )
         condition = cells["T"][0]["cellsize"]
-        self.assertTrue(condition.equals(cf.wi(28, 31, "day")))
+        self.assertTrue(condition.equals(cf.M()))
 
         cells = cf.climatology_cells(
             years=True,
@@ -580,7 +580,7 @@ class aggregateTest(unittest.TestCase):
             hours=(),
         )
         condition = cells["T"][0]["cellsize"]
-        self.assertTrue(condition.equals(cf.wi(360, 366, "day")))
+        self.assertTrue(condition.equals(cf.Y()))
 
 
 if __name__ == "__main__":

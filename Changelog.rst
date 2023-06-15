@@ -3,6 +3,8 @@ version ?.?.?
 
 **2023-??-??**
 
+* New function: `cf.isclose`
+  (https://github.com/NCAS-CMS/cf-python/issues/661)
 * New keyword parameter to `cf.aggregate`: ``cells``
   (https://github.com/NCAS-CMS/cf-python/issues/452)
 
