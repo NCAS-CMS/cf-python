@@ -156,8 +156,8 @@ For more information, see `Choosing good chunk sizes in Dask
 All operations on Dask arrays are executed in parallel using `Dask's
 dynamic task scheduling
 <https://docs.dask.org/en/stable/scheduling.html>`_. By default, the
-scheduler uses threads on the local machine, but it is easy to use
-instead local processes, a cluster of many machines, or a single
+scheduler uses threads on the local machine, but can instead use
+local processes, a cluster of many machines, or a single
 thread with no parallelism at all.
 
 Implementing a different scheduler is done via any of the methods
@@ -190,7 +190,7 @@ available pool of processing elements, which execute the tasks in
 parallel until the final result has been computed.
 
 The following example creates a visualisation of the task graph for a
-simple data computation over four chunks:
+basic data computation over four chunks:
 
 .. code-block:: python
    :caption: *Visualising the task graph for a lazy computation.*
