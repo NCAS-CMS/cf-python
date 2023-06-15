@@ -115,16 +115,16 @@ manipulation and can:
 
 
 Powerful and flexible visualisations of field
-constructs are available with the `cfplot` package that is installed
+constructs are available with the `cf-plot` package that is installed
 separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
-See the `cfplot gallery
+See the `cf-plot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 of plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of cfplot displaying a cf field construct.*
+   *Example output of cf-plot displaying a cf field construct.*
 
 ----
 
