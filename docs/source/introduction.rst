@@ -113,8 +113,7 @@ manipulation and can:
 **Visualisation**
 -----------------
 
-
-Powerful and flexible visualisations of field
+Powerful, flexible, and user-friendly visualisations of field
 constructs are available with the `cf-plot` package that is installed
 separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
