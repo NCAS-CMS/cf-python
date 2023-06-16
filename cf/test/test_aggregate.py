@@ -382,6 +382,17 @@ class aggregateTest(unittest.TestCase):
         ):
             self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
 
+        # 1-d aggregation with size 1 and size N axes and muliple
+        # spacing conditions
+        conditions = [
+            {"spacing": cf.eq(-1, "degrees_north")},
+            {"spacing": cf.wi(29, 46, "degrees_north")},
+        ]
+        cells = {"Y": conditions}
+        self.assertEqual(len(cf.aggregate(fl, cells=cells)), 2)
+        cells = {"Y": conditions[::-1]}
+        self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+
         # 2-d aggregation resulting in one field
         fl_2d = []
         for g in fl:
@@ -436,6 +447,7 @@ class aggregateTest(unittest.TestCase):
             2,
         )
 
+        # Bad cells
         with self.assertRaises(TypeError):
             cf.aggregate(fl, cells=9)
 
@@ -446,6 +458,10 @@ class aggregateTest(unittest.TestCase):
         for condition in (cf.M(2), cf.Y(2)):
             with self.assertRaises(ValueError):
                 cf.aggregate(fl, cells={"T": {"cellsize": condition}})
+
+        # Bad key
+        with self.assertRaises(ValueError):
+            cf.aggregate(fl, cells={"T": {"foo": 99}})
 
     def test_climatology_cells(self):
         """Test cf.climatology_cells"""

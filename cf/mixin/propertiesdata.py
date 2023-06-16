@@ -539,7 +539,11 @@ class PropertiesData(Properties):
         return self._unary_operation("__pos__")
 
     def __query_isclose__(self, value, rtol=None, atol=None):
-        """Query interface method for an "is close" condition."""
+        """Query interface method for an "is close" condition.
+
+        .. versionadded:: TODOAGGAVER
+
+        """
         data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(
@@ -547,7 +551,7 @@ class PropertiesData(Properties):
                 f"{self.__class__.__name__} object with no data: {self!r}"
             )
 
-        data.isclose(value, rtol=rtol, atol=atol)
+        return data.isclose(value, rtol=rtol, atol=atol)
 
     def _binary_operation(self, y, method):
         """Implement binary arithmetic and comparison operations.

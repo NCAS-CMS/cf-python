@@ -705,7 +705,8 @@ Special
    ~cf.DimensionCoordinate.__setitem__
    ~cf.DimensionCoordinate.__str__
    ~cf.DimensionCoordinate.__array__
-   ~cf.DimensionCoordinate.__data__
+   ~cf.DimensionCoordinate.__data__ 
+   ~cf.DimensionCoordinate.__query_isclose__
 
 Deprecated
 ----------

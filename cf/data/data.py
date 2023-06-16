@@ -4492,7 +4492,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return self._unary_operation("__pos__")
 
     def __query_isclose__(self, value, rtol=None, atol=None):
-        """Query interface method for an "is close" condition."""
+        """Query interface method for an "is close" condition.
+
+        .. versionadded:: TODOAGGAVER
+
+        """
         return self.isclose(value, rtol=rtol, atol=atol)
 
     @property

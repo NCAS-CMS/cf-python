@@ -607,6 +607,7 @@ Special
    ~cf.Count.__str__
    ~cf.Count.__array__
    ~cf.Count.__data__
+   ~cf.Count.__query_isclose__
    
 Deprecated
 ----------

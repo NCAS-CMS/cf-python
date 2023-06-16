@@ -245,8 +245,7 @@ class Query:
                 Only applicable to the ``'isclose'`` operator. The
                 tolerance on absolute numerical differences. If
                 `None`, the default, then the value returned at
-                evaluation time by the `cf.atol` function is used.set
-                by the `cf.atol` function.
+                evaluation time by the `cf.atol` function is used.
 
                 .. versionadded:: TODOAGGVER
 
@@ -296,11 +295,12 @@ class Query:
         .. versionadded:: TODOAGGVER
 
         """
-        if self._compound:
+        compound = self._compound
+        if compound:
             return (
-                self._compound[0].__dask_tokenize__(),
+                compound[0].__dask_tokenize__(),
                 self._bitwise_operator,
-                self._compound[1].__dask_tokenize__(),
+                compound[1].__dask_tokenize__(),
             )
 
         value = self._value
@@ -473,11 +473,9 @@ class Query:
     def atol(self):
         """The tolerance on absolute numerical differences.
 
-        For the ``'isclose'`` operator, returns the tolerance on
-        absolute numerical differences. If `None` then the value
-        returned at evaluation time by the `cf.atol` function is used.
-
-        Ignored in the evaluations of all other operators.
+        Returns the tolerance on absolute numerical differences. If
+        `None` then the value returned at evaluation time by the
+        `cf.atol` function is assumed.
 
         .. versionadded:: TODOAGGVER
 
@@ -488,11 +486,9 @@ class Query:
     def rtol(self):
         """The tolerance on relative numerical differences.
 
-        For the ``'isclose'`` operator, returns the tolerance on
-        relative numerical differences. If `None` then the value
-        returned at evaluation time by the `cf.rtol` function is used.
-
-        Ignored in the evaluations of all other operators.
+        Returns the tolerance on relative numerical differences. If
+        `None` then the value returned at evaluation time by the
+        `cf.rtol` function is assumed.
 
         .. versionadded:: TODOAGGVER
 

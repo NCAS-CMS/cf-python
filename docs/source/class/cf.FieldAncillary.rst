@@ -598,7 +598,8 @@ Special
    ~cf.FieldAncillary.__str__
    ~cf.FieldAncillary.__array__
    ~cf.FieldAncillary.__data__
-
+   ~cf.FieldAncillary.__query_isclose__
+	 
 Deprecated
 ----------
 

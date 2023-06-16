@@ -608,6 +608,7 @@ Special
    ~cf.Index.__str__
    ~cf.Index.__array__
    ~cf.Index.__data__
+   ~cf.Index.__query_isclose__
 
 Deprecated
 ----------

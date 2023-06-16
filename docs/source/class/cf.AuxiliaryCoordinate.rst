@@ -696,7 +696,8 @@ Special
    ~cf.AuxiliaryCoordinate.__setitem__
    ~cf.AuxiliaryCoordinate.__str__
    ~cf.AuxiliaryCoordinate.__array__
-   ~cf.AuxiliaryCoordinate.__data__
+   ~cf.AuxiliaryCoordinate.__data__ 
+   ~cf.AuxiliaryCoordinate.__query_isclose__
 
 Deprecated
 ----------
