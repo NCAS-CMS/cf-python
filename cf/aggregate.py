@@ -1803,7 +1803,7 @@ class _Meta:
         :Parameters:
 
             key: `str`
-                The key of the coordinate consrtuct.
+                The key of the coordinate construct.
 
         :Returns:
 
@@ -1901,7 +1901,7 @@ class _Meta:
 
         :Parameters:
 
-            properties: sequnce of `str`
+            properties: sequence of `str`
                 The names of the properties to be promoted.
 
         :Returns:
@@ -2090,13 +2090,13 @@ def aggregate(
             parameter has also been passed, then the concept of a
             "gap" becomes well defined - a gap is now when the
             difference between neighbouring coordinates originating
-            from different input fields does not meet the coordinate
-            spacing condition. In this case an aggregated field will
-            also have the specified coordinate spacing between
-            neighbouring cells that originated from different input
-            fields (as well as between the cells within each input
-            field), irrespective of the presence of bounds and their
-            values.
+            from different input fields that does not meet the
+            coordinate spacing condition. In this case an aggregated
+            field will also have the specified coordinate spacing
+            between neighbouring cells that originated from different
+            input fields (as well as between the cells within each
+            input field), irrespective of the presence of bounds and
+            their values.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2136,7 +2136,7 @@ def aggregate(
         ncvar_identities: `bool`, optional
             If True then force field and metadata constructs to be
             identified by their netCDF file variable names See also the
-            *relaxed_identies* parameter.
+            *relaxed_identities* parameter.
 
         equal_all: `bool`, optional
             If True then require that aggregated fields have the same set
@@ -2244,37 +2244,38 @@ def aggregate(
             .. versionadded:: 3.15.0
 
         cells: `dict` or `None`, optional
-            Provide conditions for dimension coordinate cells such
-            that input field or domain constructs whose dimension
+            Provide conditions for dimension coordinate cells so that
+            input field or domain constructs whose dimension
             coordinates match particular conditions will be aggregated
             separately from those which don't. All other aggregation
             criteria apply as normal. This can be used, for instance,
-            to ensure that monthly and daily averages are not
-            aggregated together.
+            to ensure that monthly and daily averages of the same
+            variable are not aggregated together.
 
             Field or domain constructs that don't match any of the
             given conditions are aggregated in the usual manner.
 
             Conditions are specified in a dictionary for which each
-            key is a dimension coordinate identity, with corresponding
-            value of one or more conditions on the dimension
-            coordinate cell sizes and/or coordinate spacings. For
-            instance, the *cells* dictionary ``{'T': {'cellsize':
-            cf.D()}}`` will cause fields or domains with time
-            coordinates whose cells span 1 day (e.g. fields of daily
-            mean data) to be aggregated separately from all others.
+            key is a dimension coordinate identity, with a
+            corresponding value of one or more conditions on the
+            dimension coordinate cell sizes and/or coordinate
+            spacings. For instance, the *cells* dictionary ``{'T':
+            {'cellsize': cf.D()}}`` will cause fields or domains with
+            time coordinates whose cells span 1 day (e.g. fields of
+            daily mean data) to be aggregated separately from all
+            others.
 
             A dictionary key selects a dimension coordinate construct
             from each input field or domain construct by passing the
-            key to its `dimension_coordinate` method. For example, for
-            a key of ``'T'``, the dimension coordinate construct
-            returned by ``f.dimension_coordinate('T')`` is
-            selected. If no such dimension coordinate construct
-            exists, or if a dimension coordinate construct exists but
-            none of its conditions are passed, then no special
-            aggregation consideration is given to that axis for that
-            field or domain. The dictionary may have any number of
-            keys, defining conditions for any number of dimension
+            key to its `dimension_coordinate` method. For example, a
+            key of ``'T'`` will select the dimension coordinate
+            construct returned by ``f.dimension_coordinate('T')``. If
+            no such dimension coordinate construct exists, or if a
+            dimension coordinate construct exists but none of its
+            conditions are passed, then no special aggregation
+            consideration is given to that axis for that field or
+            domain. The dictionary may have any number of keys,
+            defining conditions for any number of dimension
             coordinates. If multiple keys match the identity of the
             same dimension coordinate construct then the conditions
             corresponding to first such key encountered when iterating
@@ -2292,9 +2293,9 @@ def aggregate(
               absolute difference between two adjacent coordinate
               values) is given as ``{'spacing': <condition2>}``.
 
-            * Simulataneous conditions for the cell size and the cell
-              coordinate spacing given as ``{'cellsize': <condition1>,
-              'spacing': <condition2>}``.
+            * Simultaneous conditions for the cell size and the cell
+              coordinate spacing are given as
+              ``{'cellsize': <condition1>, 'spacing': <condition2>}``.
         ..
 
             where ``<condition1>`` and ``<condition2>`` must each be
@@ -2312,7 +2313,7 @@ def aggregate(
                       point precision and rounding errors. See also
                       the *rtol* and *atol* parameters.
 
-            Units must be provided on the cnditions where applicable,
+            Units must be provided on the conditions where applicable,
             since dimensionless conditions will not match cells that
             have physical dimensions.
 
@@ -2320,29 +2321,30 @@ def aggregate(
             construct may be defined by providing an ordered sequence
             of conditions. In this case, the conditions are tested in
             order, and the first one to be passed (if any) defines the
-            aggregation separation.
+            aggregation separation for each input field or domain.
 
-            If a cell coordinate spacing condition has been passed
-            then, by default, it does not apply to the spacing between
+            If a coordinate spacing condition has been passed then, by
+            default, it does not apply to the spacing between
             neighbouring coordinates from different input
             fields. However, if the *contiguous* parameter is also
             `True` then this will ensure that aggregated fields will
-            have the specified cell coordinate spacing throughout.
+            have the specified cell coordinate spacing throughout. See
+            the *contiguous* parameter for more details.
 
             .. note:: Unexpected results might occur in the particular
                       circumstance of two or more coordinate spacing
                       conditions being set for an axis which has size
-                      1 in some input fields, but not all of them.
-                      This is because whilst the size 1 dimension
-                      coordinates (for which the concept of cell
-                      coordinate spacing is undefined) will always
-                      pass the first coordinate spacing condition, the
-                      other fields might pass one of the other
-                      conditions, thus causing the fields with the
-                      size 1 axes to be aggregated seperately.
-                      However, if it transpires that all input fields
-                      pass the first coordinate spacing condition,
-                      then the aggregation will occur as expected.
+                      1 in some input fields, but not others. This is
+                      because whilst the size 1 dimension coordinates
+                      (for which the concept of cell coordinate
+                      spacing is undefined) will always pass the first
+                      coordinate spacing condition, the other fields
+                      might pass one of the other conditions, thus
+                      causing the fields with the size 1 axes to be
+                      aggregated separately. However, if it transpires
+                      that all input fields pass the first coordinate
+                      spacing condition, then the aggregation will
+                      occur as expected.
 
             **Climatological time cells**
 
@@ -2360,7 +2362,7 @@ def aggregate(
             coordinate data are on disk. Try to avoid setting
             conditions for which it doesn't matter if they are passed
             or not. For instance, if the inputs comprise monthly mean
-            air tempertures and daily mean precipitation fields, then
+            air temperatures and daily mean precipitation fields, then
             the different field identities will ensure a correct
             aggregation. In this case, adding cell conditions of
             ``{'T': [{'cellsize': cf.D()}, {'cellsize': cf.M()}]}``
