@@ -2065,8 +2065,8 @@ def aggregate(
 
         contiguous: `bool`, optional
             If True then require that the dimension coordinates of an
-            aggregated field have no "gaps" between neighbouring cells
-            that came from different input fields.
+            aggregated field have no "gaps" (defined below) between
+            neighbouring cells that came from different input fields. 
 
             By default, or if *contiguous* is False, gaps may occur
             between neighbouring cells that came from different input
@@ -2091,9 +2091,11 @@ def aggregate(
             fields does not meet the coordinate spacing condition. In
             this special case an aggregated field will also have the
             specified coordinate spacing between neighbouring cells
-            that originated from different input fields (as well as
-            between the cells within each input field), irrespective
-            of the presence of bounds and their values.
+            that originated from different input fields.
+
+            .. note:: An aggregated field may still have gaps between
+                      neighbouring cells that came from the same input
+                      field, regardless of the value of *contiguous*.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2247,20 +2249,20 @@ def aggregate(
             separately from those which don't. All other aggregation
             criteria apply as normal. This can be used, for instance,
             to ensure that monthly and daily averages of the same
-            variable are not aggregated together.
+            physical quantity are not aggregated together.
 
-            Field or domain constructs that don't match any of the
-            given conditions are aggregated in the usual manner.
+            Field or domain constructs that match any of the given
+            conditions are then aggregated in the usual manner, as are
+            those which don't match any of the given conditions.
 
-            Conditions are specified in a dictionary for which each
-            key is a dimension coordinate identity, with a
+            The conditions are specified in a dictionary for which
+            each key is a dimension coordinate identity, with a
             corresponding value of one or more conditions on the
             dimension coordinate cell sizes and/or coordinate
             spacings. For instance, the *cells* dictionary ``{'T':
             {'cellsize': cf.D()}}`` will cause fields or domains with
-            time coordinates whose cells span 1 day (e.g. fields of
-            daily mean data) to be aggregated separately from all
-            others.
+            time coordinates (``'T'``) whose cells all span 1 day
+            (``cf.D()``) to be aggregated separately from all others.
 
             A dictionary key selects a dimension coordinate construct
             from each input field or domain construct by passing the
@@ -2268,11 +2270,11 @@ def aggregate(
             key of ``'T'`` will select the dimension coordinate
             construct returned by ``f.dimension_coordinate('T')``. If
             no such dimension coordinate construct exists, or if a
-            dimension coordinate construct exists but none of its
-            conditions are passed, then no special aggregation
-            consideration is given to that axis for that field or
-            domain. The dictionary may have any number of keys,
-            defining conditions for any number of dimension
+            dimension coordinate construct exists but none of the
+            corresponding conditions are passed, then no special
+            aggregation consideration is given to that axis for that
+            field or domain. The dictionary may have any number of
+            keys, defining conditions for any number of dimension
             coordinates. If multiple keys match the identity of the
             same dimension coordinate construct then the conditions
             corresponding to first such key encountered when iterating
@@ -2283,22 +2285,23 @@ def aggregate(
             following:
 
             * A condition for the cell size (i.e. the absolute
-              difference between the cell bounds) is given as
+              difference between the cell bounds) given as
               ``{'cellsize': <condition1>}``.
 
             * A condition for the cell coordinate spacing (i.e. the
-              absolute difference between two adjacent coordinate
-              values) is given as ``{'spacing': <condition2>}``.
+              absolute difference between two neighbouring coordinate
+              values) given as ``{'spacing': <condition2>}``.
 
             * Simultaneous conditions for the cell size and the cell
               coordinate spacing are given as
-              ``{'cellsize': <condition1>, 'spacing': <condition2>}``.
+              ``{'cellsize': <condition1>, 'spacing': <condition2>}``
+              (with arbitrary key order).
         ..
 
             where ``<condition1>`` and ``<condition2>`` must each be
             one of a `Query`, `TimeDuration`, scalar `Data`, scalar
             data_like object, or `None`. A condition of `None` is
-            equivalent to the condition not being defined.
+            equivalent to that condition not being defined.
 
             .. note:: The `TimeDuration` conditions ``cf.M()`` (1
                       calendar month) and ``cf.Y()`` (1 calendar year)
@@ -2318,32 +2321,31 @@ def aggregate(
             Multiple conditions for the same dimension coordinate
             construct may be defined by providing an ordered sequence
             of conditions. In this case, the conditions are tested in
-            order, and the first one to be passed (if any) defines the
-            aggregation separation for each input field or domain.
+            order, with the first one to be passed (if any) defining
+            the aggregation separation for each input field or domain.
 
             If a coordinate spacing condition has been passed then, by
             default, it does not apply to the spacing between
             neighbouring coordinates from different input
             fields. However, if the *contiguous* parameter is also
-            `True` then this will ensure that aggregated fields will
+            True then this will ensure that aggregated fields will
             have the specified cell coordinate spacing throughout. See
             the *contiguous* parameter for more details.
 
             .. note:: Potentially unintended results might occur in
-                      the particular circumstance of two or more
-                      coordinate spacing conditions being set for an
-                      axis which has size 1 in some input fields, but
-                      not others. This is because whilst the size 1
-                      dimension coordinates (for which the concept of
-                      cell coordinate spacing is undefined) will
-                      always pass the first coordinate spacing
-                      condition, the other fields might pass one of
-                      the other conditions, thus causing the fields
-                      with the size 1 axes to be aggregated
-                      separately. However, if it transpires that all
-                      input fields pass the first coordinate spacing
-                      condition, then the aggregation will occur as
-                      expected.
+                      the particular circumstance of aggregatable
+                      input fields for which some, but not all, have a
+                      size 1 aggregation axis. The concept of cell
+                      coordinate spacing is undefined for the size 1
+                      dimension coordinates and so they will pass any
+                      coordinate spacing condition, which in practice
+                      means they pass the first in the sequence. If
+                      the dimension coordinates with size greater than
+                      1 also pass the first condition then the
+                      aggregation will proceed as expected, but if
+                      they pass one of the other coordinate spacing
+                      conditions then the fields with size 1 dimension
+                      coordinates will be aggregated separately.
 
             **Climatological time cells**
 
@@ -2361,8 +2363,8 @@ def aggregate(
             coordinate data are on disk. Try to avoid setting
             conditions when it doesn't matter if they are passed or
             not. For instance, if the inputs comprise monthly mean air
-            temperatures and daily mean precipitation fields, then the
-            different field identities will ensure a correct
+            temperature and daily mean precipitation fields, then the
+            different field identities alone will ensure a correct
             aggregation. In this case, adding cell conditions of
             ``{'T': [{'cellsize': cf.D()}, {'cellsize': cf.M()}]}``
             will not change the result, but tests will still be
@@ -2371,22 +2373,21 @@ def aggregate(
             When setting a sequence of conditions, performance will be
             improved if the conditions towards the beginning of the
             sequence are those that are expected to be passed by the
-            dimension coordinate constructs with the largest dimension
-            coordinate data arrays. This because is the conditions are
-            tested in order until a condition to passes, and
-            subsequent conditions are not tested. Therefore, this
-            strategy will minimise the amount of the most expensive
-            tests, i.e. those on the largest data, which are often
-            those with the smallest cell coordinate spacings.
+            dimension coordinate constructs with the largest data
+            arrays. This is because the conditions are tested in order
+            until a condition passes, and subsequent conditions are
+            not tested. Therefore, this strategy will minimise the
+            amount of the most expensive tests, i.e. those on the
+            largest data.
 
             *Parameter example*
               Equivalent ways to separate time cells of 1 day from
               other time cell sizes:
               ``{'T': {'cellsize': cf.D()}}``,
               ``{'T': {'cellsize': cf.eq(1, 'day'}}``,
+              ``{'T': {'cellsize': cf.isclose(1, 'day'}}``, 
               ``{'T': {'cellsize': cf.Data(1, 'day')}}``,
-              ``{'T': {'cellsize': cf.h(24)}}``,
-              ``{'T': {'cellsize': cf.isclose(1, 'day'}}``, etc.
+              ``{'T': {'cellsize': cf.h(24)}}``, etc.
 
             *Parameter example*
               Equivalent ways to separate time cells of 1 month, in
