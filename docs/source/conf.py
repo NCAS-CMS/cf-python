@@ -102,7 +102,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
-#    "sphinx_gallery.gen_gallery",
+    "sphinx_gallery.gen_gallery",
 ]
 
 

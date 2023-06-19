@@ -1473,7 +1473,7 @@ class _Meta:
 
         for signature in signatures:
             if signature[0] is None:
-                self.messsage = (
+                self.message = (
                     f"{self.f.identity()!r} field can't be aggregated due "
                     "to it having an unidentifiable "
                     "coordinate reference"
@@ -1573,7 +1573,7 @@ class _Meta:
             logger.debug(f"COMPLETE AGGREGATION METADATA:\n{self}")
 
     def string_structural_signature(self):
-        """Return a multi-line string giving a field's structual
+        """Return a multi-line string giving a field's structural
         signature.
 
         :Returns:
@@ -1588,7 +1588,7 @@ class _Meta:
         return "\n".join(string)
 
     def structural_signature(self):
-        """Build the structual signature of a field from its components.
+        """Build the structural signature of a field from its components.
 
         :Returns:
 
@@ -1597,7 +1597,7 @@ class _Meta:
         """
         f = self.field
 
-        # Initialise the structual signature with:
+        # Initialise the structural signature with:
         #
         # * the construct type (field or domain)
         # * the identity
@@ -1834,7 +1834,7 @@ class _Meta:
     def promote_to_auxiliary_coordinate(self, properties):
         """Promote properties to auxiliary coordinate constructs.
 
-        Each property is converted to a 1-d auxilliary coordinate
+        Each property is converted to a 1-d auxiliary coordinate
         construct that spans a new independent size 1 domain axis of
         the field, and the property is deleted.
 
@@ -2066,7 +2066,7 @@ def aggregate(
         contiguous: `bool`, optional
             If True then require that the dimension coordinates of an
             aggregated field have no "gaps" (defined below) between
-            neighbouring cells that came from different input fields. 
+            neighbouring cells that came from different input fields.
 
             By default, or if *contiguous* is False, gaps may occur
             between neighbouring cells that came from different input
@@ -2096,6 +2096,9 @@ def aggregate(
             .. note:: An aggregated field may still have gaps between
                       neighbouring cells that came from the same input
                       field, regardless of the value of *contiguous*.
+                      However, such gaps may be controlled with a cell
+                      coordinate spacing condition defined by the
+                      *cells* parameter.
 
         relaxed_units: `bool`, optional
             If True then assume that field and metadata constructs
@@ -2385,7 +2388,7 @@ def aggregate(
               other time cell sizes:
               ``{'T': {'cellsize': cf.D()}}``,
               ``{'T': {'cellsize': cf.eq(1, 'day'}}``,
-              ``{'T': {'cellsize': cf.isclose(1, 'day'}}``, 
+              ``{'T': {'cellsize': cf.isclose(1, 'day'}}``,
               ``{'T': {'cellsize': cf.Data(1, 'day')}}``,
               ``{'T': {'cellsize': cf.h(24)}}``, etc.
 
@@ -2698,7 +2701,7 @@ def aggregate(
         # and some (only print_info ATM) of _Meta's methods' use of:
         #    _manage_log_level_via_verbose_attr
         # breaks the verbosity management here. This is currently the
-        # only case in the codebases cfdm and cf where both decorators are at
+        # only case in the code bases cfdm and cf where both decorators are at
         # play. Logic to handle the interface between the two has not
         # yet been added, so the latter called with print_info resets the
         # log level prematurely w.r.t the intentions of the former. For now,
@@ -3408,7 +3411,7 @@ def _create_hash_and_first_values(
                 axes = aux["axes"]
                 canonical_axes = aux["canonical_axes"]
                 if axes != canonical_axes:
-                    # Transpose the N-d auxilliary coordinate so that
+                    # Transpose the N-d auxiliary coordinate so that
                     # it has the canonical axis order
                     iaxes = [axes.index(axis) for axis in canonical_axes]
                     coord = coord.transpose(iaxes)
@@ -3462,7 +3465,7 @@ def _create_hash_and_first_values(
                     cell_measure = constructs[key]
                     if axes != canonical_axes:
                         # Transpose the cell measure so that it has
-                        # the canonnical axis order
+                        # the canonical axis order
                         iaxes = [axes.index(axis) for axis in canonical_axes]
                         cell_measure = cell_measure.transpose(iaxes)
 
