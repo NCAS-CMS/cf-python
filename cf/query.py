@@ -18,8 +18,8 @@ from .functions import (
     _DEPRECATION_ERROR_FUNCTION_KWARGS,
 )
 from .functions import atol as cf_atol
-from .functions import equals as _equals
-from .functions import inspect as _inspect
+from .functions import equals as cf_equals
+from .functions import inspect as cf_inspect
 from .functions import rtol as cf_rtol
 from .units import Units
 
@@ -169,7 +169,7 @@ class Query:
     In general, each method must have the query value as it's only
     parameter. The only excecption is for `__query_isclose__`, which
     also requires the absolute and relative numerical tolerances
-    provided by the *atol* and *rtol* keyword parameters.
+    provided by *atol* and *rtol* keyword parameters.
 
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
@@ -236,16 +236,16 @@ class Query:
             rtol: number, optional
                 Only applicable to the ``'isclose'`` operator. The
                 tolerance on relative numerical differences. If
-                `None`, the default, then the value returned at
-                evaluation time by the `cf.rtol` function is used.
+                `None`, the default, then the value returned by
+                `cf.rtol` is used at evaluation time.
 
                 .. versionadded:: TODOAGGVER
 
             atol: number, optional
                 Only applicable to the ``'isclose'`` operator. The
                 tolerance on absolute numerical differences. If
-                `None`, the default, then the value returned at
-                evaluation time by the `cf.atol` function is used.
+                `None`, the default, then the value returned by
+                `cf.atol` is used at evaluation time.
 
                 .. versionadded:: TODOAGGVER
 
@@ -312,7 +312,11 @@ class Query:
         else:
             value = (value,)
 
-        return (self.__class__, self._operator, self._attr) + value
+        operator = self._operator
+        if operator == "isclose":
+            value += (self.rtol, self.atol)
+
+        return (self.__class__, operator, self._attr) + value
 
     def __deepcopy__(self, memo):
         """Used if copy.deepcopy is called on the variable."""
@@ -473,40 +477,40 @@ class Query:
     def atol(self):
         """The tolerance on absolute numerical differences.
 
-        Returns the tolerance on absolute numerical differences. If
-        `None` then the value returned at evaluation time by the
-        `cf.atol` function is assumed.
+        Returns the tolerance on absolute numerical differences that
+        is used when evaluating numerically tolerant conditions
+        (i.e. those defined by the ``'isclose'`` operator). If `None`
+        then the value returned by `cf.atol` is used instead.
+
+        For compound queries `atol` is always `None`, even if some of
+        the constituent conditions have a different value.
 
         .. versionadded:: TODOAGGVER
+
+        .. seealso:: `rtol`, `setdefault`
 
         """
         return getattr(self, "_atol", None)
 
     @property
-    def rtol(self):
-        """The tolerance on relative numerical differences.
-
-        Returns the tolerance on relative numerical differences. If
-        `None` then the value returned at evaluation time by the
-        `cf.rtol` function is assumed.
-
-        .. versionadded:: TODOAGGVER
-
-        """
-        return getattr(self, "_rtol", None)
-
-    @property
     def attr(self):
         """The object attribute on which to apply the query condition.
+
+        For compound queries `attr` is always ``()``, even if some of
+        the constituent conditions have a different value.
+
+        .. seealso:: `addattr`
 
         **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
         ()
-        >>> q = cf.Query('le', 6, attr='year')
-        >>> q.attr
+        >>> r = cf.Query('le', 6, attr='year')
+        >>> r.attr
         ('year',)
+        >>> (q | r).attr
+        ()
 
         """
         return self._attr
@@ -515,7 +519,8 @@ class Query:
     def operator(self):
         """The query operator.
 
-        Compound conditions return `None`.
+        For compound queries `operator` is always ``None``, regardless
+        of the operators of the constituent conditions.
 
         **Examples**
 
@@ -591,6 +596,25 @@ class Query:
 
         raise AttributeError(f"{self!r} has indeterminate units")
 
+    @property
+    def rtol(self):
+        """The tolerance on relative numerical differences.
+
+        Returns the tolerance on relative numerical differences that
+        is used when evaluating numerically tolerant conditions
+        (i.e. those defined by the ``'isclose'`` operator). If `None`
+        then the value returned by `cf.rtol` is used instead.
+
+        For compound queries `rtol` is always `None`, even if some of
+        the constituent conditions have a different value.
+
+        .. versionadded:: TODOAGGVER
+
+        .. seealso:: `atol`, `setdefault`
+
+        """
+        return getattr(self, "_rtol", None)
+
     @Units.setter
     def Units(self, value):
         self.set_condition_units(value)
@@ -626,6 +650,8 @@ class Query:
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
         attribute.
+
+        .. seealso:: `attr`
 
         :Parameters:
 
@@ -686,8 +712,9 @@ class Query:
         d = self.__dict__.copy()
         new.__dict__ = d
 
-        if d["_compound"]:
-            d["_compound"] = deepcopy(d["_compound"])
+        compound = d["_compound"]
+        if compound:
+            d["_compound"] = deepcopy(compound)
         else:
             d["_value"] = deepcopy(d["_value"])
 
@@ -774,17 +801,16 @@ class Query:
             "_attr",
             "_value",
             "_operator",
+            "_rtol",
+            "_atol",
         ):
-            if not _equals(
-                getattr(self, attr, None),
-                getattr(other, attr, None),
-                verbose=verbose,
-            ):
+            x = getattr(self, attr, None)
+            y = getattr(other, attr, None)
+            if not cf_equals(x, y, verbose=verbose):
                 if is_log_level_info(logger):
                     logger.info(
                         f"{self.__class__.__name__}: Different {attr!r} "
-                        f"attributes: {getattr(self, attr, None)!r}, "
-                        f"{getattr(other, attr, None)!r}"
+                        f"attributes: {x!r}, {y!r}"
                     )  # pragma: no cover
 
                 return False
@@ -881,6 +907,17 @@ class Query:
 
             return (x >= value[0]) & (x <= value[1])
 
+        if operator == "eq":
+            try:
+                return bool(value.search(x))
+            except AttributeError:
+                return x == value
+            except TypeError:
+                raise ValueError(
+                    "Can't perform regular expression search on a "
+                    f"non-string: {x!r}"
+                )
+
         if operator == "isclose":
             rtol = self.rtol
             atol = self.atol
@@ -895,17 +932,6 @@ class Query:
                 return _isclose(value, rtol=rtol, atol=atol)
 
             return np.isclose(x, value, rtol=rtol, atol=atol)
-
-        if operator == "eq":
-            try:
-                return bool(value.search(x))
-            except AttributeError:
-                return x == value
-            except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    f"non-string: {x!r}"
-                )
 
         if operator == "ne":
             try:
@@ -931,13 +957,6 @@ class Query:
                 return _le(value)
 
             return x <= value
-
-        if operator == "gt":
-            _gt = getattr(x, "__query_gt__", None)
-            if _gt is not None:
-                return _gt(value)
-
-            return x > value
 
         if operator == "ge":
             _ge = getattr(x, "__query_ge_", None)
@@ -987,7 +1006,7 @@ class Query:
             `None`
 
         """
-        print(_inspect(self))  # pragma: no cover
+        print(cf_inspect(self))  # pragma: no cover
 
     def iscontains(self):
         """Return True if the query is a "cell contains" condition.
@@ -1041,7 +1060,7 @@ class Query:
     def set_condition_units(self, units):
         """Set units of condition values in-place.
 
-        .. versionadded:: TODO
+        .. versionadded:: 3.13.1
 
         :Parameters:
 
@@ -1129,6 +1148,69 @@ class Query:
             value = get_and_set_value_units(value, units)
 
         self._value = value
+
+    def setdefault(self, rtol=None, atol=None):
+        """Set condition parameters in-place that are not already set.
+
+        For compound queries the parameters are set recursively on the
+        constituent conditions.
+
+        .. versionadded:: TODOAGGVER
+
+        .. seealso:: `atol`, `rtol`
+
+        :Parameters:
+
+            rtol: number, optional
+                Only applicable to the ``'isclose'`` operator and
+                ignore for all other operators. Set the given
+                tolerance on relative numerical differences, unless
+                already set. Ignored if `None`.
+
+            atol: number, optional
+                Only applicable to the ``'isclose'`` operator and
+                ignore for all other operators. Set the given
+                tolerance on absolute numerical differences, unless
+                already set. Ignored if `None`.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> q = cf.isclose(9)
+        >>> q
+        <CF Query: (isclose 9)>
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        <CF Query: (isclose 9 rtol=1e-05 atol=1e-08)>
+
+        >>> q = cf.isclose(9, rtol=9e-9)
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        >>> q
+        <CF Query: (isclose 9 rtol=9e-09 atol=1e-08)>
+
+        >>> q = cf.lt(9) & (cf.eq(1) | cf.isclose(4, rtol=9e-9))
+        >>> q
+        <CF Query: [(lt 9) & [(eq 1) | (isclose 4 rtol=9e-09)]]>
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        >>> q
+        <CF Query: [(lt 9) & [(eq 1) | (isclose 4 rtol=9e-09 atol=1e-08)]]>
+
+        """
+        compound = self._compound
+        if compound:
+            for q in compound:
+                q.setdefault(rtol=rtol, atol=atol)
+
+            return
+
+        if self.operator == "isclose":
+            if rtol is not None and self.rtol is None:
+                self._rtol = rtol
+
+            if atol is not None and self.atol is None:
+                self._atol = atol
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -1502,13 +1584,13 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
 
         rtol: number, optional
             The tolerance on relative numerical differences. If
-            `None`, the default, then the value returned at evaluation
-            time by the `cf.rtol` function is used.
+            `None`, the default, then the value returned by `cf.rtol`
+            is used at evaluation time.
 
         atol: number, optional
             The tolerance on absolute numerical differences. If
-            `None`, the default, then the value returned at evaluation
-            time by the `cf.atol` function is used.
+            `None`, the default, then the value returned by `cf.atol`
+            is used at evaluation time.
 
     :Returns:
 

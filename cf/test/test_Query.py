@@ -645,12 +645,16 @@ class QueryTest(unittest.TestCase):
             cf.eq(8) & cf.le(7, "km"),
             cf.wo(2, 5, attr="day") | cf.set(cf.Data([1, 2], "km")),
             cf.eq(8) | cf.lt(9) & cf.ge(10),
+            cf.isclose(1, "days", rtol=10, atol=99),
         ):
             self.assertEqual(tokenize(q), tokenize(q.copy()))
 
         self.assertEqual(tokenize(cf.eq(9, "km")), tokenize(cf.eq(9, "1000m")))
         self.assertNotEqual(
             tokenize(cf.eq(9, "km")), tokenize(cf.eq(9000, "m"))
+        )
+        self.assertNotEqual(
+            tokenize(cf.isclose(9)), tokenize(cf.isclose(9, rtol=10))
         )
 
     def test_Query_Units(self):
@@ -667,6 +671,16 @@ class QueryTest(unittest.TestCase):
 
         with self.assertRaises(AttributeError):
             (cf.eq(9, "m") | cf.gt(9, "day")).Units
+
+    def test_Query_atol(self):
+        self.assertIsNone(cf.eq(9).atol)
+        self.assertIsNone(cf.Query("isclose", 9).atol)
+        self.assertEqual(cf.Query("isclose", 9, atol=10).atol, 10)
+
+    def test_Query_rtol(self):
+        self.assertIsNone(cf.eq(9).rtol)
+        self.assertIsNone(cf.Query("isclose", 9).rtol)
+        self.assertEqual(cf.Query("isclose", 9, rtol=10).rtol, 10)
 
     def test_Query_isclose(self):
         q = cf.isclose(9)
@@ -696,6 +710,41 @@ class QueryTest(unittest.TestCase):
         # Can't set atol and rtol unless operation is 'isclose'
         with self.assertRaises(ValueError):
             cf.Query("eq", 9, atol=atol, rtol=rtol)
+
+    def test_Query_setdefault(self):
+        # rtol and atol
+        q = cf.isclose(9)
+        self.assertIsNone(q.rtol)
+        self.assertIsNone(q.atol)
+
+        q.setdefault(rtol=10, atol=99)
+        self.assertEqual(q.rtol, 10)
+        self.assertEqual(q.atol, 99)
+
+        q.setdefault(rtol=2, atol=3)
+        self.assertEqual(q.rtol, 10)
+        self.assertEqual(q.atol, 99)
+
+        q = cf.isclose(9, atol=3) | (cf.eq(1) & cf.isclose(4, rtol=2))
+        self.assertIsNone(q.rtol)
+        self.assertIsNone(q.atol)
+
+        q.setdefault(rtol=10, atol=99)
+        self.assertIsNone(q.rtol)
+        self.assertIsNone(q.atol)
+
+        c = q._compound[0]
+        self.assertEqual(c.rtol, 10)
+        self.assertEqual(c.atol, 3)
+
+        c = q._compound[1]._compound[1]
+        self.assertEqual(c.rtol, 2)
+        self.assertEqual(c.atol, 99)
+
+        q = cf.eq(9)
+        q.setdefault(rtol=10, atol=99)
+        self.assertIsNone(q.rtol)
+        self.assertIsNone(q.atol)
 
 
 if __name__ == "__main__":

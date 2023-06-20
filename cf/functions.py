@@ -352,7 +352,7 @@ def configuration(
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"of_fraction": None},
-            version="TODODASVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -361,7 +361,7 @@ def configuration(
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"collapse_parallel_mode": None},
-            version="TODODASVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

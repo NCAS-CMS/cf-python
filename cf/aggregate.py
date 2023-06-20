@@ -21,9 +21,9 @@ from .fieldancillary import FieldAncillary
 from .fieldlist import FieldList
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
-from .functions import configuration, flat
+from .functions import flat
 from .functions import rtol as cf_rtol
-from .query import gt, isclose, wi
+from .query import Query, gt, isclose, wi
 from .timeduration import M, Y
 from .units import Units
 
@@ -278,13 +278,13 @@ class _Meta:
 
             rtol: number, optional
                 The tolerance on relative differences between real
-                numbers. The default value is set by the
-                `cf.rtol` function.
+                numbers. The default value is set by the `cf.rtol`
+                function.
 
             atol: number, optional
                 The tolerance on absolute differences between real
-                numbers. The default value is set by the
-                `cf.atol` function.
+                numbers. The default value is set by the `cf.atol`
+                function.
 
             dimension: (sequence of) `str`, optional
                 Create new axes for each input field which has one or
@@ -488,7 +488,7 @@ class _Meta:
                 # Check for cell conditions that apply to this
                 # dimension coordinate construct
                 cellsize, spacing = self.cellsize_spacing(
-                    cells, dim_coord, axis, hasbounds, rtol=rtol, atol=atol
+                    cells, dim_coord, axis, hasbounds
                 )
 
                 info_dim.append(
@@ -950,10 +950,11 @@ class _Meta:
 
         return "\n".join(strings)
 
-    def cellsize_spacing(
-        self, cells, dim_coord, axis, hasbounds, rtol=None, atol=None
-    ):
-        """Return the coordinate cell size and spacing conditions.
+    def cellsize_spacing(self, cells, dim_coord, axis, hasbounds):
+        """Return coordinate cell size and spacing conditions.
+
+        Returns the coordinate cell size and spacing conditions that
+        are satisfied by the given dimension coordinate construct.
 
         .. versionadded:: TODOAGGVER
 
@@ -974,16 +975,6 @@ class _Meta:
                 Whether or not the dimension coordinate construct has
                 bounds.
 
-            rtol: number, optional
-                The tolerance on relative differences between real
-                numbers. The default value is set by the `cf.rtol`
-                function.
-
-            atol: number, optional
-                The tolerance on absolute differences between real
-                numbers. The default value is set by the `cf.atol`
-                function.
-
         :Returns:
 
             2-`tuple`
@@ -992,99 +983,101 @@ class _Meta:
 
         """
         if not cells:
+            # No conditions have been defined
             return (None, None)
 
-        # Initialise the cellsize and coordinate spacing
-        # conditions that form part of the signature
+        # Initialise the cellsize and coordinate spacing conditions
         cellsize = None
         spacing = None
 
-        with configuration(rtol=rtol, atol=atol):
-            # Check for cell conditions that apply to the dimension
-            # coordinate construct.
-            #
-            # Do this in the context of the values of rtol and atol
-            # defined by `cf.aggregate`. rtol and atol might get used
-            # by 'isclose' query conditions.
-            dims = self.field.dimension_coordinates(filter_by_axis=(axis,))
-            for identity, conditions in cells.items():
-                if not dims(identity):
-                    # The dimension coordinate does not match the
-                    # identity given by this key of the 'cells'
-                    # dictionary.
-                    continue
+        # Check for cell conditions that apply to the dimension
+        # coordinate construct.
+        dims = self.field.dimension_coordinates(filter_by_axis=(axis,))
 
-                # Still here? Then loop round the conditions to see if
-                # the dimension coordinate values match one of them.
-                dim_coord.persist(inplace=True)
-                dim_cellsize = dim_coord.cellsize
-                difference_units = dim_cellsize.Units
+        # Loop over the 'cells' dictionary
+        for identity, conditions in cells.items():
+            if not dims(identity):
+                # The dimension coordinate does not match the
+                # identity given by this key of the 'cells'
+                # dictionary.
+                continue
 
-                # Initialise the dimension coordinate construct's
-                # cellsize and spacing data
-                cellsize_data = None
-                spacing_data = None
+            # Still here? Then loop round the conditions to see if
+            # the dimension coordinate values match one of them.
+            dim_coord.persist(inplace=True)
+            dim_cellsize = dim_coord.cellsize
+            difference_units = dim_cellsize.Units
 
-                for condition in conditions:
-                    cellsize = None
-                    spacing = None
+            # Initialise the dimension coordinate construct's
+            # cellsize and spacing data
+            cellsize_data = None
+            spacing_data = None
 
-                    # Find out if the coordinates match a cellsize
-                    # condition
-                    c = condition.get("cellsize")
-                    if c is not None and difference_units.equivalent(
-                        getattr(c, "Units", Units())
-                    ):
-                        if hasbounds and cellsize_data is None:
-                            cellsize_data = dim_cellsize.persist()
+            # Loop over the sequence of conditions
+            for condition in conditions:
+                cellsize = None
+                spacing = None
 
-                        try:
-                            if hasbounds:
-                                match = (cellsize_data == c).all()
-                            else:
-                                # Dimension coordinates without bounds
-                                # have zero cell sizes
-                                match = 0 == c
-                        except ValueError:
-                            # The comparison will fail if 'c' is
-                            # hiding incompatible units, which could
-                            # be the case for a compound `Query`
-                            # condition.
-                            match = False
+                # Check for a matching cellsize condition
+                c = condition.get("cellsize")
+                if c is not None and difference_units.equivalent(
+                    getattr(c, "Units", _no_units)
+                ):
+                    if hasbounds and cellsize_data is None:
+                        cellsize_data = dim_cellsize.persist()
 
-                        if match:
-                            cellsize = c
+                    try:
+                        if hasbounds:
+                            match = (cellsize_data == c).all()
                         else:
-                            continue
+                            # Dimension coordinates without bounds
+                            # always have zero cell sizes
+                            match = 0 == c
+                    except ValueError:
+                        # The comparison will fail if 'c' is
+                        # hiding incompatible units, which could
+                        # be the case for a compound `Query`
+                        # condition.
+                        match = False
 
-                    # Find out if the coordinates match a spacing
-                    # condition
-                    c = condition.get("spacing")
-                    if c is not None and difference_units.equivalent(
-                        getattr(c, "Units", Units())
-                    ):
-                        if spacing_data is None:
-                            spacing_data = dim_coord.data.diff().persist()
+                    if match:
+                        cellsize = c
+                    else:
+                        continue
 
-                        try:
-                            match = (spacing_data == c).all()
-                        except ValueError:
-                            # The comparison will fail if 'c' is
-                            # hiding incompatible units, which could
-                            # be the case for a compound `Query`
-                            # condition.
-                            match = False
+                # Check for a matching coordinate spacing
+                # condition
+                c = condition.get("spacing")
+                if c is not None and difference_units.equivalent(
+                    getattr(c, "Units", _no_units)
+                ):
+                    if spacing_data is None:
+                        spacing_data = dim_coord.data.diff().persist()
 
-                        if match:
-                            spacing = c
-                        else:
-                            continue
+                    try:
+                        # Note: If the dimension coordinate
+                        #       construct has size 1 then
+                        #       'spacing_data' will have size 0,
+                        #       and so 'match' will always be
+                        #       True, whatever the value of 'c'.
+                        match = (spacing_data == c).all()
+                    except ValueError:
+                        # The comparison will fail if 'c' is
+                        # hiding incompatible units, which could
+                        # be the case for a compound `Query`
+                        # condition.
+                        match = False
 
-                    if cellsize is not None or spacing is not None:
-                        # We've found a matching condition
-                        break
+                    if match:
+                        spacing = c
+                    else:
+                        continue
 
-                break
+                if cellsize is not None or spacing is not None:
+                    # We've found a matching condition
+                    break
+
+            break
 
         return (cellsize, spacing)
 
@@ -1132,7 +1125,7 @@ class _Meta:
                 for c in axis[identity][condition]:
                     if c is not None:
                         string.append(
-                            f"{self.tokenise_cell_condition((c,))[0]}: "
+                            f"{self.tokenise_cell_conditions((c,))[0]}: "
                             f"Coordinate {condition} condition {c!r}"
                         )
 
@@ -1664,11 +1657,11 @@ class _Meta:
                 ("size", axis[identity]["size"]),
                 (
                     "cellsize",
-                    self.tokenise_cell_condition(axis[identity]["cellsize"]),
+                    self.tokenise_cell_conditions(axis[identity]["cellsize"]),
                 ),
                 (
                     "spacing",
-                    self.tokenise_cell_condition(axis[identity]["spacing"]),
+                    self.tokenise_cell_conditions(axis[identity]["spacing"]),
                 ),
                 ("dim_coord_index", axis[identity]["dim_coord_index"]),
             )
@@ -1757,7 +1750,7 @@ class _Meta:
             Field_ancillaries=Field_ancillaries,
         )
 
-    def tokenise_cell_condition(self, cellsize_or_spacing):
+    def tokenise_cell_conditions(self, cell_conditions):
         """Create deterministic tokens for cell conditions.
 
         .. versionadded:: TODOAGGVER
@@ -1766,26 +1759,26 @@ class _Meta:
 
         :Parameters:
 
-            cellsize_or_spacing: sequence
+            cell_conditions: sequence
                 Sequence of cell size or cell coordinate spacing
                 conditions.
 
         :Returns:
 
             `tuple`
-                Sequence of the deterministic token for each
+                Sequence of the deterministic tokens for each
                 condition.
 
         **Examples**
 
-        >>> m.tokenise_cell_condition((cf.Data(45, 'degreeE'),)
+        >>> m.tokenise_cell_conditions((cf.Data(45, 'degreeE'),)
         ('542935362dc5399b91e045384a1b84d6',)
-        >>> m.tokenise_cell_condition((5, cf.wi(40, 50, 'degreeE')))
+        >>> m.tokenise_cell_conditions((5, cf.wi(40, 50, 'degreeE')))
         ('ce9a05dd6ec76c6a6d171b0c055f3127', '8e0216a9a17a20b6620c6502bb45dec9')
 
         """
         out = []
-        for x in cellsize_or_spacing:
+        for x in cell_conditions:
             if x is None:
                 out.append(None)
             else:
@@ -1968,7 +1961,6 @@ def aggregate(
     atol=None,
     rtol=None,
     no_overlap=False,
-    shared_nc_domain=False,
     field_identity=None,
     field_ancillaries=None,
     cells=None,
@@ -2009,8 +2001,8 @@ def aggregate(
             The field or domain constructs to aggregate.
 
         verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent
-            string equal ignoring case to one of:
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
 
             * ``'DISABLE'`` (``0``)
             * ``'WARNING'`` (``1``)
@@ -2018,43 +2010,38 @@ def aggregate(
             * ``'DETAIL'`` (``3``)
             * ``'DEBUG'`` (``-1``)
 
-            set for the duration of the method call only as the
-            minimum cut-off for the verboseness level of displayed
-            output (log) messages, regardless of the
-            globally-configured `cf.log_level`.  Note that increasing
-            numerical value corresponds to increasing verbosity, with
-            the exception of ``-1`` as a special case of maximal and
-            extreme verbosity.
+            set for the duration of the method call only as the minimum
+            cut-off for the verboseness level of displayed output (log)
+            messages, regardless of the globally-configured `cf.log_level`.
+            Note that increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case of
+            maximal and extreme verbosity.
 
-            Otherwise, if `None` (the default value), output messages
-            will be shown according to the value of the `cf.log_level`
-            setting.
+            Otherwise, if `None` (the default value), output messages will
+            be shown according to the value of the `cf.log_level` setting.
 
-            Overall, the higher a non-negative integer or equivalent
-            string that is set (up to a maximum of ``3`` or
-            ``'DETAIL'``) for increasing verbosity, the more
-            description that is printed to convey information about
-            the aggregation process. Explicitly:
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
+            convey information about the aggregation process. Explicitly:
 
-            ===============  =========================================
-            Value set        Result
-            ===============  =========================================
-            ``0``            No information is displayed.
+            =============  =================================================
+            Value set      Result
+            =============  =================================================
+            ``0``          * No information is displayed.
 
-            ``1``            Display information on which fields are
-                             unaggregatable, and why.
+            ``1``          * Display information on which fields are
+                           unaggregatable, and why.
 
-            ``2``            As well as the above, display the
-                             structural signatures of the fields and,
-                             when there is more than one field
-                             construct with the same structural
-                             signature, their canonical first and last
-                             coordinate values.
+            ``2``          * As well as the above, display the structural
+                           signatures of the fields and, when there is more
+                           than one field construct with the same structural
+                           signature, their canonical first and last
+                           coordinate values.
 
-            ``3`` or ``-1``  As well as the above, display the field
-                             construct's complete aggregation
-                             metadata.
-            ===============  =========================================
+            ``3``/``-1``   * As well as the above, display the field
+                           construct's complete aggregation metadata.
+            =============  =================================================
 
         overlap: `bool`, optional
             If False then require that aggregated field constructs
@@ -2258,6 +2245,8 @@ def aggregate(
             conditions are then aggregated in the usual manner, as are
             those which don't match any of the given conditions.
 
+            **Conditions format**
+
             The conditions are specified in a dictionary for which
             each key is a dimension coordinate identity, with a
             corresponding value of one or more conditions on the
@@ -2317,15 +2306,21 @@ def aggregate(
                       point precision and rounding errors. See also
                       the *rtol* and *atol* parameters.
 
+            **Units**
+
             Units must be provided on the conditions where applicable,
-            since dimensionless conditions will not match cells that
-            have physical dimensions.
+            since conditions without defined units do not match
+            dimension coordinate constructs with defined units.
+
+            **Multiple conditions**
 
             Multiple conditions for the same dimension coordinate
             construct may be defined by providing an ordered sequence
             of conditions. In this case, the conditions are tested in
             order, with the first one to be passed (if any) defining
             the aggregation separation for each input field or domain.
+
+            **Coordinate spacing conditions**
 
             If a coordinate spacing condition has been passed then, by
             default, it does not apply to the spacing between
@@ -2336,19 +2331,21 @@ def aggregate(
             the *contiguous* parameter for more details.
 
             .. note:: Potentially unintended results might occur in
-                      the particular circumstance of aggregatable
-                      input fields for which some, but not all, have a
-                      size 1 aggregation axis. The concept of cell
-                      coordinate spacing is undefined for the size 1
-                      dimension coordinates and so they will pass any
-                      coordinate spacing condition, which in practice
-                      means they pass the first in the sequence. If
-                      the dimension coordinates with size greater than
-                      1 also pass the first condition then the
-                      aggregation will proceed as expected, but if
-                      they pass one of the other coordinate spacing
-                      conditions then the fields with size 1 dimension
-                      coordinates will be aggregated separately.
+                      the particular circumstance of multiple
+                      coordinate spacing conditions being applied to
+                      aggregatable input fields for which some, but
+                      not all, have a size 1 aggregation axis. The
+                      concept of cell coordinate spacing is undefined
+                      for the size 1 dimension coordinates and so they
+                      will pass any coordinate spacing condition,
+                      which in practice means they pass the first in
+                      the sequence. If the dimension coordinates with
+                      size greater than 1 also pass the first
+                      condition then the aggregation will proceed as
+                      expected, but if they pass one of the other
+                      coordinate spacing conditions then the fields
+                      with size 1 dimension coordinates will be
+                      aggregated separately.
 
             **Climatological time cells**
 
@@ -2399,11 +2396,6 @@ def aggregate(
               ``{'T': {'cellsize': cf.wi(28, 31, 'day'}}``.
 
             *Parameter example*
-              To separate time cells of 5-day running means given for
-              consecutive days:
-              ``{'T': {'cellsize': cf.D(5), 'spacing': cf.D(1)}}``.
-
-            *Parameter example*
               To separate horizontal cells with size (2.5 degrees
               north, 3.75 degrees east):
               ``{'Y': {'cellsize': cf.Data(2.5, 'degreeN')},
@@ -2420,13 +2412,15 @@ def aggregate(
               a cellsize of zero:
               ``{'T': {'cellsize': cf.h(0), 'spacing': cf.h(6)}}``.
 
+            *Parameter example*
+              To separate time cells of 5-day running means given for
+              consecutive days:
+              ``{'T': {'cellsize': cf.D(5), 'spacing': cf.D(1)}}``.
+
             .. versionadded:: TODOAGGAVER
 
-        no_overlap:
+        no_overlap: deprecated at version 3.0.0
             Use the *overlap* parameter instead.
-
-        shared_nc_domain: deprecated at version 3.0.0
-            No longer required due to updated CF data model.
 
         info: deprecated at version 3.5.0
             Use the *verbose* parameter instead.
@@ -2464,6 +2458,8 @@ def aggregate(
             "cf.aggregate",
             {"no_overlap": no_overlap},
             "Use keyword 'overlap' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if info is not False:  # catch 'Falsy' entries e.g. standard info=0
@@ -2583,9 +2579,16 @@ def aggregate(
                     if k not in ("cellsize", "spacing"):
                         raise ValueError(f"Invalid cell condition key: {k!r}")
 
-                    units = getattr(c, "Units", Units())
+                    if isinstance(c, Query):
+                        # Explicitly set any unspecified numerical
+                        # tolerance parameters on query conditions
+                        c = c.copy()
+                        c.setdefault(rtol=rtol, atol=atol)
+                        condition[k] = c
+
+                    units = getattr(c, "Units", _no_units)
                     if units.iscalendartime:
-                        # Convert condition of 1 calendar month/year
+                        # Convert a condition of 1 calendar month/year
                         # to a range of days
                         if c == M(1):
                             condition[k] = wi(28, 31, "day")
@@ -3090,17 +3093,6 @@ def climatology_cells(
     and further customisation may be applied by manually adding
     conditions to, or removing them from, the returned dictionary.
 
-    **Performance**
-
-    Any conditions that that do not match any of fields being
-    aggregated will still be tested against the dimension coordinate
-    constructs, which will slow down the aggregation process.
-
-    The returned conditions are ordered from the highest to lowest
-    temporal frequencies, so that dimension coordinates with the
-    largest data arrays are tested the fewest number of times. See the
-    *cells* parameter of `cf.aggregate` for details.
-
     .. versionadded:: TODOAGGVER
 
     .. seealso:: `cf.aggregate`
@@ -3108,12 +3100,12 @@ def climatology_cells(
     :Parameters:
 
         years: `bool`, optional
-            If True, the default, then include a condition for year
-            cell sizes, i.e. any number of days between 360 and 366.
+            If True, the default, then include a condition for cell
+            sizes of 1 calendar year.
 
         months: `bool`, optional
-            If True, the default, then include a condition for month
-            cell sizes i.e. any number of days between 28 and 31.
+            If True, the default, then include a condition for cell
+            sizes of 1 calendar month.
 
         days: sequence of numbers, optional
             Include a condition a cell size for each number of days in
@@ -3174,6 +3166,8 @@ def climatology_cells(
       {'cellsize': <CF Query: (isclose 1 day)>},
       {'cellsize': <CF TimeDuration: P1M (Y-M-01 00:00:00)>},
       {'cellsize': <CF TimeDuration: P1Y (Y-01-01 00:00:00)>}]}
+
+    Configure the output:
 
     >>> cells = cf.climatology_cells(
     ...     years=False,
