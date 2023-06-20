@@ -182,7 +182,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
                 .. versionadded:: 3.15.0
 
-           compression_index: `str`, optional
+           compression_index: `bool`, optional
                 True if the data being created are compression
                 indices.
 
