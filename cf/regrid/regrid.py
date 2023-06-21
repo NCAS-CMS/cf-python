@@ -104,8 +104,8 @@ def regrid(
     check_coordinates=False,
     min_weight=None,
     weights_file=None,
-    inplace=False,
     return_esmf_regrid_operator=False,
+    inplace=False,
 ):
     """Regrid a field to a new spherical or Cartesian grid.
 
@@ -1504,7 +1504,6 @@ def create_esmf_weights(
             create = True
         else:
             create = False
-
             weights = nc.variables["S"][...]
             row = nc.variables["row"][...]
             col = nc.variables["col"][...]
@@ -1557,7 +1556,9 @@ def create_esmf_weights(
             v[...] = col
 
             nc.close()
-
+        else:            
+            print ('Using stored weights :)')
+            
     if quarter:
         # The weights were created with a dummy size 2 dimension such
         # that the weights for each dummy axis element are
