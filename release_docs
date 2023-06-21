@@ -35,9 +35,13 @@ elif [[ $1 = "dev-scrub" ]] ; then
   # also completely deletes the new target directory.
   dir=$PWD/docs/dev
   rm -fr $dir
+elif [[ $1 = "dev-recipes" ]] ; then
+  # For testing: similar to dev, but specifically for generating recipes.
+  dir=$PWD/docs/dev
 else
   set +x
-  echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', or 'archive'"
+  echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', 'archive',
+  dev-recipes'"
   exit 2
 fi
 
@@ -72,6 +76,8 @@ mkdir -p $dir/_downloads
 #  # Force recreation of recipes
 #  rm source/recipes/*.md5
 #fi
+
+export DOCS_VERSION=$1
 
 make html $dir
 rc=$?
