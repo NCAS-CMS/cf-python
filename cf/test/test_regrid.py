@@ -722,6 +722,16 @@ class RegridTest(unittest.TestCase):
         d0 = src.regrids(dst, method="linear")
         self.assertEqual(d0.data.numblocks, (1, 1, 1))
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_weights_file(self):
+        """Regridding of creation/use of weights file"""
+      
+        dst = self.dst
+        src = self.src
+
+        for regrid_func in (
+            "regrids", "regridc"):
+            out = getattr(src, regrid_func)(dst, method='linear')
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
