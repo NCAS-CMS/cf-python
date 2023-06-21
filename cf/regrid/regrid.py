@@ -103,8 +103,9 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     min_weight=None,
+        weights_file=None,
     inplace=False,
-    return_esmpy_regrid_operator=False,
+    return_esmf_regrid_operator=False,
 ):
     """Regrid a field to a new spherical or Cartesian grid.
 
@@ -217,12 +218,17 @@ def regrid(
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.
 
-        return_esmpy_regrid_operator: `bool`, optional
+        return_esmf_regrid_operator: `bool`, optional
             If True then *src* is not regridded, but the `esmpy.Regrid`
             instance for the operation is returned instead. This is
             useful for checking that the field has been regridded
             correctly.
 
+        weights_file: `str`, optional
+            TODOREGRID
+
+           .. versionadded:: TODOVERREGRID
+    
     :Returns:
 
         `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
@@ -230,7 +236,7 @@ def regrid(
             was in-place; or the regridding operator if
             *return_operator* is True.
 
-            If *return_esmpy_regrid_operator* is True then *src* is not
+            If *return_esmf_regrid_operator* is True then *src* is not
             regridded, but the `esmpy.Regrid` instance for the
             operation is returned instead.
 
@@ -377,7 +383,7 @@ def regrid(
             dst_mask = get_mask(dst, dst_grid)
             if (
                 method in ("patch", "conservative_2nd", "nearest_stod")
-                or return_esmpy_regrid_operator
+                or return_esmf_regrid_operator
             ):
                 # For these regridding methods, the destination mask
                 # must be taken into account during the esmpy
@@ -389,7 +395,7 @@ def regrid(
                 dst_mask = None
 
         # Create the destination esmpy.Grid
-        dst_esmpy_grid = create_esmpy_grid(dst_grid, mask=grid_dst_mask)
+        dst_esmpy_grid = create_esmf_grid(dst_grid, mask=grid_dst_mask)
         del grid_dst_mask
 
         # Create a mask for the source grid
@@ -397,7 +403,7 @@ def regrid(
         grid_src_mask = None
         if use_src_mask and (
             method in ("patch", "conservative_2nd", "nearest_stod")
-            or return_esmpy_regrid_operator
+            or return_esmf_regrid_operator
         ):
             # For patch recovery and second-order conservative
             # regridding, the source mask needs to be taken into
@@ -414,25 +420,25 @@ def regrid(
                 grid_src_mask = src_mask
 
         # Create the source esmpy.Grid
-        src_esmpy_grid = create_esmpy_grid(src_grid, mask=grid_src_mask)
+        src_esmpy_grid = create_esmf_grid(src_grid, mask=grid_src_mask)
 
         del grid_src_mask
 
-        esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
+        esmf_regrid_operator = [] if return_esmf_regrid_operator else None
 
         # Create regrid weights
-        weights, row, col, start_index = create_esmpy_weights(
+        weights, row, col, start_index = create_esmf_weights(
             method,
             src_esmpy_grid,
             dst_esmpy_grid,
             ignore_degenerate=ignore_degenerate,
             quarter=src_grid.dummy_size_2_dimension,
-            esmpy_regrid_operator=esmpy_regrid_operator,
+            esmf_regrid_operator=esmf_regrid_operator,
         )
 
-        if return_esmpy_regrid_operator:
+        if return_esmf_regrid_operator:
             # Return the equivalent esmpy.Regrid operator
-            return esmpy_regrid_operator[-1]
+            return esmf_regrid_operator[-1]
 
         # Still here? Then we've finished with esmpy, so finalise the
         # esmpy manager. This is done to free up any Persistent
@@ -1202,7 +1208,7 @@ def esmpy_initialise():
     return esmpy.Manager(debug=bool(regrid_logging()))
 
 
-def create_esmpy_grid(grid=None, mask=None):
+def create_esmf_grid(grid=None, mask=None):
     """Create an `esmpy` Grid.
 
     .. versionadded:: 3.14.0
@@ -1422,15 +1428,15 @@ def create_esmpy_grid(grid=None, mask=None):
     return esmf_grid
 
 
-def create_esmpy_weights(
+def create_esmf_weights(
     method,
     src_esmpy_grid,
     dst_esmpy_grid,
     ignore_degenerate,
     quarter=False,
-    esmpy_regrid_operator=None,
+        esmf_regrid_operator=None, weights_file=None
 ):
-    """Create the `esmpy` regridding weights.
+    """Create the `ESMF` regridding weights.
 
     .. versionadded:: 3.14.0
 
@@ -1459,11 +1465,15 @@ def create_esmpy_weights(
 
             .. seealso:: `Cartesian_grid`
 
-         esmpy_regrid_operator: `None` or `list`, optional
-            If a `list` then the `esmpy.Regrid` instance that created
-            the instance is made available as the list's last
-            element.
+        esmf_regrid_operator: `None` or `list`, optional
+            If a `list` then the `ESMF.Regrid` instance that created
+            the instance is made available as the list's last element.
 
+        weights_file: `str`, optional
+            TODOREGRID
+
+            .. versionadded:: TODOVERREGRID
+    
     :Returns:
 
         4-`tuple` of `numpy.ndarray`
@@ -1479,31 +1489,73 @@ def create_esmpy_weights(
                    number of cells in the destination and source grids
                    respectively. The start index is 1.
             * start_index: The non-negative integer start index of the
-                   row and column indices.
+                   row and column indices, which will be 1.
 
     """
-    src_esmpy_field = esmpy.Field(src_esmpy_grid, "src")
-    dst_esmpy_field = esmpy.Field(dst_esmpy_grid, "dst")
+    from netCDF4 import Dataset
+    
+    create = True
+    if esmf_regrid_operator is None and weights_file is not None:
+        try:
+            # Read the weights from a netCDF file
+            nc = Dataset(weights_file, 'r')
+        except FileNotFoundError as error:
+            create = True
+        else:
+            create = False
+            
+            weights = nc.variables['S'][...]
+            row = nc.variables['row'][...]
+            col = nc.variables['col'][...]
+            nc.close()
+            
+    if create or esmf_regrid_operator is not None:
+        # Create the weights using ESMF
+        src_esmpy_field = esmpy.Field(src_esmpy_grid, "src")
+        dst_esmpy_field = esmpy.Field(dst_esmpy_grid, "dst")
+    
+        mask_values = np.array([0], dtype="int32")
+    
+        # Create the ESMF.regrid operator
+        r = esmpy.Regrid(
+            src_esmpy_field,
+            dst_esmpy_field,
+            regrid_method=esmpy_methods.get(method),
+            unmapped_action=esmpy.UnmappedAction.IGNORE,
+            ignore_degenerate=bool(ignore_degenerate),
+            src_mask_values=mask_values,
+            dst_mask_values=mask_values,
+            norm_type=esmpy.api.constants.NormType.FRACAREA,
+            factors=True,
+        )
 
-    mask_values = np.array([0], dtype="int32")
+        weights = r.get_weights_dict(deep_copy=True)
+        row = weights["row_dst"]
+        col = weights["col_src"]
+        weights = weights["weights"]
 
-    # Create the esmpy.regrid operator
-    r = esmpy.Regrid(
-        src_esmpy_field,
-        dst_esmpy_field,
-        regrid_method=esmpy_methods.get(method),
-        unmapped_action=esmpy.UnmappedAction.IGNORE,
-        ignore_degenerate=bool(ignore_degenerate),
-        src_mask_values=mask_values,
-        dst_mask_values=mask_values,
-        norm_type=esmpy.api.constants.NormType.FRACAREA,
-        factors=True,
-    )
-
-    weights = r.get_weights_dict(deep_copy=True)
-    row = weights["row_dst"]
-    col = weights["col_src"]
-    weights = weights["weights"]
+        if weights_file is not None:
+            # Write the weights to a netCDF file 
+            nc = Dataset(weights_file, 'w', format="NETCDF4")
+            nc.comment = "Weights created by ESMF"
+            
+            nc.createDimension("n_s", weights.size)
+            
+            v = nc.createVariable("S", "f8", ("n_s",))
+            v.long_name = "Weight values"
+            v[...] = weights
+            
+            v = nc.createVariable("row", "i8", ("n_s",))
+            v.long_name = "Destination/row indices"
+            v.start_index = 1
+            v[...] = row
+            
+            v = nc.createVariable("col", "i8", ("n_s",))
+            v.long_name = "Source/col indices"
+            v.start_index = 1
+            v[...] = col
+            
+            nc.close()
 
     if quarter:
         # The weights were created with a dummy size 2 dimension such
@@ -1522,21 +1574,22 @@ def create_esmpy_weights(
         row = row[index]
         col = col[index]
 
-    if esmpy_regrid_operator is None:
-        # Destroy esmpy objects
+    if esmf_regrid_operator is None:
+        # Destroy esmpy objects        
         src_esmpy_grid.destroy()
         dst_esmpy_grid.destroy()
-        src_esmpy_field.destroy()
-        dst_esmpy_field.destroy()
-        r.srcfield.grid.destroy()
-        r.srcfield.destroy()
-        r.dstfield.grid.destroy()
-        r.dstfield.destroy()
-        r.destroy()
+        if create:
+            src_esmpy_field.destroy()
+            dst_esmpy_field.destroy()
+            r.srcfield.grid.destroy()
+            r.srcfield.destroy()
+            r.dstfield.grid.destroy()
+            r.dstfield.destroy()
+            r.destroy()
     else:
         # Make the Regrid instance available via the
-        # 'esmpy_regrid_operator' list
-        esmpy_regrid_operator.append(r)
+        # 'esmf_regrid_operator' list
+        esmf_regrid_operator.append(r)
 
     return weights, row, col, 1
 
@@ -1887,3 +1940,44 @@ def update_non_coordinates(
 
         if axes and set(axes).issubset(dst_axis_keys):
             src.set_coordinate_reference(ref, parent=dst, strict=True)
+
+
+def  fff(weights_file, read=False, write=False):
+    """
+    """
+    from netCDF4 import Dataset
+    
+    if read:
+        # Read the weights from a netCDF file        
+        nc = Dataset(weights_file, 'r')
+        weights = nc.variables['S'][...]
+        row = nc.variables['row'][...]
+        col = nc.variables['col'][...]
+        nc.close()
+        return weights, row, col
+
+    if write:    
+        # Write the weights to a netCDF file
+        nc = Dataset(weights_file, 'w', format="NETCDF4")
+        nc.comment = "Weights created by ESMF"
+        
+        nc.createDimension("n_s", weights.size)
+        
+        S = nc.createVariable("S", "f8", ("n_s",))
+        S.long_name = "Weight values"
+        S[...] = weights
+        
+        row = nc.createVariable("row", "i8", ("n_s",))
+        row.long_name = "Destination/row indices"
+        row[...] = row
+        
+        col = nc.createVariable("col", "i8", ("n_s",))
+        col.long_name = "Source/col indices"
+        col[...] = col
+
+        nc.close()
+        return
+
+    raise ValueError("Either the 'read' or 'write' parameter must be True")
+
+    

@@ -465,18 +465,34 @@ def _regrid(
             else:
                 dst_mask = dst_mask.copy()
 
-            dst_mask = dst_mask.copy()
-            getrow = weights.getrow
+#            dst_mask = dst_mask.copy()
+#            getrow = weights.getrow
+            count_nonzero = np.count_nonzero
             where = np.where
-            for j in range(dst_size):
-                w_j = getrow(j)
-                mask = src_mask[w_j.indices]
-                if not mask.any():
+#            for j in range(dst_size):
+#                w_j = getrow(j)
+#                mask = src_mask[w_j.indices]
+#                if not mask.any():
+#                    continue
+#
+#                if where((mask) & (w_j.data >= min_weight))[0].size:
+#                    dst_mask[j] = True
+
+            indptr = weights.indptr.tolist()
+            indices = weights.indices
+            data = weights.data >= min_weight
+            for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+                j_indices = indices[i0: i1]
+                mask = src_mask[j_indices]
+                if not count_nonzero(mask):
                     continue
 
-                if where((mask) & (w_j.data >= min_weight))[0].size:
+                if where((mask) & (data[i0: i1]))[0].size:
                     dst_mask[j] = True
 
+            del indptr, data
+
+                    
         elif method in (
             "patch",
             "conservative_2nd",

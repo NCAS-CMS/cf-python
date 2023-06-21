@@ -517,6 +517,7 @@ class RegridOperator(mixin_Container, Container):
         """
         row = self.row
         if row is None:
+            # Weights are already in sparse array format
             return
 
         from math import prod
@@ -554,13 +555,23 @@ class RegridOperator(mixin_Container, Container):
             dst_mask = np.array(dst_mask).reshape((dst_size,))
         else:
             dst_mask = np.zeros((dst_size,), dtype=bool)
+#
+#        dst_mask2  = dst_mask.copy()
 
         # Set the destination grid mask to True where the weights for
         # destination grid points are all zero
+#        count_nonzero = np.count_nonzero
+#        getrow = weights.getrow
+#        for j in range(dst_size):
+#            if not count_nonzero(getrow(j).data):
+#                dst_mask[j] = True
+
         count_nonzero = np.count_nonzero
-        getrow = weights.getrow
-        for j in range(dst_size):
-            if not count_nonzero(getrow(j).data):
+        indptr = weights.indptr.tolist()
+        indices = weights.indices
+        data = weights.data
+        for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+            if not count_nonzero(data[i0: i1]):
                 dst_mask[j] = True
 
         if not dst_mask.any():

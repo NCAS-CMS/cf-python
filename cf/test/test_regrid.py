@@ -56,7 +56,7 @@ def esmpy_regrid_1d(method, src, dst, **kwargs):
         src,
         dst,
         method,
-        return_esmpy_regrid_operator=True,
+        return_esmf_regrid_operator=True,
         **kwargs
     )
 
@@ -102,7 +102,7 @@ def esmpy_regrid_Nd(coord_sys, method, src, dst, **kwargs):
         src,
         dst,
         method,
-        return_esmpy_regrid_operator=True,
+        return_esmf_regrid_operator=True,
         **kwargs
     )
 
@@ -226,6 +226,7 @@ class RegridTest(unittest.TestCase):
 
                         if isinstance(a, np.ma.MaskedArray):
                             self.assertTrue((y.mask == a.mask).all())
+                            
                         else:
                             self.assertFalse(y.mask.any())
 
