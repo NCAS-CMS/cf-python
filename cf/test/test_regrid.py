@@ -98,12 +98,7 @@ def esmpy_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
     """
     esmpy_regrid = cf.regrid.regrid(
-        coord_sys,
-        src,
-        dst,
-        method,
-        return_esmf_regrid_operator=True,
-        **kwargs
+        coord_sys, src, dst, method, return_esmf_regrid_operator=True, **kwargs
     )
 
     src = src.transpose(["X", "Y", "T"]).squeeze()
@@ -226,7 +221,7 @@ class RegridTest(unittest.TestCase):
 
                         if isinstance(a, np.ma.MaskedArray):
                             self.assertTrue((y.mask == a.mask).all())
-                            
+
                         else:
                             self.assertFalse(y.mask.any())
 

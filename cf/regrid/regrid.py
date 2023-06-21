@@ -103,7 +103,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     min_weight=None,
-        weights_file=None,
+    weights_file=None,
     inplace=False,
     return_esmf_regrid_operator=False,
 ):
@@ -228,7 +228,7 @@ def regrid(
             TODOREGRID
 
            .. versionadded:: TODOVERREGRID
-    
+
     :Returns:
 
         `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
@@ -1434,7 +1434,8 @@ def create_esmf_weights(
     dst_esmpy_grid,
     ignore_degenerate,
     quarter=False,
-        esmf_regrid_operator=None, weights_file=None
+    esmf_regrid_operator=None,
+    weights_file=None,
 ):
     """Create the `ESMF` regridding weights.
 
@@ -1473,7 +1474,7 @@ def create_esmf_weights(
             TODOREGRID
 
             .. versionadded:: TODOVERREGRID
-    
+
     :Returns:
 
         4-`tuple` of `numpy.ndarray`
@@ -1493,29 +1494,29 @@ def create_esmf_weights(
 
     """
     from netCDF4 import Dataset
-    
+
     create = True
     if esmf_regrid_operator is None and weights_file is not None:
         try:
             # Read the weights from a netCDF file
-            nc = Dataset(weights_file, 'r')
+            nc = Dataset(weights_file, "r")
         except FileNotFoundError as error:
             create = True
         else:
             create = False
-            
-            weights = nc.variables['S'][...]
-            row = nc.variables['row'][...]
-            col = nc.variables['col'][...]
+
+            weights = nc.variables["S"][...]
+            row = nc.variables["row"][...]
+            col = nc.variables["col"][...]
             nc.close()
-            
+
     if create or esmf_regrid_operator is not None:
         # Create the weights using ESMF
         src_esmpy_field = esmpy.Field(src_esmpy_grid, "src")
         dst_esmpy_field = esmpy.Field(dst_esmpy_grid, "dst")
-    
+
         mask_values = np.array([0], dtype="int32")
-    
+
         # Create the ESMF.regrid operator
         r = esmpy.Regrid(
             src_esmpy_field,
@@ -1535,26 +1536,26 @@ def create_esmf_weights(
         weights = weights["weights"]
 
         if weights_file is not None:
-            # Write the weights to a netCDF file 
-            nc = Dataset(weights_file, 'w', format="NETCDF4")
+            # Write the weights to a netCDF file
+            nc = Dataset(weights_file, "w", format="NETCDF4")
             nc.comment = "Weights created by ESMF"
-            
+
             nc.createDimension("n_s", weights.size)
-            
+
             v = nc.createVariable("S", "f8", ("n_s",))
             v.long_name = "Weight values"
             v[...] = weights
-            
+
             v = nc.createVariable("row", "i8", ("n_s",))
             v.long_name = "Destination/row indices"
             v.start_index = 1
             v[...] = row
-            
+
             v = nc.createVariable("col", "i8", ("n_s",))
             v.long_name = "Source/col indices"
             v.start_index = 1
             v[...] = col
-            
+
             nc.close()
 
     if quarter:
@@ -1575,7 +1576,7 @@ def create_esmf_weights(
         col = col[index]
 
     if esmf_regrid_operator is None:
-        # Destroy esmpy objects        
+        # Destroy esmpy objects
         src_esmpy_grid.destroy()
         dst_esmpy_grid.destroy()
         if create:
@@ -1942,35 +1943,34 @@ def update_non_coordinates(
             src.set_coordinate_reference(ref, parent=dst, strict=True)
 
 
-def  fff(weights_file, read=False, write=False):
-    """
-    """
+def fff(weights_file, read=False, write=False):
+    """ """
     from netCDF4 import Dataset
-    
+
     if read:
-        # Read the weights from a netCDF file        
-        nc = Dataset(weights_file, 'r')
-        weights = nc.variables['S'][...]
-        row = nc.variables['row'][...]
-        col = nc.variables['col'][...]
+        # Read the weights from a netCDF file
+        nc = Dataset(weights_file, "r")
+        weights = nc.variables["S"][...]
+        row = nc.variables["row"][...]
+        col = nc.variables["col"][...]
         nc.close()
         return weights, row, col
 
-    if write:    
+    if write:
         # Write the weights to a netCDF file
-        nc = Dataset(weights_file, 'w', format="NETCDF4")
+        nc = Dataset(weights_file, "w", format="NETCDF4")
         nc.comment = "Weights created by ESMF"
-        
+
         nc.createDimension("n_s", weights.size)
-        
+
         S = nc.createVariable("S", "f8", ("n_s",))
         S.long_name = "Weight values"
         S[...] = weights
-        
+
         row = nc.createVariable("row", "i8", ("n_s",))
         row.long_name = "Destination/row indices"
         row[...] = row
-        
+
         col = nc.createVariable("col", "i8", ("n_s",))
         col.long_name = "Source/col indices"
         col[...] = col
@@ -1979,5 +1979,3 @@ def  fff(weights_file, read=False, write=False):
         return
 
     raise ValueError("Either the 'read' or 'write' parameter must be True")
-
-    

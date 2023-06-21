@@ -14381,7 +14381,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
-            weights_file=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14554,7 +14554,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 TODOREGRID
 
                .. versionadded:: TODOVERREGRID
-    
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14662,7 +14662,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
-            weights_file=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14795,7 +14795,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 TODOREGRID
 
                .. versionadded:: TODOVERREGRID
-    
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
