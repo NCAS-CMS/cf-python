@@ -41,7 +41,7 @@ elif [[ $1 = "dev-recipes" ]] ; then
 else
   set +x
   echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', 'archive',
-  dev-recipes'"
+  or dev-recipes'"
   exit 2
 fi
 
