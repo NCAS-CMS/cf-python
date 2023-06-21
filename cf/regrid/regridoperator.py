@@ -39,6 +39,7 @@ class RegridOperator(mixin_Container, Container):
         src_axes=None,
         dst_axes=None,
         dst=None,
+        weights_file=None,
     ):
         """**Initialization**
 
@@ -140,6 +141,7 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("src_axes", src_axes, copy=False)
         self._set_component("dst_axes", dst_axes, copy=False)
         self._set_component("dst", dst, copy=False)
+        self._set_component("weights_file", weights_file, copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -331,6 +333,15 @@ class RegridOperator(mixin_Container, Container):
         """
         return self._get_component("weights")
 
+    @property
+    def weights_file(self):
+        """The file from which the weights were read, or `None`.
+
+        .. versionadded:: TODOREGRIDVER
+
+        """
+        return self._get_component("weights_file")
+
     def copy(self):
         """Return a deep copy.
 
@@ -366,6 +377,7 @@ class RegridOperator(mixin_Container, Container):
             src_axes=self.src_axes,
             dst_axes=self.dst_axes,
             dst=self.dst.copy(),
+            weights_file=self.weights_file,
         )
 
     @_display_or_return
@@ -410,6 +422,7 @@ class RegridOperator(mixin_Container, Container):
             "weights",
             "row",
             "col",
+            "weights_file",
         ):
             string.append(f"{attr}: {getattr(self, attr)!r}")
 
@@ -417,6 +430,8 @@ class RegridOperator(mixin_Container, Container):
 
     def get_parameter(self, parameter, *default):
         """Return a regrid operation parameter.
+
+        Deprecated at version 3.14.0.
 
         :Parameters:
 
@@ -452,20 +467,10 @@ class RegridOperator(mixin_Container, Container):
         _DEPRECATION_ERROR_METHOD(
             self,
             "get_parameter",
-            message="Using attributes instead.",
+            message="Use attributes directly.",
             version="3.14.0",
             removed_at="5.0.0",
         )
-
-        try:
-            return self._get_component("parameters")[parameter]
-        except KeyError:
-            if default:
-                return default[0]
-
-            raise ValueError(
-                f"{self.__class__.__name__} has no {parameter!r} parameter"
-            )
 
     def parameters(self):
         """Get the CF metadata parameters for the destination grid.

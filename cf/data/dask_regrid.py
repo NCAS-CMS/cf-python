@@ -433,31 +433,12 @@ def _regrid(
 
             weights = weights.copy()
 
-            # getrow = weights.getrow
-            # for j in range(dst_size):
-            #    w_j = getrow(j)
-            #    indices = w_j.indices
-            #    mask = src_mask[indices]
-            #    if not mask.any():
-            #        continue
-            #
-            #    if mask.all():
-            #        dst_mask[j] = True
-            #        continue
-            #
-            #    data = w_j.data
-            #    D_j = 1 - data[mask].sum()
-            #    data = data / D_j
-            #    data[mask] = 0
-            #    weights[j, indices] = data
-
             count_nonzero = np.count_nonzero
             indptr = weights.indptr.tolist()
             indices = weights.indices
             data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-                i_indices = indices[i0:i1]
-                mask = src_mask[i_indices]
+                mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
 
@@ -470,6 +451,8 @@ def _regrid(
                 w = w / D_j
                 w[mask] = 0
                 data[i0:i1] = w
+
+            del indptr
 
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
@@ -489,17 +472,16 @@ def _regrid(
             where = np.where
             indptr = weights.indptr.tolist()
             indices = weights.indices
-            w = weights.data >= min_weight
+            pos_data = weights.data >= min_weight
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-                i_indices = indices[i0:i1]
-                mask = src_mask[i_indices]
+                mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
 
-                if where((mask) & (w[i0:i1]))[0].size:
+                if where((mask) & (pos_data[i0:i1]))[0].size:
                     dst_mask[j] = True
 
-            del indptr, w
+            del indptr, pos_data
 
         elif method in (
             "patch",

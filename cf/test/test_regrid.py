@@ -1,6 +1,7 @@
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -8,6 +9,23 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import numpy as np
 
 import cf
+
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+(tmpfile,) = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
 
 # ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
 # either for now for backwards compatibility.
@@ -724,14 +742,26 @@ class RegridTest(unittest.TestCase):
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_weights_file(self):
-        """Regridding of creation/use of weights file"""
-      
+        """Regridding creation/use of weights file"""
         dst = self.dst
         src = self.src
 
-        for regrid_func in (
-            "regrids", "regridc"):
-            out = getattr(src, regrid_func)(dst, method='linear')
+        try:
+            os.remove(tmpfile)
+        except OSError:
+            pass
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertTrue(os.path.isfile(tmpfile))
+        self.assertIsNone(r.weights_file)
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertEqual(r.weights_file, tmpfile)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

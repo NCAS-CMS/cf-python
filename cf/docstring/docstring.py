@@ -461,7 +461,7 @@ _docstring_substitution_definitions = {
                  from this file, instead of being calculated.
 
                  The file has the same contents as the netCDF
-                 regridding weights file that may be created by a
+                 regridding weights file that can be created by a
                  `ESMF.Regrid` instance.
 
                  **Performance**

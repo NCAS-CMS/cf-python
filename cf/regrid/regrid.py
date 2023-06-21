@@ -219,7 +219,7 @@ def regrid(
             If True then modify *src* in-place and return `None`.
 
         return_esmf_regrid_operator: `bool`, optional
-            If True then *src* is not regridded, but the `esmpy.Regrid`
+            If True then *src* is not regridded, but the `ESMF.Regrid`
             instance for the operation is returned instead. This is
             useful for checking that the field has been regridded
             correctly.
@@ -237,7 +237,7 @@ def regrid(
             *return_operator* is True.
 
             If *return_esmf_regrid_operator* is True then *src* is not
-            regridded, but the `esmpy.Regrid` instance for the
+            regridded, but the `ESMF.Regrid` instance for the
             operation is returned instead.
 
     """
@@ -427,7 +427,7 @@ def regrid(
         esmf_regrid_operator = [] if return_esmf_regrid_operator else None
 
         # Create regrid weights
-        weights, row, col, start_index = create_esmf_weights(
+        weights, row, col, start_index, from_file = create_esmf_weights(
             method,
             src_esmpy_grid,
             dst_esmpy_grid,
@@ -474,6 +474,7 @@ def regrid(
             src_axes=src_axes,
             dst_axes=dst_axes,
             dst=dst,
+            weights_file=weights_file if from_file else None,
         )
     else:
         # ------------------------------------------------------------
@@ -1478,20 +1479,23 @@ def create_esmf_weights(
 
     :Returns:
 
-        4-`tuple` of `numpy.ndarray`
-            * weights: The 1-d array of the regridding weights.
-            * row: The 1-d array of the row indices of the regridding
-                   weights in the dense weights matrix, which has J
-                   rows and I columns, where J and I are the total
-                   number of cells in the destination and source grids
-                   respectively. The start index is 1.
-            * col: The 1-d array of column indices of the regridding
-                   weights in the dense weights matrix, which has J
-                   rows and I columns, where J and I are the total
-                   number of cells in the destination and source grids
-                   respectively. The start index is 1.
+        5-`tuple`
+            * weights: The 1-d `numpy` array of the regridding
+                   weights.
+            * row: The 1-d `numpy` array of the row indices of the
+                   regridding weights in the dense weights matrix,
+                   which has J rows and I columns, where J and I are
+                   the total number of cells in the destination and
+                   source grids respectively. The start index is 1.
+            * col: The 1-d `numpy` array of column indices of the
+                   regridding weights in the dense weights matrix,
+                   which has J rows and I columns, where J and I are
+                   the total number of cells in the destination and
+                   source grids respectively. The start index is 1.
             * start_index: The non-negative integer start index of the
                    row and column indices, which will be 1.
+            * from_file: `True` if the weights were read from a file,
+                   otherwise `False`.
 
     """
     from netCDF4 import Dataset
@@ -1501,10 +1505,11 @@ def create_esmf_weights(
         try:
             # Read the weights from a netCDF file
             nc = Dataset(weights_file, "r")
-        except FileNotFoundError as error:
-            create = True
+        except FileNotFoundError:
+            pass
         else:
             create = False
+
             weights = nc.variables["S"][...]
             row = nc.variables["row"][...]
             col = nc.variables["col"][...]
@@ -1512,6 +1517,8 @@ def create_esmf_weights(
 
     if create or esmf_regrid_operator is not None:
         # Create the weights using ESMF
+        from_file = False
+
         src_esmpy_field = esmpy.Field(src_esmpy_grid, "src")
         dst_esmpy_field = esmpy.Field(dst_esmpy_grid, "dst")
 
@@ -1558,7 +1565,7 @@ def create_esmf_weights(
 
             nc.close()
     else:
-        print("Using stored weights :)")
+        from_file = True
 
     if quarter:
         # The weights were created with a dummy size 2 dimension such
@@ -1594,7 +1601,7 @@ def create_esmf_weights(
         # 'esmf_regrid_operator' list
         esmf_regrid_operator.append(r)
 
-    return weights, row, col, 1
+    return weights, row, col, 1, from_file
 
 
 def contiguous_bounds(b, cyclic=False, period=None):
