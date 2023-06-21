@@ -227,7 +227,7 @@ def regrid(
         weights_file: `str`, optional
             TODOREGRID
 
-           .. versionadded:: TODOVERREGRID
+           .. versionadded:: TODOREGRIDVER
 
     :Returns:
 
@@ -434,6 +434,7 @@ def regrid(
             ignore_degenerate=ignore_degenerate,
             quarter=src_grid.dummy_size_2_dimension,
             esmf_regrid_operator=esmf_regrid_operator,
+            weights_file=weights_file,
         )
 
         if return_esmf_regrid_operator:
@@ -1473,7 +1474,7 @@ def create_esmf_weights(
         weights_file: `str`, optional
             TODOREGRID
 
-            .. versionadded:: TODOVERREGRID
+            .. versionadded:: TODOREGRIDVER
 
     :Returns:
 
@@ -1556,9 +1557,9 @@ def create_esmf_weights(
             v[...] = col
 
             nc.close()
-        else:            
-            print ('Using stored weights :)')
-            
+    else:
+        print("Using stored weights :)")
+
     if quarter:
         # The weights were created with a dummy size 2 dimension such
         # that the weights for each dummy axis element are
@@ -1942,41 +1943,3 @@ def update_non_coordinates(
 
         if axes and set(axes).issubset(dst_axis_keys):
             src.set_coordinate_reference(ref, parent=dst, strict=True)
-
-
-def fff(weights_file, read=False, write=False):
-    """ """
-    from netCDF4 import Dataset
-
-    if read:
-        # Read the weights from a netCDF file
-        nc = Dataset(weights_file, "r")
-        weights = nc.variables["S"][...]
-        row = nc.variables["row"][...]
-        col = nc.variables["col"][...]
-        nc.close()
-        return weights, row, col
-
-    if write:
-        # Write the weights to a netCDF file
-        nc = Dataset(weights_file, "w", format="NETCDF4")
-        nc.comment = "Weights created by ESMF"
-
-        nc.createDimension("n_s", weights.size)
-
-        S = nc.createVariable("S", "f8", ("n_s",))
-        S.long_name = "Weight values"
-        S[...] = weights
-
-        row = nc.createVariable("row", "i8", ("n_s",))
-        row.long_name = "Destination/row indices"
-        row[...] = row
-
-        col = nc.createVariable("col", "i8", ("n_s",))
-        col.long_name = "Source/col indices"
-        col[...] = col
-
-        nc.close()
-        return
-
-    raise ValueError("Either the 'read' or 'write' parameter must be True")

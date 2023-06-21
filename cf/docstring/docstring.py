@@ -452,6 +452,27 @@ _docstring_substitution_definitions = {
                 is masked in destination grid definition; or b) The
                 sum of ``w_ji`` for all non-masked source grid cells i
                 is strictly less than *min_weight*.""",
+    # weights_file
+    "{{weights_file: `str`, optional}}": """weights_file: `str`, optional
+                 Path to a netCDF file that contains the regridding
+                 weights. If the file does not exist then the weights
+                 will be calculated and written to the file. If the
+                 file already exists then the weights will be read
+                 from this file, instead of being calculated.
+
+                 The file has the same contents as the netCDF
+                 regridding weights file that may be created by a
+                 `ESMF.Regrid` instance.
+
+                 **Performance**
+
+                 The computation of the weights can be much more
+                 costly than the regridding itself, in which case
+                 reading pre-calcuated weights can improve
+                 performance, although not by as much as using an
+                 existing `RegridOperator` instance in memory as the
+                 destination grid (see the *dst* parameter for
+                 details).""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to

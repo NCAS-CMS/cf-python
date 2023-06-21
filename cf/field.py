@@ -14550,10 +14550,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            weights_file: `str`, optional
-                TODOREGRID
+            {{weights_file: `str`, optional}}
 
-               .. versionadded:: TODOVERREGRID
+               .. versionadded:: TODOREGRIDVER
 
             {{inplace: `bool`, optional}}
 
@@ -14791,10 +14790,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            weights_file: `str`, optional
-                TODOREGRID
+            {{weights_file: `str`, optional}}
 
-               .. versionadded:: TODOVERREGRID
+               .. versionadded:: TODOREGRIDVER
 
             {{inplace: `bool`, optional}}
 
