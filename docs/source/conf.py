@@ -390,8 +390,6 @@ sphinx_gallery_conf = {
     "doc_module": ("cf"),
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
-    'expected_failing_examples': ['recipes/plot_07_recipe.py'],
-
 }
 
 # -- Options for LaTeX output -------------------------------------------------
