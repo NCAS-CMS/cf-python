@@ -41,7 +41,7 @@ elif [[ $1 = "dev-recipes" ]] ; then
 else
   set +x
   echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', 'archive',
-  or dev-recipes'"
+  or 'dev-recipes'"
   exit 2
 fi
 
@@ -77,7 +77,7 @@ mkdir -p $dir/_downloads
 #  rm source/recipes/*.md5
 #fi
 
-export DOCS_VERSION=$1
+export CF_DOCS_MODE=$1
 
 make html $dir
 rc=$?

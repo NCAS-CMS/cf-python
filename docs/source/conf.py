@@ -105,9 +105,9 @@ extensions = [
     
 ]
 
-DOCS_VERSION = os.environ.get('DOCS_VERSION', 'none')
+CF_DOCS_MODE = os.environ.get('CF_DOCS_MODE', 'none')
 
-if DOCS_VERSION in ['dev-recipes', 'latest', 'archive']:
+if CF_DOCS_MODE in ['dev-recipes', 'latest', 'archive']:
     extensions.append('sphinx_gallery.gen_gallery')
 
 # Spelling extension configuration: set British English and false positives
