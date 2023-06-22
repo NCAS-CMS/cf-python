@@ -454,28 +454,27 @@ _docstring_substitution_definitions = {
                 is strictly less than *min_weight*.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
-                 Provide a netCDF file that contains, or will contain,
-                 the regridding weights. If `None` (the default) then
-                 the weights are computed from the grid defined by the
-                 *dst* parameter.
+                Provide a netCDF file that contains, or will contain,
+                the regridding weights. If `None` (the default) then
+                the weights are computed from the grid defined by the
+                *dst* parameter, and no file is created.
 
-                 If set to a file path that does not exist then the
-                 weights will be computed and written to that file.
+                If set to a file path that does not exist then the
+                weights will be computed and written to that file.
 
-                 If the file already exists then the weights will be
-                 read from this file, instead of being computed. A
-                 netCDF regridding weights file created by
-                 `ESMF.Regrid` has the same structure and may also be
-                 provided as an existing file.
+                If set to a file path that already exists then the
+                weights will be read from this file, instead of being
+                computed. A netCDF regridding weights file created by
+                `ESMF.Regrid` has the same structure and may also be
+                provided as an existing file.
 
-                 Ignored if *dst* is a `RegridOperator`.
+                Ignored if *dst* is a `RegridOperator`.
 
-                 **Performance**
+                **Performance**
 
-                 The computation of the weights can be much more
-                 costly than the regridding itself, in which case
-                 reading pre-calcuated weights can improve
-                 performance.""",
+                The computation of the weights can be much more costly
+                than the regridding itself, in which case reading
+                pre-calcuated weights can improve performance.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to

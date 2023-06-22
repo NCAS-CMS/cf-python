@@ -1480,16 +1480,16 @@ def create_esmf_weights(
             Provide a netCDF file that contains, or will contain, the
             regridding weights. If `None` (the default) then the
             weights are computed from the grid defined by the *dst*
-            parameter.
+            parameter, and no file is created.
 
             If set to a file path that does not exist then the weights
             will be computed and written to that file.
 
-            If the file already exists then the weights will be read
-            from this file, instead of being computed. A netCDF
-            regridding weights file created by `ESMF.Regrid` has the
-            same structure and may also be provided as an existing
-            file.
+            If set to a file path that already exists then the weights
+            will be read from this file, instead of being computed. A
+            netCDF regridding weights file created by `ESMF.Regrid`
+            has the same structure and may also be provided as an
+            existing file.
 
             .. versionadded:: TODOREGRIDVER
 

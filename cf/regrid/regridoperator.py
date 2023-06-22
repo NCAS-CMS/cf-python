@@ -570,6 +570,10 @@ class RegridOperator(mixin_Container, Container):
 
         # Set the destination grid mask to True where the weights for
         # destination grid points are all zero
+        #
+        # Note: It is much more efficient to access 'weights.indptr'
+        #       and 'weights.data' directly, rather than iterating
+        #       over rows of 'weights' and using 'weights.getrow'.
         count_nonzero = np.count_nonzero
         indptr = weights.indptr.tolist()
         data = weights.data

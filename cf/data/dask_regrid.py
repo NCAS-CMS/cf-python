@@ -433,6 +433,10 @@ def _regrid(
 
             weights = weights.copy()
 
+            # Note: It is much more efficient to access
+            #       'weights.indptr', 'weights.indices', and
+            #       'weights.data' directly, rather than iterating
+            #       over rows of 'weights' and using 'weights.getrow'.
             count_nonzero = np.count_nonzero
             indptr = weights.indptr.tolist()
             indices = weights.indices
@@ -468,6 +472,10 @@ def _regrid(
             else:
                 dst_mask = dst_mask.copy()
 
+            # Note: It is much more efficient to access
+            #       'weights.indptr', 'weights.indices', and
+            #       'weights.data' directly, rather than iterating
+            #       over rows of 'weights' and using 'weights.getrow'.
             count_nonzero = np.count_nonzero
             where = np.where
             indptr = weights.indptr.tolist()
