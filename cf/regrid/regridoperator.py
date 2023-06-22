@@ -41,7 +41,7 @@ class RegridOperator(mixin_Container, Container):
         dst=None,
         weights_file=None,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -116,6 +116,13 @@ class RegridOperator(mixin_Container, Container):
 
             src_axes: `dict` or sequence or `None`, optional
                 The source grid axes to be regridded.
+
+            weights_file: `str` or `None`, optional
+                 Path to a netCDF file that contained the regridding
+                 weights. If `None`, the default, then the weights
+                 were computed rather than read from a file.
+
+                 .. versionadded:: TODOREGRIDVER
 
         """
         super().__init__()
@@ -504,11 +511,11 @@ class RegridOperator(mixin_Container, Container):
     def tosparse(self):
         """Convert the weights to `scipy` sparse array format in-place.
 
-        The weights are converted to Compressed Sparse Row(CSR) array
+        The weights are converted to Compressed Sparse Row (CSR) array
         format, i.e. the `weights` attribute becomes a
-        `scipy.sparse._arrays.csr_array` object. A CSR array used as
-        the most efficient sparse array type given that we expect no
-        changes to the sparsity structure, and any further
+        `scipy.sparse._arrays.csr_array` object. A CSR array is used
+        as the most efficient sparse array type given that we expect
+        no changes to the sparsity structure, and any further
         modification of the weights to account for missing values in
         the source grid will always involve row-slicing.
 

@@ -389,10 +389,10 @@ _docstring_substitution_definitions = {
                 For conservative regridding methods, if True (the
                 default) then degenerate cells (those for which enough
                 vertices collapse to leave a cell as either a line or
-                a point) are skipped, not producing a
-                result. Otherwise an error will be produced if
-                degenerate cells are found, that will be present in
-                the esmpy log files.
+                a point) are skipped, not producing a result.
+                Otherwise an error will be produced if degenerate
+                cells are found, that will be present in the esmpy log
+                files.
 
                 For all other regridding methods, degenerate cells are
                 always skipped, regardless of the value of
@@ -453,26 +453,29 @@ _docstring_substitution_definitions = {
                 sum of ``w_ji`` for all non-masked source grid cells i
                 is strictly less than *min_weight*.""",
     # weights_file
-    "{{weights_file: `str`, optional}}": """weights_file: `str`, optional
-                 Path to a netCDF file that contains the regridding
-                 weights. If the file does not exist then the weights
-                 will be calculated and written to the file. If the
-                 file already exists then the weights will be read
-                 from this file, instead of being calculated.
+    "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
+                 Provide a netCDF file that contains, or will contain,
+                 the regridding weights. If `None` (the default) then
+                 the weights are computed from the grid defined by the
+                 *dst* parameter.
 
-                 The file has the same contents as the netCDF
-                 regridding weights file that can be created by a
-                 `ESMF.Regrid` instance.
+                 If set to a file path that does not exist then the
+                 weights will be computed and written to that file.
+
+                 If the file already exists then the weights will be
+                 read from this file, instead of being computed. A
+                 netCDF regridding weights file created by
+                 `ESMF.Regrid` has the same structure and may also be
+                 provided as an existing file.
+
+                 Ignored if *dst* is a `RegridOperator`.
 
                  **Performance**
 
                  The computation of the weights can be much more
                  costly than the regridding itself, in which case
                  reading pre-calcuated weights can improve
-                 performance, although not by as much as using an
-                 existing `RegridOperator` instance in memory as the
-                 destination grid (see the *dst* parameter for
-                 details).""",
+                 performance.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to

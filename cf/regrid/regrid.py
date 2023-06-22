@@ -224,10 +224,14 @@ def regrid(
             useful for checking that the field has been regridded
             correctly.
 
-        weights_file: `str`, optional
-            TODOREGRID
+        weights_file: `str` or `None`, optional
+            Provide a netCDF file that contains, or will contain, the
+            regridding weights.
 
-           .. versionadded:: TODOREGRIDVER
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
+
+            .. versionadded:: TODOREGRIDVER
 
     :Returns:
 
@@ -1472,8 +1476,20 @@ def create_esmf_weights(
             If a `list` then the `ESMF.Regrid` instance that created
             the instance is made available as the list's last element.
 
-        weights_file: `str`, optional
-            TODOREGRID
+        weights_file: `str` or `None`, optional
+            Provide a netCDF file that contains, or will contain, the
+            regridding weights. If `None` (the default) then the
+            weights are computed from the grid defined by the *dst*
+            parameter.
+
+            If set to a file path that does not exist then the weights
+            will be computed and written to that file.
+
+            If the file already exists then the weights will be read
+            from this file, instead of being computed. A netCDF
+            regridding weights file created by `ESMF.Regrid` has the
+            same structure and may also be provided as an existing
+            file.
 
             .. versionadded:: TODOREGRIDVER
 
@@ -1500,22 +1516,22 @@ def create_esmf_weights(
     """
     from netCDF4 import Dataset
 
-    create = True
+    compute_weights = True
     if esmf_regrid_operator is None and weights_file is not None:
         try:
-            # Read the weights from a netCDF file
             nc = Dataset(weights_file, "r")
         except FileNotFoundError:
             pass
         else:
-            create = False
-
+            # Read the weights from a netCDF file
             weights = nc.variables["S"][...]
             row = nc.variables["row"][...]
             col = nc.variables["col"][...]
             nc.close()
 
-    if create or esmf_regrid_operator is not None:
+            compute_weights = False
+
+    if compute_weights or esmf_regrid_operator is not None:
         # Create the weights using ESMF
         from_file = False
 
@@ -1543,9 +1559,10 @@ def create_esmf_weights(
         weights = weights["weights"]
 
         if weights_file is not None:
-            # Write the weights to a netCDF file
+            # Write the weights to a netCDF file (copying the
+            # structure of a weights file created by ESMF).
             nc = Dataset(weights_file, "w", format="NETCDF4")
-            nc.comment = "Weights created by ESMF"
+            nc.comment = "Weights created by cf-python using ESMF"
 
             nc.createDimension("n_s", weights.size)
 
@@ -1588,7 +1605,7 @@ def create_esmf_weights(
         # Destroy esmpy objects
         src_esmpy_grid.destroy()
         dst_esmpy_grid.destroy()
-        if create:
+        if compute_weights:
             src_esmpy_field.destroy()
             dst_esmpy_field.destroy()
             r.srcfield.grid.destroy()
