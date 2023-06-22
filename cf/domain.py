@@ -343,16 +343,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Parameters:
 
             x_args: sequence of numbers
-                A sequence of three numeric values. The first two values in the
-                sequence represent the coordinate range (see the bounds
-                parameter for details), and the third value represents the
-                cellsize.
+                {{args: sequence of numbers}}
 
             y_args: sequence of numbers
-                A sequence of three numeric values. The first two values in the
-                sequence represent the coordinate range (see the bounds
-                parameter for details), and the third value represents the
-                cellsize.
+                {{args: sequence of numbers}}
 
             bounds: `bool`, optional
                 If True (default), bounds will be created
