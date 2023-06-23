@@ -470,6 +470,10 @@ _docstring_substitution_definitions = {
 
                 Ignored if *dst* is a `RegridOperator`.
 
+                .. note:: No checks are performed on the file to
+                          ensure that the weights are correct for the
+                          source and destination grids.
+
                 **Performance**
 
                 The computation of the weights can be much more costly
