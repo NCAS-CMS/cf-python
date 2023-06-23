@@ -322,10 +322,6 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(np.allclose(longitude.array, x_points))
         self.assertTrue(np.allclose(latitude.array, y_points))
 
-        # Test dx and dy not divisors of the range
-        with self.assertRaises(ValueError):
-            cf.Domain.create_regular((-180, 180, 61), (-90, 90, 46))
-
         # Test if range difference in x_range is greater than 360
         with self.assertRaises(ValueError):
             cf.Domain.create_regular((-180, 190, 1), (-90, 90, 1))
@@ -366,6 +362,26 @@ class DomainTest(unittest.TestCase):
             np.allclose(latitude_no_bounds.array, y_points_no_bounds)
         )
 
+        # Test for the given specific domain
+        ymin, ymax, dy = 45., 90., 0.0083333
+        xmin, xmax, dx = 250., 360., 0.0083333
+
+        domain_specific = cf.Domain.create_regular(
+            (xmin, xmax, dx), (ymin, ymax, dy)
+        )
+        self.assertIsInstance(domain_specific, cf.Domain)
+
+        x_bounds_specific = np.arange(xmin, xmax + dx, dx)
+        y_bounds_specific = np.arange(ymin, ymax + dy, dy)
+
+        x_points_specific = (x_bounds_specific[:-1] + x_bounds_specific[1:]) / 2
+        y_points_specific = (y_bounds_specific[:-1] + y_bounds_specific[1:]) / 2
+
+        longitude_specific = domain_specific.construct("longitude")
+        latitude_specific = domain_specific.construct("latitude")
+
+        self.assertTrue(np.allclose(longitude_specific.array, x_points_specific))
+        self.assertTrue(np.allclose(latitude_specific.array, y_points_specific))
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
