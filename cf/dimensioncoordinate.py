@@ -252,7 +252,7 @@ class DimensionCoordinate(
         :Parameters:
 
             args: sequence of numbers
-                {{args: sequence of numbers}}
+                {{regular args}}
 
             bounds: `bool`, optional
                 If True (the default) then the given range represents

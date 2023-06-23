@@ -343,10 +343,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Parameters:
 
             x_args: sequence of numbers
-                {{args: sequence of numbers}}
+                {{regular args}}
 
             y_args: sequence of numbers
-                {{args: sequence of numbers}}
+                {{regular args}}
 
             bounds: `bool`, optional
                 If True (default), bounds will be created

@@ -363,8 +363,8 @@ class DomainTest(unittest.TestCase):
         )
 
         # Test for the given specific domain
-        ymin, ymax, dy = 45., 90., 0.0083333
-        xmin, xmax, dx = 250., 360., 0.0083333
+        ymin, ymax, dy = 45.0, 90.0, 0.0083333
+        xmin, xmax, dx = 250.0, 360.0, 0.0083333
 
         domain_specific = cf.Domain.create_regular(
             (xmin, xmax, dx), (ymin, ymax, dy)
@@ -374,14 +374,23 @@ class DomainTest(unittest.TestCase):
         x_bounds_specific = np.arange(xmin, xmax + dx, dx)
         y_bounds_specific = np.arange(ymin, ymax + dy, dy)
 
-        x_points_specific = (x_bounds_specific[:-1] + x_bounds_specific[1:]) / 2
-        y_points_specific = (y_bounds_specific[:-1] + y_bounds_specific[1:]) / 2
+        x_points_specific = (
+            x_bounds_specific[:-1] + x_bounds_specific[1:]
+        ) / 2
+        y_points_specific = (
+            y_bounds_specific[:-1] + y_bounds_specific[1:]
+        ) / 2
 
         longitude_specific = domain_specific.construct("longitude")
         latitude_specific = domain_specific.construct("latitude")
 
-        self.assertTrue(np.allclose(longitude_specific.array, x_points_specific))
-        self.assertTrue(np.allclose(latitude_specific.array, y_points_specific))
+        self.assertTrue(
+            np.allclose(longitude_specific.array - x_points_specific, 0)
+        )
+        self.assertTrue(
+            np.allclose(latitude_specific.array - y_points_specific, 0)
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
