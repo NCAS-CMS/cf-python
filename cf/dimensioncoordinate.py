@@ -252,10 +252,7 @@ class DimensionCoordinate(
         :Parameters:
 
             args: sequence of numbers
-                A sequence of three numeric values. The first two values in the
-                sequence represent the coordinate range (see the bounds
-                parameter for details), and the third value represents the
-                cellsize.
+                {{regular args}}
 
             bounds: `bool`, optional
                 If True (the default) then the given range represents
@@ -309,12 +306,6 @@ class DimensionCoordinate(
             raise ValueError(
                 f"Range ({range[0], range[1]}) must be decreasing for a "
                 f"negative cellsize ({cellsize})"
-            )
-
-        if range_diff % cellsize != 0:
-            raise ValueError(
-                f"The range of the dimension ({range_diff}) must be "
-                f"divisible by the cellsize ({cellsize})"
             )
 
         if standard_name is not None and not isinstance(standard_name, str):

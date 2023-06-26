@@ -658,14 +658,6 @@ class DimensionCoordinateTest(unittest.TestCase):
                 standard_name="longitude",
             )
 
-        # Cellsize not divisible by range
-        with self.assertRaises(ValueError):
-            cf.DimensionCoordinate.create_regular(
-                (-180, 180, 50),
-                units="degrees_east",
-                standard_name="longitude",
-            )
-
         # Test decreasing case
         longitude_decreasing = cf.DimensionCoordinate.create_regular(
             (180, -180, -1), units="degrees_east", standard_name="longitude"

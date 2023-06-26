@@ -102,9 +102,13 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
-    "sphinx_gallery.gen_gallery",
+    
 ]
 
+CF_DOCS_MODE = os.environ.get('CF_DOCS_MODE', 'none')
+
+if CF_DOCS_MODE in ['dev-recipes', 'latest', 'archive']:
+    extensions.append('sphinx_gallery.gen_gallery')
 
 # Spelling extension configuration: set British English and false positives
 spelling_lang = "en_GB"
