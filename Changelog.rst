@@ -4,7 +4,7 @@ version 3.15.2
 **2023-??-??**
 
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
-  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/??a?)
+  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
 
