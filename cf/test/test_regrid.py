@@ -750,7 +750,7 @@ class RegridTest(unittest.TestCase):
         """Regridding creation/use of weights file"""
         dst = self.dst
         src = self.src
-
+        tmpfile = "delme.nc"
         try:
             os.remove(tmpfile)
         except OSError:
