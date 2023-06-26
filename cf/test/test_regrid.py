@@ -74,7 +74,7 @@ def esmpy_regrid_1d(method, src, dst, **kwargs):
         src,
         dst,
         method,
-        return_esmf_regrid_operator=True,
+        return_esmpy_regrid_operator=True,
         **kwargs
     )
 
@@ -116,7 +116,12 @@ def esmpy_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
     """
     esmpy_regrid = cf.regrid.regrid(
-        coord_sys, src, dst, method, return_esmf_regrid_operator=True, **kwargs
+        coord_sys,
+        src,
+        dst,
+        method,
+        return_esmpy_regrid_operator=True,
+        **kwargs
     )
 
     src = src.transpose(["X", "Y", "T"]).squeeze()
@@ -761,6 +766,12 @@ class RegridTest(unittest.TestCase):
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertEqual(r.weights_file, tmpfile)
+
+        # Can't provide weights_file when dst is a RegridOperator
+        with self.assertRaises(ValueError):
+            self.assertEqual(
+                src.regrids(r, method="linear", weights_file=tmpfile)
+            )
 
 
 if __name__ == "__main__":

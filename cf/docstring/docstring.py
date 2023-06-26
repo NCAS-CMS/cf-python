@@ -66,20 +66,20 @@ _docstring_substitution_definitions = {
 
         The interpolation is carried out using regridding weights
         calculated by the `esmpy` package, a Python interface to the
-        Earth System Modeling Framework (ESMF) regridding utility:
-        `https://earthsystemmodeling.org/regrid`_. Outside of `esmpy`,
+        Earth System Modeling Framework regridding utility (ESMF,
+        https://earthsystemmodeling.org/regrid). Outside of `esmpy`,
         these weights are then modified for masked cells (if required)
         and the regridded data are created as the dot product of the
         weights with the source data. (Note that whilst the `esmpy`
-        package is able to also create the regridded data from its
+        package is also able to create the regridded data from its
         weights, this feature can't be integrated with the `dask`
         framework that underpins the field's data.)""",
     # regrid Logging
     "{{regrid Logging}}": """**Logging**
 
         Whether `esmpy` logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.""",
+        `cf.regrid_logging`. If it is enabled then logging takes place
+        after every call. By default logging is disabled.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -391,8 +391,8 @@ _docstring_substitution_definitions = {
                 vertices collapse to leave a cell as either a line or
                 a point) are skipped, not producing a result.
                 Otherwise an error will be produced if degenerate
-                cells are found, that will be present in the esmpy log
-                files.
+                cells are found, that will be present in the `esmpy`
+                log files.
 
                 For all other regridding methods, degenerate cells are
                 always skipped, regardless of the value of
@@ -419,7 +419,7 @@ _docstring_substitution_definitions = {
     "{{min_weight: float, optional}}": """min_weight: float, optional
                 A very small non-negative number. By default
                 *min_weight* is ``2.5 * np.finfo("float64").eps``,
-                i.e. ``5.551115123125783e-16`. It is used during
+                i.e. ``5.551115123125783e-16``. It is used during
                 linear and first-order conservative regridding when
                 adjusting the weights matrix to account for the data
                 mask. It is ignored for all other regrid methods, or
@@ -431,48 +431,60 @@ _docstring_substitution_definitions = {
                 cell in the regridded field is masked.
 
                 The default value has been chosen empirically as the
-                smallest value that produces the same masks as esmpy
+                smallest value that produces the same masks as `esmpy`
                 for the use cases defined in the cf test suite.
 
-                Define w_ji as the multiplicative weight that defines
-                how much of Vs_i (the value in source grid cell i)
-                contributes to Vd_j (the value in destination grid
-                cell j).
+                Define ``w_ji`` as the multiplicative weight that
+                defines how much of ``Vs_i`` (the value in source grid
+                cell ``i``) contributes to ``Vd_j`` (the value in
+                destination grid cell ``j``).
 
                 **Linear regridding**
 
-                Destination grid cell j will only be masked if a) it
-                is masked in destination grid definition; or b) ``w_ji
-                >= min_weight`` for those masked source grid cells i
-                for which ``w_ji > 0``.
+                Destination grid cell ``j`` will only be masked if a)
+                it is masked in the destination grid definition; or b)
+                ``w_ji >= min_weight`` for those masked source grid
+                cells i for which ``w_ji > 0``.
 
                 **Conservative first-order regridding**
 
-                Destination grid cell j will only be masked if a) it
-                is masked in destination grid definition; or b) The
-                sum of ``w_ji`` for all non-masked source grid cells i
-                is strictly less than *min_weight*.""",
+                Destination grid cell ``j`` will only be masked if a)
+                it is masked in the destination grid definition; or b)
+                The sum of ``w_ji`` for all non-masked source grid
+                cells ``i`` is strictly less than *min_weight*.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
                 Provide a netCDF file that contains, or will contain,
                 the regridding weights. If `None` (the default) then
-                the weights are computed from the grid defined by the
-                *dst* parameter, and no file is created.
+                the weights are computed in memory for regridding
+                between the source and destination grids, and no file
+                is created.
 
                 If set to a file path that does not exist then the
-                weights will be computed and written to that file.
+                weights will be computed and also written to that
+                file.
 
                 If set to a file path that already exists then the
                 weights will be read from this file, instead of being
-                computed. A netCDF regridding weights file created by
-                `ESMF.Regrid` has the same structure and may also be
-                provided as an existing file.
+                computed.
 
-                Ignored if *dst* is a `RegridOperator`.
+                .. note:: No checks are performed on an existing file
+                          to ensure that the weights are appropriate
+                          for the source field and the values of the
+                          keyword parameters. Inapproriate weights
+                          will produce incorrect results.
 
-                .. note:: No checks are performed on the file to
-                          ensure that the weights are correct for the
-                          source and destination grids.
+                          However, when regridding using weights from
+                          a file, ensuring that the source field has
+                          the same shape over the regridding axes, and
+                          the parameter settings are the same as those
+                          used when the weights file was created, will
+                          ensure correct results.
+
+                          A netCDF regridding weights file created by
+                          `esmpy.Regrid` has the same structure and
+                          may be provided as a *weights_file*, noting
+                          that no checks will be applied to it.
 
                 **Performance**
 

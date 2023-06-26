@@ -14552,7 +14552,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{weights_file: `str` or `None`, optional}}
 
-               .. versionadded:: TODOREGRIDVER
+               .. versionadded:: 3.15.2
 
             {{inplace: `bool`, optional}}
 
@@ -14571,7 +14571,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
-                operation was in-place or the regridding operator if
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
@@ -14792,7 +14792,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{weights_file: `str` or `None`, optional}}
 
-               .. versionadded:: TODOREGRIDVER
+               .. versionadded:: 3.15.2
 
             {{inplace: `bool`, optional}}
 

@@ -122,7 +122,7 @@ class RegridOperator(mixin_Container, Container):
                  weights. If `None`, the default, then the weights
                  were computed rather than read from a file.
 
-                 .. versionadded:: TODOREGRIDVER
+                 .. versionadded:: 3.15.2
 
         """
         super().__init__()
@@ -335,6 +335,10 @@ class RegridOperator(mixin_Container, Container):
     def weights(self):
         """The 1-d array of the regridding weights.
 
+        If and only if it is a `scipy` sparse array then the
+        `dst_mask` attribute will have been updated to `True` for
+        destination grid points for which the weights are all zero.
+
         .. versionadded:: 3.14.0
 
         """
@@ -344,7 +348,7 @@ class RegridOperator(mixin_Container, Container):
     def weights_file(self):
         """The file from which the weights were read, or `None`.
 
-        .. versionadded:: TODOREGRIDVER
+        .. versionadded:: 3.15.2
 
         """
         return self._get_component("weights_file")
