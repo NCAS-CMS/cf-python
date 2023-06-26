@@ -1507,18 +1507,21 @@ def create_esmpy_weights(
     :Returns:
 
         5-`tuple`
-            * weights: The 1-d `numpy` array of the regridding
-                   weights.
+            * weights: Either the 1-d `numpy` array of the regridding
+                   weights. Or `None` if the regridding weights are to
+                   be read from a file.
             * row: The 1-d `numpy` array of the row indices of the
                    regridding weights in the dense weights matrix,
                    which has J rows and I columns, where J and I are
                    the total number of cells in the destination and
-                   source grids respectively. The start index is 1.
+                   source grids respectively. The start index is 1. Or
+                   `None` if the indices are to be read from a file.
             * col: The 1-d `numpy` array of column indices of the
                    regridding weights in the dense weights matrix,
                    which has J rows and I columns, where J and I are
                    the total number of cells in the destination and
-                   source grids respectively. The start index is 1.
+                   source grids respectively. The start index is 1. Or
+                   `None` if the indices are to be read from a file.
             * start_index: The non-negative integer start index of the
                    row and column indices.
             * from_file: `True` if the weights were read from a file,
@@ -1526,23 +1529,18 @@ def create_esmpy_weights(
 
     """
     start_index = 1
+
     compute_weights = True
-
     if esmpy_regrid_operator is None and weights_file is not None:
-        from netCDF4 import Dataset
+        from os.path import isfile
 
-        try:
-            nc = Dataset(weights_file, "r")
-        except FileNotFoundError:
-            pass
-        else:
-            # Read the weights from a netCDF file
-            weights = nc.variables["S"][...]
-            row = nc.variables["row"][...]
-            col = nc.variables["col"][...]
-            nc.close()
-
+        if isfile(weights_file):
+            # The regridding weights and indices will be read from a
+            # file
             compute_weights = False
+            weights = None
+            row = None
+            col = None
 
     from_file = True
     if compute_weights or esmpy_regrid_operator is not None:
@@ -1554,7 +1552,7 @@ def create_esmpy_weights(
 
         mask_values = np.array([0], dtype="int32")
 
-        # Create the esmpy.regrid operator
+        # Create the esmpy.Regrid operator
         r = esmpy.Regrid(
             src_esmpy_field,
             dst_esmpy_field,
@@ -1592,9 +1590,12 @@ def create_esmpy_weights(
 
         if weights_file is not None:
             # Write the weights to a netCDF file (copying the
-            # dimension and variable names, and structure of a weights
+            # dimension and variable names and structure of a weights
             # file created by ESMF).
+            from netCDF4 import Dataset
+
             from .. import __version__
+            from ..data.array.netcdfarray import _lock
 
             if (
                 max(dst_esmpy_field.data.size, src_esmpy_field.data.size)
@@ -1604,6 +1605,7 @@ def create_esmpy_weights(
             else:
                 i_dtype = "i8"
 
+            _lock.acquire()
             nc = Dataset(weights_file, "w", format="NETCDF4")
             nc.title = (
                 f"{src_grid.coord_sys.capitalize()} {src_grid.method} "
@@ -1629,9 +1631,11 @@ def create_esmpy_weights(
             v[...] = col
 
             nc.close()
+            _lock.release()
 
     if esmpy_regrid_operator is None:
-        # Destroy esmpy objects
+        # Destroy esmpy objects (the esmpy.Grid objects exist even if
+        # we didn't create any weights using esmpy.Regrid).
         src_esmpy_grid.destroy()
         dst_esmpy_grid.destroy()
         if compute_weights:

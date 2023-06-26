@@ -127,7 +127,7 @@ class RegridOperator(mixin_Container, Container):
         """
         super().__init__()
 
-        if weights is None or row is None or col is None:
+        if weights is None and weights_file is None:
             # This to allow a no-arg init!
             return
 
@@ -333,11 +333,13 @@ class RegridOperator(mixin_Container, Container):
 
     @property
     def weights(self):
-        """The 1-d array of the regridding weights.
+        """The 1-d array of the regridding weights, or `None`
 
-        If and only if it is a `scipy` sparse array then the
-        `dst_mask` attribute will have been updated to `True` for
-        destination grid points for which the weights are all zero.
+        If and only if it is a `scipy` sparse array that combines the
+        weights and the row and column indices (as opposed to a
+        `numpy` array of just the weights) then the `dst_mask`
+        attribute will have been updated to `True` for destination
+        grid points for which the weights are all zero.
 
         .. versionadded:: 3.14.0
 
@@ -346,7 +348,7 @@ class RegridOperator(mixin_Container, Container):
 
     @property
     def weights_file(self):
-        """The file from which the weights were read, or `None`.
+        """The file which contains the weights, or `None`.
 
         .. versionadded:: 3.15.2
 
@@ -515,24 +517,28 @@ class RegridOperator(mixin_Container, Container):
     def tosparse(self):
         """Convert the weights to `scipy` sparse array format in-place.
 
-        The weights are converted to Compressed Sparse Row (CSR) array
-        format, i.e. the `weights` attribute becomes a
-        `scipy.sparse._arrays.csr_array` object. A CSR array is used
-        as the most efficient sparse array type given that we expect
-        no changes to the sparsity structure, and any further
-        modification of the weights to account for missing values in
-        the source grid will always involve row-slicing.
+        The `weights` attribute is set to a Compressed Sparse Row
+        (CSR) array (i.e. a `scipy.sparse._arrays.csr_array` instance)
+        that combines the weights and the row and column indices, and
+        the `row` and `col` attributes are set to `None`.
 
-        The `dst_mask` attribute is updated to `True` for destination
-        grid points for which the weights are all zero.
+        The `dst_mask` attribute is also updated to `True` for
+        destination grid points for which the weights are all zero.
+
+        A CSR array is used as the most efficient sparse array type
+        given that we expect no changes to the sparsity structure, and
+        any further modification of the weights to account for missing
+        values in the source grid will always involve row-slicing.
 
         :Returns:
 
             `None`
 
         """
+        weights = self.weights
         row = self.row
-        if row is None:
+        col = self.col
+        if weights is not None and row is None and col is None:
             # Weights are already in sparse array format
             return
 
@@ -540,9 +546,29 @@ class RegridOperator(mixin_Container, Container):
 
         from scipy.sparse import csr_array
 
-        col = self.col
-        weights = self.weights
+        if weights is None:
+            weights_file = self.weights_file
+            if weights_file is not None:
+                # Read the weights from the weights file
+                from netCDF4 import Dataset
 
+                from ..data.array.netcdfarray import _lock
+
+                _lock.acquire()
+                nc = Dataset(weights_file, "r")
+                weights = nc.variables["S"][...]
+                row = nc.variables["row"][...]
+                col = nc.variables["col"][...]
+                nc.close()
+                _lock.release()
+            else:
+                raise ValueError(
+                    "Conversion to sparse array format requires at least "
+                    "one of the 'weights' or 'weights_file' attributes to "
+                    "be set"
+                )
+
+        # Convert to sprase array format
         start_index = self.start_index
         if start_index:
             row = row - start_index
@@ -552,12 +578,14 @@ class RegridOperator(mixin_Container, Container):
         dst_size = prod(self.dst_shape)
 
         weights = csr_array((weights, (row, col)), shape=[dst_size, src_size])
-
         del row, col
+
         self._set_component("weights", weights, copy=False)
         self._set_component("row", None, copy=False)
         self._set_component("col", None, copy=False)
 
+        # Set the destination grid mask to True where the weights for
+        # destination grid points are all zero
         dst_mask = self.dst_mask
         if dst_mask is not None:
             if dst_mask.dtype != bool or dst_mask.shape != self.dst_shape:
@@ -572,9 +600,6 @@ class RegridOperator(mixin_Container, Container):
         else:
             dst_mask = np.zeros((dst_size,), dtype=bool)
 
-        # Set the destination grid mask to True where the weights for
-        # destination grid points are all zero
-        #
         # Note: It is much more efficient to access 'weights.indptr'
         #       and 'weights.data' directly, rather than iterating
         #       over rows of 'weights' and using 'weights.getrow'.
