@@ -2242,7 +2242,7 @@ def aggregate(
             physical quantity are not aggregated together.
 
             Field or domain constructs that match any of the given
-            conditions are then aggregated in the usual manner, as are
+            conditions are otherwise aggregated in the usual manner, as are
             those which don't match any of the given conditions.
 
             **Conditions format**
