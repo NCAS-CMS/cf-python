@@ -2269,8 +2269,8 @@ def aggregate(
             keys, defining conditions for any number of dimension
             coordinates. If multiple keys match the identity of the
             same dimension coordinate construct then the conditions
-            corresponding to first such key encountered when iterating
-            through the dictionary are used.
+            corresponding to the first such key encountered when
+            iterating through the dictionary are used.
 
             A dictionary value defines the dimension coordinate
             conditions as one, or an ordered sequence of, the
