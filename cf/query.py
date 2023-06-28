@@ -167,7 +167,7 @@ class Query:
     ======================  ==============================================
 
     In general, each method must have the query value as it's only
-    parameter. The only excecption is for `__query_isclose__`, which
+    parameter. The only exception is for `__query_isclose__`, which
     also requires the absolute and relative numerical tolerances
     provided by *atol* and *rtol* keyword parameters.
 
