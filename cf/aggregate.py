@@ -2330,7 +2330,7 @@ def aggregate(
             have the specified cell coordinate spacing throughout. See
             the *contiguous* parameter for more details.
 
-            .. note:: Potentially unintended results might occur in
+            .. note:: Potentially unexpected results might occur in
                       the particular circumstance of multiple
                       coordinate spacing conditions being applied to
                       aggregatable input fields for which some, but
