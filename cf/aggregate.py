@@ -2360,9 +2360,8 @@ def aggregate(
 
             The testing of the conditions has a computational
             overhead, as well as an I/O overhead if the dimension
-            coordinate data are on disk. Try to avoid setting
-            conditions when it doesn't matter if they are passed or
-            not. For instance, if the inputs comprise monthly mean air
+            coordinate data are on disk. Try to avoid setting redundant
+            conditions. For instance, if the inputs comprise monthly mean air
             temperature and daily mean precipitation fields, then the
             different field identities alone will ensure a correct
             aggregation. In this case, adding cell conditions of
@@ -2384,8 +2383,8 @@ def aggregate(
               Equivalent ways to separate time cells of 1 day from
               other time cell sizes:
               ``{'T': {'cellsize': cf.D()}}``,
-              ``{'T': {'cellsize': cf.eq(1, 'day'}}``,
-              ``{'T': {'cellsize': cf.isclose(1, 'day'}}``,
+              ``{'T': {'cellsize': cf.eq(1, 'day')}}``,
+              ``{'T': {'cellsize': cf.isclose(1, 'day')}}``,
               ``{'T': {'cellsize': cf.Data(1, 'day')}}``,
               ``{'T': {'cellsize': cf.h(24)}}``, etc.
 
@@ -2393,7 +2392,7 @@ def aggregate(
               Equivalent ways to separate time cells of 1 month, in
               any calendar, from other time cell sizes:
               ``{'T': {'cellsize': cf.M()}}``,
-              ``{'T': {'cellsize': cf.wi(28, 31, 'day'}}``.
+              ``{'T': {'cellsize': cf.wi(28, 31, 'day')}}``.
 
             *Parameter example*
               To separate horizontal cells with size (2.5 degrees
@@ -2408,7 +2407,7 @@ def aggregate(
               ``{'T': [{'cellsize': cf.D(1)}, {'cellsize': cf.D(30)}]}``.
 
             *Parameter example*
-              To aggregate 6 hourly instantaneous time cells, specify
+              To aggregate 6-hourly instantaneous time cells, specify
               a cellsize of zero:
               ``{'T': {'cellsize': cf.h(0), 'spacing': cf.h(6)}}``.
 
@@ -2646,7 +2645,6 @@ def aggregate(
             if info:
                 # Note: deliberately no gap between 'has' and '{exclude}'
                 logger.info(
-                    #                    f"Unaggregatable {meta.identity!r} has{exclude} been output: "
                     f"Unaggregatable {f_identity(meta)} has{exclude} "
                     f"been output: {meta.message}"
                 )
@@ -2735,7 +2733,6 @@ def aggregate(
             if info:
                 x = ", ".join(set(repr(m.units) for m in meta))
                 logger.info(
-                    #                    f"Unaggregatable {meta[0].field.identity()!r} fields "
                     f"Unaggregatable {f_identity(meta[0])} fields "
                     f"have{exclude} been output: Non-valid units {x}"
                 )
@@ -2837,7 +2834,6 @@ def aggregate(
             if not grouped_meta:
                 if info:
                     logger.info(
-                        #                        f"Unaggregatable {meta[0].field.identity()!r} fields "
                         f"Unaggregatable {f_identity(meta[0])} fields "
                         f"have{exclude} been output: {meta[0].message}"
                     )
@@ -2848,7 +2844,6 @@ def aggregate(
             if len(grouped_meta) == number_of_fields:
                 if debug:
                     logger.debug(
-                        #                        f"{meta[0].field.identity()!r} fields can't be "
                         f"{meta[0].identity!r} fields can't be "
                         f"aggregated along their {axis!r} axis"
                     )
@@ -2879,7 +2874,6 @@ def aggregate(
                 ):
                     if info:
                         logger.info(
-                            #                            f"Unaggregatable {m[0].field.identity()!r} fields "
                             f"Unaggregatable {f_identity(m[0])} fields "
                             f"have{exclude} been output: {m[0].message}"
                         )
@@ -2962,7 +2956,6 @@ def aggregate(
                         # already done.
                         if info:
                             logger.info(
-                                #                                f"Unaggregatable {m1.field.identity()!r} "
                                 f"Unaggregatable {f_identity(m1)} fields "
                                 f"fields have{exclude} been output: "
                                 f"{m1.message}"
@@ -3108,8 +3101,8 @@ def climatology_cells(
             sizes of 1 calendar month.
 
         days: sequence of numbers, optional
-            Include a condition a cell size for each number of days in
-            the sequence. May be an empty sequence. By default the
+            Include a condition for a cell size for each number of days
+            in the sequence. May be an empty sequence. By default the
             sequence is ``(1,)``.
 
         hours: sequence of numbers, optional
@@ -4080,7 +4073,7 @@ def _ok_coordinate_arrays(
                                 f"contiguous={bool(contiguous)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]!r} "
                                 "dimension coordinate cells do not match "
-                                f"the cell spacing condition between fields "
+                                "the cell spacing condition between fields "
                                 f"({data1!r} - {data0!r} = {dim_diff!r}) "
                                 f"!= {diff!r}"
                             )
