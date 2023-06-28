@@ -282,7 +282,7 @@ class Query:
         if rtol is not None or atol is not None:
             if operator != "isclose":
                 raise ValueError(
-                    "Can only set the 'rtol' and 'atol' parameters"
+                    "Can only set the 'rtol' and 'atol' parameters "
                     "for the 'isclose' operator"
                 )
 
