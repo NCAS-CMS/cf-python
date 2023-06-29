@@ -4501,7 +4501,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             rtol: number
                 The tolerance on relative numerical differences.
 
-            atol: number, optional
+            atol: number
                 The tolerance on absolute numerical differences.
 
         .. versionadded:: 3.15.2
