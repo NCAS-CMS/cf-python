@@ -3125,7 +3125,7 @@ def climatology_cells(
         days_instantaneous: `bool`, optional
             If True, then also include conditions for cell coordinate
             spacings with the values given by the *days* parameter. By
-            default such condition are not included.
+            default such conditions are not included.
 
         hours_instantaneous: `bool`, optional
             If True, the default, then also include conditions for
@@ -3135,13 +3135,13 @@ def climatology_cells(
         minutes_instantaneous: `bool`, optional
             If True then also include conditions for cell coordinate
             spacings with the values given by the *minutes*
-            parameter. By default such condition are not included.
+            parameter. By default such conditions are not included.
 
 
         seconds_instantaneous: `bool`, optional
             If True then also include conditions for cell coordinate
             spacings with the values given by the *seconds*
-            parameter. By default such condition are not included.
+            parameter. By default such conditions are not included.
 
     :Returns:
 
