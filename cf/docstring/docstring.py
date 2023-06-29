@@ -514,17 +514,16 @@ _docstring_substitution_definitions = {
                 instance, the following are equivalent: ``'base'`` and
                 ``'${base}'``.""",
     # regular args
-    "{{regular args}}": 
-                """A sequence of three numeric values. The first two values in 
+    "{{regular args}}": """A sequence of three numeric values. The first two values in
                 the sequence represent the coordinate range (see the bounds
                 parameter for details), and the third value represents the
                 cellsize.
 
-                .. note:: The cellsize does not have to explicitly divide into 
-                          the range of the given dimension. But as it follows 
+                .. note:: The cellsize does not have to explicitly divide into
+                          the range of the given dimension. But as it follows
                           `numpy.arange` while creating the points, one should
-                          verify that that the number of grid points are 
-                          returned as expected.""",  
+                          verify that that the number of grid points are
+                          returned as expected.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

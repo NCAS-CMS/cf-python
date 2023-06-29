@@ -7,6 +7,8 @@ version ?.?.?
   (https://github.com/NCAS-CMS/cf-python/issues/661)
 * New keyword parameter to `cf.aggregate`: ``cells``
   (https://github.com/NCAS-CMS/cf-python/issues/452)
+* Allow `__getitem__` indices that have a `to_dask_array` method
+  (https://github.com/NCAS-CMS/cf-python/issues/677)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
 

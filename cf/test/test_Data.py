@@ -1490,6 +1490,11 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue(d[indices].count(), 9)
 
+        # Indices that have a 'to_dask_array' method
+        d = cf.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
+        indices = (cf.Data([1, 3]), cf.Data([0, 1, 2, 3, 4]) > 1)
+        self.assertEqual(d[indices].shape, (2, 3))
+
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
         for hardmask in (False, True):
