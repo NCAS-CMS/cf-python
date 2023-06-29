@@ -168,8 +168,8 @@ class Query:
 
     In general, each method must have the query value as it's only
     parameter. The only exception is for `__query_isclose__`, which
-    also requires the absolute and relative numerical tolerances
-    provided by *atol* and *rtol* keyword parameters.
+    also requires the absolute and relative numerical tolerances to be
+    provided.
 
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
@@ -929,7 +929,7 @@ class Query:
 
             _isclose = getattr(x, "__query_isclose__", None)
             if _isclose is not None:
-                return _isclose(value, rtol=rtol, atol=atol)
+                return _isclose(value, rtol, atol)
 
             return np.isclose(x, value, rtol=rtol, atol=atol)
 

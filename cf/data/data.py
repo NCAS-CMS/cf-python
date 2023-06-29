@@ -4490,8 +4490,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return self._unary_operation("__pos__")
 
-    def __query_isclose__(self, value, rtol=None, atol=None):
+    def __query_isclose__(self, value, rtol, atol):
         """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+        
+            rtol: number, optional
+                The tolerance on relative numerical differences.
+    
+            atol: number, optional
+                The tolerance on absolute numerical differences.
 
         .. versionadded:: 3.15.2
 
