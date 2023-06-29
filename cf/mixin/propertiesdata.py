@@ -546,7 +546,7 @@ class PropertiesData(Properties):
             value:
                 The object to test against.
 
-            rtol: number, optional
+            rtol: number
                 The tolerance on relative numerical differences.
 
             atol: number, optional
