@@ -4498,7 +4498,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             value:
                 The object to test against.
 
-            rtol: number, optional
+            rtol: number
                 The tolerance on relative numerical differences.
 
             atol: number, optional
