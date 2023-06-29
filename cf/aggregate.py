@@ -317,7 +317,7 @@ class _Meta:
                 Conditions for dimension coordinate cells. See the
                 *cells* parameter of `cf.aggregate` for details.
 
-                .. versionaddedd:: TODOAGGVER
+                .. versionaddedd:: 3.15.2
 
             info: `bool`
                 True if the log level is ``'INFO'`` (``2``) or higher.
@@ -956,7 +956,7 @@ class _Meta:
         Returns the coordinate cell size and spacing conditions that
         are satisfied by the given dimension coordinate construct.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         :Parameters:
 
@@ -1106,7 +1106,7 @@ class _Meta:
 
         This is passed to the logger if the verbosity is high enough.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         .. seealso:: `print_info`
 
@@ -1753,7 +1753,7 @@ class _Meta:
     def tokenise_cell_conditions(self, cell_conditions):
         """Create deterministic tokens for cell conditions.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         .. seealso:: `structural_signature`
 
@@ -2416,7 +2416,7 @@ def aggregate(
               consecutive days:
               ``{'T': {'cellsize': cf.D(5), 'spacing': cf.D(1)}}``.
 
-            .. versionadded:: TODOAGGAVER
+            .. versionadded:: 3.15.2
 
         no_overlap: deprecated at version 3.0.0
             Use the *overlap* parameter instead.
@@ -3086,7 +3086,7 @@ def climatology_cells(
     and further customisation may be applied by manually adding
     conditions to, or removing them from, the returned dictionary.
 
-    .. versionadded:: TODOAGGVER
+    .. versionadded:: 3.15.2
 
     .. seealso:: `cf.aggregate`
 
@@ -4117,7 +4117,7 @@ def _ok_coordinate_arrays(
 def _difference_units(units):
     """Return difference units corresponding to position-on-scale units.
 
-    .. versionadded:: TODOAGGVER
+    .. versionadded:: 3.15.2
 
     :Parameters:
 

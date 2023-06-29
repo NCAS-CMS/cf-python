@@ -389,7 +389,7 @@ class TimeDuration:
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         """
         duration = self.duration

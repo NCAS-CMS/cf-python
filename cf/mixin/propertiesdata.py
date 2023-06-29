@@ -541,7 +541,7 @@ class PropertiesData(Properties):
     def __query_isclose__(self, value, rtol=None, atol=None):
         """Query interface method for an "is close" condition.
 
-        .. versionadded:: TODOAGGAVER
+        .. versionadded:: 3.15.2
 
         """
         data = self.get_data(None, _fill_value=None)

@@ -4493,7 +4493,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def __query_isclose__(self, value, rtol=None, atol=None):
         """Query interface method for an "is close" condition.
 
-        .. versionadded:: TODOAGGAVER
+        .. versionadded:: 3.15.2
 
         """
         return self.isclose(value, rtol=rtol, atol=atol)

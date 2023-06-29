@@ -239,7 +239,7 @@ class Query:
                 `None`, the default, then the value returned by
                 `cf.rtol` is used at evaluation time.
 
-                .. versionadded:: TODOAGGVER
+                .. versionadded:: 3.15.2
 
             atol: number, optional
                 Only applicable to the ``'isclose'`` operator. The
@@ -247,7 +247,7 @@ class Query:
                 `None`, the default, then the value returned by
                 `cf.atol` is used at evaluation time.
 
-                .. versionadded:: TODOAGGVER
+                .. versionadded:: 3.15.2
 
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
@@ -292,7 +292,7 @@ class Query:
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         """
         compound = self._compound
@@ -485,7 +485,7 @@ class Query:
         For compound queries `atol` is always `None`, even if some of
         the constituent conditions have a different value.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         .. seealso:: `rtol`, `setdefault`
 
@@ -538,7 +538,7 @@ class Query:
     def Units(self):
         """Return the units of the query.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         :Returns:
 
@@ -608,7 +608,7 @@ class Query:
         For compound queries `rtol` is always `None`, even if some of
         the constituent conditions have a different value.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         .. seealso:: `atol`, `setdefault`
 
@@ -1155,7 +1155,7 @@ class Query:
         For compound queries the parameters are set recursively on the
         constituent conditions.
 
-        .. versionadded:: TODOAGGVER
+        .. versionadded:: 3.15.2
 
         .. seealso:: `atol`, `rtol`
 
@@ -1556,7 +1556,7 @@ def ne(value, units=None, attr=None, exact=True):
 def isclose(value, units=None, attr=None, rtol=None, atol=None):
     """A `Query` object for an "is close" condition.
 
-    .. versionadded:: TODOAGGVER
+    .. versionadded:: 3.15.2
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ne`, `cf.ge`, `cf.gt`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
