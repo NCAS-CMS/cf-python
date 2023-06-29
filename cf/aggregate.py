@@ -2293,7 +2293,9 @@ def aggregate(
             where ``<condition1>`` and ``<condition2>`` must each be
             one of a `Query`, `TimeDuration`, scalar `Data`, scalar
             data_like object, or `None`. A condition of `None` is
-            equivalent to that condition not being defined.
+            equivalent to that condition not being defined (which may
+            be a useful setting for conditions that are generated
+            automatically).
 
             .. note:: The `TimeDuration` conditions ``cf.M()`` (1
                       calendar month) and ``cf.Y()`` (1 calendar year)
