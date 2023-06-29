@@ -578,11 +578,11 @@ class RegridOperator(mixin_Container, Container):
         dst_size = prod(self.dst_shape)
 
         weights = csr_array((weights, (row, col)), shape=[dst_size, src_size])
-        del row, col
 
         self._set_component("weights", weights, copy=False)
         self._set_component("row", None, copy=False)
         self._set_component("col", None, copy=False)
+        del row, col
 
         # Set the destination grid mask to True where the weights for
         # destination grid points are all zero
