@@ -959,7 +959,10 @@ Special
    ~cf.Field.__deepcopy__
    ~cf.Field.__getitem__
    ~cf.Field.__repr__
-   ~cf.Field.__str__
+   ~cf.Field.__str__ 
+   ~cf.Field.__array__
+   ~cf.Field.__data__
+   ~cf.Field.__query_isclose__
 
 Deprecated
 ----------

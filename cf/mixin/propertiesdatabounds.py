@@ -402,9 +402,6 @@ class PropertiesDataBounds(PropertiesData):
         """
         return self._unary_operation("__pos__", bounds=True)
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _binary_operation(self, other, method, bounds=True):
         """Implement binary arithmetic and comparison operations.
 
@@ -846,7 +843,16 @@ class PropertiesDataBounds(PropertiesData):
         else:
             data = self.get_data(None)
             if data is not None:
-                return Data.zeros(self.shape, units=self.Units)
+                # Convert to "difference" units
+                #
+                # TODO: Think about temperature units in relation to
+                #       https://github.com/cf-convention/discuss/issues/101,
+                #       whenever that issue is resolved.
+                units = self.Units
+                if units.isreftime:
+                    units = Units(units._units_since_reftime)
+
+                return Data.zeros(self.shape, units=units)
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data"

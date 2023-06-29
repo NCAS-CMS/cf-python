@@ -272,7 +272,7 @@ from .data.fragment import (
     UMFragmentArray,
 )
 
-from .aggregate import aggregate
+from .aggregate import aggregate, climatology_cells
 from .query import (
     Query,
     lt,
@@ -281,6 +281,7 @@ from .query import (
     ge,
     eq,
     ne,
+    isclose,
     contain,
     contains,
     wi,

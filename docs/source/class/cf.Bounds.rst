@@ -606,7 +606,8 @@ Special
    ~cf.Bounds.__setitem__
    ~cf.Bounds.__str__
    ~cf.Bounds.__array__
-   ~cf.Bounds.__data__
+   ~cf.Bounds.__data__ 
+   ~cf.Bounds.__query_isclose__
 
 Deprecated
 ----------

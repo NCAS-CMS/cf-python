@@ -653,6 +653,7 @@ Special
    ~cf.DomainAncillary.__str__
    ~cf.DomainAncillary.__array__
    ~cf.DomainAncillary.__data__
+   ~cf.DomainAncillary.__query_isclose__
 
 Deprecated
 ----------
