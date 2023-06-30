@@ -9993,8 +9993,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
 
-        <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
         >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
