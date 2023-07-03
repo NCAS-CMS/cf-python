@@ -3700,7 +3700,8 @@ Constructor    Description
 `cf.ne`        A `cf.Query` object for a "not equal" condition
 `cf.wi`        A `cf.Query` object for a "within a range" condition
 `cf.wo`        A `cf.Query` object for a "without a range" condition
-`cf.set`       A `cf.Query` object for a "member of set" condition                
+`cf.set`       A `cf.Query` object for a "member of set" condition
+`cf.isclose`   A `cf.Query` object for an "is close" condition
 =============  ======================================================================
 
 |

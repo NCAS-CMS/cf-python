@@ -1685,6 +1685,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
 
+        # Convert to "difference" units
+        #
+        # TODO: Think about temperature units in relation to
+        #       https://github.com/cf-convention/discuss/issues/101,
+        #       whenever that issue is resolved.
+        units = self.Units
+        if units.isreftime:
+            units = Units(units._units_since_reftime)
+            d.override_units(units, inplace=True)
+
         return d
 
     @_inplace_enabled(default=False)
@@ -4480,9 +4490,25 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private attributes
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol, atol):
+        """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+
+            rtol: number
+                The tolerance on relative numerical differences.
+
+            atol: number
+                The tolerance on absolute numerical differences.
+
+        .. versionadded:: 3.15.2
+
+        """
+        return self.isclose(value, rtol=rtol, atol=atol)
+
     @property
     def _Units(self):
         """Storage for the units.

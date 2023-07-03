@@ -371,7 +371,9 @@ class TimeDuration:
         self._NotImplemented_RHS_Data_op = True
 
     def __abs__(self):
-        """x.__abs__() <==> abs(x)
+        """The unary arithmetic operation ``abs``
+
+        x.__abs__() <==> abs(x)
 
         .. versionadded:: 1.4
 
@@ -384,6 +386,20 @@ class TimeDuration:
         """Returns a `numpy` array representing the time duration."""
         return self.duration.__array__(*dtype)
 
+    def __dask_tokenize__(self):
+        """Return a hashable value fully representative of the object.
+
+        .. versionadded:: 3.15.2
+
+        """
+        duration = self.duration
+        return (
+            self.__class__,
+            duration.tolist(),
+            duration.Units.formatted(definition=True),
+            self.offset,
+        )
+
     def __data__(self):
         """Returns a new reference to the `!duration` attribute."""
         return self.duration
@@ -393,7 +409,9 @@ class TimeDuration:
         return self.copy()
 
     def __neg__(self):
-        """x.__neg__() <==> -x.
+        """The unary arithmetic operation ``-``
+
+        x.__neg__() <==> -x.
 
         .. versionadded:: 1.4
 
@@ -411,15 +429,27 @@ class TimeDuration:
         return bool(self.duration)
 
     def __int__(self):
-        """x.__int__() <==> int(x)"""
+        """Called to implement the built-in function `int`
+
+        x.__int__() <==> int(x)
+
+        """
         return int(self.duration)
 
     def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        return f"<CF {self.__class__.__name__}: {str(self)}>"
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
+        return f"<CF {self.__class__.__name__}: {self}>"
 
     def __str__(self):
-        """x.__str__() <==> str(x)"""
+        """ "Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         yyy = [
             x if y is None else f"{y:0>2}"
             for x, y in zip(("Y", "M", "D", "h", "m", "s"), self.offset)
@@ -654,9 +684,6 @@ class TimeDuration:
 
         return NotImplemented
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _apply_binary_comparison(self, other, op):
         """Apply a binary comparison operation on general data.
 
@@ -991,9 +1018,6 @@ class TimeDuration:
 
         self.duration.Units = Units(value)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 
@@ -1360,13 +1384,13 @@ class TimeDuration:
                 objects. Valid values are (with example outputs for the
                 time interval "3 years from 2007-03-01 13:00:00"):
 
-                  ========================  =============================================
-                  iso                       Example output
-                  ========================  =============================================
-                  ``'start and end'``       ``'2007-03-01 13:00:00/2010-03-01 13:00:00'``
-                  ``'start and duration'``  ``'2007-03-01 13:00:00/P3Y'``
-                  ``'duration and end'``    ``'P3Y/2010-03-01 13:00:00'``
-                  ========================  =============================================
+                ========================  =============================================
+                iso                       Example output
+                ========================  =============================================
+                ``'start and end'``       ``'2007-03-01 13:00:00/2010-03-01 13:00:00'``
+                ``'start and duration'``  ``'2007-03-01 13:00:00/P3Y'``
+                ``'duration and end'``    ``'P3Y/2010-03-01 13:00:00'``
+                ========================  =============================================
 
         :Returns:
 

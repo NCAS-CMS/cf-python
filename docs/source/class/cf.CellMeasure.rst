@@ -623,7 +623,8 @@ Special
    ~cf.CellMeasure.__setitem__
    ~cf.CellMeasure.__str__
    ~cf.CellMeasure.__array__
-   ~cf.CellMeasure.__data__
+   ~cf.CellMeasure.__data__    
+   ~cf.CellMeasure.__query_isclose__
    
 Deprecated
 ----------

@@ -8,6 +8,10 @@ version 3.15.2
   (https://github.com/NCAS-CMS/cf-python/issues/675)
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
   ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
+* New function: `cf.isclose`
+  (https://github.com/NCAS-CMS/cf-python/issues/661)
+* New keyword parameter to `cf.aggregate`: ``cells``
+  (https://github.com/NCAS-CMS/cf-python/issues/452)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
 
@@ -28,7 +32,7 @@ version 3.15.1
   (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Fix bug when using the ``-d`` option to the `cfa` script 
   (https://github.com/NCAS-CMS/cf-python/issues/649)
-* Fix the return tppe from `cf.example_fields`
+* Fix the return type from `cf.example_fields`
   (https://github.com/NCAS-CMS/cf-python/pull/654)
 * Fix `set_data` when the units are invalid
   (https://github.com/NCAS-CMS/cf-python/pull/646)
