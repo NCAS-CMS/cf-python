@@ -21,4 +21,4 @@ plot_10_recipe.html#sphx-glr-recipes-plot-10-recipe-py
 plot_11_recipe.html#sphx-glr-recipes-plot-11-recipe-py
 <div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Subspace, Collapse">
 plot_12_recipe.html#sphx-glr-recipes-plot-12-recipe-py
-<div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Contourmap, Mask">
+<div class="sphx-glr-thumbcontainer contourmap mask" tooltip=" Contourmap, Mask">
