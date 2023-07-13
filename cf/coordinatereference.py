@@ -56,37 +56,45 @@ def create_2d_lats_and_lons():
     # and its parameters under PROJ.
     grid_mapping_name_attr_to_proj_string_map = {
         # Albers Equal Area
-        "albers_conical_equal_area": "",
+        "albers_conical_equal_area": "aea +lat_1=29.5 +lat_2=42.5",
         # Azimuthal equidistant
-        "azimuthal_equidistant": "",
+        "azimuthal_equidistant": "aeqd",
         # Geostationary projection
-        "geostationary": "",
+        "geostationary": "geos +h=35785831.0 +lon_0=-60 +sweep=y",
         # Lambert azimuthal equal area
-        "lambert_azimuthal_equal_area": "",
+        "lambert_azimuthal_equal_area": "laea",
         # Lambert conformal
-        "lambert_conformal_conic": "",
+        "lambert_conformal_conic": "lcc +lon_0=-90 +lat_1=33 +lat_2=45",
         # Lambert Cylindrical Equal Area
-        "lambert_cylindrical_equal_area": "",
+        # -> note this is called 'Equal Area Cylindrical' in PROJ
+        "lambert_cylindrical_equal_area": "cea",
         # Latitude-Longitude
-        "latitude_longitude": "",
+        # -> note this is called 'Equidistant Cylindrical (Plate Carrée)'
+        #    in PROJ (TODO: double check this, I think based on
+        #    https://en.wikipedia.org/wiki/Equirectangular_projection it
+        #    is True...)
+        "latitude_longitude": "eqc",
         # Mercator
-        "mercator": "",
+        "mercator": "merc",
         # Oblique Mercator
-        "oblique_mercator": "",
+        "oblique_mercator": "omerc +lat_1=45 +lat_2=55",
         # Orthographic
-        "orthographic": "",
+        "orthographic": "ortho",
         # Polar stereographic
-        "polar_stereographic": "",
+        "polar_stereographic": "stere +lat_0=90 +lat_ts=75",
         # Rotated pole
-        "rotated_latitude_longitude": "",
+        # -> TODO: not sure what this is in PROJ, could need to use
+        #    latitude_longitude ("eqc") and set extra parameters?
+        "rotated_latitude_longitude": "???",
         # Sinusoidal
-        "sinusoidal": "",
+        "sinusoidal": "sinu",
         # Stereographic
-        "stereographic": "",
+        "stereographic": "stere +lat_0=90 +lat_ts=75",
         # Transverse Mercator
-        "transverse_mercator": "",
+        "transverse_mercator": "tmerc",
         # Vertical perspective
-        "vertical_perspective": "",
+        # -> TODO: not sure what this is in PROJ. Find out!
+        "vertical_perspective": "???",
     }
     return
 
