@@ -47,6 +47,50 @@ def _totuple(a):
         return a
 
 
+def create_2d_lats_and_lons():
+    """TODO."""
+    # For keys all Grid Mappings supported by the CF Conventions, as
+    # listed in Appendix F of the document, given as the specific
+    # 'grid_mapping_name' attribute string, mapped to values of their PROJ
+    # 'proj-string' which defines the equivalent coordnate transformtion
+    # and its parameters under PROJ.
+    grid_mapping_name_attr_to_proj_string_map = {
+        # Albers Equal Area
+        "albers_conical_equal_area": "",
+        # Azimuthal equidistant
+        "azimuthal_equidistant": "",
+        # Geostationary projection
+        "geostationary": "",
+        # Lambert azimuthal equal area
+        "lambert_azimuthal_equal_area": "",
+        # Lambert conformal
+        "lambert_conformal_conic": "",
+        # Lambert Cylindrical Equal Area
+        "lambert_cylindrical_equal_area": "",
+        # Latitude-Longitude
+        "latitude_longitude": "",
+        # Mercator
+        "mercator": "",
+        # Oblique Mercator
+        "oblique_mercator": "",
+        # Orthographic
+        "orthographic": "",
+        # Polar stereographic
+        "polar_stereographic": "",
+        # Rotated pole
+        "rotated_latitude_longitude": "",
+        # Sinusoidal
+        "sinusoidal": "",
+        # Stereographic
+        "stereographic": "",
+        # Transverse Mercator
+        "transverse_mercator": "",
+        # Vertical perspective
+        "vertical_perspective": "",
+    }
+    return
+
+
 class CoordinateReference(cfdm.CoordinateReference):
     """A coordinate reference construct of the CF data model.
 
