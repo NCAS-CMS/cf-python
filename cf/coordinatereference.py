@@ -54,6 +54,8 @@ def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
     # 'grid_mapping_name' attribute string, mapped to values of their PROJ
     # 'proj-string' which defines the equivalent coordnate transformtion
     # and its parameters under PROJ.
+    #
+    # TODO double check this mapping to PROJ is correct!
     grid_mapping_name_attr_to_proj_string_map = {
         # Albers Equal Area
         "albers_conical_equal_area": "aea +lat_1=29.5 +lat_2=42.5",
@@ -69,10 +71,9 @@ def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
         # -> note this is called 'Equal Area Cylindrical' in PROJ
         "lambert_cylindrical_equal_area": "cea",
         # Latitude-Longitude
-        # -> note this is called 'Equidistant Cylindrical (Plate Carrée)'
-        #    in PROJ (TODO: double check this, I think based on
-        #    https://en.wikipedia.org/wiki/Equirectangular_projection it
-        #    is True...)
+        # -> Note this has other names such as 'Equidistant Cylindrical' and
+        # 'Plate Carrée', see e.g.
+        #  https://en.wikipedia.org/wiki/Equirectangular_projection
         "latitude_longitude": "eqc",
         # Mercator
         "mercator": "merc",
@@ -81,11 +82,10 @@ def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
         # Orthographic
         "orthographic": "ortho",
         # Polar stereographic
-        "polar_stereographic": "stere +lat_0=90 +lat_ts=75",
+        "polar_stereographic": "ups",
         # Rotated pole
-        # -> TODO: not sure what this is in PROJ, could need to use
-        #    latitude_longitude ("eqc") and set extra parameters?
-        "rotated_latitude_longitude": "???",
+        # -> need to use latitude_longitude but rotate with extra coors
+        "rotated_latitude_longitude": "eqc +lat_ts=0 +lon_0=0",
         # Sinusoidal
         "sinusoidal": "sinu",
         # Stereographic
@@ -93,8 +93,8 @@ def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
         # Transverse Mercator
         "transverse_mercator": "tmerc",
         # Vertical perspective
-        # -> TODO: not sure what this is in PROJ. Find out!
-        "vertical_perspective": "???",
+        # -> Note in PROJ this comes under 'Near-sided perspective'
+        "vertical_perspective": "+proj=nsper +h=3000000 +lat_0=-20 +lon_0=145",
     }
 
     # TODO functional code here to go from inputs to lat_data and lon_data
