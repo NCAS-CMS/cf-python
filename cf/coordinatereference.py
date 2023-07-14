@@ -47,7 +47,7 @@ def _totuple(a):
         return a
 
 
-def create_2d_lats_and_lons():
+def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
     """TODO."""
     # For keys all Grid Mappings supported by the CF Conventions, as
     # listed in Appendix F of the document, given as the specific
@@ -96,7 +96,26 @@ def create_2d_lats_and_lons():
         # -> TODO: not sure what this is in PROJ. Find out!
         "vertical_perspective": "???",
     }
-    return
+
+    # TODO functional code here to go from inputs to lat_data and lon_data
+
+    # Create latitude construct from data
+    lat_data = cf.Data(numpy.array(0))  # TODO: minimal dummy data for now
+    lat_dim = cf.DimensionCoordinate(data=lat_data))
+    lat_dim.set_properties(
+        {"standard_name": "latitude",
+         "units": "degrees_north"}
+    )
+
+    # Create longitude construct from data
+    lon_data = cf.Data(numpy.array(0))  # TODO: minimal dummy data for now
+    lon_dim = cf.DimensionCoordinate(data=lon_data)
+    lon_dim.set_properties(
+        {"standard_name": "longitude",
+         "units": "degrees_east"}
+    )
+
+    return lat_dim, lon_dim
 
 
 class CoordinateReference(cfdm.CoordinateReference):
