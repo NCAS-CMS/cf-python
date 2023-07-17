@@ -1,47 +1,49 @@
+from pyproj import CRS
+
 ALL_GRID_MAPPING_ATTR_NAMES = {
-        "grid_mapping_name",
-        # *Those which describe the ellipsoid and prime meridian:*
-        "earth_radius",
-        "inverse_flattening",
-        "longitude_of_prime_meridian",
-        "prime_meridian_name",
-        "reference_ellipsoid_name",
-        "semi_major_axis",
-        "semi_minor_axis",
-        # *Specific/applicable to only given grid mapping(s):*
-        # ...projection origin related:
-        "longitude_of_projection_origin",
-        "latitude_of_projection_origin",
-        "scale_factor_at_projection_origin",
-        # ...false-Xings:
-        "false_easting",
-        "false_northing",
-        # ...angle axis related:
-        "sweep_angle_axis",
-        "fixed_angle_axis",
-        # ...central meridian related:
-        "longitude_of_central_meridian",
-        "scale_factor_at_central_meridian",
-        # ...pole coordinates related:
-        "grid_north_pole_latitude",
-        "grid_north_pole_longitude",
-        "north_pole_grid_longitude",
-        # ...other:
-        "standard_parallel",
-        "perspective_point_height",
-        "azimuth_of_central_line",
-        "straight_vertical_longitude_from_pole",
-        # *Other, not needed for a specific grid mapping but also listed
-        # in 'Table F.1. Grid Mapping Attributes':*
-        "crs_wkt",
-        "geographic_crs_name",
-        "geoid_name",
-        "geopotential_datum_name",
-        "horizontal_datum_name",
-        "inverse_flattening",
-        "projected_crs_name",
-        "towgs84",
-    }
+    "grid_mapping_name",
+    # *Those which describe the ellipsoid and prime meridian:*
+    "earth_radius",
+    "inverse_flattening",
+    "longitude_of_prime_meridian",
+    "prime_meridian_name",
+    "reference_ellipsoid_name",
+    "semi_major_axis",
+    "semi_minor_axis",
+    # *Specific/applicable to only given grid mapping(s):*
+    # ...projection origin related:
+    "longitude_of_projection_origin",
+    "latitude_of_projection_origin",
+    "scale_factor_at_projection_origin",
+    # ...false-Xings:
+    "false_easting",
+    "false_northing",
+    # ...angle axis related:
+    "sweep_angle_axis",
+    "fixed_angle_axis",
+    # ...central meridian related:
+    "longitude_of_central_meridian",
+    "scale_factor_at_central_meridian",
+    # ...pole coordinates related:
+    "grid_north_pole_latitude",
+    "grid_north_pole_longitude",
+    "north_pole_grid_longitude",
+    # ...other:
+    "standard_parallel",
+    "perspective_point_height",
+    "azimuth_of_central_line",
+    "straight_vertical_longitude_from_pole",
+    # *Other, not needed for a specific grid mapping but also listed
+    # in 'Table F.1. Grid Mapping Attributes':*
+    "crs_wkt",
+    "geographic_crs_name",
+    "geoid_name",
+    "geopotential_datum_name",
+    "horizontal_datum_name",
+    "inverse_flattening",
+    "projected_crs_name",
+    "towgs84",
+}
 
 
 class GridMapping:
@@ -49,8 +51,8 @@ class GridMapping:
 
     def __init__(
         self,
-        grid_mapping_name,
-        proj_id,
+        grid_mapping_name=None,
+        proj_id=None,
         earth_radius=None,
         inverse_flattening=None,
         longitude_of_prime_meridian=None,
@@ -91,15 +93,62 @@ class GridMapping:
                 TODO
 
         """
-        raise NotImplementedError(
-            "Must define a specific Grid Mapping via setting its CF "
-            "Conventions 'grid_mapping_name' attribute value with the "
-            "grid_mapping_name parameter, as well as the corresponding "
-            "base PROJ '+proj' identifier with the proj_id parameter."
-        )
+        if not grid_mapping_name and not proj_id:
+            raise NotImplementedError(
+                "Must define a specific Grid Mapping via setting its CF "
+                "Conventions 'grid_mapping_name' attribute value with the "
+                "grid_mapping_name parameter, as well as the corresponding "
+                "base PROJ '+proj' identifier with the proj_id parameter."
+            )
 
 
-class AlbersEqualArea(GridMapping):
+class AzimuthalGridMapping(GridMapping):
+    """TODO."""
+
+    def __init__(
+        self, longitude_of_projection_origin, latitude_of_projection_origin
+    ):
+        super().__init__()
+
+
+class ConicGridMapping(GridMapping):
+    """TODO."""
+
+    def __init__(self, standard_parallel, longitude_of_central_meridian):
+        super().__init__()
+
+
+class CylindricalGridMapping(GridMapping):
+    """TODO."""
+
+    def __init__(self, false_easting, false_northing):
+        super().__init__()
+
+
+class LatLonGridMapping(GridMapping):
+    """TODO."""
+
+    def __init__(self):
+        super().__init__()
+
+
+class PerspectiveGridMapping(AzimuthalGridMapping):
+    """TODO."""
+
+    def __init__(
+        self, false_easting, false_northing, perspective_point_height
+    ):
+        super().__init__()
+
+
+class StereographicGridMapping(AzimuthalGridMapping):
+    """TODO."""
+
+    def __init__(self, false_easting, false_northing):
+        super().__init__()
+
+
+class AlbersEqualArea(ConicGridMapping):
     """The Albers Equal Area grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -120,7 +169,7 @@ class AlbersEqualArea(GridMapping):
         super().__init__("albers_conical_equal_area", "aea")
 
 
-class AzimuthalEquidistant(GridMapping):
+class AzimuthalEquidistant(AzimuthalGridMapping):
     """The Azimuthal Equidistant grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -141,7 +190,7 @@ class AzimuthalEquidistant(GridMapping):
         super().__init__("azimuthal_equidistant", "aeqd")
 
 
-class Geostationary(GridMapping):
+class Geostationary(PerspectiveGridMapping):
     """The Geostationary Satellite View grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -162,7 +211,7 @@ class Geostationary(GridMapping):
         super().__init__("geostationary", "geos")
 
 
-class LambertAzimuthalEqualArea(GridMapping):
+class LambertAzimuthalEqualArea(AzimuthalGridMapping):
     """The Lambert Azimuthal Equal Area grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -183,7 +232,7 @@ class LambertAzimuthalEqualArea(GridMapping):
         super().__init__("lambert_azimuthal_equal_area", "laea")
 
 
-class LambertConformalConic(GridMapping):
+class LambertConformalConic(ConicGridMapping):
     """The Lambert Conformal Conic grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -204,7 +253,7 @@ class LambertConformalConic(GridMapping):
         super().__init__("lambert_conformal_conic", "lcc")
 
 
-class LambertCylindricalEqualArea(GridMapping):
+class LambertCylindricalEqualArea(CylindricalGridMapping):
     """The Equal Area Cylindrical grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -225,7 +274,112 @@ class LambertCylindricalEqualArea(GridMapping):
         super().__init__("lambert_cylindrical_equal_area", "cea")
 
 
-class LatitudeLongitude(GridMapping):
+class Mercator(CylindricalGridMapping):
+    """The Mercator grid mapping.
+
+    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
+    this grid mapping:
+
+    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
+    cf-conventions.html#_mercator
+
+    or the corresponding PROJ projection page:
+
+    https://proj.org/en/9.2/operations/projections/merc.html
+
+    for more information.
+
+    """
+
+    def __init__(self):
+        super().__init__("mercator", "merc")
+
+
+class ObliqueMercator(CylindricalGridMapping):
+    """The Oblique Mercator grid mapping.
+
+    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
+    this grid mapping:
+
+    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
+    cf-conventions.html#_oblique_mercator
+
+    or the corresponding PROJ projection page:
+
+    https://proj.org/en/9.2/operations/projections/omerc.html
+
+    for more information.
+
+    """
+
+    def __init__(self):
+        super().__init__("oblique_mercator", "omerc")
+
+
+class Orthographic(AzimuthalGridMapping):
+    """The Orthographic grid mapping.
+
+    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
+    this grid mapping:
+
+    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
+    cf-conventions.html#_orthographic
+
+    or the corresponding PROJ projection page:
+
+    https://proj.org/en/9.2/operations/projections/ortho.html
+
+    for more information.
+
+    """
+
+    def __init__(self):
+        super().__init__("orthographic", "ortho")
+
+
+class PolarStereographic(StereographicGridMapping):
+    """The Universal Polar Stereographic grid mapping.
+
+    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
+    this grid mapping:
+
+    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
+    cf-conventions.html#polar-stereographic
+
+    or the corresponding PROJ projection page:
+
+    https://proj.org/en/9.2/operations/projections/ups.html
+
+    for more information.
+
+    """
+
+    def __init__(self):
+        super().__init__("polar_stereographic", "ups")
+
+
+class RotatedLatitudeLongitude(LatLonGridMapping):
+    """The Rotated Latitude-Longitude grid mapping.
+
+    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
+    this grid mapping:
+
+    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
+    cf-conventions.html#_rotated_pole
+
+    or the corresponding PROJ projection page:
+
+    https://proj.org/en/9.2/operations/projections/eqc.html
+
+    for more information.
+
+    """
+
+    def __init__(self):
+        super().__init__("rotated_latitude_longitude", "eqc")
+
+
+class LatitudeLongitude(RotatedLatitudeLongitude):
     """The Latitude-Longitude i.e. Plate Carrée grid mapping.
 
     For alternative names, see e.g:
@@ -250,114 +404,6 @@ class LatitudeLongitude(GridMapping):
         super().__init__("latitude_longitude", "eqc")
 
 
-class Mercator(GridMapping):
-    """The Mercator grid mapping.
-
-    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
-    this grid mapping:
-
-    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
-    cf-conventions.html#_mercator
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/merc.html
-
-    for more information.
-
-    """
-
-    def __init__(self):
-        super().__init__("mercator", "merc")
-
-
-class ObliqueMercator(GridMapping):
-    """The Oblique Mercator grid mapping.
-
-    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
-    this grid mapping:
-
-    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
-    cf-conventions.html#_oblique_mercator
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/omerc.html
-
-    for more information.
-
-    """
-
-    def __init__(self):
-        super().__init__("oblique_mercator", "omerc")
-
-
-class Orthographic(GridMapping):
-    """The Orthographic grid mapping.
-
-    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
-    this grid mapping:
-
-    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
-    cf-conventions.html#_orthographic
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/ortho.html
-
-    for more information.
-
-    """
-
-    def __init__(self):
-        super().__init__("orthographic", "ortho")
-
-
-class PolarStereographic(GridMapping):
-    """The Universal Polar Stereographic grid mapping.
-
-    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
-    this grid mapping:
-
-    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
-    cf-conventions.html#polar-stereographic
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/ups.html
-
-    for more information.
-
-    """
-
-    def __init__(self):
-        super().__init__("polar_stereographic", "ups")
-
-
-class RotatedLatitudeLongitude(GridMapping):
-    """The Rotated Latitude-Longitude grid mapping.
-
-    See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
-    this grid mapping:
-
-    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
-    cf-conventions.html#_rotated_pole
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/eqc.html
-
-    for more information.
-
-    Note: this grid mapping relates to the Latitude-Longitude i.e. Plate
-    Carrée grid mapping in that it... TODO.
-
-    """
-
-    def __init__(self):
-        super().__init__("rotated_latitude_longitude", "eqc")
-
-
 class Sinusoidal(GridMapping):
     """The Sinusoidal (Sanson-Flamsteed) grid mapping.
 
@@ -379,7 +425,7 @@ class Sinusoidal(GridMapping):
         super().__init__("sinusoidal", "sinu")
 
 
-class Stereographic(GridMapping):
+class Stereographic(StereographicGridMapping):
     """The Stereographic grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -400,7 +446,7 @@ class Stereographic(GridMapping):
         super().__init__("stereographic", "stere")
 
 
-class TransverseMercator(GridMapping):
+class TransverseMercator(CylindricalGridMapping):
     """The Transverse Mercator grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
@@ -421,7 +467,7 @@ class TransverseMercator(GridMapping):
         super().__init__("transverse_mercator", "tmerc")
 
 
-class VerticalPerspective(GridMapping):
+class VerticalPerspective(PerspectiveGridMapping):
     """The Vertical (or Near-sided) Perspective grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
