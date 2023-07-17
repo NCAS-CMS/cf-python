@@ -49,59 +49,11 @@ def _totuple(a):
 
 def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
     """TODO."""
-    # For keys all Grid Mappings supported by the CF Conventions, as
-    # listed in Appendix F of the document, given as the specific
-    # 'grid_mapping_name' attribute string, mapped to values of their PROJ
-    # 'proj-string' which defines the equivalent coordnate transformtion
-    # and its parameters under PROJ.
-    #
-    # TODO double check this mapping to PROJ is correct!
-    grid_mapping_name_attr_to_proj_string_map = {
-        # Albers Equal Area
-        "albers_conical_equal_area": "aea +lat_1=29.5 +lat_2=42.5",
-        # Azimuthal equidistant
-        "azimuthal_equidistant": "aeqd",
-        # Geostationary projection
-        "geostationary": "geos +h=35785831.0 +lon_0=-60 +sweep=y",
-        # Lambert azimuthal equal area
-        "lambert_azimuthal_equal_area": "laea",
-        # Lambert conformal
-        "lambert_conformal_conic": "lcc +lon_0=-90 +lat_1=33 +lat_2=45",
-        # Lambert Cylindrical Equal Area
-        # -> note this is called 'Equal Area Cylindrical' in PROJ
-        "lambert_cylindrical_equal_area": "cea",
-        # Latitude-Longitude
-        # -> Note this has other names such as 'Equidistant Cylindrical' and
-        # 'Plate Carrée', see e.g.
-        #  https://en.wikipedia.org/wiki/Equirectangular_projection
-        "latitude_longitude": "eqc",
-        # Mercator
-        "mercator": "merc",
-        # Oblique Mercator
-        "oblique_mercator": "omerc +lat_1=45 +lat_2=55",
-        # Orthographic
-        "orthographic": "ortho",
-        # Polar stereographic
-        "polar_stereographic": "ups",
-        # Rotated pole
-        # -> need to use latitude_longitude but rotate with extra coors
-        "rotated_latitude_longitude": "eqc +lat_ts=0 +lon_0=0",
-        # Sinusoidal
-        "sinusoidal": "sinu",
-        # Stereographic
-        "stereographic": "stere +lat_0=90 +lat_ts=75",
-        # Transverse Mercator
-        "transverse_mercator": "tmerc",
-        # Vertical perspective
-        # -> Note in PROJ this comes under 'Near-sided perspective'
-        "vertical_perspective": "+proj=nsper +h=3000000 +lat_0=-20 +lon_0=145",
-    }
-
     # TODO functional code here to go from inputs to lat_data and lon_data
 
     # Create latitude construct from data
     lat_data = cf.Data(numpy.array(0))  # TODO: minimal dummy data for now
-    lat_dim = cf.DimensionCoordinate(data=lat_data))
+    lat_dim = cf.DimensionCoordinate(data=lat_data)
     lat_dim.set_properties(
         {"standard_name": "latitude",
          "units": "degrees_north"}
