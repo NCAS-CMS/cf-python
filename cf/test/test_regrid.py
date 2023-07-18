@@ -27,6 +27,9 @@ def _remove_tmpfiles():
             pass
 
 
+atexit.register(_remove_tmpfiles)
+
+
 # ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
 # either for now for backwards compatibility.
 esmpy_imported = False
