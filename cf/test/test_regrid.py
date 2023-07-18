@@ -12,7 +12,7 @@ import cf
 
 n_tmpfiles = 1
 tmpfiles = [
-    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    tempfile.mkstemp("_test_regrid.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
 (tmpfile,) = tmpfiles
