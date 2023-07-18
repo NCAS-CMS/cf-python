@@ -444,13 +444,13 @@ _docstring_substitution_definitions = {
                 Destination grid cell ``j`` will only be masked if a)
                 it is masked in the destination grid definition; or b)
                 ``w_ji >= min_weight`` for those masked source grid
-                cells i for which ``w_ji > 0``.
+                cells ``i`` for which ``w_ji > 0``.
 
                 **Conservative first-order regridding**
 
                 Destination grid cell ``j`` will only be masked if a)
                 it is masked in the destination grid definition; or b)
-                The sum of ``w_ji`` for all non-masked source grid
+                the sum of ``w_ji`` for all non-masked source grid
                 cells ``i`` is strictly less than *min_weight*.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional

@@ -333,7 +333,7 @@ class RegridOperator(mixin_Container, Container):
 
     @property
     def weights(self):
-        """The 1-d array of the regridding weights, or `None`
+        """The 1-d array of the regridding weights, or `None`.
 
         If and only if it is a `scipy` sparse array that combines the
         weights and the row and column indices (as opposed to a

@@ -1496,7 +1496,7 @@ def create_esmpy_weights(
             weights are computed in memory for regridding between the
             source and destination grids, and no file is created.
 
-            If set to a file path that does not exist then thea
+            If set to a file path that does not exist then the
             weights will be computed and also written to that file.
 
             If set to a file path that already exists then the weights
