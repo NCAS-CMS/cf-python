@@ -106,46 +106,57 @@ class AzimuthalGridMapping(GridMapping):
     """TODO."""
 
     def __init__(
-        self, longitude_of_projection_origin, latitude_of_projection_origin
+        self,
+        longitude_of_projection_origin,
+        latitude_of_projection_origin,
+        *args,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
 
 class ConicGridMapping(GridMapping):
     """TODO."""
 
-    def __init__(self, standard_parallel, longitude_of_central_meridian):
-        super().__init__()
+    def __init__(
+        self, standard_parallel, longitude_of_central_meridian, *args, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
 
 
 class CylindricalGridMapping(GridMapping):
     """TODO."""
 
-    def __init__(self, false_easting, false_northing):
-        super().__init__()
+    def __init__(self, false_easting, false_northing, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class LatLonGridMapping(GridMapping):
     """TODO."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class PerspectiveGridMapping(AzimuthalGridMapping):
     """TODO."""
 
     def __init__(
-        self, false_easting, false_northing, perspective_point_height
+        self,
+        false_easting,
+        false_northing,
+        perspective_point_height,
+        *args,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
 
 class StereographicGridMapping(AzimuthalGridMapping):
     """TODO."""
 
-    def __init__(self, false_easting, false_northing):
-        super().__init__()
+    def __init__(self, false_easting, false_northing, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class AlbersEqualArea(ConicGridMapping):
@@ -165,8 +176,17 @@ class AlbersEqualArea(ConicGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("albers_conical_equal_area", "aea")
+    def __init__(
+        self,
+        standard_parallel,
+        longitude_of_central_meridian,
+        atitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("albers_conical_equal_area", "aea", *args, **kwargs)
 
 
 class AzimuthalEquidistant(AzimuthalGridMapping):
@@ -186,8 +206,16 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("azimuthal_equidistant", "aeqd")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        latitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("azimuthal_equidistant", "aeqd", *args, **kwargs)
 
 
 class Geostationary(PerspectiveGridMapping):
@@ -207,8 +235,19 @@ class Geostationary(PerspectiveGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("geostationary", "geos")
+    def __init__(
+        self,
+        latitude_of_projection_origin,
+        longitude_of_projection_origin,
+        perspective_point_height,
+        false_easting,
+        false_northing,
+        sweep_angle_axis,
+        fixed_angle_axis,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("geostationary", "geos", *args, **kwargs)
 
 
 class LambertAzimuthalEqualArea(AzimuthalGridMapping):
@@ -228,8 +267,18 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("lambert_azimuthal_equal_area", "laea")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        latitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(
+            "lambert_azimuthal_equal_area", "laea", *args, **kwargs
+        )
 
 
 class LambertConformalConic(ConicGridMapping):
@@ -249,8 +298,17 @@ class LambertConformalConic(ConicGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("lambert_conformal_conic", "lcc")
+    def __init__(
+        self,
+        standard_parallel,
+        longitude_of_central_meridian,
+        latitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("lambert_conformal_conic", "lcc", *args, **kwargs)
 
 
 class LambertCylindricalEqualArea(CylindricalGridMapping):
@@ -270,8 +328,19 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("lambert_cylindrical_equal_area", "cea")
+    def __init__(
+        self,
+        longitude_of_central_meridian,
+        standard_parallel,
+        scale_factor_at_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(
+            "lambert_cylindrical_equal_area", "cea", *args, **kwargs
+        )
 
 
 class Mercator(CylindricalGridMapping):
@@ -291,8 +360,17 @@ class Mercator(CylindricalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("mercator", "merc")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        standard_parallel,
+        scale_factor_at_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("mercator", "merc", *args, **kwargs)
 
 
 class ObliqueMercator(CylindricalGridMapping):
@@ -312,8 +390,18 @@ class ObliqueMercator(CylindricalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("oblique_mercator", "omerc")
+    def __init__(
+        self,
+        azimuth_of_central_line,
+        latitude_of_projection_origin,
+        longitude_of_projection_origin,
+        scale_factor_at_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("oblique_mercator", "omerc", *args, **kwargs)
 
 
 class Orthographic(AzimuthalGridMapping):
@@ -333,8 +421,16 @@ class Orthographic(AzimuthalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("orthographic", "ortho")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        latitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("orthographic", "ortho", *args, **kwargs)
 
 
 class PolarStereographic(StereographicGridMapping):
@@ -354,8 +450,18 @@ class PolarStereographic(StereographicGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("polar_stereographic", "ups")
+    def __init__(
+        self,
+        straight_vertical_longitude_from_pole,
+        latitude_of_projection_origin,
+        standard_parallel,
+        scale_factor_at_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("polar_stereographic", "ups", *args, **kwargs)
 
 
 class RotatedLatitudeLongitude(LatLonGridMapping):
@@ -375,8 +481,15 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("rotated_latitude_longitude", "eqc")
+    def __init__(
+        self,
+        grid_north_pole_latitude,
+        grid_north_pole_longitude,
+        north_pole_grid_longitude,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("rotated_latitude_longitude", "eqc", *args, **kwargs)
 
 
 class LatitudeLongitude(RotatedLatitudeLongitude):
@@ -400,8 +513,8 @@ class LatitudeLongitude(RotatedLatitudeLongitude):
 
     """
 
-    def __init__(self):
-        super().__init__("latitude_longitude", "eqc")
+    def __init__(self, *args, **kwargs):
+        super().__init__("latitude_longitude", "eqc", *args, **kwargs)
 
 
 class Sinusoidal(GridMapping):
@@ -421,8 +534,15 @@ class Sinusoidal(GridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("sinusoidal", "sinu")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("sinusoidal", "sinu", *args, **kwargs)
 
 
 class Stereographic(StereographicGridMapping):
@@ -442,8 +562,17 @@ class Stereographic(StereographicGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("stereographic", "stere")
+    def __init__(
+        self,
+        longitude_of_projection_origin,
+        latitude_of_projection_origin,
+        scale_factor_at_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("stereographic", "stere", *args, **kwargs)
 
 
 class TransverseMercator(CylindricalGridMapping):
@@ -463,8 +592,17 @@ class TransverseMercator(CylindricalGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("transverse_mercator", "tmerc")
+    def __init__(
+        self,
+        scale_factor_at_central_meridian,
+        longitude_of_central_meridian,
+        latitude_of_projection_origin,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("transverse_mercator", "tmerc", *args, **kwargs)
 
 
 class VerticalPerspective(PerspectiveGridMapping):
@@ -484,5 +622,14 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     """
 
-    def __init__(self):
-        super().__init__("vertical_perspective", "nsper")
+    def __init__(
+        self,
+        latitude_of_projection_origin,
+        longitude_of_projection_origin,
+        perspective_point_height,
+        false_easting,
+        false_northing,
+        *args,
+        **kwargs,
+    ):
+        super().__init__("vertical_perspective", "nsper", *args, **kwargs)
