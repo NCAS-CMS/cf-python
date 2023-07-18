@@ -1516,7 +1516,6 @@ rules`_.
      [270.9  -2.0 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
      [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0 273.4  -5.0]]]
 
-
 In-place modification is also possible:
 
 .. code-block:: python
