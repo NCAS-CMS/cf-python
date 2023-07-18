@@ -5,7 +5,7 @@ Using mask to plot Aerosol Optical Depth
 In this recipe, we will make use of a
 `masked array
 <https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked>`_
-to plot the high quality retrieval of Aerosol Optical Depth (AOD) from all other
+to plot the high-quality retrieval of Aerosol Optical Depth (AOD) from all other
 retrievals.
 
 """
