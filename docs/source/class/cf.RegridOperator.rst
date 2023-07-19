@@ -19,9 +19,6 @@ cf.RegridOperator
 
    ~cf.RegridOperator.copy
    ~cf.RegridOperator.dump
-   ~cf.RegridOperator.get_parameter
-   ~cf.RegridOperator.parameters
-   ~cf.RegridOperator.todense
    ~cf.RegridOperator.tosparse
 
 .. rubric:: Attributes
@@ -49,6 +46,7 @@ cf.RegridOperator
    ~cf.RegridOperator.src_shape
    ~cf.RegridOperator.start_index
    ~cf.RegridOperator.weights
+   ~cf.RegridOperator.weights_file
 
 Special
 -------

@@ -1,8 +1,13 @@
-version ?.?.?
+version 3.15.2
 --------------
 
 **2023-??-??**
 
+* Performance improvements to `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/675)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
 * New function: `cf.isclose`
   (https://github.com/NCAS-CMS/cf-python/issues/661)
 * New keyword parameter to `cf.aggregate`: ``cells``
