@@ -130,11 +130,13 @@ class AzimuthalGridMapping(GridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -142,8 +144,8 @@ class AzimuthalGridMapping(GridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -171,11 +173,13 @@ class ConicGridMapping(GridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -184,8 +188,8 @@ class ConicGridMapping(GridMapping):
         standard_parallel,
         longitude_of_central_meridian,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -205,15 +209,17 @@ class CylindricalGridMapping(GridMapping):
 
     :Parameters:
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
-    def __init__(self, false_easting, false_northing, *args, **kwargs):
+    def __init__(self, false_easting=0.0, false_northing=0.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.false_easting = false_easting
@@ -297,11 +303,13 @@ class AlbersEqualArea(ConicGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -310,8 +318,8 @@ class AlbersEqualArea(ConicGridMapping):
         standard_parallel,
         longitude_of_central_meridian,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -343,11 +351,13 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -355,8 +365,8 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -388,11 +398,13 @@ class Geostationary(PerspectiveGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         perspective_point_height: TODO
             TODO
@@ -409,11 +421,11 @@ class Geostationary(PerspectiveGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
         perspective_point_height,
         sweep_angle_axis,
         fixed_angle_axis,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -448,11 +460,13 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -460,8 +474,8 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -498,11 +512,13 @@ class LambertConformalConic(ConicGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -511,8 +527,8 @@ class LambertConformalConic(ConicGridMapping):
         standard_parallel,
         longitude_of_central_meridian,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -538,11 +554,13 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         standard_parallel: TODO
             TODO
@@ -557,11 +575,11 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def __init__(
         self,
-        false_easting,
-        false_northing,
         standard_parallel,
         longitude_of_central_meridian,
         scale_factor_at_projection_origin,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -595,11 +613,13 @@ class Mercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         standard_parallel: TODO
             TODO
@@ -614,11 +634,11 @@ class Mercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        false_easting,
-        false_northing,
         standard_parallel,
         longitude_of_projection_origin,
         scale_factor_at_projection_origin,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -650,11 +670,13 @@ class ObliqueMercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         azimuth_of_central_line: TODO
             TODO
@@ -672,12 +694,12 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        false_easting,
-        false_northing,
         azimuth_of_central_line,
         latitude_of_projection_origin,
         longitude_of_projection_origin,
         scale_factor_at_projection_origin,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -716,11 +738,13 @@ class Orthographic(AzimuthalGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
@@ -728,8 +752,8 @@ class Orthographic(AzimuthalGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -767,11 +791,13 @@ class PolarStereographic(AzimuthalGridMapping):
         scale_factor_at_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         standard_parallel: TODO
             TODO
@@ -781,12 +807,12 @@ class PolarStereographic(AzimuthalGridMapping):
     def __init__(
         self,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
         standard_parallel,
         scale_factor_at_projection_origin,
         longitude_of_projection_origin=None,
         straight_vertical_longitude_from_pole=None,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -905,19 +931,21 @@ class Sinusoidal(GridMapping):
         longitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
     """
 
     def __init__(
         self,
         longitude_of_projection_origin,
-        false_easting,
-        false_northing,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -953,11 +981,13 @@ class Stereographic(AzimuthalGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         scale_factor_at_projection_origin: TODO
             TODO
@@ -968,9 +998,9 @@ class Stereographic(AzimuthalGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
         scale_factor_at_projection_origin,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -1000,11 +1030,13 @@ class TransverseMercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         scale_factor_at_central_meridian: TODO
             TODO
@@ -1019,11 +1051,11 @@ class TransverseMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        false_easting,
-        false_northing,
         scale_factor_at_central_meridian,
         longitude_of_central_meridian,
         latitude_of_projection_origin,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
@@ -1061,11 +1093,13 @@ class VerticalPerspective(PerspectiveGridMapping):
         latitude_of_projection_origin: TODO
             TODO
 
-        false_easting: TODO
-            TODO
+        false_easting: number, optional
+            The false easting (PROJ 'x_0') value, in units of metres.
+            The default is 0.0.
 
-        false_northing: TODO
-            TODO
+        false_northing: number, optional
+            The false northing (PROJ 'y_0') value, in units of metres.
+            The default is 0.0.
 
         perspective_point_height: TODO
             TODO
@@ -1076,9 +1110,9 @@ class VerticalPerspective(PerspectiveGridMapping):
         self,
         longitude_of_projection_origin,
         latitude_of_projection_origin,
-        false_easting,
-        false_northing,
         perspective_point_height,
+        false_easting=0.0,
+        false_northing=0.0,
         *args,
         **kwargs,
     ):
