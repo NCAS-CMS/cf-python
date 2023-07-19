@@ -134,7 +134,7 @@ to download the full example code</p>
 <span id="sphx-glr-recipes-plot-12-recipe-py"></span><h1>Using mask to plot Aerosol Optical Depth<a class="headerlink" href="#using-mask-to-plot-aerosol-optical-depth" title="Permalink to this headline">¶</a></h1>
 <p>In this recipe, we will make use of a
 <a class="reference external" href="https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked">masked array</a>
-to plot the high quality retrieval of Aerosol Optical Depth (AOD) from all other
+to plot the <cite>high-quality</cite> retrieval of Aerosol Optical Depth (AOD) from all other
 retrievals.</p>
 <ol class="arabic simple">
 <li><p>Import cf-python, cf-plot and matplotlib.pyplot:</p></li>
@@ -226,7 +226,7 @@ the argument <code class="docutils literal notranslate"><span class="pre">'lines
 </div>
 <img src="../_images/sphx_glr_plot_12_recipe_001.png" srcset="../_images/sphx_glr_plot_12_recipe_001.png" alt="plot 12 recipe" class = "sphx-glr-single-img"/><p>7. Create a mask for AOD based on the quality of the retrieval. The
 <code class="docutils literal notranslate"><span class="pre">'__ne__'</span></code> method is an implementation of the <code class="docutils literal notranslate"><span class="pre">!=</span></code> operator. It is used to
-create a mask where all the <cite>high quality</cite> AOD points (with the flag 0) are
+create a mask where all the <cite>high-quality</cite> AOD points (with the flag 0) are
 marked as <code class="docutils literal notranslate"><span class="pre">False</span></code>, and all the other data points (medium quality, low
 quality, or no retrieval) are marked as <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mask</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">quality</span></a><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -235,28 +235,30 @@ quality, or no retrieval) are marked as <code class="docutils literal notranslat
 <p>8. Apply the mask to the AOD dataset. The <code class="docutils literal notranslate"><span class="pre">'where'</span></code> function takes the
 mask as an input and replaces all the values in the AOD dataset that
 correspond to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the mask with a masked value using <a class="reference external" href="https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked">cf.masked</a>.
-In this case, all AOD values that are not of <cite>high quality</cite> (since they were
+In this case, all AOD values that are not of <cite>high-quality</cite> (since they were
 marked as <code class="docutils literal notranslate"><span class="pre">True</span></code> in the mask) are masked. This means that the <code class="docutils literal notranslate"><span class="pre">high</span></code>
-variable contains only the AOD data that was retrieved with <cite>high quality</cite>.</p>
+variable contains only the AOD data that was retrieved with <cite>high-quality</cite>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">high</span></a> <span class="o">=</span> <a href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">aod</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mask</span></a><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>9. Now plot both the AOD from high quality retrieval and all other retrievals
-using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here
-<a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
+<p>9. Now plot both the AOD from <cite>high-quality</cite> retrieval and all other retrievals
+using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
 define the parts of the plot area, specifying that the figure should have
-1 row and 2 columns which is closed by
-<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;
-<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html">plt.suptitle</a>
-is used to add a title for the whole figure;
-the subplots for plotting are selected using
+1 row and 2 columns, which is closed by
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html">plt.suptitle</a>
+is used to add a title for the whole figure;</p></li>
+<li><p>the subplots for plotting are selected using
 <a class="reference external" href="https://ajheaps.github.io/cf-plot/gpos.html">cfplot.gpos</a> after which
 <a class="reference external" href="https://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to
-set the map limits and resolution for the subplots;
-as cf-plot stores the plot in a plot object with the name
+set the map limits and resolution for the subplots;</p></li>
+<li><p>and as cf-plot stores the plot in a plot object with the name
 <code class="docutils literal notranslate"><span class="pre">cfp.plotvars.plot</span></code>, country borders are added using normal
 <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/index.html">Cartopy operations</a>
-on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars.mymap</span></code> object:</p>
+on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars.mymap</span></code> object:</p></li>
+</ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
 
 <a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -290,13 +292,13 @@ on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_12_recipe_002.png" srcset="../_images/sphx_glr_plot_12_recipe_002.png" alt="AOD for both ocean and land" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  26.262 seconds)</p>
+<img src="../_images/sphx_glr_plot_12_recipe_002.png" srcset="../_images/sphx_glr_plot_12_recipe_002.png" alt="AOD for both ocean and land" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  52.858 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-12-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/05ba777f5bb420c14037866ab3d3015f/plot_12_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_12_recipe.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_12_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_12_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/75a18303961c6c4f376a6c505189a81d/plot_12_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_12_recipe.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_12_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_12_recipe.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -310,7 +312,7 @@ on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-10.
+      &copy;2023, NCAS | Page built on 2023-07-19.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -5,7 +5,7 @@ Using mask to plot Aerosol Optical Depth
 In this recipe, we will make use of a
 `masked array
 <https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked>`_
-to plot the high-quality retrieval of Aerosol Optical Depth (AOD) from all other
+to plot the `high-quality` retrieval of Aerosol Optical Depth (AOD) from all other
 retrievals.
 
 """
@@ -61,28 +61,29 @@ mask = quality.array.__ne__(0)
 # mask as an input and replaces all the values in the AOD dataset that
 # correspond to ``True`` in the mask with a masked value using `cf.masked
 # <https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked>`_.
-# In this case, all AOD values that are not of `high quality` (since they were
+# In this case, all AOD values that are not of `high-quality` (since they were
 # marked as ``True`` in the mask) are masked. This means that the ``high``
-# variable contains only the AOD data that was retrieved with `high quality`:
+# variable contains only the AOD data that was retrieved with `high-quality`:
 high = aod.where(mask, cf.masked)
 
 # %%
-# 9. Now plot both the AOD from high quality retrieval and all other retrievals 
-# using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here 
-# `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to 
-# define the parts of the plot area, specifying that the figure should have 
-# 1 row and 2 columns, which is closed by 
-# `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# `plt.suptitle <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html>`_
-# is used to add a title for the whole figure; 
-# the subplots for plotting are selected using 
-# `cfplot.gpos <https://ajheaps.github.io/cf-plot/gpos.html>`_ after which 
-# `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to 
-# set the map limits and resolution for the subplots;  
-# and as cf-plot stores the plot in a plot object with the name 
-# ``cfp.plotvars.plot``, country borders are added using normal 
-# `Cartopy operations <https://scitools.org.uk/cartopy/docs/latest/reference/index.html>`_ 
-# on the ``cfp.plotvars.mymap`` object:
+# 9. Now plot both the AOD from `high-quality` retrieval and all other retrievals 
+# using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here:
+#
+# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to 
+#   define the parts of the plot area, specifying that the figure should have 
+#   1 row and 2 columns, which is closed by 
+#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
+# - `plt.suptitle <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html>`_
+#   is used to add a title for the whole figure;
+# - the subplots for plotting are selected using 
+#   `cfplot.gpos <https://ajheaps.github.io/cf-plot/gpos.html>`_ after which 
+#   `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to 
+#   set the map limits and resolution for the subplots;  
+# - and as cf-plot stores the plot in a plot object with the name 
+#   ``cfp.plotvars.plot``, country borders are added using normal 
+#   `Cartopy operations <https://scitools.org.uk/cartopy/docs/latest/reference/index.html>`_ 
+#   on the ``cfp.plotvars.mymap`` object:
 import cartopy.feature as cfeature
 
 cfp.gopen(rows=1, columns=2, bottom=0.2)
