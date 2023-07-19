@@ -118,7 +118,25 @@ class GridMapping:
 
 
 class AzimuthalGridMapping(GridMapping):
-    """A Grid Mapping with Azimuthal classification."""
+    """A Grid Mapping with Azimuthal classification.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+    """
 
     def __init__(
         self,
@@ -138,7 +156,28 @@ class AzimuthalGridMapping(GridMapping):
 
 
 class ConicGridMapping(GridMapping):
-    """A Grid Mapping with Conic classification."""
+    """A Grid Mapping with Conic classification.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        standard_parallel: TODO
+            TODO
+
+        longitude_of_central_meridian: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+    """
 
     def __init__(
         self,
@@ -160,7 +199,19 @@ class ConicGridMapping(GridMapping):
 
 
 class CylindricalGridMapping(GridMapping):
-    """A Grid Mapping with Cylindrical classification."""
+    """A Grid Mapping with Cylindrical classification.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+    """
 
     def __init__(self, false_easting, false_northing, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -176,6 +227,8 @@ class LatLonGridMapping(GridMapping):
     on a spherical Earth, defining the canonical 2D geographical coordinate
     system so that the figure of the Earth can be described.
 
+    .. versionadded:: GMVER
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -183,7 +236,16 @@ class LatLonGridMapping(GridMapping):
 
 
 class PerspectiveGridMapping(AzimuthalGridMapping):
-    """A Grid Mapping with Azimuthal classification and perspective view."""
+    """A Grid Mapping with Azimuthal classification and perspective view.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        perspective_point_height: TODO
+            TODO
+
+    """
 
     def __init__(
         self,
@@ -222,6 +284,25 @@ class AlbersEqualArea(ConicGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        standard_parallel: TODO
+            TODO
+
+        longitude_of_central_meridian: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
     """
 
     def __init__(
@@ -252,6 +333,22 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
     """
 
     def __init__(
@@ -280,6 +377,31 @@ class Geostationary(PerspectiveGridMapping):
     https://proj.org/en/9.2/operations/projections/geos.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        perspective_point_height: TODO
+            TODO
+
+        sweep_angle_axis: TODO
+            TODO
+
+        fixed_angle_axis: TODO
+            TODO
 
     """
 
@@ -316,6 +438,22 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
     """
 
     def __init__(
@@ -347,6 +485,25 @@ class LambertConformalConic(ConicGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        standard_parallel: TODO
+            TODO
+
+        longitude_of_central_meridian: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
     """
 
     def __init__(
@@ -376,6 +533,25 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
     https://proj.org/en/9.2/operations/projections/cea.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        standard_parallel: TODO
+            TODO
+
+        longitude_of_central_meridian: TODO
+            TODO
+
+        scale_factor_at_projection_origin: TODO
+            TODO
 
     """
 
@@ -415,6 +591,25 @@ class Mercator(CylindricalGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        standard_parallel: TODO
+            TODO
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        scale_factor_at_projection_origin: TODO
+            TODO
+
     """
 
     def __init__(
@@ -450,6 +645,28 @@ class ObliqueMercator(CylindricalGridMapping):
     https://proj.org/en/9.2/operations/projections/omerc.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        azimuth_of_central_line: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        scale_factor_at_projection_origin: TODO
+            TODO
 
     """
 
@@ -489,6 +706,22 @@ class Orthographic(AzimuthalGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
     """
 
     def __init__(
@@ -517,6 +750,31 @@ class PolarStereographic(AzimuthalGridMapping):
     https://proj.org/en/9.2/operations/projections/ups.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        straight_vertical_longitude_from_pole: TODO
+            TODO
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        scale_factor_at_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        standard_parallel: TODO
+            TODO
 
     """
 
@@ -568,6 +826,19 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        grid_north_pole_latitude: TODO
+            TODO
+
+        grid_north_pole_longitude: TODO
+            TODO
+
+        north_pole_grid_longitude: TODO
+            TODO
+
     """
 
     def __init__(
@@ -604,6 +875,8 @@ class LatitudeLongitude(LatLonGridMapping):
 
     for more information.
 
+    .. versionadded:: GMVER
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -624,6 +897,19 @@ class Sinusoidal(GridMapping):
     https://proj.org/en/9.2/operations/projections/sinu.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
 
     """
 
@@ -656,6 +942,25 @@ class Stereographic(AzimuthalGridMapping):
     https://proj.org/en/9.2/operations/projections/stere.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        scale_factor_at_projection_origin: TODO
+            TODO
 
     """
 
@@ -690,6 +995,25 @@ class TransverseMercator(CylindricalGridMapping):
     https://proj.org/en/9.2/operations/projections/tmerc.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        scale_factor_at_central_meridian: TODO
+            TODO
+
+        longitude_of_central_meridian: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
 
     """
 
@@ -726,6 +1050,25 @@ class VerticalPerspective(PerspectiveGridMapping):
     https://proj.org/en/9.2/operations/projections/nsper.html
 
     for more information.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        longitude_of_projection_origin: TODO
+            TODO
+
+        latitude_of_projection_origin: TODO
+            TODO
+
+        false_easting: TODO
+            TODO
+
+        false_northing: TODO
+            TODO
+
+        perspective_point_height: TODO
+            TODO
 
     """
 
