@@ -54,6 +54,7 @@ Click on the keywords below to filter the recipes according to their function:
        <button data-filter="maths">Mathematical Operations</button>
        <button data-filter="regrid">Regrid</button>
        <button data-filter="subspace">Subspace</button>
+       <button data-filter="mask">Mask</button>
    </div>
 
 .. raw:: html
