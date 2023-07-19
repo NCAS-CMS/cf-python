@@ -14379,6 +14379,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14547,6 +14548,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14564,7 +14569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
-                operation was in-place or the regridding operator if
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
@@ -14635,6 +14640,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 
@@ -14653,6 +14659,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14781,6 +14788,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14868,6 +14879,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 

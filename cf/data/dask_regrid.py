@@ -433,23 +433,30 @@ def _regrid(
 
             weights = weights.copy()
 
-            getrow = weights.getrow
-            for j in range(dst_size):
-                w_j = getrow(j)
-                indices = w_j.indices
-                mask = src_mask[indices]
-                if not mask.any():
+            # Note: It is much more efficient to access
+            #       'weights.indptr', 'weights.indices', and
+            #       'weights.data' directly, rather than iterating
+            #       over rows of 'weights' and using 'weights.getrow'.
+            count_nonzero = np.count_nonzero
+            indptr = weights.indptr.tolist()
+            indices = weights.indices
+            data = weights.data
+            for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+                mask = src_mask[indices[i0:i1]]
+                if not count_nonzero(mask):
                     continue
 
                 if mask.all():
                     dst_mask[j] = True
                     continue
 
-                data = w_j.data
-                D_j = 1 - data[mask].sum()
-                data = data / D_j
-                data[mask] = 0
-                weights[j, indices] = data
+                w = data[i0:i1]
+                D_j = 1 - w[mask].sum()
+                w = w / D_j
+                w[mask] = 0
+                data[i0:i1] = w
+
+            del indptr
 
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
@@ -465,17 +472,24 @@ def _regrid(
             else:
                 dst_mask = dst_mask.copy()
 
-            dst_mask = dst_mask.copy()
-            getrow = weights.getrow
+            # Note: It is much more efficient to access
+            #       'weights.indptr', 'weights.indices', and
+            #       'weights.data' directly, rather than iterating
+            #       over rows of 'weights' and using 'weights.getrow'.
+            count_nonzero = np.count_nonzero
             where = np.where
-            for j in range(dst_size):
-                w_j = getrow(j)
-                mask = src_mask[w_j.indices]
-                if not mask.any():
+            indptr = weights.indptr.tolist()
+            indices = weights.indices
+            pos_data = weights.data >= min_weight
+            for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+                mask = src_mask[indices[i0:i1]]
+                if not count_nonzero(mask):
                     continue
 
-                if where((mask) & (w_j.data >= min_weight))[0].size:
+                if where((mask) & (pos_data[i0:i1]))[0].size:
                     dst_mask[j] = True
+
+            del indptr, pos_data
 
         elif method in (
             "patch",
