@@ -124,11 +124,21 @@ class AzimuthalGridMapping(GridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -142,8 +152,8 @@ class AzimuthalGridMapping(GridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -170,8 +180,13 @@ class ConicGridMapping(GridMapping):
         longitude_of_central_meridian: TODO
             TODO
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -300,8 +315,13 @@ class AlbersEqualArea(ConicGridMapping):
         longitude_of_central_meridian: TODO
             TODO
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -317,7 +337,7 @@ class AlbersEqualArea(ConicGridMapping):
         self,
         standard_parallel,
         longitude_of_central_meridian,
-        latitude_of_projection_origin,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -345,11 +365,21 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -363,8 +393,8 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -392,11 +422,21 @@ class Geostationary(PerspectiveGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -419,11 +459,11 @@ class Geostationary(PerspectiveGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
         perspective_point_height,
         sweep_angle_axis,
         fixed_angle_axis,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -454,11 +494,21 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -472,8 +522,8 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -506,11 +556,21 @@ class LambertConformalConic(ConicGridMapping):
         standard_parallel: TODO
             TODO
 
-        longitude_of_central_meridian: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -525,8 +585,8 @@ class LambertConformalConic(ConicGridMapping):
     def __init__(
         self,
         standard_parallel,
-        longitude_of_central_meridian,
-        latitude_of_projection_origin,
+        longitude_of_central_meridian=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -624,8 +684,13 @@ class Mercator(CylindricalGridMapping):
         standard_parallel: TODO
             TODO
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: TODO
             TODO
@@ -635,8 +700,8 @@ class Mercator(CylindricalGridMapping):
     def __init__(
         self,
         standard_parallel,
-        longitude_of_projection_origin,
         scale_factor_at_projection_origin,
+        longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -681,11 +746,21 @@ class ObliqueMercator(CylindricalGridMapping):
         azimuth_of_central_line: TODO
             TODO
 
-        latitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        longitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: TODO
             TODO
@@ -695,8 +770,8 @@ class ObliqueMercator(CylindricalGridMapping):
     def __init__(
         self,
         azimuth_of_central_line,
-        latitude_of_projection_origin,
-        longitude_of_projection_origin,
+        latitude_of_projection_origin=0.0,
+        longitude_of_projection_origin=0.0,
         scale_factor_at_projection_origin,
         false_easting=0.0,
         false_northing=0.0,
@@ -732,11 +807,21 @@ class Orthographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -750,8 +835,8 @@ class Orthographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -782,11 +867,21 @@ class PolarStereographic(AzimuthalGridMapping):
         straight_vertical_longitude_from_pole: TODO
             TODO
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: TODO
             TODO
@@ -806,10 +901,10 @@ class PolarStereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        latitude_of_projection_origin,
         standard_parallel,
         scale_factor_at_projection_origin,
-        longitude_of_projection_origin=None,
+        latitude_of_projection_origin=0.0,
+        longitude_of_projection_origin=0.0,
         straight_vertical_longitude_from_pole=None,
         false_easting=0.0,
         false_northing=0.0,
@@ -928,8 +1023,13 @@ class Sinusoidal(GridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -943,7 +1043,7 @@ class Sinusoidal(GridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
+        longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -975,11 +1075,21 @@ class Stereographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -996,11 +1106,11 @@ class Stereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
         scale_factor_at_projection_origin,
         false_easting=0.0,
         false_northing=0.0,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         *args,
         **kwargs,
     ):
@@ -1044,8 +1154,13 @@ class TransverseMercator(CylindricalGridMapping):
         longitude_of_central_meridian: TODO
             TODO
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
     """
 
@@ -1053,7 +1168,7 @@ class TransverseMercator(CylindricalGridMapping):
         self,
         scale_factor_at_central_meridian,
         longitude_of_central_meridian,
-        latitude_of_projection_origin,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -1087,11 +1202,21 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: TODO
-            TODO
+        longitude_of_projection_origin: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        latitude_of_projection_origin: TODO
-            TODO
+        latitude_of_projection_origin: number or `str`, optional
+            The latitude of projection center (PROJ 'lat_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -1108,9 +1233,9 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     def __init__(
         self,
-        longitude_of_projection_origin,
-        latitude_of_projection_origin,
         perspective_point_height,
+        longitude_of_projection_origin=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
