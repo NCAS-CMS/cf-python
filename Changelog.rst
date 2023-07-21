@@ -22,6 +22,7 @@ version 3.15.2
   (https://github.com/NCAS-CMS/cf-python/issues/665)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
+* Changed dependency: ``1.10.1.1<=cfdm<1.10.2.0``
 
 ----
 
