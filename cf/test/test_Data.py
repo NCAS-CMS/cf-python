@@ -1495,6 +1495,12 @@ class DataTest(unittest.TestCase):
         indices = (cf.Data([1, 3]), cf.Data([0, 1, 2, 3, 4]) > 1)
         self.assertEqual(d[indices].shape, (2, 3))
 
+        # ... and with a masked array
+        d.where(d < 20, cf.masked, inplace=True)
+        e = d[cf.Data([0, 7]), 0]
+        f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
+        self.assertTrue(e.equals(f))
+
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
         for hardmask in (False, True):
