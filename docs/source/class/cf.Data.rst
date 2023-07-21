@@ -73,6 +73,8 @@ Dask
    ~cf.Data.chunk_indices
    ~cf.Data.todict
    ~cf.Data.to_dask_array
+   ~cf.Data.get_deterministic_name
+   ~cf.Data.has_deterministic_name
 
 .. rubric:: Attributes
 

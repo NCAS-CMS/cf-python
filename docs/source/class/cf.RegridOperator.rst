@@ -48,6 +48,19 @@ cf.RegridOperator
    ~cf.RegridOperator.weights
    ~cf.RegridOperator.weights_file
 
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.RegridOperator.get_parameter
+   ~cf.RegridOperator.parameters
+
 Special
 -------
 

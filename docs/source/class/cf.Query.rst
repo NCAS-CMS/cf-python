@@ -27,6 +27,7 @@ Methods
    ~cf.Query.exact
    ~cf.Query.inspect
    ~cf.Query.set_condition_units
+   ~cf.Query.setdefault
 
 Attributes
 ----------
@@ -42,6 +43,8 @@ Attributes
    ~cf.Query.iscontains
    ~cf.Query.isquery
    ~cf.Query.Units
+   ~cf.Query.atol
+   ~cf.Query.rtol
    
 
 .. _Query-Special:
