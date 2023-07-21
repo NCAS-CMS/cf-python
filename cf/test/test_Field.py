@@ -652,6 +652,10 @@ class FieldTest(unittest.TestCase):
         g = f[0].squeeze()
         g[5]
 
+        # Test list indices that have a `to_dask_array` method
+        y = f.dimension_coordinate("Y")
+        self.assertEqual(f[y > 3].shape, (6, 9))
+
         # Indices result in a subspaced shape that has a size 0 axis
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
@@ -696,6 +700,11 @@ class FieldTest(unittest.TestCase):
         g.del_data()
         with self.assertRaises(Exception):
             f[..., 0:2] = g
+
+        # Test list indices that have a `to_dask_array` method
+        y = f.dimension_coordinate("Y")
+        f[y > 3] = -314
+        self.assertEqual(f.where(cf.ne(-314), cf.masked).count(), 6 * 9)
 
     def test_Field__add__(self):
         f = self.f.copy()

@@ -1921,6 +1921,9 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     [slice(-2, 2, None), slice(None, None, None)]
     >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=True)
     ([slice(0, 4, 1), slice(None, None, None)], {0: 2})
+    >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
+    [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
+
 
     """
     parsed_indices = []
@@ -2032,6 +2035,12 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
+
+        elif hasattr(index, "to_dask_array"):
+            to_dask_array = index.to_dask_array
+            if callable(to_dask_array):
+                # Replace index with its Dask array
+                index = to_dask_array()
 
         parsed_indices[i] = index
 

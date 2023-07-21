@@ -1427,8 +1427,25 @@ the only differences being:
                    : longitude(5) = [157.5, ..., -22.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
 
+An index that is a list of integers may also be provided as a `numpy`
+array, a `dask` array, a `cf.Data` instance, or a metadata construct
+that has data:
+
+.. code-block:: python
+   :caption: *Create a new field construct for longitudes greater than
+             180 degrees east.*
+	     
+   >>> lon = q.dimension_coordinate('X')
+   >>> print(q[:, lon > 180])
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(4)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(4) = [202.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
    
-A `cf.Data` instance can also directly be indexed in the same way:
+A `cf.Data` instance can also directly be indexed in the same ways:
 
 .. code-block:: python
    :caption: *Create a new 'Data' instance by indexing.*
@@ -1516,7 +1533,6 @@ rules`_.
      [270.9  -2.0 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
      [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0 273.4  -5.0]]]
 
-
 In-place modification is also possible:
 
 .. code-block:: python
@@ -1537,6 +1553,27 @@ A `cf.Data` instance can also assigned values in the same way:
    >>> print(t[0, 0, -1].array)
    [[[-99.]]]
 
+An index that is a list of integers may also be provided as a `numpy`
+array, a `dask` array, a `cf.Data` instance, or a metadata construct
+that has data:
+
+.. code-block:: python
+   :caption: *Assign to elements which correspond to positive grid
+             latitudes.*
+	     
+   >>> y = t.dimension_coordinate('Y')
+   >>> t[:, y > 0] = -6
+   >>> print(t)
+   [[[ -6.0 -4.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0]
+     [ -6.0 -4.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0]
+     [ -6.0 -4.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0]
+     [ -6.0 -4.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0]
+     [ -6.0 -4.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0  -6.0]
+     [263.9 -2.0 272.1   3.0   4.0   5.0 260.0 263.5 270.2]
+     [273.8 -2.0 268.5   0.0   1.0   2.0 270.6 273.0 270.6]
+     [-11.0 -2.0 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9 -2.0 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4 -2.0 276.3 266.1  -4.0 268.1 277.0 273.4  -5.0]]]
 
 .. _Masked-values:
      
