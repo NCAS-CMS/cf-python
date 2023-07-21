@@ -9993,8 +9993,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
 
-        <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
         >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
@@ -14381,6 +14379,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14549,6 +14548,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14566,7 +14569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
-                operation was in-place or the regridding operator if
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
@@ -14637,6 +14640,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 
@@ -14655,6 +14659,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14783,6 +14788,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14870,6 +14879,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 

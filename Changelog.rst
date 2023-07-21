@@ -1,8 +1,18 @@
-version ?.?.?
+version 3.15.2
 --------------
 
-**2023-??-??**
+**2023-07-21**
 
+* Performance improvements to `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/675)
+* Performance improvements to `cf.read` when reading datasets with
+  compression-by-convention
+  (https://github.com/NCAS-CMS/cf-python/pull/671)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
+* New keyword parameter to `cf.aggregate`: ``cells``
+  (https://github.com/NCAS-CMS/cf-python/issues/452)
 * New function: `cf.isclose`
   (https://github.com/NCAS-CMS/cf-python/issues/661)
 * New keyword parameter to `cf.aggregate`: ``cells``
@@ -10,8 +20,12 @@ version ?.?.?
 * Allow `cf.Data` and other objects that have data (such as
   `cf.DimensionCoordinate`) to be used as indices
   (https://github.com/NCAS-CMS/cf-python/issues/677)
+* Fix bug that caused `cf.Field.regrids` and `cf.Field.regridc` to
+  fail when the regrid axes are chunked with more than one chunk
+  (https://github.com/NCAS-CMS/cf-python/issues/665)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
+* Changed dependency: ``1.10.1.1<=cfdm<1.10.2.0``
 
 ----
 

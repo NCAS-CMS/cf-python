@@ -1779,7 +1779,7 @@ class PropertiesData(Properties):
         """The maximum of the data array.
 
         .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1807,7 +1807,7 @@ class PropertiesData(Properties):
         """The unweighted mean the data array.
 
         .. seealso:: `maximum`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1836,7 +1836,7 @@ class PropertiesData(Properties):
         array.
 
         .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`,
-                     `standard_devitation`, `sum`, `variance`
+                     `standard_deviation`, `sum`, `variance`
 
         :Returns:
 
@@ -2116,7 +2116,7 @@ class PropertiesData(Properties):
         """The sum of the data array.
 
         .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `variance`
+                     `sample_size`, `standard_deviation`, `variance`
 
         :Returns:
 

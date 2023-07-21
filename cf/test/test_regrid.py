@@ -1,6 +1,8 @@
+import atexit
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -8,6 +10,26 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import numpy as np
 
 import cf
+
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_regrid.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+(tmpfile,) = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
 
 # ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
 # either for now for backwards compatibility.
@@ -226,6 +248,7 @@ class RegridTest(unittest.TestCase):
 
                         if isinstance(a, np.ma.MaskedArray):
                             self.assertTrue((y.mask == a.mask).all())
+
                         else:
                             self.assertFalse(y.mask.any())
 
@@ -725,6 +748,34 @@ class RegridTest(unittest.TestCase):
 
         d0 = src.regrids(dst, method="linear")
         self.assertEqual(d0.data.numblocks, (1, 1, 1))
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_weights_file(self):
+        """Regridding creation/use of weights file"""
+        dst = self.dst
+        src = self.src
+
+        try:
+            os.remove(tmpfile)
+        except OSError:
+            pass
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertTrue(os.path.isfile(tmpfile))
+        self.assertIsNone(r.weights_file)
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertEqual(r.weights_file, tmpfile)
+
+        # Can't provide weights_file when dst is a RegridOperator
+        with self.assertRaises(ValueError):
+            self.assertEqual(
+                src.regrids(r, method="linear", weights_file=tmpfile)
+            )
 
 
 if __name__ == "__main__":

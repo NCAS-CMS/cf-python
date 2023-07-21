@@ -80,7 +80,10 @@ Some notable cases where non-lazy computations occur are:
 		       
      >>> weights = fl[0].regrids(dst, method='conservative', return_operator=True)
      >>> regridded = [f.regrids(weights) for f in fl]
-   
+
+  The weights may also be stored on disk for re-use in future sessions
+  by using the ``weights_file`` keyword parameter.
+  
 * **Aggregation**
 
   When two or more field or domain constructs are aggregated to form a
