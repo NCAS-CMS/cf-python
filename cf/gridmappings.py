@@ -174,8 +174,17 @@ class ConicGridMapping(GridMapping):
 
     :Parameters:
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            for both values is 0.0 decimal degrees.
 
         longitude_of_central_meridian: TODO
             TODO
@@ -263,8 +272,10 @@ class PerspectiveGridMapping(AzimuthalGridMapping):
 
     :Parameters:
 
-        perspective_point_height: TODO
-            TODO
+        perspective_point_height: number
+            The height of the view point above the surface (PROJ
+            'h') value, for example the height of a satellite above
+            the Earth, in units of meters.
 
     """
 
@@ -309,8 +320,19 @@ class AlbersEqualArea(ConicGridMapping):
 
     :Parameters:
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees.
+
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
 
         longitude_of_central_meridian: TODO
             TODO
@@ -335,8 +357,8 @@ class AlbersEqualArea(ConicGridMapping):
 
     def __init__(
         self,
-        standard_parallel,
         longitude_of_central_meridian,
+        standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
@@ -422,6 +444,11 @@ class Geostationary(PerspectiveGridMapping):
 
     :Parameters:
 
+        perspective_point_height: number
+            The height of the view point above the surface (PROJ
+            'h') value, for example the height of a satellite above
+            the Earth, in units of meters.
+
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
@@ -446,33 +473,54 @@ class Geostationary(PerspectiveGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        perspective_point_height: TODO
-            TODO
+        sweep_angle_axis: `str`, optional
+            Sweep angle axis of the viewing instrument, which indicates
+            the axis on which the view sweeps. Valid options
+            are "x" and "y". The default is "y".
 
-        sweep_angle_axis: TODO
-            TODO
+            For more information about the nature of this parameter, see:
 
-        fixed_angle_axis: TODO
-            TODO
+            https://proj.org/en/9.2/operations/projections/
+            geos.html#note-on-sweep-angle
+
+        fixed_angle_axis: `str`, optional
+            The axis on which the view is fixed. It corresponds to the
+            inner-gimbal axis of the gimbal view model, whose axis of
+            rotation moves about the outer-gimbal axis. Valid options
+            are "x" and "y". The default is "x".
+
+             .. note:: If the fixed_angle_axis is "x", sweep_angle_axis
+                       is "y", and vice versa.
 
     """
 
     def __init__(
         self,
         perspective_point_height,
-        sweep_angle_axis,
-        fixed_angle_axis,
         longitude_of_projection_origin=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
+        sweep_angle_axis="y",
+        fixed_angle_axis="x",
         *args,
         **kwargs,
     ):
         super().__init__("geostationary", "geos", *args, **kwargs)
 
-        self.sweep_angle_axis = sweep_angle_axis
-        self.fixed_angle_axis = fixed_angle_axis
+        # sweep_angle_axis must be the opposite (of "x" and "y") to
+        # fixed_angle_axis.
+        if (sweep_angle_axis.lower(), fixed_angle_axis.lower()) not in [
+            ("x", "y")("y", "x")
+        ]:
+            raise ValueError(
+                "The sweep_angle_axis must be the opposite value, from 'x' "
+                "and 'y', to the fixed_angle_axis."
+            )
+
+        # Values "x" and "y" are not case-sensitive, so convert to lower-case
+        self.sweep_angle_axis = sweep_angle_axis.lower()
+        self.fixed_angle_axis = fixed_angle_axis.lower()
 
 
 class LambertAzimuthalEqualArea(AzimuthalGridMapping):
@@ -553,8 +601,17 @@ class LambertConformalConic(ConicGridMapping):
 
     :Parameters:
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            for both values is 0.0 decimal degrees.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -584,7 +641,7 @@ class LambertConformalConic(ConicGridMapping):
 
     def __init__(
         self,
-        standard_parallel,
+        standard_parallel=(0.0, 0.0),
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -622,8 +679,17 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            for both values is 0.0 decimal degrees.
 
         longitude_of_central_meridian: TODO
             TODO
@@ -635,9 +701,9 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def __init__(
         self,
-        standard_parallel,
         longitude_of_central_meridian,
         scale_factor_at_projection_origin,
+        standard_parallel=(0.0, 0.0),
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -681,8 +747,17 @@ class Mercator(CylindricalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            for both values is 0.0 decimal degrees.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -699,8 +774,8 @@ class Mercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        standard_parallel,
         scale_factor_at_projection_origin,
+        standard_parallel=(0.0, 0.0),
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
@@ -769,10 +844,10 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def __init__(
         self,
+        scale_factor_at_projection_origin,
         azimuth_of_central_line,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
-        scale_factor_at_projection_origin,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -894,15 +969,24 @@ class PolarStereographic(AzimuthalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        standard_parallel: TODO
-            TODO
+        standard_parallel: number, `str` or 2-`tuple`, optional
+            The standard parallel values, either the first (PROJ
+            'lat_1' value), the second (PROJ 'lat_2' value) or
+            both, given as a 2-tuple of numbers or strings corresponding to
+            the first and then the second in order, where `None`
+            indicates that a value is not being specified for either. In
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            for both values is 0.0 decimal degrees.
 
     """
 
     def __init__(
         self,
-        standard_parallel,
         scale_factor_at_projection_origin,
+        standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
         straight_vertical_longitude_from_pole=None,
@@ -1202,6 +1286,11 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     :Parameters:
 
+        perspective_point_height: number
+            The height of the view point above the surface (PROJ
+            'h') value, for example the height of a satellite above
+            the Earth, in units of meters.
+
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
@@ -1225,9 +1314,6 @@ class VerticalPerspective(PerspectiveGridMapping):
         false_northing: number, optional
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
-
-        perspective_point_height: TODO
-            TODO
 
     """
 
