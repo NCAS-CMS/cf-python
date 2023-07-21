@@ -7,8 +7,8 @@ version ?.?.?
   (https://github.com/NCAS-CMS/cf-python/issues/661)
 * New keyword parameter to `cf.aggregate`: ``cells``
   (https://github.com/NCAS-CMS/cf-python/issues/452)
-* Allow `cf.Data` and other objects (such as `cf.DimensionCoordinate`)
-  to be used as indices
+* Allow `cf.Data` and other objects that have data (such as
+  `cf.DimensionCoordinate`) to be used as indices
   (https://github.com/NCAS-CMS/cf-python/issues/677)
 * Fix bug that caused `cf.read` to fail for some PP data with a single
   vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
