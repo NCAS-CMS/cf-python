@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.15.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.2</a></h1>
 
 
 
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="performance">
 <span id="id1"></span><h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.15.1 for version 1.10 of the CF conventions.</p>
+<p>Version 3.15.2 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#dask" id="id10"><strong>Dask</strong></a></p></li>
@@ -190,6 +190,8 @@ domain using pre-computed regridding weights.</em></span><a class="headerlink" h
 </pre></div>
 </div>
 </div>
+<p>The weights may also be stored on disk for re-use in future sessions
+by using the <code class="docutils literal notranslate"><span class="pre">weights_file</span></code> keyword parameter.</p>
 </li>
 <li><p><strong>Aggregation</strong></p>
 <p>When two or more field or domain constructs are aggregated to form a
@@ -248,8 +250,8 @@ then its convenient if those arrays have matching chunks patterns.</p></li>
 <span id="id5"></span><h2><a class="toc-backref" href="#id13"><strong>Parallel computation</strong></a><a class="headerlink" href="#parallel-computation" title="Permalink to this headline">¶</a></h2>
 <p>All operations on Dask arrays are executed in parallel using <a class="reference external" href="https://docs.dask.org/en/stable/scheduling.html">Dask’s
 dynamic task scheduling</a>. By default, the
-scheduler uses threads on the local machine, but it is easy to use
-instead local processes, a cluster of many machines, or a single
+scheduler uses threads on the local machine, but can instead use
+local processes, a cluster of many machines, or a single
 thread with no parallelism at all.</p>
 <p>Implementing a different scheduler is done via any of the methods
 supported by Dask, and all <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> operations executed after a new
@@ -279,7 +281,7 @@ graph. The tasks in the graph are passed by the scheduler to the
 available pool of processing elements, which execute the tasks in
 parallel until the final result has been computed.</p>
 <p>The following example creates a visualisation of the task graph for a
-simple data computation over four chunks:</p>
+basic data computation over four chunks:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><em>Visualising the task graph for a lazy computation.</em></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
@@ -340,7 +342,7 @@ available we hope to lift this restriction.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-06-09.
+      &copy;2023, NCAS | Page built on 2023-07-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

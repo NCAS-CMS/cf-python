@@ -30,6 +30,7 @@ Aggregation
    :template: function.rst
 
    cf.aggregate
+   cf.climatology_cells
 
 .. _functions-mathematical-operations:
 
@@ -70,6 +71,7 @@ Condition constructors
    cf.wi
    cf.wo
    cf.set
+   cf.isclose
 
 .. rubric:: Date-time conditions
    

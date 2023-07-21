@@ -151,6 +151,8 @@ q.cyclic()
 q.constructs.domain_axis_identity('domainaxis1')
 print(q[:, -2:3])
 print(q[:, 3:-2:-1])
+lon = q.dimension_coordinate('X')
+print(q[:, lon > 180])
 t.data[0, [2, 3, 9], [4, 8]]
 q, t = cf.read('file.nc')
 t[:, 0, 0] = -1
@@ -167,6 +169,9 @@ t[0, 0, -1] /= -10
 print(t[0, 0, -1].array)
 t.data[0, 0, -1] = -99
 print(t[0, 0, -1].array)
+y = t.dimension_coordinate('Y')
+t[:, y > 0] = -6
+print(t)
 t[0, :, -2] = cf.masked
 print(t.array)
 t[0, 4, -2] = 99
