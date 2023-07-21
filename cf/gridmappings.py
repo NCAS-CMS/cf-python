@@ -57,7 +57,7 @@ class GridMapping:
         earth_radius=None,
         inverse_flattening=None,
         longitude_of_prime_meridian=None,
-        prime_meridian_name=None,
+        prime_meridian_name="Greenwich",
         reference_ellipsoid_name=None,
         semi_major_axis=None,
         semi_minor_axis=None,
@@ -66,32 +66,67 @@ class GridMapping:
 
         :Parameters:
 
-            grid_mapping_name: string
-                TODO
+        Parameters to define the grid mapping:
 
-            proj_id: string
-                TODO "_proj" projection name
+            grid_mapping_name: `str`
+                The value of the 'grid_mapping_name' attribute
+                attached to a data variable, for example
+                "mercator" to indicate the Mercator projection.
+
+            proj_id: `str`
+                The PROJ projection identifier shorthand name that
+                corresponds to the specified 'grid_mapping_name'
+                attribute, for example "merc" for the Mercator
+                projection. This is the initial component in the
+                PROJ 'proj-string' to describe the coordinate
+                transformation.
+
+                .. note:: Do not specify the full 'proj-string'
+                          including parameters, and do not specify
+                          the projection specifier '+proj' as a
+                          prefix. Only give the projection ID.
+
+        Parameters to define the ellipsoid size and shape:
 
             earth_radius: number, optional
-                TODO
+                The radius of the sphere e.g. Earth (PROJ 'R' value),
+                in units of meters. The default is TODO.
 
-            inverse_flattening: TODO, optional
-                TODO
+                If used in conjunction with 'reference_ellipsoid_name',
+                this parameter takes precedence.
+
+            reference_ellipsoid_name: `str` or `None`, optional
+                The name of a built-in ellipsoid definition.
+                The default is `None`.
+
+                If used in conjunction with 'earth_radius', the
+                'earth_radius' parameter takes precedence.
+
+            inverse_flattening: number, optional
+                The reverse flattening of the ellipsoid (PROJ 'rf'
+                value), :math:`\frac{1}{f}`, where f corresponds to
+                the flattening value (PROJ 'f' value) for the ellipsoid,
+                in units of TODO. The default is TODO.
 
             longitude_of_prime_meridian: TODO, optional
                 TODO
 
-            prime_meridian_name: TODO, optional
-                TODO
+            prime_meridian_name: `str`, optional
+                The name, or the longitude relative to greenwich, of
+                the prime meridian (PROJ 'pm' value). The default is
+                "Greenwich". Supported names and corresponding
+                longitudes are listed at:
 
-            reference_ellipsoid_name: TODO, optional
-                TODO
+                https://proj.org/en/9.2/usage/
+                projections.html#prime-meridian
 
-            semi_major_axis: TODO, optional
-                TODO
+            semi_major_axis: number, optional
+                The semi-major axis of the ellipsoid (PROJ 'a' value)
+                in units of TODO. The default is TODO.
 
-            semi_minor_axis: TODO, optional
-                TODO
+            semi_minor_axis: number, optional
+                The semi-minor axis of the ellipsoid (PROJ 'b' value)
+                in units of TODO. The default is TODO.
 
         """
         if not grid_mapping_name and not proj_id:
