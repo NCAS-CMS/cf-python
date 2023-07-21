@@ -15,8 +15,6 @@ version 3.15.2
   (https://github.com/NCAS-CMS/cf-python/issues/452)
 * New function: `cf.isclose`
   (https://github.com/NCAS-CMS/cf-python/issues/661)
-* New keyword parameter to `cf.aggregate`: ``cells``
-  (https://github.com/NCAS-CMS/cf-python/issues/452)
 * Allow `cf.Data` and other objects that have data (such as
   `cf.DimensionCoordinate`) to be used as indices
   (https://github.com/NCAS-CMS/cf-python/issues/677)
