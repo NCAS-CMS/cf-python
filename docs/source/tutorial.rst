@@ -1433,7 +1433,7 @@ that has data:
 
 .. code-block:: python
    :caption: *Create a new field construct for longitudes greater than
-             180.*
+             180 degrees east.*
 	     
    >>> lon = q.dimension_coordinate('X')
    >>> print(q[:, lon > 180])
