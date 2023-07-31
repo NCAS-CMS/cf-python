@@ -218,11 +218,18 @@ class ConicGridMapping(GridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character can indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            for both values is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
 
-        longitude_of_central_meridian: TODO
-            TODO
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
+
+        longitude_of_central_meridian: number or `str`, optional
+            The longitude of (natural) origin i.e. central meridian, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
@@ -244,9 +251,9 @@ class ConicGridMapping(GridMapping):
 
     def __init__(
         self,
-        standard_parallel,
-        longitude_of_central_meridian,
-        latitude_of_projection_origin,
+        standard_parallel=(0.0, 0.0),
+        longitude_of_central_meridian=0.0,
+        latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         *args,
@@ -369,8 +376,13 @@ class AlbersEqualArea(ConicGridMapping):
             The default is (0.0, 0.0), that is 0.0 decimal degrees
             for the first and second standard parallel values.
 
-        longitude_of_central_meridian: TODO
-            TODO
+        longitude_of_central_meridian: number or `str`, optional
+            The longitude of (natural) origin i.e. central meridian, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
@@ -392,7 +404,7 @@ class AlbersEqualArea(ConicGridMapping):
 
     def __init__(
         self,
-        longitude_of_central_meridian,
+        longitude_of_central_meridian=0.0,
         standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -645,8 +657,10 @@ class LambertConformalConic(ConicGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character can indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            for both values is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
+
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -723,11 +737,18 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character can indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            for both values is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
 
-        longitude_of_central_meridian: TODO
-            TODO
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
+
+        longitude_of_central_meridian: number or `str`, optional
+            The longitude of (natural) origin i.e. central meridian, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: number, optional
             The scale factor at natural origin (PROJ 'k_0' value). It
@@ -737,7 +758,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def __init__(
         self,
-        longitude_of_central_meridian,
+        longitude_of_central_meridian=0.0,
         standard_parallel=(0.0, 0.0),
         false_easting=0.0,
         false_northing=0.0,
@@ -792,8 +813,10 @@ class Mercator(CylindricalGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character can indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            for both values is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
+
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -1017,8 +1040,10 @@ class PolarStereographic(AzimuthalGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character can indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            for both values is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
+
+            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            for the first and second standard parallel values.
 
     """
 
@@ -1275,8 +1300,13 @@ class TransverseMercator(CylindricalGridMapping):
         scale_factor_at_central_meridian: TODO
             TODO
 
-        longitude_of_central_meridian: TODO
-            TODO
+        longitude_of_central_meridian: number or `str`, optional
+            The longitude of (natural) origin i.e. central meridian, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character can indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
@@ -1291,7 +1321,7 @@ class TransverseMercator(CylindricalGridMapping):
     def __init__(
         self,
         scale_factor_at_central_meridian,
-        longitude_of_central_meridian,
+        longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
