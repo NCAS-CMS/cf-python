@@ -729,18 +729,19 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         longitude_of_central_meridian: TODO
             TODO
 
-        scale_factor_at_projection_origin: TODO
-            TODO
+        scale_factor_at_projection_origin: number, optional
+            The scale factor at natural origin (PROJ 'k_0' value). It
+            is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
         longitude_of_central_meridian,
-        scale_factor_at_projection_origin,
         standard_parallel=(0.0, 0.0),
         false_easting=0.0,
         false_northing=0.0,
+        scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
@@ -802,18 +803,19 @@ class Mercator(CylindricalGridMapping):
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
 
-        scale_factor_at_projection_origin: TODO
-            TODO
+        scale_factor_at_projection_origin: number, optional
+            The scale factor at natural origin (PROJ 'k_0' value). It
+            is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
-        scale_factor_at_projection_origin,
         standard_parallel=(0.0, 0.0),
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
+        scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
@@ -872,19 +874,20 @@ class ObliqueMercator(CylindricalGridMapping):
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
 
-        scale_factor_at_projection_origin: TODO
-            TODO
+        scale_factor_at_projection_origin: number, optional
+            The scale factor at natural origin (PROJ 'k_0' value). It
+            is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
-        scale_factor_at_projection_origin,
         azimuth_of_central_line,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
+        scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
@@ -993,8 +996,9 @@ class PolarStereographic(AzimuthalGridMapping):
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
 
-        scale_factor_at_projection_origin: TODO
-            TODO
+        scale_factor_at_projection_origin: number, optional
+            The scale factor at natural origin (PROJ 'k_0' value). It
+            is unitless. The default is 1.0.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -1020,13 +1024,13 @@ class PolarStereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        scale_factor_at_projection_origin,
         standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
         straight_vertical_longitude_from_pole=None,
         false_easting=0.0,
         false_northing=0.0,
+        scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
@@ -1218,18 +1222,19 @@ class Stereographic(AzimuthalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        scale_factor_at_projection_origin: TODO
-            TODO
+        scale_factor_at_projection_origin: number, optional
+            The scale factor at natural origin (PROJ 'k_0' value). It
+            is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
-        scale_factor_at_projection_origin,
         false_easting=0.0,
         false_northing=0.0,
         longitude_of_projection_origin=0.0,
         latitude_of_projection_origin=0.0,
+        scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
