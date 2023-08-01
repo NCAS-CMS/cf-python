@@ -229,7 +229,7 @@ nino34_rolling = nino34_anomaly.moving_window(
 elnino = nino34_rolling >= 0.4
 lanina = nino34_rolling <= -0.4
 
-cfp.gset(xmin=1940, xmax=2022, ymin=-3, ymax=3)
+# cfp.gset(xmin='1940-1-1', xmax='2022-12-31', ymin=-3, ymax=3)
 cfp.gopen(figsize=(10, 6))
 cfp.lineplot(
     nino34_rolling,
@@ -246,7 +246,7 @@ cfp.plotvars.plot.axhline(
 )
 cfp.plotvars.plot.axhline(0, color="black", linestyle="-", linewidth=1)
 cfp.plotvars.plot.fill_between(
-    nino34_rolling.coordinate("T").year,
+    nino34_rolling.coordinate("T").array,
     0.4,
     nino34_rolling.array.squeeze(),
     where=elnino.squeeze(),
@@ -254,12 +254,12 @@ cfp.plotvars.plot.fill_between(
     alpha=0.3,
 )
 cfp.plotvars.plot.fill_between(
-    nino34_rolling.coordinate("T").year,
+    nino34_rolling.coordinate("T").array,
     -0.4,
     nino34_rolling.array.squeeze(),
     where=lanina.squeeze(),
     color="blue",
     alpha=0.3,
 )
-cfp.plotvars.plot.legend(frameon=False, loc="lower center", ncol=2)
+cfp.plotvars.plot.legend(frameon=False, loc="lower left", ncol=2)
 cfp.gclose()
