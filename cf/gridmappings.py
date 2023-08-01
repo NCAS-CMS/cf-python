@@ -43,6 +43,13 @@ ALL_GRID_MAPPING_ATTR_NAMES = {
     "towgs84",  # PROJ +towgs84
 }
 
+# Define this first since it provides the default for several parameters,
+# e.g. WGS1984_CF_ATTR_DEFAULTS.semi_major_axis is 6378137.0, the radius
+# of the Earth in metres. Note we use the 'merc' projection to take these
+# from since that projection includes all the "latlon" attributes, with
+# identical values, as well as further map parameters with standard defaults.
+WGS1984_CF_ATTR_DEFAULTS = CRS.from_proj4("+proj=merc").to_cf()
+
 
 """Abstract classes for general Grid Mappings."""
 
@@ -54,13 +61,13 @@ class GridMapping:
         self,
         grid_mapping_name=None,
         proj_id=None,
+        reference_ellipsoid_name="WGS 84",  # other defaults derive from this
+        semi_major_axis=WGS1984_CF_ATTR_DEFAULTS.semi_major_axis,
+        semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS.semi_minor_axis,
+        inverse_flattening=WGS1984_CF_ATTR_DEFAULTS.inverse_flattening,
+        prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS.prime_meridian_name,
+        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS.longitude_of_prime_meridian,
         earth_radius=None,
-        inverse_flattening=None,
-        longitude_of_prime_meridian=None,
-        prime_meridian_name="Greenwich",
-        reference_ellipsoid_name=None,
-        semi_major_axis=None,
-        semi_minor_axis=None,
     ):
         """**Initialisation**
 
@@ -82,51 +89,67 @@ class GridMapping:
                 transformation.
 
                 .. note:: Do not specify the full 'proj-string'
-                          including parameters, and do not specify
-                          the projection specifier '+proj' as a
-                          prefix. Only give the projection ID.
+                          including parameters, since these are
+                          calculated from the class input parameters,
+                          and do not include the projection specifier
+                          '+proj' as a prefix. Only give the
+                          projection ID.
 
         Parameters to define the ellipsoid size and shape:
 
-            earth_radius: number, optional
-                The radius of the sphere e.g. Earth (PROJ 'R' value),
-                in units of meters. The default is TODO.
-
-                If used in conjunction with 'reference_ellipsoid_name',
-                this parameter takes precedence.
-
             reference_ellipsoid_name: `str` or `None`, optional
                 The name of a built-in ellipsoid definition.
-                The default is `None`.
+                The default is "WGS 84".
 
-                If used in conjunction with 'earth_radius', the
-                'earth_radius' parameter takes precedence.
+                .. note:: If used in conjunction with 'earth_radius',
+                          the 'earth_radius' parameter takes precedence.
 
             inverse_flattening: number, optional
                 The reverse flattening of the ellipsoid (PROJ 'rf'
                 value), :math:`\frac{1}{f}`, where f corresponds to
-                the flattening value (PROJ 'f' value) for the ellipsoid,
-                in units of TODO. The default is TODO.
-
-            longitude_of_prime_meridian: TODO, optional
-                TODO
+                the flattening value (PROJ 'f' value) for the ellipsoid.
+                Unitless. The default is 298.257223563.
 
             prime_meridian_name: `str`, optional
-                The name, or the longitude relative to greenwich, of
-                the prime meridian (PROJ 'pm' value). The default is
-                "Greenwich". Supported names and corresponding
-                longitudes are listed at:
+                A predeclared name to define the prime meridian (PROJ
+                'pm' value). The default is "Greenwich". Supported
+                names and corresponding longitudes are listed at:
 
                 https://proj.org/en/9.2/usage/
                 projections.html#prime-meridian
 
-            semi_major_axis: number, optional
-                The semi-major axis of the ellipsoid (PROJ 'a' value)
-                in units of TODO. The default is TODO.
+                .. note:: If used in conjunction with
+                          'longitude_of_prime_meridian', this
+                          parameter takes precedence.
 
-            semi_minor_axis: number, optional
+            longitude_of_prime_meridian: `str or `None`, optional
+                The longitude relative to Greenwich of the
+                prime meridian. The default is 0.0.
+
+                .. note:: If used in conjunction with
+                          'prime_meridian_name', the
+                          'prime_meridian_name' parameter takes
+                          precedence.
+
+            semi_major_axis: number or `None`, optional
+                The semi-major axis of the ellipsoid (PROJ 'a' value)
+                in units of meters. The default is 6378137.0.
+
+            semi_minor_axis: number or `None`, optional
                 The semi-minor axis of the ellipsoid (PROJ 'b' value)
-                in units of TODO. The default is TODO.
+                in units of meters. The default is 6356752.314245179.
+
+            earth_radius: number or `None`, optional
+                The radius of the ellipsoid, if a sphere (PROJ 'R' value),
+                in units of meters. If the ellipsoid is not a sphere,
+                set as `None`, the default, to indicate that ellipsoid
+                parameters such as the reference_ellipsoid_name or
+                semi_major_axis and semi_minor_axis are being set,
+                since these take precendence.
+
+                .. note:: If used in conjunction with
+                          'reference_ellipsoid_name', this parameter
+                          takes precedence.
 
         """
         if not grid_mapping_name and not proj_id:
@@ -162,7 +185,7 @@ class AzimuthalGridMapping(GridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -170,7 +193,7 @@ class AzimuthalGridMapping(GridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -216,7 +239,7 @@ class ConicGridMapping(GridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -226,7 +249,7 @@ class ConicGridMapping(GridMapping):
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -234,7 +257,7 @@ class ConicGridMapping(GridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -369,7 +392,7 @@ class AlbersEqualArea(ConicGridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -379,7 +402,7 @@ class AlbersEqualArea(ConicGridMapping):
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -387,7 +410,7 @@ class AlbersEqualArea(ConicGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -437,7 +460,7 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -445,7 +468,7 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -499,7 +522,7 @@ class Geostationary(PerspectiveGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -507,7 +530,7 @@ class Geostationary(PerspectiveGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -536,8 +559,8 @@ class Geostationary(PerspectiveGridMapping):
             rotation moves about the outer-gimbal axis. Valid options
             are "x" and "y". The default is "x".
 
-             .. note:: If the fixed_angle_axis is "x", sweep_angle_axis
-                       is "y", and vice versa.
+            .. note:: If the fixed_angle_axis is "x", sweep_angle_axis
+                      is "y", and vice versa.
 
     """
 
@@ -592,7 +615,7 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -600,7 +623,7 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -655,7 +678,7 @@ class LambertConformalConic(ConicGridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -665,7 +688,7 @@ class LambertConformalConic(ConicGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -673,7 +696,7 @@ class LambertConformalConic(ConicGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -735,7 +758,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -745,7 +768,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -811,7 +834,7 @@ class Mercator(CylindricalGridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -821,7 +844,7 @@ class Mercator(CylindricalGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -878,13 +901,20 @@ class ObliqueMercator(CylindricalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        azimuth_of_central_line: TODO
-            TODO
+        azimuth_of_central_line: number or `str`, optional
+            The azimuth i.e. tilt angle of the centerline clockwise
+            from north at the center point of the line (PROJ 'alpha'
+            value), in units of decimal degrees, where
+            forming a string by adding a suffix character
+            indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -892,7 +922,7 @@ class ObliqueMercator(CylindricalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -905,7 +935,7 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        azimuth_of_central_line,
+        azimuth_of_central_line=0.0,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -946,7 +976,7 @@ class Orthographic(AzimuthalGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -954,7 +984,7 @@ class Orthographic(AzimuthalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1000,13 +1030,13 @@ class PolarStereographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        straight_vertical_longitude_from_pole: TODO
+        straight_vertical_longitude_from_pole: TODOSADIES
             TODO
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1014,7 +1044,7 @@ class PolarStereographic(AzimuthalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1038,7 +1068,7 @@ class PolarStereographic(AzimuthalGridMapping):
             the first and then the second in order, where `None`
             indicates that a value is not being specified for either. In
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
@@ -1099,7 +1129,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     :Parameters:
 
-        grid_north_pole_latitude: TODO
+        grid_north_pole_latitude: TODOSADIES
             TODO
 
         grid_north_pole_longitude: TODO
@@ -1174,7 +1204,7 @@ class Sinusoidal(GridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1226,7 +1256,7 @@ class Stereographic(AzimuthalGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1234,7 +1264,7 @@ class Stereographic(AzimuthalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1297,13 +1327,13 @@ class TransverseMercator(CylindricalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        scale_factor_at_central_meridian: TODO
+        scale_factor_at_central_meridian: TODOSADIES
             TODO
 
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1311,7 +1341,7 @@ class TransverseMercator(CylindricalGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1364,7 +1394,7 @@ class VerticalPerspective(PerspectiveGridMapping):
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
@@ -1372,7 +1402,7 @@ class VerticalPerspective(PerspectiveGridMapping):
         latitude_of_projection_origin: number or `str`, optional
             The latitude of projection center (PROJ 'lat_0' value), in
             units of decimal degrees, where forming a string by adding
-            a suffix character can indicates alternative units of
+            a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees. The default
             is 0.0 decimal degrees.
