@@ -3,23 +3,23 @@ from pyproj import CRS
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
     # *Those which describe the ellipsoid and prime meridian:*
-    "earth_radius",  # PROJ +R
-    "inverse_flattening",  # PROJ "+rf"
+    "earth_radius",                       # PROJ '+R' value
+    "inverse_flattening",                 # PROJ '+rf' value
     "longitude_of_prime_meridian",
-    "prime_meridian_name",  # PROJ +pm
-    "reference_ellipsoid_name",  # PROJ +ellps
-    "semi_major_axis",  # PROJ "+a"
-    "semi_minor_axis",  # PROJ "+b"
+    "prime_meridian_name",                # PROJ '+pm' value
+    "reference_ellipsoid_name",           # PROJ '+ellps' value
+    "semi_major_axis",                    # PROJ '+a' value
+    "semi_minor_axis",                    # PROJ '+b' value
     # *Specific/applicable to only given grid mapping(s):*
     # ...projection origin related:
-    "longitude_of_projection_origin",  # PROJ +lon_0
-    "latitude_of_projection_origin",  # PROJ +lat_0
-    "scale_factor_at_projection_origin",  # PROJ k_0
+    "longitude_of_projection_origin",     # PROJ '+lon_0' value
+    "latitude_of_projection_origin",      # PROJ '+lat_0' value
+    "scale_factor_at_projection_origin",  # PROJ '+k_0' value
     # ...false-Xings:
-    "false_easting",  # PROJ +x_0
-    "false_northing",  # PROJ +y_0
+    "false_easting",                      # PROJ '+x_0' value
+    "false_northing",                     # PROJ '+y_0' value
     # ...angle axis related:
-    "sweep_angle_axis",  # PROJ +sweep
+    "sweep_angle_axis",                   # PROJ '+sweep' value
     "fixed_angle_axis",
     # ...central meridian related:
     "longitude_of_central_meridian",
@@ -29,29 +29,68 @@ ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_north_pole_longitude",
     "north_pole_grid_longitude",
     # ...other:
-    "standard_parallel",  # PROJ ["+lat_1", "+lat_2"] (up to 2)
-    "perspective_point_height",  # PROJ "+h"
-    "azimuth_of_central_line",  # PROJ +gamma OR +alpha
-    "straight_vertical_longitude_from_pole",  # PROJ +south
+    "standard_parallel",                  # PROJ ['+lat_1', '+lat_2'] values
+    "perspective_point_height",           # PROJ '+h' value
+    "azimuth_of_central_line",            # PROJ '+alpha' (ignore '+gamma')
+    "straight_vertical_longitude_from_pole",
     # *Other, not needed for a specific grid mapping but also listed
     # in 'Table F.1. Grid Mapping Attributes':*
-    "crs_wkt" "geographic_crs_name",  # PROJ "crs_wkt",  # PROJ geoid_crs
-    "geoid_name",  # PROJ geoidgrids
+    "crs_wkt",                            # PROJ 'crs_wkt' value
+    "geographic_crs_name",
+    "geoid_name",
     "geopotential_datum_name",
     "horizontal_datum_name",
     "projected_crs_name",
-    "towgs84",  # PROJ +towgs84
+    "towgs84",                            # PROJ '+towgs84' value
 }
 
-# Define this first since it provides the default for several parameters,
-# e.g. WGS1984_CF_ATTR_DEFAULTS.semi_major_axis is 6378137.0, the radius
-# of the Earth in metres. Note we use the 'merc' projection to take these
-# from since that projection includes all the "latlon" attributes, with
-# identical values, as well as further map parameters with standard defaults.
+"""
+Define this first since it provides the default for several parameters,
+e.g. WGS1984_CF_ATTR_DEFAULTS.semi_major_axis is 6378137.0, the radius
+of the Earth in metres. Note we use the 'merc' projection to take these
+from since that projection includes all the attributes given for
+'latlon' instead and with identical values, but also includes further
+map parameters with defaults applied across the projections.
+
+At the time of dedicating the code, the value of this is as follows, and
+the values documented as defaults in the docstrings are taken from this:
+
+{'crs_wkt': '<not quoted here due to long length>',
+ 'semi_major_axis': 6378137.0,
+ 'semi_minor_axis': 6356752.314245179,
+ 'inverse_flattening': 298.257223563,
+ 'reference_ellipsoid_name': 'WGS 84',
+ 'longitude_of_prime_meridian': 0.0,
+ 'prime_meridian_name': 'Greenwich',
+ 'geographic_crs_name': 'unknown',
+ 'horizontal_datum_name': 'World Geodetic System 1984',
+ 'projected_crs_name': 'unknown',
+ 'grid_mapping_name': 'mercator',
+ 'standard_parallel': 0.0,
+ 'longitude_of_projection_origin': 0.0,
+ 'false_easting': 0.0,
+ 'false_northing': 0.0,
+ 'scale_factor_at_projection_origin': 1.0}
+"""
 WGS1984_CF_ATTR_DEFAULTS = CRS.from_proj4("+proj=merc").to_cf()
 
 
-"""Abstract classes for general Grid Mappings."""
+"""Abstract classes for general Grid Mappings.
+
+Note that default arguments are based upon the PROJ defaults, which can
+be cross-referenced via running:
+
+CRS.from_proj4("+proj=<proj_id> <minimal parameters>").to_cf()
+
+where <minimal parameters> is for when required arguments must be provided
+to return a coordinate reference instance, and obviously these values
+where reported should not be included as defaults. An example is:
+
+CRS.from_proj4("+proj=lcc +lat_1=1").to_cf()
+
+where `'standard_parallel': (1.0, 0.0)` would not be taken as a default.
+
+"""
 
 
 class GridMapping:
@@ -61,7 +100,8 @@ class GridMapping:
         self,
         grid_mapping_name=None,
         proj_id=None,
-        reference_ellipsoid_name="WGS 84",  # other defaults derive from this
+        # i.e. WGS1984_CF_ATTR_DEFAULTS.reference_ellipsoid_name:
+        reference_ellipsoid_name="WGS 84",
         semi_major_axis=WGS1984_CF_ATTR_DEFAULTS.semi_major_axis,
         semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS.semi_minor_axis,
         inverse_flattening=WGS1984_CF_ATTR_DEFAULTS.inverse_flattening,
@@ -232,7 +272,7 @@ class ConicGridMapping(GridMapping):
 
     :Parameters:
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
+        standard_parallel: number, `str` or 2-`tuple`
             The standard parallel values, either the first (PROJ
             'lat_1' value), the second (PROJ 'lat_2' value) or
             both, given as a 2-tuple of numbers or strings corresponding to
@@ -274,7 +314,7 @@ class ConicGridMapping(GridMapping):
 
     def __init__(
         self,
-        standard_parallel=(0.0, 0.0),
+        standard_parallel,
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -427,8 +467,8 @@ class AlbersEqualArea(ConicGridMapping):
 
     def __init__(
         self,
+        standard_parallel,
         longitude_of_central_meridian=0.0,
-        standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
@@ -671,7 +711,7 @@ class LambertConformalConic(ConicGridMapping):
 
     :Parameters:
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
+        standard_parallel: number, `str` or 2-`tuple`
             The standard parallel values, either the first (PROJ
             'lat_1' value), the second (PROJ 'lat_2' value) or
             both, given as a 2-tuple of numbers or strings corresponding to
@@ -713,7 +753,7 @@ class LambertConformalConic(ConicGridMapping):
 
     def __init__(
         self,
-        standard_parallel=(0.0, 0.0),
+        standard_parallel,
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -762,8 +802,9 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
-            for the first and second standard parallel values.
+            The default is (0.0, None), that is 0.0 decimal degrees
+            for the first standard parallel value and nothing set for
+            the second.
 
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
@@ -774,18 +815,18 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: number, optional
-            The scale factor at natural origin (PROJ 'k_0' value). It
-            is unitless. The default is 1.0.
+            The scale factor used in the projection (PROJ 'k_0' value).
+            It is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
-        longitude_of_central_meridian=0.0,
-        standard_parallel=(0.0, 0.0),
+        standard_parallel=(0.0, None),
         false_easting=0.0,
         false_northing=0.0,
         scale_factor_at_projection_origin=1.0,
+        longitude_of_central_meridian=0.0,
         *args,
         **kwargs,
     ):
@@ -838,8 +879,9 @@ class Mercator(CylindricalGridMapping):
             radians if the suffix is 'R' or 'r'. If a string, a suffix
             of 'd', 'D' or '°' confirm units of decimal degrees.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
-            for the first and second standard parallel values.
+            The default is (0.0, None), that is 0.0 decimal degrees
+            for the first standard parallel value and nothing set for
+            the second.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -850,14 +892,14 @@ class Mercator(CylindricalGridMapping):
             is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: number, optional
-            The scale factor at natural origin (PROJ 'k_0' value). It
-            is unitless. The default is 1.0.
+            The scale factor used in the projection (PROJ 'k_0' value).
+            It is unitless. The default is 1.0.
 
     """
 
     def __init__(
         self,
-        standard_parallel=(0.0, 0.0),
+        standard_parallel=(0.0, None),
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
@@ -928,8 +970,8 @@ class ObliqueMercator(CylindricalGridMapping):
             is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: number, optional
-            The scale factor at natural origin (PROJ 'k_0' value). It
-            is unitless. The default is 1.0.
+            The scale factor used in the projection (PROJ 'k_0' value).
+            It is unitless. The default is 1.0.
 
     """
 
@@ -1030,8 +1072,14 @@ class PolarStereographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        straight_vertical_longitude_from_pole: TODOSADIES
-            TODO
+        straight_vertical_longitude_from_pole: number or `str`, optional
+            The longitude of (natural) origin i.e. central meridian,
+            oriented straight up from the North or South Pole, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
         longitude_of_projection_origin: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
@@ -1050,8 +1098,8 @@ class PolarStereographic(AzimuthalGridMapping):
             is 0.0 decimal degrees.
 
         scale_factor_at_projection_origin: number, optional
-            The scale factor at natural origin (PROJ 'k_0' value). It
-            is unitless. The default is 1.0.
+            The scale factor used in the projection (PROJ 'k_0' value).
+            It is unitless. The default is 1.0.
 
         false_easting: number, optional
             The false easting (PROJ 'x_0') value, in units of metres.
@@ -1082,13 +1130,15 @@ class PolarStereographic(AzimuthalGridMapping):
         standard_parallel=(0.0, 0.0),
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
-        straight_vertical_longitude_from_pole=None,
+        straight_vertical_longitude_from_pole=0.0,
         false_easting=0.0,
         false_northing=0.0,
         scale_factor_at_projection_origin=1.0,
         *args,
         **kwargs,
     ):
+        # TODO check defaults here, they do not appear for
+        # CRS.from_proj4("+proj=ups").to_cf() to cross reference!
         super().__init__("polar_stereographic", "ups", *args, **kwargs)
 
         # See: https://github.com/cf-convention/cf-conventions/issues/445
@@ -1129,14 +1179,31 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     :Parameters:
 
-        grid_north_pole_latitude: TODOSADIES
-            TODO
+        grid_north_pole_latitude: number or `str`
+            Latitude of the North pole of the unrotated source CRS,
+            expressed in the rotated geographic CRS, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        grid_north_pole_longitude: TODO
-            TODO
+        grid_north_pole_longitude: number or `str`
+            Longitude of the North pole of the unrotated source CRS,
+            expressed in the rotated geographic CRS, in
+            units of decimal degrees, where forming a string by adding
+            a suffix character indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
-        north_pole_grid_longitude: TODO
-            TODO
+        north_pole_grid_longitude: number or `str`, optional
+            The longitude of projection center (PROJ 'lon_0' value), in
+            units of decimal degrees, where forming a string by adding
+            a suffix character indicates alternative units of
+            radians if the suffix is 'R' or 'r'. If a string, a suffix
+            of 'd', 'D' or '°' confirm units of decimal degrees. The default
+            is 0.0 decimal degrees.
 
     """
 
@@ -1144,7 +1211,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         self,
         grid_north_pole_latitude,
         grid_north_pole_longitude,
-        north_pole_grid_longitude,
+        north_pole_grid_longitude=0.0,
         *args,
         **kwargs,
     ):
@@ -1278,8 +1345,8 @@ class Stereographic(AzimuthalGridMapping):
             The default is 0.0.
 
         scale_factor_at_projection_origin: number, optional
-            The scale factor at natural origin (PROJ 'k_0' value). It
-            is unitless. The default is 1.0.
+            The scale factor used in the projection (PROJ 'k_0' value).
+            It is unitless. The default is 1.0.
 
     """
 
@@ -1327,8 +1394,9 @@ class TransverseMercator(CylindricalGridMapping):
             The false northing (PROJ 'y_0') value, in units of metres.
             The default is 0.0.
 
-        scale_factor_at_central_meridian: TODOSADIES
-            TODO
+        scale_factor_at_central_meridian: number, optional
+            The scale factor at (natural) origin i.e. central meridian.
+            It is unitless. The default is 1.0.
 
         longitude_of_central_meridian: number or `str`, optional
             The longitude of (natural) origin i.e. central meridian, in
@@ -1350,7 +1418,7 @@ class TransverseMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        scale_factor_at_central_meridian,
+        scale_factor_at_central_meridian=1.0,
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
