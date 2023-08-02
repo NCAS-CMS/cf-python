@@ -3,23 +3,23 @@ from pyproj import CRS
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
     # *Those which describe the ellipsoid and prime meridian:*
-    "earth_radius",                       # PROJ '+R' value
-    "inverse_flattening",                 # PROJ '+rf' value
+    "earth_radius",  # -------------------- PROJ '+R' value
+    "inverse_flattening",  # -------------- PROJ '+rf' value
     "longitude_of_prime_meridian",
-    "prime_meridian_name",                # PROJ '+pm' value
-    "reference_ellipsoid_name",           # PROJ '+ellps' value
-    "semi_major_axis",                    # PROJ '+a' value
-    "semi_minor_axis",                    # PROJ '+b' value
+    "prime_meridian_name",  # ------------- PROJ '+pm' value
+    "reference_ellipsoid_name",  # -------- PROJ '+ellps' value
+    "semi_major_axis",  # ----------------- PROJ '+a' value
+    "semi_minor_axis",  # ----------------- PROJ '+b' value
     # *Specific/applicable to only given grid mapping(s):*
     # ...projection origin related:
-    "longitude_of_projection_origin",     # PROJ '+lon_0' value
-    "latitude_of_projection_origin",      # PROJ '+lat_0' value
+    "longitude_of_projection_origin",  # -- PROJ '+lon_0' value
+    "latitude_of_projection_origin",  # --- PROJ '+lat_0' value
     "scale_factor_at_projection_origin",  # PROJ '+k_0' value
     # ...false-Xings:
-    "false_easting",                      # PROJ '+x_0' value
-    "false_northing",                     # PROJ '+y_0' value
+    "false_easting",  # ------------------- PROJ '+x_0' value
+    "false_northing",  # ------------------ PROJ '+y_0' value
     # ...angle axis related:
-    "sweep_angle_axis",                   # PROJ '+sweep' value
+    "sweep_angle_axis",  # ---------------- PROJ '+sweep' value
     "fixed_angle_axis",
     # ...central meridian related:
     "longitude_of_central_meridian",
@@ -29,19 +29,19 @@ ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_north_pole_longitude",
     "north_pole_grid_longitude",
     # ...other:
-    "standard_parallel",                  # PROJ ['+lat_1', '+lat_2'] values
-    "perspective_point_height",           # PROJ '+h' value
-    "azimuth_of_central_line",            # PROJ '+alpha' (ignore '+gamma')
+    "standard_parallel",  # --------------- PROJ ['+lat_1', '+lat_2'] values
+    "perspective_point_height",  # -------- PROJ '+h' value
+    "azimuth_of_central_line",  # --------- PROJ '+alpha' (ignore '+gamma')
     "straight_vertical_longitude_from_pole",
     # *Other, not needed for a specific grid mapping but also listed
     # in 'Table F.1. Grid Mapping Attributes':*
-    "crs_wkt",                            # PROJ 'crs_wkt' value
+    "crs_wkt",  # ------------------------- PROJ 'crs_wkt' value
     "geographic_crs_name",
     "geoid_name",
     "geopotential_datum_name",
     "horizontal_datum_name",
     "projected_crs_name",
-    "towgs84",                            # PROJ '+towgs84' value
+    "towgs84",  # ------------------------- PROJ '+towgs84' value
 }
 
 """
@@ -1169,10 +1169,6 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
     http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
     cf-conventions.html#_rotated_pole
 
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/eqc.html
-
     for more information.
 
     .. versionadded:: GMVER
@@ -1215,7 +1211,9 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         *args,
         **kwargs,
     ):
-        super().__init__("rotated_latitude_longitude", "eqc", *args, **kwargs)
+        super().__init__(
+            "rotated_latitude_longitude", "latlon", *args, **kwargs
+        )
 
         self.grid_north_pole_latitude = grid_north_pole_latitude
         self.grid_north_pole_longitude = grid_north_pole_longitude
@@ -1223,21 +1221,13 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
 
 class LatitudeLongitude(LatLonGridMapping):
-    """The Latitude-Longitude i.e. Plate Carrée grid mapping.
-
-    For alternative names, see e.g:
-
-    https://en.wikipedia.org/wiki/Equirectangular_projection
+    """The Latitude-Longitude grid mapping.
 
     See the CF Conventions document 'Appendix F: Grid Mappings' sub-section on
     this grid mapping:
 
     http://cfconventions.org/Data/cf-conventions/cf-conventions-1.10/
     cf-conventions.html#_latitude_longitude
-
-    or the corresponding PROJ projection page:
-
-    https://proj.org/en/9.2/operations/projections/eqc.html
 
     for more information.
 
@@ -1246,7 +1236,7 @@ class LatitudeLongitude(LatLonGridMapping):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__("latitude_longitude", "eqc", *args, **kwargs)
+        super().__init__("latitude_longitude", "latlon", *args, **kwargs)
 
 
 class Sinusoidal(GridMapping):
