@@ -102,11 +102,11 @@ class GridMapping:
         proj_id=None,
         # i.e. WGS1984_CF_ATTR_DEFAULTS.reference_ellipsoid_name:
         reference_ellipsoid_name="WGS 84",
-        semi_major_axis=WGS1984_CF_ATTR_DEFAULTS.semi_major_axis,
-        semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS.semi_minor_axis,
-        inverse_flattening=WGS1984_CF_ATTR_DEFAULTS.inverse_flattening,
-        prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS.prime_meridian_name,
-        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS.longitude_of_prime_meridian,
+        semi_major_axis=WGS1984_CF_ATTR_DEFAULTS["semi_major_axis"],
+            semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS["semi_minor_axis"],
+        inverse_flattening=WGS1984_CF_ATTR_DEFAULTS["inverse_flattening"],
+            prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS["prime_meridian_name"],
+        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS["longitude_of_prime_meridian"],
         earth_radius=None,
     ):
         """**Initialisation**
@@ -213,6 +213,30 @@ class GridMapping:
         self.reference_ellipsoid_name = reference_ellipsoid_name
         self.semi_major_axis = semi_major_axis
         self.semi_minor_axis = semi_minor_axis
+
+    def get_proj_string(self):
+        """TODO"""
+        # TODO finish to return parameters for full proj string
+        return f"+proj={self.proj_id}"
+
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        # Report parent GridMapping class to indicate classification,
+        # but only if it has one (> 2 avoids own class and 'object')
+        # base. E.g. we get <CF AzimuthalGridMapping:Orthographic>,
+        # <CF GridMapping:AzimuthalGridMapping>, <CF GridMapping>.
+        parent_gm = ""
+        if len(self.__class__.__mro__) > 2:
+            parent_gm = self.__class__.__mro__[1].__name__ + ": "
+        return (
+            f"<CF {parent_gm}{self.__class__.__name__}>"
+        )
+
+    def __str__(self):
+        """x.__str__() <==> str(x)"""
+        return (
+            f"{self.__repr__()[:-1]} {self.get_proj_string()}>"
+        )
 
 
 class AzimuthalGridMapping(GridMapping):
@@ -621,7 +645,7 @@ class Geostationary(PerspectiveGridMapping):
         # sweep_angle_axis must be the opposite (of "x" and "y") to
         # fixed_angle_axis.
         if (sweep_angle_axis.lower(), fixed_angle_axis.lower()) not in [
-            ("x", "y")("y", "x")
+                ("x", "y"),("y", "x")
         ]:
             raise ValueError(
                 "The sweep_angle_axis must be the opposite value, from 'x' "
@@ -1212,7 +1236,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         **kwargs,
     ):
         super().__init__(
-            "rotated_latitude_longitude", "latlon", *args, **kwargs
+            "rotated_latitude_longitude", "latlong", *args, **kwargs
         )
 
         self.grid_north_pole_latitude = grid_north_pole_latitude
@@ -1236,7 +1260,7 @@ class LatitudeLongitude(LatLonGridMapping):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__("latitude_longitude", "latlon", *args, **kwargs)
+        super().__init__("latitude_longitude", "latlong", *args, **kwargs)
 
 
 class Sinusoidal(GridMapping):

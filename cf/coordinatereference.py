@@ -47,7 +47,7 @@ def _totuple(a):
         return a
 
 
-def create_2d_lats_and_lons(projection, 1d_proj_coors, crs_params):
+def create_2d_lats_and_lons(projection, proj_1d_coors, crs_params):
     """TODO."""
     # TODO functional code here to go from inputs to lat_data and lon_data
 

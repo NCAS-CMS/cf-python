@@ -323,6 +323,31 @@ from .read_write import read, write
 
 from .regrid import RegridOperator
 
+from .gridmappings import (
+    GridMapping,
+    AzimuthalGridMapping,
+    ConicGridMapping,
+    CylindricalGridMapping,
+    LatLonGridMapping,
+    PerspectiveGridMapping,
+    AlbersEqualArea,
+    AzimuthalEquidistant,
+    Geostationary,
+    LambertAzimuthalEqualArea,
+    LambertConformalConic,
+    LambertCylindricalEqualArea,
+    Mercator,
+    ObliqueMercator,
+    Orthographic,
+    PolarStereographic,
+    RotatedLatitudeLongitude,
+    LatitudeLongitude,
+    Sinusoidal,
+    Stereographic,
+    TransverseMercator,
+    VerticalPerspective,
+)
+
 
 # Set up basic logging for the full project with a root logger
 import logging
