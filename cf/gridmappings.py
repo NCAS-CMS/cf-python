@@ -1,4 +1,7 @@
+from abc import ABC, abstractmethod
+
 from pyproj import CRS
+
 
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
@@ -93,49 +96,25 @@ where `'standard_parallel': (1.0, 0.0)` would not be taken as a default.
 """
 
 
-class GridMapping:
+class GridMapping(ABC):
     """A container for a Grid Mapping recognised by the CF Conventions."""
 
     def __init__(
         self,
-        grid_mapping_name=None,
-        proj_id=None,
         # i.e. WGS1984_CF_ATTR_DEFAULTS.reference_ellipsoid_name:
         reference_ellipsoid_name="WGS 84",
         semi_major_axis=WGS1984_CF_ATTR_DEFAULTS["semi_major_axis"],
-            semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS["semi_minor_axis"],
+        semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS["semi_minor_axis"],
         inverse_flattening=WGS1984_CF_ATTR_DEFAULTS["inverse_flattening"],
-            prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS["prime_meridian_name"],
-        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS["longitude_of_prime_meridian"],
+        prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS["prime_meridian_name"],
+        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS[
+            "longitude_of_prime_meridian"
+        ],
         earth_radius=None,
     ):
         """**Initialisation**
 
         :Parameters:
-
-        Parameters to define the grid mapping:
-
-            grid_mapping_name: `str`
-                The value of the 'grid_mapping_name' attribute
-                attached to a data variable, for example
-                "mercator" to indicate the Mercator projection.
-
-            proj_id: `str`
-                The PROJ projection identifier shorthand name that
-                corresponds to the specified 'grid_mapping_name'
-                attribute, for example "merc" for the Mercator
-                projection. This is the initial component in the
-                PROJ 'proj-string' to describe the coordinate
-                transformation.
-
-                .. note:: Do not specify the full 'proj-string'
-                          including parameters, since these are
-                          calculated from the class input parameters,
-                          and do not include the projection specifier
-                          '+proj' as a prefix. Only give the
-                          projection ID.
-
-        Parameters to define the ellipsoid size and shape:
 
             reference_ellipsoid_name: `str` or `None`, optional
                 The name of a built-in ellipsoid definition.
@@ -192,17 +171,6 @@ class GridMapping:
                           takes precedence.
 
         """
-        if not grid_mapping_name and not proj_id:
-            raise NotImplementedError(
-                "Must define a specific Grid Mapping via setting its CF "
-                "Conventions 'grid_mapping_name' attribute value with the "
-                "grid_mapping_name parameter, as well as the corresponding "
-                "base PROJ '+proj' identifier with the proj_id parameter."
-            )
-
-        # Defining the Grid Mapping
-        self.grid_mapping_name = grid_mapping_name
-        self.proj_id = proj_id
 
         # The attributes which describe the ellipsoid and prime meridian,
         # which may be included, when applicable, with any grid mapping
@@ -213,6 +181,18 @@ class GridMapping:
         self.reference_ellipsoid_name = reference_ellipsoid_name
         self.semi_major_axis = semi_major_axis
         self.semi_minor_axis = semi_minor_axis
+
+    @property
+    @abstractmethod
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        pass
+
+    @property
+    @abstractmethod
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        pass
 
     def get_proj_string(self):
         """TODO"""
@@ -228,15 +208,11 @@ class GridMapping:
         parent_gm = ""
         if len(self.__class__.__mro__) > 2:
             parent_gm = self.__class__.__mro__[1].__name__ + ": "
-        return (
-            f"<CF {parent_gm}{self.__class__.__name__}>"
-        )
+        return f"<CF {parent_gm}{self.__class__.__name__}>"
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
-        return (
-            f"{self.__repr__()[:-1]} {self.get_proj_string()}>"
-        )
+        return f"{self.__repr__()[:-1]} {self.get_proj_string()}>"
 
 
 class AzimuthalGridMapping(GridMapping):
@@ -489,17 +465,15 @@ class AlbersEqualArea(ConicGridMapping):
 
     """
 
-    def __init__(
-        self,
-        standard_parallel,
-        longitude_of_central_meridian=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__("albers_conical_equal_area", "aea", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "albers_conical_equal_area"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "aea"
 
 
 class AzimuthalEquidistant(AzimuthalGridMapping):
@@ -547,16 +521,15 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     """
 
-    def __init__(
-        self,
-        longitude_of_projection_origin=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__("azimuthal_equidistant", "aeqd", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "azimuthal_equidistant"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "aeqd"
 
 
 class Geostationary(PerspectiveGridMapping):
@@ -631,21 +604,30 @@ class Geostationary(PerspectiveGridMapping):
     def __init__(
         self,
         perspective_point_height,
+        *args,
         longitude_of_projection_origin=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         sweep_angle_axis="y",
         fixed_angle_axis="x",
-        *args,
         **kwargs,
     ):
-        super().__init__("geostationary", "geos", *args, **kwargs)
+        super().__init__(
+            perspective_point_height,
+            *args,
+            longitude_of_projection_origin=0.0,
+            latitude_of_projection_origin=0.0,
+            false_easting=0.0,
+            false_northing=0.0,
+            **kwargs,
+        )
 
         # sweep_angle_axis must be the opposite (of "x" and "y") to
         # fixed_angle_axis.
         if (sweep_angle_axis.lower(), fixed_angle_axis.lower()) not in [
-                ("x", "y"),("y", "x")
+            ("x", "y"),
+            ("y", "x"),
         ]:
             raise ValueError(
                 "The sweep_angle_axis must be the opposite value, from 'x' "
@@ -655,6 +637,16 @@ class Geostationary(PerspectiveGridMapping):
         # Values "x" and "y" are not case-sensitive, so convert to lower-case
         self.sweep_angle_axis = sweep_angle_axis.lower()
         self.fixed_angle_axis = fixed_angle_axis.lower()
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "geostationary"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "geos"
 
 
 class LambertAzimuthalEqualArea(AzimuthalGridMapping):
@@ -702,18 +694,15 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     """
 
-    def __init__(
-        self,
-        longitude_of_projection_origin=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(
-            "lambert_azimuthal_equal_area", "laea", *args, **kwargs
-        )
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "lambert_azimuthal_equal_area"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "laea"
 
 
 class LambertConformalConic(ConicGridMapping):
@@ -775,17 +764,15 @@ class LambertConformalConic(ConicGridMapping):
 
     """
 
-    def __init__(
-        self,
-        standard_parallel,
-        longitude_of_central_meridian=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__("lambert_conformal_conic", "lcc", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "lambert_conformal_conic"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "lcc"
 
 
 class LambertCylindricalEqualArea(CylindricalGridMapping):
@@ -846,16 +833,16 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def __init__(
         self,
-        standard_parallel=(0.0, None),
+        *args,
         false_easting=0.0,
         false_northing=0.0,
+        standard_parallel=(0.0, None),
         scale_factor_at_projection_origin=1.0,
         longitude_of_central_meridian=0.0,
-        *args,
         **kwargs,
     ):
         super().__init__(
-            "lambert_cylindrical_equal_area", "cea", *args, **kwargs
+            *args, false_easting=0.0, false_northing=0.0, **kwargs
         )
 
         self.standard_parallel = standard_parallel
@@ -863,6 +850,16 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "lambert_cylindrical_equal_area"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "cea"
 
 
 class Mercator(CylindricalGridMapping):
@@ -923,21 +920,33 @@ class Mercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        standard_parallel=(0.0, None),
-        longitude_of_projection_origin=0.0,
+        *args,
         false_easting=0.0,
         false_northing=0.0,
+        standard_parallel=(0.0, None),
+        longitude_of_projection_origin=0.0,
         scale_factor_at_projection_origin=1.0,
-        *args,
         **kwargs,
     ):
-        super().__init__("mercator", "merc", *args, **kwargs)
+        super().__init__(
+            *args, false_easting=0.0, false_northing=0.0, **kwargs
+        )
 
         self.standard_parallel = standard_parallel
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "mercator"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "merc"
 
 
 class ObliqueMercator(CylindricalGridMapping):
@@ -1001,16 +1010,18 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def __init__(
         self,
+        *args,
         azimuth_of_central_line=0.0,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
+        scale_factor_at_projection_origin=1.0,
         false_easting=0.0,
         false_northing=0.0,
-        scale_factor_at_projection_origin=1.0,
-        *args,
         **kwargs,
     ):
-        super().__init__("oblique_mercator", "omerc", *args, **kwargs)
+        super().__init__(
+            *args, false_easting=0.0, false_northing=0.0, **kwargs
+        )
 
         self.azimuth_of_central_line = azimuth_of_central_line
         self.latitude_of_projection_origin = latitude_of_projection_origin
@@ -1018,6 +1029,16 @@ class ObliqueMercator(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "oblique_mercator"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "omerc"
 
 
 class Orthographic(AzimuthalGridMapping):
@@ -1065,16 +1086,15 @@ class Orthographic(AzimuthalGridMapping):
 
     """
 
-    def __init__(
-        self,
-        longitude_of_projection_origin=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__("orthographic", "ortho", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "orthographic"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "ortho"
 
 
 class PolarStereographic(AzimuthalGridMapping):
@@ -1151,19 +1171,26 @@ class PolarStereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        standard_parallel=(0.0, 0.0),
+        *args,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
-        straight_vertical_longitude_from_pole=0.0,
         false_easting=0.0,
         false_northing=0.0,
+        standard_parallel=(0.0, 0.0),
+        straight_vertical_longitude_from_pole=0.0,
         scale_factor_at_projection_origin=1.0,
-        *args,
         **kwargs,
     ):
         # TODO check defaults here, they do not appear for
         # CRS.from_proj4("+proj=ups").to_cf() to cross reference!
-        super().__init__("polar_stereographic", "ups", *args, **kwargs)
+        super().__init__(
+            *args,
+            latitude_of_projection_origin=0.0,
+            longitude_of_projection_origin=0.0,
+            false_easting=0.0,
+            false_northing=0.0,
+            **kwargs,
+        )
 
         # See: https://github.com/cf-convention/cf-conventions/issues/445
         if (
@@ -1182,6 +1209,16 @@ class PolarStereographic(AzimuthalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "polar_stereographic"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "ups"
 
 
 class RotatedLatitudeLongitude(LatLonGridMapping):
@@ -1231,17 +1268,25 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         self,
         grid_north_pole_latitude,
         grid_north_pole_longitude,
-        north_pole_grid_longitude=0.0,
         *args,
+        north_pole_grid_longitude=0.0,
         **kwargs,
     ):
-        super().__init__(
-            "rotated_latitude_longitude", "latlong", *args, **kwargs
-        )
+        super().__init__(*args, **kwargs)
 
         self.grid_north_pole_latitude = grid_north_pole_latitude
         self.grid_north_pole_longitude = grid_north_pole_longitude
         self.north_pole_grid_longitude = north_pole_grid_longitude
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "rotated_latitude_longitude"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "latlong"
 
 
 class LatitudeLongitude(LatLonGridMapping):
@@ -1259,8 +1304,15 @@ class LatitudeLongitude(LatLonGridMapping):
 
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__("latitude_longitude", "latlong", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "latitude_longitude"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "latlong"
 
 
 class Sinusoidal(GridMapping):
@@ -1302,17 +1354,27 @@ class Sinusoidal(GridMapping):
 
     def __init__(
         self,
+        *args,
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
-        *args,
         **kwargs,
     ):
-        super().__init__("sinusoidal", "sinu", *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.false_easting = false_easting
         self.false_northing = false_northing
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "sinusoidal"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "sinu"
 
 
 class Stereographic(AzimuthalGridMapping):
@@ -1366,19 +1428,36 @@ class Stereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
+        *args,
         false_easting=0.0,
         false_northing=0.0,
         longitude_of_projection_origin=0.0,
         latitude_of_projection_origin=0.0,
         scale_factor_at_projection_origin=1.0,
-        *args,
         **kwargs,
     ):
-        super().__init__("stereographic", "stere", *args, **kwargs)
+        super().__init__(
+            *args,
+            false_easting=0.0,
+            false_northing=0.0,
+            longitude_of_projection_origin=0.0,
+            latitude_of_projection_origin=0.0,
+            **kwargs,
+        )
 
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "stereographic"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "stere"
 
 
 class TransverseMercator(CylindricalGridMapping):
@@ -1432,21 +1511,33 @@ class TransverseMercator(CylindricalGridMapping):
 
     def __init__(
         self,
+        *args,
         scale_factor_at_central_meridian=1.0,
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
-        *args,
         **kwargs,
     ):
-        super().__init__("transverse_mercator", "tmerc", *args, **kwargs)
+        super().__init__(
+            *args, false_easting=0.0, false_northing=0.0, **kwargs
+        )
 
         self.scale_factor_at_central_meridian = (
             scale_factor_at_central_meridian
         )
         self.longitude_of_central_meridian = longitude_of_central_meridian
         self.latitude_of_projection_origin = latitude_of_projection_origin
+
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "transverse_mercator"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "tmerc"
 
 
 class VerticalPerspective(PerspectiveGridMapping):
@@ -1499,14 +1590,12 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     """
 
-    def __init__(
-        self,
-        perspective_point_height,
-        longitude_of_projection_origin=0.0,
-        latitude_of_projection_origin=0.0,
-        false_easting=0.0,
-        false_northing=0.0,
-        *args,
-        **kwargs,
-    ):
-        super().__init__("vertical_perspective", "nsper", *args, **kwargs)
+    @property
+    def grid_mapping_name(self):
+        """The value of the 'grid_mapping_name' attribute."""
+        return "vertical_perspective"
+
+    @property
+    def proj_id(self):
+        """The PROJ projection identifier shorthand name."""
+        return "nsper"
