@@ -101,15 +101,15 @@ class GridMapping(ABC):
 
     def __init__(
         self,
-        # i.e. WGS1984_CF_ATTR_DEFAULTS.reference_ellipsoid_name:
+        # i.e. WGS1984_CF_ATTR_DEFAULTS["reference_ellipsoid_name"], etc.
         reference_ellipsoid_name="WGS 84",
+        # The next three parameters are non-zero floats so don't hard-code
+        # WGS84 defaults in case of future precision changes:
         semi_major_axis=WGS1984_CF_ATTR_DEFAULTS["semi_major_axis"],
         semi_minor_axis=WGS1984_CF_ATTR_DEFAULTS["semi_minor_axis"],
         inverse_flattening=WGS1984_CF_ATTR_DEFAULTS["inverse_flattening"],
-        prime_meridian_name=WGS1984_CF_ATTR_DEFAULTS["prime_meridian_name"],
-        longitude_of_prime_meridian=WGS1984_CF_ATTR_DEFAULTS[
-            "longitude_of_prime_meridian"
-        ],
+        prime_meridian_name="Greenwich",
+        longitude_of_prime_meridian=0.0,
         earth_radius=None,
     ):
         """**Initialisation**
@@ -194,10 +194,11 @@ class GridMapping(ABC):
         """The PROJ projection identifier shorthand name."""
         pass
 
+    @property
+    @abstractmethod
     def get_proj_string(self):
-        """TODO"""
-        # TODO finish to return parameters for full proj string
-        return f"+proj={self.proj_id}"
+        """The value of the PROJ proj-string defining the projection."""
+        pass
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -254,10 +255,9 @@ class AzimuthalGridMapping(GridMapping):
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
-        *args,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.latitude_of_projection_origin = latitude_of_projection_origin
@@ -319,10 +319,9 @@ class ConicGridMapping(GridMapping):
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
-        *args,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.standard_parallel = standard_parallel
         self.longitude_of_central_meridian = longitude_of_central_meridian
@@ -348,8 +347,8 @@ class CylindricalGridMapping(GridMapping):
 
     """
 
-    def __init__(self, false_easting=0.0, false_northing=0.0, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, false_easting=0.0, false_northing=0.0, **kwargs):
+        super().__init__(**kwargs)
 
         self.false_easting = false_easting
         self.false_northing = false_northing
@@ -365,9 +364,7 @@ class LatLonGridMapping(GridMapping):
     .. versionadded:: GMVER
 
     """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    pass
 
 
 class PerspectiveGridMapping(AzimuthalGridMapping):
@@ -384,13 +381,8 @@ class PerspectiveGridMapping(AzimuthalGridMapping):
 
     """
 
-    def __init__(
-        self,
-        perspective_point_height,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def __init__(self, perspective_point_height, **kwargs):
+        super().__init__(**kwargs)
 
         self.perspective_point_height = perspective_point_height
 
@@ -604,7 +596,6 @@ class Geostationary(PerspectiveGridMapping):
     def __init__(
         self,
         perspective_point_height,
-        *args,
         longitude_of_projection_origin=0.0,
         latitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -615,7 +606,6 @@ class Geostationary(PerspectiveGridMapping):
     ):
         super().__init__(
             perspective_point_height,
-            *args,
             longitude_of_projection_origin=0.0,
             latitude_of_projection_origin=0.0,
             false_easting=0.0,
@@ -833,7 +823,6 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def __init__(
         self,
-        *args,
         false_easting=0.0,
         false_northing=0.0,
         standard_parallel=(0.0, None),
@@ -842,7 +831,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            *args, false_easting=0.0, false_northing=0.0, **kwargs
+            false_easting=0.0, false_northing=0.0, **kwargs
         )
 
         self.standard_parallel = standard_parallel
@@ -920,7 +909,6 @@ class Mercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        *args,
         false_easting=0.0,
         false_northing=0.0,
         standard_parallel=(0.0, None),
@@ -929,7 +917,7 @@ class Mercator(CylindricalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            *args, false_easting=0.0, false_northing=0.0, **kwargs
+            false_easting=0.0, false_northing=0.0, **kwargs
         )
 
         self.standard_parallel = standard_parallel
@@ -1010,7 +998,6 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        *args,
         azimuth_of_central_line=0.0,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
@@ -1020,7 +1007,7 @@ class ObliqueMercator(CylindricalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            *args, false_easting=0.0, false_northing=0.0, **kwargs
+            false_easting=0.0, false_northing=0.0, **kwargs
         )
 
         self.azimuth_of_central_line = azimuth_of_central_line
@@ -1171,7 +1158,6 @@ class PolarStereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        *args,
         latitude_of_projection_origin=0.0,
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
@@ -1184,7 +1170,6 @@ class PolarStereographic(AzimuthalGridMapping):
         # TODO check defaults here, they do not appear for
         # CRS.from_proj4("+proj=ups").to_cf() to cross reference!
         super().__init__(
-            *args,
             latitude_of_projection_origin=0.0,
             longitude_of_projection_origin=0.0,
             false_easting=0.0,
@@ -1268,11 +1253,10 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         self,
         grid_north_pole_latitude,
         grid_north_pole_longitude,
-        *args,
         north_pole_grid_longitude=0.0,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.grid_north_pole_latitude = grid_north_pole_latitude
         self.grid_north_pole_longitude = grid_north_pole_longitude
@@ -1354,13 +1338,12 @@ class Sinusoidal(GridMapping):
 
     def __init__(
         self,
-        *args,
         longitude_of_projection_origin=0.0,
         false_easting=0.0,
         false_northing=0.0,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.false_easting = false_easting
@@ -1428,7 +1411,6 @@ class Stereographic(AzimuthalGridMapping):
 
     def __init__(
         self,
-        *args,
         false_easting=0.0,
         false_northing=0.0,
         longitude_of_projection_origin=0.0,
@@ -1437,7 +1419,6 @@ class Stereographic(AzimuthalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            *args,
             false_easting=0.0,
             false_northing=0.0,
             longitude_of_projection_origin=0.0,
@@ -1511,7 +1492,6 @@ class TransverseMercator(CylindricalGridMapping):
 
     def __init__(
         self,
-        *args,
         scale_factor_at_central_meridian=1.0,
         longitude_of_central_meridian=0.0,
         latitude_of_projection_origin=0.0,
@@ -1520,7 +1500,7 @@ class TransverseMercator(CylindricalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            *args, false_easting=0.0, false_northing=0.0, **kwargs
+            false_easting=0.0, false_northing=0.0, **kwargs
         )
 
         self.scale_factor_at_central_meridian = (
