@@ -8,13 +8,13 @@ anomaly in the Niño 3.4 region. According to `NCAR Climate Data Guide
 the Niño 3.4 anomalies may be thought of as representing the average equatorial
 SSTs across the Pacific from about the dateline to the South American coast.
 The Niño 3.4 index typically uses a 5-month running mean, and El Niño or La
-Niña events are defined when the Niño 3.4 SSTs exceed +/- 0.4 degrees C for a
+Niña events are defined when the Niño 3.4 SSTs exceed +/- 0.4 degrees Celsius for a
 period of six months or more.
 
 """
 
 # %%
-# 1. Import cf-python, cf-plot and matplotlib.pyplot:
+# 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
 
@@ -30,8 +30,8 @@ print(sst)
 sst.Units = cf.Units("degreesC")
 
 # %%
-# 4. SST is subspaced for for Niño 3.4 region (5N-5S, 170W-120W) and as the
-# dataset is using longitudes in 0-360 degrees East format, they are substracted
+# 4. SST is subspaced for the Niño 3.4 region (5N-5S, 170W-120W) and as the
+# dataset is using longitudes in 0-360 degrees East format, they are subtracted
 # from 360 to convert them:
 region = sst.subspace(X=cf.wi(360 - 170, 360 - 120), Y=cf.wi(-5, 5))
 
@@ -45,7 +45,7 @@ region = sst.subspace(X=cf.wi(360 - 170, 360 - 120), Y=cf.wi(-5, 5))
 #   set the map limits and projection;
 # - `cfplot.setvars <http://ajheaps.github.io/cf-plot/setvars.html>`_ is used to
 #   set various attributes of the plot, like enabling a grid and and setting the
-#   land color to grey;
+#   land colour to grey;
 # - `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to
 #   choose one of the colour maps amongst many available;
 # - `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_ plots contour data
@@ -170,7 +170,7 @@ cfp.gclose()
 # This period is often used as a reference period for calculating anomalies.
 # The variables ``climatology`` and ``std_dev`` include the mean and the
 # standard deviation over the time (T) dimension of the ``base_period`` data
-# respectively. The line for varaible ``nino34_anomaly`` calculates the
+# respectively. The line for variable ``nino34_anomaly`` calculates the
 # standardized anomaly for each time step in the ``nino34_index`` data. It
 # subtracts the ``climatology`` from the ``nino34_index`` and then divides by
 # the ``std_dev``. The resulting ``nino34_anomaly`` data represents how much
@@ -197,19 +197,19 @@ nino34_anomaly = (nino34_index - climatology) / std_dev
 # method. The ``mode='nearest'`` parameter is used to specify how to pad the
 # data outside of the time range. The resulting ``nino34_rolling`` variable
 # represents a smoothed version of the ``nino34_anomaly`` data. It removes
-# short-term fluctuations and highlights longer-term trends or cycles.
+# short-term fluctuations and highlights longer-term trends or cycles:
 nino34_rolling = nino34_anomaly.moving_window(
     method="mean", window_size=5, axis="T", mode="nearest"
 )
 
 # %%
-# 8. Define El Niño and La Niña events by creating boolean masks to identify
+# 8. Define El Niño and La Niña events by creating Boolean masks to identify
 # El Niño and La Niña events. Now plot SST anomalies in the Niño 3.4 region over
 # time using cf-plot. Here:
 #
 # - `cfplot.gset <http://ajheaps.github.io/cf-plot/gset.html>`_ sets the limits
 #   of the x-axis (years from 1940 to 2022) and y-axis (anomalies from -3
-#   degrees C to 3 degrees C) for the plot;
+#   degrees Celsius to 3 degrees Celsius) for the plot;
 # - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
 #   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
