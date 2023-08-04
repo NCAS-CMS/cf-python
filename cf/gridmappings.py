@@ -99,6 +99,33 @@ the values documented as defaults in the docstrings are taken from this:
 WGS1984_CF_ATTR_DEFAULTS = CRS.from_proj4("+proj=merc").to_cf()
 
 
+def _convert_units_cf_to_proj(cf_units):
+    """Take CF units and convert them to equivalent units under PROJ."""
+    pass
+
+
+def _convert_units_proj_to_cf(cf_units):
+    """Take units used in PROJ and convert them to CF units."""
+    pass
+
+
+def _make_proj_string_comp(spec):
+    """Form a PROJ proj-string end from the given PROJ parameters.
+
+    :Parameters:
+
+        spec: `dict`
+            A dictionary providing the proj-string specifiers for
+            parameters, as keys, with their values as values. Values
+            must be convertible to strings.
+
+    """
+    proj_string = ""
+    for comp, value in spec.items():
+        proj_string += f" +{comp}={value}"
+    return proj_string
+
+
 """Abstract classes for general Grid Mappings.
 
 Note that default arguments are based upon the PROJ defaults, which can
@@ -148,8 +175,8 @@ class GridMapping(ABC):
             inverse_flattening: number, optional
                 The reverse flattening of the ellipsoid (PROJ 'rf'
                 value), :math:`\frac{1}{f}`, where f corresponds to
-                the flattening value (PROJ 'f' value) for the ellipsoid.
-                Unitless. The default is 298.257223563.
+                the flattening value (PROJ 'f' value) for the
+                ellipsoid. Unitless. The default is 298.257223563.
 
             prime_meridian_name: `str`, optional
                 A predeclared name to define the prime meridian (PROJ
