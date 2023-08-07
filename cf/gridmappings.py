@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
-
-PROJ_PREFIX="+proj"
+PROJ_PREFIX = "+proj"
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
     # *Those which describe the ellipsoid and prime meridian:*
@@ -98,6 +97,8 @@ the values documented as defaults in the docstrings are taken from this:
 """
 WGS1984_CF_ATTR_DEFAULTS = CRS.from_proj4("+proj=merc").to_cf()
 
+DUMMY_PARAMS = {"a": "b", "c": 0.0}  # TODOPARAMETERS, drop this
+
 
 def _convert_units_cf_to_proj(cf_units):
     """Take CF units and convert them to equivalent units under PROJ."""
@@ -122,6 +123,14 @@ def _make_proj_string_comp(spec):
     """
     proj_string = ""
     for comp, value in spec.items():
+        if not isinstance(value, str):
+            try:
+                value = str(value)
+            except TypeError:
+                raise TypeError(
+                    "Can't create proj-string due to non-representable "
+                    f"value {value} for key {comp}"
+                )
         proj_string += f" +{comp}={value}"
     return proj_string
 
@@ -419,6 +428,7 @@ class LatLonGridMapping(GridMapping):
     .. versionadded:: GMVER
 
     """
+
     pass
 
 
@@ -524,7 +534,8 @@ class AlbersEqualArea(ConicGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class AzimuthalEquidistant(AzimuthalGridMapping):
@@ -584,7 +595,8 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class Geostationary(PerspectiveGridMapping):
@@ -703,7 +715,8 @@ class Geostationary(PerspectiveGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class LambertAzimuthalEqualArea(AzimuthalGridMapping):
@@ -763,7 +776,8 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class LambertConformalConic(ConicGridMapping):
@@ -837,7 +851,8 @@ class LambertConformalConic(ConicGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class LambertCylindricalEqualArea(CylindricalGridMapping):
@@ -905,9 +920,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         longitude_of_central_meridian=0.0,
         **kwargs,
     ):
-        super().__init__(
-            false_easting=0.0, false_northing=0.0, **kwargs
-        )
+        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
         self.standard_parallel = standard_parallel
         self.longitude_of_central_meridian = longitude_of_central_meridian
@@ -927,7 +940,8 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class Mercator(CylindricalGridMapping):
@@ -995,9 +1009,7 @@ class Mercator(CylindricalGridMapping):
         scale_factor_at_projection_origin=1.0,
         **kwargs,
     ):
-        super().__init__(
-            false_easting=0.0, false_northing=0.0, **kwargs
-        )
+        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
         self.standard_parallel = standard_parallel
         self.longitude_of_projection_origin = longitude_of_projection_origin
@@ -1017,7 +1029,8 @@ class Mercator(CylindricalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class ObliqueMercator(CylindricalGridMapping):
@@ -1089,9 +1102,7 @@ class ObliqueMercator(CylindricalGridMapping):
         false_northing=0.0,
         **kwargs,
     ):
-        super().__init__(
-            false_easting=0.0, false_northing=0.0, **kwargs
-        )
+        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
         self.azimuth_of_central_line = azimuth_of_central_line
         self.latitude_of_projection_origin = latitude_of_projection_origin
@@ -1112,7 +1123,8 @@ class ObliqueMercator(CylindricalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class Orthographic(AzimuthalGridMapping):
@@ -1172,7 +1184,8 @@ class Orthographic(AzimuthalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class PolarStereographic(AzimuthalGridMapping):
@@ -1298,7 +1311,8 @@ class PolarStereographic(AzimuthalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class RotatedLatitudeLongitude(LatLonGridMapping):
@@ -1369,7 +1383,8 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class LatitudeLongitude(LatLonGridMapping):
@@ -1399,7 +1414,8 @@ class LatitudeLongitude(LatLonGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class Sinusoidal(GridMapping):
@@ -1464,7 +1480,8 @@ class Sinusoidal(GridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class Stereographic(AzimuthalGridMapping):
@@ -1549,7 +1566,8 @@ class Stereographic(AzimuthalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class TransverseMercator(CylindricalGridMapping):
@@ -1610,9 +1628,7 @@ class TransverseMercator(CylindricalGridMapping):
         false_northing=0.0,
         **kwargs,
     ):
-        super().__init__(
-            false_easting=0.0, false_northing=0.0, **kwargs
-        )
+        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
         self.scale_factor_at_central_meridian = (
             scale_factor_at_central_meridian
@@ -1632,7 +1648,8 @@ class TransverseMercator(CylindricalGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
 
 
 class VerticalPerspective(PerspectiveGridMapping):
@@ -1697,4 +1714,5 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
-        return f"{PROJ_PREFIX}={self.proj_id} TODOPARAMETERS"
+        parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
+        return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
