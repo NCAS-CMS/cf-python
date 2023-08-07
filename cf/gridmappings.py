@@ -1336,8 +1336,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
 
         grid_north_pole_longitude: number or `str`
             Longitude of the North pole of the unrotated source CRS,
@@ -1345,8 +1344,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
             units of decimal degrees, where forming a string by adding
             a suffix character indicates alternative units of
             radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            of 'd', 'D' or '°' confirm units of decimal degrees.
 
         north_pole_grid_longitude: number or `str`, optional
             The longitude of projection center (PROJ 'lon_0' value), in
