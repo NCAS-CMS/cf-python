@@ -58,9 +58,19 @@ all_concrete_grid_mappings_req_args = {
 
 
 class GridMappingsTest(unittest.TestCase):
-    f = cf.example_field(1)
+    """TODO."""
 
-    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    # Of the example fields, only 1, 6 and 7 have any coordinate references
+    # with a coordinate conversion, hence use these to test, plus 0 as an
+    # example case of a field without a coordinate reference at all.
+    f = cf.example_fields()
+    f0 = f[0]  # No coordinate reference
+    f1 = f[1]  # 2, with grid mappings of [None, 'rotated_latitude_longitude']
+    f6 = f[6]  # 1, with grid mapping of ['latitude_longitude']
+    f7 = f[7]  # 1, with grid mapping of ['rotated_latitude_longitude']
+    f_with_gm = (f1, f6, f7)
+
+    # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
         """TODO."""
         for cls in all_concrete_grid_mappings:
@@ -73,6 +83,16 @@ class GridMappingsTest(unittest.TestCase):
                 g = cls(*example_minimal_args)
             repr(g)
             str(g)
+
+    def test_grid_mapping_find_gm_class(self):
+        """TODO."""
+        for f in self.f_with_gm:
+            crefs = f.coordinate_references().values()
+            for cref in crefs:
+                gm = cref.coordinate_conversion.get_parameter(
+                    "grid_mapping_name", default=None
+                )
+                # TODO test that matches with GM class
 
 
 if __name__ == "__main__":
