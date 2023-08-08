@@ -1,5 +1,7 @@
 import cfdm
 
+from .gridmappings import *  # noqa: F403
+
 
 class CoordinateConversion(cfdm.CoordinateConversion):
     """A coordinate conversion component of a coordinate reference
@@ -27,3 +29,6 @@ class CoordinateConversion(cfdm.CoordinateConversion):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
+
+    def get_grid_mapping():
+        pass

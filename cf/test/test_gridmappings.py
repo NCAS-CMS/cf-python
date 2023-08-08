@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-all_abstract_grid_mappings = (
+ALL_ABSTRACT_GRID_MAPPINGS = (
     cf.GridMapping,
     cf.AzimuthalGridMapping,
     cf.ConicGridMapping,
@@ -26,7 +26,7 @@ all_abstract_grid_mappings = (
     cf.PerspectiveGridMapping,
 )
 # Representing all Grid Mappings repsented by the CF Conventions (APpendix F)
-all_concrete_grid_mappings = (
+ALL_CONCRETE_GRID_MAPPINGS = (
     cf.AlbersEqualArea,
     cf.AzimuthalEquidistant,
     cf.Geostationary,
@@ -69,11 +69,21 @@ class GridMappingsTest(unittest.TestCase):
     f6 = f[6]  # 1, with grid mapping of ['latitude_longitude']
     f7 = f[7]  # 1, with grid mapping of ['rotated_latitude_longitude']
     f_with_gm = (f1, f6, f7)
+    gm_of_ex_fields = (
+        None,
+        cf.RotatedLatitudeLongitude,
+        None,
+        None,
+        None,
+        None,
+        cf.LatitudeLongitude,
+        cf.RotatedLatitudeLongitude,
+    )
 
     # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
         """TODO."""
-        for cls in all_concrete_grid_mappings:
+        for cls in ALL_CONCRETE_GRID_MAPPINGS:
             if cls.__name__ not in all_concrete_grid_mappings_req_args:
                 g = cls()
             else:
