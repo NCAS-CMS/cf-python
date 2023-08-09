@@ -68,16 +68,54 @@ class GridMappingsTest(unittest.TestCase):
     f1 = f[1]  # 2, with grid mappings of [None, 'rotated_latitude_longitude']
     f6 = f[6]  # 1, with grid mapping of ['latitude_longitude']
     f7 = f[7]  # 1, with grid mapping of ['rotated_latitude_longitude']
-    f_with_gm = (f1, f6, f7)
-    gm_of_ex_fields = (
-        None,
-        cf.RotatedLatitudeLongitude,
-        None,
-        None,
-        None,
-        None,
-        cf.LatitudeLongitude,
-        cf.RotatedLatitudeLongitude,
+    f_with_gm = {
+        f1: cf.RotatedLatitudeLongitude,
+        f6: cf.LatitudeLongitude,
+        f7: cf.RotatedLatitudeLongitude,
+    )
+
+    # From a custom netCDF file with Oblique Mercator GM
+    # TODO generate this .nc via create_test_files.py and un-commit
+    # forced commit of the (data-free / header-only) netCDF file.
+    f_om = cf.read("oblique_mercator.nc")
+
+    # Create some coordinate references with different GMs to test on:
+    cr_aea = cf.CoordinateReference(
+        coordinates=["coordA", "coordB", "coordC"],
+        coordinate_conversion=cf.CoordinateConversion(
+            parameters={
+                "grid_mapping_name": "albers_conical_equal_area",
+                "standard_parallel": [10, 10],
+                "longitude_of_projection_origin":45.0,
+                "false_easting": -1000,
+                "false_northing": 500,
+            }
+        ),
+    )
+    cr_aea_actual_proj_string = (
+        "+proj=aea +lat_1=10. +lat_2=10. +lon_0=45.0 +x_0=-1000. +y_0=-500."
+    )
+
+    cr_om = cf.CoordinateReference(
+        coordinates=["coordA", "coordB"],
+        coordinate_conversion=cf.CoordinateConversion(
+            parameters={
+                "grid_mapping_name": "oblique_mercator",
+                "latitude_of_projection_origin": -22.0,
+                "longitude_of_projection_origin": -59.0,
+                "false_easting": -12500.0,
+                "false_northing": -12500.0,
+                "azimuth_of_central_line": 89.999999,
+                "scale_factor_at_projection_origin": 1.0,
+                "inverse_flattening": 0.0,
+                "semi_major_axis": 6371229.0,
+            }
+        ),
+    )
+    cr_om_actual_proj_string = (
+        "+proj=omerc +lat_0=-22.00 +alpha=89.999999 +lonc=-59.00 "
+        "+x_0=-12500. +y_0=-12500. +ellps=sphere +a=6371229. +b=6371229. "
+        "+units=m +no_defs"
     )
 
     # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
