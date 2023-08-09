@@ -247,6 +247,25 @@ class GridMapping(ABC):
         self.semi_major_axis = semi_major_axis
         self.semi_minor_axis = semi_minor_axis
 
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        # Report parent GridMapping class to indicate classification,
+        # but only if it has one (> 2 avoids own class and 'object')
+        # base. E.g. we get <CF AzimuthalGridMapping:Orthographic>,
+        # <CF GridMapping:AzimuthalGridMapping>, <CF GridMapping>.
+        parent_gm = ""
+        if len(self.__class__.__mro__) > 2:
+            parent_gm = self.__class__.__mro__[1].__name__ + ": "
+        return f"<CF {parent_gm}{self.__class__.__name__}>"
+
+    def __str__(self):
+        """x.__str__() <==> str(x)"""
+        return f"{self.__repr__()[:-1]} {self.get_proj_string()}>"
+
+    def __eq__(self, other):
+        """The rich comparison operator ``==``."""
+        return self.get_proj_string() == other.get_proj_string()
+
     @property
     @abstractmethod
     def grid_mapping_name(self):
@@ -263,21 +282,6 @@ class GridMapping(ABC):
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
         pass
-
-    def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        # Report parent GridMapping class to indicate classification,
-        # but only if it has one (> 2 avoids own class and 'object')
-        # base. E.g. we get <CF AzimuthalGridMapping:Orthographic>,
-        # <CF GridMapping:AzimuthalGridMapping>, <CF GridMapping>.
-        parent_gm = ""
-        if len(self.__class__.__mro__) > 2:
-            parent_gm = self.__class__.__mro__[1].__name__ + ": "
-        return f"<CF {parent_gm}{self.__class__.__name__}>"
-
-    def __str__(self):
-        """x.__str__() <==> str(x)"""
-        return f"{self.__repr__()[:-1]} {self.get_proj_string()}>"
 
 
 class AzimuthalGridMapping(GridMapping):
