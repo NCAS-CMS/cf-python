@@ -250,7 +250,7 @@ Dimension coords: long_name=time(996) = [1940-01-01 00:00:00, ..., 2022-12-01 00
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>7. The 2-meter temperature climatology is then calculated for the month of
+<p>9. The 2-meter temperature climatology is then calculated for the month of
 July over the period from 1981 to 2010, which provides a baseline against
 which anomalies in later years are compared:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july_climatology</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m_july</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
@@ -258,7 +258,7 @@ which anomalies in later years are compared:</p>
 <span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>8. Calculate the temperature anomaly for the month of July in the year 2018
+<p>10. Calculate the temperature anomaly for the month of July in the year 2018
 relative to the climatological baseline (<code class="docutils literal notranslate"><span class="pre">t2m_july_climatology</span></code>). This
 indicates how much the temperatures for that month in that year deviated from
 the long-term average for July across the 1981-2010 period:</p>
@@ -267,7 +267,7 @@ the long-term average for July across the 1981-2010 period:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>10.
+<p>11.
 The July 2018 season experienced extreme heat in many parts of the Northern
 Hemisphere. This period’s extreme events were related to unusual
 meteorological conditions, particularly abnormalities in the jet stream. To
@@ -337,7 +337,7 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_14_recipe_002.png" srcset="../_images/sphx_glr_plot_14_recipe_002.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  37.066 seconds)</p>
+<img src="../_images/sphx_glr_plot_14_recipe_002.png" srcset="../_images/sphx_glr_plot_14_recipe_002.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  49.944 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-14-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_14_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_14_recipe.py</span></code></a></p>

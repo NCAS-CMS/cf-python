@@ -95,7 +95,7 @@ t2m.Units = cf.Units("degreesC")
 t2m_july = t2m.subspace(T=cf.month(7))
 
 # %%
-# 7. The 2-meter temperature climatology is then calculated for the month of
+# 9. The 2-meter temperature climatology is then calculated for the month of
 # July over the period from 1981 to 2010, which provides a baseline against
 # which anomalies in later years are compared:
 t2m_july_climatology = t2m_july.subspace(
@@ -103,7 +103,7 @@ t2m_july_climatology = t2m_july.subspace(
 ).collapse("T: mean")
 
 # %%
-# 8. Calculate the temperature anomaly for the month of July in the year 2018
+# 10. Calculate the temperature anomaly for the month of July in the year 2018
 # relative to the climatological baseline (``t2m_july_climatology``). This
 # indicates how much the temperatures for that month in that year deviated from
 # the long-term average for July across the 1981-2010 period:
@@ -112,7 +112,7 @@ t2m_july_anomaly_2018 = (
 )
 
 # %%
-# 10.
+# 11.
 # The July 2018 season experienced extreme heat in many parts of the Northern
 # Hemisphere. This period's extreme events were related to unusual
 # meteorological conditions, particularly abnormalities in the jet stream. To
