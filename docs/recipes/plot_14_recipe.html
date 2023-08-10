@@ -153,14 +153,14 @@ during the 2018 boreal spring/summer season in the Northern Hemisphere.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: geopotential (ncvar%z)
 -----------------------------
-Data            : geopotential(long_name=time(132), long_name=latitude(721), long_name=longitude(1440)) m**2 s**-2
-Dimension coords: long_name=time(132) = [2010-01-01 00:00:00, ..., 2020-12-01 00:00:00] gregorian
+Data            : geopotential(long_name=time(252), long_name=latitude(721), long_name=longitude(1440)) m**2 s**-2
+Dimension coords: long_name=time(252) = [2000-01-01 00:00:00, ..., 2020-12-01 00:00:00] gregorian
                 : long_name=latitude(721) = [90.0, ..., -90.0] degrees_north
                 : long_name=longitude(1440) = [0.0, ..., 359.75] degrees_east
 </pre></div>
 </div>
 <p>3. Convert the geopotential data to geopotential height by dividing it by the
-acceleration due to gravity (approximated as 9.81 m/s^2):</p>
+acceleration due to gravity (approximated as 9.81 <span class="math notranslate nohighlight">\(m \cdot {s}^{-2}\)</span>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gp</span></a> <span class="o">/</span> <span class="mf">9.81</span>
 </pre></div>
 </div>
@@ -244,7 +244,7 @@ Dimension coords: long_name=time(996) = [1940-01-01 00:00:00, ..., 2022-12-01 00
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../attribute/cf.Field.Units.html#cf.Field.Units" title="cf.Field.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">t2m</span><span class="o">.</span><span class="n">Units</span></a> <span class="o">=</span> <a href="../class/cf.Units.html#cf.Units" title="cf.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class"><span class="n">cf</span><span class="o">.</span><span class="n">Units</span></a><span class="p">(</span><span class="s2">&quot;degreesC&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="4">
+<ol class="arabic simple" start="8">
 <li><p>Extract a subset for July across the years for <code class="docutils literal notranslate"><span class="pre">t2m</span></code>:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
@@ -337,7 +337,7 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_14_recipe_002.png" srcset="../_images/sphx_glr_plot_14_recipe_002.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  18.277 seconds)</p>
+<img src="../_images/sphx_glr_plot_14_recipe_002.png" srcset="../_images/sphx_glr_plot_14_recipe_002.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  37.066 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-14-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_14_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_14_recipe.py</span></code></a></p>
@@ -357,7 +357,7 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-08.
+      &copy;2023, NCAS | Page built on 2023-08-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
