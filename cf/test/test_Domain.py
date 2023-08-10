@@ -295,6 +295,13 @@ class DomainTest(unittest.TestCase):
     def test_Domain_size(self):
         self.assertEqual(self.d.size, 90)
 
+    def test_Domain_get_grid_mappings(self):
+        self.assertEqual(
+            self.d.get_grid_mappings(), {
+                'coordinatereference1': 'rotated_latitude_longitude'
+            }
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

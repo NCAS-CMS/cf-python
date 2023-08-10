@@ -109,12 +109,9 @@ class GridMappingsTest(unittest.TestCase):
     def test_grid_mapping_find_gm_class(self):
         """TODO."""
         for f in self.f_with_gm:
-            crefs = f.coordinate_references().values()
-            for cref in crefs:
-                gm = cref.coordinate_conversion.get_parameter(
-                    "grid_mapping_name", default=None
-                )
-                # TODO test that matches with GM class
+            gms = f.domain.get_grid_mappings()
+            print(gms)
+            # TODO test that matches with GM class
 
 
 if __name__ == "__main__":

@@ -476,6 +476,36 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             default, message=f"{self.__class__.__name__} has no data"
         )
 
+    def get_grid_mappings(self):
+        """Returns coordinate conversions with grid mapping parameters.
+
+        .. versionadded:: GMVER
+
+        :Returns:
+
+                `dict`
+                     CoordinateConversion construct identifiers with
+                     vaules of their 'grid_mapping_name' attributes,
+                     for all CoordinateConversions of the domain that
+                     have a 'grid_mapping_name' parameter defined.
+
+        **Examples**
+
+        >>> f.get_grid_mappings()
+        {"coordinatereference1": "rotated_latitude_longitude"}
+        >>> g.get_grid_mappings()
+        {}
+
+        """
+        gms = {}
+        for cref_name, cref in self.coordinate_references().items():
+             gm = cref.coordinate_conversion.get_parameter(
+                    "grid_mapping_name", default=None
+                )
+             if gm:
+                 gms[cref_name] = gm
+        return gms
+
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
 

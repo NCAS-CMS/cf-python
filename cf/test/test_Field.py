@@ -2614,6 +2614,19 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.auxiliary_to_dimension("latitude")
 
+    def test_Field_get_grid_mappings(self):
+        self.assertEqual(
+            self.f.get_grid_mappings(),
+            {'coordinatereference1': 'rotated_latitude_longitude'}
+        )
+        self.assertEqual(
+            self.f0.get_grid_mappings(), {}
+        )
+        self.assertEqual(
+            self.f1.get_grid_mappings(),
+            {'coordinatereference1': 'rotated_latitude_longitude'}
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
