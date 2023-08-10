@@ -30,5 +30,5 @@ class CoordinateConversion(cfdm.CoordinateConversion):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    def get_grid_mapping():
+    def get_grid_mapping(field):
         pass

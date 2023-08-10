@@ -17,33 +17,6 @@ except ImportError:
     pass
 
 
-ALL_ABSTRACT_GRID_MAPPINGS = (
-    cf.GridMapping,
-    cf.AzimuthalGridMapping,
-    cf.ConicGridMapping,
-    cf.CylindricalGridMapping,
-    cf.LatLonGridMapping,
-    cf.PerspectiveGridMapping,
-)
-# Representing all Grid Mappings repsented by the CF Conventions (APpendix F)
-ALL_CONCRETE_GRID_MAPPINGS = (
-    cf.AlbersEqualArea,
-    cf.AzimuthalEquidistant,
-    cf.Geostationary,
-    cf.LambertAzimuthalEqualArea,
-    cf.LambertConformalConic,
-    cf.LambertCylindricalEqualArea,
-    cf.Mercator,
-    cf.ObliqueMercator,
-    cf.Orthographic,
-    cf.PolarStereographic,
-    cf.RotatedLatitudeLongitude,
-    cf.LatitudeLongitude,
-    cf.Sinusoidal,
-    cf.Stereographic,
-    cf.TransverseMercator,
-    cf.VerticalPerspective,
-)
 # These are those of the above which have required positional arguments
 all_concrete_grid_mappings_req_args = {
     "AlbersEqualArea": {"standard_parallel": 0.0},
@@ -68,11 +41,12 @@ class GridMappingsTest(unittest.TestCase):
     f1 = f[1]  # 2, with grid mappings of [None, 'rotated_latitude_longitude']
     f6 = f[6]  # 1, with grid mapping of ['latitude_longitude']
     f7 = f[7]  # 1, with grid mapping of ['rotated_latitude_longitude']
-    f_with_gm = {
-        f1: cf.RotatedLatitudeLongitude,
-        f6: cf.LatitudeLongitude,
-        f7: cf.RotatedLatitudeLongitude,
-    )
+    f_with_gm = (f1, f6, f7)
+    f_wth_gm_mapping = {
+        "f1": cf.RotatedLatitudeLongitude,
+        "f6": cf.LatitudeLongitude,
+        "f7": cf.RotatedLatitudeLongitude,
+    }
 
     # From a custom netCDF file with Oblique Mercator GM
     # TODO generate this .nc via create_test_files.py and un-commit
@@ -121,7 +95,7 @@ class GridMappingsTest(unittest.TestCase):
     # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
         """TODO."""
-        for cls in ALL_CONCRETE_GRID_MAPPINGS:
+        for cls in cf._all_concrete_grid_mappings:
             if cls.__name__ not in all_concrete_grid_mappings_req_args:
                 g = cls()
             else:

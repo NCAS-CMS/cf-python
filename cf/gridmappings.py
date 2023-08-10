@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
+
 PROJ_PREFIX = "+proj"
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
@@ -265,6 +266,10 @@ class GridMapping(ABC):
     def __eq__(self, other):
         """The rich comparison operator ``==``."""
         return self.get_proj_string() == other.get_proj_string()
+
+    def __hash__(self, other):
+        """The rich comparison operator ``==``."""
+        return hash(self.get_proj_string())
 
     @property
     @abstractmethod
@@ -1718,3 +1723,34 @@ class VerticalPerspective(PerspectiveGridMapping):
         """The value of the PROJ proj-string defining the projection."""
         parameters = _make_proj_string_comp(DUMMY_PARAMS)  # TODOPARAMETERS
         return f"{PROJ_PREFIX}={self.proj_id}{parameters}"
+
+
+# TODO move this definition elsewhere, having at end feels like an
+# anti-pattern...
+_all_abstract_grid_mappings = (
+    GridMapping,
+    AzimuthalGridMapping,
+    ConicGridMapping,
+    CylindricalGridMapping,
+    LatLonGridMapping,
+    PerspectiveGridMapping,
+)
+# Representing all Grid Mappings repsented by the CF Conventions (APpendix F)
+_all_concrete_grid_mappings = (
+    AlbersEqualArea,
+    AzimuthalEquidistant,
+    Geostationary,
+    LambertAzimuthalEqualArea,
+    LambertConformalConic,
+    LambertCylindricalEqualArea,
+    Mercator,
+    ObliqueMercator,
+    Orthographic,
+    PolarStereographic,
+    RotatedLatitudeLongitude,
+    LatitudeLongitude,
+    Sinusoidal,
+    Stereographic,
+    TransverseMercator,
+    VerticalPerspective,
+)

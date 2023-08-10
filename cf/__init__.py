@@ -346,6 +346,8 @@ from .gridmappings import (
     Stereographic,
     TransverseMercator,
     VerticalPerspective,
+    _all_abstract_grid_mappings,
+    _all_concrete_grid_mappings,
 )
 
 
