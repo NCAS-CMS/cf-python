@@ -22,7 +22,7 @@ print(gp)
 
 # %%
 # 3. Convert the geopotential data to geopotential height by dividing it by the
-# acceleration due to gravity (approximated as 9.81 m/s^2):
+# acceleration due to gravity (approximated as 9.81 :math:`m \cdot {s}^{-2}`):
 gph = gp / 9.81
 
 # %%
@@ -91,7 +91,7 @@ print(t2m)
 t2m.Units = cf.Units("degreesC")
 
 # %%
-# 4. Extract a subset for July across the years for ``t2m``:
+# 8. Extract a subset for July across the years for ``t2m``:
 t2m_july = t2m.subspace(T=cf.month(7))
 
 # %%
