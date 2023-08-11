@@ -1,6 +1,6 @@
 """
 Calculate and plot the Niño 3.4 Index
-====================================
+=====================================
 
 In this recipe, we will calculate and plot the sea surface temperature (SST)
 anomaly in the Niño 3.4 region. According to `NCAR Climate Data Guide
@@ -206,6 +206,9 @@ nino34_rolling = nino34_anomaly.moving_window(
 # El Niño and La Niña events. Now plot SST anomalies in the Niño 3.4 region over
 # time using cf-plot. Here:
 #
+# - `cfplot.gset <http://ajheaps.github.io/cf-plot/gset.html>`_ sets the limits
+#   of the x-axis (years from 1940 to 2022) and y-axis (anomalies from -3
+#   degrees C to 3 degrees C) for the plot;
 # - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
 #   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
@@ -224,6 +227,8 @@ nino34_rolling = nino34_anomaly.moving_window(
 #   is used to add a legend in the end:
 elnino = nino34_rolling >= 0.4
 lanina = nino34_rolling <= -0.4
+
+cfp.gset(xmin='1940-1-1', xmax='2022-12-31', ymin=-3, ymax=3)
 
 cfp.gopen(figsize=(10, 6))
 cfp.lineplot(
@@ -256,5 +261,5 @@ cfp.plotvars.plot.fill_between(
     color="blue",
     alpha=0.3,
 )
-cfp.plotvars.plot.legend(frameon=False, loc="lower left", ncol=2)
+cfp.plotvars.plot.legend(frameon=False, loc="lower center", ncol=2)
 cfp.gclose()
