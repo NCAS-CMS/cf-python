@@ -253,6 +253,13 @@ class GridMapping(ABC):
         """The value of the 'grid_mapping_name' attribute."""
         return
 
+    @property
+    @classmethod
+    @abstractmethod
+    def proj_id(cls):
+        """The PROJ projection identifier shorthand name."""
+        return
+
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
         # Report parent GridMapping class to indicate classification,
@@ -275,12 +282,6 @@ class GridMapping(ABC):
     def __hash__(self, other):
         """The rich comparison operator ``==``."""
         return hash(self.get_proj_string())
-
-    @property
-    @abstractmethod
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        pass
 
     @abstractmethod
     def get_proj_string(self):
@@ -531,11 +532,7 @@ class AlbersEqualArea(ConicGridMapping):
     """
 
     grid_mapping_name = "albers_conical_equal_area"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "aea"
+    proj_id = "aea"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -589,11 +586,7 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
     """
 
     grid_mapping_name = "azimuthal_equidistant"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "aeqd"
+    proj_id = "aeqd"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -671,6 +664,7 @@ class Geostationary(PerspectiveGridMapping):
     """
 
     grid_mapping_name = "geostationary"
+    proj_id = "geos"
 
     def __init__(
         self,
@@ -706,11 +700,6 @@ class Geostationary(PerspectiveGridMapping):
         # Values "x" and "y" are not case-sensitive, so convert to lower-case
         self.sweep_angle_axis = sweep_angle_axis.lower()
         self.fixed_angle_axis = fixed_angle_axis.lower()
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "geos"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -764,11 +753,7 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
     """
 
     grid_mapping_name = "lambert_azimuthal_equal_area"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "laea"
+    proj_id = "laea"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -836,11 +821,7 @@ class LambertConformalConic(ConicGridMapping):
     """
 
     grid_mapping_name = "lambert_conformal_conic"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "lcc"
+    proj_id = "lcc"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -905,6 +886,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
     """
 
     grid_mapping_name = "lambert_cylindrical_equal_area"
+    proj_id = "cea"
 
     def __init__(
         self,
@@ -922,11 +904,6 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "cea"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -991,6 +968,7 @@ class Mercator(CylindricalGridMapping):
     """
 
     grid_mapping_name = "mercator"
+    proj_id = "merc"
 
     def __init__(
         self,
@@ -1008,11 +986,6 @@ class Mercator(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "merc"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1080,6 +1053,7 @@ class ObliqueMercator(CylindricalGridMapping):
     """
 
     grid_mapping_name = "oblique_mercator"
+    proj_id = "omerc"
 
     def __init__(
         self,
@@ -1099,11 +1073,6 @@ class ObliqueMercator(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "omerc"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1157,11 +1126,7 @@ class Orthographic(AzimuthalGridMapping):
     """
 
     grid_mapping_name = "orthographic"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "ortho"
+    proj_id = "ortho"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1242,6 +1207,7 @@ class PolarStereographic(AzimuthalGridMapping):
     """
 
     grid_mapping_name = "polar_stereographic"
+    proj_id = "ups"
 
     def __init__(
         self,
@@ -1281,11 +1247,6 @@ class PolarStereographic(AzimuthalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "ups"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1335,6 +1296,7 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
     """
 
     grid_mapping_name = "rotated_latitude_longitude"
+    proj_id = "latlong"
 
     def __init__(
         self,
@@ -1348,11 +1310,6 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         self.grid_north_pole_latitude = grid_north_pole_latitude
         self.grid_north_pole_longitude = grid_north_pole_longitude
         self.north_pole_grid_longitude = north_pole_grid_longitude
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "latlong"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1376,11 +1333,7 @@ class LatitudeLongitude(LatLonGridMapping):
     """
 
     grid_mapping_name = "latitude_longitude"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "latlong"
+    proj_id = "latlong"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1426,6 +1379,7 @@ class Sinusoidal(GridMapping):
     """
 
     grid_mapping_name = "sinusoidal"
+    proj_id = "sinu"
 
     def __init__(
         self,
@@ -1439,11 +1393,6 @@ class Sinusoidal(GridMapping):
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.false_easting = false_easting
         self.false_northing = false_northing
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "sinu"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1501,6 +1450,7 @@ class Stereographic(AzimuthalGridMapping):
     """
 
     grid_mapping_name = "stereographic"
+    proj_id = "stere"
 
     def __init__(
         self,
@@ -1522,11 +1472,6 @@ class Stereographic(AzimuthalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "stere"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1584,6 +1529,7 @@ class TransverseMercator(CylindricalGridMapping):
     """
 
     grid_mapping_name = "transverse_mercator"
+    proj_id = "tmerc"
 
     def __init__(
         self,
@@ -1601,11 +1547,6 @@ class TransverseMercator(CylindricalGridMapping):
         )
         self.longitude_of_central_meridian = longitude_of_central_meridian
         self.latitude_of_projection_origin = latitude_of_projection_origin
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "tmerc"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
@@ -1664,11 +1605,7 @@ class VerticalPerspective(PerspectiveGridMapping):
     """
 
     grid_mapping_name = "vertical_perspective"
-
-    @property
-    def proj_id(self):
-        """The PROJ projection identifier shorthand name."""
-        return "nsper"
+    proj_id = "nsper"
 
     def get_proj_string(self):
         """The value of the PROJ proj-string defining the projection."""
