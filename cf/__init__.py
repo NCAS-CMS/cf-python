@@ -348,6 +348,7 @@ from .gridmappings import (
     VerticalPerspective,
     _all_abstract_grid_mappings,
     _all_concrete_grid_mappings,
+    _get_cf_grid_mapping_from_name,
 )
 
 

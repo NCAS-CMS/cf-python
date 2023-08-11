@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
-
 PROJ_PREFIX = "+proj"
 ALL_GRID_MAPPING_ATTR_NAMES = {
     "grid_mapping_name",
@@ -230,7 +229,6 @@ class GridMapping(ABC):
                           takes precedence.
 
         """
-
         for kwarg in kwargs:
             if kwarg not in ALL_GRID_MAPPING_ATTR_NAMES:
                 raise ValueError(
@@ -247,6 +245,13 @@ class GridMapping(ABC):
         self.reference_ellipsoid_name = reference_ellipsoid_name
         self.semi_major_axis = semi_major_axis
         self.semi_minor_axis = semi_minor_axis
+
+    @property
+    @classmethod
+    @abstractmethod
+    def grid_mapping_name(cls):
+        """The value of the 'grid_mapping_name' attribute."""
+        return
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -270,12 +275,6 @@ class GridMapping(ABC):
     def __hash__(self, other):
         """The rich comparison operator ``==``."""
         return hash(self.get_proj_string())
-
-    @property
-    @abstractmethod
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        pass
 
     @property
     @abstractmethod
@@ -531,10 +530,7 @@ class AlbersEqualArea(ConicGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "albers_conical_equal_area"
+    grid_mapping_name = "albers_conical_equal_area"
 
     @property
     def proj_id(self):
@@ -592,10 +588,7 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "azimuthal_equidistant"
+    grid_mapping_name = "azimuthal_equidistant"
 
     @property
     def proj_id(self):
@@ -677,6 +670,8 @@ class Geostationary(PerspectiveGridMapping):
 
     """
 
+    grid_mapping_name = "geostationary"
+
     def __init__(
         self,
         perspective_point_height,
@@ -711,11 +706,6 @@ class Geostationary(PerspectiveGridMapping):
         # Values "x" and "y" are not case-sensitive, so convert to lower-case
         self.sweep_angle_axis = sweep_angle_axis.lower()
         self.fixed_angle_axis = fixed_angle_axis.lower()
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "geostationary"
 
     @property
     def proj_id(self):
@@ -773,10 +763,7 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "lambert_azimuthal_equal_area"
+    grid_mapping_name = "lambert_azimuthal_equal_area"
 
     @property
     def proj_id(self):
@@ -848,10 +835,7 @@ class LambertConformalConic(ConicGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "lambert_conformal_conic"
+    grid_mapping_name = "lambert_conformal_conic"
 
     @property
     def proj_id(self):
@@ -920,6 +904,8 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     """
 
+    grid_mapping_name = "lambert_cylindrical_equal_area"
+
     def __init__(
         self,
         false_easting=0.0,
@@ -936,11 +922,6 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "lambert_cylindrical_equal_area"
 
     @property
     def proj_id(self):
@@ -1009,6 +990,8 @@ class Mercator(CylindricalGridMapping):
 
     """
 
+    grid_mapping_name = "mercator"
+
     def __init__(
         self,
         false_easting=0.0,
@@ -1025,11 +1008,6 @@ class Mercator(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "mercator"
 
     @property
     def proj_id(self):
@@ -1101,6 +1079,8 @@ class ObliqueMercator(CylindricalGridMapping):
 
     """
 
+    grid_mapping_name = "oblique_mercator"
+
     def __init__(
         self,
         azimuth_of_central_line=0.0,
@@ -1119,11 +1099,6 @@ class ObliqueMercator(CylindricalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "oblique_mercator"
 
     @property
     def proj_id(self):
@@ -1181,10 +1156,7 @@ class Orthographic(AzimuthalGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "orthographic"
+    grid_mapping_name = "orthographic"
 
     @property
     def proj_id(self):
@@ -1269,6 +1241,8 @@ class PolarStereographic(AzimuthalGridMapping):
 
     """
 
+    grid_mapping_name = "polar_stereographic"
+
     def __init__(
         self,
         latitude_of_projection_origin=0.0,
@@ -1307,11 +1281,6 @@ class PolarStereographic(AzimuthalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "polar_stereographic"
 
     @property
     def proj_id(self):
@@ -1365,6 +1334,8 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     """
 
+    grid_mapping_name = "rotated_latitude_longitude"
+
     def __init__(
         self,
         grid_north_pole_latitude,
@@ -1377,11 +1348,6 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
         self.grid_north_pole_latitude = grid_north_pole_latitude
         self.grid_north_pole_longitude = grid_north_pole_longitude
         self.north_pole_grid_longitude = north_pole_grid_longitude
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "rotated_latitude_longitude"
 
     @property
     def proj_id(self):
@@ -1409,10 +1375,7 @@ class LatitudeLongitude(LatLonGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "latitude_longitude"
+    grid_mapping_name = "latitude_longitude"
 
     @property
     def proj_id(self):
@@ -1462,6 +1425,8 @@ class Sinusoidal(GridMapping):
 
     """
 
+    grid_mapping_name = "sinusoidal"
+
     def __init__(
         self,
         longitude_of_projection_origin=0.0,
@@ -1474,11 +1439,6 @@ class Sinusoidal(GridMapping):
         self.longitude_of_projection_origin = longitude_of_projection_origin
         self.false_easting = false_easting
         self.false_northing = false_northing
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "sinusoidal"
 
     @property
     def proj_id(self):
@@ -1540,6 +1500,8 @@ class Stereographic(AzimuthalGridMapping):
 
     """
 
+    grid_mapping_name = "stereographic"
+
     def __init__(
         self,
         false_easting=0.0,
@@ -1560,11 +1522,6 @@ class Stereographic(AzimuthalGridMapping):
         self.scale_factor_at_projection_origin = (
             scale_factor_at_projection_origin
         )
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "stereographic"
 
     @property
     def proj_id(self):
@@ -1626,6 +1583,8 @@ class TransverseMercator(CylindricalGridMapping):
 
     """
 
+    grid_mapping_name = "transverse_mercator"
+
     def __init__(
         self,
         scale_factor_at_central_meridian=1.0,
@@ -1642,11 +1601,6 @@ class TransverseMercator(CylindricalGridMapping):
         )
         self.longitude_of_central_meridian = longitude_of_central_meridian
         self.latitude_of_projection_origin = latitude_of_projection_origin
-
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "transverse_mercator"
 
     @property
     def proj_id(self):
@@ -1709,10 +1663,7 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     """
 
-    @property
-    def grid_mapping_name(self):
-        """The value of the 'grid_mapping_name' attribute."""
-        return "vertical_perspective"
+    grid_mapping_name = "vertical_perspective"
 
     @property
     def proj_id(self):
@@ -1735,7 +1686,7 @@ _all_abstract_grid_mappings = (
     LatLonGridMapping,
     PerspectiveGridMapping,
 )
-# Representing all Grid Mappings repsented by the CF Conventions (APpendix F)
+# Representing all Grid Mappings repsented by the CF Conventions (Appendix F)
 _all_concrete_grid_mappings = (
     AlbersEqualArea,
     AzimuthalEquidistant,
@@ -1754,3 +1705,14 @@ _all_concrete_grid_mappings = (
     TransverseMercator,
     VerticalPerspective,
 )
+
+
+def _get_cf_grid_mapping_from_name(gm_name):
+    """TODO."""
+    cf_supported_gm_names = {
+        gm.grid_mapping_name: gm for gm in _all_concrete_grid_mappings
+    }
+    if gm_name in cf_supported_gm_names:
+        return cf_supported_gm_names[gm_name]
+    else:
+        return

@@ -60,7 +60,7 @@ class GridMappingsTest(unittest.TestCase):
             parameters={
                 "grid_mapping_name": "albers_conical_equal_area",
                 "standard_parallel": [10, 10],
-                "longitude_of_projection_origin":45.0,
+                "longitude_of_projection_origin": 45.0,
                 "false_easting": -1000,
                 "false_northing": 500,
             }
@@ -106,12 +106,18 @@ class GridMappingsTest(unittest.TestCase):
             repr(g)
             str(g)
 
-    def test_grid_mapping_find_gm_class(self):
+    def test_grid_mapping__get_cf_grid_mapping_from_name(self):
         """TODO."""
-        for f in self.f_with_gm:
-            gms = f.domain.get_grid_mappings()
-            print(gms)
-            # TODO test that matches with GM class
+        for gm_name, cf_gm_class in {
+            "vertical_perspective": cf.VerticalPerspective,
+            "oblique_mercator": cf.ObliqueMercator,
+            "albers_conical_equal_area": cf.AlbersEqualArea,
+            "lambert_conformal_conic": cf.LambertConformalConic,
+            "some_unsupported_name": None,
+        }.items():
+            self.assertEqual(
+                cf._get_cf_grid_mapping_from_name(gm_name), cf_gm_class
+            )
 
 
 if __name__ == "__main__":
