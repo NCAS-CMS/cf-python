@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 
 from pyproj import CRS
@@ -101,13 +102,81 @@ DUMMY_PARAMS = {"a": "b", "c": 0.0}  # TODOPARAMETERS, drop this
 
 
 def _convert_units_cf_to_proj(cf_units):
-    """Take CF units and convert them to equivalent units under PROJ."""
-    pass
+    """Take CF units and convert them to equivalent units under PROJ.
+
+    Note that PROJ units for latitude and longitude are in
+    units of decimal degrees, where forming a string by adding
+    a suffix character indicates alternative units of
+    radians if the suffix is 'R' or 'r'. If a string, a suffix
+    of 'd', 'D' or '°' confirm units of decimal degrees. The default
+    is usually 0.0 decimal degrees. For more information, see:
+
+    https://proj.org/en/9.2/usage/projections.html#projection-units
+
+    TODO finish docs
+
+    """
+    value = None
+    proj_units = None
+    return value, proj_units
 
 
-def _convert_units_proj_to_cf(cf_units):
-    """Take units used in PROJ and convert them to CF units."""
-    pass
+def _convert_units_proj_to_cf(proj_val_with_units, context):
+    """Take units used in PROJ and convert them to CF units.
+
+    Note that PROJ units for latitude and longitude are in
+    units of decimal degrees, where forming a string by adding
+    a suffix character indicates alternative units of
+    radians if the suffix is 'R' or 'r'. If a string, a suffix
+    of 'd', 'D' or '°' confirm units of decimal degrees. The default
+    is usually 0.0 decimal degrees. For more information, see:
+
+    https://proj.org/en/9.2/usage/projections.html#projection-units
+
+    TODO finish docs
+
+    """
+    cf_compatible = True  # unless find otherwise (True unless proven False)
+    if context == "lat":
+        cf_units = "degrees_north"
+    elif context == "lon":
+        cf_units = "degrees_east"
+    else:
+        # From the CF Conventions Document (3.1. Units):
+        # "The unit degrees is also allowed on coordinate variables such as "
+        # "the latitude and longitude coordinates of a transformed grid."
+        cf_units = "degrees"
+
+    # Only valid input is a valid float or integer (digit with zero or one
+    # decimal point only) optionally followed by a single suffix letter
+    # indicating decimal degrees or radians with PROJ. Be strict about an
+    # exact regex match, because anything not following the pattern (e.g.
+    # something with extra letters) is ambiguous w.r.t. units.
+    valid_form = re.compile("(\d+(\.\d+)?)([rRdD°]?)")
+    form = re.fullmatch(valid_form, proj_val_with_units)
+    if form:
+        if len(form.groups()) == 3:
+            value, _, suffix = form.groups()[2]
+        else:
+            value = form.groups()
+            suffix = None
+        if suffix in ("r", "R"):  # radians units
+            cf_units = "radians"
+            # Convert to decimal so we can store the degree_X form from context:
+        elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees' units
+            pass
+        else:
+            cf_compatible = False
+    else:
+        cf_compatible = False
+
+    if not cf_units_found:
+        raise ValueError(
+            f"Input PROJ input not valid: {proj_val_with_units}. "
+            "Ensure valid PROJ units are supplied."
+        )
+
+    return value, cf.Units(cf_units)
 
 
 def _make_proj_string_comp(spec):
