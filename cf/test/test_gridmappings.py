@@ -145,11 +145,11 @@ class GridMappingsTest(unittest.TestCase):
                 ]:
             _input, correct_output = input_with_correct_output
             proj_arg, context_arg = _input
-            #print("ARGS OF:", _input, correct_output, proj_arg, context_arg)
+            print("ARGS OF:", _input, correct_output, proj_arg, context_arg)
             d = cf._convert_units_proj_to_cf(proj_arg, context_arg)
-            #print("EXPECT:", correct_output)
-            #print("GET:", d)
-            #print()
+            print("EXPECT:", correct_output)
+            print("GET:", d)
+            print()
             self.assertTrue(d.equals(correct_output, verbose=2))
 
 if __name__ == "__main__":
