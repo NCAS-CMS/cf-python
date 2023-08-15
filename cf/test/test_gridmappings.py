@@ -2,11 +2,11 @@ import datetime
 import faulthandler
 import unittest
 
-# import numpy as np
-
-faulthandler.enable()  # to debug seg faults and timeouts
+import numpy as np
 
 import cf
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 pyproj_imported = False
 try:
@@ -119,6 +119,38 @@ class GridMappingsTest(unittest.TestCase):
                 cf._get_cf_grid_mapping_from_name(gm_name), cf_gm_class
             )
 
+    def test_grid_mapping__convert_units_proj_to_cf(self):
+        """TODO."""
+        for input_with_correct_output in [
+                # Check float value and no suffix
+                (("45.0", None), cf.Data(45.0, units="degrees")),
+                (("45.0", "lat"), cf.Data(45.0, units="degrees_north")),
+                (("45.0", "lon"), cf.Data(45.0, units="degrees_east")),
+                # Check integer value and "d" suffix
+                (("10d", None), cf.Data(10, units="degrees")),
+                (("10d", "lat"), cf.Data(10, units="degrees_north")),
+                (("10d", "lon"), cf.Data(10, units="degrees_east")),
+                # Check >180 float and "D" suffix
+                (("200.123D", None), cf.Data(200.123, units="degrees")),
+                (("200.123D", "lat"), cf.Data(200.123, units="degrees_north")),
+                (("200.123D", "lon"), cf.Data(200.123, units="degrees_east")),
+                # Check "R" suffix
+                ((f"{0.5 * np.pi}R", None), cf.Data(90, units="degrees")),
+                ((f"{0.5 * np.pi}R", "lat"), cf.Data(90, units="degrees_north")),
+                ((f"{0.5 * np.pi}R", "lon"), cf.Data(90, units="degrees_east")),
+                # Check >360 degrees (full revolution) and  "r" suffix
+                ((f"{3.0 * np.pi}r", None), cf.Data(180, units="degrees")),
+                ((f"{3.0 * np.pi}r", "lat"), cf.Data(180, units="degrees_north")),
+                ((f"{3.0 * np.pi}r", "lon"), cf.Data(180, units="degrees_east")),
+                ]:
+            _input, correct_output = input_with_correct_output
+            proj_arg, context_arg = _input
+            #print("ARGS OF:", _input, correct_output, proj_arg, context_arg)
+            d = cf._convert_units_proj_to_cf(proj_arg, context_arg)
+            #print("EXPECT:", correct_output)
+            #print("GET:", d)
+            #print()
+            self.assertTrue(d.equals(correct_output, verbose=2))
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

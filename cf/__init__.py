@@ -349,6 +349,7 @@ from .gridmappings import (
     _all_abstract_grid_mappings,
     _all_concrete_grid_mappings,
     _get_cf_grid_mapping_from_name,
+    _convert_units_proj_to_cf,
 )
 
 

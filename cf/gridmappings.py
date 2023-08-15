@@ -1,6 +1,9 @@
 import re
 from abc import ABC, abstractmethod
 
+from .data import Data
+from .units import Units
+
 from pyproj import CRS
 
 PROJ_PREFIX = "+proj"
@@ -121,7 +124,7 @@ def _convert_units_cf_to_proj(cf_units):
     return value, proj_units
 
 
-def _convert_units_proj_to_cf(proj_val_with_units, context):
+def _convert_units_proj_to_cf(proj_val_with_units, context=None):
     """Take units used in PROJ and convert them to CF units.
 
     Note that PROJ units for latitude and longitude are in
@@ -143,20 +146,27 @@ def _convert_units_proj_to_cf(proj_val_with_units, context):
         cf_units = "degrees_east"
     else:
         # From the CF Conventions Document (3.1. Units):
-        # "The unit degrees is also allowed on coordinate variables such as "
-        # "the latitude and longitude coordinates of a transformed grid."
+        # "The COARDS convention prohibits the unit degrees altogether,
+        # but this unit is not forbidden by the CF convention because
+        # it may in fact be appropriate for a variable containing, say,
+        # solar zenith angle. The unit degrees is also allowed on
+        # coordinate variables such as the latitude and longitude
+        # coordinates of a transformed grid. In this case the coordinate
+        # values are not true latitudes and longitudes which must always
+        # be identified using the more specific forms of degrees as
+        # described in Section 4.1.
         cf_units = "degrees"
 
     # Only valid input is a valid float or integer (digit with zero or one
     # decimal point only) optionally followed by a single suffix letter
     # indicating decimal degrees or radians with PROJ. Be strict about an
     # exact regex match, because anything not following the pattern (e.g.
-    # something with extra letters) is ambiguous w.r.t. units.
+    # something with extra letters) will be ambiguous for PROJ units.
     valid_form = re.compile("(\d+(\.\d+)?)([rRdD°]?)")
     form = re.fullmatch(valid_form, proj_val_with_units)
     if form:
         if len(form.groups()) == 3:
-            value, _, suffix = form.groups()[2]
+            value, _, suffix = form.groups()
         else:
             value = form.groups()
             suffix = None
@@ -164,19 +174,17 @@ def _convert_units_proj_to_cf(proj_val_with_units, context):
             cf_units = "radians"
             # Convert to decimal so we can store the degree_X form from context:
         elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees' units
-            pass
-        else:
             cf_compatible = False
     else:
         cf_compatible = False
 
-    if not cf_units_found:
+    if not cf_compatible:
         raise ValueError(
             f"Input PROJ input not valid: {proj_val_with_units}. "
             "Ensure valid PROJ units are supplied."
         )
 
-    return value, cf.Units(cf_units)
+    return Data(value, Units(cf_units))
 
 
 def _make_proj_string_comp(spec):
