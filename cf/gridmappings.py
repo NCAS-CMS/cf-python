@@ -165,20 +165,19 @@ def _convert_units_proj_to_cf(proj_val_with_units, context=None):
     valid_form = re.compile("(\d+(\.\d+)?)([rRdD°]?)")
     form = re.fullmatch(valid_form, proj_val_with_units)
     if form:
-        suffix, float_comp = None, None
-        if len(form.groups()) == 3:
-            value, float_comp, suffix = form.groups()
-            #if float_comp:
-            #    is_flaot= True
-            #print("FOR", form, "GET", value, is_float, suffix)
-        elif len(form.groups()) == 2:
-            value, float_comp = form.groups()
+        comps = form.groups()
+        suffix = None
+        if len(comps) == 3:
+            value, float_comp, suffix = comps
         else:
-            value = form.groups()
+            value, *float_comp = comps
+
+        print("%%%%%%%", value, float_comp, suffix)
 
         if suffix in ("r", "R"):  # radians units
             cf_units = "radians"
             # Convert to decimal so we can store the degree_X form from context:
+            # TODO
         elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees' units
             cf_compatible = False
     else:
