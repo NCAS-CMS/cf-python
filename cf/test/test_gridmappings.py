@@ -135,13 +135,13 @@ class GridMappingsTest(unittest.TestCase):
                 (("200.123D", "lat"), cf.Data(200.123, units="degrees_north")),
                 (("200.123D", "lon"), cf.Data(200.123, units="degrees_east")),
                 # Check "R" suffix
-                ((f"{0.5 * np.pi}R", None), cf.Data(90, units="degrees")),
-                ((f"{0.5 * np.pi}R", "lat"), cf.Data(90, units="degrees_north")),
-                ((f"{0.5 * np.pi}R", "lon"), cf.Data(90, units="degrees_east")),
+                ((f"{0.5 * np.pi}R", None), cf.Data(0.5 * np.pi, units="radians")),
+                ((f"{0.5 * np.pi}R", "lat"), cf.Data(90.0, units="degrees_north")),
+                ((f"{0.5 * np.pi}R", "lon"), cf.Data(90.0, units="degrees_east")),
                 # Check >360 degrees (full revolution) and  "r" suffix
-                ((f"{3.0 * np.pi}r", None), cf.Data(180, units="degrees")),
-                ((f"{3.0 * np.pi}r", "lat"), cf.Data(180, units="degrees_north")),
-                ((f"{3.0 * np.pi}r", "lon"), cf.Data(180, units="degrees_east")),
+                ((f"{3.0 * np.pi}r", None), cf.Data(3.0 * np.pi, units="radians")),
+                ((f"{3.0 * np.pi}r", "lat"), cf.Data(540.0, units="degrees_north")),
+                ((f"{3.0 * np.pi}r", "lon"), cf.Data(540.0, units="degrees_east")),
                 ]:
             _input, correct_output = input_with_correct_output
             proj_arg, context_arg = _input

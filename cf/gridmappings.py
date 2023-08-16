@@ -172,12 +172,20 @@ def _convert_units_proj_to_cf(proj_val_with_units, context=None):
         else:
             value, *float_comp = comps
 
-        print("%%%%%%%", value, float_comp, suffix)
+        # Convert string value to relevant numeric form
+        if float_comp:
+            numeric_value = float(value)
+        else:
+            numeric_value = int(value)
 
         if suffix in ("r", "R"):  # radians units
-            cf_units = "radians"
-            # Convert to decimal so we can store the degree_X form from context:
-            # TODO
+            if context:
+                # Convert so we can store the degree_X form of the lat/lon context:
+                numeric_value = Units.conform(
+                    numeric_value, Units("radians"), Units("degrees"))
+            else:  # if no lat/lon context, leave as radians to avoid rounding etc.
+                cf_units = "radians"
+
         elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees' units
             cf_compatible = False
     else:
@@ -188,12 +196,6 @@ def _convert_units_proj_to_cf(proj_val_with_units, context=None):
             f"Input PROJ input not valid: {proj_val_with_units}. "
             "Ensure valid PROJ units are supplied."
         )
-
-    # Convert string value to relevant numeric form
-    if float_comp:
-        numeric_value = float(value)
-    else:
-        numeric_value = int(value)
 
     return Data(numeric_value, Units(cf_units))
 
