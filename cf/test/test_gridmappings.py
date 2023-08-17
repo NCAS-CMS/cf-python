@@ -152,7 +152,7 @@ class GridMappingsTest(unittest.TestCase):
                 (("-70.5°", "lon"), cf.Data(-70.5, units="degrees_east")),
                 ]:
             _input, correct_output = input_with_correct_output
-            d = cf._convert_units_proj_to_cf(*_input)
+            d = cf.convert_proj_angular_data_to_cf(*_input)
             self.assertTrue(d.equals(correct_output, verbose=2))
 
 if __name__ == "__main__":

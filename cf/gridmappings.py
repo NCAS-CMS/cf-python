@@ -104,39 +104,36 @@ WGS1984_CF_ATTR_DEFAULTS = CRS.from_proj4("+proj=merc").to_cf()
 DUMMY_PARAMS = {"a": "b", "c": 0.0}  # TODOPARAMETERS, drop this
 
 
-def _convert_units_cf_to_proj(cf_units):
-    """Take CF units and convert them to equivalent units under PROJ.
+def convert_proj_angular_data_to_cf(proj_data, context=None):
+    """Take a PROJ angular data component and convert it to CF Data with CF Units.
 
     Note that PROJ units for latitude and longitude are in
     units of decimal degrees, where forming a string by adding
     a suffix character indicates alternative units of
     radians if the suffix is 'R' or 'r'. If a string, a suffix
-    of 'd', 'D' or '°' confirm units of decimal degrees. The default
-    is usually 0.0 decimal degrees. For more information, see:
+    of 'd', 'D' or '°' confirm units of decimal degrees.
 
-    https://proj.org/en/9.2/usage/projections.html#projection-units
+    .. versionadded:: GMVER
 
-    TODO finish docs
+    :Parameters:
 
-    """
-    value = None
-    proj_units = None
-    return value, proj_units
+        proj_data: `str`
+            The PROJ angular data component, for example "90", "90.0",
+             "90.0D", "1.0R", or "1r".
 
+            For details on valid PROJ data components in PROJ strings,
+            notably indicating units, see:
 
-def _convert_units_proj_to_cf(proj_val_with_units, context=None):
-    """Take units used in PROJ and convert them to CF units.
+            https://proj.org/en/9.2/usage/projections.html#projection-units
 
-    Note that PROJ units for latitude and longitude are in
-    units of decimal degrees, where forming a string by adding
-    a suffix character indicates alternative units of
-    radians if the suffix is 'R' or 'r'. If a string, a suffix
-    of 'd', 'D' or '°' confirm units of decimal degrees. The default
-    is usually 0.0 decimal degrees. For more information, see:
-
-    https://proj.org/en/9.2/usage/projections.html#projection-units
-
-    TODO finish docs
+        context: `str` or `None`, optional
+            The physical context of the conversion, where 'lat' indicates
+            a latitude value and 'lon' indicates a longitude, such that
+            indication of either context will return cf.Data with values
+            having units appropriate to that context, namely 'degrees_north'
+            or 'degrees_east' respectively. If None, 'degrees' or 'radians'
+            (depending on the input PROJ units) will be the units.
+            The default is None.
 
     """
     cf_compatible = True  # unless find otherwise (True unless proven False)
@@ -163,7 +160,7 @@ def _convert_units_proj_to_cf(proj_val_with_units, context=None):
     # exact regex match, because anything not following the pattern (e.g.
     # something with extra letters) will be ambiguous for PROJ units.
     valid_form = re.compile("(-?\d+(\.\d+)?)([rRdD°]?)")
-    form = re.fullmatch(valid_form, proj_val_with_units)
+    form = re.fullmatch(valid_form, proj_data)
     if form:
         comps = form.groups()
         suffix = None
