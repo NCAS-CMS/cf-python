@@ -141,7 +141,7 @@ countries = ["Ireland", "Belgium", "Switzerland"]
 #   use distribution on the corresponding subplot.
 # - The ``plt.tight_layout`` function is called to ensure that the subplots are 
 #   properly spaced within the figure and finally, the ``plt.show function`` 
-#   display the figure with the histograms.
+#   displays the figure with the histograms.
 fig, axs = plt.subplots(3, 1, figsize=(8, 10))
 
 for i, country in enumerate(countries):
