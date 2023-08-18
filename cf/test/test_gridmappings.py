@@ -10,7 +10,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 pyproj_imported = False
 try:
-    import pyproj
+    import pyproj  # noqa: F401
 
     pyproj_imported = True
 except ImportError:
