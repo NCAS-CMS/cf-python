@@ -347,6 +347,7 @@ from .gridmappings import (
     TransverseMercator,
     VerticalPerspective,
     convert_proj_angular_data_to_cf,
+    convert_cf_angular_data_to_proj,
     _all_abstract_grid_mappings,
     _all_concrete_grid_mappings,
     _get_cf_grid_mapping_from_name,

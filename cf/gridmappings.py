@@ -1,10 +1,11 @@
+import itertools
 import re
 from abc import ABC, abstractmethod
 
+from pyproj import CRS
+
 from .data import Data
 from .units import Units
-
-from pyproj import CRS
 
 PROJ_PREFIX = "+proj"
 ALL_GRID_MAPPING_ATTR_NAMES = {
@@ -105,7 +106,7 @@ DUMMY_PARAMS = {"a": "b", "c": 0.0}  # TODOPARAMETERS, drop this
 
 
 def convert_proj_angular_data_to_cf(proj_data, context=None):
-    """Take a PROJ angular data component and convert it to CF Data with CF Units.
+    """Convert a PROJ angular data component into CF Data with CF Units.
 
     Note that PROJ units for latitude and longitude are in
     units of decimal degrees, where forming a string by adding
@@ -135,6 +136,12 @@ def convert_proj_angular_data_to_cf(proj_data, context=None):
             (depending on the input PROJ units) will be the units.
             The default is None.
 
+    :Returns:
+
+        `Data`
+            A cf.Data object with CF-compliant units that corresponds
+            to the PROJ data and the context provided.
+
     """
     cf_compatible = True  # unless find otherwise (True unless proven False)
     if context == "lat":
@@ -159,7 +166,7 @@ def convert_proj_angular_data_to_cf(proj_data, context=None):
     # indicating decimal degrees or radians with PROJ. Be strict about an
     # exact regex match, because anything not following the pattern (e.g.
     # something with extra letters) will be ambiguous for PROJ units.
-    valid_form = re.compile("(-?\d+(\.\d+)?)([rRdD°]?)")
+    valid_form = re.compile("(-?\d+(\.\d*)?)([rRdD°]?)")
     form = re.fullmatch(valid_form, proj_data)
     if form:
         comps = form.groups()
@@ -177,24 +184,97 @@ def convert_proj_angular_data_to_cf(proj_data, context=None):
 
         if suffix in ("r", "R"):  # radians units
             if context:
-                # Convert so we can store the degree_X form of the lat/lon context:
+                # Convert so we can apply degree_X form of the lat/lon context
                 numeric_value = Units.conform(
-                    numeric_value, Units("radians"), Units("degrees"))
-            else:  # if no lat/lon context, leave as radians to avoid rounding etc.
+                    numeric_value, Units("radians"), Units("degrees")
+                )
+            else:  # Otherwise leave as radians to avoid rounding etc.
                 cf_units = "radians"
-
-        elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees' units
+        elif suffix and suffix not in ("d", "D", "°"):  # 'decimal degrees'
             cf_compatible = False
     else:
         cf_compatible = False
 
     if not cf_compatible:
         raise ValueError(
-            f"Input PROJ input not valid: {proj_val_with_units}. "
-            "Ensure valid PROJ units are supplied."
+            f"PROJ data input not valid: {proj_data}. Ensure a valid "
+            "PROJ value and optionally units are supplied."
         )
 
     return Data(numeric_value, Units(cf_units))
+
+
+def convert_cf_angular_data_to_proj(data):
+    """Convert singleton angular CF Data into a PROJ data component.
+
+    PROJ units for latitude and longitude are generally in units of
+    decimal degrees.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        data: `Data`
+            A cf.Data object of size 1 containing an angular value
+            with CF-compliant angular units, for example
+            cf.Data(45, units="degrees_north").
+
+    :Returns:
+
+        `str`
+            A PROJ angular data component that corresponds
+            to the Data provided.
+
+    """
+    if data.size != 1:
+        raise ValueError(
+            f"Input cf.Data must have size 1, got size: {data.size}"
+        )
+
+    units = data.Units
+    if not units:
+        raise ValueError(
+            "Must provide cf.Data with units for unambiguous conversion."
+        )
+    units_str = units.units
+
+    degrees_unit_prefix = ["degree", "degrees"]
+    # Valid possibilities from 4.1. Latitude Coordinate:
+    # http://cfconventions.org/cf-conventions/
+    # cf-conventions.html#latitude-coordinate
+    valid_cf_lat_units = [
+        s + e
+        for s, e in itertools.product(
+            degrees_unit_prefix, ("_north", "_N", "N")
+        )
+    ]
+    # Valid possibilities from 4.2. Longitude Coordinate, see:
+    # http://cfconventions.org/cf-conventions/
+    # cf-conventions.html#longitude-coordinate
+    valid_cf_lon_units = [
+        s + e
+        for s, e in itertools.product(
+            degrees_unit_prefix, ("_east", "_E", "E")
+        )
+    ]
+    valid_degrees_units = (
+        degrees_unit_prefix + valid_cf_lat_units + valid_cf_lon_units
+    )
+
+    if units_str in valid_degrees_units:
+        # No need for suffix 'D' for decimal degrees, as that is the default
+        # recognised when no suffix is given
+        proj_data = f"{data.data.array.item()}"
+    elif units_str == "radians":
+        proj_data = f"{data.data.array.item()}R"
+    else:
+        raise ValueError(
+            "Unrecognised angular units set on the cf.Data. Valid options "
+            f"are: {', '.join(valid_degrees_units)} and radians but got: "
+            f"{units_str}"
+        )
+
+    return proj_data
 
 
 def _make_proj_string_comp(spec):

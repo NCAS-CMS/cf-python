@@ -119,41 +119,66 @@ class GridMappingsTest(unittest.TestCase):
                 cf._get_cf_grid_mapping_from_name(gm_name), cf_gm_class
             )
 
-    def test_grid_mapping__convert_units_proj_to_cf(self):
-        """TODO."""
+    def test_grid_mapping_convert_proj_angular_data_to_cf(self):
+        """Test the 'convert_proj_angular_data_to_cf' function."""
         for input_with_correct_output in [
-                # Check float value and no suffix
-                (("45.0", None), cf.Data(45.0, units="degrees")),
-                (("45.0", "lat"), cf.Data(45.0, units="degrees_north")),
-                (("45.0", "lon"), cf.Data(45.0, units="degrees_east")),
-                # Check integer and no suffix
-                (("100", None), cf.Data(100, units="degrees")),
-                (("100", "lat"), cf.Data(100, units="degrees_north")),
-                (("100", "lon"), cf.Data(100, units="degrees_east")),
-                # Check "R" suffix
-                ((f"{0.5 * np.pi}R", None), cf.Data(0.5 * np.pi, units="radians")),
-                ((f"{0.5 * np.pi}R", "lat"), cf.Data(90.0, units="degrees_north")),
-                ((f"{0.5 * np.pi}R", "lon"), cf.Data(90.0, units="degrees_east")),
-                # Check >360 degrees (over a full revolution) and  "r" suffix
-                ((f"{3.0 * np.pi}r", None), cf.Data(3.0 * np.pi, units="radians")),
-                ((f"{3.0 * np.pi}r", "lat"), cf.Data(540.0, units="degrees_north")),
-                ((f"{3.0 * np.pi}r", "lon"), cf.Data(540.0, units="degrees_east")),
-                # Check integer value and "d" suffix
-                (("10d", None), cf.Data(10, units="degrees")),
-                (("10d", "lat"), cf.Data(10, units="degrees_north")),
-                (("10d", "lon"), cf.Data(10, units="degrees_east")),
-                # Check >180 float and "D" suffix
-                (("200.123D", None), cf.Data(200.123, units="degrees")),
-                (("200.123D", "lat"), cf.Data(200.123, units="degrees_north")),
-                (("200.123D", "lon"), cf.Data(200.123, units="degrees_east")),
-                # Check negative numeric value and "°" suffix
-                (("-70.5°", None), cf.Data(-70.5, units="degrees")),
-                (("-70.5°", "lat"), cf.Data(-70.5, units="degrees_north")),
-                (("-70.5°", "lon"), cf.Data(-70.5, units="degrees_east")),
-                ]:
+            # Check float value and no suffix
+            (("45.0", None), cf.Data(45.0, units="degrees")),
+            (("45.0", "lat"), cf.Data(45.0, units="degrees_north")),
+            (("45.0", "lon"), cf.Data(45.0, units="degrees_east")),
+            # Check integer and no suffix
+            (("100", None), cf.Data(100, units="degrees")),
+            (("100", "lat"), cf.Data(100, units="degrees_north")),
+            (("100", "lon"), cf.Data(100, units="degrees_east")),
+            # Check >360 degrees (over a full revolution) and  "r" suffix
+            ((f"{3.0 * np.pi}r", None), cf.Data(3.0 * np.pi, units="radians")),
+            (
+                (f"{3.0 * np.pi}r", "lat"),
+                cf.Data(540.0, units="degrees_north"),
+            ),
+            ((f"{3.0 * np.pi}r", "lon"), cf.Data(540.0, units="degrees_east")),
+            # Check "R" suffix
+            ((f"{0.5 * np.pi}R", None), cf.Data(0.5 * np.pi, units="radians")),
+            ((f"{0.5 * np.pi}R", "lat"), cf.Data(90.0, units="degrees_north")),
+            ((f"{0.5 * np.pi}R", "lon"), cf.Data(90.0, units="degrees_east")),
+            # Check integer value and "d" suffix
+            (("10d", None), cf.Data(10, units="degrees")),
+            (("10d", "lat"), cf.Data(10, units="degrees_north")),
+            (("10d", "lon"), cf.Data(10, units="degrees_east")),
+            # Check >180 float and "D" suffix
+            (("200.123D", None), cf.Data(200.123, units="degrees")),
+            (("200.123D", "lat"), cf.Data(200.123, units="degrees_north")),
+            (("200.123D", "lon"), cf.Data(200.123, units="degrees_east")),
+            # Check negative numeric value and "°" suffix
+            (("-70.5°", None), cf.Data(-70.5, units="degrees")),
+            (("-70.5°", "lat"), cf.Data(-70.5, units="degrees_north")),
+            (("-70.5°", "lon"), cf.Data(-70.5, units="degrees_east")),
+            # Check zero and lack of digits after point edge cases
+            (("0", None), cf.Data(0, units="degrees")),
+            (("0.0", "lat"), cf.Data(0.0, units="degrees_north")),
+            (("-0.", "lon"), cf.Data(0.0, units="degrees_east")),
+        ]:
             _input, correct_output = input_with_correct_output
             d = cf.convert_proj_angular_data_to_cf(*_input)
             self.assertTrue(d.equals(correct_output, verbose=2))
+
+    def test_grid_mapping_convert_cf_angular_data_to_proj(self):
+        """Test the 'convert_cf_angular_data_to_proj' function."""
+        for input_with_correct_output in [
+            # Check float and basic lat/lon-context free degree unit
+            (cf.Data(45.0, units="degrees"), "45.0"),
+            # Check integer and various units possible for lat/lon
+            (cf.Data(45, units="degrees_north"), "45"),
+            (cf.Data(45, units="degrees_N"), "45"),
+            (cf.Data(45, units="degreeN"), "45"),
+            (cf.Data(45, units="degrees_east"), "45"),
+            (cf.Data(45, units="degrees_E"), "45"),
+            (cf.Data(45, units="degreeE"), "45"),
+        ]:
+            _input, correct_output = input_with_correct_output
+            d = cf.convert_cf_angular_data_to_proj(_input)
+            self.assertEqual(d, correct_output)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
