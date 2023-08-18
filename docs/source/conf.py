@@ -391,6 +391,9 @@ sphinx_gallery_conf = {
     "within_subsection_order": FileNameSortKey,
 }
 
+import warnings
+warnings.filterwarnings("ignore")
+
 # -- Options for LaTeX output -------------------------------------------------
 
 # The paper size ('letter' or 'a4').
