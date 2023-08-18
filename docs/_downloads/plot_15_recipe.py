@@ -73,7 +73,7 @@ def extract_data(country_name):
 # specific country:
 #
 # - The `digitize <https://ncas-cms.github.io/cf-python/method/cf.Field.digitize.html>`_
-#   function of the ``field`` object is called to convert the land use data into
+#   function of the ``cf.Field`` object is called to convert the land use data into
 #   indices of bins. It takes an array of bins (defined by 
 #   the `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ function)
 #   and the ``return_bins=True`` parameter, which returns the actual bin values 
