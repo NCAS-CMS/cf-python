@@ -4,11 +4,15 @@ Resampling Land Use Flags to a Coarser Grid
 
 In this recipe, we will analyse the land use distribution using a land use data
 file and visualize the data as a histogram. This will help to understand the
-proportion of different land use categories in each country. The land use data
+proportion of different land use categories in each country.
+
+The land use data
 is initially available at a high spatial resolution of approximately 100 m,
 with several flags defined with numbers representing the type of land use.
 Regridding the data to a corser resolution of approximately 25 km would
-incorrectly represent the flags on the new grids. To avoid this, we will
+incorrectly represent the flags on the new grids.
+
+To avoid this, we will
 resample the data to the coarser resolution by aggregating the data within
 predefined spatial regions or bins. This approach will give a dataset where each
 25 km grid cell contains a histogram of land use flags, as determined by the
@@ -20,7 +24,8 @@ and distortions in the data.
 """
 
 # %%
-# 1. Import the required libraries:
+# 1. Import the required libraries. We will use Cartopy's ``shapereader`` to work with
+# shapefiles that define country boundaries:
 import cf
 import cartopy.io.shapereader as shpreader
 import matplotlib.pyplot as plt
@@ -135,12 +140,12 @@ countries = ["Ireland", "Belgium", "Switzerland"]
 # - The ``plt.subplots`` function is called to set up a figure with three 
 #   subplots, with a figure size of 8 inches by 10 inches.
 # - A loop iterates over each country in the countries list and for each 
-#   country, the ``extract_data`` function is called to extract the land use 
-#   data for that country.
+#   country, the ``extract_data`` function is called to extract its land use 
+#   data.
 # - The ``plot_histogram`` function is then called to plot the histogram of land
 #   use distribution on the corresponding subplot.
 # - The ``plt.tight_layout`` function is called to ensure that the subplots are 
-#   properly spaced within the figure and finally, the ``plt.show function`` 
+#   properly spaced within the figure and finally, the ``plt.show`` function
 #   displays the figure with the histograms.
 fig, axs = plt.subplots(3, 1, figsize=(8, 10))
 
