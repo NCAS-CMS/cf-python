@@ -132,23 +132,22 @@ to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="resampling-land-use-flags-to-a-coarser-grid">
 <span id="sphx-glr-recipes-plot-15-recipe-py"></span><h1>Resampling Land Use Flags to a Coarser Grid<a class="headerlink" href="#resampling-land-use-flags-to-a-coarser-grid" title="Permalink to this headline">¶</a></h1>
-<p>In this recipe, we will analyse the land use distribution using a land use data
-file and visualize the data as a histogram. This will help to understand the
-proportion of different land use categories in each country. The land use data
-is initially available at a high spatial resolution of approximately 100 m,
-with several flags defined with numbers representing the type of land use.
-Regridding the data to a corser resolution of approximately 25 km would
-incorrectly represent the flags on the new grids. To avoid this, we will
-resample the data to the coarser resolution by aggregating the data within
-predefined spatial regions or bins. This approach will give a dataset where each
-25 km grid cell contains a histogram of land use flags, as determined by the
-original 100 m resolution data. It retains the original spatial extent of the
-data while reducing its spatial complexity. Regridding, on the other hand,
-involves interpolating the data onto a new grid, which can introduce artifacts
-and distortions in the data.</p>
-<ol class="arabic simple">
-<li><p>Import the required libraries:</p></li>
-</ol>
+<p>In this recipe, we will compare the land use distribution in different countries
+using a land use data file and visualize the data as a histogram. This will help
+to understand the proportion of different land use categories in each country.</p>
+<p>The land use data is initially available at a high spatial resolution of
+approximately 100 m, with several flags defined with numbers representing the
+type of land use. Regridding the data to a coarser resolution of approximately
+25 km would incorrectly represent the flags on the new grids.</p>
+<p>To avoid this, we will resample the data to the coarser resolution by
+aggregating the data within predefined spatial regions or bins. This approach
+will give a dataset where each 25 km grid cell contains a histogram of land use
+flags, as determined by the original 100 m resolution data. It retains the
+original spatial extent of the data while reducing its spatial complexity.
+Regridding, on the other hand, involves interpolating the data onto a new grid,
+which can introduce artifacts and distortions in the data.</p>
+<p>1. Import the required libraries. We will use Cartopy’s <code class="docutils literal notranslate"><span class="pre">shapereader</span></code> to
+work with shapefiles that define country boundaries:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cartopy.io.shapereader</span> <span class="k">as</span> <span class="nn">shpreader</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -247,8 +246,8 @@ stored in the <code class="docutils literal notranslate"><span class="pre">f</sp
 specific country:</p>
 <ul class="simple">
 <li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.digitize.html">digitize</a>
-function of the <code class="docutils literal notranslate"><span class="pre">cf.Field</span></code> object is called to convert the land use data into
-indices of bins. It takes an array of bins (defined by
+function of the <code class="docutils literal notranslate"><span class="pre">cf.Field</span></code> object is called to convert the land use data
+into indices of bins. It takes an array of bins (defined by
 the <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">np.linspace</a> function)
 and the <code class="docutils literal notranslate"><span class="pre">return_bins=True</span></code> parameter, which returns the actual bin values
 along with the digitized data.</p></li>
@@ -260,7 +259,8 @@ while the bins variable contains the actual bin values.</p></li>
 <li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.histogram.html">cf.histogram</a>
 function is called on the digitized data to create a histogram. This
 function returns a field object with the histogram data.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">h.array.squeeze()</span></code> function extracts the histogram data as a NumPy
+<li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.squeeze.html">squeeze</a>
+function applied to the histogram <code class="docutils literal notranslate"><span class="pre">array</span></code> extracts the histogram data as a NumPy
 array and removes any single dimensions.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">total_valid_sub_cells</span></code> variable calculates the total number of valid
 subcells (non-missing data points) by summing the histogram data.</p></li>
@@ -313,12 +313,12 @@ input parameters.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">plt.subplots</span></code> function is called to set up a figure with three
 subplots, with a figure size of 8 inches by 10 inches.</p></li>
 <li><p>A loop iterates over each country in the countries list and for each
-country, the <code class="docutils literal notranslate"><span class="pre">extract_data</span></code> function is called to extract the land use
-data for that country.</p></li>
+country, the <code class="docutils literal notranslate"><span class="pre">extract_data</span></code> function is called to extract its land use
+data.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">plot_histogram</span></code> function is then called to plot the histogram of land
 use distribution on the corresponding subplot.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">plt.tight_layout</span></code> function is called to ensure that the subplots are
-properly spaced within the figure and finally, the <code class="docutils literal notranslate"><span class="pre">plt.show</span> <span class="pre">function</span></code>
+properly spaced within the figure and finally, the <code class="docutils literal notranslate"><span class="pre">plt.show</span></code> function
 displays the figure with the histograms.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axs</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
@@ -332,13 +332,13 @@ displays the figure with the histograms.</p></li>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_15_recipe_001.png" srcset="../_images/sphx_glr_plot_15_recipe_001.png" alt="Ireland, Belgium, Switzerland" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  7.102 seconds)</p>
+<img src="../_images/sphx_glr_plot_15_recipe_001.png" srcset="../_images/sphx_glr_plot_15_recipe_001.png" alt="Ireland, Belgium, Switzerland" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 4 minutes  56.480 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-15-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/4e7fa5ce5a75274645224d4ecc29e61c/plot_15_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_15_recipe.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_15_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_15_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/afff3850c8e766036c3fbff7a3c7567b/plot_15_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_15_recipe.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_15_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_15_recipe.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -352,7 +352,7 @@ displays the figure with the histograms.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-18.
+      &copy;2023, NCAS | Page built on 2023-08-22.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

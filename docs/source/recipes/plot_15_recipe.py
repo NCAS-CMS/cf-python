@@ -3,30 +3,27 @@ Resampling Land Use Flags to a Coarser Grid
 ===========================================
 
 In this recipe, we will compare the land use distribution in different countries
-using a land use data
-file and visualize the data as a histogram. This will help to understand the
-proportion of different land use categories in each country.
+using a land use data file and visualize the data as a histogram. This will help
+to understand the proportion of different land use categories in each country.
 
-The land use data
-is initially available at a high spatial resolution of approximately 100 m,
-with several flags defined with numbers representing the type of land use.
-Regridding the data to a coarser resolution of approximately 25 km would
-incorrectly represent the flags on the new grids.
+The land use data is initially available at a high spatial resolution of 
+approximately 100 m, with several flags defined with numbers representing the 
+type of land use. Regridding the data to a coarser resolution of approximately 
+25 km would incorrectly represent the flags on the new grids.
 
-To avoid this, we will
-resample the data to the coarser resolution by aggregating the data within
-predefined spatial regions or bins. This approach will give a dataset where each
-25 km grid cell contains a histogram of land use flags, as determined by the
-original 100 m resolution data. It retains the original spatial extent of the
-data while reducing its spatial complexity. Regridding, on the other hand,
-involves interpolating the data onto a new grid, which can introduce artifacts
-and distortions in the data.
+To avoid this, we will resample the data to the coarser resolution by 
+aggregating the data within predefined spatial regions or bins. This approach 
+will give a dataset where each 25 km grid cell contains a histogram of land use 
+flags, as determined by the original 100 m resolution data. It retains the 
+original spatial extent of the data while reducing its spatial complexity. 
+Regridding, on the other hand, involves interpolating the data onto a new grid, 
+which can introduce artifacts and distortions in the data.
 
 """
 
 # %%
-# 1. Import the required libraries. We will use Cartopy's ``shapereader`` to work with
-# shapefiles that define country boundaries:
+# 1. Import the required libraries. We will use Cartopy's ``shapereader`` to 
+# work with shapefiles that define country boundaries:
 import cf
 import cartopy.io.shapereader as shpreader
 import matplotlib.pyplot as plt
@@ -79,8 +76,8 @@ def extract_data(country_name):
 # specific country:
 #
 # - The `digitize <https://ncas-cms.github.io/cf-python/method/cf.Field.digitize.html>`_
-#   function of the ``cf.Field`` object is called to convert the land use data into
-#   indices of bins. It takes an array of bins (defined by 
+#   function of the ``cf.Field`` object is called to convert the land use data 
+#   into indices of bins. It takes an array of bins (defined by 
 #   the `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ function)
 #   and the ``return_bins=True`` parameter, which returns the actual bin values 
 #   along with the digitized data.
@@ -92,7 +89,7 @@ def extract_data(country_name):
 # - The `cf.histogram <https://ncas-cms.github.io/cf-python/function/cf.histogram.html>`_ 
 #   function is called on the digitized data to create a histogram. This 
 #   function returns a field object with the histogram data.
-# - The `squeeze <https://ncas-cms.github.io/cf-python/method/cf.Field.squeeze.html>`_`
+# - The `squeeze <https://ncas-cms.github.io/cf-python/method/cf.Field.squeeze.html>`_
 #   function applied to the histogram ``array`` extracts the histogram data as a NumPy
 #   array and removes any single dimensions.
 # - The ``total_valid_sub_cells`` variable calculates the total number of valid 
