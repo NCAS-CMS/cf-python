@@ -2,14 +2,15 @@
 Resampling Land Use Flags to a Coarser Grid
 ===========================================
 
-In this recipe, we will analyse the land use distribution using a land use data
+In this recipe, we will compare the land use distribution in different countries
+using a land use data
 file and visualize the data as a histogram. This will help to understand the
 proportion of different land use categories in each country.
 
 The land use data
 is initially available at a high spatial resolution of approximately 100 m,
 with several flags defined with numbers representing the type of land use.
-Regridding the data to a corser resolution of approximately 25 km would
+Regridding the data to a coarser resolution of approximately 25 km would
 incorrectly represent the flags on the new grids.
 
 To avoid this, we will
@@ -91,7 +92,8 @@ def extract_data(country_name):
 # - The `cf.histogram <https://ncas-cms.github.io/cf-python/function/cf.histogram.html>`_ 
 #   function is called on the digitized data to create a histogram. This 
 #   function returns a field object with the histogram data.
-# - The ``h.array.squeeze()`` function extracts the histogram data as a NumPy 
+# - The `squeeze <https://ncas-cms.github.io/cf-python/method/cf.Field.squeeze.html>`_`
+#   function applied to the histogram ``array`` extracts the histogram data as a NumPy
 #   array and removes any single dimensions.
 # - The ``total_valid_sub_cells`` variable calculates the total number of valid 
 #   subcells (non-missing data points) by summing the histogram data.
