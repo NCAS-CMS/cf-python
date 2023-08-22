@@ -176,8 +176,25 @@ class GridMappingsTest(unittest.TestCase):
             (cf.Data(45, units="degreeE"), "45"),
         ]:
             _input, correct_output = input_with_correct_output
-            d = cf.convert_cf_angular_data_to_proj(_input)
-            self.assertEqual(d, correct_output)
+            p = cf.convert_cf_angular_data_to_proj(_input)
+            self.assertEqual(p, correct_output)
+
+        # Note that 'convert_cf_angular_data_to_proj' and
+        # 'convert_proj_angular_data_to_cf' are not strict inverse
+        # functions, since the former will convert to the *simplest*
+        # way to specify the PROJ input, namely with no suffix for
+        # degrees(_X) units and the 'R' suffix for radians, whereas
+        # the input might have 'D' or 'r' etc. instead.
+        #
+        # However, we check that inputs that are expected to be
+        # undone to their original form by operation of both
+        # functions, namely those with this 'simplest' PROJ form,
+        # do indeed get re-generated with operation of both:
+        for p in ("10", "-10", "0", "1R", "0.2R", "0.1R"):
+            p2 = cf.convert_cf_angular_data_to_proj(
+                cf.convert_proj_angular_data_to_cf(p)
+            )
+            self.assertEqual(p, p2)
 
 
 if __name__ == "__main__":
