@@ -121,6 +121,8 @@ class GridMappingsTest(unittest.TestCase):
 
     def test_grid_mapping_convert_proj_angular_data_to_cf(self):
         """Test the 'convert_proj_angular_data_to_cf' function."""
+
+        # Check representative valid inputs
         for input_with_correct_output in [
             # Check float value and no suffix
             (("45.0", None), cf.Data(45.0, units="degrees")),
@@ -164,6 +166,7 @@ class GridMappingsTest(unittest.TestCase):
 
     def test_grid_mapping_convert_cf_angular_data_to_proj(self):
         """Test the 'convert_cf_angular_data_to_proj' function."""
+        # Check representative valid inputs
         for input_with_correct_output in [
             # Check float and basic lat/lon-context free degree unit
             (cf.Data(45.0, units="degrees"), "45.0"),
@@ -174,10 +177,30 @@ class GridMappingsTest(unittest.TestCase):
             (cf.Data(45, units="degrees_east"), "45"),
             (cf.Data(45, units="degrees_E"), "45"),
             (cf.Data(45, units="degreeE"), "45"),
+            # Check negative
+            (cf.Data(-0.1, units="degrees"), "-0.1"),
+            (cf.Data(-10, units="degrees"), "-10"),
+            # Check zero case
+            (cf.Data(0, units="degrees_north"), "0"),
+            (cf.Data(0.0, units="degrees_north"), "0.0"),
+            # Check radians units cases and >180
+            (cf.Data(190, units="radians"), "190R"),
+            (cf.Data(190.0, units="radians"), "190.0R"),
+            # Check TODO
+            # TODO
         ]:
             _input, correct_output = input_with_correct_output
             p = cf.convert_cf_angular_data_to_proj(_input)
             self.assertEqual(p, correct_output)
+
+        # Check representative invalid inputs error correctly
+        for bad_input in [
+            cf.Data([1, 2, 3]),  # not singular (size 1)
+            cf.Data(45),  # no units
+            cf.Data(45, "m"),  # non-angular units
+        ]:
+            with self.assertRaises(ValueError):
+                cf.convert_cf_angular_data_to_proj(bad_input)
 
         # Note that 'convert_cf_angular_data_to_proj' and
         # 'convert_proj_angular_data_to_cf' are not strict inverse
