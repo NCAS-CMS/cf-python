@@ -219,6 +219,16 @@ class GridMappingsTest(unittest.TestCase):
             )
             self.assertEqual(p, p2)
 
+            # With a lat or lon 'context'
+            p3 = cf.convert_cf_angular_data_to_proj(
+                cf.convert_proj_angular_data_to_cf(p, context="lat")
+            )
+            self.assertEqual(p, p3)
+            p4 = cf.convert_cf_angular_data_to_proj(
+                cf.convert_proj_angular_data_to_cf(p, context="lon")
+            )
+            self.assertEqual(p, p4)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
