@@ -239,27 +239,16 @@ def convert_cf_angular_data_to_proj(data):
     units_str = units.units
 
     degrees_unit_prefix = ["degree", "degrees"]
-    # Valid possibilities from 4.1. Latitude Coordinate:
-    # http://cfconventions.org/cf-conventions/
-    # cf-conventions.html#latitude-coordinate
-    valid_cf_lat_units = [
+    # Taken from 4.1. Latitude Coordinate and 4.2. Longitude Coordinate:
+    # http://cfconventions.org/cf-conventions/cf-conventions.html...
+    # ...#latitude-coordinate and ...#longitude-coordinate
+    valid_cf_lat_lon_units = [
         s + e
         for s, e in itertools.product(
-            degrees_unit_prefix, ("_north", "_N", "N")
+            degrees_unit_prefix, ("_north", "_N", "N", "_east", "_E", "E")
         )
     ]
-    # Valid possibilities from 4.2. Longitude Coordinate, see:
-    # http://cfconventions.org/cf-conventions/
-    # cf-conventions.html#longitude-coordinate
-    valid_cf_lon_units = [
-        s + e
-        for s, e in itertools.product(
-            degrees_unit_prefix, ("_east", "_E", "E")
-        )
-    ]
-    valid_degrees_units = (
-        degrees_unit_prefix + valid_cf_lat_units + valid_cf_lon_units
-    )
+    valid_degrees_units = degrees_unit_prefix + valid_cf_lat_lon_units
 
     if units_str in valid_degrees_units:
         # No need for suffix 'D' for decimal degrees, as that is the default
