@@ -213,21 +213,26 @@ class GridMappingsTest(unittest.TestCase):
         # undone to their original form by operation of both
         # functions, namely those with this 'simplest' PROJ form,
         # do indeed get re-generated with operation of both:
-        for p in ("10", "-10", "0", "1R", "0.2R", "0.1R"):
+        for p in ("10", "-10", "10.11", "0", "1R", "0.2R", "-0.1R", "0R"):
             p2 = cf.convert_cf_angular_data_to_proj(
                 cf.convert_proj_angular_data_to_cf(p)
             )
             self.assertEqual(p, p2)
 
-            # With a lat or lon 'context'
-            p3 = cf.convert_cf_angular_data_to_proj(
-                cf.convert_proj_angular_data_to_cf(p, context="lat")
-            )
-            self.assertEqual(p, p3)
-            p4 = cf.convert_cf_angular_data_to_proj(
-                cf.convert_proj_angular_data_to_cf(p, context="lon")
-            )
-            self.assertEqual(p, p4)
+            # With a lat or lon 'context'. Only non-radians inputs will
+            # be re-generated since degrees_X gets converted back to the
+            # default degrees, so skip those in these test cases.
+            if not p.endswith("R"):
+                a = cf.convert_proj_angular_data_to_cf(p, context="lat")
+                p3 = cf.convert_cf_angular_data_to_proj(
+                    cf.convert_proj_angular_data_to_cf(p, context="lat")
+                )
+                self.assertEqual(p, p3)
+
+                p4 = cf.convert_cf_angular_data_to_proj(
+                    cf.convert_proj_angular_data_to_cf(p, context="lon")
+                )
+                self.assertEqual(p, p4)
 
 
 if __name__ == "__main__":
