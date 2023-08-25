@@ -17,6 +17,7 @@ from .functions import (
     indices_shape,
     parse_indices,
 )
+from .gridmappings import _get_cf_grid_mapping_from_name
 
 _empty_set = set()
 
@@ -476,21 +477,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             default, message=f"{self.__class__.__name__} has no data"
         )
 
-
-def _get_cf_grid_mapping_from_name(gm_name):
-    """TODOSADIE."""
-    cf_supported_gm_names = {
-        gm.grid_mapping_name: gm for gm in _all_concrete_grid_mappings
-    }
-    if gm_name in cf_supported_gm_names:
-        return cf_supported_gm_names[gm_name]
-    else:
-        return
-
-    def get_grid_mappings(self):
+    def get_grid_mappings(self, as_class=False):
         """Returns coordinate conversions with grid mapping parameters.
 
         .. versionadded:: GMVER
+
+        :Parameters:
+
+            as_class: `bool`, optional
+                If `True`, return the grid mapping as the equivalent
+                CF Class, for example cf.RotatedLatitudeLongitude,
+                rather than as a string corresponding to the value
+                of the 'grid_mapping_name' attribute, which is
+                the default.
 
         :Returns:
 
@@ -514,7 +513,10 @@ def _get_cf_grid_mapping_from_name(gm_name):
                 "grid_mapping_name", default=None
             )
             if gm:
-                gms[cref_name] = gm
+                if as_class:
+                    gms[cref_name] = _get_cf_grid_mapping_from_name(gm)
+                else:
+                    gms[cref_name] = gm
         return gms
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):

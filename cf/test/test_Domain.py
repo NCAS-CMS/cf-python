@@ -301,6 +301,11 @@ class DomainTest(unittest.TestCase):
                 'coordinatereference1': 'rotated_latitude_longitude'
             }
         )
+        self.assertEqual(
+            self.d.get_grid_mappings(as_class=True), {
+                'coordinatereference1': cf.RotatedLatitudeLongitude
+            }
+        )
 
 
 if __name__ == "__main__":

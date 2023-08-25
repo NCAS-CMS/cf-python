@@ -2620,11 +2620,14 @@ class FieldTest(unittest.TestCase):
             {'coordinatereference1': 'rotated_latitude_longitude'}
         )
         self.assertEqual(
+            self.f.get_grid_mappings(as_class=True),
+            {'coordinatereference1': cf.RotatedLatitudeLongitude}
+        )
+        self.assertEqual(
             self.f0.get_grid_mappings(), {}
         )
         self.assertEqual(
-            self.f1.get_grid_mappings(),
-            {'coordinatereference1': 'rotated_latitude_longitude'}
+            self.f0.get_grid_mappings(as_class=True), {}
         )
 
 
