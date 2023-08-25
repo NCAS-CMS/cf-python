@@ -15644,7 +15644,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def get_grid_mappings(self, as_class=False):
-        """Returns coordinate conversions with grid mapping parameters.
+        """Returns coordinate conversions with their grid mappings.
 
         .. versionadded:: GMVER
 
@@ -15652,18 +15652,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             as_class: `bool`, optional
                 If `True`, return the grid mapping as the equivalent
-                CF Class, for example cf.RotatedLatitudeLongitude,
-                rather than as a string corresponding to the value
-                of the 'grid_mapping_name' attribute, which is
-                the default.
+                CF Grid Mapping class, for example
+                cf.RotatedLatitudeLongitude, rather than as a string
+                corresponding to the value of the 'grid_mapping_name'
+                attribute, for example 'rotated_latitude_longitude'.
+                By default the 'grid_mapping_name' value is returned.
 
         :Returns:
 
                 `dict`
                      CoordinateConversion construct identifiers with
-                     vaules of their 'grid_mapping_name' attributes,
-                     for all CoordinateConversions of the domain that
-                     have a 'grid_mapping_name' parameter defined.
+                     values of their 'grid_mapping_name' attribute,
+                     or corresponding CF Grid Mapping class if
+                     as_class is `True`, for all CoordinateConversions
+                     of the domain that have a 'grid_mapping_name'
+                     parameter defined.
 
         **Examples**
 

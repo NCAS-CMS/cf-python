@@ -1801,7 +1801,32 @@ _all_concrete_grid_mappings = (
 
 
 def _get_cf_grid_mapping_from_name(gm_name):
-    """TODO."""
+    """Return the CF Grid Mapping class for a 'grid_mapping_name'.
+
+        .. versionadded:: GMVER
+
+        :Parameters:
+
+            gm_name: `str`
+                The value of the 'grid_mapping_name' attribute
+                to convert to the equivalent CF Grid Mapping class.
+
+        :Returns:
+
+                `cf.GridMapping`
+                     The CF Grid Mapping class corresponding to
+                     the input 'grid_mapping_name' attribute.
+
+        **Examples**
+
+        >>> cf._get_cf_grid_mapping_from_name("vertical_perspective")
+        cf.gridmappings.VerticalPerspective
+
+        >>>  cf._get_cf_grid_mapping_from_name("lambert_conformal_conic")
+        cf.gridmappings.LambertConformalConic
+
+
+    """
     cf_supported_gm_names = {
         gm.grid_mapping_name: gm for gm in _all_concrete_grid_mappings
     }
