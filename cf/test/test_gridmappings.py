@@ -31,12 +31,14 @@ all_concrete_grid_mappings_req_args = {
 
 
 class GridMappingsTest(unittest.TestCase):
-    """TODO."""
+    """Unit test for the GridMapping class and any derived classes."""
 
     # Of the example fields, only 1, 6 and 7 have any coordinate references
     # with a coordinate conversion, hence use these to test, plus 0 as an
     # example case of a field without a coordinate reference at all.
     f = cf.example_fields()
+    # TODOGM, could do with a new example field or two with a grid mapping
+    # other than those two below, for diversity and testing on etc.
     f0 = f[0]  # No coordinate reference
     f1 = f[1]  # 2, with grid mappings of [None, 'rotated_latitude_longitude']
     f6 = f[6]  # 1, with grid mapping of ['latitude_longitude']
@@ -94,7 +96,7 @@ class GridMappingsTest(unittest.TestCase):
 
     # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
-        """TODO."""
+        """Test all means of GridMapping inspection.."""
         for cls in cf._all_concrete_grid_mappings:
             if cls.__name__ not in all_concrete_grid_mappings_req_args:
                 g = cls()
@@ -107,7 +109,7 @@ class GridMappingsTest(unittest.TestCase):
             str(g)
 
     def test_grid_mapping__get_cf_grid_mapping_from_name(self):
-        """TODO."""
+        """Test the '_get_cf_grid_mapping_from_name' function."""
         for gm_name, cf_gm_class in {
             "vertical_perspective": cf.VerticalPerspective,
             "oblique_mercator": cf.ObliqueMercator,
