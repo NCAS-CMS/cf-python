@@ -392,6 +392,7 @@ sphinx_gallery_conf = {
 }
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
 # -- Options for LaTeX output -------------------------------------------------
