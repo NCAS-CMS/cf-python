@@ -5,7 +5,9 @@ from abc import ABC, abstractmethod
 from pyproj import CRS
 
 from .data import Data
+from .data.utils import is_numeric_dtype
 from .units import Units
+
 
 PROJ_PREFIX = "+proj"
 ALL_GRID_MAPPING_ATTR_NAMES = {
@@ -229,6 +231,10 @@ def convert_cf_angular_data_to_proj(data):
     if data.size != 1:
         raise ValueError(
             f"Input cf.Data must have size 1, got size: {data.size}"
+        )
+    if not is_numeric_dtype(data):
+        raise TypeError(
+            f"Input cf.Data must have numeric data type, got: {data.dtype}"
         )
 
     units = data.Units
