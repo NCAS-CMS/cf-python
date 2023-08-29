@@ -10,50 +10,61 @@ from .units import Units
 
 
 PROJ_PREFIX = "+proj"
+
+# Grid Mapping valid attribute names. Taken from the list given in
+# 'Table F.1. Grid Mapping Attributes' in Appendix F: Grid Mappings'
+# of the Conventions document.
+#
+# Values indicate if attribute values are expected to be numeric (instead
+# of string) for the given attribute key (the table defines this via N, S).
 ALL_GRID_MAPPING_ATTR_NAMES = {
-    "grid_mapping_name",
+    "grid_mapping_name": False,
     # *Those which describe the ellipsoid and prime meridian:*
-    "earth_radius",  # -------------------- PROJ '+R' value
-    "inverse_flattening",  # -------------- PROJ '+rf' value
-    "longitude_of_prime_meridian",
-    "prime_meridian_name",  # ------------- PROJ '+pm' value
-    "reference_ellipsoid_name",  # -------- PROJ '+ellps' value
-    "semi_major_axis",  # ----------------- PROJ '+a' value
-    "semi_minor_axis",  # ----------------- PROJ '+b' value
+    "earth_radius": True,
+    "inverse_flattening": True,
+    "longitude_of_prime_meridian": True,
+    "prime_meridian_name": False,
+    "reference_ellipsoid_name": False,
+    "semi_major_axis": True,
+    "semi_minor_axis": True,
     # *Specific/applicable to only given grid mapping(s):*
     # ...projection origin related:
-    "longitude_of_projection_origin",  # -- PROJ '+lon_0' value
-    "latitude_of_projection_origin",  # --- PROJ '+lat_0' value
-    "scale_factor_at_projection_origin",  # PROJ '+k_0' value
+    "longitude_of_projection_origin": True,
+    "latitude_of_projection_origin": True,
+    "scale_factor_at_projection_origin": True,
     # ...false-Xings:
-    "false_easting",  # ------------------- PROJ '+x_0' value
-    "false_northing",  # ------------------ PROJ '+y_0' value
+    "false_easting": True,
+    "false_northing": True,
     # ...angle axis related:
-    "sweep_angle_axis",  # ---------------- PROJ '+sweep' value
-    "fixed_angle_axis",
+    "sweep_angle_axis": False,
+    "fixed_angle_axis": False,
     # ...central meridian related:
-    "longitude_of_central_meridian",
-    "scale_factor_at_central_meridian",
+    "longitude_of_central_meridian": True,
+    "scale_factor_at_central_meridian": True,
     # ...pole coordinates related:
-    "grid_north_pole_latitude",
-    "grid_north_pole_longitude",
-    "north_pole_grid_longitude",
+    "grid_north_pole_latitude": True,
+    "grid_north_pole_longitude": True,
+    "north_pole_grid_longitude": True,
     # ...other:
-    "standard_parallel",  # --------------- PROJ ['+lat_1', '+lat_2'] values
-    "perspective_point_height",  # -------- PROJ '+h' value
-    "azimuth_of_central_line",  # --------- PROJ '+alpha' (ignore '+gamma')
-    "straight_vertical_longitude_from_pole",
+    "standard_parallel": True,
+    "perspective_point_height": True,
+    "azimuth_of_central_line": True,
+    "straight_vertical_longitude_from_pole": True,
     # *Other, not needed for a specific grid mapping but also listed
     # in 'Table F.1. Grid Mapping Attributes':*
-    "crs_wkt",  # ------------------------- PROJ 'crs_wkt' value
-    "geographic_crs_name",
-    "geoid_name",
-    "geopotential_datum_name",
-    "horizontal_datum_name",
-    "projected_crs_name",
-    "towgs84",  # ------------------------- PROJ '+towgs84' value
+    "crs_wkt": False,
+    "geographic_crs_name": False,
+    "geoid_name": False,
+    "geopotential_datum_name": False,
+    "horizontal_datum_name": False,
+    "projected_crs_name": False,
+    "towgs84": True,
 }
-GRID_MAPPING_ATTR_TO_PROJ_STRING_COMP = {
+
+# Indicates what PROJ string ID component(s) refer(s) to the grid mapping
+# attribute in question when '+' is added as a suffix, for example
+# 'earth_radius' is '+R' and 'inverse_flattening' is '+rf'
+GRID_MAPPING_ATTR_TO_PROJ_STRING_COMP_VALUES = {
     "earth_radius": "R",
     "inverse_flattening": "rf",
     "prime_meridian_name": "pm",
@@ -68,7 +79,7 @@ GRID_MAPPING_ATTR_TO_PROJ_STRING_COMP = {
     "sweep_angle_axis": "sweep",
     "standard_parallel": ("lat_1", "lat_2"),
     "perspective_point_height": "h",
-    "azimuth_of_central_line": "alpha",
+    "azimuth_of_central_line": ("alpha", "gamma"),
     "crs_wkt": "crs_wkt",
     "towgs84": "towgs84",
 }
