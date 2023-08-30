@@ -142,8 +142,8 @@ cr_canonical_units = {
     "latitude_of_projection_origin": Units("degrees_north"),
     "scale_factor_at_projection_origin": Units("1"),
     # ...false-Xings:
-    # MISSING: false_easting
-    # MISSING false_northing
+    "false_easting": Units("m"),
+    "false_northing": Units("m"),
     # ...central meridian related:
     "longitude_of_central_meridian": Units("degrees_east"),
     "scale_factor_at_central_meridian": Units("1"),
@@ -154,11 +154,18 @@ cr_canonical_units = {
     # ...other:
     "standard_parallel": Units("degrees_north"),
     "perspective_point_height": Units("m"),
-    # MISSING: "azimuth_of_central_line"
+    "azimuth_of_central_line": Units("degrees"),
     "straight_vertical_longitude_from_pole": Units("degrees_north"),
     # *Other, not needed for a specific grid mapping but also listed
     # in 'Table F.1. Grid Mapping Attributes':*
-    # MISSING: "towgs84"
+    # TODOGM towgs84 is very complicated, with multiple components
+    # of translations, roations and scaling each with different units
+    # requirements, so we should probably sort this out later, see:
+    # https://proj.org/en/9.3/operations/transformations/
+    # helmert.html#helmert-transform
+    # where translations are in meters, rotations in arc-seconds, and
+    # scaling is in parts per million.
+    "towgs84": None,
 }
 
 # Indicates what PROJ string ID component(s) refer(s) to the grid mapping
