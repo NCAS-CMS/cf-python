@@ -72,26 +72,116 @@ repr_suffix = ""
 
 _stash2standard_name = {}
 
+
+
+
 # ---------------------------------------------------------------------
-# Coordinate reference constants TODO: turn these into functions
+# Coordinate reference and grid mapping related constants
 # ---------------------------------------------------------------------
+# Grid Mapping valid attribute names. Taken from the list given in
+# 'Table F.1. Grid Mapping Attributes' in Appendix F: Grid Mappings'
+# of the Conventions document.
+#
+# Values indicate if attribute values are expected to be numeric (instead
+# of string) for the given attribute key (the table defines this via N, S).
+# For any value where this is True, canonical units must be provided
+# in the 'cr_canonical_units' dict below.
+cr_gm_valid_attr_names_are_numeric = {
+    "grid_mapping_name": False,
+    # *Those which describe the ellipsoid and prime meridian:*
+    "earth_radius": True,
+    "inverse_flattening": True,
+    "longitude_of_prime_meridian": True,
+    "prime_meridian_name": False,
+    "reference_ellipsoid_name": False,
+    "semi_major_axis": True,
+    "semi_minor_axis": True,
+    # *Specific/applicable to only given grid mapping(s):*
+    # ...projection origin related:
+    "longitude_of_projection_origin": True,
+    "latitude_of_projection_origin": True,
+    "scale_factor_at_projection_origin": True,
+    # ...false-Xings:
+    "false_easting": True,
+    "false_northing": True,
+    # ...angle axis related:
+    "sweep_angle_axis": False,
+    "fixed_angle_axis": False,
+    # ...central meridian related:
+    "longitude_of_central_meridian": True,
+    "scale_factor_at_central_meridian": True,
+    # ...pole coordinates related:
+    "grid_north_pole_latitude": True,
+    "grid_north_pole_longitude": True,
+    "north_pole_grid_longitude": True,
+    # ...other:
+    "standard_parallel": True,
+    "perspective_point_height": True,
+    "azimuth_of_central_line": True,
+    "straight_vertical_longitude_from_pole": True,
+    # *Other, not needed for a specific grid mapping but also listed
+    # in 'Table F.1. Grid Mapping Attributes':*
+    "crs_wkt": False,
+    "geographic_crs_name": False,
+    "geoid_name": False,
+    "geopotential_datum_name": False,
+    "horizontal_datum_name": False,
+    "projected_crs_name": False,
+    "towgs84": True,
+}
 cr_canonical_units = {
+    # *Those which describe the ellipsoid and prime meridian:*
     "earth_radius": Units("m"),
-    "grid_north_pole_latitude": Units("degrees_north"),
-    "grid_north_pole_longitude": Units("degrees_east"),
     "inverse_flattening": Units("1"),
-    "latitude_of_projection_origin": Units("degrees_north"),
-    "longitude_of_central_meridian": Units("degrees_east"),
     "longitude_of_prime_meridian": Units("degrees_east"),
-    "longitude_of_projection_origin": Units("degrees_east"),
-    "north_pole_grid_longitude": Units("degrees"),
-    "perspective_point_height": Units("m"),
-    "scale_factor_at_central_meridian": Units("1"),
-    "scale_factor_at_projection_origin": Units("1"),
     "semi_major_axis": Units("m"),
     "semi_minor_axis": Units("m"),
+    # *Specific/applicable to only given grid mapping(s):*
+    # ...projection origin related:
+    "longitude_of_projection_origin": Units("degrees_east"),
+    "latitude_of_projection_origin": Units("degrees_north"),
+    "scale_factor_at_projection_origin": Units("1"),
+    # ...false-Xings:
+    # MISSING: false_easting
+    # MISSING false_northing
+    # ...central meridian related:
+    "longitude_of_central_meridian": Units("degrees_east"),
+    "scale_factor_at_central_meridian": Units("1"),
+    # ...pole coordinates related:
+    "grid_north_pole_latitude": Units("degrees_north"),
+    "grid_north_pole_longitude": Units("degrees_east"),
+    "north_pole_grid_longitude": Units("degrees"),
+    # ...other:
     "standard_parallel": Units("degrees_north"),
+    "perspective_point_height": Units("m"),
+    # MISSING: "azimuth_of_central_line"
     "straight_vertical_longitude_from_pole": Units("degrees_north"),
+    # *Other, not needed for a specific grid mapping but also listed
+    # in 'Table F.1. Grid Mapping Attributes':*
+    # MISSING: "towgs84"
+}
+
+# Indicates what PROJ string ID component(s) refer(s) to the grid mapping
+# attribute in question when '+' is added as a suffix, for example
+# 'earth_radius' is '+R' and 'inverse_flattening' is '+rf'
+cr_gm_attr_to_proj_string_comps = {
+    "earth_radius": "R",
+    "inverse_flattening": "rf",
+    "prime_meridian_name": "pm",
+    "reference_ellipsoid_name": "ellps",
+    "semi_major_axis": "a",
+    "semi_minor_axis": "b",
+    "longitude_of_projection_origin": "lon_0",
+    "latitude_of_projection_origin": "lat_0",
+    "scale_factor_at_projection_origin": "k_0",
+    "false_easting": "x_0",
+    "false_northing": "y_0",
+    "sweep_angle_axis": "sweep",
+    "standard_parallel": ("lat_1", "lat_2"),
+    "perspective_point_height": "h",
+    "azimuth_of_central_line": ("alpha", "gamma"),
+    "crs_wkt": "crs_wkt",
+    "towgs84": "towgs84",
 }
 
 cr_coordinates = {

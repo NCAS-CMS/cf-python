@@ -4,85 +4,16 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
+from .constants import (
+    cr_gm_valid_attr_names_are_numeric,
+    cr_gm_attr_to_proj_string_comps,
+)
 from .data import Data
 from .data.utils import is_numeric_dtype
 from .units import Units
 
 
 PROJ_PREFIX = "+proj"
-
-# Grid Mapping valid attribute names. Taken from the list given in
-# 'Table F.1. Grid Mapping Attributes' in Appendix F: Grid Mappings'
-# of the Conventions document.
-#
-# Values indicate if attribute values are expected to be numeric (instead
-# of string) for the given attribute key (the table defines this via N, S).
-ALL_GRID_MAPPING_ATTR_NAMES = {
-    "grid_mapping_name": False,
-    # *Those which describe the ellipsoid and prime meridian:*
-    "earth_radius": True,
-    "inverse_flattening": True,
-    "longitude_of_prime_meridian": True,
-    "prime_meridian_name": False,
-    "reference_ellipsoid_name": False,
-    "semi_major_axis": True,
-    "semi_minor_axis": True,
-    # *Specific/applicable to only given grid mapping(s):*
-    # ...projection origin related:
-    "longitude_of_projection_origin": True,
-    "latitude_of_projection_origin": True,
-    "scale_factor_at_projection_origin": True,
-    # ...false-Xings:
-    "false_easting": True,
-    "false_northing": True,
-    # ...angle axis related:
-    "sweep_angle_axis": False,
-    "fixed_angle_axis": False,
-    # ...central meridian related:
-    "longitude_of_central_meridian": True,
-    "scale_factor_at_central_meridian": True,
-    # ...pole coordinates related:
-    "grid_north_pole_latitude": True,
-    "grid_north_pole_longitude": True,
-    "north_pole_grid_longitude": True,
-    # ...other:
-    "standard_parallel": True,
-    "perspective_point_height": True,
-    "azimuth_of_central_line": True,
-    "straight_vertical_longitude_from_pole": True,
-    # *Other, not needed for a specific grid mapping but also listed
-    # in 'Table F.1. Grid Mapping Attributes':*
-    "crs_wkt": False,
-    "geographic_crs_name": False,
-    "geoid_name": False,
-    "geopotential_datum_name": False,
-    "horizontal_datum_name": False,
-    "projected_crs_name": False,
-    "towgs84": True,
-}
-
-# Indicates what PROJ string ID component(s) refer(s) to the grid mapping
-# attribute in question when '+' is added as a suffix, for example
-# 'earth_radius' is '+R' and 'inverse_flattening' is '+rf'
-GRID_MAPPING_ATTR_TO_PROJ_STRING_COMP_VALUES = {
-    "earth_radius": "R",
-    "inverse_flattening": "rf",
-    "prime_meridian_name": "pm",
-    "reference_ellipsoid_name": "ellps",
-    "semi_major_axis": "a",
-    "semi_minor_axis": "b",
-    "longitude_of_projection_origin": "lon_0",
-    "latitude_of_projection_origin": "lat_0",
-    "scale_factor_at_projection_origin": "k_0",
-    "false_easting": "x_0",
-    "false_northing": "y_0",
-    "sweep_angle_axis": "sweep",
-    "standard_parallel": ("lat_1", "lat_2"),
-    "perspective_point_height": "h",
-    "azimuth_of_central_line": ("alpha", "gamma"),
-    "crs_wkt": "crs_wkt",
-    "towgs84": "towgs84",
-}
 
 
 """
@@ -403,7 +334,7 @@ class GridMapping(ABC):
 
         """
         for kwarg in kwargs:
-            if kwarg not in ALL_GRID_MAPPING_ATTR_NAMES:
+            if kwarg not in cr_gm_valid_attr_names_are_numeric:
                 raise ValueError(
                     "Unrecognised map parameter provided for the "
                     f"Grid Mapping: {kwarg}"
