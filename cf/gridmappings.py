@@ -655,9 +655,6 @@ class AlbersEqualArea(ConicGridMapping):
             the `Data` units are taken and must be angular and
             compatible with latitude.
 
-            The default is (0.0, 0.0), that is 0.0 degrees_north
-            for the first and second standard parallel values.
-
         longitude_of_central_meridian: number or scalar `Data`, optional
             The longitude of (natural) origin i.e. central meridian.
             If provided as a number or `Data` without units, the units
@@ -1039,7 +1036,8 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
             taken and must be compatible with distance.
             The default is 0.0 metres.
 
-        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+        standard_parallel: 2-`tuple` of number or scalar `Data`
+                           or `None`, optional
             The standard parallel value(s): the first (PROJ 'lat_1'
             value) and/or the second (PROJ 'lat_2' value), given
             as a 2-tuple of numbers or strings corresponding to
@@ -1074,7 +1072,7 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         self,
         false_easting=0.0,
         false_northing=0.0,
-        standard_parallel=(0.0, None),
+        standard_parallel=(0.0, 0.0),
         scale_factor_at_projection_origin=1.0,
         longitude_of_central_meridian=0.0,
         **kwargs,
@@ -1126,7 +1124,8 @@ class Mercator(CylindricalGridMapping):
             taken and must be compatible with distance.
             The default is 0.0 metres.
 
-        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+        standard_parallel: 2-`tuple` of number or scalar `Data`
+                           or `None`, optional
             The standard parallel value(s): the first (PROJ 'lat_1'
             value) and/or the second (PROJ 'lat_2' value), given
             as a 2-tuple of numbers or strings corresponding to
@@ -1161,7 +1160,7 @@ class Mercator(CylindricalGridMapping):
         self,
         false_easting=0.0,
         false_northing=0.0,
-        standard_parallel=(0.0, None),
+        standard_parallel=(0.0, 0.0),
         longitude_of_projection_origin=0.0,
         scale_factor_at_projection_origin=1.0,
         **kwargs,
@@ -1386,7 +1385,8 @@ class PolarStereographic(AzimuthalGridMapping):
             taken and must be compatible with distance.
             The default is 0.0 metres.
 
-        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+        standard_parallel: 2-`tuple` of number or scalar `Data`
+                           or `None`, optional
             The standard parallel value(s): the first (PROJ 'lat_1'
             value) and/or the second (PROJ 'lat_2' value), given
             as a 2-tuple of numbers or strings corresponding to
