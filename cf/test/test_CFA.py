@@ -449,8 +449,10 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g.data.get_filenames()), 2)
         self.assertEqual(len(g.get_filenames()), 3)
 
-    def test_UUU(self):
+    def test_CFA_unlimited_dimension(self):
         """Test CFA with unlimited dimensions"""
+        # Create a CAF file field from a field that has an unlimited
+        # dimension and no metadata constructs spanning that dimension
         f = cf.example_field(0)
         d = f.domain_axis("X")
         d.nc_set_unlimited(True)
@@ -461,6 +463,7 @@ class CFATest(unittest.TestCase):
 
         # Check that the CFA file can be read
         h = cf.read(tmpfile2)
+        self.assertEqual(len(h), 1)
 
 
 if __name__ == "__main__":
