@@ -8,6 +8,9 @@
   sphinxcontrib-spelling==4.3.0
 
 * The `.py` files to generate recipes are stored in `docs/source/recipes/`.
+  
+* The netCDF and PP files for generationn of the same are available to download at: 
+  https://drive.google.com/drive/folders/1gaMHbV0A37hzQHH_C5oMBWOoxgoQPdCT?usp=sharing
 
 * For every new added recipe, `docs/source/recipes/recipe_list.txt` has to be
   edited to include the newly added recipe with its corresponding filters in the
