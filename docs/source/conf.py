@@ -306,7 +306,7 @@ html_title = "Documentation"
 
 # The name of an image file (relative to this directory) to place at
 # the top of the sidebar.
-html_logo = "images/logo.png"
+html_logo = "images/logo.svg"
 
 # The name of an image file (within the static path) to use as favicon
 # of the docs.  This file should be a Windows icon file (.ico) being
