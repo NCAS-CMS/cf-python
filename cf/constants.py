@@ -73,8 +73,6 @@ repr_suffix = ""
 _stash2standard_name = {}
 
 
-
-
 # ---------------------------------------------------------------------
 # Coordinate reference and grid mapping related constants
 # ---------------------------------------------------------------------
@@ -155,7 +153,9 @@ cr_canonical_units = {
     "standard_parallel": Units("degrees_north"),
     "perspective_point_height": Units("m"),
     "azimuth_of_central_line": Units("degrees"),
-    "straight_vertical_longitude_from_pole": Units("degrees_north"),
+    # TODOGM check the below is correct, was 'degrees_north' before but it
+    # is a longitude so surely that was wrong?:
+    "straight_vertical_longitude_from_pole": Units("degrees_east"),
     # *Other, not needed for a specific grid mapping but also listed
     # in 'Table F.1. Grid Mapping Attributes':*
     # TODOGM towgs84 is very complicated, with multiple components
