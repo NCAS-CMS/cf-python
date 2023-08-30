@@ -451,7 +451,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_unlimited_dimension(self):
         """Test CFA with unlimited dimensions"""
-        # Create a CAF file field from a field that has an unlimited
+        # Create a CAF file from a field that has an unlimited
         # dimension and no metadata constructs spanning that dimension
         f = cf.example_field(0)
         d = f.domain_axis("X")
