@@ -4,14 +4,12 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
-from .constants import (
+from .constants import (  # cr_gm_attr_to_proj_string_comps,
     cr_gm_valid_attr_names_are_numeric,
-    cr_gm_attr_to_proj_string_comps,
 )
 from .data import Data
 from .data.utils import is_numeric_dtype
 from .units import Units
-
 
 PROJ_PREFIX = "+proj"
 
@@ -52,11 +50,18 @@ DUMMY_PARAMS = {"a": "b", "c": 0.0}  # TODOPARAMETERS, drop this
 def convert_proj_angular_data_to_cf(proj_data, context=None):
     """Convert a PROJ angular data component into CF Data with CF Units.
 
-    Note that PROJ units for latitude and longitude are in
+    PROJ units for latitude and longitude are in
     units of decimal degrees, where forming a string by adding
     a suffix character indicates alternative units of
     radians if the suffix is 'R' or 'r'. If a string, a suffix
     of 'd', 'D' or '°' confirm units of decimal degrees.
+
+    Note that `cf.convert_cf_angular_data_to_proj` and
+    this function are not strict inverse functions,
+    since the former will always convert to the *simplest*
+    way to specify the PROJ input, namely with no suffix for
+    degrees(_X) units and the 'R' suffix for radians, whereas
+    the input might have 'D' or 'r' etc. instead.
 
     .. versionadded:: GMVER
 
@@ -151,8 +156,18 @@ def convert_proj_angular_data_to_cf(proj_data, context=None):
 def convert_cf_angular_data_to_proj(data):
     """Convert singleton angular CF Data into a PROJ data component.
 
-    PROJ units for latitude and longitude are generally in units of
-    decimal degrees.
+    PROJ units for latitude and longitude are in
+    units of decimal degrees, where forming a string by adding
+    a suffix character indicates alternative units of
+    radians if the suffix is 'R' or 'r'. If a string, a suffix
+    of 'd', 'D' or '°' confirm units of decimal degrees.
+
+    Note that this function and `convert_proj_angular_data_to_cf`
+    are not strict inverse functions, since this function
+    will always convert to the *simplest*
+    way to specify the PROJ input, namely with no suffix for
+    degrees(_X) units and the 'R' suffix for radians, whereas
+    the input might have 'D' or 'r' etc. instead.
 
     .. versionadded:: GMVER
 
@@ -285,11 +300,12 @@ class GridMapping(ABC):
                 .. note:: If used in conjunction with 'earth_radius',
                           the 'earth_radius' parameter takes precedence.
 
-            inverse_flattening: number, optional
+            inverse_flattening: number or scalar `Data`, optional
                 The reverse flattening of the ellipsoid (PROJ 'rf'
                 value), :math:`\frac{1}{f}`, where f corresponds to
                 the flattening value (PROJ 'f' value) for the
-                ellipsoid. Unitless. The default is 298.257223563.
+                ellipsoid. Unitless, so `Data` must be unitless.
+                The default is 298.257223563.
 
             prime_meridian_name: `str`, optional
                 A predeclared name to define the prime meridian (PROJ
@@ -303,30 +319,44 @@ class GridMapping(ABC):
                           'longitude_of_prime_meridian', this
                           parameter takes precedence.
 
-            longitude_of_prime_meridian: `str or `None`, optional
+            longitude_of_prime_meridian: number or scalar `Data`, optional
                 The longitude relative to Greenwich of the
-                prime meridian. The default is 0.0.
+                prime meridian. If provided as a number or `Data` without
+                units, the units are taken as 'degrees_east', else the
+                `Data` units are taken and must be angular and
+                compatible with longitude. The default is 0.0
+                degrees_east.
 
                 .. note:: If used in conjunction with
                           'prime_meridian_name', the
                           'prime_meridian_name' parameter takes
                           precedence.
 
-            semi_major_axis: number or `None`, optional
-                The semi-major axis of the ellipsoid (PROJ 'a' value)
-                in units of meters. The default is 6378137.0.
+            semi_major_axis: number, scalar `Data` or `None`, optional
+                The semi-major axis of the ellipsoid (PROJ 'a' value),
+                in units of meters unless units are otherwise specified
+                via `Data` units, in which case they must be conformable
+                to meters and will be converted. The default is 6378137.0.
 
-            semi_minor_axis: number or `None`, optional
+            semi_minor_axis: number, scalar `Data` or `None`, optional
                 The semi-minor axis of the ellipsoid (PROJ 'b' value)
-                in units of meters. The default is 6356752.314245179.
+                in units of meters unless units are otherwise specified
+                via `Data` units, in which case they must be conformable
+                to meters and will be converted. The default is
+                6356752.314245179.
 
-            earth_radius: number or `None`, optional
+            earth_radius: number, scalar `Data` or `None`, optional
                 The radius of the ellipsoid, if a sphere (PROJ 'R' value),
-                in units of meters. If the ellipsoid is not a sphere,
+                in units of meters unless units are otherwise specified
+                via `Data` units, in which case they must be conformable
+                to meters and will be converted.
+
+                If the ellipsoid is not a sphere, then
                 set as `None`, the default, to indicate that ellipsoid
                 parameters such as the reference_ellipsoid_name or
                 semi_major_axis and semi_minor_axis are being set,
-                since these take precendence.
+                since these will should be used to define a
+                non-spherical ellipsoid.
 
                 .. note:: If used in conjunction with
                           'reference_ellipsoid_name', this parameter
@@ -400,29 +430,33 @@ class AzimuthalGridMapping(GridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -449,43 +483,48 @@ class ConicGridMapping(GridMapping):
 
     :Parameters:
 
-        standard_parallel: number, `str` or 2-`tuple`
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
+
+            The default is (0.0, 0.0), that is 0.0 degrees_north
             for the first and second standard parallel values.
 
-        longitude_of_central_meridian: number or `str`, optional
-            The longitude of (natural) origin i.e. central meridian, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_central_meridian: number or scalar `Data`, optional
+            The longitude of (natural) origin i.e. central meridian.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -514,13 +553,19 @@ class CylindricalGridMapping(GridMapping):
 
     :Parameters:
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -552,10 +597,13 @@ class PerspectiveGridMapping(AzimuthalGridMapping):
 
     :Parameters:
 
-        perspective_point_height: number
+        perspective_point_height: number or scalar `Data`
             The height of the view point above the surface (PROJ
             'h') value, for example the height of a satellite above
-            the Earth, in units of meters.
+            the Earth, in units of meters 'm'. If provided
+            as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
 
     """
 
@@ -595,43 +643,48 @@ class AlbersEqualArea(ConicGridMapping):
 
     :Parameters:
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
+
+            The default is (0.0, 0.0), that is 0.0 degrees_north
             for the first and second standard parallel values.
 
-        longitude_of_central_meridian: number or `str`, optional
-            The longitude of (natural) origin i.e. central meridian, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_central_meridian: number or scalar `Data`, optional
+            The longitude of (natural) origin i.e. central meridian.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -663,29 +716,33 @@ class AzimuthalEquidistant(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -717,34 +774,41 @@ class Geostationary(PerspectiveGridMapping):
 
     :Parameters:
 
-        perspective_point_height: number
+        perspective_point_height: number or scalar `Data`
             The height of the view point above the surface (PROJ
             'h') value, for example the height of a satellite above
-            the Earth, in units of meters.
+            the Earth, in units of meters 'm'. If provided
+            as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
         sweep_angle_axis: `str`, optional
             Sweep angle axis of the viewing instrument, which indicates
@@ -830,29 +894,33 @@ class LambertAzimuthalEqualArea(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -884,43 +952,48 @@ class LambertConformalConic(ConicGridMapping):
 
     :Parameters:
 
-        standard_parallel: number, `str` or 2-`tuple`
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
+
+            The default is (0.0, 0.0), that is 0.0 degrees_north
             for the first and second standard parallel values.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -952,40 +1025,45 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, None), that is 0.0 decimal degrees
-            for the first standard parallel value and nothing set for
-            the second.
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
 
-        longitude_of_central_meridian: number or `str`, optional
-            The longitude of (natural) origin i.e. central meridian, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            The default is (0.0, 0.0), that is 0.0 degrees_north
+            for the first and second standard parallel values.
 
-        scale_factor_at_projection_origin: number, optional
+        longitude_of_central_meridian: number or scalar `Data`, optional
+            The longitude of (natural) origin i.e. central meridian.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
+
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
             The scale factor used in the projection (PROJ 'k_0' value).
-            It is unitless. The default is 1.0.
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
     """
 
@@ -1034,40 +1112,45 @@ class Mercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, None), that is 0.0 decimal degrees
-            for the first standard parallel value and nothing set for
-            the second.
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            The default is (0.0, 0.0), that is 0.0 degrees_north
+            for the first and second standard parallel values.
 
-        scale_factor_at_projection_origin: number, optional
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
+
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
             The scale factor used in the projection (PROJ 'k_0' value).
-            It is unitless. The default is 1.0.
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
     """
 
@@ -1116,43 +1199,45 @@ class ObliqueMercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        azimuth_of_central_line: number or `str`, optional
+        azimuth_of_central_line: number or scalar `Data`, optional
             The azimuth i.e. tilt angle of the centerline clockwise
             from north at the center point of the line (PROJ 'alpha'
-            value), in units of decimal degrees, where
-            forming a string by adding a suffix character
-            indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            value). If provided as a number or `Data` without units,
+            the units are taken as 'degrees', else the `Data`
+            units are taken and must be angular and compatible.
+            The default is 0.0 degrees.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        scale_factor_at_projection_origin: number, optional
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
             The scale factor used in the projection (PROJ 'k_0' value).
-            It is unitless. The default is 1.0.
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
     """
 
@@ -1203,29 +1288,33 @@ class Orthographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -1257,55 +1346,59 @@ class PolarStereographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        straight_vertical_longitude_from_pole: number or `str`, optional
+        straight_vertical_longitude_from_pole: number or scalar `Data`, optional
             The longitude of (natural) origin i.e. central meridian,
-            oriented straight up from the North or South Pole, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+            oriented straight up from the North or South Pole.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        scale_factor_at_projection_origin: number, optional
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
             The scale factor used in the projection (PROJ 'k_0' value).
-            It is unitless. The default is 1.0.
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        standard_parallel: number, `str` or 2-`tuple`, optional
-            The standard parallel values, either the first (PROJ
-            'lat_1' value), the second (PROJ 'lat_2' value) or
-            both, given as a 2-tuple of numbers or strings corresponding to
+        standard_parallel: 2-`tuple` of number or scalar `Data` or `None`
+            The standard parallel value(s): the first (PROJ 'lat_1'
+            value) and/or the second (PROJ 'lat_2' value), given
+            as a 2-tuple of numbers or strings corresponding to
             the first and then the second in order, where `None`
-            indicates that a value is not being specified for either. In
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            indicates that a value is not being set for either.
 
-            The default is (0.0, 0.0), that is 0.0 decimal degrees
+            If provided as a number or `Data` without units, the units
+            for each of the values are taken as 'degrees_north', else
+            the `Data` units are taken and must be angular and
+            compatible with latitude.
+
+            The default is (0.0, 0.0), that is 0.0 degrees_north
             for the first and second standard parallel values.
 
     """
@@ -1373,29 +1466,25 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
 
     :Parameters:
 
-        grid_north_pole_latitude: number or `str`
+        grid_north_pole_latitude: number or scalar `Data`
             Latitude of the North pole of the unrotated source CRS,
-            expressed in the rotated geographic CRS, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            expressed in the rotated geographic CRS.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
 
-        grid_north_pole_longitude: number or `str`
+        grid_north_pole_longitude: number or scalar `Data`
             Longitude of the North pole of the unrotated source CRS,
-            expressed in the rotated geographic CRS, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees.
+            expressed in the rotated geographic CRS.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
 
-        north_pole_grid_longitude: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        north_pole_grid_longitude: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
 
     """
 
@@ -1464,21 +1553,26 @@ class Sinusoidal(GridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_central_meridian: number or scalar `Data`, optional
+            The longitude of (natural) origin i.e. central meridian.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -1523,33 +1617,37 @@ class Stereographic(AzimuthalGridMapping):
 
     :Parameters:
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        scale_factor_at_projection_origin: number, optional
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
             The scale factor used in the projection (PROJ 'k_0' value).
-            It is unitless. The default is 1.0.
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
     """
 
@@ -1602,33 +1700,37 @@ class TransverseMercator(CylindricalGridMapping):
 
     :Parameters:
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        scale_factor_at_central_meridian: number, optional
-            The scale factor at (natural) origin i.e. central meridian.
-            It is unitless. The default is 1.0.
+        scale_factor_at_projection_origin: number or scalar `Data`, optional
+            The scale factor used in the projection (PROJ 'k_0' value).
+            Unitless, so `Data` must be unitless. The default is 1.0.
 
-        longitude_of_central_meridian: number or `str`, optional
-            The longitude of (natural) origin i.e. central meridian, in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_central_meridian: number or scalar `Data`, optional
+            The longitude of (natural) origin i.e. central meridian.
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
     """
 
@@ -1677,34 +1779,41 @@ class VerticalPerspective(PerspectiveGridMapping):
 
     :Parameters:
 
-        perspective_point_height: number
+        perspective_point_height: number or scalar `Data`
             The height of the view point above the surface (PROJ
             'h') value, for example the height of a satellite above
-            the Earth, in units of meters.
+            the Earth, in units of meters 'm'. If provided
+            as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
 
-        longitude_of_projection_origin: number or `str`, optional
-            The longitude of projection center (PROJ 'lon_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        longitude_of_projection_origin: number or scalar `Data`, optional
+            The longitude of projection center (PROJ 'lon_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_east', else the `Data` units are
+            taken and must be angular and compatible with longitude.
+            The default is 0.0 degrees_east.
 
-        latitude_of_projection_origin: number or `str`, optional
-            The latitude of projection center (PROJ 'lat_0' value), in
-            units of decimal degrees, where forming a string by adding
-            a suffix character indicates alternative units of
-            radians if the suffix is 'R' or 'r'. If a string, a suffix
-            of 'd', 'D' or '°' confirm units of decimal degrees. The default
-            is 0.0 decimal degrees.
+        latitude_of_projection_origin: number or scalar `Data`, optional
+            The latitude of projection center (PROJ 'lat_0' value).
+            If provided as a number or `Data` without units, the units
+            are taken as 'degrees_north', else the `Data` units are
+            taken and must be angular and compatible with latitude.
+            The default is 0.0 degrees_north.
 
-        false_easting: number, optional
-            The false easting (PROJ 'x_0') value, in units of metres.
-            The default is 0.0.
+        false_easting: number or scalar `Data`, optional
+            The false easting (PROJ 'x_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
-        false_northing: number, optional
-            The false northing (PROJ 'y_0') value, in units of metres.
-            The default is 0.0.
+        false_northing: number or scalar `Data`, optional
+            The false northing (PROJ 'y_0') value.
+            If provided as a number or `Data` without units, the units
+            are taken as metres 'm', else the `Data` units are
+            taken and must be compatible with distance.
+            The default is 0.0 metres.
 
     """
 
@@ -1751,27 +1860,27 @@ _all_concrete_grid_mappings = (
 def _get_cf_grid_mapping_from_name(gm_name):
     """Return the CF Grid Mapping class for a 'grid_mapping_name'.
 
-        .. versionadded:: GMVER
+    .. versionadded:: GMVER
 
-        :Parameters:
+    :Parameters:
 
-            gm_name: `str`
-                The value of the 'grid_mapping_name' attribute
-                to convert to the equivalent CF Grid Mapping class.
+        gm_name: `str`
+            The value of the 'grid_mapping_name' attribute
+            to convert to the equivalent CF Grid Mapping class.
 
-        :Returns:
+    :Returns:
 
-                `cf.GridMapping`
-                     The CF Grid Mapping class corresponding to
-                     the input 'grid_mapping_name' attribute.
+            `cf.GridMapping`
+                 The CF Grid Mapping class corresponding to
+                 the input 'grid_mapping_name' attribute.
 
-        **Examples**
+    **Examples**
 
-        >>> cf._get_cf_grid_mapping_from_name("vertical_perspective")
-        cf.gridmappings.VerticalPerspective
+    >>> cf._get_cf_grid_mapping_from_name("vertical_perspective")
+    cf.gridmappings.VerticalPerspective
 
-        >>>  cf._get_cf_grid_mapping_from_name("lambert_conformal_conic")
-        cf.gridmappings.LambertConformalConic
+    >>>  cf._get_cf_grid_mapping_from_name("lambert_conformal_conic")
+    cf.gridmappings.LambertConformalConic
 
 
     """
