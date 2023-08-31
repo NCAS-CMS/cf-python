@@ -435,8 +435,6 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_multiple_files(self):
         """Test storing multiple CFA frgament locations."""
-        tmpfile1 = "delme1.nc"
-        tmpfile2 = "delme2.nc"
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -450,6 +448,22 @@ class CFATest(unittest.TestCase):
 
         self.assertEqual(len(g.data.get_filenames()), 2)
         self.assertEqual(len(g.get_filenames()), 3)
+
+    def test_CFA_unlimited_dimension(self):
+        """Test CFA with unlimited dimensions"""
+        # Create a CFA file from a field that has an unlimited
+        # dimension and no metadata constructs spanning that dimension
+        f = cf.example_field(0)
+        d = f.domain_axis("X")
+        d.nc_set_unlimited(True)
+        f.del_construct("X")
+        cf.write(f, tmpfile1)
+        g = cf.read(tmpfile1)
+        cf.write(g, tmpfile2, cfa=True)
+
+        # Check that the CFA file can be read
+        h = cf.read(tmpfile2)
+        self.assertEqual(len(h), 1)
 
 
 if __name__ == "__main__":

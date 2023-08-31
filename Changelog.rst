@@ -1,3 +1,11 @@
+version 3.15.3
+--------------
+
+**2023-08-31**
+
+* Prevent unlimited dimensions from being written to CFA-netCDF files
+  (https://github.com/NCAS-CMS/cf-python/issues/689)
+
 version 3.15.2
 --------------
 
