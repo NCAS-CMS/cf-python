@@ -28,7 +28,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         If a CFA-netCDF file is being written then no axis can be
         unlimited, i.e. `False` is always returned.
 
-        .. versionadded:: TODOUNLIMITED
+        .. versionadded:: 3.15.3
 
         :Parameters:
 
