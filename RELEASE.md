@@ -164,3 +164,5 @@
   https://github.com/NCAS-CMS/cf-python/releases
   
 * Upload the new release to Zenodo: https://zenodo.org/record/3961353
+
+* Copy the archive docs to https://github.com/NCAS-CMS/cf-python-docs
