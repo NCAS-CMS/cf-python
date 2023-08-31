@@ -182,9 +182,9 @@ std_dev = base_period.collapse("T: sd")
 # 8. The line for variable ``nino34_anomaly`` calculates the standardized
 # anomaly for each time step in the ``nino34_index`` data. It subtracts the
 # ``climatology`` from the ``nino34_index`` and then divides by the ``std_dev``.
-# The resulting ``nino34_anomaly`` data represents how much the SST in the Niño 
-# 3.4 region deviates from the 1961-1990 average, in units of standard 
-# deviations. This is a common way to quantify climate anomalies like El Niño 
+# The resulting ``nino34_anomaly`` data represents how much the SST in the Niño
+# 3.4 region deviates from the 1961-1990 average, in units of standard
+# deviations. This is a common way to quantify climate anomalies like El Niño
 # and La Niña events:
 nino34_anomaly = (nino34_index - climatology) / std_dev
 
@@ -228,7 +228,7 @@ nino34_rolling = nino34_anomaly.moving_window(
 elnino = nino34_rolling >= 0.4
 lanina = nino34_rolling <= -0.4
 
-cfp.gset(xmin='1940-1-1', xmax='2022-12-31', ymin=-3, ymax=3)
+cfp.gset(xmin="1940-1-1", xmax="2022-12-31", ymin=-3, ymax=3)
 
 cfp.gopen(figsize=(10, 6))
 cfp.lineplot(

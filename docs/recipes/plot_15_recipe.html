@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -150,12 +150,14 @@ flags, as determined by the original 100 m resolution data. It retains the
 original spatial extent of the data while reducing its spatial complexity.
 Regridding, on the other hand, involves interpolating the data onto a new grid,
 which can introduce artifacts and distortions in the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.io.shapereader</span> <span class="k">as</span> <span class="nn">shpreader</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
 <p>1. Import the required libraries. We will use Cartopy’s <code class="docutils literal notranslate"><span class="pre">shapereader</span></code> to
 work with shapefiles that define country boundaries:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cartopy.io.shapereader</span> <span class="k">as</span> <span class="nn">shpreader</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -336,7 +338,7 @@ displays the figure with the histograms.</p></li>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_15_recipe_001.png" srcset="../_images/sphx_glr_plot_15_recipe_001.png" alt="Ireland, Belgium, Switzerland" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 18 minutes  14.260 seconds)</p>
+<img src="../_images/sphx_glr_plot_15_recipe_001.png" srcset="../_images/sphx_glr_plot_15_recipe_001.png" alt="Ireland, Belgium, Switzerland" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 54 minutes  12.592 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-15-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_15_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_15_recipe.py</span></code></a></p>
