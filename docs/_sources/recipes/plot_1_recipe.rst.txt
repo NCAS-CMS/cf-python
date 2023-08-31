@@ -354,7 +354,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  54.799 seconds)
+   **Total running time of the script:** ( 1 minutes  17.579 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_1_recipe.py:

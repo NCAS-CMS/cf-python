@@ -24,10 +24,11 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Plotting a joint histogram" href="plot_09_recipe.html" />
-    <link rel="prev" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_06_recipe.html" />
+    <link rel="prev" title="Plotting members of a model ensemble" href="plot_07_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,6 +40,9 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
@@ -91,7 +95,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
-      <li>Previous: <a href="plot_06_recipe.html" title="previous chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
+      <li>Previous: <a href="plot_07_recipe.html" title="previous chapter">Plotting members of a model ensemble</a></li>
       <li>Next: <a href="plot_09_recipe.html" title="next chapter">Plotting a joint histogram</a></li>
   </ul></li>
   </ul></li>
@@ -184,9 +188,9 @@ to download the full example code</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=blended air_temperature_anomaly over land with sea_water_temperature_anomaly (ncvar%tas_mean)
 --------------------------------------------------------------------------------------------------------------
-Data            : long_name=blended air_temperature_anomaly over land with sea_water_temperature_anomaly(time(2079), latitude(36), longitude(72)) K
-Cell methods    : area: mean (interval: 5.0 degrees_north) time(2079): mean (interval: 1 month) realization(1): mean
-Dimension coords: time(2079) = [1850-01-16 12:00:00, ..., 2023-03-16 12:00:00] gregorian
+Data            : long_name=blended air_temperature_anomaly over land with sea_water_temperature_anomaly(time(2074), latitude(36), longitude(72)) K
+Cell methods    : area: mean (interval: 5.0 degrees_north) time(2074): mean (interval: 1 month) realization(1): mean
+Dimension coords: time(2074) = [1850-01-16 12:00:00, ..., 2022-10-16 12:00:00] gregorian
                 : latitude(36) = [-87.5, ..., 87.5] degrees_north
                 : longitude(72) = [-177.5, ..., 177.5] degrees_east
                 : realization(1) = [100] 1
@@ -290,7 +294,7 @@ and <a class="reference external" href="http://ajheaps.github.io/cf-plot/stipple
 Warning - boolean data found - converting to integers
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  18.540 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  21.594 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-08-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_08_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_08_recipe.py</span></code></a></p>
@@ -310,7 +314,7 @@ Warning - boolean data found - converting to integers
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

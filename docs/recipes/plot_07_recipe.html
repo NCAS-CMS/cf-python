@@ -24,10 +24,11 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Plotting statistically significant temperature trends with stippling" href="plot_8_recipe.html" />
-    <link rel="prev" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_6_recipe.html" />
+    <link rel="next" title="Plotting statistically significant temperature trends with stippling" href="plot_08_recipe.html" />
+    <link rel="prev" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_06_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,6 +40,9 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,14 +88,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
-      <li>Previous: <a href="plot_6_recipe.html" title="previous chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
-      <li>Next: <a href="plot_8_recipe.html" title="next chapter">Plotting statistically significant temperature trends with stippling</a></li>
+      <li>Previous: <a href="plot_06_recipe.html" title="previous chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
+      <li>Next: <a href="plot_08_recipe.html" title="next chapter">Plotting statistically significant temperature trends with stippling</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -173,20 +178,20 @@ ensemble_members = 10
 experiment = &#39;451 = SODAsi.3 pentad 8 member SSTs climatologically adjusted to
               HadISST2.3 1981 to 2010 climatology&#39;
 forecast_init_type = 3
-history = &#39;Mon Apr 15 00:59:16 2019: cdo -v -f nc4 -r
+history = &#39;Mon Apr 15 00:59:30 2019: cdo -v -f nc4 -r
            setpartabn,/global/homes/l/lslivins/convert_grb2_netcdf/cdo_table
-           -copy -setreftime,1800-01-01,00:00:00,3hours PRMSL.1941_004.grb
-           PRMSL.1941_mem004.nc&#39;
+           -copy -setreftime,1800-01-01,00:00:00,3hours PRMSL.1941_001.grb
+           PRMSL.1941_mem001.nc&#39;
 institution = &#39;NOAA ESRL Physical Sciences Division &amp; CU/CIRES \n&#39;
 long_name = &#39;Pressure reduced to MSL&#39;
 observations = &#39;International Surface Pressure Databank version 4.7&#39;
 original_name = &#39;prmsl&#39;
 param = &#39;1.3.0&#39;
 platform = &#39;Model&#39;
-realization = 4
+realization = 1
 units = &#39;Pa&#39;
 
-Data(time(2920), latitude(256), longitude(512)) = [[[101351.0, ..., 100562.0]]] Pa
+Data(time(2920), latitude(256), longitude(512)) = [[[100489.0, ..., 101519.0]]] Pa
 
 Domain Axis: latitude(256)
 Domain Axis: longitude(512)
@@ -275,7 +280,7 @@ A moving average of the ensemble along the time axis, with a window size of 90 (
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_07_recipe_001.png" srcset="../_images/sphx_glr_plot_07_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  35.758 seconds)</p>
+<img src="../_images/sphx_glr_plot_07_recipe_001.png" srcset="../_images/sphx_glr_plot_07_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  4.205 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-07-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_07_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_07_recipe.py</span></code></a></p>
@@ -295,11 +300,11 @@ A moving average of the ensemble along the time axis, with a window size of 90 (
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -94,7 +94,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
     -----------------------------------------------------------
     Conventions = 'CF-1.10'
     _FillValue = -1073741824.0
-    history = 'Converted from UM/PP by cf-python v3.15.0'
+    history = 'Converted from UM/PP by cf-python v3.14.1'
     lbproc = '8192'
     lbtim = '122'
     long_name = 'WIND GUST'
@@ -248,17 +248,6 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/sadie/anaconda3/envs/cf-env/lib/python3.8/site-packages/cartopy/crs.py:228: ShapelyDeprecationWarning: __len__ for multi-part geometries is deprecated and will be removed in Shapely 2.0. Check the length of the `geoms` property instead to get the  number of parts of a multi-part geometry.
-      if len(multi_line_string) > 1:
-    /home/sadie/anaconda3/envs/cf-env/lib/python3.8/site-packages/cartopy/crs.py:280: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
-      for line in multi_line_string:
-    /home/sadie/anaconda3/envs/cf-env/lib/python3.8/site-packages/cartopy/crs.py:347: ShapelyDeprecationWarning: __len__ for multi-part geometries is deprecated and will be removed in Shapely 2.0. Check the length of the `geoms` property instead to get the  number of parts of a multi-part geometry.
-      if len(p_mline) > 0:
-
 
 
 
@@ -281,13 +270,6 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
    :srcset: /recipes/images/sphx_glr_plot_6_recipe_002.png
    :class: sphx-glr-single-img
 
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/sadie/anaconda3/envs/cf-env/lib/python3.8/site-packages/cartopy/io/__init__.py:241: DownloadWarning: Downloading: https://naciscdn.org/naturalearth/50m/physical/ne_50m_coastline.zip
-      warnings.warn('Downloading: {}'.format(url), DownloadWarning)
 
 
 
@@ -330,7 +312,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
     -----------------------------------------------------------
     Conventions = 'CF-1.10'
     _FillValue = -1073741824.0
-    history = 'Converted from UM/PP by cf-python v3.15.0'
+    history = 'Converted from UM/PP by cf-python v3.14.1'
     lbproc = '8192'
     lbtim = '122'
     long_name = 'WIND GUST'
@@ -403,20 +385,13 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /home/sadie/anaconda3/envs/cf-env/lib/python3.8/site-packages/cartopy/mpl/geoaxes.py:1586: UserWarning: The following kwargs were not used by contour: 'transform_first'
-      result = matplotlib.axes.Axes.contourf(self, *args, **kwargs)
-
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  23.559 seconds)
+   **Total running time of the script:** ( 0 minutes  30.084 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_6_recipe.py:

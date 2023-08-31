@@ -181,7 +181,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  3.502 seconds)
+   **Total running time of the script:** ( 0 minutes  3.300 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_4_recipe.py:

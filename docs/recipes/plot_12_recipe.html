@@ -24,9 +24,10 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="../tutorial.html" />
+    <link rel="next" title="Calculate and plot the Niño 3.4 Index" href="plot_13_recipe.html" />
     <link rel="prev" title="Plotting the Warming Stripes" href="plot_11_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -39,6 +40,9 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
@@ -92,7 +96,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
       <li>Previous: <a href="plot_11_recipe.html" title="previous chapter">Plotting the Warming Stripes</a></li>
-      <li>Next: <a href="../tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+      <li>Next: <a href="plot_13_recipe.html" title="next chapter">Calculate and plot the Niño 3.4 Index</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -224,7 +228,7 @@ the argument <code class="docutils literal notranslate"><span class="pre">'lines
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><span class="n">f</span><span class="o">=</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">aod</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">x</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lon</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">y</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lat</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>7. Create a mask for AOD based on the quality of the retrieval. The
+<img src="../_images/sphx_glr_plot_12_recipe_001.png" srcset="../_images/sphx_glr_plot_12_recipe_001.png" alt="plot 12 recipe" class = "sphx-glr-single-img"/><p>7. Create a mask for AOD based on the quality of the retrieval. The
 <code class="docutils literal notranslate"><span class="pre">'__ne__'</span></code> method is an implementation of the <code class="docutils literal notranslate"><span class="pre">!=</span></code> operator. It is used to
 create a mask where all the <cite>high-quality</cite> AOD points (with the flag 0) are
 marked as <code class="docutils literal notranslate"><span class="pre">False</span></code>, and all the other data points (medium quality, low
@@ -292,7 +296,7 @@ on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_12_recipe_001.png" srcset="../_images/sphx_glr_plot_12_recipe_001.png" alt="AOD for both ocean and land" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  42.223 seconds)</p>
+<img src="../_images/sphx_glr_plot_12_recipe_002.png" srcset="../_images/sphx_glr_plot_12_recipe_002.png" alt="AOD for both ocean and land" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  59.360 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-12-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_12_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_12_recipe.py</span></code></a></p>
@@ -312,7 +316,7 @@ on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
