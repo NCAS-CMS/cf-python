@@ -4,9 +4,7 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
-from .constants import (  # cr_gm_attr_to_proj_string_comps,
-    cr_gm_valid_attr_names_are_numeric,
-)
+from .constants import cr_canonical_units, cr_gm_valid_attr_names_are_numeric
 from .data import Data
 from .data.utils import is_numeric_dtype
 from .units import Units
@@ -252,6 +250,82 @@ def _make_proj_string_comp(spec):
     return proj_string
 
 
+def _validate_map_parameter(mp_name, mp_value):
+    """TODO
+
+    :Parameters:
+
+        mp_name: `str`
+            TODO
+
+        mp_value: TODO
+            TODO
+
+    :Returns:
+
+        `dict`
+            TODO
+
+    """
+    # 0. Check input parameters are valid CF GM map parameters, not
+    # for any case something unrecognised that will silently do nothing.
+    if mp_name not in cr_gm_valid_attr_names_are_numeric:
+        raise ValueError(
+            "Unrecognised map parameter provided for the "
+            f"Grid Mapping: {mp_name}"
+        )
+
+    # 1. If None, can return early:
+    if mp_value is None:  # distinguish from 0 or 0.0 etc.
+        return mp_name, None
+
+    # 2. Now ensure the type of the value is as expected.
+    expect_numeric = cr_gm_valid_attr_names_are_numeric[mp_name]
+    if expect_numeric:
+        if (isinstance(mp_value, Data) and not is_numeric_dtype(mp_value)) or (
+            not isinstance(mp_value, (int, float))
+        ):
+            raise TypeError(
+                f"Map parameter {mp_name} has an incompatible "
+                "data type, expected numeric or Data but got "
+                f"{type(mp_value)}"
+            )
+    elif not expect_numeric and not isinstance(mp_value, str):
+        raise TypeError(
+            f"Map parameter {mp_name} has an incompatible "
+            "data type, expected a string but got "
+            f"{type(mp_value)}"
+        )
+
+    # 3. Finally ensure the units are valid and conformed to the
+    # canonical units, where numeric.
+    if expect_numeric:
+        canon_units = cr_canonical_units[mp_name]
+        if isinstance(mp_value, Data):
+            # In this case, is Data which may have units which aren't equal to
+            # the canonical ones, so may need to conform the value.
+            units = mp_value.Units
+            # The units must be checked and might need to be conformed
+            if not units.equivalent(canon_units):
+                raise ValueError(
+                    f"Map parameter {mp_name} value has units that "
+                    "are incompatible with the expected units of "
+                    f"{canon_units}: {units}"
+                )
+            elif not units.equals(canon_units):
+                conforming_value = Units.conform(
+                    mp_value.array.item(), units, canon_units
+                )
+        else:
+            conforming_value = mp_value
+
+        # Return numeric value as Data with conformed value and canonical units
+        return mp_name, Data(conforming_value, units=canon_units)
+    else:
+        # Return string value
+        return mp_name, mp_value
+
+
 """Abstract classes for general Grid Mappings.
 
 Note that default arguments are based upon the PROJ defaults, which can
@@ -361,22 +435,33 @@ class GridMapping(ABC):
                           takes precedence.
 
         """
-        for kwarg in kwargs:
-            if kwarg not in cr_gm_valid_attr_names_are_numeric:
-                raise ValueError(
-                    "Unrecognised map parameter provided for the "
-                    f"Grid Mapping: {kwarg}"
-                )
+        # Validate the arbitary kwargs
+        for kwarg, value in kwargs.items():
+            _validate_map_parameter(kwarg, value)
 
         # The attributes which describe the ellipsoid and prime meridian,
         # which may be included, when applicable, with any grid mapping.
-        self.earth_radius = earth_radius
-        self.inverse_flattening = inverse_flattening
-        self.longitude_of_prime_meridian = longitude_of_prime_meridian
-        self.prime_meridian_name = prime_meridian_name
-        self.reference_ellipsoid_name = reference_ellipsoid_name
-        self.semi_major_axis = semi_major_axis
-        self.semi_minor_axis = semi_minor_axis
+        self.earth_radius = _validate_map_parameter(
+            "earth_radius", earth_radius
+        )
+        self.inverse_flattening = _validate_map_parameter(
+            "inverse_flattening", inverse_flattening
+        )
+        self.longitude_of_prime_meridian = _validate_map_parameter(
+            "longitude_of_prime_meridian", longitude_of_prime_meridian
+        )
+        self.prime_meridian_name = _validate_map_parameter(
+            "prime_meridian_name", prime_meridian_name
+        )
+        self.reference_ellipsoid_name = _validate_map_parameter(
+            "reference_ellipsoid_name", reference_ellipsoid_name
+        )
+        self.semi_major_axis = _validate_map_parameter(
+            "semi_major_axis", semi_major_axis
+        )
+        self.semi_minor_axis = _validate_map_parameter(
+            "semi_minor_axis", semi_minor_axis
+        )
 
     @property
     @classmethod
