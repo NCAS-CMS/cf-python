@@ -948,10 +948,10 @@ class Geostationary(PerspectiveGridMapping):
     ):
         super().__init__(
             perspective_point_height,
-            longitude_of_projection_origin=0.0,
-            latitude_of_projection_origin=0.0,
-            false_easting=0.0,
-            false_northing=0.0,
+            longitude_of_projection_origin=longitude_of_projection_origin,
+            latitude_of_projection_origin=latitude_of_projection_origin,
+            false_easting=false_easting,
+            false_northing=false_northing,
             **kwargs,
         )
 
@@ -1170,7 +1170,11 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
         longitude_of_central_meridian=0.0,
         **kwargs,
     ):
-        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
+        super().__init__(
+            false_easting=false_easting,
+            false_northing=false_northing,
+            **kwargs,
+        )
 
         self.standard_parallel = (
             _validate_map_parameter("standard_parallel", standard_parallel[0]),
@@ -1259,7 +1263,11 @@ class Mercator(CylindricalGridMapping):
         scale_factor_at_projection_origin=1.0,
         **kwargs,
     ):
-        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
+        super().__init__(
+            false_easting=false_easting,
+            false_northing=false_northing,
+            **kwargs,
+        )
 
         self.standard_parallel = (
             _validate_map_parameter("standard_parallel", standard_parallel[0]),
@@ -1348,7 +1356,11 @@ class ObliqueMercator(CylindricalGridMapping):
         false_northing=0.0,
         **kwargs,
     ):
-        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
+        super().__init__(
+            false_easting=false_easting,
+            false_northing=false_northing,
+            **kwargs,
+        )
 
         self.azimuth_of_central_line = _validate_map_parameter(
             "azimuth_of_central_line", azimuth_of_central_line
@@ -1512,10 +1524,10 @@ class PolarStereographic(AzimuthalGridMapping):
         # TODO check defaults here, they do not appear for
         # CRS.from_proj4("+proj=ups").to_cf() to cross reference!
         super().__init__(
-            latitude_of_projection_origin=0.0,
-            longitude_of_projection_origin=0.0,
-            false_easting=0.0,
-            false_northing=0.0,
+            latitude_of_projection_origin=latitude_of_projection_origin,
+            longitude_of_projection_origin=longitude_of_projection_origin,
+            false_easting=false_easting,
+            false_northing=false_northing,
             **kwargs,
         )
 
@@ -1753,10 +1765,10 @@ class Stereographic(AzimuthalGridMapping):
         **kwargs,
     ):
         super().__init__(
-            false_easting=0.0,
-            false_northing=0.0,
-            longitude_of_projection_origin=0.0,
-            latitude_of_projection_origin=0.0,
+            false_easting=false_easting,
+            false_northing=false_northing,
+            longitude_of_projection_origin=longitude_of_projection_origin,
+            latitude_of_projection_origin=latitude_of_projection_origin,
             **kwargs,
         )
 
@@ -1831,7 +1843,11 @@ class TransverseMercator(CylindricalGridMapping):
         false_northing=0.0,
         **kwargs,
     ):
-        super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
+        super().__init__(
+            false_easting=false_easting,
+            false_northing=false_northing,
+            **kwargs,
+        )
 
         self.scale_factor_at_central_meridian = _validate_map_parameter(
             "scale_factor_at_central_meridian",
