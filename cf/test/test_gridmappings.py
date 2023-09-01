@@ -19,10 +19,10 @@ except ImportError:
 
 # These are those of the above which have required positional arguments
 all_concrete_grid_mappings_req_args = {
-    "AlbersEqualArea": {"standard_parallel": 0.0},
+    "AlbersEqualArea": {"standard_parallel": (0.0, None)},
     "Geostationary": {"perspective_point_height": 1000},
     "VerticalPerspective": {"perspective_point_height": 1000},
-    "LambertConformalConic": {"standard_parallel": 0.0},
+    "LambertConformalConic": {"standard_parallel": (1.0, 1.0)},
     "RotatedLatitudeLongitude": {
         "grid_north_pole_latitude": 0.0,
         "grid_north_pole_longitude": 0.0,
@@ -118,7 +118,7 @@ class GridMappingsTest(unittest.TestCase):
                 example_minimal_args = all_concrete_grid_mappings_req_args[
                     cls.__name__
                 ]
-                g = cls(*example_minimal_args)
+                g = cls(**example_minimal_args)
             repr(g)
             str(g)
 
