@@ -145,6 +145,31 @@ class GridMappingsTest(unittest.TestCase):
         )
 
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    def test_grid_mapping_map_parameter_validation(self):
+        """Test the validation of map parameters to Grid Mapping classes."""
+        g1 = cf.Mercator(
+            false_easting=10.0,
+            false_northing=cf.Data(-20, units="m"),
+            standard_parallel=(None, 50),
+            longitude_of_projection_origin=-40.0,
+            scale_factor_at_projection_origin=3.0,
+            prime_meridian_name="brussels",
+        )
+        self.assertEqual(g1.false_easting, cf.Data(10.0, "m"))
+        self.assertEqual(g1.false_northing, cf.Data(-20, "m"))
+        self.assertEqual(
+            g1.standard_parallel, (None, cf.Data(50, "degrees_north"))
+        )
+        self.assertEqual(
+            g1.longitude_of_projection_origin, cf.Data(-40.0, "degrees_east")
+        )
+        self.assertEqual(g1.scale_factor_at_projection_origin, cf.Data(3.0, 1))
+        self.assertEqual(g1.prime_meridian_name, "brussels")
+
+        # TODOGM extend this test a lot with testing like the above and
+        # with systematic coverage over valid inputs
+
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__get_cf_grid_mapping_from_name(self):
         """Test the '_get_cf_grid_mapping_from_name' function."""
         for gm_name, cf_gm_class in {
