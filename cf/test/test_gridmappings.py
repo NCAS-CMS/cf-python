@@ -94,9 +94,23 @@ class GridMappingsTest(unittest.TestCase):
         "+units=m +no_defs"
     )
 
-    # @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    def test_grid_mapping__init__(self):
+        """Test GridMapping object initiation."""
+        for cls in cf._all_concrete_grid_mappings:
+            if cls.__name__ not in all_concrete_grid_mappings_req_args:
+                cls()
+
+        # Shouldn't be able to instantiate any abstract classes, since
+        # abstract methods grid_mapping_name and proj_id must be defined
+        # further down in the inheritance chain to enable concrete classes.
+        for cls in cf._all_abstract_grid_mappings:
+            with self.assertRaises(TypeError):
+                cls()
+
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
-        """Test all means of GridMapping inspection.."""
+        """Test all means of GridMapping inspection."""
         for cls in cf._all_concrete_grid_mappings:
             if cls.__name__ not in all_concrete_grid_mappings_req_args:
                 g = cls()
@@ -108,6 +122,29 @@ class GridMappingsTest(unittest.TestCase):
             repr(g)
             str(g)
 
+        g1 = cf.Mercator()
+        self.assertEqual(repr(g1), "<CF CylindricalGridMapping: Mercator>")
+        self.assertEqual(
+            str(g1), "<CF CylindricalGridMapping: Mercator +proj=merc>"
+        )
+
+        g2 = cf.Orthographic()
+        self.assertEqual(repr(g2), "<CF AzimuthalGridMapping: Orthographic>")
+        self.assertEqual(
+            str(g2), "<CF AzimuthalGridMapping: Orthographic +proj=ortho>"
+        )
+
+        g3 = cf.Sinusoidal()
+        self.assertEqual(repr(g3), "<CF GridMapping: Sinusoidal>")
+        self.assertEqual(str(g3), "<CF GridMapping: Sinusoidal +proj=sinu>")
+
+        g4 = cf.Stereographic()
+        self.assertEqual(repr(g4), "<CF AzimuthalGridMapping: Stereographic>")
+        self.assertEqual(
+            str(g4), "<CF AzimuthalGridMapping: Stereographic +proj=stere>"
+        )
+
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__get_cf_grid_mapping_from_name(self):
         """Test the '_get_cf_grid_mapping_from_name' function."""
         for gm_name, cf_gm_class in {
@@ -201,7 +238,7 @@ class GridMappingsTest(unittest.TestCase):
             cf.Data([1, 2, 3]),  # not singular (size 1)
             cf.Data(45),  # no units
             cf.Data(45, "m"),  # non-angular units
-            cf.Data(2, "elephants")  # bad/non-CF units
+            cf.Data(2, "elephants"),  # bad/non-CF units
         ]:
             with self.assertRaises(ValueError):
                 cf.convert_cf_angular_data_to_proj(bad_input)
@@ -230,7 +267,6 @@ class GridMappingsTest(unittest.TestCase):
             # be re-generated since degrees_X gets converted back to the
             # default degrees, so skip those in these test cases.
             if not p.endswith("R"):
-                a = cf.convert_proj_angular_data_to_cf(p, context="lat")
                 p3 = cf.convert_cf_angular_data_to_proj(
                     cf.convert_proj_angular_data_to_cf(p, context="lat")
                 )
