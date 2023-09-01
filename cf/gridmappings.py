@@ -277,7 +277,7 @@ def _validate_map_parameter(mp_name, mp_value):
 
     # 1. If None, can return early:
     if mp_value is None:  # distinguish from 0 or 0.0 etc.
-        return mp_name, None
+        return None
 
     # 2. Now ensure the type of the value is as expected.
     expect_numeric = cr_gm_valid_attr_names_are_numeric[mp_name]
@@ -320,10 +320,10 @@ def _validate_map_parameter(mp_name, mp_value):
             conforming_value = mp_value
 
         # Return numeric value as Data with conformed value and canonical units
-        return mp_name, Data(conforming_value, units=canon_units)
+        return Data(conforming_value, units=canon_units)
     else:
         # Return string value
-        return mp_name, mp_value
+        return mp_value
 
 
 """Abstract classes for general Grid Mappings.
@@ -559,10 +559,18 @@ class AzimuthalGridMapping(GridMapping):
     ):
         super().__init__(**kwargs)
 
-        self.longitude_of_projection_origin = longitude_of_projection_origin
-        self.latitude_of_projection_origin = latitude_of_projection_origin
-        self.false_easting = false_easting
-        self.false_northing = false_northing
+        self.longitude_of_projection_origin = _validate_map_parameter(
+            "longitude_of_projection_origin", longitude_of_projection_origin
+        )
+        self.latitude_of_projection_origin = _validate_map_parameter(
+            "latitude_of_projection_origin", latitude_of_projection_origin
+        )
+        self.false_easting = _validate_map_parameter(
+            "false_easting", false_easting
+        )
+        self.false_northing = _validate_map_parameter(
+            "false_northing", false_northing
+        )
 
 
 class ConicGridMapping(GridMapping):
@@ -628,11 +636,22 @@ class ConicGridMapping(GridMapping):
     ):
         super().__init__(**kwargs)
 
-        self.standard_parallel = standard_parallel
-        self.longitude_of_central_meridian = longitude_of_central_meridian
-        self.latitude_of_projection_origin = latitude_of_projection_origin
-        self.false_easting = false_easting
-        self.false_northing = false_northing
+        self.standard_parallel = (
+            _validate_map_parameter("standard_parallel", standard_parallel[0]),
+            _validate_map_parameter("standard_parallel", standard_parallel[1]),
+        )
+        self.longitude_of_central_meridian = _validate_map_parameter(
+            "longitude_of_central_meridian", longitude_of_central_meridian
+        )
+        self.latitude_of_projection_origin = _validate_map_parameter(
+            "latitude_of_projection_origin", latitude_of_projection_origin
+        )
+        self.false_easting = _validate_map_parameter(
+            "false_easting", false_easting
+        )
+        self.false_northing = _validate_map_parameter(
+            "false_northing", false_northing
+        )
 
 
 class CylindricalGridMapping(GridMapping):
@@ -661,8 +680,12 @@ class CylindricalGridMapping(GridMapping):
     def __init__(self, false_easting=0.0, false_northing=0.0, **kwargs):
         super().__init__(**kwargs)
 
-        self.false_easting = false_easting
-        self.false_northing = false_northing
+        self.false_easting = _validate_map_parameter(
+            "false_easting", false_easting
+        )
+        self.false_northing = _validate_map_parameter(
+            "false_northing", false_northing
+        )
 
 
 class LatLonGridMapping(GridMapping):
@@ -699,7 +722,9 @@ class PerspectiveGridMapping(AzimuthalGridMapping):
     def __init__(self, perspective_point_height, **kwargs):
         super().__init__(**kwargs)
 
-        self.perspective_point_height = perspective_point_height
+        self.perspective_point_height = _validate_map_parameter(
+            "perspective_point_height", perspective_point_height
+        )
 
 
 """Concrete classes for all Grid Mappings supported by the CF Conventions.
@@ -930,9 +955,17 @@ class Geostationary(PerspectiveGridMapping):
             **kwargs,
         )
 
+        # Values "x" and "y" are not case-sensitive, so convert to lower-case
+        self.sweep_angle_axis = _validate_map_parameter(
+            "sweep_angle_axis", sweep_angle_axis
+        ).lower()
+        self.fixed_angle_axis = _validate_map_parameter(
+            "fixed_angle_axis", fixed_angle_axis
+        ).lower()
+
         # sweep_angle_axis must be the opposite (of "x" and "y") to
         # fixed_angle_axis.
-        if (sweep_angle_axis.lower(), fixed_angle_axis.lower()) not in [
+        if (self.sweep_angle_axis, self.fixed_angle_axis) not in [
             ("x", "y"),
             ("y", "x"),
         ]:
@@ -940,10 +973,6 @@ class Geostationary(PerspectiveGridMapping):
                 "The sweep_angle_axis must be the opposite value, from 'x' "
                 "and 'y', to the fixed_angle_axis."
             )
-
-        # Values "x" and "y" are not case-sensitive, so convert to lower-case
-        self.sweep_angle_axis = sweep_angle_axis.lower()
-        self.fixed_angle_axis = fixed_angle_axis.lower()
 
 
 class LambertAzimuthalEqualArea(AzimuthalGridMapping):
@@ -1143,10 +1172,16 @@ class LambertCylindricalEqualArea(CylindricalGridMapping):
     ):
         super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
-        self.standard_parallel = standard_parallel
-        self.longitude_of_central_meridian = longitude_of_central_meridian
-        self.scale_factor_at_projection_origin = (
-            scale_factor_at_projection_origin
+        self.standard_parallel = (
+            _validate_map_parameter("standard_parallel", standard_parallel[0]),
+            _validate_map_parameter("standard_parallel", standard_parallel[1]),
+        )
+        self.longitude_of_central_meridian = _validate_map_parameter(
+            "longitude_of_central_meridian", longitude_of_central_meridian
+        )
+        self.scale_factor_at_projection_origin = _validate_map_parameter(
+            "scale_factor_at_projection_origin",
+            scale_factor_at_projection_origin,
         )
 
 
@@ -1226,10 +1261,16 @@ class Mercator(CylindricalGridMapping):
     ):
         super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
-        self.standard_parallel = standard_parallel
-        self.longitude_of_projection_origin = longitude_of_projection_origin
-        self.scale_factor_at_projection_origin = (
-            scale_factor_at_projection_origin
+        self.standard_parallel = (
+            _validate_map_parameter("standard_parallel", standard_parallel[0]),
+            _validate_map_parameter("standard_parallel", standard_parallel[1]),
+        )
+        self.longitude_of_projection_origin = _validate_map_parameter(
+            "longitude_of_projection_origin", longitude_of_projection_origin
+        )
+        self.scale_factor_at_projection_origin = _validate_map_parameter(
+            "scale_factor_at_projection_origin",
+            scale_factor_at_projection_origin,
         )
 
 
@@ -1309,11 +1350,18 @@ class ObliqueMercator(CylindricalGridMapping):
     ):
         super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
-        self.azimuth_of_central_line = azimuth_of_central_line
-        self.latitude_of_projection_origin = latitude_of_projection_origin
-        self.longitude_of_projection_origin = longitude_of_projection_origin
-        self.scale_factor_at_projection_origin = (
-            scale_factor_at_projection_origin
+        self.azimuth_of_central_line = _validate_map_parameter(
+            "azimuth_of_central_line", azimuth_of_central_line
+        )
+        self.latitude_of_projection_origin = _validate_map_parameter(
+            "latitude_of_projection_origin", latitude_of_projection_origin
+        )
+        self.longitude_of_projection_origin = _validate_map_parameter(
+            "longitude_of_projection_origin", longitude_of_projection_origin
+        )
+        self.scale_factor_at_projection_origin = _validate_map_parameter(
+            "scale_factor_at_projection_origin",
+            scale_factor_at_projection_origin,
         )
 
 
@@ -1481,12 +1529,17 @@ class PolarStereographic(AzimuthalGridMapping):
                 "'straight_vertical_longitude_from_pole' can be set."
             )
 
-        self.straight_vertical_longitude_from_pole = (
-            straight_vertical_longitude_from_pole
+        self.straight_vertical_longitude_from_pole = _validate_map_parameter(
+            "straight_vertical_longitude_from_pole",
+            straight_vertical_longitude_from_pole,
         )
-        self.standard_parallel = standard_parallel
-        self.scale_factor_at_projection_origin = (
-            scale_factor_at_projection_origin
+        self.standard_parallel = (
+            _validate_map_parameter("standard_parallel", standard_parallel[0]),
+            _validate_map_parameter("standard_parallel", standard_parallel[1]),
+        )
+        self.scale_factor_at_projection_origin = _validate_map_parameter(
+            "scale_factor_at_projection_origin",
+            scale_factor_at_projection_origin,
         )
 
 
@@ -1539,9 +1592,15 @@ class RotatedLatitudeLongitude(LatLonGridMapping):
     ):
         super().__init__(**kwargs)
 
-        self.grid_north_pole_latitude = grid_north_pole_latitude
-        self.grid_north_pole_longitude = grid_north_pole_longitude
-        self.north_pole_grid_longitude = north_pole_grid_longitude
+        self.grid_north_pole_latitude = _validate_map_parameter(
+            "grid_north_pole_latitude", grid_north_pole_latitude
+        )
+        self.grid_north_pole_longitude = _validate_map_parameter(
+            "grid_north_pole_longitude", grid_north_pole_longitude
+        )
+        self.north_pole_grid_longitude = _validate_map_parameter(
+            "north_pole_grid_longitude", north_pole_grid_longitude
+        )
 
 
 class LatitudeLongitude(LatLonGridMapping):
@@ -1617,9 +1676,15 @@ class Sinusoidal(GridMapping):
     ):
         super().__init__(**kwargs)
 
-        self.longitude_of_projection_origin = longitude_of_projection_origin
-        self.false_easting = false_easting
-        self.false_northing = false_northing
+        self.longitude_of_projection_origin = _validate_map_parameter(
+            "longitude_of_projection_origin", longitude_of_projection_origin
+        )
+        self.false_easting = _validate_map_parameter(
+            "false_easting", false_easting
+        )
+        self.false_northing = _validate_map_parameter(
+            "false_northing", false_northing
+        )
 
 
 class Stereographic(AzimuthalGridMapping):
@@ -1695,8 +1760,9 @@ class Stereographic(AzimuthalGridMapping):
             **kwargs,
         )
 
-        self.scale_factor_at_projection_origin = (
-            scale_factor_at_projection_origin
+        self.scale_factor_at_projection_origin = _validate_map_parameter(
+            "scale_factor_at_projection_origin",
+            scale_factor_at_projection_origin,
         )
 
 
@@ -1767,11 +1833,16 @@ class TransverseMercator(CylindricalGridMapping):
     ):
         super().__init__(false_easting=0.0, false_northing=0.0, **kwargs)
 
-        self.scale_factor_at_central_meridian = (
-            scale_factor_at_central_meridian
+        self.scale_factor_at_central_meridian = _validate_map_parameter(
+            "scale_factor_at_central_meridian",
+            scale_factor_at_central_meridian,
         )
-        self.longitude_of_central_meridian = longitude_of_central_meridian
-        self.latitude_of_projection_origin = latitude_of_projection_origin
+        self.longitude_of_central_meridian = _validate_map_parameter(
+            "longitude_of_central_meridian", longitude_of_central_meridian
+        )
+        self.latitude_of_projection_origin = _validate_map_parameter(
+            "latitude_of_projection_origin", latitude_of_projection_origin
+        )
 
 
 class VerticalPerspective(PerspectiveGridMapping):
