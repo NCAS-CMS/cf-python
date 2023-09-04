@@ -50,10 +50,11 @@ class GridMappingsTest(unittest.TestCase):
         "f7": cf.RotatedLatitudeLongitude,
     }
 
+    # TODO: ignore the below for now, in short will create a new test file
+    # with a Oblique Mercator GM
+    #
     # From a custom netCDF file with Oblique Mercator GM
-    # TODO generate this .nc via create_test_files.py and un-commit
-    # forced commit of the (data-free / header-only) netCDF file.
-    f_om = cf.read("oblique_mercator.nc")
+    # f_om = cf.read("oblique_mercator.nc")
 
     # Create some coordinate references with different GMs to test on:
     cr_aea = cf.CoordinateReference(
