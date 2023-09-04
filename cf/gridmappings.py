@@ -251,7 +251,7 @@ def _make_proj_string_comp(spec):
 
 
 def _validate_map_parameter(mp_name, mp_value):
-    """TODO
+    """Validate map parameters for correct type and canonical units.
 
     :Parameters:
 
@@ -263,8 +263,8 @@ def _validate_map_parameter(mp_name, mp_value):
 
     :Returns:
 
-        `dict`
-            TODO
+        `Data`, `str`, or `None`
+            A value conformed to the TODO
 
     """
     # 0. Check input parameters are valid CF GM map parameters, not
@@ -283,7 +283,7 @@ def _validate_map_parameter(mp_name, mp_value):
     expect_numeric = cr_gm_valid_attr_names_are_numeric[mp_name]
     if expect_numeric:
         if (isinstance(mp_value, Data) and not is_numeric_dtype(mp_value)) or (
-            not isinstance(mp_value, (int, float))
+            not isinstance(mp_value, (Data, int, float))
         ):
             raise TypeError(
                 f"Map parameter {mp_name} has an incompatible "
@@ -316,6 +316,8 @@ def _validate_map_parameter(mp_name, mp_value):
                 conforming_value = Units.conform(
                     mp_value.array.item(), units, canon_units
                 )
+            else:
+                conforming_value = mp_value
         else:
             conforming_value = mp_value
 
