@@ -149,14 +149,16 @@ class GridMappingsTest(unittest.TestCase):
         """Test the validation of map parameters to Grid Mapping classes."""
         g1 = cf.Mercator(
             false_easting=10.0,
-            false_northing=cf.Data(-20, units="m"),
+            false_northing=cf.Data(-20, units="cm"),
             standard_parallel=(None, 50),
-            longitude_of_projection_origin=-40.0,
+            longitude_of_projection_origin=cf.Data(
+                -40.0, units="degrees_east"
+            ),
             scale_factor_at_projection_origin=3.0,
             prime_meridian_name="brussels",
         )
         self.assertEqual(g1.false_easting, cf.Data(10.0, "m"))
-        self.assertEqual(g1.false_northing, cf.Data(-20, "m"))
+        self.assertEqual(g1.false_northing, cf.Data(-0.2, "m"))
         self.assertEqual(
             g1.standard_parallel, (None, cf.Data(50, "degrees_north"))
         )
