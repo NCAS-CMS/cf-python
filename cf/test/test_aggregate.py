@@ -363,7 +363,20 @@ class aggregateTest(unittest.TestCase):
                 }
             },
         ):
-            self.assertEqual(len(cf.aggregate(fl, cells=cells)), 1)
+            x = cf.aggregate(fl, cells=cells)
+            self.assertEqual(len(x), 1)
+
+        # Test storage of cell conditions
+        x = x[0]
+        lat = x.dimension_coordinate("latitude")
+        chars = lat.get_cell_characteristics()
+        self.assertTrue(chars["cellsize"].equals(cf.wi(30, 60, "degrees_N")))
+        self.assertTrue(chars["spacing"].equals(cf.set([30, 45], "degrees_N")))
+        for identity in ("longitude", "time"):
+            self.assertEqual(
+                x.dimension_coordinate(identity).get_cell_characteristics(),
+                {"cellsize": None, "spacing": None},
+            )
 
         for cells in (
             {"Y": {"cellsize": cf.wi(39, 60, "km")}},

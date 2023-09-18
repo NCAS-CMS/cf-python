@@ -2311,7 +2311,7 @@ def aggregate(
             **Units**
 
             Units must be provided on the conditions where applicable,
-            since conditions without defined units do not match
+            since conditions without defined units will not match
             dimension coordinate constructs with defined units.
 
             **Multiple conditions**
@@ -2357,6 +2357,14 @@ def aggregate(
             simulation outputs:
 
             >>> x = cf.aggregate(fl, cells=cf.climatology_cells())
+
+            **Storage of conditions**
+
+            All returned field or domain constructs that have passed
+            dimension coordinate cell conditions will have those
+            conditions stored on the approriate dimension coordinate
+            constructs, retrievable via their
+            `DimensionCoordinate.get_cell_characteristics` methods.
 
             **Performance**
 
@@ -2489,10 +2497,9 @@ def aggregate(
     # Initialise the cache of canonical metadata attributes
     canonical = _Canonical()
 
-    output_constructs = []
     output_meta = []
-
-    output_constructs_append = output_constructs.append
+    output_meta_append = output_meta.append
+    output_meta_extend = output_meta.extend
 
     if exclude:
         exclude = " NOT"
@@ -2656,11 +2663,10 @@ def aggregate(
                 # This field does not have a structural signature, so
                 # it can't be aggregated. Put it straight into the
                 # output list and move on to the next input construct.
-                if not copy:
-                    output_constructs_append(f)
-                    output_meta_append(meta)
-                else:
-                    output_constructs_append(f.copy())
+                if copy:
+                    meta = meta.copy()
+
+                output_meta_append(meta)
 
             continue
 
@@ -2727,12 +2733,8 @@ def aggregate(
             # next signature.
             # --------------------------------------------------------
             if copy:
-                 meta[0].field =                 meta[0].field.copy()
+                meta[0] = meta[0].copy()
 
-            if cells:
-                self._set_cell_conditions(meta[0])
-                
-            output_constructs_append(meta[0].field)
             output_meta_append(meta[0])
             continue
 
@@ -2745,11 +2747,10 @@ def aggregate(
                 )
 
             if not exclude:
-                output_meta_extend(meta)
                 if copy:
-                    output_constructs.extend(m.field.copy() for m in meta)
+                    output_meta_extend(m.copy() for m in meta)
                 else:
-                    output_constructs.extend(m.field for m in meta)
+                    output_meta_extend(meta)
 
             continue
 
@@ -2863,7 +2864,6 @@ def aggregate(
             # --------------------------------------------------------
             for m in grouped_meta:
                 if len(m) == 1:
-                    # TODOAGG cell condisions ??/
                     continue
 
                 # ----------------------------------------------------
@@ -2941,7 +2941,7 @@ def aggregate(
                     "domain_ancillary": {},
                     "field_ancillary": {},
                     "domain_topology": {},  # UGRID
-                    "cell_connectivity": {},  # UGRID
+                    "cell_interface": {},  # UGRID
                 }
 
                 m0 = m[0].copy()
@@ -3024,9 +3024,6 @@ def aggregate(
                                 copy=False,
                             )
 
-                    if cells:
-                        self._set_cell_conditions(m0)
-
                 m[:] = [m0]
 
             if unaggregatable:
@@ -3044,17 +3041,18 @@ def aggregate(
         if unaggregatable:
             status = 1
             if not exclude:
-                output_constructs_extend(meta0)
                 if copy:
-                    output_constructs.extend((m.field.copy() for m in meta0))
+                    output_meta_extend(m.copy() for m in meta0)
                 else:
-                    output_constructs.extend((m.field for m in meta0))
+                    output_meta_extend(meta0)
         else:
             output_meta_extend(meta)
-            output_constructs.extend((m.field for m in meta))
 
-    output_constructs = self._set_cell_conditions(cells, output_meta, copy=copy)
-            
+    if cells:
+        _set_cell_conditions(output_meta)
+
+    output_constructs = [m.field for m in output_meta]
+
     aggregate.status = status
 
     Type = "field"
@@ -3071,14 +3069,51 @@ def aggregate(
 
     return output_constructs
 
-def _set_cell_conditions(cells, meta, copy=True):
-    if not cells:
-        if copy:
-            return [m.field.copy() for m in meta]
-        else:
-            return [m.field for m in meta]
-    out = []
-    for m in meta:
+
+def _set_cell_conditions(output_meta):
+    """Store the cell characteristics from any cell conditions.
+
+    The cell size and cell spacing characteristics are stored on the
+    approriate dimension coordinate constructs.
+
+    .. versionadded:: 3.15.4
+
+    :Parameters:
+
+        output_meta: `list`
+            The list of `_Meta` objects, each of which contains an
+            output field or domain construct. The field or constructs
+            are updated in-place.
+
+    :Returns:
+
+        `None`
+
+    """
+    for m in output_meta:
+        for value in m.axis.values():
+            dim_index = value["dim_coord_index"]
+            if dim_index is None:
+                # There is no dimension coordinate construct for this
+                # axis
+                continue
+
+            cellsize = value["cellsize"][dim_index]
+            if cellsize is None:
+                # There is no cell size condition
+                continue
+
+            spacing = value["spacing"][dim_index]
+            if spacing is None:
+                # There is no cell spacing condition
+                continue
+
+            # Set the cell conditions on the dimension coordinate
+            # construct
+            dim_coord = m.field.dimension_coordinate(value["keys"][dim_index])
+            dim_coord.set_cell_characteristics(
+                cellsize=cellsize, spacing=spacing
+            )
 
 
 # --------------------------------------------------------------------
@@ -3202,7 +3237,7 @@ def climatology_cells(
       {'cellsize': <CF Query: (isclose 12 hour)>},
       {'cellsize': <CF TimeDuration: P1M (Y-M-01 00:00:00)>}]}
 
-    Add a condition that separately aggregates decadal data:
+    Add a condition for decadal data:
 
     >>> cells['T'].append({'cellsize': cf.wi(3600, 3660, 'day')})
     >>> cells
@@ -4192,7 +4227,7 @@ def _aggregate_2_fields(
     verbose=None,
     concatenate=True,
     data_concatenation=None,
-        cell_conditions=None,
+    cell_conditions=None,
     relaxed_units=False,
     copy=True,
 ):
@@ -4274,7 +4309,7 @@ def _aggregate_2_fields(
 
     for i, (hash0, hash1) in enumerate(zip(hash_values0, hash_values1)):
         hash_values0[i] = hash_values0[i] + hash_values1[i]
-        
+
     # N-d auxiliary coordinates
     for identity in m0.nd_aux:
         aux0 = m0.nd_aux[identity]
@@ -4390,12 +4425,6 @@ def _aggregate_2_fields(
                 key, [construct1]
             ).append(construct0)
 
-        # 1-d pppp
-        if construct_type == "dimension_coordinate" and construct_type not in cell_conditions:
-            cellsize = m0.axis[a_identity].get("cellsize")
-            spacing = m0.axis[a_identity].get("spacing")
-            if cellsize is not None or spacing is not None:
-                cell_conditions[dimension_coordinate] = {'cellsize': cellsize, 'spacing': spacing}
     # ----------------------------------------------------------------
     # Update the size of the aggregating axis in the output parent
     # construct

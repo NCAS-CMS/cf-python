@@ -338,7 +338,6 @@ Cyclicity
    :toctree: ../method/
    :template: method.rst
 	      
-
    ~cf.DimensionCoordinate.rechunk
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
@@ -365,7 +364,11 @@ Miscellaneous
    ~cf.DimensionCoordinate.inspect
    ~cf.DimensionCoordinate.to_memory
    ~cf.DimensionCoordinate.uncompress
-   
+   ~cf.DimensionCoordinate.del_cell_characteristics
+   ~cf.DimensionCoordinate.get_cell_characteristics
+   ~cf.DimensionCoordinate.has_cell_characteristics
+   ~cf.DimensionCoordinate.set_cell_characteristics
+
 Mathematical operations
 -----------------------
 
