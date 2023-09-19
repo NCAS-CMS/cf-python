@@ -1637,7 +1637,9 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(g.match_by_naxes(3))
         self.assertFalse(g.match_by_naxes(99, 88))
 
-        # Match by construct
+    def test_Field_match_by_construct(self):
+        f = self.f.copy()
+
         for OR in (True, False):
             self.assertTrue(f.match_by_construct(OR=OR))
             self.assertTrue(f.match_by_construct("X", OR=OR))
@@ -1672,6 +1674,11 @@ class FieldTest(unittest.TestCase):
                 "X", "qwerty", "grid_latitude: max", "over:years", OR=True
             )
         )
+
+        # Check match for size 1 axes that are not spanned by the data
+        f = cf.example_field(0)
+        self.assertTrue(f.match_by_construct(T=cf.dt("2019-01-01")))
+        self.assertFalse(f.match_by_construct(T=cf.dt("9876-12-31")))
 
     def test_Field_autocyclic(self):
         f = self.f.copy()
