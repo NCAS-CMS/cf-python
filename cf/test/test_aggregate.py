@@ -373,9 +373,8 @@ class aggregateTest(unittest.TestCase):
         self.assertTrue(chars["cellsize"].equals(cf.wi(30, 60, "degrees_N")))
         self.assertTrue(chars["spacing"].equals(cf.set([30, 45], "degrees_N")))
         for identity in ("longitude", "time"):
-            self.assertEqual(
-                x.dimension_coordinate(identity).get_cell_characteristics(),
-                {"cellsize": None, "spacing": None},
+            self.assertIsNone(
+                x.dimension_coordinate(identity).get_cell_characteristics(None)
             )
 
         for cells in (

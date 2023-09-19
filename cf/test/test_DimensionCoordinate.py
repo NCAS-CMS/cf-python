@@ -700,24 +700,17 @@ class DimensionCoordinateTest(unittest.TestCase):
         """Test the `cell_characteristic` DimensionCoordinate methods."""
         d = self.dim.copy()
         self.assertFalse(d.has_cell_characteristics())
-        self.assertEqual(
-            d.get_cell_characteristics(),
-            {"cellsize": None, "spacing": None},
-        )
+        self.assertIsNone(d.get_cell_characteristics(None))
         self.assertIsNone(d.set_cell_characteristics(cellsize=5, spacing=None))
         self.assertTrue(d.has_cell_characteristics())
         self.assertEqual(
             d.get_cell_characteristics(),
-            {"cellsize": 5, "spacing": None},
+            {"cellsize": 5},
         )
-        self.assertEqual(
-            d.del_cell_characteristics(), {"cellsize": 5, "spacing": None}
-        )
-        self.assertEqual(
-            d.del_cell_characteristics(), {"cellsize": None, "spacing": None}
-        )
+        self.assertEqual(d.del_cell_characteristics(), {"cellsize": 5})
+        self.assertIsNone(d.del_cell_characteristics(None))
 
-        # Check that cell charactersitics are copied
+        # Copy preserves cell charactersitics
         d.set_cell_characteristics(1, 2)
         e = d.copy()
         self.assertEqual(
@@ -730,9 +723,8 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         # set_data clears cell characteristics
         d.set_data(d.data)
-        self.assertEqual(
-            d.get_cell_characteristics(),
-            {"cellsize": None, "spacing": None},
+        self.assertIsNone(
+            d.get_cell_characteristics(None),
         )
 
         # set_bounds clears cell characteristics
@@ -742,10 +734,8 @@ class DimensionCoordinateTest(unittest.TestCase):
             {"cellsize": 1, "spacing": 2},
         )
         d.set_bounds(d.bounds)
-        self.assertEqual(
-            d.get_cell_characteristics(),
-            {"cellsize": None, "spacing": None},
-        )
+        with self.assertRaises(ValueError):
+            d.get_cell_characteristics()
 
 
 if __name__ == "__main__":

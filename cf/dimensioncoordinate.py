@@ -100,15 +100,15 @@ class DimensionCoordinate(
         )
 
         if source:
-            # Reset "cell_characteristics" after set_data/set_bounds
-            # has removed it
+            # Reset cell characteristics after set_data/set_bounds has
+            # removed them
             try:
-                cell_chars = source._custom.get("cell_characteristics")
+                chars = source._get_component("cell_characteristics", None)
             except AttributeError:
-                cell_chars = None
+                chars = None
 
-            if cell_chars is not None:
-                self._custom["cell_characteristics"] = cell_chars
+            if chars is not None:
+                self._set_component("cell_characteristics", chars, copy=False)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -765,6 +765,41 @@ class DimensionCoordinate(
 
         return bounds
 
+    def del_cell_characteristics(self, default=ValueError()):
+        """Remove the cell characteristics.
+
+        A cell characterisitic is assumed to valid for each cell. Cell
+        characteristics are not inferred from the coordinate or bounds
+        data, but may be defined with the `set_cell_characteristics`
+        method. Cell characteristics are automatically removed
+        whenever the new data or bounds are set with `set_data` or
+        `set_bounds` respectively.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `get_cell_characteristics`,
+                     `has_cell_characteristics`,
+                     `set_cell_characteristics`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if cell
+                characteristics have not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `dict`
+                The removed cell size characteristics, as would have
+                been returned by `get_cell_characteristics`.
+
+        """
+        out = self.get_cell_characteristics(default=default)
+        self._del_component("cell_characteristics", default=None)
+        return out
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
@@ -831,35 +866,8 @@ class DimensionCoordinate(
 
         return super().get_bounds(default=default)
 
-    def del_cell_characteristics(self):
-        """Remove the cell characteristics.
-
-        A cell characterisitic is assumed to valid for each cell. Cell
-        characteristics are not inferred from the coordinate or bounds
-        data, but may be defined with the `set_cell_characteristics`
-        method. Cell characteristics are automatically removed
-        whenever the new data or bounds are set with `set_data` or
-        `set_bounds` respectively.
-
-        .. versionadded:: 3.15.4
-
-        .. seealso:: `get_cell_characteristics`,
-                     `has_cell_characteristics`,
-                     `set_cell_characteristics`
-
-        :Returns:
-
-            `dict`
-                The removed cell size characteristics, as would have
-                been returned by `get_cell_characteristics`.
-
-        """
-        cell_characteristics = self.get_cell_characteristics()
-        self._custom.pop("cell_characteristics", None)
-        return cell_characteristics
-
-    def get_cell_characteristics(self):
-        """Return the cell characteristics.
+    def get_cell_characteristics(self, default=ValueError()):
+        """Return cell characteristics.
 
         A cell characterisitic is assumed to valid for each cell. Cell
         characteristics are not inferred from the coordinate or bounds
@@ -874,6 +882,14 @@ class DimensionCoordinate(
                      `has_cell_characteristics`,
                      `set_cell_characteristics`
 
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if cell
+                characteristics have not been set.
+
+                {{default Exception}}
+
         :Returns:
 
             `dict`
@@ -886,14 +902,20 @@ class DimensionCoordinate(
                 has been stored for that type.
 
         """
-        try:
-            cell_characteristics = self._custom["cell_characteristics"]
-        except KeyError:
-            return {"cellsize": None, "spacing": None}
-        else:
-            from copy import deepcopy
+        out = self._get_component("cell_characteristics", default=None)
+        if out is None:
+            if default is None:
+                return
 
-            return deepcopy(cell_characteristics)
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no 'cell_characteristics "
+                "component",
+            )
+
+        from copy import deepcopy
+
+        return deepcopy(out)
 
     def has_cell_characteristics(self):
         """Whether or not there are any cell characteristics.
@@ -917,13 +939,7 @@ class DimensionCoordinate(
                 Whether or not there are any cell characteristics.
 
         """
-        custom = self._custom
-        if "cell_characteristics" not in custom:
-            return False
-
-        return not all(
-            v is None for v in custom["cell_characteristics"].values()
-        )
+        return self._has_component("cell_characteristics")
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -1035,7 +1051,7 @@ class DimensionCoordinate(
         None
 
         """
-        self._custom.pop("cell_characteristics", None)
+        self._del_component("cell_characteristics", default=None)
         super().set_bounds(bounds, copy=copy)
 
     def set_cell_characteristics(self, cellsize, spacing):
@@ -1082,14 +1098,18 @@ class DimensionCoordinate(
         >>> d.set_cell_characteristics(cf.wi(100, 200), 150)
 
         """
-        custom = self._custom
-        if cellsize is None and spacing is None:
-            custom.pop("cell_characteristics", None)
-        else:
-            custom["cell_characteristics"] = {
-                "cellsize": cellsize,
-                "spacing": spacing,
-            }
+        chars = {}
+        if cellsize is not None:
+            chars["cellsize"] = cellsize
+
+        if spacing is not None:
+            chars["spacing"] = spacing
+
+        if not chars:
+            self.del_cell_characteristics(None)
+            return
+
+        self._set_component("cell_characteristics", chars, copy=False)
 
     def set_data(self, data, copy=True, inplace=True):
         """Set the data.
@@ -1146,7 +1166,7 @@ class DimensionCoordinate(
         None
 
         """
-        self._custom.pop("cell_characteristics", None)
+        self._del_component("cell_characteristics", default=None)
         return super().set_data(data, copy=copy, inplace=inplace)
 
     # ----------------------------------------------------------------
