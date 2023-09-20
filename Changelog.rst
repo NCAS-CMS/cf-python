@@ -3,7 +3,7 @@ version 3.15.4
 
 **2023-??-??**
 
-* Fix bug `cf.Field.match_by_construct` that always returned True for
+* Fix bug in `cf.Field.match_by_construct` that always returned True for
   1-d constructs whose axis is not in the data, even when the
   criterion was not matched
   (https://github.com/NCAS-CMS/cf-python/issues/691)
