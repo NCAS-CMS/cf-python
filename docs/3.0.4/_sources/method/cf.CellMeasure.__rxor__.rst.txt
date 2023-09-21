@@ -1,7 +1,0 @@
-cf.CellMeasure.__rxor__
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__rxor__

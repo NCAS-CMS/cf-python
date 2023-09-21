@@ -24,10 +24,9 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Plotting members of a model ensemble" href="plot_7_recipe.html" />
-    <link rel="prev" title="Plotting wind vectors overlaid on precipitation data" href="plot_5_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,10 +38,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,15 +86,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
-      <li>Previous: <a href="plot_5_recipe.html" title="previous chapter">Plotting wind vectors overlaid on precipitation data</a></li>
-      <li>Next: <a href="plot_7_recipe.html" title="next chapter">Plotting members of a model ensemble</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -144,7 +143,7 @@ to download the full example code</p>
 <ol class="arabic simple" start="2">
 <li><p>Read the field constructs using read function:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;~/recipes/au952a.pd20510414.pp&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/au952a.pd20510414.pp&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -163,7 +162,7 @@ Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
 -----------------------------------------------------------
 Conventions = &#39;CF-1.10&#39;
 _FillValue = -1073741824.0
-history = &#39;Converted from UM/PP by cf-python v3.15.0&#39;
+history = &#39;Converted from UM/PP by cf-python v3.14.1&#39;
 lbproc = &#39;8192&#39;
 lbtim = &#39;122&#39;
 long_name = &#39;WIND GUST&#39;
@@ -258,7 +257,7 @@ Coordinate reference: grid_mapping_name:rotated_latitude_longitude
 <ol class="arabic simple" start="5">
 <li><p>Create a new instance of the <cite>cf.dt</cite> class with a specified year, month, day, hour, minute, second and microsecond. Then store the result in the variable <code class="docutils literal notranslate"><span class="pre">test</span></code>:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2051</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a> <span class="o">=</span> <a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><span class="mi">2051</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -304,7 +303,7 @@ Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
 -----------------------------------------------------------
 Conventions = &#39;CF-1.10&#39;
 _FillValue = -1073741824.0
-history = &#39;Converted from UM/PP by cf-python v3.15.0&#39;
+history = &#39;Converted from UM/PP by cf-python v3.14.1&#39;
 lbproc = &#39;8192&#39;
 lbtim = &#39;122&#39;
 long_name = &#39;WIND GUST&#39;
@@ -362,10 +361,10 @@ Dimension coordinate: longitude
 <a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">regridded_data</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="cftime.datetime" class="sphx-glr-backref-module-cftime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_6_recipe_003.png" srcset="../_images/sphx_glr_plot_6_recipe_003.png" alt="plot 6 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  25.541 seconds)</p>
+<img src="../_images/sphx_glr_plot_6_recipe_003.png" srcset="../_images/sphx_glr_plot_6_recipe_003.png" alt="plot 6 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  30.084 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-6-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/plot_6_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_6_recipe.py</span></code></a></p>
+<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_6_recipe.py</span></code></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_6_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_6_recipe.ipynb</span></code></a></p>
@@ -382,7 +381,7 @@ Dimension coordinate: longitude
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-05-04.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

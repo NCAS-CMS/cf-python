@@ -538,9 +538,32 @@ class PropertiesData(Properties):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol, atol):
+        """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+
+            rtol: number
+                The tolerance on relative numerical differences.
+
+            atol: number
+                The tolerance on absolute numerical differences.
+
+        .. versionadded:: 3.15.2
+
+        """
+        data = self.get_data(None, _fill_value=None)
+        if data is None:
+            raise ValueError(
+                "Can't apply '__query_isclose__' to a "
+                f"{self.__class__.__name__} object with no data: {self!r}"
+            )
+
+        return data.isclose(value, rtol=rtol, atol=atol)
+
     def _binary_operation(self, y, method):
         """Implement binary arithmetic and comparison operations.
 
@@ -1756,7 +1779,7 @@ class PropertiesData(Properties):
         """The maximum of the data array.
 
         .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1784,7 +1807,7 @@ class PropertiesData(Properties):
         """The unweighted mean the data array.
 
         .. seealso:: `maximum`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1813,7 +1836,7 @@ class PropertiesData(Properties):
         array.
 
         .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`,
-                     `standard_devitation`, `sum`, `variance`
+                     `standard_deviation`, `sum`, `variance`
 
         :Returns:
 
@@ -2093,7 +2116,7 @@ class PropertiesData(Properties):
         """The sum of the data array.
 
         .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `variance`
+                     `sample_size`, `standard_deviation`, `variance`
 
         :Returns:
 

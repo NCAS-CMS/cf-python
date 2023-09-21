@@ -1,7 +1,0 @@
-cf.Count.match_by_property
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.match_by_property

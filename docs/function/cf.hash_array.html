@@ -24,10 +24,11 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.implementation" href="cf.implementation.html" />
-    <link rel="prev" title="cf.flat" href="cf.flat.html" />
+    <link rel="next" title="cf.min_total_memory" href="cf.min_total_memory.html" />
+    <link rel="prev" title="cf.free_memory_factor" href="cf.free_memory_factor.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -91,8 +96,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.flat.html" title="previous chapter">cf.flat</a></li>
-      <li>Next: <a href="cf.implementation.html" title="next chapter">cf.implementation</a></li>
+      <li>Previous: <a href="cf.free_memory_factor.html" title="previous chapter">cf.free_memory_factor</a></li>
+      <li>Next: <a href="cf.min_total_memory.html" title="next chapter">cf.min_total_memory</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -130,8 +135,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.hash_array<a class="headerlink" href="#cf-hash-array" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.hash_array">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">hash_array</code><span class="sig-paren">(</span><em class="sig-param">array</em>, <em class="sig-param">algorithm=&lt;built-in function openssl_sha1&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/functions.py#L2633-L2704"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.hash_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">hash_array</code><span class="sig-paren">(</span><em class="sig-param">array</em>, <em class="sig-param">algorithm=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/functions.py#L2640-L2696"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.hash_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a hash value of a numpy array.</p>
+<p>Deprecated at version 3.15.0 and is no longer available. Use
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.base.tokenize</span></code> instead.</p>
 <p>The hash value is dependent on the data type and the shape of the
 array. If the array is a masked array then the hash value is
 independent of the fill value and of data array values underlying
@@ -139,10 +146,10 @@ any masked elements.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The numpy array to be hashed. May be a masked array.</p>
+<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The numpy array to be hashed. May be a masked array.</p>
 </dd>
 <dt>algorithm: <a class="reference external" href="https://docs.python.org/3/library/hashlib.html#module-hashlib" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hashlib</span></code></a> constructor function</dt><dd><p>Constructor function for the desired hash algorithm,
-e.g. <code class="xref py py-obj docutils literal notranslate"><span class="pre">hashlib.md5</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">hashlib.sha256</span></code>, etc.</p>
+e.g. <a class="reference external" href="https://docs.python.org/3/library/hashlib.html#hashlib.md5" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hashlib.md5</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/hashlib.html#hashlib.sha256" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hashlib.sha256</span></code></a>, etc.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
 </div>
@@ -194,11 +201,11 @@ e.g. <code class="xref py py-obj docutils literal notranslate"><span class="pre"
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

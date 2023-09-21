@@ -1,3 +1,5 @@
+:orphan:
+
 cf.DimensionCoordinate.nc_get_variable
 ======================================
 

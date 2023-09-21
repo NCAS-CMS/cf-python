@@ -1,7 +1,0 @@
-cf.Index.__mul__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.__mul__

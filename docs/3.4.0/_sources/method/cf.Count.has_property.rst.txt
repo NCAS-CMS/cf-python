@@ -1,7 +1,0 @@
-cf.Count.has_property
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.has_property

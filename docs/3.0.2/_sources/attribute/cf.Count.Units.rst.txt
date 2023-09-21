@@ -1,7 +1,0 @@
-cf.Count.Units
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.Count.Units

@@ -1,7 +1,0 @@
-cf.List.concatenate
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.concatenate

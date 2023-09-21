@@ -1,7 +1,0 @@
-cf.Count.__deepcopy__
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.__deepcopy__

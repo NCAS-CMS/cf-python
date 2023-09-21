@@ -1,7 +1,0 @@
-cf.CellMeasure.sample_size
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.sample_size

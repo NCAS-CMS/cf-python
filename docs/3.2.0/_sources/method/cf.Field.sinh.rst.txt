@@ -1,7 +1,0 @@
-cf.Field.sinh
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.sinh

@@ -261,6 +261,7 @@ extras_require = {
 setup(
     name="cf-python",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     version=version,
     description="A CF-compliant earth science data analysis library",
     author="David Hassell",

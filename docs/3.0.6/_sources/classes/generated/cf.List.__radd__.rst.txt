@@ -1,7 +1,0 @@
-cf.List.__radd__
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__radd__

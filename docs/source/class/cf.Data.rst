@@ -73,6 +73,8 @@ Dask
    ~cf.Data.chunk_indices
    ~cf.Data.todict
    ~cf.Data.to_dask_array
+   ~cf.Data.get_deterministic_name
+   ~cf.Data.has_deterministic_name
 
 .. rubric:: Attributes
 
@@ -821,9 +823,7 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.__array__
    ~cf.Data.__contains__
-   ~cf.Data.__data__     
    ~cf.Data.__deepcopy__
    ~cf.Data.__getitem__ 
    ~cf.Data.__hash__
@@ -832,6 +832,9 @@ Special
    ~cf.Data.__repr__
    ~cf.Data.__setitem__ 
    ~cf.Data.__str__
+   ~cf.Data.__array__
+   ~cf.Data.__data__     
+   ~cf.Data.__query_isclose__
 
 Deprecated
 ----------

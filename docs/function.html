@@ -24,6 +24,7 @@
     <script src="_static/copybutton.js"></script>
     <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cf.read" href="function/cf.read.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -127,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cf-functions">
 <span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.15.0 for version 1.10 of the CF conventions.</p>
+<p>Version 3.15.3 for version 1.10 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -155,6 +160,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></p></td>
 <td><p>Aggregate field constructs into as few field constructs as possible.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.climatology_cells.html#cf.climatology_cells" title="cf.climatology_cells"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.climatology_cells</span></code></a></p></td>
+<td><p>Return a climatological cells dictionary for <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -188,13 +196,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a></p></td>
 <td><p>Return the distribution of a set of variables in the form of an N-dimensional histogram.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a></p></td>
-<td><p>Calculate the relative vorticity using centred finite differences.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ATOL</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ATOL</span></code></a></p></td>
 <td><p>Alias for <a class="reference internal" href="function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RTOL</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RTOL</span></code></a></p></td>
 <td><p>Alias for <a class="reference internal" href="function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a>.</p></td>
 </tr>
 </tbody>
@@ -235,6 +240,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.set.html#cf.set" title="cf.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.set</span></code></a></p></td>
 <td><p>A <a class="reference internal" href="class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “member of set” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.isclose.html#cf.isclose" title="cf.isclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.isclose</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for an “is close” condition.</p></td>
 </tr>
 </tbody>
 </table>
@@ -428,43 +436,40 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.flat.html#cf.flat" title="cf.flat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.flat</span></code></a></p></td>
 <td><p>Return an iterator over an arbitrarily nested sequence.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.hash_array.html#cf.hash_array" title="cf.hash_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hash_array</span></code></a></p></td>
-<td><p>Return a hash value of a numpy array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.implementation.html#cf.implementation" title="cf.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.implementation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.implementation.html#cf.implementation" title="cf.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.implementation</span></code></a></p></td>
 <td><p>Return a container for the CF data model implementation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.indices_shape.html#cf.indices_shape" title="cf.indices_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.indices_shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.indices_shape.html#cf.indices_shape" title="cf.indices_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.indices_shape</span></code></a></p></td>
 <td><p>Return the shape of the array subspace implied by indices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.inspect.html#cf.inspect" title="cf.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.inspect</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.inspect.html#cf.inspect" title="cf.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.inspect</span></code></a></p></td>
 <td><p>Inspect the attributes of an object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a></p></td>
 <td><p>The minimal level of seriousness of log messages which are shown.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.pathjoin.html#cf.pathjoin" title="cf.pathjoin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.pathjoin</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.pathjoin.html#cf.pathjoin" title="cf.pathjoin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.pathjoin</span></code></a></p></td>
 <td><p>Join two file path components intelligently.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a></p></td>
 <td><p>Use ‘relaxed’ mode when getting a construct identity.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.relpath.html#cf.relpath" title="cf.relpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relpath</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.relpath.html#cf.relpath" title="cf.relpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relpath</span></code></a></p></td>
 <td><p>Return a relative filepath to a file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a></p></td>
 <td><p>Load a STASH to standard name conversion table from a file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.stash2standard_name.html#cf.stash2standard_name" title="cf.stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.stash2standard_name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.stash2standard_name.html#cf.stash2standard_name" title="cf.stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.stash2standard_name</span></code></a></p></td>
 <td><p>Return a copy of the loaded STASH to standard name conversion table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.unique_constructs.html#cf.unique_constructs" title="cf.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unique_constructs</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.unique_constructs.html#cf.unique_constructs" title="cf.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unique_constructs</span></code></a></p></td>
 <td><p>Return the unique constructs from a sequence.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.LOG_LEVEL.html#cf.LOG_LEVEL" title="cf.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.LOG_LEVEL</span></code></a></p></td>
 <td><p>Alias for <a class="reference internal" href="function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES" title="cf.RELAXED_IDENTITIES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RELAXED_IDENTITIES</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES" title="cf.RELAXED_IDENTITIES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RELAXED_IDENTITIES</span></code></a></p></td>
 <td><p>Alias for <a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a>.</p></td>
 </tr>
 </tbody>
@@ -493,17 +498,23 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.free_memory_factor.html#cf.free_memory_factor" title="cf.free_memory_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory_factor</span></code></a></p></td>
 <td><p>Set the fraction of memory kept free as a temporary workspace.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.min_total_memory.html#cf.min_total_memory" title="cf.min_total_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.min_total_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.hash_array.html#cf.hash_array" title="cf.hash_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hash_array</span></code></a></p></td>
+<td><p>Return a hash value of a numpy array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.min_total_memory.html#cf.min_total_memory" title="cf.min_total_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.min_total_memory</span></code></a></p></td>
 <td><p>The minimum total memory across nodes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.of_fraction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.of_fraction</span></code></a></p></td>
 <td><p>The amount of concurrently open files above which files containing data arrays may be automatically closed.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cf.open_files.html#cf.open_files" title="cf.open_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.open_files.html#cf.open_files" title="cf.open_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files</span></code></a></p></td>
 <td><p>Return the open files containing sub-arrays of master data arrays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.open_files_threshold_exceeded.html#cf.open_files_threshold_exceeded" title="cf.open_files_threshold_exceeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files_threshold_exceeded</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.open_files_threshold_exceeded.html#cf.open_files_threshold_exceeded" title="cf.open_files_threshold_exceeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files_threshold_exceeded</span></code></a></p></td>
 <td><p>Return True if the total number of open files is greater than the current threshold.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a></p></td>
+<td><p>Calculate the relative vorticity using centred finite differences.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.set_performance.html#cf.set_performance" title="cf.set_performance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.set_performance</span></code></a></p></td>
 <td><p>Tune performance of parallelisation.</p></td>
@@ -539,11 +550,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

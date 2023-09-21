@@ -1,7 +1,0 @@
-cf.FieldAncillary.hour
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.FieldAncillary.hour

@@ -24,10 +24,11 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Query.operator" href="cf.Query.operator.html" />
-    <link rel="prev" title="cf.Query.set_condition_units" href="../method/cf.Query.set_condition_units.html" />
+    <link rel="prev" title="cf.Query.setdefault" href="../method/cf.Query.setdefault.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -92,7 +97,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Query.html">cf.Query</a><ul>
-      <li>Previous: <a href="../method/cf.Query.set_condition_units.html" title="previous chapter">cf.Query.set_condition_units</a></li>
+      <li>Previous: <a href="../method/cf.Query.setdefault.html" title="previous chapter">cf.Query.setdefault</a></li>
       <li>Next: <a href="cf.Query.operator.html" title="next chapter">cf.Query.operator</a></li>
   </ul></li>
   </ul></li>
@@ -134,13 +139,21 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt id="cf.Query.attr">
 <code class="sig-prename descclassname">Query.</code><code class="sig-name descname">attr</code><a class="headerlink" href="#cf.Query.attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>The object attribute on which to apply the query condition.</p>
+<p>For compound queries <a class="reference internal" href="#cf.Query.attr" title="cf.Query.attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attr</span></code></a> is always <code class="docutils literal notranslate"><span class="pre">()</span></code>, even if some of
+the constituent conditions have a different value.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a></p>
+</div>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
 <span class="go">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;le&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">attr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;le&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">attr</span>
 <span class="go">(&#39;year&#39;,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">q</span> <span class="o">|</span> <span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">attr</span>
+<span class="go">()</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -155,11 +168,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

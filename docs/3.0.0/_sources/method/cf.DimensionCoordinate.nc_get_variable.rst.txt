@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.nc_get_variable
-======================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.nc_get_variable

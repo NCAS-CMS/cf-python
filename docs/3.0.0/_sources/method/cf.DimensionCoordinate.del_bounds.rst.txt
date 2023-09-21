@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.del_bounds
-=================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.del_bounds

@@ -1,7 +1,0 @@
-cf.DomainAncillary.__rand__
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.__rand__

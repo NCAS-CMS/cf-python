@@ -74,8 +74,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.10"
-__date__ = "2023-04-27"
-__version__ = "3.15.0"
+__date__ = "2023-08-31"
+__version__ = "3.15.3"
 
 _requires = (
     "numpy",
@@ -169,7 +169,7 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.6.0"
+_minimum_vn = "1.6.2"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
@@ -193,7 +193,7 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.10.1.0"
+_minimum_vn = "1.10.1.2"
 _maximum_vn = "1.10.2.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
@@ -272,7 +272,7 @@ from .data.fragment import (
     UMFragmentArray,
 )
 
-from .aggregate import aggregate
+from .aggregate import aggregate, climatology_cells
 from .query import (
     Query,
     lt,
@@ -281,6 +281,7 @@ from .query import (
     ge,
     eq,
     ne,
+    isclose,
     contain,
     contains,
     wi,

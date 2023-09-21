@@ -1,7 +1,0 @@
-cf.CellMeasure.subspace
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.subspace

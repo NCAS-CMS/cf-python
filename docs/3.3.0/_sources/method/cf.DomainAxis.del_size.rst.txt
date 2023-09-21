@@ -1,7 +1,0 @@
-cf.DomainAxis.del_size
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAxis.del_size

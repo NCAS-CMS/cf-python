@@ -22,7 +22,7 @@
    introduction
    cf_data_model
    installation
-   contributing
+   cheat_sheet
    recipes/index
    tutorial
    analysis
@@ -31,6 +31,7 @@
    performance
    releases
    Changelog
+   contributing
    
 **Index and search**
 ====================

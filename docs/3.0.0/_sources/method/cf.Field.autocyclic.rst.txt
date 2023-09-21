@@ -1,7 +1,0 @@
-cf.Field.autocyclic
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.autocyclic

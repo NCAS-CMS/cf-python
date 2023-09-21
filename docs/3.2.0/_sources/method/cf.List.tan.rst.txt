@@ -1,7 +1,0 @@
-cf.List.tan
-===========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.tan

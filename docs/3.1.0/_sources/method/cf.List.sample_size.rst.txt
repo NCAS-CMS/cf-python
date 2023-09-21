@@ -1,7 +1,0 @@
-cf.List.sample_size
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.sample_size

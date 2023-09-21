@@ -1,7 +1,0 @@
-cf.Bounds.identity
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.identity

@@ -24,9 +24,10 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.where" href="cf.Data.where.html" />
+    <link rel="next" title="cf.Data.argmin" href="cf.Data.argmin.html" />
     <link rel="prev" title="cf.Data.func" href="cf.Data.func.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -93,7 +98,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="cf.Data.func.html" title="previous chapter">cf.Data.func</a></li>
-      <li>Next: <a href="cf.Data.where.html" title="next chapter">cf.Data.where</a></li>
+      <li>Next: <a href="cf.Data.argmin.html" title="next chapter">cf.Data.argmin</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -132,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.argmax<a class="headerlink" href="#cf-data-argmax" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.argmax">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">argmax</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">unravel=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/data/data.py#L5839-L5917"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.argmax" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">argmax</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">unravel=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/data/data.py#L5941-L6023"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.argmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the maximum values along an axis.</p>
 <p>If no axis is specified then the returned index locates the
 maximum of the whole data.</p>
@@ -141,6 +146,13 @@ indices corresponding to the first occurrence are returned.</p>
 <p><strong>Performance</strong></p>
 <p>If the data index is returned as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> (see the <em>unravel</em>
 parameter) then all delayed operations are computed.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Data.argmin.html#cf.Data.argmin" title="cf.Data.argmin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argmin</span></code></a></p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -171,7 +183,7 @@ locating the maxima over a subset of the axes.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">&lt;CF Data(): 5&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">5</span>
 </pre></div>
 </div>
@@ -199,7 +211,7 @@ locating the maxima over a subset of the axes.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0 1 2]</span>
 <span class="go"> [3 5 5]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">&lt;CF Data(2): [2, 1]&gt;</span>
 </pre></div>
 </div>
@@ -215,11 +227,11 @@ locating the maxima over a subset of the axes.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-27.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

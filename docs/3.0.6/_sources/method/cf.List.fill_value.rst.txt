@@ -1,7 +1,0 @@
-cf.List.fill_value
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.fill_value

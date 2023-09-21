@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Data.fits_in_memory
 ======================
 

@@ -1,7 +1,0 @@
-cf.CellMethod.__deepcopy__
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.__deepcopy__

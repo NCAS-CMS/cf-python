@@ -1,7 +1,0 @@
-cf.DomainAncillary.__rpow__
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.__rpow__

@@ -1,3 +1,5 @@
+:orphan:
+
 cf.NetCDFArray.get_ncvar
 ========================
 

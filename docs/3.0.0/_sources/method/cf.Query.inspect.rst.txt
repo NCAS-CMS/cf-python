@@ -1,7 +1,0 @@
-cf.Query.inspect
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Query.inspect

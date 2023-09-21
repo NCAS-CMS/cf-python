@@ -4,6 +4,7 @@ import faulthandler
 import unittest
 
 import numpy as np
+from dask.base import tokenize
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -523,6 +524,12 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(
             cf.TimeDuration.days_in_month(2004, 2, calendar="366_day"), 29
         )
+
+    def test_TimeDuration__dask_tokenize__(self):
+        for t in (cf.D(), cf.M(3, day=13, hour=10, minute=40, second=30)):
+            self.assertEqual(tokenize(t), tokenize(t.copy()))
+
+        self.assertNotEqual(tokenize(cf.D()), tokenize(cf.h(24)))
 
 
 if __name__ == "__main__":

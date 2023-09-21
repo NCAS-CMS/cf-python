@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Using mask to plot Aerosol Optical Depth &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculate and plot the Niño 3.4 Index" href="plot_13_recipe.html" />
+    <link rel="prev" title="Plotting the Warming Stripes" href="plot_11_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_11_recipe.html" title="previous chapter">Plotting the Warming Stripes</a></li>
+      <li>Next: <a href="plot_13_recipe.html" title="next chapter">Calculate and plot the Niño 3.4 Index</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-12-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="using-mask-to-plot-aerosol-optical-depth">
+<span id="sphx-glr-recipes-plot-12-recipe-py"></span><h1>Using mask to plot Aerosol Optical Depth<a class="headerlink" href="#using-mask-to-plot-aerosol-optical-depth" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will make use of a
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked">masked array</a>
+to plot the <cite>high-quality</cite> retrieval of Aerosol Optical Depth (AOD) from all other
+retrievals.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python, cf-plot and matplotlib.pyplot:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read the field constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fl</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span>
+    <span class="s2">&quot;~/recipes/JRR-AOD_v3r0_npp_s202012310752331_e202012310753573_c202100000000000.nc&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fl</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;CF Field: long_name=AOT at 0.55 micron for both ocean and land(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Retrieval AOD550 for each land aerosol model: dust, generic, urban, smoke(ncdim%Rows(768), ncdim%Columns(3200), ncdim%LndLUTnchn(4)) 1&gt;,
+ &lt;CF Field: long_name=AOT at 5 ABI channels (0.47, 0.64, 0.86, 1.61, 2.26 microns)(ncdim%Rows(768), ncdim%Columns(3200), ncdim%AbiAODnchn(11)) 1&gt;,
+ &lt;CF Field: long_name=Aerosol model: 0-oceanic, 1-dust, 2-generic, 3-urban, 4-heavy smoke(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Angstrom Exponent for 0.55 and 0.86 micron(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Angstrom Exponent for 0.86 and 1.61 micron(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Cloud Mask Quality Flag(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Retrieved coarse aerosol model index over ocean(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Retrieved fine aerosol model index over ocean(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Retrieved ratio of fine mode optical depth at 0.55 micron over ocean(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Percent of high quality retrievals %&gt;,
+ &lt;CF Field: long_name=Mean AOD at 550 nm %&gt;,
+ &lt;CF Field: long_name=Mean High Quality AOD at 550 nm %&gt;,
+ &lt;CF Field: long_name=Retrieval quality:  0: high; 1: medium; 2: low; 3: no retrieval(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=External flags from input masks: bit 0&amp;1: cloud (0-confClr/1-probClr/2-probCld/3-confCld); bit 2: snow (0-No/1-Yes); bit 3: cloud shadow; bit 4: fire; bit 5: sun glint; bit 6: Heavy aerosol(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Flags for input data (0-valid/1-invalid): bit 0: geolocation;  bit 1: geometry; bit 2: ancillary model data; bit 3: reflectance(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Flags for retrieval path (0-No/1-Yes): bit 0: retrieval over water; bit 1: over bright land; bit 2: over glint water; bit 3: retrieval with SW scheme over land; bit 4: retrieval with SWIR scheme over land; bit 5: retrieval over bright-land algorithm, bit 6: dark land retrieval over bright land(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Flags for retrieval (0-No/1-Yes): bit 0: retrieval failed; bit 1: airmass exceeds threshold; bit 2: dark barren land surface type; bit 3: extrapolation involved; bit 4: retrieval residula out of range; bit 5: dark land NDVI out of range; bit 6: dark land redness ratio out of range; bit 7: adjacent to cloud or snow(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Flags for internal tests (0-No/1-Yes): bit 0: cloudy; bit 1: cirrus; bit 2: thin cirrus; bit 3: inhomogeneous; bit 4: snow/ice; bit 5: ephemeral water; bit 6: shallow water; bit 7: heavy aerosol(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Retrieval residual for each land aerosol model: dust, generic, urban, smoke(ncdim%Rows(768), ncdim%Columns(3200), ncdim%LndLUTnchn(4)) 1&gt;,
+ &lt;CF Field: long_name=Retrieval residual of the best solution(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Percent of AOD retrievals %&gt;,
+ &lt;CF Field: long_name=land surface reflectance at 0.47, 0.64 and 2.26 micron(ncdim%Rows(768), ncdim%Columns(3200), ncdim%AbiAODnchn(11)) 1&gt;,
+ &lt;CF Field: long_name=Inhomogeneity TOA reflectance standard deviation: 0.47 micron over land, 2.26 micron over ocean(ncdim%Rows(768), ncdim%Columns(3200)) 1&gt;,
+ &lt;CF Field: long_name=Start column index 1&gt;,
+ &lt;CF Field: long_name=Start row index 1&gt;,
+ &lt;CF Field: long_name=Cloud Mask Granule Level Degradation Quality Flag 1&gt;]
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Select AOD from the field list by identity and look at the contents:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">aod</span></a> <span class="o">=</span> <a href="../method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">fl</span><span class="o">.</span><span class="n">select_field</span></a><span class="p">(</span><span class="s2">&quot;long_name=AOT at 0.55 micron for both ocean and land&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">aod</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=AOT at 0.55 micron for both ocean and land (ncvar%AOD550)
+--------------------------------------------------------------------------
+Data            : long_name=AOT at 0.55 micron for both ocean and land(ncdim%Rows(768), ncdim%Columns(3200)) 1
+Auxiliary coords: long_name=Longitude(ncdim%Rows(768), ncdim%Columns(3200)) = [[94.47801971435547, ..., 63.974063873291016]] degrees_east
+                : long_name=Latitude(ncdim%Rows(768), ncdim%Columns(3200)) = [[21.498714447021484, ..., 22.031387329101562]] degrees_north
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Select AOD retrieval quality by index and look at the quality flags:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">quality</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fl</span></a><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">quality</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=Retrieval quality:  0: high; 1: medium; 2: low; 3: no retrieval (ncvar%QCAll)
+----------------------------------------------------------------------------------------------
+Data            : long_name=Retrieval quality:  0: high; 1: medium; 2: low; 3: no retrieval(ncdim%Rows(768), ncdim%Columns(3200)) 1
+Auxiliary coords: long_name=Longitude(ncdim%Rows(768), ncdim%Columns(3200)) = [[94.47801971435547, ..., 63.974063873291016]] degrees_east
+                : long_name=Latitude(ncdim%Rows(768), ncdim%Columns(3200)) = [[21.498714447021484, ..., 22.031387329101562]] degrees_north
+</pre></div>
+</div>
+<p>5. Select latitude and longitude dimensions by identities, with two different
+techniques:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">lon</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">aod</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;long_name=Longitude&quot;</span><span class="p">)</span>
+<a href="../class/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">lat</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">aod</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>6. Plot the AOD for all the retrievals using
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here the argument
+<code class="docutils literal notranslate"><span class="pre">'ptype'</span></code> specifies the type of plot to use (latituide-longitude here) and
+the argument <code class="docutils literal notranslate"><span class="pre">'lines=False'</span></code> does not draw contour lines:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span><span class="n">f</span><span class="o">=</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">aod</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">x</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lon</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">y</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lat</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_12_recipe_001.png" srcset="../_images/sphx_glr_plot_12_recipe_001.png" alt="plot 12 recipe" class = "sphx-glr-single-img"/><p>7. Create a mask for AOD based on the quality of the retrieval. The
+<code class="docutils literal notranslate"><span class="pre">'__ne__'</span></code> method is an implementation of the <code class="docutils literal notranslate"><span class="pre">!=</span></code> operator. It is used to
+create a mask where all the <cite>high-quality</cite> AOD points (with the flag 0) are
+marked as <code class="docutils literal notranslate"><span class="pre">False</span></code>, and all the other data points (medium quality, low
+quality, or no retrieval) are marked as <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mask</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">quality</span></a><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>8. Apply the mask to the AOD dataset. The <code class="docutils literal notranslate"><span class="pre">'where'</span></code> function takes the
+mask as an input and replaces all the values in the AOD dataset that
+correspond to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the mask with a masked value using <a class="reference external" href="https://ncas-cms.github.io/cf-python/constant.html#cf.cf.masked">cf.masked</a>.
+In this case, all AOD values that are not of <cite>high-quality</cite> (since they were
+marked as <code class="docutils literal notranslate"><span class="pre">True</span></code> in the mask) are masked. This means that the <code class="docutils literal notranslate"><span class="pre">high</span></code>
+variable contains only the AOD data that was retrieved with <cite>high-quality</cite>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">high</span></a> <span class="o">=</span> <a href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">aod</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mask</span></a><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>9. Now plot both the AOD from <cite>high-quality</cite> retrieval and all other retrievals
+using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
+define the parts of the plot area, specifying that the figure should have
+1 row and 2 columns, which is closed by
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html">plt.suptitle</a>
+is used to add a title for the whole figure;</p></li>
+<li><p>the subplots for plotting are selected using
+<a class="reference external" href="https://ajheaps.github.io/cf-plot/gpos.html">cfplot.gpos</a> after which
+<a class="reference external" href="https://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to
+set the map limits and resolution for the subplots;</p></li>
+<li><p>and as cf-plot stores the plot in a plot object with the name
+<code class="docutils literal notranslate"><span class="pre">cfp.plotvars.plot</span></code>, country borders are added using normal
+<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/index.html">Cartopy operations</a>
+on the <code class="docutils literal notranslate"><span class="pre">cfp.plotvars.mymap</span></code> object:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html#matplotlib.pyplot.suptitle" title="matplotlib.pyplot.suptitle" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span></a><span class="p">(</span><span class="s2">&quot;AOD for both ocean and land&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=</span><span class="mi">68</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">98</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">aod</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lon</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lat</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;All retrievals&quot;</span><span class="p">,</span>
+    <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=</span><span class="mi">68</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">98</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">high</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lon</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><a href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">lat</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span>
+    <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;High quality retrieval&quot;</span><span class="p">,</span>
+    <span class="n">colorbar_position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+    <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+    <span class="n">colorbar_title</span><span class="o">=</span><span class="s2">&quot;AOD at 0.55 $\mu$&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_12_recipe_002.png" srcset="../_images/sphx_glr_plot_12_recipe_002.png" alt="AOD for both ocean and land" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  2.707 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-12-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_12_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_12_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_12_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_12_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-08-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

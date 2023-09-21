@@ -331,7 +331,7 @@ In all collapses, missing data array elements are accounted for in the
 calculation.
 
 Any collapse method that involves a calculation (such as calculating a
-mean), as opposed to just selecting a value (such as finding a
+mean), as opposed to only selecting a value (such as finding a
 maximum), will return a field containing double precision floating
 point numbers. If this is not desired then the data type can be reset
 after the collapse with the `~Field.dtype` attribute of the field
@@ -1428,17 +1428,17 @@ coordinate constructs.
              coordinates latitude and longitude.*
 
    >>> import numpy
-   >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
-   >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids([lat, lon], method='linear')
+   >>> domain = cf.Domain.create_regular((0, 360, 5.0), (-90, 90, 2.5))
+   >>> c = a.regrids(domain, method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
-   Data            : air_temperature(time(2), latitude(73), longitude(72)) K
+   Data            : air_temperature(time(2), latitude(72), longitude(72)) K
    Cell methods    : time(2): mean
    Dimension coords: time(2) = [1860-01-16 00:00:00, 1860-02-16 00:00:00] 360_day
-                   : latitude(73) = [-90.0, ..., 90.0] degrees_north
-                   : longitude(72) = [0.0, ..., 355.0] degrees_east
+                   : latitude(72) = [-88.75, ..., 88.75] degrees_north
+                   : longitude(72) = [2.5, ..., 357.5] degrees_east
                    : height(1) = [2.0] m
+
 
 A destination domain defined by two-dimensional (curvilinear) latitude
 and longitude auxiliary coordinate constructs can also be specified in
@@ -1486,10 +1486,11 @@ will produce similar results to using using spherical regridding.
              method onto the grid specified in the dimension coordinate
              time.*
 
-   >>> time = cf.DimensionCoordinate()
-   >>> time.standard_name='time'
-   >>> time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
-   ...                       units='days since 1860-01-01', calendar='360_day'))
+   >>> time = cf.DimensionCoordinate.create_regular(
+   ...      (0.5, 60.5, 1),    
+   ...      units=cf.Units("days since 1860-01-01", calendar="360_day"),
+   ...      standard_name="time",
+   ...      )
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
    >>> c = a.regridc([time], axes='T', method='linear')
@@ -1497,31 +1498,7 @@ will produce similar results to using using spherical regridding.
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
    Cell methods    : time(60): mean
-   Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day
-                   : latitude(73) = [-90.0, ..., 90.0] degrees_north
-                   : longitude(96) = [0.0, ..., 356.25] degrees_east
-                   : height(1) = [2.0] m
-
-
-Note the requirement for the conservative method of contiguous,
-non-overlapping bounds on the destination domain:
-
-.. code-block:: python
-   :caption: *Regrid the time axis 'T' of field 'a' conservatively
-             (to first order) onto the grid specified in the dimension
-             coordinate time.*
-
-   >>> c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
-   ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
-   >>> bounds = time.create_bounds()
-   >>> time.set_bounds(bounds)
-   >>> c = a.regridc([time], axes='T', method='conservative')
-   >>> print(c)
-   Field: air_temperature (ncvar%tas)
-   ----------------------------------
-   Data            : air_temperature(time(60), latitude(73), longitude(96)) K
-   Cell methods    : time(60): mean
-   Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day
+   Dimension coords: time(60) = [1860-01-02 00:00:00, ..., 1860-03-01 00:00:00] 360_day
                    : latitude(73) = [-90.0, ..., 90.0] degrees_north
                    : longitude(96) = [0.0, ..., 356.25] degrees_east
                    : height(1) = [2.0] m
@@ -1607,7 +1584,7 @@ pressure coordinates after the regridding operation.
    Coord references: grid_mapping_name:rotated_latitude_longitude
 
 Note that the `~Field.replace_construct` method of the field construct
-is used to easily replace the vertical dimension coordinate construct,
+is used to directly replace the vertical dimension coordinate construct,
 without having to manually match up the corresponding domain axis
 construct and construct key.
 

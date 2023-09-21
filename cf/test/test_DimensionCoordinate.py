@@ -626,6 +626,76 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(d.data.chunks, ((1,) * d.size,))
         self.assertEqual(d.bounds.data.chunks, ((1,) * d.size, (2,)))
 
+    def test_DimensionCoordinate_create_regular(self):
+        longitude = cf.DimensionCoordinate.create_regular(
+            (-180, 180, 1), units="degrees_east", standard_name="longitude"
+        )
+        self.assertIsInstance(longitude, cf.DimensionCoordinate)
+        self.assertTrue(
+            np.allclose(longitude.array, np.linspace(-179.5, 179.5, 360))
+        )
+        self.assertEqual(longitude.standard_name, "longitude")
+        self.assertEqual(longitude.units, "degrees_east")
+
+        # Invalid inputs
+        with self.assertRaises(ValueError):
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1, 2),
+                units="degrees_east",
+                standard_name="longitude",
+            )
+
+        with self.assertRaises(ValueError):
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1), units="degrees_east", standard_name=123
+            )
+
+        # Cellsize larger than range
+        with self.assertRaises(ValueError):
+            cf.DimensionCoordinate.create_regular(
+                (-180, 180, 361),
+                units="degrees_east",
+                standard_name="longitude",
+            )
+
+        # Test decreasing case
+        longitude_decreasing = cf.DimensionCoordinate.create_regular(
+            (180, -180, -1), units="degrees_east", standard_name="longitude"
+        )
+        self.assertIsInstance(longitude_decreasing, cf.DimensionCoordinate)
+        self.assertTrue(
+            np.allclose(
+                longitude_decreasing.array, np.linspace(179.5, -179.5, 360)
+            )
+        )
+        self.assertEqual(longitude_decreasing.standard_name, "longitude")
+        self.assertEqual(longitude_decreasing.units, "degrees_east")
+
+        # Decreasing range with positive delta
+        with self.assertRaises(ValueError):
+            cf.DimensionCoordinate.create_regular((180, -180, 1))
+
+        # Test decreasing case and bounds=False
+        longitude_decreasing_no_bounds = cf.DimensionCoordinate.create_regular(
+            (180, -180, -1),
+            units="degrees_east",
+            standard_name="longitude",
+            bounds=False,
+        )
+        self.assertIsInstance(
+            longitude_decreasing_no_bounds, cf.DimensionCoordinate
+        )
+        self.assertFalse(longitude_decreasing_no_bounds.has_bounds())
+        self.assertTrue(
+            np.allclose(
+                longitude_decreasing_no_bounds.array, np.arange(180, -181, -1)
+            )
+        )
+        self.assertEqual(
+            longitude_decreasing_no_bounds.standard_name, "longitude"
+        )
+        self.assertEqual(longitude_decreasing_no_bounds.units, "degrees_east")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

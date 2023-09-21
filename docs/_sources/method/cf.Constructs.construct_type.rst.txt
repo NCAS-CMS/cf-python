@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Constructs.construct_type
 ============================
 

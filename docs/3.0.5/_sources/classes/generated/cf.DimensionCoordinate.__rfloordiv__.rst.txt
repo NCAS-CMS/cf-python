@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.__rfloordiv__
-====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.__rfloordiv__

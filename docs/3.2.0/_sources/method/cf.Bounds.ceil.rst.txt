@@ -1,7 +1,0 @@
-cf.Bounds.ceil
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.ceil

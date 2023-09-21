@@ -235,7 +235,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  20.444 seconds)
+   **Total running time of the script:** ( 0 minutes  6.238 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_5_recipe.py:

@@ -594,6 +594,7 @@ Special
    ~cf.List.__str__
    ~cf.List.__array__
    ~cf.List.__data__
+   ~cf.List.__query_isclose__
 
 Deprecated
 ----------

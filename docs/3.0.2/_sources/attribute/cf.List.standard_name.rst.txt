@@ -1,7 +1,0 @@
-cf.List.standard_name
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.List.standard_name

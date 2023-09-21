@@ -1313,7 +1313,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if debug:
             logger.debug(
-                "\nrefs_to_add_from_field1={refs_to_add_from_field1}"
+                f"\nrefs_to_add_from_field1={refs_to_add_from_field1}"
             )  # pragma: no cover
 
         for ref in refs_to_add_from_field1:
@@ -6103,13 +6103,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # DCH
         if debug:
-            logger.debug(f"    Weights: {weights}")  # pragma: no cover
             logger.debug(
+                f"    Weights: {weights}\n",
                 f"    Number of indexed ({', '.join(names)}) bins: "
-                f"{unique_indices.shape[1]}"
-            )  # pragma: no cover
-            logger.debug(
-                f"    ({', '.join(names)}) bin indices:"  # DCH
+                f"{unique_indices.shape[1]}\n"
+                f"    ({', '.join(names)}) bin indices:",  # DCH
             )  # pragma: no cover
 
         # Loop round unique collections of bin indices
@@ -9610,7 +9608,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses.
             #
             # Use cull_graph=True to prevent dask failures arising
-            # concatenating graphs with lots of unused nodes.
+            # from concatenating graphs with lots of unused nodes.
             # --------------------------------------------------------
             try:
                 f = self.concatenate(fl, axis=iaxis, cull_graph=True)
@@ -9995,8 +9993,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
 
-        <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
         >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
@@ -10085,7 +10081,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             indices = []
 
         # Add the indices that apply to the field's data dimensions
-        indices.extend([domain_indices["indices"][axis] for axis in data_axes])
+        axis_indices = domain_indices["indices"]
+        indices.extend([axis_indices[axis] for axis in data_axes])
+
+        # Check that there are no invalid indices for size 1 axes not
+        # spanned by the data
+        if len(axis_indices) > len(data_axes):
+            for axis, index in axis_indices.items():
+                if axis in data_axes or index == slice(None):
+                    continue
+
+                import dask.array as da
+
+                shape = da.from_array([0])[index].compute_chunk_sizes().shape
+                if 0 in shape:
+                    raise IndexError(
+                        "Can't create size 0 indices for the size 1 "
+                        f"{self.constructs.domain_axis_identity(axis)!r} axis"
+                    )
 
         return tuple(indices)
 
@@ -10542,7 +10555,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if debug:
                 logger.debug(
-                    "Non-parametric coordinates construct key: {key!r}\n"
+                    f"Non-parametric coordinates construct key: {key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
@@ -14383,6 +14396,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14551,6 +14565,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14568,7 +14586,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
-                operation was in-place or the regridding operator if
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
@@ -14639,6 +14657,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 
@@ -14657,6 +14676,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14785,6 +14805,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14872,6 +14896,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 

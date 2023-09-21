@@ -1,7 +1,0 @@
-cf.List.valid_range
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.List.valid_range

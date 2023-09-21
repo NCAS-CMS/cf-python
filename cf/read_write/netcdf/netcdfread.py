@@ -154,6 +154,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         parent_ncvar=None,
         coord_ncvar=None,
         cfa_term=None,
+        compression_index=False,
     ):
         """Create data for a netCDF or CFA-netCDF variable.
 
@@ -181,6 +182,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
                 .. versionadded:: 3.15.0
 
+           compression_index: `bool`, optional
+                True if the data being created are compression
+                indices.
+
+                .. versionadded:: 3.15.2
+
         :Returns:
 
             `Data`
@@ -201,12 +208,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # one dask chunk
             if data.npartitions == 1:
                 data._cfa_set_write(True)
-
-            if self.implementation.get_construct_type(construct) != "field":
-                # Only cache values from non-field data, on the
-                # assumption that field data is, in general, so large
-                # that finding the cached values takes too long. See
-                # method `_cache_data_elements` for details.
+            if (
+                not compression_index
+                and self.implementation.get_construct_type(construct)
+                != "field"
+            ):
+                # Only cache values from non-field data and
+                # non-compression-index data, on the assumptions that:
+                #
+                # a) Field data is, in general, so large that finding
+                #    the cached values takes too long.
+                #
+                # b) Cached values are never really required for
+                #    compression index data.
                 self._cache_data_elements(data, ncvar)
 
             return data
@@ -470,8 +484,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         doesn't scale well with array size (i.e. it takes
         disproportionally longer for larger arrays). Such arrays are
         usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so it should be be considered
-        to not call this method for field constructs.
+        need to know any array values, so this method should be used
+        with caution, if at all, on field construct data.
 
         .. versionadded:: 3.14.0
 

@@ -1,7 +1,0 @@
-cf.Data.compressed
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Data.compressed

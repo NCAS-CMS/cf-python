@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Resampling Land Use Flags to a Coarser Grid &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorial" href="../tutorial.html" />
+    <link rel="prev" title="Overlay Geopotential height contours over Temperature anomalies" href="plot_14_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_14_recipe.html" title="previous chapter">Overlay Geopotential height contours over Temperature anomalies</a></li>
+      <li>Next: <a href="../tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-15-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="resampling-land-use-flags-to-a-coarser-grid">
+<span id="sphx-glr-recipes-plot-15-recipe-py"></span><h1>Resampling Land Use Flags to a Coarser Grid<a class="headerlink" href="#resampling-land-use-flags-to-a-coarser-grid" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will compare the land use distribution in different countries
+using a land use data file and visualize the data as a histogram. This will help
+to understand the proportion of different land use categories in each country.</p>
+<p>The land use data is initially available at a high spatial resolution of
+approximately 100 m, with several flags defined with numbers representing the
+type of land use. Regridding the data to a coarser resolution of approximately
+25 km would incorrectly represent the flags on the new grids.</p>
+<p>To avoid this, we will resample the data to the coarser resolution by
+aggregating the data within predefined spatial regions or bins. This approach
+will give a dataset where each 25 km grid cell contains a histogram of land use
+flags, as determined by the original 100 m resolution data. It retains the
+original spatial extent of the data while reducing its spatial complexity.
+Regridding, on the other hand, involves interpolating the data onto a new grid,
+which can introduce artifacts and distortions in the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.io.shapereader</span> <span class="k">as</span> <span class="nn">shpreader</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>1. Import the required libraries. We will use Cartopy’s <code class="docutils literal notranslate"><span class="pre">shapereader</span></code> to
+work with shapefiles that define country boundaries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read and select land use data by index and see properties of all constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/output.tif.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">f</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-------------------------------------------------
+Field: long_name=GDAL Band Number 1 (ncvar%Band1)
+-------------------------------------------------
+Conventions = &#39;CF-1.5&#39;
+GDAL = &#39;GDAL 3.1.4, released 2020/10/20&#39;
+GDAL_AREA_OR_POINT = &#39;Area&#39;
+GDAL_DataType = &#39;Thematic&#39;
+RepresentationType = &#39;THEMATIC&#39;
+_FillValue = -128
+_Unsigned = &#39;true&#39;
+history = &#39;Mon Aug 14 15:57:58 2023: GDAL CreateCopy( output.tif.nc, ... )&#39;
+long_name = &#39;GDAL Band Number 1&#39;
+valid_range = array([  0, 255], dtype=int16)
+
+Data(latitude(37778), longitude(101055)) = [[0, ..., 0]]
+
+Domain Axis: latitude(37778)
+Domain Axis: longitude(101055)
+
+Dimension coordinate: latitude
+    long_name = &#39;latitude&#39;
+    standard_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(latitude(37778)) = [24.285323229852995, ..., 72.66262936728634] degrees_north
+
+Dimension coordinate: longitude
+    long_name = &#39;longitude&#39;
+    standard_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(longitude(101055)) = [-56.50450160064635, ..., 72.90546463309875] degrees_east
+
+Coordinate reference: grid_mapping_name:latitude_longitude
+    Coordinate conversion:GeoTransform = -56.50514190170437 0.001280602116034448 0 72.66326966834436 0 -0.001280602116034448
+    Coordinate conversion:grid_mapping_name = latitude_longitude
+    Coordinate conversion:long_name = CRS definition
+    Coordinate conversion:spatial_ref = GEOGCS[&quot;WGS 84&quot;,DATUM[&quot;WGS_1984&quot;,SPHEROID[&quot;WGS 84&quot;,6378137,298.257223563,AUTHORITY[&quot;EPSG&quot;,&quot;7030&quot;]],AUTHORITY[&quot;EPSG&quot;,&quot;6326&quot;]],PRIMEM[&quot;Greenwich&quot;,0],UNIT[&quot;degree&quot;,0.0174532925199433,AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]],AXIS[&quot;Latitude&quot;,NORTH],AXIS[&quot;Longitude&quot;,EAST],AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]
+    Datum:inverse_flattening = 298.257223563
+    Datum:longitude_of_prime_meridian = 0.0
+    Datum:semi_major_axis = 6378137.0
+    Dimension Coordinate: longitude
+    Dimension Coordinate: latitude
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Define a function to extract data for a specific country:</p></li>
+</ol>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">extract_data</span></code> function is defined to extract land use data for a
+specific country, specified by the <code class="docutils literal notranslate"><span class="pre">country_name</span></code> parameter.</p></li>
+<li><p>It uses the <a class="reference external" href="https://www.naturalearthdata.com/downloads/110m-cultural-vectors/110m-admin-0-countries/">Natural Earth</a>
+shapefile to get the bounding coordinates of the selected country.</p></li>
+<li><p>The <a class="reference external" href="https://scitools.org.uk/cartopy/docs/v0.15/tutorials/using_the_shapereader.html#cartopy.io.shapereader.natural_earth">shpreader.natural_earth</a>
+function is called to access the Natural
+Earth shapefile of country boundaries with a resolution of 10 m.</p></li>
+<li><p>The <a class="reference external" href="https://scitools.org.uk/cartopy/docs/v0.15/tutorials/using_the_shapereader.html#cartopy.io.shapereader.Reader">shpreader.Reader</a>
+function reads the shapefile, and the selected country’s record is retrieved
+by filtering the records based on the <code class="docutils literal notranslate"><span class="pre">NAME_LONG</span></code> attribute.</p></li>
+<li><p>The bounding coordinates are extracted using the <code class="docutils literal notranslate"><span class="pre">bounds</span></code> attribute of the
+selected country record.</p></li>
+<li><p>The land use data file is then read and subset using these bounding
+coordinates with the help of the <code class="docutils literal notranslate"><span class="pre">subspace</span></code> function. The subset data is
+stored in the <code class="docutils literal notranslate"><span class="pre">f</span></code> variable.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">extract_data</span><span class="p">(</span><span class="n">country_name</span><span class="p">):</span>
+    <span class="n">shpfilename</span> <span class="o">=</span> <span class="n">shpreader</span><span class="o">.</span><span class="n">natural_earth</span><span class="p">(</span>
+        <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;cultural&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;admin_0_countries&quot;</span>
+    <span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">shpreader</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">shpfilename</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a> <span class="o">=</span> <span class="p">[</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a>
+        <span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
+        <span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span><span class="o">.</span><span class="n">attributes</span></a><span class="p">[</span><span class="s2">&quot;NAME_LONG&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span>
+    <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">lon_min</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span><span class="o">.</span><span class="n">bounds</span></a>
+
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/output.tif.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">f</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">X</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span><span class="p">))</span>
+
+    <span class="k">return</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a>
+</pre></div>
+</div>
+<p>4. Define a function to plot a histogram of land use distribution for a
+specific country:</p>
+<ul class="simple">
+<li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.digitize.html">digitize</a>
+function of the <code class="docutils literal notranslate"><span class="pre">cf.Field</span></code> object is called to convert the land use data
+into indices of bins. It takes an array of bins (defined by
+the <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">np.linspace</a> function)
+and the <code class="docutils literal notranslate"><span class="pre">return_bins=True</span></code> parameter, which returns the actual bin values
+along with the digitized data.</p></li>
+<li><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">np.linspace</a>
+function is used to create an array of evenly spaced bin edges from 0 to 50,
+with 51 total values. This creates bins of width 1.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">digitized</span></code> variable contains the bin indices for each data point,
+while the bins variable contains the actual bin values.</p></li>
+<li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/function/cf.histogram.html">cf.histogram</a>
+function is called on the digitized data to create a histogram. This
+function returns a field object with the histogram data.</p></li>
+<li><p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.squeeze.html">squeeze</a>
+function applied to the histogram <code class="docutils literal notranslate"><span class="pre">array</span></code> extracts the histogram data as a NumPy
+array and removes any single dimensions.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">total_valid_sub_cells</span></code> variable calculates the total number of valid
+subcells (non-missing data points) by summing the histogram data.</p></li>
+<li><p>The last element of the bin_counts array is removed with slicing
+(<code class="docutils literal notranslate"><span class="pre">bin_counts[:-1]</span></code>) to match the length of the <code class="docutils literal notranslate"><span class="pre">bin_indices</span></code> array.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">percentages</span></code> variable calculates the percentage of each bin by
+dividing the <code class="docutils literal notranslate"><span class="pre">bin_counts</span></code> by the <code class="docutils literal notranslate"><span class="pre">total_valid_sub_cells</span></code> and multiplying
+by 100.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">bin_indices</span></code> variable calculates the center of each bin by averaging
+the bin edges. This is done by adding the <code class="docutils literal notranslate"><span class="pre">bins.array[:-1,</span> <span class="pre">0]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">bins.array[1:,</span> <span class="pre">0]</span></code> arrays and dividing by 2.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ax.bar</span></code> function is called to plot the histogram as a bar chart on
+the provided axis. The x-axis values are given by the <code class="docutils literal notranslate"><span class="pre">bin_indices</span></code> array,
+and the y-axis values are given by the <code class="docutils literal notranslate"><span class="pre">percentages</span></code> array.</p></li>
+<li><p>The title, x-axis label, y-axis label, and axis limits are set based on the
+input parameters.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_histogram</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">ylim</span><span class="p">,</span> <span class="n">xlim</span><span class="p">):</span>
+    <span class="n">digitized</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy.linspace" title="numpy.linspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">linspace</span></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">h</span> <span class="o">=</span> <a href="../function/cf.histogram.html#cf.histogram" title="cf.histogram" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">histogram</span></a><span class="p">(</span><span class="n">digitized</span><span class="p">)</span>
+    <span class="n">bin_counts</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+    <span class="n">total_valid_sub_cells</span> <span class="o">=</span> <span class="n">bin_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">bin_counts</span> <span class="o">=</span> <span class="n">bin_counts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">percentages</span> <span class="o">=</span> <span class="n">bin_counts</span> <span class="o">/</span> <span class="n">total_valid_sub_cells</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="n">bin_indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.bar.html#matplotlib.axes.Axes.bar" title="matplotlib.axes.Axes.bar" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">bar</span></a><span class="p">(</span><span class="n">bin_indices</span><span class="p">,</span> <span class="n">percentages</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib.axes.Axes.set_title" title="matplotlib.axes.Axes.set_title" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span></a><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;Land Use Flag&quot;</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;Percentage&quot;</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylim.html#matplotlib.axes.Axes.set_ylim" title="matplotlib.axes.Axes.set_ylim" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span></a><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlim.html#matplotlib.axes.Axes.set_xlim" title="matplotlib.axes.Axes.set_xlim" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span></a><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Define the countries of interest:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">countries</span></a> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ireland&quot;</span><span class="p">,</span> <span class="s2">&quot;Belgium&quot;</span><span class="p">,</span> <span class="s2">&quot;Switzerland&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Set up the figure and axes for plotting the histograms:</p></li>
+</ol>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">plt.subplots</span></code> function is called to set up a figure with three
+subplots, with a figure size of 8 inches by 10 inches.</p></li>
+<li><p>A loop iterates over each country in the countries list and for each
+country, the <code class="docutils literal notranslate"><span class="pre">extract_data</span></code> function is called to extract its land use
+data.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">plot_histogram</span></code> function is then called to plot the histogram of land
+use distribution on the corresponding subplot.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">plt.tight_layout</span></code> function is called to ensure that the subplots are
+properly spaced within the figure and finally, the <code class="docutils literal notranslate"><span class="pre">plt.show</span></code> function
+displays the figure with the histograms.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axs</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">countries</span></a><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">axs</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">]</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a> <span class="o">=</span> <span class="n">extract_data</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a><span class="p">)</span>
+    <span class="n">plot_histogram</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">country</span></a><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="matplotlib.pyplot.tight_layout" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_15_recipe_001.png" srcset="../_images/sphx_glr_plot_15_recipe_001.png" alt="Ireland, Belgium, Switzerland" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 54 minutes  12.592 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-15-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_15_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_15_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_15_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_15_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-08-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

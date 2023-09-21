@@ -1,7 +1,0 @@
-cf.Count.match
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.match

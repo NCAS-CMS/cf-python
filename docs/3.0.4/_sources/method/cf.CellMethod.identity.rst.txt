@@ -1,7 +1,0 @@
-cf.CellMethod.identity
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.identity

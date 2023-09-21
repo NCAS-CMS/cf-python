@@ -22,6 +22,32 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         instance._NetCDFRead = NetCDFRead
         return instance
 
+    def _unlimited(self, field, axis):
+        """Whether an axis is unlimited.
+
+        If a CFA-netCDF file is being written then no axis can be
+        unlimited, i.e. `False` is always returned.
+
+        .. versionadded:: 3.15.3
+
+        :Parameters:
+
+            field: `Field` or `Domain`
+
+            axis: `str`
+                Domain axis construct identifier,
+                e.g. ``'domainaxis1'``.
+
+        :Returns:
+
+            `bool`
+
+        """
+        if self.write_vars["cfa"]:
+            return False
+
+        return super()._unlimited(field, axis)
+
     def _write_as_cfa(self, cfvar, construct_type, domain_axes):
         """Whether or not to write as a CFA variable.
 

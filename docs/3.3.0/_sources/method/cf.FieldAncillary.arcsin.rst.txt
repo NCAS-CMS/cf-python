@@ -1,7 +1,0 @@
-cf.FieldAncillary.arcsin
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.arcsin

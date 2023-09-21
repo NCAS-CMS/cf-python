@@ -44,9 +44,9 @@ The cf package is only for Python 3.8 or newer.
 cf is in the Python package index: https://pypi.org/project/cf-python
 
 To install cf and its :ref:`required dependencies <Required>` (apart
-from :ref:`Udunits <Udunits>`, and there are also has some
+from :ref:`Udunits <Udunits>`, and there are also some
 :ref:`optional dependencies <Optional>` which are **not**
-automatically installed via ``pip``) run, for example :
+automatically installed via ``pip``) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -77,13 +77,13 @@ Udunits
 
 Udunits (a C library that provides support for units of physical
 quantities) is a required dependency that is not installed by ``pip``,
-but it is easily installed in a ``conda`` environment:
+but it can be installed in a ``conda`` environment:
 
 .. code-block:: console
 
    $ conda install -c conda-forge udunits2
 
-Alternatively, Udunits is often available in from operating system
+Alternatively, Udunits is often available from operating system
 software download managers, or may be installed from source.
     
 Note that :ref:`some environment variables might also need setting
@@ -102,7 +102,7 @@ details.
 
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
-visualisation package <http://ajheaps.github.io/cf-plot>`_, run
+visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
 
 .. code-block:: console
    :caption: *Install with conda.*
@@ -170,7 +170,7 @@ properly, although the defaults are usually sufficient.
 ---------------
 
 During installation the ``cfa`` command line utility is also
-installed, which
+installed, which:
 
 * :ref:`generates text descriptions of field constructs contained in
   files <File-inspection-with-cfa>`, and
@@ -198,10 +198,10 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.1.0 or up to,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.1.2 or up to,
   but not including, 1.10.2.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.

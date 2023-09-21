@@ -1,7 +1,0 @@
-cf.DomainAxis.equals
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAxis.equals

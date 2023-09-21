@@ -1685,6 +1685,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
 
+        # Convert to "difference" units
+        #
+        # TODO: Think about temperature units in relation to
+        #       https://github.com/cf-convention/discuss/issues/101,
+        #       whenever that issue is resolved.
+        units = self.Units
+        if units.isreftime:
+            units = Units(units._units_since_reftime)
+            d.override_units(units, inplace=True)
+
         return d
 
     @_inplace_enabled(default=False)
@@ -3739,8 +3749,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         numblocks = dx.numblocks
         if not all(numblocks[i] == 1 for i in regrid_axes):
             chunks = [
-                (-1,) if i in regrid_axes else c
-                for i, c in enumerate(dx.chunks)
+                -1 if i in regrid_axes else c for i, c in enumerate(dx.chunks)
             ]
             dx = dx.rechunk(chunks)
 
@@ -4481,9 +4490,25 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private attributes
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol, atol):
+        """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+
+            rtol: number
+                The tolerance on relative numerical differences.
+
+            atol: number
+                The tolerance on absolute numerical differences.
+
+        .. versionadded:: 3.15.2
+
+        """
+        return self.isclose(value, rtol=rtol, atol=atol)
+
     @property
     def _Units(self):
         """Storage for the units.
@@ -11772,21 +11797,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
-
-    #    def optimize_graph(self):
-    #        """Remove unnecessary tasks from the dask graph in-place.
-    #
-    #        .. versionadded:: 3.15.1
-    #
-    #        .. seealso:: `todict`
-    #
-    #        """
-    #        d = _inplace_enabled_define_and_cleanup(self)
-    #        dx = d.to_dask_array()
-    #        dsk = collections_to_dsk((dx,), optimize_graph=True)
-    #        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-    #        d._set_dask(dx, clear=_NONE)
-    #        return d
 
     @classmethod
     def zeros(

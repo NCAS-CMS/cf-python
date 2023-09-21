@@ -344,7 +344,8 @@ class FieldDomain:
 
             if debug:
                 logger.debug(
-                    f"  item_axes    = {item_axes!r}\n  keys         = {keys!r}"
+                    f"  item_axes    = {item_axes!r}\n"
+                    f"  keys         = {keys!r}"
                 )  # pragma: no cover
 
             if n_axes == 1:
@@ -369,9 +370,9 @@ class FieldDomain:
                 if isinstance(value, (list, slice, tuple, np.ndarray)):
                     # 1-d CASE 1: Value is already an index, e.g. [0],
                     #             [7,4,2], slice(0,4,2),
-                    #             numpy.array([2,4,7]), [True, False,
-                    #             True]
-
+                    #             numpy.array([2,4,7]),
+                    #             [True,False,True]
+                    index = value
                     if debug:
                         logger.debug("  1-d CASE 1:")  # pragma: no cover
 
@@ -475,7 +476,7 @@ class FieldDomain:
 
                 if debug:
                     logger.debug(
-                        f"  index        = {index}\n" f"  ind          = {ind}"
+                        f"    index      = {index}\n    ind        = {ind}"
                     )  # pragma: no cover
 
                 # Put the index into the correct place in the list of

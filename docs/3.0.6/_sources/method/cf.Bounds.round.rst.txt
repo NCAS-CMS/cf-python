@@ -1,7 +1,0 @@
-cf.Bounds.round
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.round

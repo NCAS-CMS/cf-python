@@ -1,15 +1,75 @@
+version 3.15.4
+--------------
+
+**2023-??-??**
+
+* Fix bug in `cf.Field.match_by_construct` that always returned True for
+  1-d constructs whose axis is not in the data, even when the
+  criterion was not matched
+  (https://github.com/NCAS-CMS/cf-python/issues/691)
+
+version 3.15.3
+--------------
+
+**2023-08-31**
+
+* Prevent unlimited dimensions from being written to CFA-netCDF files
+  (https://github.com/NCAS-CMS/cf-python/issues/689)
+
+version 3.15.2
+--------------
+
+**2023-07-21**
+
+* Performance improvements to `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/675)
+* Performance improvements to `cf.read` when reading datasets with
+  compression-by-convention
+  (https://github.com/NCAS-CMS/cf-python/pull/671)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
+* New keyword parameter to `cf.aggregate`: ``cells``
+  (https://github.com/NCAS-CMS/cf-python/issues/452)
+* New function: `cf.isclose`
+  (https://github.com/NCAS-CMS/cf-python/issues/661)
+* Allow `cf.Data` and other objects that have data (such as
+  `cf.DimensionCoordinate`) to be used as indices
+  (https://github.com/NCAS-CMS/cf-python/issues/677)
+* Fix bug that caused `cf.Field.regrids` and `cf.Field.regridc` to
+  fail when the regrid axes are chunked with more than one chunk
+  (https://github.com/NCAS-CMS/cf-python/issues/665)
+* Fix bug that caused `cf.read` to fail for some PP data with a single
+  vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
+* Changed dependency: ``1.10.1.1<=cfdm<1.10.2.0``
+
+----
+
 version 3.15.1
 --------------
 
-**2023-05-??**
+**2023-06-09**
 
+* New documentation cheat sheet
+  (https://github.com/NCAS-CMS/cf-python/issues/591)
 * Performance improvements to `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/640)
 * New methods: `cf.Data.argmin`, `cf.Field.argmin`
   (https://github.com/NCAS-CMS/cf-python/issues/577)
+* Deprecate `cf.relative_vorticity` in favour of `cf.curl_xy`
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Fix bug when using the ``-d`` option to the `cfa` script 
   (https://github.com/NCAS-CMS/cf-python/issues/649)
+* Fix the return type from `cf.example_fields`
+  (https://github.com/NCAS-CMS/cf-python/pull/654)
+* Fix `set_data` when the units are invalid
+  (https://github.com/NCAS-CMS/cf-python/pull/646)
+* Fix `cf.Field.laplacian_xy`, `cf.Field.grad_xy`, `cf.curl_xy` and
+  `cf.div_xy` to work in cases when the dimension coordinates are
+  missing standard names
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
 * Changed dependency: ``cfunits>=3.3.6``
+* Changed dependency: ``cftime>=1.6.2``
 
 ----
 

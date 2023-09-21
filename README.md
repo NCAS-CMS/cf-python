@@ -39,6 +39,11 @@ Installation
 
 http://ncas-cms.github.io/cf-python/installation.html
 
+Cheat Sheet
+===========
+
+https://ncas-cms.github.io/cf-python/cheat_sheet.html
+
 Recipes
 =======
 

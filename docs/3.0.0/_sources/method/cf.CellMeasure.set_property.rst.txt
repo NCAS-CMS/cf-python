@@ -1,7 +1,0 @@
-cf.CellMeasure.set_property
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.set_property

@@ -1,7 +1,0 @@
-cf.Index.cos
-============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Index.cos

@@ -1,7 +1,0 @@
-cf.RaggedContiguousArray.ndim
-=============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.RaggedContiguousArray.ndim
