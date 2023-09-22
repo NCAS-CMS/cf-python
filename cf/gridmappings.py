@@ -256,15 +256,25 @@ def _validate_map_parameter(mp_name, mp_value):
     :Parameters:
 
         mp_name: `str`
-            TODO
+            The name of the map parameter to validate. It should be
+            a name valid in this way in CF, namely one listed under
+            the 'Table F.1. Grid Mapping Attributes' in Appendix
+            F: Grid Mappings', therefore listed as a key in
+            `cr_gm_valid_attr_names_are_numeric`, else a ValueError
+            will be raised early.
 
-        mp_value: TODO
-            TODO
+        mp_value: `str`, `Data`, numeric or `None`
+            The map parameter value being set for the given map
+            parameter name. The type, and if numeric or `Data`,
+            units, will be validated against the expected values
+            for the given map parameter name.
 
     :Returns:
 
         `Data`, `str`, or `None`
-            A value conformed to the TODO
+            The map parameter value, assuming it passes validation,
+            conformed to the canonical units of the map parameter
+            name, if units are applicable.
 
     """
     # 0. Check input parameters are valid CF GM map parameters, not
@@ -510,7 +520,16 @@ class GridMapping(ABC):
         return f"{PROJ_PREFIX}={self.proj_id}{params}"
 
     def get_proj_crs(self):
-        """TODO."""
+        """Get the PROJ Coordinate Reference System.
+
+        :Returns:
+
+            `pyproj.crs.CRS`
+                 The PROJ Coordinate Reference System defined with
+                 a `pyproj` `CRS` class that corresponds to the
+                 Grid Mapping instance.
+
+       """
         return CRS.from_proj4(self.get_proj_string())
 
 
@@ -1924,8 +1943,6 @@ class VerticalPerspective(PerspectiveGridMapping):
     proj_id = "nsper"
 
 
-# TODO move this definition elsewhere, having at end feels like an
-# anti-pattern...
 _all_abstract_grid_mappings = (
     GridMapping,
     AzimuthalGridMapping,
