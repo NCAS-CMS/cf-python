@@ -475,6 +475,11 @@ class GridMapping(ABC):
             "semi_minor_axis", semi_minor_axis
         )
 
+        # TODO hook this up to the CF CR
+        self.crs_wkt = None
+
+        # TODO hook up to the CF CR generally: in part 2.
+
     @property
     @classmethod
     @abstractmethod
@@ -531,6 +536,18 @@ class GridMapping(ABC):
 
        """
         return CRS.from_proj4(self.get_proj_string())
+
+    def has_crs_wkt(self):
+        """True if the Grid Mapping has a valid crs_wkt attribute set.
+
+        :Returns:
+
+            `bool`
+                 Whether the Grid Mapping instance has a crs_wkt
+                 attribute set.
+
+       """
+        return self.crs_wkt is not None
 
 
 class AzimuthalGridMapping(GridMapping):
