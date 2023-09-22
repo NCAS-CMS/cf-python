@@ -10081,7 +10081,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             indices = []
 
         # Add the indices that apply to the field's data dimensions
-        indices.extend([domain_indices["indices"][axis] for axis in data_axes])
+        axis_indices = domain_indices["indices"]
+        indices.extend([axis_indices[axis] for axis in data_axes])
+
+        # Check that there are no invalid indices for size 1 axes not
+        # spanned by the data
+        if len(axis_indices) > len(data_axes):
+            for axis, index in axis_indices.items():
+                if axis in data_axes or index == slice(None):
+                    continue
+
+                import dask.array as da
+
+                shape = da.from_array([0])[index].compute_chunk_sizes().shape
+                if 0 in shape:
+                    raise IndexError(
+                        "Can't create size 0 indices for the size 1 "
+                        f"{self.constructs.domain_axis_identity(axis)!r} axis"
+                    )
 
         return tuple(indices)
 
