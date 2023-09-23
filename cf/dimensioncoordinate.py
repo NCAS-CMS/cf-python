@@ -909,7 +909,7 @@ class DimensionCoordinate(
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no 'cell_characteristics "
+                f"{self.__class__.__name__} has no 'cell_characteristics' "
                 "component",
             )
 
@@ -1057,7 +1057,7 @@ class DimensionCoordinate(
     def set_cell_characteristics(self, cellsize, spacing):
         """Set cell characteristics.
 
-        A cell characterisitic is assumed to valid for each cell. Cell
+        A cell characteristic is assumed to be valid for each cell. Cell
         characteristics are not inferred from the coordinate or bounds
         data, but may be set with this method. Cell characteristics
         are automatically removed whenever the new data or bounds are
