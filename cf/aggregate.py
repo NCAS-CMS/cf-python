@@ -3074,7 +3074,7 @@ def _set_cell_conditions(output_meta):
     """Store the cell characteristics from any cell conditions.
 
     The cell size and cell spacing characteristics are stored on the
-    approriate dimension coordinate constructs.
+    appropriate dimension coordinate constructs.
 
     .. versionadded:: 3.15.4
 
