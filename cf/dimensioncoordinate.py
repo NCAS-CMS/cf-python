@@ -920,7 +920,7 @@ class DimensionCoordinate(
     def has_cell_characteristics(self):
         """Whether or not there are any cell characteristics.
 
-        A cell characterisitic is assumed to valid for each cell. Cell
+        A cell characteristic is assumed to be valid for each cell. Cell
         characteristics are not inferred from the coordinate or bounds
         data, but may be defined with the `set_cell_characteristics`
         method. Cell characteristics are automatically removed
