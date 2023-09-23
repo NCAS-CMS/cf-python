@@ -2362,7 +2362,7 @@ def aggregate(
 
             All returned field or domain constructs that have passed
             dimension coordinate cell conditions will have those
-            conditions stored on the approriate dimension coordinate
+            conditions stored on the appropriate dimension coordinate
             constructs, retrievable via their
             `DimensionCoordinate.get_cell_characteristics` methods.
 

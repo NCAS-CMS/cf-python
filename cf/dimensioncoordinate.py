@@ -768,7 +768,7 @@ class DimensionCoordinate(
     def del_cell_characteristics(self, default=ValueError()):
         """Remove the cell characteristics.
 
-        A cell characterisitic is assumed to valid for each cell. Cell
+        A cell characteristic is assumed to be valid for each cell. Cell
         characteristics are not inferred from the coordinate or bounds
         data, but may be defined with the `set_cell_characteristics`
         method. Cell characteristics are automatically removed
@@ -869,7 +869,7 @@ class DimensionCoordinate(
     def get_cell_characteristics(self, default=ValueError()):
         """Return cell characteristics.
 
-        A cell characterisitic is assumed to valid for each cell. Cell
+        A cell characteristic is assumed to be valid for each cell. Cell
         characteristics are not inferred from the coordinate or bounds
         data, but may be defined with the `set_cell_characteristics`
         method. Cell characteristics are automatically removed
