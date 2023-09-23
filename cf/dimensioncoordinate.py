@@ -1024,7 +1024,7 @@ class DimensionCoordinate(
                 The bounds to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the bounds prior to
+                If True then copy the bounds prior to
                 insertion. By default the bounds are copied.
 
         :Returns:
@@ -1129,7 +1129,7 @@ class DimensionCoordinate(
                 {{data_like}}
 
             copy: `bool`, optional
-                If False then do not copy the data prior to
+                If True then copy the data prior to
                 insertion. By default the data are copied.
 
             {{inplace: `bool`, optional (default True)}}
