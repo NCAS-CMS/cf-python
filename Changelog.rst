@@ -3,6 +3,9 @@ version 3.15.4
 
 **2023-??-??**
 
+* Record dimension coordinate cell characteristics
+  (https://github.com/NCAS-CMS/cf-python/issues/692)
+* New set of methods to query, set, del, and `get_cell_characterstics`
 * Fix bug in `cf.Field.match_by_construct` that always returned True for
   1-d constructs whose axis is not in the data, even when the
   criterion was not matched
