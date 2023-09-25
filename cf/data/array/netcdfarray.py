@@ -8,11 +8,13 @@ from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
 _lock = SerializableLock()
 
 
-class NetCDFArray(ActiveStorageMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
+class NetCDFArray(
+    ActiveStorageMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray
+):
     """An array stored in a netCDF file.
 
     TODOACTIVEDOCS
-    
+
     """
 
     def __dask_tokenize__(self):
