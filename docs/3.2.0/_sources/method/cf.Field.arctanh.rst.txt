@@ -1,7 +1,0 @@
-cf.Field.arctanh
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.arctanh

@@ -6,6 +6,7 @@ from numbers import Integral
 from os.path import isdir
 from re import Pattern
 
+from cfdm import is_log_level_info
 from numpy.ma.core import MaskError
 
 from ..aggregate import aggregate as cf_aggregate
@@ -59,11 +60,16 @@ def read(
     warn_valid=False,
     chunks="auto",
     domain=False,
+    cfa=None,
 ):
-    """Read field constructs from netCDF, CDL, PP or UM fields datasets.
+    """Read field or domain constructs from files.
 
-    Input datasets are mapped to field constructs in memory which are
-    returned as elements of a `FieldList`.
+    The following file formats are supported: CF-netCDF, CFA-netCDF,
+    CDL, PP and UM fields datasets.
+
+    Input datasets are mapped to constructs in memory which are
+    returned as elements of a `FieldList` or if the *domain* parameter
+    is True, a `DomainList`.
 
     NetCDF files may be on disk or on an OPeNDAP server.
 
@@ -635,6 +641,28 @@ def read(
 
             .. versionadded:: 3.11.0
 
+        cfa: `dict`, optional
+            Configure the reading of CFA-netCDF files. The dictionary
+            may have any subset of the following key/value pairs to
+            override the information read from the file:
+
+            * ``'substitutions'``: `dict`
+
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              names. Each key may be specified with or without the
+              ``${...}`` syntax. For instance, the following are
+              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
+              The substitutions are used in conjunction with, and take
+              precedence over, any that are stored in the CFA-netCDF
+              file by the ``substitutions`` attribute of the ``file``
+              CFA aggregation instruction variable.
+
+              *Example:*
+                ``{'base': 'file:///data/'}``
+
+            .. versionadded:: 3.15.0
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -751,10 +779,11 @@ def read(
     # Manage input parameters where contradictions are possible:
     if cdl_string and fmt:
         if fmt == "CDL":
-            logger.info(
-                "It is not necessary to set the cf.read fmt as 'CDL' when "
-                "cdl_string is True, since that implies CDL is the format."
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    "It is not necessary to set the cf.read fmt as 'CDL' when "
+                    "cdl_string is True, since that implies CDL is the format."
+                )  # pragma: no cover
         else:
             raise ValueError(
                 "cdl_string can only be True when the format is CDL, though "
@@ -767,6 +796,31 @@ def read(
             f"Can't set follow_symlinks={follow_symlinks!r} "
             f"when recursive={recursive!r}"
         )
+
+    info = is_log_level_info(logger)
+
+    # Parse the 'cfa' parameter
+    if cfa is None:
+        cfa_options = {}
+    else:
+        cfa_options = cfa.copy()
+        keys = ("substitutions",)
+        if not set(cfa_options).issubset(keys):
+            raise ValueError(
+                "Invalid dictionary key to the 'cfa' parameter."
+                f"Valid keys are {keys}. Got: {cfa_options}"
+            )
+
+    if "substitutions" in cfa_options:
+        substitutions = cfa_options["substitutions"].copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                # Add missing ${...}
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    else:
+        substitutions = {}
+
+    cfa_options["substitutions"] = substitutions
 
     # Initialise the output list of fields/domains
     if domain:
@@ -855,7 +909,8 @@ def read(
             files2 = files3
 
         for filename in files2:
-            logger.info(f"File: {filename}")  # pragma: no cover
+            if info:
+                logger.info(f"File: {filename}")  # pragma: no cover
 
             if um:
                 ftype = "UM"
@@ -897,6 +952,7 @@ def read(
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
+                cfa_options=cfa_options,
             )
 
             # --------------------------------------------------------
@@ -914,10 +970,11 @@ def read(
             field_counter = len(out)
             file_counter += 1
 
-    logger.info(
-        f"Read {field_counter} field{_plural(field_counter)} from "
-        f"{file_counter} file{_plural(file_counter)}"
-    )  # pragma: no cover
+    if info:
+        logger.info(
+            f"Read {field_counter} field{_plural(field_counter)} from "
+            f"{file_counter} file{_plural(file_counter)}"
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Aggregate the output fields/domains
@@ -928,10 +985,11 @@ def read(
         out = cf_aggregate(out, **aggregate_options)
 
         n = len(out)  # pragma: no cover
-        logger.info(
-            f"{org_len} input field{_plural(org_len)} aggregated into "
-            f"{n} field{ _plural(n)}"
-        )  # pragma: no cover
+        if info:
+            logger.info(
+                f"{org_len} input field{_plural(org_len)} aggregated into "
+                f"{n} field{ _plural(n)}"
+            )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
@@ -1008,6 +1066,7 @@ def _read_a_file(
     chunks="auto",
     select=None,
     domain=False,
+    cfa_options=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1037,6 +1096,11 @@ def _read_a_file(
 
         domain: `bool`, optional
             See `cf.read` for details.
+
+        cfa_options: `dict`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: 3.15.0
 
     :Returns:
 
@@ -1071,11 +1135,7 @@ def _read_a_file(
         "chunks": chunks,
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
-        # 'cfa' defaults to False. If the file has
-        # "CFA" in its Conventions global attribute
-        # then 'cfa' will be changed to True in
-        # netcdf.read
-        "cfa": False,
+        "cfa_options": cfa_options,
     }
 
     # ----------------------------------------------------------------

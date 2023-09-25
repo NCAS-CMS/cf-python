@@ -24,6 +24,7 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.tempdir" href="cf.tempdir.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -130,9 +135,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.regrid_logging<a class="headerlink" href="#cf-regrid-logging" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.regrid_logging">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">regrid_logging</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.regrid_logging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether or not to enable <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> regridding logging.</p>
-<p>If it is logging is performed after every call to <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>.</p>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">regrid_logging</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.regrid_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not to enable <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> regridding logging.</p>
+<p>If it is logging is performed after every call to <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -171,7 +176,7 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -1,7 +1,9 @@
 import logging
 from itertools import chain
+from os import sep
 
 import numpy as np
+from cfdm import is_log_level_info
 
 from ..cfdatetime import dt
 from ..data import Data
@@ -16,6 +18,7 @@ from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
+    abspath,
     default_netCDF_fillvals,
 )
 from ..functions import equivalent as cf_equivalent
@@ -535,9 +538,32 @@ class PropertiesData(Properties):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol, atol):
+        """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+
+            rtol: number
+                The tolerance on relative numerical differences.
+
+            atol: number
+                The tolerance on absolute numerical differences.
+
+        .. versionadded:: 3.15.2
+
+        """
+        data = self.get_data(None, _fill_value=None)
+        if data is None:
+            raise ValueError(
+                "Can't apply '__query_isclose__' to a "
+                f"{self.__class__.__name__} object with no data: {self!r}"
+            )
+
+        return data.isclose(value, rtol=rtol, atol=atol)
+
     def _binary_operation(self, y, method):
         """Implement binary arithmetic and comparison operations.
 
@@ -731,10 +757,12 @@ class PropertiesData(Properties):
 
         """
         if self.has_data() != other.has_data():
-            logger.info(
-                f"{self.__class__.__name__}: Only one construct "
-                f"has data: {self!r}, {other!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Only one construct "
+                    f"has data: {self!r}, {other!r}"
+                )
+
             return False
 
         if not self.has_data():
@@ -744,24 +772,30 @@ class PropertiesData(Properties):
         data1 = other.get_data(_fill_value=False)
 
         if data0.shape != data1.shape:
-            logger.info(
-                f"{self.__class__.__name__}: Data have different shapes: "
-                f"{data0.shape}, {data1.shape}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have different shapes: "
+                    f"{data0.shape}, {data1.shape}"
+                )
+
             return False
 
         if not data0.Units.equivalent(data1.Units):
-            logger.info(
-                f"{self.__class__.__name__}: Data have non-equivalent units: "
-                f"{data0.Units!r}, {data1.Units!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have non-equivalent "
+                    f"units: {data0.Units!r}, {data1.Units!r}"
+                )
+
             return False
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
-            logger.info(
-                f"{self.__class__.__name__}: Data have non-equivalent values: "
-                f"{data0!r}, {data1!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have non-equivalent "
+                    f"values: {data0!r}, {data1!r}"
+                )
+
             return False
 
         return True
@@ -1593,6 +1627,39 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.add_file_location(location)
+
+        return abspath(location).rstrip(sep)
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
@@ -1712,7 +1779,7 @@ class PropertiesData(Properties):
         """The maximum of the data array.
 
         .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1740,7 +1807,7 @@ class PropertiesData(Properties):
         """The unweighted mean the data array.
 
         .. seealso:: `maximum`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `sum`,
+                     `sample_size`, `standard_deviation`, `sum`,
                      `variance`
 
         :Returns:
@@ -1769,7 +1836,7 @@ class PropertiesData(Properties):
         array.
 
         .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`,
-                     `standard_devitation`, `sum`, `variance`
+                     `standard_deviation`, `sum`, `variance`
 
         :Returns:
 
@@ -1838,6 +1905,12 @@ class PropertiesData(Properties):
 
                 If *value* is `None` then any existing period is removed
                 from the construct.
+
+            config:
+                Additional parameters for optimising the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
 
         :Returns:
 
@@ -2043,7 +2116,7 @@ class PropertiesData(Properties):
         """The sum of the data array.
 
         .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `standard_devitation`, `variance`
+                     `sample_size`, `standard_deviation`, `variance`
 
         :Returns:
 
@@ -2473,6 +2546,100 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
+    def cfa_update_file_substitutions(self, substitutions):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_update_file_substitutions(substitutions)
+
+    @_inplace_enabled(default=False)
+    def cfa_clear_file_substitutions(self, inplace=False):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_clear_file_substitutions({})
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_del_file_substitution(base)
+
+    def cfa_file_substitutions(
+        self,
+    ):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> g = f.cfa_file_substitutions()
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_file_substitutions({})
+
     def chunk(self, chunksize=None):
         """Partition the data array.
 
@@ -2576,7 +2743,14 @@ class PropertiesData(Properties):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=True):
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`
@@ -2589,22 +2763,41 @@ class PropertiesData(Properties):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
         TODO
 
         """
-        variable0 = variables[0]
+        out = variables[0]
+        if copy:
+            out = out.copy()
 
         if len(variables) == 1:
-            return variable0.copy()
-
-        out = variable0.copy()
+            return out
 
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
             cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
         )
         out.set_data(data, copy=False)
 
@@ -2899,6 +3092,39 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> f.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.del_file_location(location)
+
+        return abspath(location).rstrip(sep)
+
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -2998,10 +3224,12 @@ class PropertiesData(Properties):
         # Check that each instance has the same Units
         try:
             if not self.Units.equals(other.Units):
-                logger.info(
-                    f"{self.__class__.__name__}: Different Units: "
-                    f"{self.Units!r} != {other.Units!r}"
-                )
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different Units: "
+                        f"{self.Units!r} != {other.Units!r}"
+                    )
+
                 return False
         except AttributeError:
             pass
@@ -3225,6 +3453,34 @@ class PropertiesData(Properties):
             calendar_months=calendar_months,
             calendar_years=calendar_years,
         )
+
+    def file_locations(self):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.file_locations()
+
+        return set()
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):

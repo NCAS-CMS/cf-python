@@ -1,7 +1,0 @@
-cf.FieldAncillary.var
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.var

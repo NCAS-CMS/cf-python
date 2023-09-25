@@ -1,7 +1,0 @@
-cf.DomainAxis.nc_set_unlimited
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAxis.nc_set_unlimited

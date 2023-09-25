@@ -176,6 +176,7 @@ Miscellaneous
    ~cf.Domain.apply_masking
    ~cf.Domain.climatological_time_axes
    ~cf.Domain.copy
+   ~cf.Domain.create_regular   
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
@@ -251,6 +252,24 @@ Groups
    ~cf.Domain.nc_set_group_attribute
    ~cf.Domain.nc_set_group_attributes
   
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.add_file_location
+   ~cf.Domain.cfa_clear_file_substitutions
+   ~cf.Domain.cfa_del_file_substitution
+   ~cf.Domain.cfa_file_substitutions
+   ~cf.Domain.cfa_update_file_substitutions
+   ~cf.Domain.del_file_location
+   ~cf.Domain.file_locations
+
 Geometries
 ^^^^^^^^^^
 

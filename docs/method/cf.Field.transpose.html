@@ -24,6 +24,7 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.unsqueeze" href="cf.Field.unsqueeze.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -132,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.transpose<a class="headerlink" href="#cf-field-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.transpose">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">items=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/field.py#L11748-L11847"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">items=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/field.py#L12157-L12256"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <p>By default the order of the axes is reversed, but any ordering may
 be specified by selecting the axes of the output in the required
@@ -157,7 +162,7 @@ the domain axis construct returned by
 provided, or if no axes are specified then the axis order
 is reversed.</p>
 </dd>
-<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True then metadata constructs are also transposed so
+<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then metadata constructs are also transposed so
 that their axes are in the same relative order as in the
 transposed data array of the field. By default metadata
 constructs are not altered.</p>
@@ -200,7 +205,7 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

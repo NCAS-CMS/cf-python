@@ -44,8 +44,8 @@ in cf.
       default directory used by the :mod:`tempfile` module.
 
     REGRID_LOGGING: `bool`
-      Whether or not to enable `ESMF` logging. If it is logging is
-      performed after every call to `ESMF`. By default logging is
+      Whether or not to enable `esmpy` logging. If it is logging is
+      performed after every call to `esmpy`. By default logging is
       disabled.
 
     LOG_LEVEL: `str`

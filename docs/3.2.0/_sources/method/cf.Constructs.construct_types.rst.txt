@@ -1,7 +1,0 @@
-cf.Constructs.construct_types
-=============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Constructs.construct_types

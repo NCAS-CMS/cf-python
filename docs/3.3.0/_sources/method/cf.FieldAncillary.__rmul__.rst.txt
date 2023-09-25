@@ -1,7 +1,0 @@
-cf.FieldAncillary.__rmul__
-==========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.__rmul__

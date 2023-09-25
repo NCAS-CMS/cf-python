@@ -74,8 +74,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.10"
-__date__ = "2023-03-10"
-__version__ = "3.14.1"
+__date__ = "2023-08-31"
+__version__ = "3.15.3"
 
 _requires = (
     "numpy",
@@ -97,12 +97,17 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 __cf_version__ = cfdm.core.__cf_version__
+__cfa_version__ = "0.6.2"
 
 from packaging.version import Version
 import importlib.util
 import platform
 
-_found_ESMF = bool(importlib.util.find_spec("ESMF"))
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
+_found_esmpy = bool(
+    importlib.util.find_spec("esmpy") or importlib.util.find_spec("ESMF")
+)
 
 try:
     import netCDF4
@@ -164,7 +169,7 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.6.0"
+_minimum_vn = "1.6.2"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
@@ -180,7 +185,7 @@ if Version(numpy.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.4"
+_minimum_vn = "3.3.6"
 if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
@@ -188,8 +193,8 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.10.0.3"
-_maximum_vn = "1.10.1.0"
+_minimum_vn = "1.10.1.2"
+_maximum_vn = "1.10.2.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
@@ -206,7 +211,7 @@ if Version(dask.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of Python
-_minimum_vn = "3.7.0"
+_minimum_vn = "3.8.0"
 if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
@@ -262,12 +267,12 @@ from .data.array import (
 )
 
 from .data.fragment import (
-    MissingFragmentArray,
+    FullFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
 )
 
-from .aggregate import aggregate
+from .aggregate import aggregate, climatology_cells
 from .query import (
     Query,
     lt,
@@ -276,6 +281,7 @@ from .query import (
     ge,
     eq,
     ne,
+    isclose,
     contain,
     contains,
     wi,

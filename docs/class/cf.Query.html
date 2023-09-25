@@ -24,6 +24,7 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Query.addattr" href="../method/cf.Query.addattr.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -131,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/query.py#L27-L926"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/query.py#L32-L1237"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition for subsequent evaluation.</p>
 <p>A condition that may be applied to any object may be stored in a
@@ -160,8 +165,8 @@ evaluated in the context of that object.</p>
 instances:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 20%" />
-<col style="width: 80%" />
+<col style="width: 27%" />
+<col style="width: 73%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Operator</p></th>
@@ -195,6 +200,9 @@ instances:</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'set'</span></code></p></td>
 <td><p>A “member of set” condition</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'isclose'</span></code></p></td>
+<td><p>An “is close” condition</p></td>
 </tr>
 </tbody>
 </table>
@@ -310,34 +318,40 @@ instead of the equivalent built-in Python operator.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></p></td>
 <td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'set'</span></code> condition is evaluated</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_isclose__</span></code></p></td>
+<td><p>Called when an <code class="docutils literal notranslate"><span class="pre">'isclose'</span></code> condition is
+evaluated.</p></td>
+</tr>
 </tbody>
 </table>
-<p>In all cases the query value is the only, mandatory argument of
-the method.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">pass</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList_with_override</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__query_lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="gp">... </span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the &lt; operator element-wise&quot;&quot;&quot;</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)([</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="go">TypeError: &#39;&lt;&#39; not supported between instances of &#39;myList&#39; and &#39;int&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList_with_override</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="go">[True, False, False]</span>
-</pre></div>
-</div>
+<p>In general, each method must have the query value as it’s only
+parameter. The only exception is for <code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_isclose__</span></code>, which
+also requires the absolute and relative numerical tolerances to be
+provided.</p>
 <p>When the condition is on an attribute, or nested attributes, of
 the operand, the query interface method is looked for on the
 attribute object, rather than the parent object.</p>
 <p>If the value has units then the argument passed to query interface
 method is automatically a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object that attaches the units to
 the value.</p>
+<p>For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList_with_interface</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__query_lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)([</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">TypeError: &#39;&lt;&#39; not supported between instances of &#39;myList&#39; and &#39;int&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">myList_with_interface</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">[True, False, False]</span>
+</pre></div>
+</div>
 <p><strong>Initialisation</strong></p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt>operator: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The query operator.</p>
 </dd>
 <dt>value:</dt><dd><p>The value of the condition.</p>
@@ -354,6 +368,22 @@ itself. Nested attributes are specified by separating
 them with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example, the “month” attribute
 of the “bounds” attribute is specified as
 <code class="docutils literal notranslate"><span class="pre">'bounds.month'</span></code>. See also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
+</dd>
+<dt>rtol: number, optional</dt><dd><p>Only applicable to the <code class="docutils literal notranslate"><span class="pre">'isclose'</span></code> operator. The
+tolerance on relative numerical differences. If
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the value returned by
+<a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a> is used at evaluation time.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.2.</span></p>
+</div>
+</dd>
+<dt>atol: number, optional</dt><dd><p>Only applicable to the <code class="docutils literal notranslate"><span class="pre">'isclose'</span></code> operator. The
+tolerance on absolute numerical differences. If
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the value returned by
+<a class="reference internal" href="../function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a> is used at evaluation time.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.2.</span></p>
+</div>
 </dd>
 <dt>exact: deprecated at version 3.0.0.</dt><dd><p>Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
 </dd>
@@ -397,6 +427,9 @@ of the “bounds” attribute is specified as
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.set_condition_units.html#cf.Query.set_condition_units" title="cf.Query.set_condition_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_condition_units</span></code></a></p></td>
 <td><p>Set units of condition values in-place.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.setdefault.html#cf.Query.setdefault" title="cf.Query.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a></p></td>
+<td><p>Set condition parameters in-place that are not already set.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -423,6 +456,57 @@ of the “bounds” attribute is specified as
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.isquery.html#cf.Query.isquery" title="cf.Query.isquery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isquery</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.Units.html#cf.Query.Units" title="cf.Query.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>Return the units of the query.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.atol.html#cf.Query.atol" title="cf.Query.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a></p></td>
+<td><p>The tolerance on absolute numerical differences.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.rtol.html#cf.Query.rtol" title="cf.Query.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a></p></td>
+<td><p>The tolerance on relative numerical differences.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<span id="query-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.__deepcopy__.html#cf.Query.__deepcopy__" title="cf.Query.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Used if copy.deepcopy is called on the variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.__repr__.html#cf.Query.__repr__" title="cf.Query.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.__str__.html#cf.Query.__str__" title="cf.Query.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.__eq__.html#cf.Query.__eq__" title="cf.Query.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.__ne__.html#cf.Query.__ne__" title="cf.Query.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.__and__.html#cf.Query.__and__" title="cf.Query.__and__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__and__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.__iand__.html#cf.Query.__iand__" title="cf.Query.__iand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iand__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&amp;=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.__or__.html#cf.Query.__or__" title="cf.Query.__or__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__or__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.__ior__.html#cf.Query.__ior__" title="cf.Query.__ior__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ior__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">|=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.__dask_tokenize__.html#cf.Query.__dask_tokenize__" title="cf.Query.__dask_tokenize__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__dask_tokenize__</span></code></a></p></td>
+<td><p>Return a hashable value fully representative of the object.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -436,7 +520,7 @@ of the “bounds” attribute is specified as
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

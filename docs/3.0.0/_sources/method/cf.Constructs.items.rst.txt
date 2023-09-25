@@ -1,7 +1,0 @@
-cf.Constructs.items
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Constructs.items

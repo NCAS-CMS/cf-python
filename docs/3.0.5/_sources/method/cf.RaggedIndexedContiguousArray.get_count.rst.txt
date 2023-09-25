@@ -1,7 +1,0 @@
-cf.RaggedIndexedContiguousArray.get_count
-=========================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.RaggedIndexedContiguousArray.get_count

@@ -24,6 +24,7 @@
     <script src="_static/copybutton.js"></script>
     <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api_reference.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -125,64 +130,63 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="analysis">
 <span id="id1"></span><h1><strong>Analysis</strong><a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.14.1 for version 1.10 of the CF conventions.</p>
+<p>Version 3.15.3 for version 1.10 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in an executable
 script (<a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
 <p>Note that this page is duplicated in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#sample-datasets" id="id84"><strong>Sample datasets</strong></a></p></li>
-<li><p><a class="reference internal" href="#statistical-collapses" id="id85"><strong>Statistical collapses</strong></a></p>
+<li><p><a class="reference internal" href="#sample-datasets" id="id82"><strong>Sample datasets</strong></a></p></li>
+<li><p><a class="reference internal" href="#statistical-collapses" id="id83"><strong>Statistical collapses</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#collapse-methods" id="id86">Collapse methods</a></p></li>
-<li><p><a class="reference internal" href="#data-type-and-missing-data" id="id87">Data type and missing data</a></p></li>
-<li><p><a class="reference internal" href="#collapse-weights" id="id88">Collapse weights</a></p></li>
-<li><p><a class="reference internal" href="#multiple-collapses" id="id89">Multiple collapses</a></p></li>
-<li><p><a class="reference internal" href="#grouped-collapses" id="id90">Grouped collapses</a></p></li>
-<li><p><a class="reference internal" href="#climatological-statistics" id="id91">Climatological statistics</a></p></li>
+<li><p><a class="reference internal" href="#collapse-methods" id="id84">Collapse methods</a></p></li>
+<li><p><a class="reference internal" href="#data-type-and-missing-data" id="id85">Data type and missing data</a></p></li>
+<li><p><a class="reference internal" href="#collapse-weights" id="id86">Collapse weights</a></p></li>
+<li><p><a class="reference internal" href="#multiple-collapses" id="id87">Multiple collapses</a></p></li>
+<li><p><a class="reference internal" href="#grouped-collapses" id="id88">Grouped collapses</a></p></li>
+<li><p><a class="reference internal" href="#climatological-statistics" id="id89">Climatological statistics</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#other-statistical-operations" id="id92"><strong>Other statistical operations</strong></a></p>
+<li><p><a class="reference internal" href="#other-statistical-operations" id="id90"><strong>Other statistical operations</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#cumulative-sums" id="id93">Cumulative sums</a></p></li>
-<li><p><a class="reference internal" href="#histograms" id="id94">Histograms</a></p></li>
-<li><p><a class="reference internal" href="#binning-operations" id="id95">Binning operations</a></p></li>
-<li><p><a class="reference internal" href="#percentiles" id="id96">Percentiles</a></p></li>
+<li><p><a class="reference internal" href="#cumulative-sums" id="id91">Cumulative sums</a></p></li>
+<li><p><a class="reference internal" href="#histograms" id="id92">Histograms</a></p></li>
+<li><p><a class="reference internal" href="#binning-operations" id="id93">Binning operations</a></p></li>
+<li><p><a class="reference internal" href="#percentiles" id="id94">Percentiles</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#regridding" id="id97"><strong>Regridding</strong></a></p>
+<li><p><a class="reference internal" href="#regridding" id="id95"><strong>Regridding</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#regridding-methods" id="id98">Regridding methods</a></p></li>
-<li><p><a class="reference internal" href="#spherical-regridding" id="id99">Spherical regridding</a></p></li>
-<li><p><a class="reference internal" href="#cartesian-regridding" id="id100">Cartesian regridding</a></p></li>
-<li><p><a class="reference internal" href="#regridding-masked-data" id="id101">Regridding masked data</a></p></li>
-<li><p><a class="reference internal" href="#vertical-regridding" id="id102">Vertical regridding</a></p></li>
+<li><p><a class="reference internal" href="#regridding-methods" id="id96">Regridding methods</a></p></li>
+<li><p><a class="reference internal" href="#spherical-regridding" id="id97">Spherical regridding</a></p></li>
+<li><p><a class="reference internal" href="#cartesian-regridding" id="id98">Cartesian regridding</a></p></li>
+<li><p><a class="reference internal" href="#regridding-masked-data" id="id99">Regridding masked data</a></p></li>
+<li><p><a class="reference internal" href="#vertical-regridding" id="id100">Vertical regridding</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#mathematical-operations" id="id103"><strong>Mathematical operations</strong></a></p>
+<li><p><a class="reference internal" href="#mathematical-operations" id="id101"><strong>Mathematical operations</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#binary-arithmetical-operations" id="id104">Binary arithmetical operations</a></p></li>
-<li><p><a class="reference internal" href="#unary-operations" id="id105">Unary operations</a></p></li>
-<li><p><a class="reference internal" href="#relational-operations" id="id106">Relational operations</a></p></li>
-<li><p><a class="reference internal" href="#arithmetical-and-relational-operations-with-insufficient-metadata" id="id107">Arithmetical and relational operations with insufficient metadata</a></p></li>
-<li><p><a class="reference internal" href="#operating-on-the-field-constructs-data" id="id108">Operating on the field constructs’ data</a></p></li>
-<li><p><a class="reference internal" href="#trigonometrical-and-hyperbolic-functions" id="id109">Trigonometrical and hyperbolic functions</a></p></li>
-<li><p><a class="reference internal" href="#exponential-and-logarithmic-functions" id="id110">Exponential and logarithmic functions</a></p></li>
-<li><p><a class="reference internal" href="#rounding-and-truncation" id="id111">Rounding and truncation</a></p></li>
-<li><p><a class="reference internal" href="#moving-windows" id="id112">Moving windows</a></p></li>
-<li><p><a class="reference internal" href="#convolution-filters" id="id113">Convolution filters</a></p></li>
-<li><p><a class="reference internal" href="#general-first-order-derivative" id="id114">General first order derivative</a></p></li>
-<li><p><a class="reference internal" href="#gradient-vector" id="id115">Gradient vector</a></p></li>
-<li><p><a class="reference internal" href="#laplacian" id="id116">Laplacian</a></p></li>
-<li><p><a class="reference internal" href="#divergence" id="id117">Divergence</a></p></li>
-<li><p><a class="reference internal" href="#curl" id="id118">Curl</a></p></li>
-<li><p><a class="reference internal" href="#relative-vorticity" id="id119">Relative vorticity</a></p></li>
+<li><p><a class="reference internal" href="#binary-arithmetical-operations" id="id102">Binary arithmetical operations</a></p></li>
+<li><p><a class="reference internal" href="#unary-operations" id="id103">Unary operations</a></p></li>
+<li><p><a class="reference internal" href="#relational-operations" id="id104">Relational operations</a></p></li>
+<li><p><a class="reference internal" href="#arithmetical-and-relational-operations-with-insufficient-metadata" id="id105">Arithmetical and relational operations with insufficient metadata</a></p></li>
+<li><p><a class="reference internal" href="#operating-on-the-field-constructs-data" id="id106">Operating on the field constructs’ data</a></p></li>
+<li><p><a class="reference internal" href="#trigonometrical-and-hyperbolic-functions" id="id107">Trigonometrical and hyperbolic functions</a></p></li>
+<li><p><a class="reference internal" href="#exponential-and-logarithmic-functions" id="id108">Exponential and logarithmic functions</a></p></li>
+<li><p><a class="reference internal" href="#rounding-and-truncation" id="id109">Rounding and truncation</a></p></li>
+<li><p><a class="reference internal" href="#moving-windows" id="id110">Moving windows</a></p></li>
+<li><p><a class="reference internal" href="#convolution-filters" id="id111">Convolution filters</a></p></li>
+<li><p><a class="reference internal" href="#general-first-order-derivative" id="id112">General first order derivative</a></p></li>
+<li><p><a class="reference internal" href="#gradient-vector" id="id113">Gradient vector</a></p></li>
+<li><p><a class="reference internal" href="#laplacian" id="id114">Laplacian</a></p></li>
+<li><p><a class="reference internal" href="#divergence" id="id115">Divergence</a></p></li>
+<li><p><a class="reference internal" href="#curl" id="id116">Curl</a></p></li>
 </ul>
 </li>
 </ul>
 </div>
 <section id="sample-datasets">
-<span id="id2"></span><h2><a class="toc-backref" href="#id84"><strong>Sample datasets</strong></a><a class="headerlink" href="#sample-datasets" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><a class="toc-backref" href="#id82"><strong>Sample datasets</strong></a><a class="headerlink" href="#sample-datasets" title="Permalink to this headline">¶</a></h2>
 <p>This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file <code class="docutils literal notranslate"><span class="pre">cf_tutorial_files.zip</span></code>
 (<a class="reference download internal" download="" href="_downloads/cf_tutorial_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
@@ -215,7 +219,7 @@ of the on-line code repository.</p>
 <hr class="docutils" />
 </section>
 <section id="statistical-collapses">
-<span id="id3"></span><h2><a class="toc-backref" href="#id85"><strong>Statistical collapses</strong></a><a class="headerlink" href="#statistical-collapses" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a class="toc-backref" href="#id83"><strong>Statistical collapses</strong></a><a class="headerlink" href="#statistical-collapses" title="Permalink to this headline">¶</a></h2>
 <p>Collapsing one or more dimensions reduces their size and replaces the
 data along those axes with representative statistical values. The
 result is a new field construct with consistent metadata for the
@@ -327,7 +331,7 @@ reference system.</p>
 </div>
 </div>
 <section id="collapse-methods">
-<span id="id4"></span><h3><a class="toc-backref" href="#id86">Collapse methods</a><a class="headerlink" href="#collapse-methods" title="Permalink to this headline">¶</a></h3>
+<span id="id4"></span><h3><a class="toc-backref" href="#id84">Collapse methods</a><a class="headerlink" href="#collapse-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following collapse methods are available, over any subset of the
 domain axes. The “Cell method” column in the table gives the method
 name, defined by the CF conventions, of the new cell method construct
@@ -587,18 +591,18 @@ x_{i}^2}\]</div>
 </table>
 </section>
 <section id="data-type-and-missing-data">
-<span id="id5"></span><h3><a class="toc-backref" href="#id87">Data type and missing data</a><a class="headerlink" href="#data-type-and-missing-data" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><a class="toc-backref" href="#id85">Data type and missing data</a><a class="headerlink" href="#data-type-and-missing-data" title="Permalink to this headline">¶</a></h3>
 <p>In all collapses, missing data array elements are accounted for in the
 calculation.</p>
 <p>Any collapse method that involves a calculation (such as calculating a
-mean), as opposed to just selecting a value (such as finding a
+mean), as opposed to only selecting a value (such as finding a
 maximum), will return a field containing double precision floating
 point numbers. If this is not desired then the data type can be reset
 after the collapse with the <a class="reference internal" href="attribute/cf.Field.dtype.html#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> attribute of the field
 construct.</p>
 </section>
 <section id="collapse-weights">
-<span id="id6"></span><h3><a class="toc-backref" href="#id88">Collapse weights</a><a class="headerlink" href="#collapse-weights" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><a class="toc-backref" href="#id86">Collapse weights</a><a class="headerlink" href="#collapse-weights" title="Permalink to this headline">¶</a></h3>
 <p>For weights to be incorporated in the collapse, the axes to be
 weighted must be identified with the <em>weights</em> keyword. A collapse by
 a particular method is either never weighted, or may be weighted, or
@@ -833,7 +837,7 @@ method.</p>
 specified.</p>
 </section>
 <section id="multiple-collapses">
-<span id="id7"></span><h3><a class="toc-backref" href="#id89">Multiple collapses</a><a class="headerlink" href="#multiple-collapses" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><a class="toc-backref" href="#id87">Multiple collapses</a><a class="headerlink" href="#multiple-collapses" title="Permalink to this headline">¶</a></h3>
 <p>Multiple collapses normally require multiple calls to
 <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>: one on the original field construct and then one on
 each interim field construct.</p>
@@ -872,7 +876,7 @@ methods-like syntax.</em></span><a class="headerlink" href="#id38" title="Permal
 </div>
 </section>
 <section id="grouped-collapses">
-<span id="id8"></span><h3><a class="toc-backref" href="#id90">Grouped collapses</a><a class="headerlink" href="#grouped-collapses" title="Permalink to this headline">¶</a></h3>
+<span id="id8"></span><h3><a class="toc-backref" href="#id88">Grouped collapses</a><a class="headerlink" href="#grouped-collapses" title="Permalink to this headline">¶</a></h3>
 <p>A grouped collapse is one for which an axis is not collapsed
 completely to size 1. Instead the collapse axis is partitioned into
 non-overlapping groups and each group is collapsed to size 1. The
@@ -985,7 +989,7 @@ contiguous group containing overlapping cells) keywords of
 <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
 </section>
 <section id="climatological-statistics">
-<span id="id9"></span><h3><a class="toc-backref" href="#id91">Climatological statistics</a><a class="headerlink" href="#climatological-statistics" title="Permalink to this headline">¶</a></h3>
+<span id="id9"></span><h3><a class="toc-backref" href="#id89">Climatological statistics</a><a class="headerlink" href="#climatological-statistics" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#climatological-statistics">Climatological statistics</a> may be derived from corresponding
 portions of the annual cycle in a set of years (e.g. the average
 January temperatures in the climatology of 1961-1990, where the values
@@ -1163,9 +1167,9 @@ standard deviations with two separate collapse calls.</em></span><a class="heade
 </section>
 </section>
 <section id="other-statistical-operations">
-<h2><a class="toc-backref" href="#id92"><strong>Other statistical operations</strong></a><a class="headerlink" href="#other-statistical-operations" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id90"><strong>Other statistical operations</strong></a><a class="headerlink" href="#other-statistical-operations" title="Permalink to this headline">¶</a></h2>
 <section id="cumulative-sums">
-<span id="id10"></span><h3><a class="toc-backref" href="#id93">Cumulative sums</a><a class="headerlink" href="#cumulative-sums" title="Permalink to this headline">¶</a></h3>
+<span id="id10"></span><h3><a class="toc-backref" href="#id91">Cumulative sums</a><a class="headerlink" href="#cumulative-sums" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a> method of the field construct calculates the
 cumulative sum of elements along a given axis. The cell bounds of the
 axis are updated to describe the ranges over which the sums apply, and
@@ -1208,7 +1212,7 @@ positioning of coordinate values in the summed axis of the returned
 field construct.</p>
 </section>
 <section id="histograms">
-<span id="id11"></span><h3><a class="toc-backref" href="#id94">Histograms</a><a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
+<span id="id11"></span><h3><a class="toc-backref" href="#id92">Histograms</a><a class="headerlink" href="#histograms" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a> function is used to record the distribution of a
 set of variables in the form of an N-dimensional histogram.</p>
 <p>Each dimension of the histogram is defined by a field construct
@@ -1323,7 +1327,7 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 </div>
 </section>
 <section id="binning-operations">
-<span id="id12"></span><h3><a class="toc-backref" href="#id95">Binning operations</a><a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h3>
+<span id="id12"></span><h3><a class="toc-backref" href="#id93">Binning operations</a><a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
 an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
@@ -1411,7 +1415,7 @@ temperature and pressure values.</em></span><a class="headerlink" href="#id53" t
 </div>
 </section>
 <section id="percentiles">
-<span id="id13"></span><h3><a class="toc-backref" href="#id96">Percentiles</a><a class="headerlink" href="#percentiles" title="Permalink to this headline">¶</a></h3>
+<span id="id13"></span><h3><a class="toc-backref" href="#id94">Percentiles</a><a class="headerlink" href="#percentiles" title="Permalink to this headline">¶</a></h3>
 <p>Percentiles of the data can be computed along any subset of the axes
 with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id54">
@@ -1519,7 +1523,7 @@ percentiles, and digitize the data based on these bins.</em></span><a class="hea
 </section>
 </section>
 <section id="regridding">
-<span id="id14"></span><h2><a class="toc-backref" href="#id97"><strong>Regridding</strong></a><a class="headerlink" href="#regridding" title="Permalink to this headline">¶</a></h2>
+<span id="id14"></span><h2><a class="toc-backref" href="#id95"><strong>Regridding</strong></a><a class="headerlink" href="#regridding" title="Permalink to this headline">¶</a></h2>
 <p>Regridding, also called remapping or interpolation, is the process of
 changing the domain of a field construct whilst preserving the
 qualities of the original data.</p>
@@ -1527,9 +1531,9 @@ qualities of the original data.</p>
 regridding data between domains with spherical coordinate systems; and
 <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
-<a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a> package, a
-Python interface to the Earth System Modeling Framework regridding
-utility.</p>
+<a class="reference external" href="https://earthsystemmodeling.org/esmpy/">esmpy</a> package (formerly
+called <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>), a Python interface to the Earth System Modeling
+Framework regridding utility.</p>
 <p>As with <a class="reference internal" href="tutorial.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
 regridding may be applied over a subset of the domain axes, and the
 domain axis constructs and coordinate constructs for the non-regridded
@@ -1539,7 +1543,7 @@ spans the regridding dimensions are also regridded, but <a class="reference inte
 ancillary constructs</span></a> whose data spans the
 regridding dimensions are removed from the regridded field construct.</p>
 <section id="regridding-methods">
-<span id="id15"></span><h3><a class="toc-backref" href="#id98">Regridding methods</a><a class="headerlink" href="#regridding-methods" title="Permalink to this headline">¶</a></h3>
+<span id="id15"></span><h3><a class="toc-backref" href="#id96">Regridding methods</a><a class="headerlink" href="#regridding-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following regridding methods are available (in this table,
 “source” and “destination” refer to the domain of the field construct
 being regridded, and the domain that it is being regridded to,
@@ -1629,7 +1633,7 @@ input at most one source point.</p>
 </table>
 </section>
 <section id="spherical-regridding">
-<span id="id16"></span><h3><a class="toc-backref" href="#id99">Spherical regridding</a><a class="headerlink" href="#spherical-regridding" title="Permalink to this headline">¶</a></h3>
+<span id="id16"></span><h3><a class="toc-backref" href="#id97">Spherical regridding</a><a class="headerlink" href="#spherical-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Regridding from and to spherical coordinate systems using the
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
@@ -1752,16 +1756,15 @@ coordinate constructs.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Regrid ‘a’ onto two-dimensional (curvilinear) dimension
 coordinates latitude and longitude.</em></span><a class="headerlink" href="#id59" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mf">92.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">([</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">create_regular</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
-<span class="go">Data            : air_temperature(time(2), latitude(73), longitude(72)) K</span>
+<span class="go">Data            : air_temperature(time(2), latitude(72), longitude(72)) K</span>
 <span class="go">Cell methods    : time(2): mean</span>
 <span class="go">Dimension coords: time(2) = [1860-01-16 00:00:00, 1860-02-16 00:00:00] 360_day</span>
-<span class="go">                : latitude(73) = [-90.0, ..., 90.0] degrees_north</span>
-<span class="go">                : longitude(72) = [0.0, ..., 355.0] degrees_east</span>
+<span class="go">                : latitude(72) = [-88.75, ..., 88.75] degrees_north</span>
+<span class="go">                : longitude(72) = [2.5, ..., 357.5] degrees_east</span>
 <span class="go">                : height(1) = [2.0] m</span>
 </pre></div>
 </div>
@@ -1787,7 +1790,7 @@ registered by setting a period of cyclicity with the
 construct.</p>
 </section>
 <section id="cartesian-regridding">
-<span id="id17"></span><h3><a class="toc-backref" href="#id100">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
+<span id="id17"></span><h3><a class="toc-backref" href="#id98">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
 similar to <a class="reference internal" href="tutorial.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
@@ -1802,10 +1805,11 @@ will produce similar results to using using spherical regridding.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Regrid the time axis ‘T’ of field ‘a’ with the linear
 method onto the grid specified in the dimension coordinate
 time.</em></span><a class="headerlink" href="#id60" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-<span class="gp">... </span>                      <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 1860-01-01&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="o">.</span><span class="n">create_regular</span><span class="p">(</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">60.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>     <span class="n">units</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s2">&quot;days since 1860-01-01&quot;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s2">&quot;360_day&quot;</span><span class="p">),</span>
+<span class="gp">... </span>     <span class="n">standard_name</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+<span class="gp">... </span>     <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span>
 <span class="go">&lt;CF DimensionCoordinate: time(60) days since 1860-01-01 360_day&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
@@ -1813,30 +1817,7 @@ time.</em></span><a class="headerlink" href="#id60" title="Permalink to this cod
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(60), latitude(73), longitude(96)) K</span>
 <span class="go">Cell methods    : time(60): mean</span>
-<span class="go">Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day</span>
-<span class="go">                : latitude(73) = [-90.0, ..., 90.0] degrees_north</span>
-<span class="go">                : longitude(96) = [0.0, ..., 356.25] degrees_east</span>
-<span class="go">                : height(1) = [2.0] m</span>
-</pre></div>
-</div>
-</div>
-<p>Note the requirement for the conservative method of contiguous,
-non-overlapping bounds on the destination domain:</p>
-<div class="literal-block-wrapper docutils container" id="id61">
-<div class="code-block-caption"><span class="caption-text"><em>Regrid the time axis ‘T’ of field ‘a’ conservatively
-(to first order) onto the grid specified in the dimension
-coordinate time.</em></span><a class="headerlink" href="#id61" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>  <span class="c1"># Raises Exception</span>
-<span class="go">ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-<span class="go">Field: air_temperature (ncvar%tas)</span>
-<span class="go">----------------------------------</span>
-<span class="go">Data            : air_temperature(time(60), latitude(73), longitude(96)) K</span>
-<span class="go">Cell methods    : time(60): mean</span>
-<span class="go">Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day</span>
+<span class="go">Dimension coords: time(60) = [1860-01-02 00:00:00, ..., 1860-03-01 00:00:00] 360_day</span>
 <span class="go">                : latitude(73) = [-90.0, ..., 90.0] degrees_north</span>
 <span class="go">                : longitude(96) = [0.0, ..., 356.25] degrees_east</span>
 <span class="go">                : height(1) = [2.0] m</span>
@@ -1847,7 +1828,7 @@ coordinate time.</em></span><a class="headerlink" href="#id61" title="Permalink 
 also possible, similarly to spherical regridding.</p>
 </section>
 <section id="regridding-masked-data">
-<span id="id18"></span><h3><a class="toc-backref" href="#id101">Regridding masked data</a><a class="headerlink" href="#regridding-masked-data" title="Permalink to this headline">¶</a></h3>
+<span id="id18"></span><h3><a class="toc-backref" href="#id99">Regridding masked data</a><a class="headerlink" href="#regridding-masked-data" title="Permalink to this headline">¶</a></h3>
 <p>The data mask of the source field construct is taken into account,
 such that the regridded data will be masked in regions where the
 source data is masked. By default the mask of the destination field
@@ -1862,7 +1843,7 @@ points. For these methods, masking a destination point means that the
 point will not participate in the regridding.</p>
 </section>
 <section id="vertical-regridding">
-<span id="id19"></span><h3><a class="toc-backref" href="#id102">Vertical regridding</a><a class="headerlink" href="#vertical-regridding" title="Permalink to this headline">¶</a></h3>
+<span id="id19"></span><h3><a class="toc-backref" href="#id100">Vertical regridding</a><a class="headerlink" href="#vertical-regridding" title="Permalink to this headline">¶</a></h3>
 <p>The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
 vertical axis is transformed so that it’s coordinate values vary
@@ -1870,9 +1851,9 @@ linearly. For example, to regrid data on one set of vertical pressure
 coordinates to another set, the pressure coordinates may first be
 transformed into the logarithm of pressure, and then changed back to
 pressure coordinates after the regridding operation.</p>
-<div class="literal-block-wrapper docutils container" id="id62">
+<div class="literal-block-wrapper docutils container" id="id61">
 <div class="code-block-caption"><span class="caption-text"><em>Regrid a field construct from one set of pressure levels
-to another.</em></span><a class="headerlink" href="#id62" title="Permalink to this code">¶</a></div>
+to another.</em></span><a class="headerlink" href="#id61" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;vertical.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
@@ -1915,16 +1896,16 @@ to another.</em></span><a class="headerlink" href="#id62" title="Permalink to th
 </div>
 </div>
 <p>Note that the <a class="reference internal" href="method/cf.Field.replace_construct.html#cf.Field.replace_construct" title="cf.Field.replace_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_construct</span></code></a> method of the field construct
-is used to easily replace the vertical dimension coordinate construct,
+is used to directly replace the vertical dimension coordinate construct,
 without having to manually match up the corresponding domain axis
 construct and construct key.</p>
 <hr class="docutils" />
 </section>
 </section>
 <section id="mathematical-operations">
-<span id="id20"></span><h2><a class="toc-backref" href="#id103"><strong>Mathematical operations</strong></a><a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<span id="id20"></span><h2><a class="toc-backref" href="#id101"><strong>Mathematical operations</strong></a><a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <section id="binary-arithmetical-operations">
-<span id="id21"></span><h3><a class="toc-backref" href="#id104">Binary arithmetical operations</a><a class="headerlink" href="#binary-arithmetical-operations" title="Permalink to this headline">¶</a></h3>
+<span id="id21"></span><h3><a class="toc-backref" href="#id102">Binary arithmetical operations</a><a class="headerlink" href="#binary-arithmetical-operations" title="Permalink to this headline">¶</a></h3>
 <p>A field construct may be arithmetically combined with another field
 construct, or any other object that is broadcastable to its data. See
 the <a class="reference internal" href="class/cf.Field.html#field-binary-arithmetic"><span class="std std-ref">comprehensive list of available binary operations</span></a>.</p>
@@ -1940,9 +1921,9 @@ operand, and augmented assignments are possible.</p>
 <p>Automatic units conversions are also carried out between operands
 during operations, and if one operand has no units then the units of
 the other are assumed.</p>
-<div class="literal-block-wrapper docutils container" id="id63">
+<div class="literal-block-wrapper docutils container" id="id62">
 <div class="code-block-caption"><span class="caption-text"><em>Apply some binary arithmetic operations to combine the
-data for a pair of field constructs.</em></span><a class="headerlink" href="#id63" title="Permalink to this code">¶</a></div>
+data for a pair of field constructs.</em></span><a class="headerlink" href="#id62" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
 <span class="go">{&#39;min&#39;: &lt;CF Data(): 260.0 K&gt;,</span>
@@ -1968,11 +1949,11 @@ data for a pair of field constructs.</em></span><a class="headerlink" href="#id6
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id64">
+<div class="literal-block-wrapper docutils container" id="id63">
 <div class="code-block-caption"><span class="caption-text"><em>Apply a binary addition operation to apply an offset to
 the units and permute the axes of air temperature data
 on a field construct. Note the use of augmented
-assignment to apply an offset to the units.</em></span><a class="headerlink" href="#id64" title="Permalink to this code">¶</a></div>
+assignment to apply an offset to the units.</em></span><a class="headerlink" href="#id63" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
@@ -1987,10 +1968,10 @@ assignment to apply an offset to the units.</em></span><a class="headerlink" hre
 the “standard_name” and “long_name” properties are removed. This is
 the case if the units of the result differ from both operands, or if
 they have different standard names.</p>
-<div class="literal-block-wrapper docutils container" id="id65">
+<div class="literal-block-wrapper docutils container" id="id64">
 <div class="code-block-caption"><span class="caption-text"><em>Applying a binary operation where the resultant field construct
 has a different physical nature to the two operands. Note the
-removal of the ‘standard_name’ property to account for this.</em></span><a class="headerlink" href="#id65" title="Permalink to this code">¶</a></div>
+removal of the ‘standard_name’ property to account for this.</em></span><a class="headerlink" href="#id64" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
 <span class="go">[&#39;air_temperature&#39;,</span>
 <span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
@@ -2033,9 +2014,9 @@ result of binary operation will, by default, only have bounds if both
 operands have bounds; and the bounds of the result will be the result
 of the same binary operation on bounds objects. This behaviour may
 modified by the <a class="reference internal" href="function/cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.bounds_combination_mode</span></code></a> function.</p>
-<div class="literal-block-wrapper docutils container" id="id66">
+<div class="literal-block-wrapper docutils container" id="id65">
 <div class="code-block-caption"><span class="caption-text"><em>Demonstrate how bounds are treated in binary
-operations.</em></span><a class="headerlink" href="#id66" title="Permalink to this code">¶</a></div>
+operations.</em></span><a class="headerlink" href="#id65" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 <span class="go">Dimension coordinate: longitude</span>
@@ -2081,8 +2062,8 @@ operations.</em></span><a class="headerlink" href="#id66" title="Permalink to th
 </div>
 <p>The setting of the bounds combination mode may also be set in a
 context manager:</p>
-<div class="literal-block-wrapper docutils container" id="id67">
-<div class="code-block-caption"><span class="caption-text"><em>Set the bounds combination mode in a context manager.</em></span><a class="headerlink" href="#id67" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id66">
+<div class="code-block-caption"><span class="caption-text"><em>Set the bounds combination mode in a context manager.</em></span><a class="headerlink" href="#id66" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cf</span><span class="o">.</span><span class="n">bounds_combination_mode</span><span class="p">(</span><span class="s1">&#39;OR&#39;</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="p">(</span><span class="n">x2</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 <span class="gp">...</span>
@@ -2098,24 +2079,24 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
 </ul>
-<div class="literal-block-wrapper docutils container" id="id68">
+<div class="literal-block-wrapper docutils container" id="id67">
 <div class="code-block-caption"><span class="caption-text"><em>A field construct will not be returned if
 the left hand operand is a numpy array or a
-‘Data’ instance.</em></span><a class="headerlink" href="#id68" title="Permalink to this code">¶</a></div>
+‘Data’ instance.</em></span><a class="headerlink" href="#id67" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
@@ -2138,12 +2119,12 @@ the left hand operand is a numpy array or a
 </div>
 </section>
 <section id="unary-operations">
-<span id="id22"></span><h3><a class="toc-backref" href="#id105">Unary operations</a><a class="headerlink" href="#unary-operations" title="Permalink to this headline">¶</a></h3>
+<span id="id22"></span><h3><a class="toc-backref" href="#id103">Unary operations</a><a class="headerlink" href="#unary-operations" title="Permalink to this headline">¶</a></h3>
 <p>Python unary operators also work on the field construct’s data,
 returning a new field construct with modified data values. See the
 <a class="reference internal" href="class/cf.Field.html#field-unary-arithmetic"><span class="std std-ref">comprehensive list of available unary operations</span></a>.</p>
-<div class="literal-block-wrapper docutils container" id="id69">
-<div class="code-block-caption"><span class="caption-text"><em>Apply some unary operations to a field construct’s data.</em></span><a class="headerlink" href="#id69" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id68">
+<div class="code-block-caption"><span class="caption-text"><em>Apply some unary operations to a field construct’s data.</em></span><a class="headerlink" href="#id68" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
@@ -2168,7 +2149,7 @@ returning a new field construct with modified data values. See the
 </div>
 </section>
 <section id="relational-operations">
-<span id="id23"></span><h3><a class="toc-backref" href="#id106">Relational operations</a><a class="headerlink" href="#relational-operations" title="Permalink to this headline">¶</a></h3>
+<span id="id23"></span><h3><a class="toc-backref" href="#id104">Relational operations</a><a class="headerlink" href="#relational-operations" title="Permalink to this headline">¶</a></h3>
 <p>A field construct may compared with another field construct, or any
 other object that is broadcastable to its data. See the
 <a class="reference internal" href="class/cf.Field.html#field-comparison"><span class="std std-ref">comprehensive list of available relational operations</span></a>. The result is a field construct with Boolean
@@ -2185,10 +2166,10 @@ operand.</p>
 <p>Automatic units conversions are also carried out between operands
 during operations, and if one operand has no units then the units of
 the other are assumed.</p>
-<div class="literal-block-wrapper docutils container" id="id70">
+<div class="literal-block-wrapper docutils container" id="id69">
 <div class="code-block-caption"><span class="caption-text"><em>Produce field constructs of Boolean data encapsulating
 the nature of some relations between a field construct and
-another operand.</em></span><a class="headerlink" href="#id70" title="Permalink to this code">¶</a></div>
+another operand.</em></span><a class="headerlink" href="#id69" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
@@ -2219,11 +2200,11 @@ another operand.</em></span><a class="headerlink" href="#id70" title="Permalink 
 </div>
 <p>The “standard_name” and “long_name” properties are removed from the
 result, which also has no units.</p>
-<div class="literal-block-wrapper docutils container" id="id71">
+<div class="literal-block-wrapper docutils container" id="id70">
 <div class="code-block-caption"><span class="caption-text"><em>A field construct of Boolean data created from a relational
 operation on a field construct and another operand will be
 stripped of its standard_name property (and its long_name
-property if it has been set, unlike for ‘q’ here).</em></span><a class="headerlink" href="#id71" title="Permalink to this code">¶</a></div>
+property if it has been set, unlike for ‘q’ here).</em></span><a class="headerlink" href="#id70" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
 <span class="go">[&#39;specific_humidity&#39;,</span>
 <span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
@@ -2261,7 +2242,7 @@ for more details. <em>(This will be made easier in a future release with
 a new function for combining such field constructs.)</em></p>
 </section>
 <section id="arithmetical-and-relational-operations-with-insufficient-metadata">
-<span id="id24"></span><h3><a class="toc-backref" href="#id107">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
+<span id="id24"></span><h3><a class="toc-backref" href="#id105">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
 <p>When both operands of a <a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
 creation of the mapping of physically compatible dimensions relies on
 there being sufficient metadata. By default, the mapping relies on
@@ -2269,8 +2250,8 @@ their being “strict” identities for the metadata constructs with
 multi-valued data. The strict identity is restricted <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code>
 property (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attribute), and may be returned by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>
 method of a construct:</p>
-<div class="literal-block-wrapper docutils container" id="id72">
-<div class="code-block-caption"><span class="caption-text"><em>Find the “strict” identity of a construct.</em></span><a class="headerlink" href="#id72" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id71">
+<div class="code-block-caption"><span class="caption-text"><em>Find the “strict” identity of a construct.</em></span><a class="headerlink" href="#id71" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;latitude&#39;</span>
@@ -2298,7 +2279,7 @@ constructs.</p></li>
 </ul>
 </section>
 <section id="operating-on-the-field-constructs-data">
-<span id="id25"></span><h3><a class="toc-backref" href="#id108">Operating on the field constructs’ data</a><a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h3>
+<span id="id25"></span><h3><a class="toc-backref" href="#id106">Operating on the field constructs’ data</a><a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
 <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
 be carried out on their data instances, thereby bypassing any
@@ -2320,9 +2301,9 @@ rules</a>), dimension order and dimension direction, and that the
 resulting data is compatible with the metadata of the field construct
 which will contain it. Automatic units conversions are, however, still
 accounted for when combining the data instances.</p>
-<div class="literal-block-wrapper docutils container" id="id73">
+<div class="literal-block-wrapper docutils container" id="id72">
 <div class="code-block-caption"><span class="caption-text"><em>Operate on the data and use ‘set_data’ to put the
-resulting data into the new field construct.</em></span><a class="headerlink" href="#id73" title="Permalink to this code">¶</a></div>
+resulting data into the new field construct.</em></span><a class="headerlink" href="#id72" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="go">&lt;CF Data(): 260.0 K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -2335,17 +2316,17 @@ resulting data into the new field construct.</em></span><a class="headerlink" hr
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id74">
-<div class="code-block-caption"><span class="caption-text"><em>Update the data with indexed assignment</em></span><a class="headerlink" href="#id74" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id73">
+<div class="code-block-caption"><span class="caption-text"><em>Update the data with indexed assignment</em></span><a class="headerlink" href="#id73" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_data</span>
  <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
  <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">0.0</span> <span class="n">K</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id75">
+<div class="literal-block-wrapper docutils container" id="id74">
 <div class="code-block-caption"><span class="caption-text"><em>An example of augmented assignment involving the data of
-two field constructs.</em></span><a class="headerlink" href="#id75" title="Permalink to this code">¶</a></div>
+two field constructs.</em></span><a class="headerlink" href="#id74" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">-=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 <span class="go">&lt;CF Data(): 0.0 K&gt;</span>
@@ -2354,7 +2335,7 @@ two field constructs.</em></span><a class="headerlink" href="#id75" title="Perma
 </div>
 </section>
 <section id="trigonometrical-and-hyperbolic-functions">
-<h3><a class="toc-backref" href="#id109">Trigonometrical and hyperbolic functions</a><a class="headerlink" href="#trigonometrical-and-hyperbolic-functions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id107">Trigonometrical and hyperbolic functions</a><a class="headerlink" href="#trigonometrical-and-hyperbolic-functions" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs have methods to apply
 trigonometric and hyperbolic functions, and their inverses,
 element-wise to the data. These preserve the metadata but
@@ -2431,8 +2412,8 @@ element-wise.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="literal-block-wrapper docutils container" id="id76">
-<div class="code-block-caption"><span class="caption-text"><em>Find the sine of each latitude coordinate value.</em></span><a class="headerlink" href="#id76" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id75">
+<div class="code-block-caption"><span class="caption-text"><em>Find the sine of each latitude coordinate value.</em></span><a class="headerlink" href="#id75" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span><span class="o">.</span><span class="n">data</span>
@@ -2453,9 +2434,9 @@ and therefore may return
 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nan</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">inf</span></code>). When applying these methods to constructs with masked
 data, you may prefer to output masked values instead of invalid ones. In
 this case, you can use <code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code> to do the conversion afterwards:</p>
-<div class="literal-block-wrapper docutils container" id="id77">
+<div class="literal-block-wrapper docutils container" id="id76">
 <div class="code-block-caption"><span class="caption-text"><em>Take the `arctanh` of some masked data and then transform
-resultant invalid values into masked data values.</em></span><a class="headerlink" href="#id77" title="Permalink to this code">¶</a></div>
+resultant invalid values into masked data values.</em></span><a class="headerlink" href="#id76" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">arctanh</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -2468,13 +2449,13 @@ resultant invalid values into masked data values.</em></span><a class="headerlin
 </div>
 </section>
 <section id="exponential-and-logarithmic-functions">
-<h3><a class="toc-backref" href="#id110">Exponential and logarithmic functions</a><a class="headerlink" href="#exponential-and-logarithmic-functions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id108">Exponential and logarithmic functions</a><a class="headerlink" href="#exponential-and-logarithmic-functions" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs have <a class="reference internal" href="method/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> and
 <a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a> methods for applying exponential and logarithmic
 functions respectively element-wise to the data, preserving the
 metadata but changing the construct’s units where required.</p>
-<div class="literal-block-wrapper docutils container" id="id78">
-<div class="code-block-caption"><span class="caption-text"><em>Find the logarithms and exponentials of field constructs.</em></span><a class="headerlink" href="#id78" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id77">
+<div class="code-block-caption"><span class="caption-text"><em>Find the logarithms and exponentials of field constructs.</em></span><a class="headerlink" href="#id77" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
 <span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
@@ -2494,7 +2475,7 @@ metadata but changing the construct’s units where required.</p>
 result.</p>
 </section>
 <section id="rounding-and-truncation">
-<h3><a class="toc-backref" href="#id111">Rounding and truncation</a><a class="headerlink" href="#rounding-and-truncation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id109">Rounding and truncation</a><a class="headerlink" href="#rounding-and-truncation" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs the following methods to
 round and truncate their data:</p>
 <table class="docutils align-default">
@@ -2530,15 +2511,15 @@ round and truncate their data:</p>
 </table>
 </section>
 <section id="moving-windows">
-<h3><a class="toc-backref" href="#id112">Moving windows</a><a class="headerlink" href="#moving-windows" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id110">Moving windows</a><a class="headerlink" href="#moving-windows" title="Permalink to this headline">¶</a></h3>
 <p>Moving window calculations along an axis may be created with the
 <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method of the field construct.</p>
 <p>Moving mean, sum, and integral calculations are possible.</p>
 <p>By default moving means are unweighted, but weights based on the axis
 cell sizes (or custom weights) may applied to the calculation.</p>
-<div class="literal-block-wrapper docutils container" id="id79">
+<div class="literal-block-wrapper docutils container" id="id78">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point weighted mean of the ‘X’ axis. Since
-the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="headerlink" href="#id79" title="Permalink to this code">¶</a></div>
+the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="headerlink" href="#id78" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
@@ -2602,17 +2583,17 @@ method constructs.</p>
 </div>
 </section>
 <section id="convolution-filters">
-<h3><a class="toc-backref" href="#id113">Convolution filters</a><a class="headerlink" href="#convolution-filters" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id111">Convolution filters</a><a class="headerlink" href="#convolution-filters" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference external" href="https://en.wikipedia.org/wiki/Convolution">convolution</a> of the
 field construct data with a filter along a single domain axis can be
 calculated, which also updates the bounds of a relevant dimension
 coordinate construct to account for the width of the
 filter. Convolution filters are carried with the
 <a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct.</p>
-<div class="literal-block-wrapper docutils container" id="id80">
+<div class="literal-block-wrapper docutils container" id="id79">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 5-point mean of the ‘X’ axis with a
 non-uniform window function. Since the the ‘X’ axis is
-cyclic, the convolution wraps by default.</em></span><a class="headerlink" href="#id80" title="Permalink to this code">¶</a></div>
+cyclic, the convolution wraps by default.</em></span><a class="headerlink" href="#id79" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
@@ -2660,13 +2641,13 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
-<div class="literal-block-wrapper docutils container" id="id81">
+<div class="literal-block-wrapper docutils container" id="id80">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
 axis. Since the ‘Y’ axis is not cyclic, the convolution
 by default inserts missing data at points for which the
-filter window extends beyond the array.</em></span><a class="headerlink" href="#id81" title="Permalink to this code">¶</a></div>
+filter window extends beyond the array.</em></span><a class="headerlink" href="#id80" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">windows</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exponential_window</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">exponential_window</span><span class="p">)</span>
@@ -2687,7 +2668,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2698,18 +2679,18 @@ method constructs.</p>
 </div>
 </section>
 <section id="general-first-order-derivative">
-<h3><a class="toc-backref" href="#id114">General first order derivative</a><a class="headerlink" href="#general-first-order-derivative" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id112">General first order derivative</a><a class="headerlink" href="#general-first-order-derivative" title="Permalink to this headline">¶</a></h3>
 <p>The derivative along a dimension of the field construct’s data can be
 calculated as a centred finite difference with the <a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
 method. If the axis is <a class="reference internal" href="tutorial.html#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
 derivative wraps around by default, otherwise it may be forced to wrap
 around; a one-sided difference is calculated at the edges; or missing
 data is inserted.</p>
-<div class="literal-block-wrapper docutils container" id="id82">
+<div class="literal-block-wrapper docutils container" id="id81">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate for a field construct’s data the derivative along both
 the ‘X’ and ‘Y’ axes, where the former (by default) uses missing
 values in the calculation, but the latter has been told to use a
-one-sided finite difference at the boundary.</em></span><a class="headerlink" href="#id82" title="Permalink to this code">¶</a></div>
+one-sided finite difference at the boundary.</em></span><a class="headerlink" href="#id81" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">one_sided_at_boundary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -2717,7 +2698,7 @@ one-sided finite difference at the boundary.</em></span><a class="headerlink" hr
 </div>
 </section>
 <section id="gradient-vector">
-<h3><a class="toc-backref" href="#id115">Gradient vector</a><a class="headerlink" href="#gradient-vector" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id113">Gradient vector</a><a class="headerlink" href="#gradient-vector" title="Permalink to this headline">¶</a></h3>
 <p>The horizontal gradient vector of a scalar field may calculated with
 the <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a> method when the field has dimension coordinates
 of X and Y, in either Cartesian (e.g. plane projection) or spherical
@@ -2743,7 +2724,7 @@ azimuthal angle.</p>
 <p>See <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.grad_xy</span></code></a> for details and examples.</p>
 </section>
 <section id="laplacian">
-<h3><a class="toc-backref" href="#id116">Laplacian</a><a class="headerlink" href="#laplacian" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id114">Laplacian</a><a class="headerlink" href="#laplacian" title="Permalink to this headline">¶</a></h3>
 <p>The horizontal Laplacian of a scalar field may be calculated with the
 <a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_xy</span></code></a> method when the field has dimension coordinates
 of X and Y, in either Cartesian (e.g. plane projection) or spherical
@@ -2771,7 +2752,7 @@ azimuthal angle.</p>
 <p>See <a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.laplacian_xy</span></code></a> for details and examples.</p>
 </section>
 <section id="divergence">
-<h3><a class="toc-backref" href="#id117">Divergence</a><a class="headerlink" href="#divergence" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id115">Divergence</a><a class="headerlink" href="#divergence" title="Permalink to this headline">¶</a></h3>
 <p>The horizontal divergence may be calculated with the <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a>
 function from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
@@ -2799,11 +2780,13 @@ azimuthal angle.</p>
 <p>See <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a> for details and examples.</p>
 </section>
 <section id="curl">
-<h3><a class="toc-backref" href="#id118">Curl</a><a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id116">Curl</a><a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h3>
 <p>The horizontal curl may be calculated with the <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> function
 from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
 spherical polar coordinate systems.</p>
+<p>Note that the curl of the horizontal wind field is the relative
+vorticity.</p>
 <p>The horizontal curl of the <span class="math notranslate nohighlight">\((f_x, f_y)\)</span> vector in Cartesian
 coordinates is given by:</p>
 <div class="math notranslate nohighlight">
@@ -2825,68 +2808,6 @@ spherical polar coordinates is given by:</p>
 polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
 azimuthal angle.</p>
 <p>See <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> for details and examples.</p>
-</section>
-<section id="relative-vorticity">
-<h3><a class="toc-backref" href="#id119">Relative vorticity</a><a class="headerlink" href="#relative-vorticity" title="Permalink to this headline">¶</a></h3>
-<p>The relative vorticity of the wind may be calculated on a global or
-limited area domain, and in Cartesian or spherical polar coordinate
-systems.</p>
-<p>The relative vorticity of wind defined on a Cartesian domain (such as
-a <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a>) is defined as</p>
-<div class="math notranslate nohighlight">
-\[\zeta _{cartesian} = \frac{\delta v}{\delta x} -
-\frac{\delta u}{\delta y}\]</div>
-<p>where <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are points on along the ‘X’ and ‘Y’
-Cartesian dimensions respectively; and <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> denote
-the ‘X’ and ‘Y’ components of the horizontal winds.</p>
-<p>If the wind field is defined on a spherical latitude-longitude
-domain then a correction factor is included:</p>
-<div class="math notranslate nohighlight">
-\[\zeta _{spherical} = \frac{\delta v}{\delta x} -
-\frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)\]</div>
-<p>where <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> denote the longitudinal and latitudinal
-components of the horizontal wind field; <span class="math notranslate nohighlight">\(r\)</span> is the radius of
-the Earth; and <span class="math notranslate nohighlight">\(\phi\)</span> is the latitude at each point.</p>
-<p>The <a class="reference internal" href="function/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a> function creates a relative vorticity
-field construct from field constructs containing the wind components
-using finite differences to approximate the derivatives. Dimensions
-other than ‘X’ and ‘Y’ remain unchanged by the operation.</p>
-<div class="literal-block-wrapper docutils container" id="id83">
-<div class="code-block-caption"><span class="caption-text"><em>Generate a relative vorticity field construct from wind
-component field constructs, then round the field’s data to
-8 decimal places.</em></span><a class="headerlink" href="#id83" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;wind_components.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">relative_vorticity</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span>
-<span class="go">Field: atmosphere_relative_vorticity (ncvar%va)</span>
-<span class="go">-----------------------------------------------</span>
-<span class="go">Data            : atmosphere_relative_vorticity(time(1), atmosphere_hybrid_height_coordinate(1), latitude(9), longitude(8)) s-1</span>
-<span class="go">Dimension coords: time(1) = [1978-09-01 06:00:00] 360_day</span>
-<span class="go">                : atmosphere_hybrid_height_coordinate(1) = [9.9982] m</span>
-<span class="go">                : latitude(9) = [-90, ..., 70] degrees_north</span>
-<span class="go">                : longitude(8) = [0, ..., 315] degrees_east</span>
-<span class="go">Coord references: standard_name:atmosphere_hybrid_height_coordinate</span>
-<span class="go">Domain ancils   : atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate(1)) = [9.9982] m</span>
-<span class="go">                : long_name=vertical coordinate formula term: b(k)(atmosphere_hybrid_height_coordinate(1)) = [0.9989]</span>
-<span class="go">                : surface_altitude(latitude(9), longitude(8)) = [[2816.25, ..., 2325.98]] m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">zeta</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
-<span class="go">[[[[--        --        --        --        --        --        --        --       ]</span>
-<span class="go">   [-2.04e-06  1.58e-06  5.19e-06  4.74e-06 -4.76e-06 -2.27e-06  9.55e-06 -3.64e-06]</span>
-<span class="go">   [-8.4e-07  -4.37e-06 -3.55e-06 -2.31e-06 -3.6e-07  -8.58e-06 -2.45e-06  6.5e-07 ]</span>
-<span class="go">   [ 4.08e-06  4.55e-06  2.75e-06  4.15e-06  5.16e-06  4.17e-06  4.67e-06 -7e-07   ]</span>
-<span class="go">   [-1.4e-07  -3.5e-07  -1.27e-06 -1.29e-06  2.01e-06  4.4e-07  -2.5e-06   2.05e-06]</span>
-<span class="go">   [-7.3e-07  -1.59e-06 -1.77e-06 -3.13e-06 -7.9e-07  -5.1e-07  -2.79e-06  1.12e-06]</span>
-<span class="go">   [-3.7e-07   7.1e-07   1.52e-06  6.5e-07  -2.75e-06 -4.3e-07   1.62e-06 -6.6e-07 ]</span>
-<span class="go">   [ 9.5e-07  -8e-07     6.6e-07   7.2e-07  -2.13e-06 -4.5e-07  -7.5e-07  -1.11e-06]</span>
-<span class="go">   [--        --        --        --        --        --        --        --       ]]]]</span>
-</pre></div>
-</div>
-</div>
-<p>For axes that are not <a class="reference internal" href="tutorial.html#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, missing data
-is inserted at the edges by default; otherwise it may be forced to
-wrap around, or a one-sided difference is calculated at the edges. If
-the longitudinal axis is <a class="reference internal" href="tutorial.html#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
-derivative wraps around by default.</p>
 <hr class="docutils" />
 </section>
 </section>
@@ -2900,7 +2821,7 @@ derivative wraps around by default.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

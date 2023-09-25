@@ -3,6 +3,9 @@ from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
 
+import numpy as np
+from cfdm import is_log_level_info
+
 from .data import Data
 from .decorators import (
     _deprecated_kwarg_check,
@@ -14,8 +17,10 @@ from .functions import (
     _DEPRECATION_ERROR_FUNCTION,
     _DEPRECATION_ERROR_FUNCTION_KWARGS,
 )
-from .functions import equals as _equals
-from .functions import inspect as _inspect
+from .functions import atol as cf_atol
+from .functions import equals as cf_equals
+from .functions import inspect as cf_inspect
+from .functions import rtol as cf_rtol
 from .units import Units
 
 logger = logging.getLogger(__name__)
@@ -25,7 +30,7 @@ builtin_set = set
 
 
 class Query:
-    '''Encapsulate a condition for subsequent evaluation.
+    """Encapsulate a condition for subsequent evaluation.
 
     A condition that may be applied to any object may be stored in a
     `Query` object. A `Query` object encapsulates a condition, such as
@@ -52,19 +57,20 @@ class Query:
     The following operators are supported when constructing `Query`
     instances:
 
-    =========  ===================================
-    Operator   Description
-    =========  ===================================
-    ``'lt'``   A "strictly less than" condition
-    ``'le'``   A "less than or equal" condition
-    ``'gt'``   A "strictly greater than" condition
-    ``'ge'``   A "greater than or equal" condition
-    ``'eq'``   An "equal" condition
-    ``'ne'``   A "not equal" condition
-    ``'wi'``   A "within a range" condition
-    ``'wo'``   A "without a range" condition
-    ``'set'``  A "member of set" condition
-    =========  ===================================
+    =============  ===================================
+    Operator       Description
+    =============  ===================================
+    ``'lt'``       A "strictly less than" condition
+    ``'le'``       A "less than or equal" condition
+    ``'gt'``       A "strictly greater than" condition
+    ``'ge'``       A "greater than or equal" condition
+    ``'eq'``       An "equal" condition
+    ``'ne'``       A "not equal" condition
+    ``'wi'``       A "within a range" condition
+    ``'wo'``       A "without a range" condition
+    ``'set'``      A "member of set" condition
+    ``'isclose'``  An "is close" condition
+    =============  ===================================
 
     **Compound queries**
 
@@ -156,23 +162,14 @@ class Query:
     `__query_wi__`          Called when a ``'wi'`` condition is evaluated
     `__query_wo__`          Called when a ``'wo'`` condition is evaluated
     `__query_set__`         Called when a ``'set'`` condition is evaluated
+    `__query_isclose__`     Called when an ``'isclose'`` condition is
+                            evaluated.
     ======================  ==============================================
 
-    In all cases the query value is the only, mandatory argument of
-    the method.
-
-       >>> class myList(list):
-       ...     pass
-       ...
-       >>> class myList_with_override(list):
-       ...     def __query_lt__(self, value):
-       ...         """Apply the < operator element-wise"""
-       ...         return type(self)([x < value for x in self])
-       ...
-       >>> c == myList([1, 2, 3])
-       TypeError: '<' not supported between instances of 'myList' and 'int'
-       >>> c == myList_with_override([1, 2, 3])
-       [True, False, False]
+    In general, each method must have the query value as it's only
+    parameter. The only exception is for `__query_isclose__`, which
+    also requires the absolute and relative numerical tolerances to be
+    provided.
 
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
@@ -182,12 +179,35 @@ class Query:
     method is automatically a `Data` object that attaches the units to
     the value.
 
-    '''
+    For example:
+
+       >>> class myList(list):
+       ...     pass
+       ...
+       >>> class myList_with_interface(list):
+       ...     def __query_lt__(self, value):
+       ...         return type(self)([x < value for x in self])
+       ...
+       >>> c == myList([1, 2, 3])
+       TypeError: '<' not supported between instances of 'myList' and 'int'
+       >>> c == myList_with_interface([1, 2, 3])
+       [True, False, False]
+
+    """
 
     isquery = True
 
     @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
-    def __init__(self, operator, value, units=None, attr=None, exact=True):
+    def __init__(
+        self,
+        operator,
+        value,
+        units=None,
+        attr=None,
+        exact=True,
+        rtol=None,
+        atol=None,
+    ):
         """**Initialisation**
 
         :Parameters:
@@ -213,6 +233,22 @@ class Query:
                 of the "bounds" attribute is specified as
                 ``'bounds.month'``. See also the `addattr` method.
 
+            rtol: number, optional
+                Only applicable to the ``'isclose'`` operator. The
+                tolerance on relative numerical differences. If
+                `None`, the default, then the value returned by
+                `cf.rtol` is used at evaluation time.
+
+                .. versionadded:: 3.15.2
+
+            atol: number, optional
+                Only applicable to the ``'isclose'`` operator. The
+                tolerance on absolute numerical differences. If
+                `None`, the default, then the value returned by
+                `cf.atol` is used at evaluation time.
+
+                .. versionadded:: 3.15.2
+
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
 
@@ -223,9 +259,9 @@ class Query:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError(
-                    f"'{value_units}' and '{Units(units)}' are not equivalent "
-                    f"units therefore the query does not make physical "
-                    "sense."
+                    f"'{value_units}' and '{Units(units)}' are not "
+                    f"equivalent units therefore the query does not make "
+                    "physical sense."
                 )
 
         self._operator = operator
@@ -242,6 +278,45 @@ class Query:
         self.query_type = operator
 
         self._NotImplemented_RHS_Data_op = True
+
+        if rtol is not None or atol is not None:
+            if operator != "isclose":
+                raise ValueError(
+                    "Can only set the 'rtol' and 'atol' parameters "
+                    "for the 'isclose' operator"
+                )
+
+            self._rtol = rtol
+            self._atol = atol
+
+    def __dask_tokenize__(self):
+        """Return a hashable value fully representative of the object.
+
+        .. versionadded:: 3.15.2
+
+        """
+        compound = self._compound
+        if compound:
+            return (
+                compound[0].__dask_tokenize__(),
+                self._bitwise_operator,
+                compound[1].__dask_tokenize__(),
+            )
+
+        value = self._value
+        if isinstance(value, Data):
+            value = (
+                value.tolist(),
+                value.Units.formatted(definition=True),
+            )
+        else:
+            value = (value,)
+
+        operator = self._operator
+        if operator == "isclose":
+            value += (self.rtol, self.atol)
+
+        return (self.__class__, operator, self._attr) + value
 
     def __deepcopy__(self, memo):
         """Used if copy.deepcopy is called on the variable."""
@@ -272,8 +347,8 @@ class Query:
         """The binary bitwise operation ``&``
 
         Combine two queries with a logical And operation. If the
-        `!value` of both queries is the same then it will be retained on
-        the compound query.
+        `!value` of both queries is the same then it will be retained
+        on the compound query.
 
         x.__and__(y) <==> x&y
 
@@ -290,11 +365,18 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
-        if value0 is None or value1 is None or value0 != value1:
-            new._value = None
-        else:
-            new._value = deepcopy(value0)
+        new_value = None
+        if value0 is not None and value1 is not None:
+            try:
+                if (value0 == value1).all():
+                    new_value = deepcopy(value0)
+            except AttributeError:
+                if value0 == value1:
+                    new_value = deepcopy(value0)
+            except ValueError:
+                pass
 
+        new._value = new_value
         new._NotImplemented_RHS_Data_op = True
 
         return new
@@ -311,8 +393,8 @@ class Query:
         """The binary bitwise operation ``|``
 
         Combine two queries with a logical Or operation. If the
-        `!value` of both queries is the same then it will be retained on
-        the compound query.
+        `!value` of both queries is the same then it will be retained
+        on the compound query.
 
         x.__or__(y) <==> x|y
 
@@ -329,11 +411,18 @@ class Query:
         # on the compound query
         value0 = self._value
         value1 = other._value
-        if value0 is None or value1 is None or value0 != value1:
-            new._value = None
-        else:
-            new._value = deepcopy(value0)
+        new_value = None
+        if value0 is not None and value1 is not None:
+            try:
+                if (value0 == value1).all():
+                    new_value = deepcopy(value0)
+            except AttributeError:
+                if value0 == value1:
+                    new_value = deepcopy(value0)
+            except ValueError:
+                pass
 
+        new._value = new_value
         new._NotImplemented_RHS_Data_op = True
 
         return new
@@ -361,35 +450,67 @@ class Query:
 
         """
         attr = ".".join(self._attr)
+        operator = self._operator
+        compound = self._compound
+        if not compound:
+            out = f"{attr}({operator} {self._value!s}"
+            rtol = self.rtol
+            if rtol is not None:
+                out += f" rtol={rtol}"
 
-        if not self._compound:
-            out = f"{attr}({self._operator} {self._value!s})"
-        else:
-            bitwise_operator = repr(self._bitwise_operator)
-            if "and_" in bitwise_operator:
-                bitwise_operator = "&"
-            elif "or_" in bitwise_operator:
-                bitwise_operator = "|"
+            atol = self.atol
+            if atol is not None:
+                out += f" atol={atol}"
 
-            out = (
-                f"{attr}[{self._compound[0]} {bitwise_operator} "
-                f"{self._compound[1]}]"
-            )
+            out += ")"
+            return out
 
-        return out
+        bitwise_operator = repr(self._bitwise_operator)
+        if "and_" in bitwise_operator:
+            bitwise_operator = "&"
+        elif "or_" in bitwise_operator:
+            bitwise_operator = "|"
+
+        return f"{attr}[{compound[0]} {bitwise_operator} {compound[1]}]"
+
+    @property
+    def atol(self):
+        """The tolerance on absolute numerical differences.
+
+        Returns the tolerance on absolute numerical differences that
+        is used when evaluating numerically tolerant conditions
+        (i.e. those defined by the ``'isclose'`` operator). If `None`
+        then the value returned by `cf.atol` is used instead.
+
+        For compound queries `atol` is always `None`, even if some of
+        the constituent conditions have a different value.
+
+        .. versionadded:: 3.15.2
+
+        .. seealso:: `rtol`, `setdefault`
+
+        """
+        return getattr(self, "_atol", None)
 
     @property
     def attr(self):
         """The object attribute on which to apply the query condition.
+
+        For compound queries `attr` is always ``()``, even if some of
+        the constituent conditions have a different value.
+
+        .. seealso:: `addattr`
 
         **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
         ()
-        >>> q = cf.Query('le', 6, attr='year')
-        >>> q.attr
+        >>> r = cf.Query('le', 6, attr='year')
+        >>> r.attr
         ('year',)
+        >>> (q | r).attr
+        ()
 
         """
         return self._attr
@@ -398,7 +519,8 @@ class Query:
     def operator(self):
         """The query operator.
 
-        Compound conditions return `None`.
+        For compound queries `operator` is always ``None``, regardless
+        of the operators of the constituent conditions.
 
         **Examples**
 
@@ -411,6 +533,91 @@ class Query:
 
         """
         return self._operator
+
+    @property
+    def Units(self):
+        """Return the units of the query.
+
+        .. versionadded:: 3.15.2
+
+        :Returns:
+
+            `Units`
+                The units of the query value.
+
+        **Examples**
+
+        >>> cf.eq(9).Units
+        <Units: >
+        >>> cf.eq(9, 'm s-1').Units
+        <Units: m s-1>
+        >>> cf.eq(cf.Data(9, 'km')).Units
+        <Units: km>
+
+        >>> (cf.eq(9) | cf.gt(10)).Units
+        <Units: >
+        >>> (cf.eq(9, 'm') | cf.gt(10, 'm')).Units
+        <Units: >
+        >>> (cf.eq(9, 'm') | cf.gt(9, 'm')).Units
+        <Units: m>
+        >>> (cf.eq(9, 'm') | cf.gt(45)).Units
+        <Units: m>
+
+        >>> (cf.eq(9, 'm') | cf.gt(9, 'day')).Units
+        AttributeError: <CF Query: [(eq 9 m) | (gt 9 day)]> has indeterminate units
+
+        """
+        value = self._value
+        if value is not None:
+            try:
+                return value.Units
+            except AttributeError:
+                return Units()
+
+        compound = self._compound
+        if compound:
+            # Still here? Then we have compund units with no common
+            # value, so see if the units of each embedded query are
+            # equivalent.
+            q0, q1 = compound
+            units0 = getattr(q0, "Units", Units())
+            units1 = getattr(q1, "Units", Units())
+            if not units0:
+                if not units1:
+                    return Units()
+
+                return units1
+
+            if not units1:
+                return units0
+
+            if units0.equivalent(units1):
+                return units0
+
+        raise AttributeError(f"{self!r} has indeterminate units")
+
+    @property
+    def rtol(self):
+        """The tolerance on relative numerical differences.
+
+        Returns the tolerance on relative numerical differences that
+        is used when evaluating numerically tolerant conditions
+        (i.e. those defined by the ``'isclose'`` operator). If `None`
+        then the value returned by `cf.rtol` is used instead.
+
+        For compound queries `rtol` is always `None`, even if some of
+        the constituent conditions have a different value.
+
+        .. versionadded:: 3.15.2
+
+        .. seealso:: `atol`, `setdefault`
+
+        """
+        return getattr(self, "_rtol", None)
+
+    @Units.setter
+    def Units(self, value):
+        self.set_condition_units(value)
 
     @property
     def value(self):
@@ -443,6 +650,8 @@ class Query:
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
         attribute.
+
+        .. seealso:: `attr`
 
         :Parameters:
 
@@ -503,8 +712,9 @@ class Query:
         d = self.__dict__.copy()
         new.__dict__ = d
 
-        if d["_compound"]:
-            d["_compound"] = deepcopy(d["_compound"])
+        compound = d["_compound"]
+        if compound:
+            d["_compound"] = deepcopy(compound)
         else:
             d["_value"] = deepcopy(d["_value"])
 
@@ -536,39 +746,54 @@ class Query:
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
         """True if two `Query` objects are the same."""
-        standard_difference_message = (
-            f"{self.__class__.__name__}: Different compound components"
-        )
         if self._compound:
             if not other._compound:
-                logger.info(standard_difference_message)  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound components"
+                    )  # pragma: no cover
+
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
-                logger.info(
-                    f"{self.__class__.__name__}: Different compound "
-                    f"operators: {self._bitwise_operator!r}, "
-                    f"{other._bitwise_operator!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound "
+                        f"operators: {self._bitwise_operator!r}, "
+                        f"{other._bitwise_operator!r}"
+                    )  # pragma: no cover
+
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
-                    logger.info(
-                        standard_difference_message
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different compound components"
+                        )  # pragma: no cover
+
                     return False
                 if not self._compound[1].equals(other._compound[0]):
-                    logger.info(
-                        standard_difference_message
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different compound components"
+                        )  # pragma: no cover
+
                     return False
             elif not self._compound[1].equals(other._compound[1]):
-                logger.info(standard_difference_message)  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different compound components"
+                    )  # pragma: no cover
+
                 return False
 
         elif other._compound:
-            logger.info(standard_difference_message)  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different compound components"
+                )  # pragma: no cover
+
             return False
 
         for attr in (
@@ -576,17 +801,18 @@ class Query:
             "_attr",
             "_value",
             "_operator",
+            "_rtol",
+            "_atol",
         ):
-            if not _equals(
-                getattr(self, attr, None),
-                getattr(other, attr, None),
-                verbose=verbose,
-            ):
-                logger.info(
-                    f"{self.__class__.__name__}: Different {attr!r} "
-                    f"attributes: {getattr(self, attr, None)!r}, "
-                    f"{getattr(other, attr, None)!r}"
-                )  # pragma: no cover
+            x = getattr(self, attr, None)
+            y = getattr(other, attr, None)
+            if not cf_equals(x, y, verbose=verbose):
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different {attr!r} "
+                        f"attributes: {x!r}, {y!r}"
+                    )  # pragma: no cover
+
                 return False
 
         return True
@@ -663,16 +889,49 @@ class Query:
         operator = self._operator
         value = self._value
 
-        standard_regex_error_msg = (
-            f"Can't perform regular expression search on a non-string: {x!r}"
-        )
+        # TODO: Once Python 3.9 is no longer supported, this is a good
+        #       candidate for PEP 622 – Structural Pattern Matching
+        #       (https://peps.python.org/pep-0622)
+
+        if operator == "gt":
+            _gt = getattr(x, "__query_gt__", None)
+            if _gt is not None:
+                return _gt(value)
+
+            return x > value
+
+        if operator == "wi":
+            _wi = getattr(x, "__query_wi__", None)
+            if _wi is not None:
+                return _wi(value)
+
+            return (x >= value[0]) & (x <= value[1])
+
         if operator == "eq":
             try:
                 return bool(value.search(x))
             except AttributeError:
                 return x == value
             except TypeError:
-                raise ValueError(standard_regex_error_msg)
+                raise ValueError(
+                    "Can't perform regular expression search on a "
+                    f"non-string: {x!r}"
+                )
+
+        if operator == "isclose":
+            rtol = self.rtol
+            atol = self.atol
+            if atol is None:
+                atol = cf_atol().value
+
+            if rtol is None:
+                rtol = cf_rtol().value
+
+            _isclose = getattr(x, "__query_isclose__", None)
+            if _isclose is not None:
+                return _isclose(value, rtol, atol)
+
+            return np.isclose(x, value, rtol=rtol, atol=atol)
 
         if operator == "ne":
             try:
@@ -680,7 +939,10 @@ class Query:
             except AttributeError:
                 return x != value
             except TypeError:
-                raise ValueError(standard_regex_error_msg)
+                raise ValueError(
+                    "Can't perform regular expression search on a "
+                    f"non-string: {x!r}"
+                )
 
         if operator == "lt":
             _lt = getattr(x, "__query_lt__", None)
@@ -696,26 +958,12 @@ class Query:
 
             return x <= value
 
-        if operator == "gt":
-            _gt = getattr(x, "__query_gt__", None)
-            if _gt is not None:
-                return _gt(value)
-
-            return x > value
-
         if operator == "ge":
             _ge = getattr(x, "__query_ge_", None)
             if _ge is not None:
                 return _ge(value)
 
             return x >= value
-
-        if operator == "wi":
-            _wi = getattr(x, "__query_wi__", None)
-            if _wi is not None:
-                return _wi(value)
-
-            return (x >= value[0]) & (x <= value[1])
 
         if operator == "wo":
             _wo = getattr(x, "__query_wo__", None)
@@ -758,7 +1006,7 @@ class Query:
             `None`
 
         """
-        print(_inspect(self))  # pragma: no cover
+        print(cf_inspect(self))  # pragma: no cover
 
     def iscontains(self):
         """Return True if the query is a "cell contains" condition.
@@ -812,7 +1060,7 @@ class Query:
     def set_condition_units(self, units):
         """Set units of condition values in-place.
 
-        .. versionadded:: TODO
+        .. versionadded:: 3.13.1
 
         :Parameters:
 
@@ -901,6 +1149,69 @@ class Query:
 
         self._value = value
 
+    def setdefault(self, rtol=None, atol=None):
+        """Set condition parameters in-place that are not already set.
+
+        For compound queries the parameters are set recursively on the
+        constituent conditions.
+
+        .. versionadded:: 3.15.2
+
+        .. seealso:: `atol`, `rtol`
+
+        :Parameters:
+
+            rtol: number, optional
+                Only applicable to the ``'isclose'`` operator and
+                ignore for all other operators. Set the given
+                tolerance on relative numerical differences, unless
+                already set. Ignored if `None`.
+
+            atol: number, optional
+                Only applicable to the ``'isclose'`` operator and
+                ignore for all other operators. Set the given
+                tolerance on absolute numerical differences, unless
+                already set. Ignored if `None`.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> q = cf.isclose(9)
+        >>> q
+        <CF Query: (isclose 9)>
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        <CF Query: (isclose 9 rtol=1e-05 atol=1e-08)>
+
+        >>> q = cf.isclose(9, rtol=9e-9)
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        >>> q
+        <CF Query: (isclose 9 rtol=9e-09 atol=1e-08)>
+
+        >>> q = cf.lt(9) & (cf.eq(1) | cf.isclose(4, rtol=9e-9))
+        >>> q
+        <CF Query: [(lt 9) & [(eq 1) | (isclose 4 rtol=9e-09)]]>
+        >>> q.setdefault(rtol=1e-5, atol=1e-08)
+        >>> q
+        <CF Query: [(lt 9) & [(eq 1) | (isclose 4 rtol=9e-09 atol=1e-08)]]>
+
+        """
+        compound = self._compound
+        if compound:
+            for q in compound:
+                q.setdefault(rtol=rtol, atol=atol)
+
+            return
+
+        if self.operator == "isclose":
+            if rtol is not None and self.rtol is None:
+                self._rtol = rtol
+
+            if atol is not None and self.atol is None:
+                self._atol = atol
+
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
@@ -933,7 +1244,7 @@ def lt(value, units=None, attr=None):
     """A `Query` object for a "strictly less than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.le`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -994,7 +1305,7 @@ def le(value, units=None, attr=None):
     """A `Query` object for a "less than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1038,7 +1349,7 @@ def gt(value, units=None, attr=None):
     """A `Query` object for a "strictly greater than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1082,7 +1393,7 @@ def ge(value, units=None, attr=None):
     """A `Query` object for a "greater than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.gt`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1134,7 +1445,7 @@ def eq(value, units=None, attr=None, exact=True):
     """A `Query` object for an "equal" condition.
 
     .. seealso:: `cf.contains`, `cf.ge`, `cf.gt`, `cf.ne`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1194,7 +1505,7 @@ def ne(value, units=None, attr=None, exact=True):
     """A `Query` object for a "not equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
-                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+                 `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1242,11 +1553,87 @@ def ne(value, units=None, attr=None, exact=True):
     return Query("ne", value, units=units, attr=attr)
 
 
+def isclose(value, units=None, attr=None, rtol=None, atol=None):
+    """A `Query` object for an "is close" condition.
+
+    .. versionadded:: 3.15.2
+
+    .. seealso:: `cf.contains`, `cf.eq`, `cf.ne`, `cf.ge`, `cf.gt`,
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
+
+    :Parameters:
+
+        value:
+            The value to be used in the isclose test. May be any
+            scalar `cf.Data` object, or else any numerical object that
+            can be operated on with ``np.isclose``.
+
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and *value* already has units (such
+            as those attached to a `Data` object), then the pair of
+            units must be equivalent.
+
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+
+        rtol: number, optional
+            The tolerance on relative numerical differences. If
+            `None`, the default, then the value returned by `cf.rtol`
+            is used at evaluation time.
+
+        atol: number, optional
+            The tolerance on absolute numerical differences. If
+            `None`, the default, then the value returned by `cf.atol`
+            is used at evaluation time.
+
+    :Returns:
+
+        `Query`
+            The query object.
+
+    **Examples**
+
+    >>> q = cf.isclose(9)
+    >>> q
+    <CF Query: (isclose 9)>
+    >>> q.evaluate(9.000001)
+    False
+    >>> with cf.configuration(rtol=0.001, atol=0.01):
+    ...     print(q.evaluate(9.000001))
+    ...
+    True
+    >>> q.evaluate(9.000001)
+    False
+
+    >>> q = cf.isclose(9, rtol=0.001, atol=0.01)
+    >>> q
+    <CF Query: (isclose 9 rtol=0.001 atol=0.01)>
+    >>> q.evaluate(9.000001)
+    True
+
+    >>> q = cf.isclose(9, atol=0.01)
+    >>> q
+    <CF Query: (isclose 9 atol=0.01)>
+    >>> q.evaluate(9.000001)
+    True
+
+    """
+    return Query(
+        "isclose", value, units=units, attr=attr, rtol=rtol, atol=atol
+    )
+
+
 def wi(value0, value1, units=None, attr=None):
     """A `Query` object for a "within a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.set`, `cf.wo`
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 
@@ -1293,7 +1680,7 @@ def wo(value0, value1, units=None, attr=None):
     """A `Query` object for a "without a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`
+                 `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.isclose`
 
     :Parameters:
 
@@ -1340,7 +1727,7 @@ def set(values, units=None, attr=None, exact=True):
     """A `Query` object for a "member of set" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
-                 `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`
+                 `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`, `cf.isclose`
 
     :Parameters:
 

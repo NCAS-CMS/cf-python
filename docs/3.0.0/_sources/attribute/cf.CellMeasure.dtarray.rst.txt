@@ -1,7 +1,0 @@
-cf.CellMeasure.dtarray
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.CellMeasure.dtarray

@@ -42,8 +42,6 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
-TEST_DASKIFIED_ONLY = True
-
 
 class read_writeTest(unittest.TestCase):
     filename = os.path.join(
@@ -72,7 +70,6 @@ class read_writeTest(unittest.TestCase):
     netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
-    #    @unittest.skipIf(TEST_DASKIFIED_ONLY, "KeyError: 'q'")
     def test_write_filename(self):
         f = self.f0
         a = f.array

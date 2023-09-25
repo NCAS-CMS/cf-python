@@ -338,7 +338,6 @@ Cyclicity
    :toctree: ../method/
    :template: method.rst
 	      
-
    ~cf.DimensionCoordinate.rechunk
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
@@ -359,12 +358,17 @@ Miscellaneous
 
    ~cf.DimensionCoordinate.concatenate
    ~cf.DimensionCoordinate.copy
+   ~cf.DimensionCoordinate.create_regular
    ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
    ~cf.DimensionCoordinate.to_memory
    ~cf.DimensionCoordinate.uncompress
-   
+   ~cf.DimensionCoordinate.del_cell_characteristics
+   ~cf.DimensionCoordinate.get_cell_characteristics
+   ~cf.DimensionCoordinate.has_cell_characteristics
+   ~cf.DimensionCoordinate.set_cell_characteristics
+
 Mathematical operations
 -----------------------
 
@@ -516,6 +520,24 @@ Groups
    ~cf.DimensionCoordinate.nc_set_variable_groups
    ~cf.DimensionCoordinate.nc_clear_variable_groups
   
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.add_file_location
+   ~cf.DimensionCoordinate.cfa_clear_file_substitutions
+   ~cf.DimensionCoordinate.cfa_del_file_substitution
+   ~cf.DimensionCoordinate.cfa_file_substitutions
+   ~cf.DimensionCoordinate.cfa_update_file_substitutions
+   ~cf.DimensionCoordinate.del_file_location
+   ~cf.DimensionCoordinate.file_locations
+
 Aliases
 -------
 
@@ -686,7 +708,8 @@ Special
    ~cf.DimensionCoordinate.__setitem__
    ~cf.DimensionCoordinate.__str__
    ~cf.DimensionCoordinate.__array__
-   ~cf.DimensionCoordinate.__data__
+   ~cf.DimensionCoordinate.__data__ 
+   ~cf.DimensionCoordinate.__query_isclose__
 
 Deprecated
 ----------

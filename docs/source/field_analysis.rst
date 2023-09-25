@@ -331,7 +331,7 @@ In all collapses, missing data array elements are accounted for in the
 calculation.
 
 Any collapse method that involves a calculation (such as calculating a
-mean), as opposed to just selecting a value (such as finding a
+mean), as opposed to only selecting a value (such as finding a
 maximum), will return a field containing double precision floating
 point numbers. If this is not desired then the data type can be reset
 after the collapse with the `~Field.dtype` attribute of the field
@@ -1237,9 +1237,9 @@ The field construct has two regridding methods: `~Field.regrids` for
 regridding data between domains with spherical coordinate systems; and
 `~Field.regridc` for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
-`ESMF <https://earthsystemmodeling.org/esmpy/>`_ package, a
-Python interface to the Earth System Modeling Framework regridding
-utility.
+`esmpy <https://earthsystemmodeling.org/esmpy/>`_ package (formerly
+called `ESMF`), a Python interface to the Earth System Modeling
+Framework regridding utility.
 
 As with :ref:`statistical collapses <Statistical-collapses>`,
 regridding may be applied over a subset of the domain axes, and the
@@ -1428,17 +1428,17 @@ coordinate constructs.
              coordinates latitude and longitude.*
 
    >>> import numpy
-   >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
-   >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids([lat, lon], method='linear')
+   >>> domain = cf.Domain.create_regular((0, 360, 5.0), (-90, 90, 2.5))
+   >>> c = a.regrids(domain, method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
-   Data            : air_temperature(time(2), latitude(73), longitude(72)) K
+   Data            : air_temperature(time(2), latitude(72), longitude(72)) K
    Cell methods    : time(2): mean
    Dimension coords: time(2) = [1860-01-16 00:00:00, 1860-02-16 00:00:00] 360_day
-                   : latitude(73) = [-90.0, ..., 90.0] degrees_north
-                   : longitude(72) = [0.0, ..., 355.0] degrees_east
+                   : latitude(72) = [-88.75, ..., 88.75] degrees_north
+                   : longitude(72) = [2.5, ..., 357.5] degrees_east
                    : height(1) = [2.0] m
+
 
 A destination domain defined by two-dimensional (curvilinear) latitude
 and longitude auxiliary coordinate constructs can also be specified in
@@ -1486,10 +1486,11 @@ will produce similar results to using using spherical regridding.
              method onto the grid specified in the dimension coordinate
              time.*
 
-   >>> time = cf.DimensionCoordinate()
-   >>> time.standard_name='time'
-   >>> time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
-   ...                       units='days since 1860-01-01', calendar='360_day'))
+   >>> time = cf.DimensionCoordinate.create_regular(
+   ...      (0.5, 60.5, 1),    
+   ...      units=cf.Units("days since 1860-01-01", calendar="360_day"),
+   ...      standard_name="time",
+   ...      )
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
    >>> c = a.regridc([time], axes='T', method='linear')
@@ -1497,31 +1498,7 @@ will produce similar results to using using spherical regridding.
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
    Cell methods    : time(60): mean
-   Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day
-                   : latitude(73) = [-90.0, ..., 90.0] degrees_north
-                   : longitude(96) = [0.0, ..., 356.25] degrees_east
-                   : height(1) = [2.0] m
-
-
-Note the requirement for the conservative method of contiguous,
-non-overlapping bounds on the destination domain:
-
-.. code-block:: python
-   :caption: *Regrid the time axis 'T' of field 'a' conservatively
-             (to first order) onto the grid specified in the dimension
-             coordinate time.*
-
-   >>> c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
-   ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
-   >>> bounds = time.create_bounds()
-   >>> time.set_bounds(bounds)
-   >>> c = a.regridc([time], axes='T', method='conservative')
-   >>> print(c)
-   Field: air_temperature (ncvar%tas)
-   ----------------------------------
-   Data            : air_temperature(time(60), latitude(73), longitude(96)) K
-   Cell methods    : time(60): mean
-   Dimension coords: time(60) = [1860-01-01 12:00:00, ..., 1860-02-30 12:00:00] 360_day
+   Dimension coords: time(60) = [1860-01-02 00:00:00, ..., 1860-03-01 00:00:00] 360_day
                    : latitude(73) = [-90.0, ..., 90.0] degrees_north
                    : longitude(96) = [0.0, ..., 356.25] degrees_east
                    : height(1) = [2.0] m
@@ -1607,7 +1584,7 @@ pressure coordinates after the regridding operation.
    Coord references: grid_mapping_name:rotated_latitude_longitude
 
 Note that the `~Field.replace_construct` method of the field construct
-is used to easily replace the vertical dimension coordinate construct,
+is used to directly replace the vertical dimension coordinate construct,
 without having to manually match up the corresponding domain axis
 construct and construct key.
 
@@ -2520,6 +2497,9 @@ from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
 spherical polar coordinate systems.
 
+Note that the curl of the horizontal wind field is the relative
+vorticity.
+
 The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
 coordinates is given by:
 
@@ -2544,75 +2524,6 @@ polar angle with respect to polar axis, and :math:`\phi` is the
 azimuthal angle.
 
 See `cf.curl_xy` for details and examples.
-
-
-Relative vorticity
-^^^^^^^^^^^^^^^^^^
-
-The relative vorticity of the wind may be calculated on a global or
-limited area domain, and in Cartesian or spherical polar coordinate
-systems.
-
-The relative vorticity of wind defined on a Cartesian domain (such as
-a `Plane projection`_) is defined as
-
-.. math:: \zeta _{cartesian} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y}
-
-where :math:`x` and :math:`y` are points on along the 'X' and 'Y'
-Cartesian dimensions respectively; and :math:`u` and :math:`v` denote
-the 'X' and 'Y' components of the horizontal winds.
-
-If the wind field is defined on a spherical latitude-longitude
-domain then a correction factor is included:
-
-.. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)
-
-where :math:`u` and :math:`v` denote the longitudinal and latitudinal
-components of the horizontal wind field; :math:`r` is the radius of
-the Earth; and :math:`\phi` is the latitude at each point.
-
-The `cf.relative_vorticity` function creates a relative vorticity
-field construct from field constructs containing the wind components
-using finite differences to approximate the derivatives. Dimensions
-other than 'X' and 'Y' remain unchanged by the operation.
-
-.. code-block:: python
-   :caption: *Generate a relative vorticity field construct from wind
-             component field constructs, then round the field's data to
-             8 decimal places.*
-   
-   >>> u, v = cf.read('wind_components.nc')
-   >>> zeta = cf.relative_vorticity(u, v)
-   >>> print(zeta)
-   Field: atmosphere_relative_vorticity (ncvar%va)
-   -----------------------------------------------
-   Data            : atmosphere_relative_vorticity(time(1), atmosphere_hybrid_height_coordinate(1), latitude(9), longitude(8)) s-1
-   Dimension coords: time(1) = [1978-09-01 06:00:00] 360_day
-                   : atmosphere_hybrid_height_coordinate(1) = [9.9982] m
-                   : latitude(9) = [-90, ..., 70] degrees_north
-                   : longitude(8) = [0, ..., 315] degrees_east
-   Coord references: standard_name:atmosphere_hybrid_height_coordinate
-   Domain ancils   : atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate(1)) = [9.9982] m
-                   : long_name=vertical coordinate formula term: b(k)(atmosphere_hybrid_height_coordinate(1)) = [0.9989]
-                   : surface_altitude(latitude(9), longitude(8)) = [[2816.25, ..., 2325.98]] m
-   >>> print(zeta.array.round(8))
-   [[[[--        --        --        --        --        --        --        --       ]
-      [-2.04e-06  1.58e-06  5.19e-06  4.74e-06 -4.76e-06 -2.27e-06  9.55e-06 -3.64e-06]
-      [-8.4e-07  -4.37e-06 -3.55e-06 -2.31e-06 -3.6e-07  -8.58e-06 -2.45e-06  6.5e-07 ]
-      [ 4.08e-06  4.55e-06  2.75e-06  4.15e-06  5.16e-06  4.17e-06  4.67e-06 -7e-07   ]
-      [-1.4e-07  -3.5e-07  -1.27e-06 -1.29e-06  2.01e-06  4.4e-07  -2.5e-06   2.05e-06]
-      [-7.3e-07  -1.59e-06 -1.77e-06 -3.13e-06 -7.9e-07  -5.1e-07  -2.79e-06  1.12e-06]
-      [-3.7e-07   7.1e-07   1.52e-06  6.5e-07  -2.75e-06 -4.3e-07   1.62e-06 -6.6e-07 ]
-      [ 9.5e-07  -8e-07     6.6e-07   7.2e-07  -2.13e-06 -4.5e-07  -7.5e-07  -1.11e-06]
-      [--        --        --        --        --        --        --        --       ]]]]
-
-For axes that are not :ref:`cyclic <Cyclic-domain-axes>`, missing data
-is inserted at the edges by default; otherwise it may be forced to
-wrap around, or a one-sided difference is calculated at the edges. If
-the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
-derivative wraps around by default.
   
 ----
 

@@ -1,7 +1,0 @@
-cf.NetCDFArray.copy
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.NetCDFArray.copy

@@ -1,7 +1,0 @@
-cf.Count.__rmod__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Count.__rmod__

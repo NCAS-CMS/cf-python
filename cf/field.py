@@ -2,9 +2,11 @@ import logging
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
+from os import sep
 
 import cfdm
 import numpy as np
+from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
 
 from . import (
     AuxiliaryCoordinate,
@@ -46,6 +48,7 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
+    abspath,
     flat,
     parse_indices,
 )
@@ -359,10 +362,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
-        logger.debug(
-            self.__class__.__name__ + ".__getitem__"
-        )  # pragma: no cover
-        logger.debug(f"    input indices = {indices}")  # pragma: no cover
+        debug = is_log_level_debug(logger)
+
+        if debug:
+            logger.debug(
+                self.__class__.__name__ + ".__getitem__"
+            )  # pragma: no cover
+            logger.debug(f"    input indices = {indices}")  # pragma: no cover
 
         if indices is Ellipsis:
             return self.copy()
@@ -409,10 +415,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         else:
             findices = indices
 
-        logger.debug(f"    shape    = {shape}")  # pragma: no cover
-        logger.debug(f"    indices  = {indices}")  # pragma: no cover
-        logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
-        logger.debug(f"    findices = {findices}")  # pragma: no cover
+        if debug:
+            logger.debug(f"    shape    = {shape}")  # pragma: no cover
+            logger.debug(f"    indices  = {indices}")  # pragma: no cover
+            logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
+            logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = data[tuple(findices)]
 
@@ -447,7 +454,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-                logger.debug(f"    dice = {tuple(dice)}")  # pragma: no cover
+
+                if debug:
+                    logger.debug(
+                        f"    dice = {tuple(dice)}"
+                    )  # pragma: no cover
 
                 # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.
@@ -893,6 +904,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f._binary_operation(g, '__rdiv__')
 
         """
+        debug = is_log_level_debug(logger)
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1092,7 +1104,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
-            logger.info(f"{identity} {y}")
+            if debug:
+                logger.debug(f"{identity} {y}")
+
             if isinstance(identity, int) or identity not in out0:
                 field1.swapaxes(
                     field1.get_data_axes().index(y.axis), -1, inplace=True
@@ -1100,12 +1114,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             else:
                 # This identity is also in out0
                 a = out0[identity]
-                logger.info(f"{identity} {y.axis} {a.axis}")
-                logger.info(
-                    f"{a} {field0.get_data_axes()} {field1.get_data_axes()} "
-                    f"{field1.get_data_axes().index(y.axis)} "
-                    f"{field0.get_data_axes().index(a.axis)}"
-                )
+                if debug:
+                    logger.debug(f"{identity} {y.axis} {a.axis}")
+                    logger.debug(
+                        f"{a} {field0.get_data_axes()} "
+                        f"{field1.get_data_axes()} "
+                        f"{field1.get_data_axes().index(y.axis)} "
+                        f"{field0.get_data_axes().index(a.axis)}"
+                    )
 
                 field1.swapaxes(
                     field1.get_data_axes().index(y.axis),
@@ -1120,7 +1136,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         }
 
-        logger.info(f"\naxis_map= {axis_map}\n")
+        if debug:
+            logger.debug(f"\naxis_map= {axis_map}\n")
 
         # ------------------------------------------------------------
         # Check that the two fields have compatible metadata
@@ -1221,10 +1238,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
-        logger.info(f"\naxes_added_from_field1= {axes_added_from_field1}\n")
-        logger.info(
-            f"axes_to_replace_from_field1= {axes_to_replace_from_field1}"
-        )
+        if debug:
+            logger.debug(
+                f"\naxes_added_from_field1= {axes_added_from_field1}\n"
+            )
+            logger.debug(
+                f"axes_to_replace_from_field1= {axes_to_replace_from_field1}"
+            )
 
         already_copied = {}
 
@@ -1250,7 +1270,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_axes = set(axes_added_from_field1).union(
             axes_to_replace_from_field1
         )
-        logger.info(f"\nnew_axes ={new_axes}")
+
+        if debug:
+            logger.debug(f"\nnew_axes ={new_axes}")
 
         if new_axes:
             constructs = field1.constructs.filter(
@@ -1289,7 +1311,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             elif axes.intersection(axes_to_replace_from_field1):
                 refs_to_add_from_field1.append(ref)
 
-        logger.info("\nrefs_to_add_from_field1={refs_to_add_from_field1}")
+        if debug:
+            logger.debug(
+                f"\nrefs_to_add_from_field1={refs_to_add_from_field1}"
+            )  # pragma: no cover
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
@@ -1705,9 +1730,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         item1 = field1.constructs[key1]
 
         if item0.has_data() != item1.has_data():
-            logger.info(
-                f"{self.__class__.__name__}: Only one item has data"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Only one item has data"
+                )  # pragma: no cover
+
             return False
 
         if not item0.has_data():
@@ -1715,17 +1742,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return True
 
         if item0.size != item1.size:
-            logger.info(
-                f"{self.__class__.__name__}: Different metadata construct "
-                f"data array size: {item0.size} != {item1.size}"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different metadata construct "
+                    f"data array size: {item0.size} != {item1.size}"
+                )  # pragma: no cover
+
             return False
 
         if item0.ndim != item1.ndim:
-            logger.info(
-                f"{self.__class__.__name__}: Different data array ranks "
-                f"({item0.ndim}, {item1.ndim})"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data array ranks "
+                    f"({item0.ndim}, {item1.ndim})"
+                )  # pragma: no cover
+
             return False
 
         axes0 = self.get_data_axes(key0, default=())
@@ -1741,11 +1772,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for axis0 in axes0:
                 axis1 = t["id_to_axis"].get(s["axis_to_id"][axis0], None)
                 if axis1 is None:
-                    # TODO: improve message here (make user friendly):
-                    logger.info(
-                        "t['id_to_axis'] does not have a key "
-                        f"s['axis_to_id'][axis0] for {self.__class__.__name__}"
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        # TODO: improve message here (make user friendly):
+                        logger.info(
+                            "t['id_to_axis'] does not have a key "
+                            f"s['axis_to_id'][axis0] for "
+                            f"{self.__class__.__name__}"
+                        )  # pragma: no cover
+
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -1753,10 +1787,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for axis0 in axes0:
                 axis1 = axis_map.get(axis0)
                 if axis1 is None:
-                    # TODO: improve message here (make user friendly):
-                    logger.info(
-                        f"axis_map[axis0] is None for {self.__class__.__name__}"
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        # TODO: improve message here (make user friendly):
+                        logger.info(
+                            f"axis_map[axis0] is None for {self.__class__.__name__}"
+                        )  # pragma: no cover
+
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
@@ -3643,6 +3679,164 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_clear_file_substitution()
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+        constructs=True,
+    ):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa base: `str`}}
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the file substitutions removed from them.
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        super().cfa_del_file_substitution(base)
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_del_file_substitution(base)
+
+    def cfa_file_substitutions(self, constructs=True):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_file_substitutions()
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                out.update(c.cfa_file_substitutions())
+
+        return out
+
+    def del_file_location(
+        self,
+        location,
+        constructs=True,
+    ):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the new file location removed from them.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+        super().del_file_location(location)
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.del_file_location(location, inplace=True)
+
+        return location
+
+    def cfa_update_file_substitutions(
+        self,
+        substitutions,
+        constructs=True,
+    ):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the file substitutions set on them.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_update_file_substitutions({'base': '/data/model'})
+
+        """
+        super().cfa_update_file_substitutions(substitutions)
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_update_file_substitutions(substitutions)
+
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.
@@ -3791,7 +3985,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `derivative`, `grad_xy`, `iscyclic`, `cf.div_xy`
+        .. seealso:: `derivative`, `grad_xy`, `iscyclic`,
+                     `cf.curl_xy`, `cf.div_xy`
 
         :Parameters:
 
@@ -3890,6 +4085,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -3918,8 +4119,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = term1 + term2
 
             # Reset latitude and longitude coordinate units
-            f.dimension_coordinate("X").Units = x_units
-            f.dimension_coordinate("Y").Units = y_units
+            f.dimension_coordinate("longitude").Units = x_units
+            f.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates
@@ -4047,7 +4248,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull_graph=True):
+    def concatenate(
+        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -4071,6 +4274,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             `Field`
@@ -4082,7 +4302,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return fields.copy()
 
         field0 = fields[0]
-        out = field0.copy()
+        if copy:
+            out = field0.copy()
 
         if len(fields) == 1:
             return out
@@ -4091,6 +4312,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
             cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
         )
 
         # Change the domain axis size
@@ -4136,6 +4359,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     constructs,
                     axis=construct_axes.index(dim),
                     cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
                 )
             except ValueError:
                 # Couldn't concatenate this construct, so remove it from
@@ -5701,7 +5926,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         True
 
         """
-        logger.info(f"    Method: {method}")  # pragma: no cover
+        debug = is_log_level_debug(logger)
+
+        if debug:
+            logger.debug(f"    Method: {method}")  # pragma: no cover
 
         if method == "integral":
             if weights is None:
@@ -5815,9 +6043,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             dim.set_bounds(self._Bounds(data=bounds_data))
 
-            logger.info(
-                f"                    bins     : {dim.identity()} {bounds_data!r}"  # DCH
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    "                    bins     : "
+                    f"{dim.identity()} {bounds_data!r}"  # DCH
+                )  # pragma: no cover
 
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(self._DomainAxis(dim.size))
@@ -5872,18 +6102,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         del y
 
         # DCH
-        logger.info(f"    Weights: {weights}")  # pragma: no cover
-        logger.info(
-            f"    Number of indexed ({', '.join(names)}) bins: "
-            f"{unique_indices.shape[1]}"
-        )  # pragma: no cover
-        logger.info(
-            f"    ({', '.join(names)}) bin indices:"  # DCH
-        )  # pragma: no cover
+        if debug:
+            logger.debug(
+                f"    Weights: {weights}\n",
+                f"    Number of indexed ({', '.join(names)}) bins: "
+                f"{unique_indices.shape[1]}\n"
+                f"    ({', '.join(names)}) bin indices:",  # DCH
+            )  # pragma: no cover
 
         # Loop round unique collections of bin indices
         for i in zip(*unique_indices):
-            logger.info(f"{' '.join(str(i))}")
+            if debug:
+                logger.debug(f"{' '.join(str(i))}")  # pragma: no cover
 
             b = bin_indices[0] == i[0]
             for a, n in zip(bin_indices[1:], i[1:]):
@@ -7447,6 +7677,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 self, "collapse", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
+        debug = is_log_level_debug(logger)
+
         if inplace:
             f = self
         else:
@@ -7545,10 +7777,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             all_axes.append(axes2)
 
-        logger.info(
-            "    all_methods, all_axes, all_within, all_over = "
-            f"{all_methods} {all_axes} {all_within} {all_over}"
-        )  # pragma: no cover
+        if debug:
+            logger.debug(
+                "    all_methods, all_axes, all_within, all_over = "
+                f"{all_methods} {all_axes} {all_within} {all_over}"
+            )  # pragma: no cover
 
         if group is not None and len(all_axes) > 1:
             raise ValueError(
@@ -7576,15 +7809,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 filter_by_key=axes, todict=False
             )
 
-            logger.info(
-                f"    axes                    = {axes}"
-            )  # pragma: no cover
-            logger.info(
-                f"    method                  = {method}"
-            )  # pragma: no cover
-            logger.info(
-                f"    collapse_axes_all_sizes = {collapse_axes_all_sizes}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"    axes                    = {axes}"
+                )  # pragma: no cover
+                logger.debug(
+                    f"    method                  = {method}"
+                )  # pragma: no cover
+                logger.debug(
+                    f"    collapse_axes_all_sizes = {collapse_axes_all_sizes}"
+                )  # pragma: no cover
 
             if not collapse_axes_all_sizes:
                 raise ValueError(
@@ -7609,9 +7843,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     gt(1), todict=True
                 )
 
-            logger.info(
-                f"    collapse_axes           = {collapse_axes}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"    collapse_axes           = {collapse_axes}"
+                )  # pragma: no cover
 
             if not collapse_axes:
                 # Do nothing if there are no collapse axes
@@ -7635,9 +7870,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ]
             size = reduce(operator_mul, collapse_axes_sizes, 1)
 
-            logger.info(
-                f"    collapse_axes_sizes     = {collapse_axes_sizes}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"    collapse_axes_sizes     = {collapse_axes_sizes}"
+                )  # pragma: no cover
 
             grouped_collapse = (
                 within is not None or over is not None or group is not None
@@ -7759,9 +7995,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # ------------------------------------------------------------
             # Calculate weights
             # ------------------------------------------------------------
-            logger.info(
-                f"    Input weights           = {weights!r}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"    Input weights           = {weights!r}"
+                )  # pragma: no cover
 
             if method not in _collapse_weighted_methods:
                 weights = None
@@ -7789,9 +8026,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if d_weights:
                     d_kwargs["weights"] = d_weights
 
-                logger.info(
-                    f"    Output weights          = {d_weights!r}"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"    Output weights          = {d_weights!r}"
+                    )  # pragma: no cover
 
             elif method == "integral":
                 raise ValueError(
@@ -7805,12 +8043,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # ========================================================
             # Collapse the data array
             # ========================================================
-            logger.info(
-                "  Before collapse of data:\n"
-                f"    iaxes, d_kwargs = {iaxes} {d_kwargs}\n"
-                f"    f.shape = {f.shape}\n"
-                f"    f.dtype = {f.dtype}\n"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    "  Before collapse of data:\n"
+                    f"    iaxes, d_kwargs = {iaxes} {d_kwargs}\n"
+                    f"    f.shape = {f.shape}\n"
+                    f"    f.dtype = {f.dtype}\n"
+                )  # pragma: no cover
 
             getattr(f.data, method)(
                 axes=iaxes,
@@ -7829,12 +8068,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     [axis for axis in data_axes if axis not in collapse_axes]
                 )
 
-            logger.info(
-                "  After collapse of data:\n"
-                f"    f.shape = {f.shape}\n"
-                f"    f.dtype = {f.dtype}\n"
-                f"collapse_axes = {collapse_axes}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    "  After collapse of data:\n"
+                    f"    f.shape = {f.shape}\n"
+                    f"    f.dtype = {f.dtype}\n"
+                    f"collapse_axes = {collapse_axes}"
+                )  # pragma: no cover
 
             # --------------------------------------------------------
             # Delete vertical coordinate references whose coordinates
@@ -7890,9 +8130,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     todict=True,
                 )
                 for key, value in c.items():
-                    logger.info(
-                        f"    Removing {value.construct_type}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"    Removing {value.construct_type}"
+                        )  # pragma: no cover
 
                     f.del_construct(key)
 
@@ -7906,9 +8147,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     todict=True,
                 )
                 for key, value in c.items():
-                    logger.info(
-                        f"    Removing {value.construct_type} {key!r}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"    Removing {value.construct_type} {key!r}"
+                        )  # pragma: no cover
 
                     f.del_construct(key)
 
@@ -7924,14 +8166,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), axis_mode="exact", todict=True
                 )
                 for key, aux in c.items():
-                    logger.info(f"key = {key}")  # pragma: no cover
+                    if debug:
+                        logger.debug(f"key = {key}")  # pragma: no cover
 
                     d = aux[0]
 
                     if aux.has_bounds() or (aux[:-1] != aux[1:]).any():
-                        logger.info(
-                            f"    Removing {aux.construct_type} {key!r}"
-                        )  # pragma: no cover
+                        if debug:
+                            logger.debug(
+                                f"    Removing {aux.construct_type} {key!r}"
+                            )  # pragma: no cover
 
                         f.del_construct(key)
                     else:
@@ -7943,9 +8187,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 # Reset the axis size
                 f.domain_axes(todict=True)[axis].set_size(1)
-                logger.info(
-                    f"Changing axis size to 1: {axis}"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"Changing axis size to 1: {axis}"
+                    )  # pragma: no cover
 
                 dim = f.dimension_coordinate(
                     filter_by_axis=(axis,), default=None
@@ -8544,22 +8789,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # START OF MAIN CODE
 
-        logger.info(
-            "    Grouped collapse:"
-            f"        method            = {method!r}"
-            f"        axis_in           = {axis_in!r}"
-            f"        axis              = {axis!r}"
-            f"        over              = {over!r}"
-            f"        over_days         = {over_days!r}"
-            f"        over_years        = {over_years!r}"
-            f"        within            = {within!r}"
-            f"        within_days       = {within_days!r}"
-            f"        within_years      = {within_years!r}"
-            f"        regroup           = {regroup!r}"
-            f"        group             = {group!r}"
-            f"        group_span        = {group_span!r}"
-            f"        group_contiguous  = {group_contiguous!r}"
-        )  # pragma: no cover
+        debug = is_log_level_debug(logger)
+        if debug:
+            logger.debug(
+                "    Grouped collapse:"
+                f"        method            = {method!r}"
+                f"        axis_in           = {axis_in!r}"
+                f"        axis              = {axis!r}"
+                f"        over              = {over!r}"
+                f"        over_days         = {over_days!r}"
+                f"        over_years        = {over_years!r}"
+                f"        within            = {within!r}"
+                f"        within_days       = {within_days!r}"
+                f"        within_years      = {within_years!r}"
+                f"        regroup           = {regroup!r}"
+                f"        group             = {group!r}"
+                f"        group_span        = {group_span!r}"
+                f"        group_contiguous  = {group_contiguous!r}"
+            )  # pragma: no cover
 
         # Size of uncollapsed axis
         axis_size = self.domain_axes(todict=True)[axis].get_size()
@@ -8836,9 +9083,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         # cells. Therefore we can stop.
                         break
 
-                    logger.info(
-                        f"          HMS  = {HMS!r}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"          HMS  = {HMS!r}"
+                        )  # pragma: no cover
 
                     if over_days is None:
                         # --------------------------------------------
@@ -8964,18 +9212,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     if not mdHMS0:
                         # Keep a record of the first cell
                         mdHMS0 = mdHMS
-                        logger.info(
-                            f"        mdHMS0 = {mdHMS0!r}"
-                        )  # pragma: no cover
+                        if debug:
+                            logger.debug(
+                                f"        mdHMS0 = {mdHMS0!r}"
+                            )  # pragma: no cover
                     elif mdHMS.equals(mdHMS0):
                         # We've got repeat of the first cell, which
                         # means that we must have now classified all
                         # cells. Therefore we can stop.
                         break
 
-                    logger.info(
-                        f"        mdHMS  = {mdHMS!r}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"        mdHMS  = {mdHMS!r}"
+                        )  # pragma: no cover
 
                     if over_years is None:
                         # --------------------------------------------
@@ -9200,9 +9450,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # ---------------------------------------------------------
             # Collapse each group
             # ---------------------------------------------------------
-            logger.info(
-                f"        classification    = {classification}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"        classification    = {classification}"
+                )  # pragma: no cover
 
             unique = np.unique(classification)
             unique = unique[np.where(unique >= 0)[0]]
@@ -9286,9 +9537,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # Still here? Then collapse the group
                 # ----------------------------------------------------
                 w = _group_weights(weights, iaxis, index)
-                logger.info(
-                    f"        Collapsing group {u}:"
-                )  # pragma: no cover
+                if debug:
+                    logger.debug(
+                        f"        Collapsing group {u}:"
+                    )  # pragma: no cover
 
                 fl.append(
                     pc.collapse(
@@ -9353,10 +9605,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             # --------------------------------------------------------
-            # Concatenate the partial collapses
+            # Concatenate the partial collapses.
+            #
+            # Use cull_graph=True to prevent dask failures arising
+            # from concatenating graphs with lots of unused nodes.
             # --------------------------------------------------------
             try:
-                f = self.concatenate(fl, axis=iaxis)
+                f = self.concatenate(fl, axis=iaxis, cull_graph=True)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 
@@ -9369,7 +9624,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Return the collapsed field
         # ------------------------------------------------------------
         self.__dict__ = f.__dict__
-        logger.info("    End of grouped collapse")  # pragma: no cover
+        if debug:
+            logger.debug("    End of grouped collapse")  # pragma: no cover
 
         return self
 
@@ -9397,14 +9653,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `None`
 
         """
-        original_cell_methods = self.cell_methods(todict=True)  # .ordered()
-        logger.info(
-            "  Update cell methods:"
-            f"    Original cell methods = {original_cell_methods}"
-            f"    method        = {method!r}"
-            f"    within        = {within!r}"
-            f"    over          = {over!r}"
-        )  # pragma: no cover
+        debug = is_log_level_debug(logger)
+
+        original_cell_methods = self.cell_methods(todict=True)
+        if debug:
+            logger.debug(
+                "  Update cell methods:"
+                f"    Original cell methods = {original_cell_methods}"
+                f"    method        = {method!r}"
+                f"    within        = {within!r}"
+                f"    over          = {over!r}"
+            )  # pragma: no cover
 
         if input_axes and tuple(input_axes) == ("area",):
             axes = ("area",)
@@ -9470,9 +9729,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if cell_method is not None:
             self.set_construct(cell_method)
 
-        logger.info(
-            f"    Modified cell methods = {self.cell_methods()}"
-        )  # pragma: no cover
+        if debug:
+            logger.debug(
+                f"    Modified cell methods = {self.cell_methods()}"
+            )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):
@@ -9733,8 +9993,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
 
-        <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
-
         >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
@@ -9747,7 +10005,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -9823,7 +10081,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             indices = []
 
         # Add the indices that apply to the field's data dimensions
-        indices.extend([domain_indices["indices"][axis] for axis in data_axes])
+        axis_indices = domain_indices["indices"]
+        indices.extend([axis_indices[axis] for axis in data_axes])
+
+        # Check that there are no invalid indices for size 1 axes not
+        # spanned by the data
+        if len(axis_indices) > len(data_axes):
+            for axis, index in axis_indices.items():
+                if axis in data_axes or index == slice(None):
+                    continue
+
+                import dask.array as da
+
+                shape = da.from_array([0])[index].compute_chunk_sizes().shape
+                if 0 in shape:
+                    raise IndexError(
+                        "Can't create size 0 indices for the size 1 "
+                        f"{self.constructs.domain_axis_identity(axis)!r} axis"
+                    )
 
         return tuple(indices)
 
@@ -9962,6 +10237,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             # Axes have been set
             # --------------------------------------------------------
+
+            # Check that the input data spans all of the size > 1 axes
+            sizes = set([axis.get_size() for axis in domain_axes.values()])
+            data_shape = set(data.shape)
+            sizes.discard(1)
+            data_shape.discard(1)
+            if data_shape != sizes:
+                raise ValueError(
+                    "Can't set data: Input data must span all axes that "
+                    "have size greater than 1, as well as optionally "
+                    "spanning any size 1 axes."
+                )
+
             if isinstance(axes, (str, int, slice)):
                 axes = (axes,)
 
@@ -9969,8 +10257,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if len(axes) != data.ndim:
                 raise ValueError(
-                    f"Can't set data: {len(axes)} axes provided, but "
-                    f"{data.ndim} needed"
+                    f"Can't set data: Input data spans {data.ndim} "
+                    f"dimensions, but only {len(axes)} were specified by "
+                    "the 'axes' parameter."
                 )
 
             for axis, size in zip(axes, data.shape):
@@ -9980,8 +10269,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         domain_axes[axis].get_size(None) for axis in axes
                     )
                     raise ValueError(
-                        f"Can't set data: Data shape {data.shape} differs "
-                        f"from shape implied by axes {axes}: {axes_shape}"
+                        f"Can't set data: Input data shape {data.shape} "
+                        f"differs from shape implied by the given axes "
+                        f"{axes}: {axes_shape}"
                     )
 
         elif f.get_data_axes(default=None) is None:
@@ -10184,7 +10474,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -10212,6 +10502,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
+
+        detail = is_log_level_detail(logger)
+        debug = is_log_level_debug(logger)
 
         for cr in f.coordinate_references(todict=True).values():
             # --------------------------------------------------------
@@ -10245,10 +10538,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if computed_standard_name:
                 c.standard_name = computed_standard_name
 
-            logger.detail(
-                "Non-parametric coordinates:\n"
-                f"{c.dump(display=False, _level=1)}"
-            )  # pragma: no cover
+            if c.has_bounds():
+                c.bounds.clear_properties()
+
+            if detail:
+                logger.detail(
+                    "Non-parametric coordinates:\n"
+                    f"{c.dump(display=False, _level=1)}"
+                )  # pragma: no cover
 
             key = f.set_construct(c, axes=computed_axes, copy=False)
 
@@ -10256,11 +10553,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # reference construct
             cr.set_coordinate(key)
 
-            logger.debug(
-                "Non-parametric coordinates construct key: {key!r}\n"
-                "Updated coordinate reference construct:\n"
-                f"{cr.dump(display=False, _level=1)}"
-            )  # pragma: no cover
+            if debug:
+                logger.debug(
+                    f"Non-parametric coordinates construct key: {key!r}\n"
+                    "Updated coordinate reference construct:\n"
+                    f"{cr.dump(display=False, _level=1)}"
+                )  # pragma: no cover
 
         return f
 
@@ -11438,6 +11736,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
+    def file_locations(self, constructs=True):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Parameters:
+
+            constructs: `bool`, optional
+                If True (the default) then the file locations from
+                metadata constructs are also returned.
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> f.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = super().file_locations()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                out.update(c.file_locations())
+
+        return out
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
@@ -11530,7 +11863,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         If the data index is returned as a `tuple` (see the *unravel*
         parameter) then all delayed operations are computed.
 
-        .. seealso:: `where`, `cf.Data.argmax`
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `argmin`, `where`, `cf.Data.argmax`
 
         :Parameters:
 
@@ -11604,6 +11939,97 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             axis = self.get_data_axes().index(axis)
 
         return self.data.argmax(axis=axis, unravel=unravel)
+
+    def argmin(self, axis=None, unravel=False):
+        """Return the indices of the minimum values along an axis.
+
+        If no axis is specified then the returned index locates the
+        minimum of the whole data.
+
+        In case of multiple occurrences of the minimum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `argmax`, `where`, `cf.Data.argmin`
+
+        :Parameters:
+
+            axis: optional
+                Select the domain axis over which to locate the
+                minimum values, defined by the domain axis that would
+                be selected by passing the given *axis* to a call of
+                the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis
+                construct returned by ``f.domain_axis('X')`` is
+                selected.
+
+                By default the minimum over the flattened data is
+                located.
+
+            unravel: `bool`, optional
+                If True then when locating the minimum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the minima over a subset of the axes.
+
+        :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the minimum, or minima.
+
+        **Examples**
+
+        >>> f = cf.example_field(2)
+        >>> print(f)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        Find the T axis indices of the minimum at each X-Y location:
+
+        >>> i = f.argmin('T')
+        >>> print(i.array)
+        [[ 5 14  4 32 11 34  9 27]
+         [10  7  4 21 11 10  3 33]
+         [21 33  1 30 26  8 33  4]
+         [15 10 12 19 23 20 30 25]
+         [28 33 31 11 15 12  9  7]]
+
+        Find the coordinates of the global minimum value, showing that
+        it occurs on 1960-03-16 12:00:00 at location 292.5 degrees
+        east, -45.0 degrees north:
+
+        >>> g = f[f.argmin(unravel=True)]
+        >>> print(g)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K
+        Cell methods    : area: mean
+        Dimension coords: time(1) = [1960-03-16 12:00:00]
+                        : latitude(1) = [-45.0] degrees_north
+                        : longitude(1) = [292.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        See `cf.Data.argmin` for further examples.
+
+        """
+        if axis is not None:
+            axis = self.domain_axis(axis, key=True)
+            axis = self.get_data_axes().index(axis)
+
+        return self.data.argmin(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
@@ -11781,7 +12207,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 provided, or if no axes are specified then the axis order
                 is reversed.
 
-            constructs: `bool`
+            constructs: `bool`, optional
                 If True then metadata constructs are also transposed so
                 that their axes are in the same relative order as in the
                 transposed data array of the field. By default metadata
@@ -12179,6 +12605,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
+            # Ensure that the lat and lon dimension coordinates have
+            # standard names, so that metadata-aware broadcasting
+            # works as expected when all of their units are radians.
+            x_coord.standard_name = "longitude"
+            y_coord.standard_name = "latitude"
+
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
             theta = np.pi / 2 - f.convert(y_key, full_domain=True)
@@ -12199,11 +12631,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             # Reset latitude and longitude coordinate units
-            X.dimension_coordinate("X").Units = x_units
-            X.dimension_coordinate("Y").Units = y_units
+            X.dimension_coordinate("longitude").Units = x_units
+            X.dimension_coordinate("latitude").Units = y_units
 
-            Y.dimension_coordinate("X").Units = x_units
-            Y.dimension_coordinate("Y").Units = y_units
+            Y.dimension_coordinate("longitude").Units = x_units
+            Y.dimension_coordinate("latitude").Units = y_units
         else:
             # --------------------------------------------------------
             # Cartesian coordinates
@@ -13028,7 +13460,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -13831,6 +14263,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
+    def add_file_location(
+        self,
+        location,
+        constructs=True,
+    ):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the new file location added to them.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> f.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().add_file_location(location)
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.add_file_location(location)
+
+        return location
+
     def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n
         dimensions, where M <= N.
@@ -13922,6 +14396,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14090,6 +14565,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14107,7 +14586,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
-                operation was in-place or the regridding operator if
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
@@ -14125,7 +14604,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -14178,6 +14657,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 
@@ -14196,6 +14676,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
+        weights_file=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14324,6 +14805,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
+            {{weights_file: `str` or `None`, optional}}
+
+               .. versionadded:: 3.15.2
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -14359,7 +14844,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -14411,6 +14896,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
+            weights_file=weights_file,
             inplace=inplace,
         )
 

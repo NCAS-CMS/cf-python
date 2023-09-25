@@ -1,7 +1,0 @@
-cf.Field.arcsin
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.arcsin

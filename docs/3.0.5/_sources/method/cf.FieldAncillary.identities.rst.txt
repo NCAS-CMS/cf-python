@@ -1,7 +1,0 @@
-cf.FieldAncillary.identities
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldAncillary.identities

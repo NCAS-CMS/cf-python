@@ -44,9 +44,9 @@ The cf package is only for Python 3.8 or newer.
 cf is in the Python package index: https://pypi.org/project/cf-python
 
 To install cf and its :ref:`required dependencies <Required>` (apart
-from :ref:`Udunits <Udunits>`, and there are also has some
+from :ref:`Udunits <Udunits>`, and there are also some
 :ref:`optional dependencies <Optional>` which are **not**
-automatically installed via ``pip``) run, for example :
+automatically installed via ``pip``) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -77,13 +77,13 @@ Udunits
 
 Udunits (a C library that provides support for units of physical
 quantities) is a required dependency that is not installed by ``pip``,
-but it is easily installed in a ``conda`` environment:
+but it can be installed in a ``conda`` environment:
 
 .. code-block:: console
 
    $ conda install -c conda-forge udunits2
 
-Alternatively, Udunits is often available in from operating system
+Alternatively, Udunits is often available from operating system
 software download managers, or may be installed from source.
     
 Note that :ref:`some environment variables might also need setting
@@ -102,13 +102,13 @@ details.
 
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
-visualisation package <http://ajheaps.github.io/cf-plot>`_, run
+visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
 
 .. code-block:: console
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge esmpy=8.2.0
+   $ conda install -c conda-forge esmpy>=8.0.0
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.14.0``):
+   you want to install, e.g. ``3.15.0``):
 
    .. code-block:: console
 
@@ -170,7 +170,7 @@ properly, although the defaults are usually sufficient.
 ---------------
 
 During installation the ``cfa`` command line utility is also
-installed, which
+installed, which:
 
 * :ref:`generates text descriptions of field constructs contained in
   files <File-inspection-with-cfa>`, and
@@ -190,7 +190,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.8 or newer.
+* `Python <https://www.python.org/>`_, 3.8.0 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.22.0 or newer.
 
@@ -198,13 +198,13 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.3 or up to,
-  but not including, 1.10.1.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.1.2 or up to,
+  but not including, 1.10.2.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.5 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
@@ -243,18 +243,19 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
-  8.0.0 or up to 8.2.0. This is easily installed via conda with
+* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
+  named `ESMF` with the old module name also being accepted for import,
+  version 8.0.0 or newer. This is easily installed via conda with
 
   .. code-block:: console
 
-     $ conda install -c conda-forge esmpy=8.2.0
+     $ conda install -c conda-forge esmpy>=8.0.0
 
   or may be installed from source.
 
 .. rubric:: Convolution filters, derivatives and relative vorticity
 
-* `scipy <https://pypi.org/project/scipy>`_, version 1.1.0 or newer.
+* `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
 .. rubric:: Subspacing based on N-dimensional construct cells (N > 1)
             containing a given value

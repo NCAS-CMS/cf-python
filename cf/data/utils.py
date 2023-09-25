@@ -424,7 +424,7 @@ def chunk_positions(chunks):
 
     .. versionadded:: 3.14.0
 
-    .. seealso:: `chunk_shapes`
+    .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_shapes`
 
     :Parameters:
 
@@ -454,7 +454,7 @@ def chunk_shapes(chunks):
 
     .. versionadded:: 3.14.0
 
-    .. seealso:: `chunk_positions`
+    .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_positions`
 
     :Parameters:
 
@@ -477,6 +477,43 @@ def chunk_shapes(chunks):
 
     """
     return product(*chunks)
+
+
+def chunk_locations(chunks):
+    """Find the shape of each chunk.
+
+    .. versionadded:: 3.15.0
+
+    .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
+
+    :Parameters:
+
+        chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
+
+    **Examples**
+
+    >>> chunks = ((1, 2), (9,), (4, 5, 6))
+    >>> for location in cf.data.utils.chunk_locations(chunks):
+    ...     print(location)
+    ...
+    ((0, 1), (0, 9), (0, 4))
+    ((0, 1), (0, 9), (4, 9))
+    ((0, 1), (0, 9), (9, 15))
+    ((1, 3), (0, 9), (0, 4))
+    ((1, 3), (0, 9), (4, 9))
+    ((1, 3), (0, 9), (9, 15))
+
+    """
+    from dask.utils import cached_cumsum
+
+    cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+    locations = [
+        [(s, s + dim) for s, dim in zip(starts, shapes)]
+        for starts, shapes in zip(cumdims, chunks)
+    ]
+    return product(*locations)
 
 
 def scalar_masked_array(dtype=float):
@@ -556,6 +593,10 @@ def conform_units(value, units, message=None):
             message that is independent of the calling context is
             used.
 
+    :Returns:
+
+            The *value* with conformed units.
+
     **Examples**
 
     >>> cf.data.utils.conform_units(1, cf.Units('m'))
@@ -584,14 +625,15 @@ def conform_units(value, units, message=None):
 
     """
     value_units = getattr(value, "Units", None)
-    if value_units is None:
+    if value_units is None or value_units == units:
         return value
 
     if value_units.equivalent(units):
-        if value_units != units:
-            value = value.copy()
-            value.Units = units
-    elif value_units and units:
+        value = value.copy()
+        value.Units = units
+        return value
+
+    if value_units and units:
         if message is None:
             message = (
                 f"Units {value_units!r} are incompatible with units {units!r}"

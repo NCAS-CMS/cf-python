@@ -55,6 +55,61 @@ class DimensionCoordinate(
         instance._Bounds = Bounds
         return instance
 
+    def __init__(
+        self,
+        properties=None,
+        data=None,
+        bounds=None,
+        geometry=None,
+        interior_ring=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
+        """**Initialisation**
+
+        :Parameters:
+
+            {{init properties: `dict`, optional}}
+
+               *Parameter example:*
+                  ``properties={'standard_name': 'time'}``
+
+            {{init data: data_like, optional}}
+
+            {{init bounds: `Bounds`, optional}}
+
+            {{init geometry: `str`, optional}}
+
+            {{init interior_ring: `InteriorRing`, optional}}
+
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
+
+        """
+        super().__init__(
+            properties=properties,
+            data=data,
+            bounds=bounds,
+            geometry=geometry,
+            interior_ring=interior_ring,
+            source=source,
+            copy=copy,
+            _use_data=_use_data,
+        )
+
+        if source:
+            # Reset cell characteristics after set_data/set_bounds has
+            # removed them
+            try:
+                chars = source._get_component("cell_characteristics", None)
+            except AttributeError:
+                chars = None
+
+            if chars is not None:
+                self._set_component("cell_characteristics", chars, copy=False)
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -114,64 +169,32 @@ class DimensionCoordinate(
         if data is not None:
             # Infer the direction from the data
             if data.size > 1:
-                data = data[0:2].array
+                c = data._get_cached_elements()
+                if c:
+                    try:
+                        return bool(c.get(0) < c.get(1))
+                    except TypeError:
+                        pass
+
+                data = data[:2].compute()
                 return bool(data.item(0) < data.item(1))
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
-            b = data[(0,) * (data.ndim - 1)].array
+            c = data._get_cached_elements()
+            if c:
+                try:
+                    return bool(c.get(0) < c.get(1))
+                except TypeError:
+                    pass
+
+            b = data[0].compute()
             return bool(b.item(0) < b.item(1))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    #    @property
-    #    def cellsize(self):
-    #        '''The cell sizes.
-    #
-    #    :Returns:
-    #
-    #        `Data`
-    #            The size for each cell.
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds)
-    #    <CF Bounds: latitude(3, 2) degrees_north>
-    #    >>> print(c.bounds.array)
-    #    [[-90. -87.]
-    #     [-87. -80.]
-    #     [-80. -67.]]
-    #    >>> print(d.cellsize)
-    #    <CF Data(3): [3.0, 7.0, 13.0] degrees_north>
-    #    >>> print(d.cellsize.array)
-    #    [  3.   7.  13.]
-    #    >>> print(c.sin().cellsize.array)
-    #    [ 0.00137047  0.01382178  0.0643029 ]
-    #
-    #    >>> del(c.bounds)
-    #    >>> c.cellsize
-    #    AttributeError: Can't get cell sizes when coordinates have no bounds
-    #
-    #        '''
-    #        cells = self.get_bounds_data(None)
-    #        if cells is None:
-    #            raise AttributeError(
-    #                "Can't get cell sizes when coordinates have no bounds")
-    #
-    #        if self.direction():
-    #            cells = cells[:, 1] - cells[:, 0]
-    #        else:
-    #            cells = cells[:, 0] - cells[:, 1]
-    #
-    #        cells.squeeze(1, inplace=True)
-    #
-    #        return cells
 
     @property
     def decreasing(self):
@@ -231,69 +254,6 @@ class DimensionCoordinate(
         """
         return self.direction()
 
-    #    @property
-    #    def lower_bounds(self):
-    #        '''The lower dimension coordinate bounds in a `cf.Data` object.
-    #
-    #    .. seealso:: `bounds`, `upper_bounds`
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds.array)
-    #    [[ 5  3]
-    #     [ 3  1]
-    #     [ 1 -1]]
-    #    >>> c.lower_bounds
-    #    <CF Data(3): [3, 1, -1]>
-    #    >>> print(c.lower_bounds.array)
-    #    [ 3  1 -1]
-    #
-    #        '''
-    #        data = self.get_bounds_data(None)
-    #        if data is None:
-    #            raise ValueError(
-    #                "Can't get lower bounds when there are no bounds")
-    #
-    #        if self.direction():
-    #            i = 0
-    #        else:
-    #            i = 1
-    #
-    #        out = data[..., i]
-    #        out.squeeze(1, inplace=True)
-    #        return out
-
-    #
-    #    @property
-    #    def upper_bounds(self):
-    #        '''The upper dimension coordinate bounds in a `cf.Data` object.
-    #
-    #    .. seealso:: `bounds`, `lower_bounds`
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds.array)
-    #    [[ 5  3]
-    #     [ 3  1]
-    #     [ 1 -1]]
-    #    >>> c.upper_bounds
-    #    <CF Data(3): [5, 3, 1]>
-    #    >>> print(c.upper_bounds.array)
-    #    [5  3  1]
-    #
-    #        '''
-    #        data = self.get_bounds_data(None)
-    #        if data is None:
-    #            raise ValueError(
-    #                "Can't get upper bounds when there are no bounds")
-    #
-    #        if self.direction():
-    #            i = 1
-    #        else:
-    #            i = 0
-    #
-    #        return data[..., i].squeeze(1)
-
     def direction(self):
         """Return True if the dimension coordinate values are
         increasing, otherwise return False.
@@ -333,6 +293,100 @@ class DimensionCoordinate(
         self._custom["direction"] = _direction
 
         return _direction
+
+    @classmethod
+    def create_regular(cls, args, units=None, standard_name=None, bounds=True):
+        """
+        Create a new `DimensionCoordinate` with the given range and cellsize.
+
+        .. versionadded:: 3.15.0
+
+        :Note: This method does not set the cyclicity of the
+               `DimensionCoordinate`.
+
+        :Parameters:
+
+            args: sequence of numbers
+                {{regular args}}
+
+            bounds: `bool`, optional
+                If True (the default) then the given range represents
+                the bounds, and the coordinate points will be the midpoints of
+                the bounds. If False, the range represents the coordinate points
+                directly.
+
+            units: str or `Units`, optional
+                The units of the new `DimensionCoordinate` object.
+
+            standard_name: str, optional
+                The standard_name of the `DimensionCoordinate` object.
+
+        :Returns:
+
+            `DimensionCoordinate`
+                The newly created DimensionCoordinate object.
+
+        **Examples**
+
+        >>> longitude = cf.DimensionCoordinate.create_regular(
+                (-180, 180, 1), units='degrees_east', standard_name='longitude'
+            )
+        >>> longitude.dump()
+        Dimension coordinate: longitude
+            standard_name = 'longitude'
+            units = 'degrees_east'
+            Data(360) = [-179.5, ..., 179.5] degrees_east
+            Bounds:units = 'degrees_east'
+            Bounds:Data(360, 2) = [[-180.0, ..., 180.0]] degrees_east
+
+        """
+        args = np.array(args)
+
+        if args.shape != (3,) or args.dtype.kind not in "fi":
+            raise ValueError(
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {args}."
+            )
+
+        range = (args[0], args[1])
+        cellsize = args[2]
+
+        range_diff = range[1] - range[0]
+        if cellsize > 0 and range_diff <= 0:
+            raise ValueError(
+                f"Range ({range[0], range[1]}) must be increasing for a "
+                f"positive cellsize ({cellsize})"
+            )
+        elif cellsize < 0 and range_diff >= 0:
+            raise ValueError(
+                f"Range ({range[0], range[1]}) must be decreasing for a "
+                f"negative cellsize ({cellsize})"
+            )
+
+        if standard_name is not None and not isinstance(standard_name, str):
+            raise ValueError("standard_name must be either None or a string.")
+
+        if bounds:
+            cellsize2 = cellsize / 2
+            start = range[0] + cellsize2
+            end = range[1] - cellsize2
+        else:
+            start = range[0]
+            end = range[1]
+
+        points = np.arange(start, end + cellsize, cellsize)
+
+        coordinate = cls(
+            data=Data(points, units=units),
+            properties={"standard_name": standard_name},
+            copy=False,
+        )
+
+        if bounds:
+            b = coordinate.create_bounds()
+            coordinate.set_bounds(b, copy=False)
+
+        return coordinate
 
     def create_bounds(
         self, bound=None, cellsize=None, flt=0.5, max=None, min=None
@@ -711,6 +765,41 @@ class DimensionCoordinate(
 
         return bounds
 
+    def del_cell_characteristics(self, default=ValueError()):
+        """Remove the cell characteristics.
+
+        A cell characteristic is assumed to be valid for each cell. Cell
+        characteristics are not inferred from the coordinate or bounds
+        data, but may be defined with the `set_cell_characteristics`
+        method. Cell characteristics are automatically removed
+        whenever the new data or bounds are set with `set_data` or
+        `set_bounds` respectively.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `get_cell_characteristics`,
+                     `has_cell_characteristics`,
+                     `set_cell_characteristics`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if cell
+                characteristics have not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `dict`
+                The removed cell size characteristics, as would have
+                been returned by `get_cell_characteristics`.
+
+        """
+        out = self.get_cell_characteristics(default=default)
+        self._del_component("cell_characteristics", default=None)
+        return out
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
@@ -777,66 +866,80 @@ class DimensionCoordinate(
 
         return super().get_bounds(default=default)
 
-    #    def autoperiod(self, verbose=False):
-    #        '''TODO Set dimensions to be cyclic.
-    #
-    #    TODO A dimension is set to be cyclic if it has a unique longitude (or
-    #    grid longitude) dimension coordinate construct with bounds and the
-    #    first and last bounds values differ by 360 degrees (or an
-    #    equivalent amount in other units).
-    #
-    #    .. versionadded:: 3.0.0
-    #
-    #    .. seealso:: `isperiodic`, `period`
-    #
-    #    :Parameters:
-    #
-    #        TODO
-    #
-    #    :Returns:
-    #
-    #       `bool`
-    #
-    #    **Examples**
-    #
-    #    >>> f.autocyclic()
-    #
-    #        '''
-    #        if not self.Units.islongitude:
-    #            if verbose:
-    #                print(0)
-    #            if (self.get_property('standard_name', None) not in
-    #                    ('longitude', 'grid_longitude')):
-    #                if verbose:
-    #                    print(1)
-    #                return False
-    #
-    #        bounds = self.get_bounds(None)
-    #        if bounds is None:
-    #            if verbose:
-    #                print(2)
-    #            return False
-    #
-    #        bounds_data = bounds.get_data(None)
-    #        if bounds_data is None:
-    #            if verbose:
-    #                print(3)
-    #            return False
-    #
-    #        bounds = bounds_data.array
-    #
-    #        period = Data(360.0, units='degrees')
-    #
-    #        period.Units = bounds_data.Units
-    #
-    #        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
-    #            if verbose:
-    #                print(4)
-    #            return False
-    #
-    #        self.period(period)
-    #
-    #        return True
+    def get_cell_characteristics(self, default=ValueError()):
+        """Return cell characteristics.
+
+        A cell characteristic is assumed to be valid for each cell. Cell
+        characteristics are not inferred from the coordinate or bounds
+        data, but may be defined with the `set_cell_characteristics`
+        method. Cell characteristics are automatically removed
+        whenever the new data or bounds are set with `set_data` or
+        `set_bounds` respectively.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `del_cell_characteristics`,
+                     `has_cell_characteristics`,
+                     `set_cell_characteristics`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if cell
+                characteristics have not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `dict`
+                The cell size characteristic (i.e. the absolute
+                difference between the cell bounds) and cell spacing
+                characteristic (i.e. the absolute difference between
+                two neighbouring coordinate values), with keys
+                ``'cellsize'`` and ``'spacing'`` respectively. If
+                either has a value of `None` then no characteristic
+                has been stored for that type.
+
+        """
+        out = self._get_component("cell_characteristics", default=None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no 'cell_characteristics' "
+                "component",
+            )
+
+        from copy import deepcopy
+
+        return deepcopy(out)
+
+    def has_cell_characteristics(self):
+        """Whether or not there are any cell characteristics.
+
+        A cell characteristic is assumed to be valid for each cell. Cell
+        characteristics are not inferred from the coordinate or bounds
+        data, but may be defined with the `set_cell_characteristics`
+        method. Cell characteristics are automatically removed
+        whenever the new data or bounds are set with `set_data` or
+        `set_bounds` respectively.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `del_cell_characteristics`,
+                     `get_cell_characteristics`,
+                     `set_cell_characteristics`
+
+        :Returns:
+
+            `bool`
+                Whether or not there are any cell characteristics.
+
+        """
+        return self._has_component("cell_characteristics")
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -853,7 +956,6 @@ class DimensionCoordinate(
             # Null roll
             return c
 
-        #        period = self._custom.get('period')
         period = c.period()
 
         if period is None:
@@ -908,6 +1010,164 @@ class DimensionCoordinate(
         c._custom["direction"] = direction
 
         return c
+
+    def set_bounds(self, bounds, copy=True):
+        """Set the bounds.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
+
+        :Parameters:
+
+            bounds: `Bounds`
+                The bounds to be inserted.
+
+            copy: `bool`, optional
+                If True then copy the bounds prior to
+                insertion. By default the bounds are copied.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> import numpy
+        >>> b = {{package}}.Bounds(data=numpy.arange(10).reshape(5, 2))
+        >>> c.set_bounds(b)
+        >>> c.has_bounds()
+        True
+        >>> c.get_bounds()
+        <Bounds: (5, 2) >
+        >>> b = c.del_bounds()
+        >>> b
+        <Bounds: (5, 2) >
+        >>> c.has_bounds()
+        False
+        >>> print(c.get_bounds(None))
+        None
+        >>> print(c.del_bounds(None))
+        None
+
+        """
+        self._del_component("cell_characteristics", default=None)
+        super().set_bounds(bounds, copy=copy)
+
+    def set_cell_characteristics(self, cellsize, spacing):
+        """Set cell characteristics.
+
+        A cell characteristic is assumed to be valid for each cell. Cell
+        characteristics are not inferred from the coordinate or bounds
+        data, but may be set with this method. Cell characteristics
+        are automatically removed whenever the new data or bounds are
+        set with `set_data` or `set_bounds` respectively.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `del_cell_characteristics`,
+                     `get_cell_characteristics`,
+                     `has_cell_characteristics`
+
+        :Parameters:
+
+            cellsize:
+                The cell size (i.e. the absolute difference between
+                the cell bounds) characteristic. May be a `Query`,
+                `TimeDuration`, scalar `Data`, scalar data_like
+                object, or `None`. A value of `None` means no
+                characteristc has been set.
+
+            spacing:
+                The cell spacing (i.e. the absolute difference between
+                two neighbouring coordinate values) characteristic.
+                May be a `Query`, `TimeDuration`, scalar `Data`,
+                scalar data_like object, or `None`. A value of `None`
+                means no characteristc has been set.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.set_cell_characteristics(cellsize=cf.D(5), spacing=cf.D(1))
+
+        >>> d.set_cell_characteristics(cf.Data(10, 'degree_E'), None)
+
+        >>> d.set_cell_characteristics(cf.wi(100, 200), 150)
+
+        """
+        chars = {}
+        if cellsize is not None:
+            chars["cellsize"] = cellsize
+
+        if spacing is not None:
+            chars["spacing"] = spacing
+
+        if not chars:
+            self.del_cell_characteristics(None)
+            return
+
+        self._set_component("cell_characteristics", chars, copy=False)
+
+    def set_data(self, data, copy=True, inplace=True):
+        """Set the data.
+
+        The units, calendar and fill value of the incoming `Data`
+        instance are removed prior to insertion.
+
+        .. versionadded:: 3.15.4
+
+        .. seealso:: `data`, `del_data`, `get_data`, `has_data`
+
+        :Parameters:
+
+            data: `Data`
+                The data to be inserted.
+
+                {{data_like}}
+
+            copy: `bool`, optional
+                If True then copy the data prior to
+                insertion. By default the data are copied.
+
+            {{inplace: `bool`, optional (default True)}}
+
+                .. versionadded:: 3.7.0
+
+        :Returns:
+
+            `None` or `{{class}}`
+                If the operation was in-place then `None` is returned,
+                otherwise return a new `{{class}}` instance containing
+                the new data.
+
+        **Examples**
+
+        >>> f = cf.{{class}}()
+        >>> f.set_data([1, 2, 3])
+        >>> f.has_data()
+        True
+        >>> f.get_data()
+        <CF Data(3): [1, 2, 3]>
+        >>> f.data
+        <CF Data(3): [1, 2, 3]>
+        >>> f.del_data()
+        <CF Data(3): [1, 2, 3]>
+        >>> g = f.set_data([4, 5, 6], inplace=False)
+        >>> g.data
+        <CF Data(3): [4, 5, 6]>
+        >>> f.has_data()
+        False
+        >>> print(f.get_data(None))
+        None
+        >>> print(f.del_data(None))
+        None
+
+        """
+        self._del_component("cell_characteristics", default=None)
+        return super().set_data(data, copy=copy, inplace=inplace)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

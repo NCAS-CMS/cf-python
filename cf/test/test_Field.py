@@ -652,6 +652,10 @@ class FieldTest(unittest.TestCase):
         g = f[0].squeeze()
         g[5]
 
+        # Test list indices that have a `to_dask_array` method
+        y = f.dimension_coordinate("Y")
+        self.assertEqual(f[y > 3].shape, (6, 9))
+
         # Indices result in a subspaced shape that has a size 0 axis
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
@@ -696,6 +700,11 @@ class FieldTest(unittest.TestCase):
         g.del_data()
         with self.assertRaises(Exception):
             f[..., 0:2] = g
+
+        # Test list indices that have a `to_dask_array` method
+        y = f.dimension_coordinate("Y")
+        f[y > 3] = -314
+        self.assertEqual(f.where(cf.ne(-314), cf.masked).count(), 6 * 9)
 
     def test_Field__add__(self):
         f = self.f.copy()
@@ -1020,15 +1029,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g.set_data(cf.Data(9), axes="X")
 
-        g = cf.Field()
-        a = g.set_construct(cf.DomainAxis(9))
-        b = g.set_construct(cf.DomainAxis(10))
-        g.set_data(cf.Data(list(range(9))), axes=a)
-        with self.assertRaises(Exception):
-            g.set_data(cf.Data(list(range(9))), axes=b)
-        with self.assertRaises(Exception):
-            g.set_data(cf.Data(list(range(9))), axes=[b, a])
-
         # Test inplace
         f = self.f.copy()
         d = f.del_data()
@@ -1054,6 +1054,35 @@ class FieldTest(unittest.TestCase):
             g.set_data(cf.Data(numpy.arange(8)))
         with self.assertRaises(Exception):
             g.set_data(cf.Data(numpy.arange(90).reshape(10, 9)))
+
+        # Test 'axes' parameter
+        g = cf.Field()
+        a = g.set_construct(cf.DomainAxis(9))
+        b = g.set_construct(cf.DomainAxis(10))
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=a)
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=b)
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=[b, a])
+
+        f = cf.example_field(0)
+        f.set_data(f.data, axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data.transpose(), axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data, axes=["Y"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data[0], axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data, axes=["T", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data[0], axes=["T", "X"])
 
     def test_Field_get_data_axes(self):
         f = self.f
@@ -1608,7 +1637,9 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(g.match_by_naxes(3))
         self.assertFalse(g.match_by_naxes(99, 88))
 
-        # Match by construct
+    def test_Field_match_by_construct(self):
+        f = self.f.copy()
+
         for OR in (True, False):
             self.assertTrue(f.match_by_construct(OR=OR))
             self.assertTrue(f.match_by_construct("X", OR=OR))
@@ -1643,6 +1674,11 @@ class FieldTest(unittest.TestCase):
                 "X", "qwerty", "grid_latitude: max", "over:years", OR=True
             )
         )
+
+        # Check match for size 1 axes that are not spanned by the data
+        f = cf.example_field(0)
+        self.assertTrue(f.match_by_construct(T=cf.dt("2019-01-01")))
+        self.assertFalse(f.match_by_construct(T=cf.dt("9876-12-31")))
 
     def test_Field_autocyclic(self):
         f = self.f.copy()
@@ -2362,6 +2398,23 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(x.equals(x0, rtol=1e-10))
                 self.assertTrue(y.equals(y0, rtol=1e-10))
 
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        del f.dimension_coordinate("X").standard_name
+        del f.dimension_coordinate("Y").standard_name
+        x, y = f.grad_xy(radius="earth")
+        self.assertEqual(x.shape, f.shape)
+        self.assertEqual(y.shape, f.shape)
+        self.assertEqual(x.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            x.dimension_coordinate("X").standard_name, "longitude"
+        )
+        self.assertEqual(y.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            y.dimension_coordinate("X").standard_name, "longitude"
+        )
+
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
 
@@ -2418,6 +2471,18 @@ class FieldTest(unittest.TestCase):
                 del lp.long_name
                 del lp0.long_name
                 self.assertTrue(lp.equals(lp0, rtol=1e-10))
+
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        del f.dimension_coordinate("X").standard_name
+        del f.dimension_coordinate("Y").standard_name
+        g = f.laplacian_xy(radius="earth")
+        self.assertEqual(g.shape, f.shape)
+        self.assertEqual(g.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            g.dimension_coordinate("X").standard_name, "longitude"
+        )
 
     def test_Field_to_dask_array(self):
         f = self.f0.copy()
@@ -2522,6 +2587,21 @@ class FieldTest(unittest.TestCase):
         # Bad axis
         with self.assertRaises(ValueError):
             f.argmax(axis="foo")
+
+    def test_Field_argmin(self):
+        """Test the `argmin` Field method."""
+        f = cf.example_field(2)
+        i = f.argmin("T")
+        self.assertEqual(i.shape, f.shape[1:])
+
+        i = f.argmin(unravel=True)
+        self.assertIsInstance(i, tuple)
+        g = f[i]
+        self.assertEqual(g.shape, (1, 1, 1))
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            f.argmin(axis="foo")
 
     def test_Field_subspace(self):
         f = self.f

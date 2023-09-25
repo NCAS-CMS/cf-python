@@ -1,7 +1,6 @@
 import atexit
 import csv
 import ctypes.util
-import hashlib
 import importlib
 import os
 import platform
@@ -11,7 +10,6 @@ import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
-from marshal import dumps
 from math import isnan
 from numbers import Integral
 from os import mkdir
@@ -21,6 +19,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
+from urllib.parse import urlparse
 
 import cfdm
 import netCDF4
@@ -30,7 +29,7 @@ from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
-from . import __file__, __version__
+from . import __cfa_version__, __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -362,7 +361,7 @@ def configuration(
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"of_fraction": None},
-            version="TODODASVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -371,7 +370,7 @@ def configuration(
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"collapse_parallel_mode": None},
-            version="TODODASVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -546,9 +545,9 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class regrid_logging(ConstantAccess):
-    """Whether or not to enable `ESMF` regridding logging.
+    """Whether or not to enable `esmpy` regridding logging.
 
-    If it is logging is performed after every call to `ESMF`.
+    If it is logging is performed after every call to `esmpy`.
 
     :Parameters:
 
@@ -1213,6 +1212,33 @@ def CF():
 
 
 CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
+
+
+def CFA():
+    """The version of the CFA conventions.
+
+    This indicates which version of the CFA conventions are
+    represented by this release of the cf package, and therefore the
+    version can not be changed.
+
+    .. versionadded:: 3.15.0
+
+    .. seealso:: `cf.CF`
+
+    :Returns:
+
+        `str`
+            The version of the CFA conventions represented by this
+            release of the cf package.
+
+    **Examples**
+
+    >>> cf.CFA()
+    '0.6.2'
+
+    """
+    return __cfa_version__
+
 
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other
@@ -1960,6 +1986,9 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     [slice(-2, 2, None), slice(None, None, None)]
     >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=True)
     ([slice(0, 4, 1), slice(None, None, None)], {0: 2})
+    >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
+    [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
+
 
     """
     parsed_indices = []
@@ -2071,6 +2100,12 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
+
+        elif hasattr(index, "to_dask_array"):
+            to_dask_array = index.to_dask_array
+            if callable(to_dask_array):
+                # Replace index with its Dask array
+                index = to_dask_array()
 
         parsed_indices[i] = index
 
@@ -2538,14 +2573,15 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    if filename is None:
-        return
+    u = urlparse(filename)
+    scheme = u.scheme
+    if not scheme:
+        return _os_path_abspath(filename)
 
-    u = urllib.parse.urlparse(filename)
-    if u.scheme != "":
-        return filename
+    if scheme == "file":
+        return u.path
 
-    return _os_path_abspath(filename)
+    return filename
 
 
 def relpath(filename, start=None):
@@ -2666,8 +2702,11 @@ def pathjoin(path1, path2):
     return _os_path_join(path1, path2)
 
 
-def hash_array(array, algorithm=hashlib.sha1):
+def hash_array(array, algorithm=None):
     """Return a hash value of a numpy array.
+
+    Deprecated at version 3.15.0 and is no longer available. Use
+    `dask.base.tokenize` instead.
 
     The hash value is dependent on the data type and the shape of the
     array. If the array is a masked array then the hash value is
@@ -2714,30 +2753,12 @@ def hash_array(array, algorithm=hashlib.sha1):
     5950106833921144220
 
     """
-    h = algorithm()
-
-    h.update(dumps(array.dtype.name))
-    h.update(dumps(array.shape))
-
-    if np.ma.isMA(array):
-        if np.ma.is_masked(array):
-            mask = array.mask
-            if not mask.flags.c_contiguous:
-                mask = np.ascontiguousarray(mask)
-
-            h.update(mask)
-            array = array.copy()
-            array.set_fill_value()
-            array = array.filled()
-        else:
-            array = array.data
-
-    if not array.flags.c_contiguous:
-        array = np.ascontiguousarray(array)
-
-    h.update(array)
-
-    return hash(h.digest())
+    _DEPRECATION_ERROR_FUNCTION(
+        "hash_array",
+        "Use 'dask.base.tokenize' instead.",
+        version="3.15.0",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 def inspect(self):
@@ -3014,17 +3035,31 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     return out
 
 
-def _get_module_info(module, try_except=False):
+def _get_module_info(module, alternative_name=False, try_except=False):
     """Helper function for processing modules for cf.environment."""
     if try_except:
+        module_name = None
         try:
             importlib.import_module(module)
+            module_name = module
         except ImportError:
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
+
+        if not module_name:
             return ("not available", "")
+    else:
+        module_name = module
 
     return (
-        importlib.import_module(module).__version__,
-        importlib.util.find_spec(module).origin,
+        importlib.import_module(module_name).__version__,
+        importlib.util.find_spec(module_name).origin,
     )
 
 
@@ -3057,7 +3092,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
-    ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py
+    esmpy/ESMF: 8.4.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/esmpy/__init__.py
     Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
     dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
     netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
@@ -3067,9 +3102,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
     matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
     cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
-    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfunits: 3.3.6 /home/username/cfunits/cfunits/__init__.py
     cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
-    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cfdm: 1.10.1.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
     cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
@@ -3077,7 +3112,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    ESMF: 8.1.1
+    esmpy/ESMF: 8.4.1
     Python: 3.8.10
     dask: 2022.6.0
     netCDF4: 1.5.6
@@ -3087,9 +3122,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0
     matplotlib: 3.4.3
     cftime: 1.6.0
-    cfunits: 3.3.5
+    cfunits: 3.3.6
     cfplot: 3.1.18
-    cfdm: 1.10.0.1
+    cfdm: 1.10.1.0
     cf: 3.14.0
 
     """
@@ -3100,7 +3135,9 @@ def environment(display=True, paths=True):
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
-        "ESMF": _get_module_info("ESMF", try_except=True),
+        "esmpy/ESMF": (
+            _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
+        ),
         # Now Python itself
         "Python": (platform.python_version(), sys.executable),
         # Then Dask (cover first from below as it's important under-the-hood)
@@ -3270,6 +3307,44 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
             f"version {version} and is no longer available{removed_at}. "
             f"{message}"
         )
+
+
+def _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
+    func,
+    kwarg,
+    value,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Value {value!r} of keyword {kwarg!r} of function {func!r} "
+        f"has been deprecated at version {version} and is no longer "
+        f"available{removed_at}. {message}"
+    )
+
+
+def _DEPRECATION_ERROR_FUNCTION_KWARG(
+    func,
+    kwarg=None,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    if version is None:
+        raise ValueError("Must provide deprecation version, e.g. '3.14.0'")
+
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Keyword {kwarg!r} of function {func} has been deprecated "
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
+    )
 
 
 def _DEPRECATION_ERROR_KWARGS(

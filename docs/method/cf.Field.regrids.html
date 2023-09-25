@@ -24,6 +24,7 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.day" href="../attribute/cf.Field.day.html" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -132,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/field.py#L13907-L14182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/field.py#L14364-L14645"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Regrid the field to a new latitude and longitude grid.</p>
 <p>Regridding is the process of interpolating the field data
 values while preserving the qualities of the original data,
@@ -184,19 +189,19 @@ axes. In these special cases an exception will be raised if
 the source data mask does not meet this requirement.</p>
 <p><strong>Implementation</strong></p>
 <p>The interpolation is carried out using regridding weights
-calculated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> package, a Python interface to the
-Earth System Modeling Framework (ESMF) regridding utility:
-<a href="#id5"><span class="problematic" id="id6">`https://earthsystemmodeling.org/regrid`_</span></a>. Outside of <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>,
+calculated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> package, a Python interface to the
+Earth System Modeling Framework regridding utility (ESMF,
+<a class="reference external" href="https://earthsystemmodeling.org/regrid">https://earthsystemmodeling.org/regrid</a>). Outside of <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>,
 these weights are then modified for masked cells (if required)
 and the regridded data are created as the dot product of the
-weights with the source data. (Note that whilst the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>
-package is able to also create the regridded data from its
+weights with the source data. (Note that whilst the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>
+package is also able to create the regridded data from its
 weights, this feature can’t be integrated with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 framework that underpins the field’s data.)</p>
 <p><strong>Logging</strong></p>
-<p>Whether <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> logging is enabled or not is determined by
-<a class="reference internal" href="../function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>. If it is logging takes place after every
-call. By default logging is disabled.</p>
+<p>Whether <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code> logging is enabled or not is determined by
+<a class="reference internal" href="../function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>. If it is enabled then logging takes place
+after every call. By default logging is disabled.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.4.</span></p>
 </div>
@@ -376,10 +381,10 @@ dictionary values must be <code class="docutils literal notranslate"><span class
 <dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For conservative regridding methods, if True (the
 default) then degenerate cells (those for which enough
 vertices collapse to leave a cell as either a line or
-a point) are skipped, not producing a
-result. Otherwise an error will be produced if
-degenerate cells are found, that will be present in
-the ESMF log files.</p>
+a point) are skipped, not producing a result.
+Otherwise an error will be produced if degenerate
+cells are found, that will be present in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>
+log files.</p>
 <p>For all other regridding methods, degenerate cells are
 always skipped, regardless of the value of
 <em>ignore_degenerate</em>.</p>
@@ -406,7 +411,7 @@ parameter for details.</p>
 </dd>
 <dt>min_weight: float, optional</dt><dd><p>A very small non-negative number. By default
 <em>min_weight</em> is <code class="docutils literal notranslate"><span class="pre">2.5</span> <span class="pre">*</span> <span class="pre">np.finfo(&quot;float64&quot;).eps</span></code>,
-i.e. <a href="#id3"><span class="problematic" id="id4">``</span></a>5.551115123125783e-16`. It is used during
+i.e. <code class="docutils literal notranslate"><span class="pre">5.551115123125783e-16</span></code>. It is used during
 linear and first-order conservative regridding when
 adjusting the weights matrix to account for the data
 mask. It is ignored for all other regrid methods, or
@@ -416,24 +421,66 @@ might only be non-zero as a result of rounding errors,
 the <em>min_weight</em> parameter controls whether or a not
 cell in the regridded field is masked.</p>
 <p>The default value has been chosen empirically as the
-smallest value that produces the same masks as ESMF
+smallest value that produces the same masks as <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy</span></code>
 for the use cases defined in the cf test suite.</p>
-<p>Define w_ji as the multiplicative weight that defines
-how much of Vs_i (the value in source grid cell i)
-contributes to Vd_j (the value in destination grid
-cell j).</p>
+<p>Define <code class="docutils literal notranslate"><span class="pre">w_ji</span></code> as the multiplicative weight that
+defines how much of <code class="docutils literal notranslate"><span class="pre">Vs_i</span></code> (the value in source grid
+cell <code class="docutils literal notranslate"><span class="pre">i</span></code>) contributes to <code class="docutils literal notranslate"><span class="pre">Vd_j</span></code> (the value in
+destination grid cell <code class="docutils literal notranslate"><span class="pre">j</span></code>).</p>
 <p><strong>Linear regridding</strong></p>
-<p>Destination grid cell j will only be masked if a) it
-is masked in destination grid definition; or b) <code class="docutils literal notranslate"><span class="pre">w_ji</span>
-<span class="pre">&gt;=</span> <span class="pre">min_weight</span></code> for those masked source grid cells i
-for which <code class="docutils literal notranslate"><span class="pre">w_ji</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p>
+<p>Destination grid cell <code class="docutils literal notranslate"><span class="pre">j</span></code> will only be masked if a)
+it is masked in the destination grid definition; or b)
+<code class="docutils literal notranslate"><span class="pre">w_ji</span> <span class="pre">&gt;=</span> <span class="pre">min_weight</span></code> for those masked source grid
+cells <code class="docutils literal notranslate"><span class="pre">i</span></code> for which <code class="docutils literal notranslate"><span class="pre">w_ji</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p>
 <p><strong>Conservative first-order regridding</strong></p>
-<p>Destination grid cell j will only be masked if a) it
-is masked in destination grid definition; or b) The
-sum of <code class="docutils literal notranslate"><span class="pre">w_ji</span></code> for all non-masked source grid cells i
-is strictly less than <em>min_weight</em>.</p>
+<p>Destination grid cell <code class="docutils literal notranslate"><span class="pre">j</span></code> will only be masked if a)
+it is masked in the destination grid definition; or b)
+the sum of <code class="docutils literal notranslate"><span class="pre">w_ji</span></code> for all non-masked source grid
+cells <code class="docutils literal notranslate"><span class="pre">i</span></code> is strictly less than <em>min_weight</em>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>weights_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><blockquote>
+<div><p>Provide a netCDF file that contains, or will contain,
+the regridding weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then
+the weights are computed in memory for regridding
+between the source and destination grids, and no file
+is created.</p>
+<p>If set to a file path that does not exist then the
+weights will be computed and also written to that
+file.</p>
+<p>If set to a file path that already exists then the
+weights will be read from this file, instead of being
+computed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>No checks are performed on an existing file
+to ensure that the weights are appropriate
+for the source field and the values of the
+keyword parameters. Inapproriate weights
+will produce incorrect results.</p>
+<p>However, when regridding using weights from
+a file, ensuring that the source field has
+the same shape over the regridding axes, and
+the parameter settings are the same as those
+used when the weights file was created, will
+ensure correct results.</p>
+<p>A netCDF regridding weights file created
+directly by ESMF has the same structure and
+variable names (<code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">row</span></code>, and <code class="docutils literal notranslate"><span class="pre">col</span></code>
+for the weights, destination/row indices,
+and source/col indices respectively), so may
+be provided as a <em>weights_file</em>, noting that
+no checks will be applied to it.</p>
+</div>
+<p><strong>Performance</strong></p>
+<p>The computation of the weights can be much more costly
+than the regridding itself, in which case reading
+pre-calcuated weights can improve performance.</p>
+</div></blockquote>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.2.</span></p>
 </div>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
@@ -452,7 +499,7 @@ is strictly less than <em>min_weight</em>.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The regridded field construct; or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
-operation was in-place or the regridding operator if
+operation was in-place; or the regridding operator if
 <em>return_operator</em> is True.</p>
 </dd>
 </dl>
@@ -472,7 +519,7 @@ operation was in-place or the regridding operator if
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
 <span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
@@ -521,7 +568,7 @@ operation was in-place or the regridding operator if
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

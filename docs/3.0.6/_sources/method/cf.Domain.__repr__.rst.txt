@@ -1,7 +1,0 @@
-cf.Domain.__repr__
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Domain.__repr__

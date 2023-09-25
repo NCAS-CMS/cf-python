@@ -1,7 +1,0 @@
-cf.DomainAxis.__repr__
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAxis.__repr__

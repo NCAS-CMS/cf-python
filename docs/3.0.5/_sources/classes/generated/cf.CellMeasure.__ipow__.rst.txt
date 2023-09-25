@@ -1,7 +1,0 @@
-cf.CellMeasure.__ipow__
-=======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.__ipow__

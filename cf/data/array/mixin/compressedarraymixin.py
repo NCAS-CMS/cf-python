@@ -27,6 +27,11 @@ class CompressedArrayMixin:
 
         """
         try:
+            return array.to_dask_array()
+        except AttributeError:
+            pass
+
+        try:
             chunks = array.chunks
         except AttributeError:
             chunks = "auto"
@@ -37,7 +42,7 @@ class CompressedArrayMixin:
             pass
 
         try:
-            array.get_filename()
+            array.get_filenames()
         except AttributeError:
             pass
         else:

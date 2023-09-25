@@ -1,12 +1,16 @@
 #!/bin/bash
 
-python create_test_files.py
+file=create_test_files.py
+echo "Running $file"
+python $file
 rc=$?
 if [[ $rc != 0 ]]; then
   exit $rc
 fi
 
-python setup_create_field.py
+file=setup_create_field.py
+echo "Running $file"
+python $file
 rc=$?
 if [[ $rc != 0 ]]; then
   exit $rc
@@ -14,6 +18,7 @@ fi
 
 for file in test_*.py
 do
+  echo "Running $file"
   python $file
   rc=$?
   if [[ $rc != 0 ]]; then

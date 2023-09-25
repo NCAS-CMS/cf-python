@@ -4,7 +4,7 @@
 * Ensure that the requirements on dependencies & their versions are
   up-to-date and consistent in both the `requirements.txt` and in
   `docs/source/installation.rst`; and in the `_requires` list and
-  `LooseVersion` checks in `cf/__init__.py`.
+  `Version` checks in `cf/__init__.py`.
 
 * Make sure that `README.md` is up to date.
 
@@ -43,6 +43,16 @@
   export PYTHONPATH=$PWD:$PYTHONPATH
   ./test_tutorial_code
   ```
+
+* **Follow all of the steps outlined externally in `DOCUMENTATION.md`**,
+  notably so that the correct Sphinx-related environment is prepared for
+  documentation building.
+  
+* Ensure that the [PDF for Cheat Sheet](docs/_downloads/cheatsheet.pdf) 
+  is updated to include any API changes. The PDF is created using Canva 
+  keeping in mind the colours and fonts of the website. The same could 
+  be edited using this 
+  [link](https://www.canva.com/design/DAFk9_BVfNY/gmQHycBiV_YbTIWMqYxK1g/edit).
 
 * Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
@@ -154,3 +164,5 @@
   https://github.com/NCAS-CMS/cf-python/releases
   
 * Upload the new release to Zenodo: https://zenodo.org/record/3961353
+
+* Copy the archive docs to https://github.com/NCAS-CMS/cf-python-docs

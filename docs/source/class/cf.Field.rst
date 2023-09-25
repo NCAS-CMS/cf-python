@@ -241,6 +241,7 @@ Data
    :template: method.rst
 
    ~cf.Field.argmax
+   ~cf.Field.argmin
    ~cf.Field.where
 
 Miscellaneous data operations
@@ -426,7 +427,25 @@ Groups
    ~cf.Field.nc_clear_group_attributes
    ~cf.Field.nc_set_group_attribute
    ~cf.Field.nc_set_group_attributes
-  
+
+CFA
+^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Field.add_file_location
+   ~cf.Field.cfa_clear_file_substitutions
+   ~cf.Field.cfa_del_file_substitution
+   ~cf.Field.cfa_file_substitutions
+   ~cf.Field.cfa_update_file_substitutions
+   ~cf.Field.del_file_location
+   ~cf.Field.file_locations
+
 Geometries
 ^^^^^^^^^^
 
@@ -478,6 +497,8 @@ Domain axes
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.domain_axis
+   ~cf.Field.domain_axes
    ~cf.Field.analyse_items
    ~cf.Field.autocyclic
    ~cf.Field.axes
@@ -938,7 +959,10 @@ Special
    ~cf.Field.__deepcopy__
    ~cf.Field.__getitem__
    ~cf.Field.__repr__
-   ~cf.Field.__str__
+   ~cf.Field.__str__ 
+   ~cf.Field.__array__
+   ~cf.Field.__data__
+   ~cf.Field.__query_isclose__
 
 Deprecated
 ----------

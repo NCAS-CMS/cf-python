@@ -70,7 +70,11 @@ Dask
    ~cf.Data.cull_graph
    ~cf.Data.dask_compressed_array
    ~cf.Data.rechunk
+   ~cf.Data.chunk_indices
+   ~cf.Data.todict
    ~cf.Data.to_dask_array
+   ~cf.Data.get_deterministic_name
+   ~cf.Data.has_deterministic_name
 
 .. rubric:: Attributes
 
@@ -456,6 +460,7 @@ Searching
    :template: method.rst
 
    ~cf.Data.argmax
+   ~cf.Data.argmin
    ~cf.Data.where
 	      
 Counting
@@ -596,6 +601,8 @@ Miscellaneous
    ~cf.Data.get_filenames
    ~cf.Data.get_original_filenames
    ~cf.Data.source
+   ~cf.Data.source.get_deterministic_name
+   ~cf.Data.source.has_deterministic_name
 
 .. rubric:: Attributes
 
@@ -644,6 +651,32 @@ Performance
    ~cf.Data.chunks
    ~cf.Data.npartitions
    ~cf.Data.numblocks
+
+
+CFA
+---
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	  
+   ~cf.Data.add_file_location
+   ~cf.Data.cfa_clear_file_substitutions
+   ~cf.Data.cfa_del_aggregated_data
+   ~cf.Data.cfa_del_file_substitution
+   ~cf.Data.cfa_file_substitutions
+   ~cf.Data.cfa_get_aggregated_data
+   ~cf.Data.cfa_get_term
+   ~cf.Data.cfa_get_write
+   ~cf.Data.cfa_has_aggregated_data
+   ~cf.Data.cfa_has_file_substitutions
+   ~cf.Data.cfa_set_aggregated_data
+   ~cf.Data.cfa_set_term
+   ~cf.Data.cfa_set_write
+   ~cf.Data.cfa_update_file_substitutions
+   ~cf.Data.del_file_location
+   ~cf.Data.file_locations
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
@@ -790,9 +823,7 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.__array__
    ~cf.Data.__contains__
-   ~cf.Data.__data__     
    ~cf.Data.__deepcopy__
    ~cf.Data.__getitem__ 
    ~cf.Data.__hash__
@@ -801,6 +832,9 @@ Special
    ~cf.Data.__repr__
    ~cf.Data.__setitem__ 
    ~cf.Data.__str__
+   ~cf.Data.__array__
+   ~cf.Data.__data__     
+   ~cf.Data.__query_isclose__
 
 Deprecated
 ----------

@@ -24,6 +24,7 @@
     <script src="_static/copybutton.js"></script>
     <script src="_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -37,10 +38,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.3</a></h1>
 
 
 
@@ -73,7 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
@@ -82,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -177,6 +182,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__abs__.html#cf.List.__abs__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__abs__.html#cf.TimeDuration.__abs__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__add__.html#cf.AuxiliaryCoordinate.__add__">__add__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -203,6 +210,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__add__.html#cf.List.__add__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__add__.html#cf.TimeDuration.__add__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__and__.html#cf.AuxiliaryCoordinate.__and__">__and__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -227,6 +236,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__and__.html#cf.List.__and__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__and__.html#cf.Query.__and__">(cf.Query method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__array__.html#cf.AuxiliaryCoordinate.__array__">__array__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -243,11 +254,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.DomainAncillary.__array__.html#cf.DomainAncillary.__array__">(cf.DomainAncillary method)</a>
 </li>
+        <li><a href="method/cf.Field.__array__.html#cf.Field.__array__">(cf.Field method)</a>
+</li>
         <li><a href="method/cf.FieldAncillary.__array__.html#cf.FieldAncillary.__array__">(cf.FieldAncillary method)</a>
 </li>
         <li><a href="method/cf.Index.__array__.html#cf.Index.__array__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__array__.html#cf.List.__array__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__array__.html#cf.TimeDuration.__array__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.CoordinateConversion.__bool__.html#cf.CoordinateConversion.__bool__">__bool__() (cf.CoordinateConversion method)</a>
@@ -256,6 +271,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Data.__bool__.html#cf.Data.__bool__">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.Datum.__bool__.html#cf.Datum.__bool__">(cf.Datum method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__bool__.html#cf.TimeDuration.__bool__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Constructs.__call__.html#cf.Constructs.__call__">__call__() (cf.Constructs method)</a>
@@ -292,6 +309,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="method/cf.Constructs.__copy__.html#cf.Constructs.__copy__">__copy__() (cf.Constructs method)</a>
 </li>
+      <li><a href="method/cf.Query.__dask_tokenize__.html#cf.Query.__dask_tokenize__">__dask_tokenize__() (cf.Query method)</a>
+
+      <ul>
+        <li><a href="method/cf.TimeDuration.__dask_tokenize__.html#cf.TimeDuration.__dask_tokenize__">(cf.TimeDuration method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__data__.html#cf.AuxiliaryCoordinate.__data__">__data__() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -307,11 +330,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.DomainAncillary.__data__.html#cf.DomainAncillary.__data__">(cf.DomainAncillary method)</a>
 </li>
+        <li><a href="method/cf.Field.__data__.html#cf.Field.__data__">(cf.Field method)</a>
+</li>
         <li><a href="method/cf.FieldAncillary.__data__.html#cf.FieldAncillary.__data__">(cf.FieldAncillary method)</a>
 </li>
         <li><a href="method/cf.Index.__data__.html#cf.Index.__data__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__data__.html#cf.List.__data__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__data__.html#cf.TimeDuration.__data__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__deepcopy__.html#cf.AuxiliaryCoordinate.__deepcopy__">__deepcopy__() (cf.AuxiliaryCoordinate method)</a>
@@ -355,6 +382,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__deepcopy__.html#cf.List.__deepcopy__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__deepcopy__.html#cf.Query.__deepcopy__">(cf.Query method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__deepcopy__.html#cf.TimeDuration.__deepcopy__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__div__.html#cf.AuxiliaryCoordinate.__div__">__div__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -378,6 +409,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__div__.html#cf.Index.__div__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__div__.html#cf.List.__div__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__div__.html#cf.TimeDuration.__div__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Configuration.__enter__.html#cf.Configuration.__enter__">__enter__() (cf.Configuration method)</a>
@@ -411,6 +444,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__eq__.html#cf.List.__eq__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__eq__.html#cf.Query.__eq__">(cf.Query method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__eq__.html#cf.TimeDuration.__eq__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.Configuration.__exit__.html#cf.Configuration.__exit__">__exit__() (cf.Configuration method)</a>
 
@@ -441,6 +478,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__floordiv__.html#cf.List.__floordiv__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__floordiv__.html#cf.TimeDuration.__floordiv__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ge__.html#cf.AuxiliaryCoordinate.__ge__">__ge__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -466,6 +505,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__ge__.html#cf.Index.__ge__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__ge__.html#cf.List.__ge__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__ge__.html#cf.TimeDuration.__ge__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="attribute/cf.Field.__getitem__.html#cf.Field.__getitem__">__getitem__ (cf.Field attribute)</a>
@@ -529,6 +570,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__gt__.html#cf.List.__gt__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__gt__.html#cf.TimeDuration.__gt__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.Data.__hash__.html#cf.Data.__hash__">__hash__() (cf.Data method)</a>
 
@@ -561,6 +604,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__iadd__.html#cf.List.__iadd__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__iadd__.html#cf.TimeDuration.__iadd__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__iand__.html#cf.AuxiliaryCoordinate.__iand__">__iand__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -584,6 +629,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__iand__.html#cf.Index.__iand__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__iand__.html#cf.List.__iand__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.Query.__iand__.html#cf.Query.__iand__">(cf.Query method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__idiv__.html#cf.AuxiliaryCoordinate.__idiv__">__idiv__() (cf.AuxiliaryCoordinate method)</a>
@@ -609,6 +656,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__idiv__.html#cf.List.__idiv__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__idiv__.html#cf.TimeDuration.__idiv__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ifloordiv__.html#cf.AuxiliaryCoordinate.__ifloordiv__">__ifloordiv__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -632,6 +681,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__ifloordiv__.html#cf.Index.__ifloordiv__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__ifloordiv__.html#cf.List.__ifloordiv__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__ifloordiv__.html#cf.TimeDuration.__ifloordiv__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ilshift__.html#cf.AuxiliaryCoordinate.__ilshift__">__ilshift__() (cf.AuxiliaryCoordinate method)</a>
@@ -681,6 +732,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__imod__.html#cf.List.__imod__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__imod__.html#cf.TimeDuration.__imod__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__imul__.html#cf.AuxiliaryCoordinate.__imul__">__imul__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -707,9 +760,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__imul__.html#cf.List.__imul__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__imul__.html#cf.TimeDuration.__imul__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.DomainAxis.__int__.html#cf.DomainAxis.__int__">__int__() (cf.DomainAxis method)</a>
+
+      <ul>
+        <li><a href="method/cf.TimeDuration.__int__.html#cf.TimeDuration.__int__">(cf.TimeDuration method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__invert__.html#cf.AuxiliaryCoordinate.__invert__">__invert__() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -756,6 +815,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__ior__.html#cf.Index.__ior__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__ior__.html#cf.List.__ior__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.Query.__ior__.html#cf.Query.__ior__">(cf.Query method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ipow__.html#cf.AuxiliaryCoordinate.__ipow__">__ipow__() (cf.AuxiliaryCoordinate method)</a>
@@ -829,6 +890,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__isub__.html#cf.List.__isub__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__isub__.html#cf.TimeDuration.__isub__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.Constructs.__iter__.html#cf.Constructs.__iter__">__iter__() (cf.Constructs method)</a>
 
@@ -860,6 +923,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__itruediv__.html#cf.Index.__itruediv__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__itruediv__.html#cf.List.__itruediv__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__itruediv__.html#cf.TimeDuration.__itruediv__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ixor__.html#cf.AuxiliaryCoordinate.__ixor__">__ixor__() (cf.AuxiliaryCoordinate method)</a>
@@ -910,6 +975,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__le__.html#cf.Index.__le__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__le__.html#cf.List.__le__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__le__.html#cf.TimeDuration.__le__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Constructs.__len__.html#cf.Constructs.__len__">__len__() (cf.Constructs method)</a>
@@ -971,6 +1038,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__lt__.html#cf.List.__lt__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__lt__.html#cf.TimeDuration.__lt__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__mod__.html#cf.AuxiliaryCoordinate.__mod__">__mod__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -994,6 +1063,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__mod__.html#cf.Index.__mod__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__mod__.html#cf.List.__mod__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__mod__.html#cf.TimeDuration.__mod__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__mul__.html#cf.AuxiliaryCoordinate.__mul__">__mul__() (cf.AuxiliaryCoordinate method)</a>
@@ -1021,6 +1092,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__mul__.html#cf.List.__mul__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__mul__.html#cf.TimeDuration.__mul__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__ne__.html#cf.AuxiliaryCoordinate.__ne__">__ne__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1047,6 +1120,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__ne__.html#cf.List.__ne__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__ne__.html#cf.Query.__ne__">(cf.Query method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__ne__.html#cf.TimeDuration.__ne__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__neg__.html#cf.AuxiliaryCoordinate.__neg__">__neg__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1071,6 +1148,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__neg__.html#cf.List.__neg__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__neg__.html#cf.TimeDuration.__neg__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__or__.html#cf.AuxiliaryCoordinate.__or__">__or__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1094,6 +1173,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__or__.html#cf.Index.__or__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__or__.html#cf.List.__or__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.Query.__or__.html#cf.Query.__or__">(cf.Query method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__pos__.html#cf.AuxiliaryCoordinate.__pos__">__pos__() (cf.AuxiliaryCoordinate method)</a>
@@ -1144,6 +1225,30 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.__pow__.html#cf.List.__pow__">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.AuxiliaryCoordinate.__query_isclose__.html#cf.AuxiliaryCoordinate.__query_isclose__">__query_isclose__() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.__query_isclose__.html#cf.Bounds.__query_isclose__">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.__query_isclose__.html#cf.CellMeasure.__query_isclose__">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.__query_isclose__.html#cf.Count.__query_isclose__">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.__query_isclose__.html#cf.Data.__query_isclose__">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.__query_isclose__.html#cf.DimensionCoordinate.__query_isclose__">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.__query_isclose__.html#cf.DomainAncillary.__query_isclose__">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.__query_isclose__.html#cf.Field.__query_isclose__">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.__query_isclose__.html#cf.FieldAncillary.__query_isclose__">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.__query_isclose__.html#cf.Index.__query_isclose__">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.__query_isclose__.html#cf.List.__query_isclose__">(cf.List method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__radd__.html#cf.AuxiliaryCoordinate.__radd__">__radd__() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -1166,6 +1271,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__radd__.html#cf.Index.__radd__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__radd__.html#cf.List.__radd__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__radd__.html#cf.TimeDuration.__radd__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__rand__.html#cf.AuxiliaryCoordinate.__rand__">__rand__() (cf.AuxiliaryCoordinate method)</a>
@@ -1259,7 +1366,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__repr__.html#cf.List.__repr__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__repr__.html#cf.Query.__repr__">(cf.Query method)</a>
+</li>
         <li><a href="method/cf.RegridOperator.__repr__.html#cf.RegridOperator.__repr__">(cf.RegridOperator method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__repr__.html#cf.TimeDuration.__repr__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__rfloordiv__.html#cf.AuxiliaryCoordinate.__rfloordiv__">__rfloordiv__() (cf.AuxiliaryCoordinate method)</a>
@@ -1332,6 +1443,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__rmod__.html#cf.Index.__rmod__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__rmod__.html#cf.List.__rmod__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__rmod__.html#cf.TimeDuration.__rmod__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__rmul__.html#cf.AuxiliaryCoordinate.__rmul__">__rmul__() (cf.AuxiliaryCoordinate method)</a>
@@ -1479,6 +1592,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__rsub__.html#cf.List.__rsub__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__rsub__.html#cf.TimeDuration.__rsub__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__rtruediv__.html#cf.AuxiliaryCoordinate.__rtruediv__">__rtruediv__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1595,6 +1710,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__str__.html#cf.List.__str__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.Query.__str__.html#cf.Query.__str__">(cf.Query method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__str__.html#cf.TimeDuration.__str__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__sub__.html#cf.AuxiliaryCoordinate.__sub__">__sub__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1619,6 +1738,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.List.__sub__.html#cf.List.__sub__">(cf.List method)</a>
 </li>
+        <li><a href="method/cf.TimeDuration.__sub__.html#cf.TimeDuration.__sub__">(cf.TimeDuration method)</a>
+</li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__truediv__.html#cf.AuxiliaryCoordinate.__truediv__">__truediv__() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1642,6 +1763,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Index.__truediv__.html#cf.Index.__truediv__">(cf.Index method)</a>
 </li>
         <li><a href="method/cf.List.__truediv__.html#cf.List.__truediv__">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.TimeDuration.__truediv__.html#cf.TimeDuration.__truediv__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.__xor__.html#cf.AuxiliaryCoordinate.__xor__">__xor__() (cf.AuxiliaryCoordinate method)</a>
@@ -1710,6 +1833,34 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="function/cf.abspath.html#cf.abspath">abspath() (in module cf)</a>
 </li>
+      <li><a href="method/cf.AuxiliaryCoordinate.add_file_location.html#cf.AuxiliaryCoordinate.add_file_location">add_file_location() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.add_file_location.html#cf.Bounds.add_file_location">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.add_file_location.html#cf.CellMeasure.add_file_location">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.add_file_location.html#cf.Count.add_file_location">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.add_file_location.html#cf.Data.add_file_location">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.add_file_location.html#cf.DimensionCoordinate.add_file_location">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.add_file_location.html#cf.Domain.add_file_location">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.add_file_location.html#cf.DomainAncillary.add_file_location">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.add_file_location.html#cf.Field.add_file_location">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.add_file_location.html#cf.FieldAncillary.add_file_location">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.add_file_location.html#cf.Index.add_file_location">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.add_file_location.html#cf.List.add_file_location">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.NetCDFArray.add_file_location.html#cf.NetCDFArray.add_file_location">(cf.NetCDFArray method)</a>
+</li>
+      </ul></li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.add_offset.html#cf.AuxiliaryCoordinate.add_offset">add_offset (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2002,6 +2153,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.argmax.html#cf.Field.argmax">(cf.Field method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.argmin.html#cf.Data.argmin">argmin() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.argmin.html#cf.Field.argmin">(cf.Field method)</a>
+</li>
+      </ul></li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array">array (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2082,6 +2239,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.asreftime.html#cf.List.asreftime">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="attribute/cf.Query.atol.html#cf.Query.atol">atol (cf.Query attribute)</a>
+</li>
       <li><a href="function/cf.ATOL.html#cf.ATOL">ATOL() (in module cf)</a>
 </li>
       <li><a href="function/cf.atol.html#cf.atol">atol() (in module cf)</a>
@@ -2348,6 +2507,128 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="constant.html#cf.cf.masked">cf.masked (in module cf)</a>
 </li>
+      <li><a href="method/cf.AuxiliaryCoordinate.cfa_clear_file_substitutions.html#cf.AuxiliaryCoordinate.cfa_clear_file_substitutions">cfa_clear_file_substitutions() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.cfa_clear_file_substitutions.html#cf.Bounds.cfa_clear_file_substitutions">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.cfa_clear_file_substitutions.html#cf.CellMeasure.cfa_clear_file_substitutions">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.cfa_clear_file_substitutions.html#cf.Count.cfa_clear_file_substitutions">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.cfa_clear_file_substitutions.html#cf.Data.cfa_clear_file_substitutions">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.cfa_clear_file_substitutions.html#cf.DimensionCoordinate.cfa_clear_file_substitutions">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.cfa_clear_file_substitutions.html#cf.Domain.cfa_clear_file_substitutions">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.cfa_clear_file_substitutions.html#cf.DomainAncillary.cfa_clear_file_substitutions">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.cfa_clear_file_substitutions.html#cf.Field.cfa_clear_file_substitutions">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.cfa_clear_file_substitutions.html#cf.FieldAncillary.cfa_clear_file_substitutions">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.cfa_clear_file_substitutions.html#cf.Index.cfa_clear_file_substitutions">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.cfa_clear_file_substitutions.html#cf.List.cfa_clear_file_substitutions">(cf.List method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.Data.cfa_del_aggregated_data.html#cf.Data.cfa_del_aggregated_data">cfa_del_aggregated_data() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.AuxiliaryCoordinate.cfa_del_file_substitution.html#cf.AuxiliaryCoordinate.cfa_del_file_substitution">cfa_del_file_substitution() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.cfa_del_file_substitution.html#cf.Bounds.cfa_del_file_substitution">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.cfa_del_file_substitution.html#cf.CellMeasure.cfa_del_file_substitution">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.cfa_del_file_substitution.html#cf.Count.cfa_del_file_substitution">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.cfa_del_file_substitution.html#cf.Data.cfa_del_file_substitution">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.cfa_del_file_substitution.html#cf.DimensionCoordinate.cfa_del_file_substitution">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.cfa_del_file_substitution.html#cf.Domain.cfa_del_file_substitution">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.cfa_del_file_substitution.html#cf.DomainAncillary.cfa_del_file_substitution">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.cfa_del_file_substitution.html#cf.Field.cfa_del_file_substitution">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.cfa_del_file_substitution.html#cf.FieldAncillary.cfa_del_file_substitution">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.cfa_del_file_substitution.html#cf.Index.cfa_del_file_substitution">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.cfa_del_file_substitution.html#cf.List.cfa_del_file_substitution">(cf.List method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.AuxiliaryCoordinate.cfa_file_substitutions.html#cf.AuxiliaryCoordinate.cfa_file_substitutions">cfa_file_substitutions() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.cfa_file_substitutions.html#cf.Bounds.cfa_file_substitutions">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.cfa_file_substitutions.html#cf.CellMeasure.cfa_file_substitutions">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.cfa_file_substitutions.html#cf.Count.cfa_file_substitutions">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.cfa_file_substitutions.html#cf.Data.cfa_file_substitutions">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.cfa_file_substitutions.html#cf.DimensionCoordinate.cfa_file_substitutions">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.cfa_file_substitutions.html#cf.Domain.cfa_file_substitutions">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.cfa_file_substitutions.html#cf.DomainAncillary.cfa_file_substitutions">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.cfa_file_substitutions.html#cf.Field.cfa_file_substitutions">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.cfa_file_substitutions.html#cf.FieldAncillary.cfa_file_substitutions">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.cfa_file_substitutions.html#cf.Index.cfa_file_substitutions">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.cfa_file_substitutions.html#cf.List.cfa_file_substitutions">(cf.List method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.Data.cfa_get_aggregated_data.html#cf.Data.cfa_get_aggregated_data">cfa_get_aggregated_data() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_get_term.html#cf.Data.cfa_get_term">cfa_get_term() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_get_write.html#cf.Data.cfa_get_write">cfa_get_write() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_has_aggregated_data.html#cf.Data.cfa_has_aggregated_data">cfa_has_aggregated_data() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_has_file_substitutions.html#cf.Data.cfa_has_file_substitutions">cfa_has_file_substitutions() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_set_aggregated_data.html#cf.Data.cfa_set_aggregated_data">cfa_set_aggregated_data() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_set_term.html#cf.Data.cfa_set_term">cfa_set_term() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.Data.cfa_set_write.html#cf.Data.cfa_set_write">cfa_set_write() (cf.Data method)</a>
+</li>
+      <li><a href="method/cf.AuxiliaryCoordinate.cfa_update_file_substitutions.html#cf.AuxiliaryCoordinate.cfa_update_file_substitutions">cfa_update_file_substitutions() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.cfa_update_file_substitutions.html#cf.Bounds.cfa_update_file_substitutions">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.cfa_update_file_substitutions.html#cf.CellMeasure.cfa_update_file_substitutions">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.cfa_update_file_substitutions.html#cf.Count.cfa_update_file_substitutions">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.cfa_update_file_substitutions.html#cf.DimensionCoordinate.cfa_update_file_substitutions">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.cfa_update_file_substitutions.html#cf.Domain.cfa_update_file_substitutions">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.cfa_update_file_substitutions.html#cf.DomainAncillary.cfa_update_file_substitutions">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.cfa_update_file_substitutions.html#cf.Field.cfa_update_file_substitutions">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.cfa_update_file_substitutions.html#cf.FieldAncillary.cfa_update_file_substitutions">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.cfa_update_file_substitutions.html#cf.Index.cfa_update_file_substitutions">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.cfa_update_file_substitutions.html#cf.List.cfa_update_file_substitutions">(cf.List method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.CellMethod.change_axes.html#cf.CellMethod.change_axes">change_axes() (cf.CellMethod method)</a>
 </li>
       <li><a href="attribute/cf.Data.change_calendar.html#cf.Data.change_calendar">change_calendar (cf.Data attribute)</a>
@@ -2380,6 +2661,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.chunk.html#cf.List.chunk">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.chunk_indices.html#cf.Data.chunk_indices">chunk_indices() (cf.Data method)</a>
+</li>
       <li><a href="attribute/cf.Data.chunks.html#cf.Data.chunks">chunks (cf.Data attribute)</a>
 </li>
       <li><a href="method/cf.Data.chunks.html#cf.Data.chunks">chunks() (cf.Data method)</a>
@@ -2436,6 +2719,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.climatological_time_axes.html#cf.Field.climatological_time_axes">(cf.Field method)</a>
 </li>
       </ul></li>
+      <li><a href="function/cf.climatology_cells.html#cf.climatology_cells">climatology_cells() (in module cf)</a>
+</li>
       <li><a href="method/cf.AuxiliaryCoordinate.clip.html#cf.AuxiliaryCoordinate.clip">clip() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -2560,6 +2845,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.compressed_dimensions.html#cf.RaggedIndexedContiguousArray.compressed_dimensions">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Data.compute.html#cf.Data.compute">compute (cf.Data attribute)</a>
 </li>
       <li><a href="method/cf.Field.compute_vertical_coordinates.html#cf.Field.compute_vertical_coordinates">compute_vertical_coordinates() (cf.Field method)</a>
@@ -2622,8 +2909,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.construct_item.html#cf.Field.construct_item">(cf.Field method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Domain.construct_key.html#cf.Domain.construct_key">construct_key() (cf.Domain method)</a>
 
       <ul>
@@ -2932,6 +3217,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds">create_bounds() (cf.DimensionCoordinate method)</a>
 </li>
+      <li><a href="method/cf.DimensionCoordinate.create_regular.html#cf.DimensionCoordinate.create_regular">create_regular() (cf.DimensionCoordinate class method)</a>
+
+      <ul>
+        <li><a href="method/cf.Domain.create_regular.html#cf.Domain.create_regular">(cf.Domain class method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.creation_commands.html#cf.AuxiliaryCoordinate.creation_commands">creation_commands() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -3240,6 +3531,34 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
       <ul>
         <li><a href="method/cf.Field.del_domain_axis.html#cf.Field.del_domain_axis">(cf.Field method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.AuxiliaryCoordinate.del_file_location.html#cf.AuxiliaryCoordinate.del_file_location">del_file_location() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.del_file_location.html#cf.Bounds.del_file_location">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.del_file_location.html#cf.CellMeasure.del_file_location">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.del_file_location.html#cf.Count.del_file_location">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.del_file_location.html#cf.Data.del_file_location">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.del_file_location.html#cf.DimensionCoordinate.del_file_location">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.del_file_location.html#cf.Domain.del_file_location">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.del_file_location.html#cf.DomainAncillary.del_file_location">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.del_file_location.html#cf.Field.del_file_location">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.del_file_location.html#cf.FieldAncillary.del_file_location">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.del_file_location.html#cf.Index.del_file_location">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.del_file_location.html#cf.List.del_file_location">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.NetCDFArray.del_file_location.html#cf.NetCDFArray.del_file_location">(cf.NetCDFArray method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.Data.del_fill_value.html#cf.Data.del_fill_value">del_fill_value() (cf.Data method)</a>
@@ -3826,7 +4145,35 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="class/cf.FieldList.html#cf.FieldList">FieldList (class in cf)</a>
 </li>
-      <li><a href="attribute/cf.NetCDFArray.file_address.html#cf.NetCDFArray.file_address">file_address (cf.NetCDFArray attribute)</a>
+      <li><a href="method/cf.AuxiliaryCoordinate.file_locations.html#cf.AuxiliaryCoordinate.file_locations">file_locations() (cf.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cf.Bounds.file_locations.html#cf.Bounds.file_locations">(cf.Bounds method)</a>
+</li>
+        <li><a href="method/cf.CellMeasure.file_locations.html#cf.CellMeasure.file_locations">(cf.CellMeasure method)</a>
+</li>
+        <li><a href="method/cf.Count.file_locations.html#cf.Count.file_locations">(cf.Count method)</a>
+</li>
+        <li><a href="method/cf.Data.file_locations.html#cf.Data.file_locations">(cf.Data method)</a>
+</li>
+        <li><a href="method/cf.DimensionCoordinate.file_locations.html#cf.DimensionCoordinate.file_locations">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.file_locations.html#cf.Domain.file_locations">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAncillary.file_locations.html#cf.DomainAncillary.file_locations">(cf.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cf.Field.file_locations.html#cf.Field.file_locations">(cf.Field method)</a>
+</li>
+        <li><a href="method/cf.FieldAncillary.file_locations.html#cf.FieldAncillary.file_locations">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.file_locations.html#cf.Index.file_locations">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.file_locations.html#cf.List.file_locations">(cf.List method)</a>
+</li>
+        <li><a href="method/cf.NetCDFArray.file_locations.html#cf.NetCDFArray.file_locations">(cf.NetCDFArray method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cf.NetCDFArray.filename.html#cf.NetCDFArray.filename">filename() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.files.html#cf.AuxiliaryCoordinate.files">files() (cf.AuxiliaryCoordinate method)</a>
 
@@ -3892,6 +4239,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.Data.first_element.html#cf.Data.first_element">first_element() (cf.Data method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Data.fits_in_memory.html#cf.Data.fits_in_memory">fits_in_memory() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.Data.fits_in_one_chunk_in_memory.html#cf.Data.fits_in_one_chunk_in_memory">fits_in_one_chunk_in_memory() (cf.Data method)</a>
@@ -3914,8 +4263,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="attribute/cf.Flags.flag_values.html#cf.Flags.flag_values">(cf.Flags attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.Field.Flags.html#cf.Field.Flags">Flags (cf.Field attribute)</a>
 
       <ul>
@@ -4041,6 +4388,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       </ul></li>
       <li><a href="method/cf.NetCDFArray.get_address.html#cf.NetCDFArray.get_address">get_address() (cf.NetCDFArray method)</a>
+</li>
+      <li><a href="method/cf.NetCDFArray.get_addresses.html#cf.NetCDFArray.get_addresses">get_addresses() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.CellMethod.get_axes.html#cf.CellMethod.get_axes">get_axes() (cf.CellMethod method)</a>
 </li>
@@ -4178,22 +4527,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.Data.get_dependent_tie_points.html#cf.Data.get_dependent_tie_points">get_dependent_tie_points() (cf.Data method)</a>
 </li>
+      <li><a href="method/cf.Data.get_deterministic_name.html#cf.Data.get_deterministic_name">get_deterministic_name() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.Field.get_domain.html#cf.Field.get_domain">get_domain() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.CoordinateConversion.get_domain_ancillary.html#cf.CoordinateConversion.get_domain_ancillary">get_domain_ancillary() (cf.CoordinateConversion method)</a>
 </li>
-      <li><a href="method/cf.GatheredArray.get_filename.html#cf.GatheredArray.get_filename">get_filename() (cf.GatheredArray method)</a>
-
-      <ul>
-        <li><a href="method/cf.NetCDFArray.get_filename.html#cf.NetCDFArray.get_filename">(cf.NetCDFArray method)</a>
+      <li><a href="method/cf.NetCDFArray.get_filename.html#cf.NetCDFArray.get_filename">get_filename() (cf.NetCDFArray method)</a>
 </li>
-        <li><a href="method/cf.RaggedContiguousArray.get_filename.html#cf.RaggedContiguousArray.get_filename">(cf.RaggedContiguousArray method)</a>
-</li>
-        <li><a href="method/cf.RaggedIndexedArray.get_filename.html#cf.RaggedIndexedArray.get_filename">(cf.RaggedIndexedArray method)</a>
-</li>
-        <li><a href="method/cf.RaggedIndexedContiguousArray.get_filename.html#cf.RaggedIndexedContiguousArray.get_filename">(cf.RaggedIndexedContiguousArray method)</a>
-</li>
-      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.get_filenames.html#cf.AuxiliaryCoordinate.get_filenames">get_filenames() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -4230,9 +4571,13 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.get_filenames.html#cf.RaggedIndexedContiguousArray.get_filenames">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.get_fill_value.html#cf.Data.get_fill_value">get_fill_value() (cf.Data method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="method/cf.Data.get_fill_value.html#cf.Data.get_fill_value">get_fill_value() (cf.Data method)</a>
+      <li><a href="method/cf.NetCDFArray.get_format.html#cf.NetCDFArray.get_format">get_format() (cf.NetCDFArray method)</a>
+</li>
+      <li><a href="method/cf.NetCDFArray.get_formats.html#cf.NetCDFArray.get_formats">get_formats() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.get_geometry.html#cf.AuxiliaryCoordinate.get_geometry">get_geometry() (cf.AuxiliaryCoordinate method)</a>
 
@@ -4242,7 +4587,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.DomainAncillary.get_geometry.html#cf.DomainAncillary.get_geometry">(cf.DomainAncillary method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.NetCDFArray.get_group.html#cf.NetCDFArray.get_group">get_group() (cf.NetCDFArray method)</a>
+      <li><a href="method/cf.NetCDFArray.get_groups.html#cf.NetCDFArray.get_groups">get_groups() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.Data.get_index.html#cf.Data.get_index">get_index() (cf.Data method)</a>
 
@@ -4277,8 +4622,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       <li><a href="method/cf.CellMethod.get_method.html#cf.CellMethod.get_method">get_method() (cf.CellMethod method)</a>
 </li>
       <li><a href="method/cf.NetCDFArray.get_missing_values.html#cf.NetCDFArray.get_missing_values">get_missing_values() (cf.NetCDFArray method)</a>
-</li>
-      <li><a href="method/cf.NetCDFArray.get_ncvar.html#cf.NetCDFArray.get_ncvar">get_ncvar() (cf.NetCDFArray method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.get_node_count.html#cf.AuxiliaryCoordinate.get_node_count">get_node_count() (cf.AuxiliaryCoordinate method)</a>
 
@@ -4400,8 +4743,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.get_units.html#cf.RaggedIndexedContiguousArray.get_units">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.NetCDFArray.get_varid.html#cf.NetCDFArray.get_varid">get_varid() (cf.NetCDFArray method)</a>
-</li>
       <li><a href="method/cf.AuxiliaryCoordinate.getprop.html#cf.AuxiliaryCoordinate.getprop">getprop() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -4556,6 +4897,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.has_data_axes.html#cf.Field.has_data_axes">(cf.Field method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.has_deterministic_name.html#cf.Data.has_deterministic_name">has_deterministic_name() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.CoordinateConversion.has_domain_ancillary.html#cf.CoordinateConversion.has_domain_ancillary">has_domain_ancillary() (cf.CoordinateConversion method)</a>
 </li>
       <li><a href="method/cf.Data.has_fill_value.html#cf.Data.has_fill_value">has_fill_value() (cf.Data method)</a>
@@ -5004,10 +5347,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="method/cf.TimeDuration.interval.html#cf.TimeDuration.interval">interval() (cf.TimeDuration method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.CellMethod.intervals.html#cf.CellMethod.intervals">intervals (cf.CellMethod attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter">inverse_filter() (cf.Constructs method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.is_climatology.html#cf.AuxiliaryCoordinate.is_climatology">is_climatology() (cf.AuxiliaryCoordinate method)</a>
@@ -5045,7 +5388,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       </ul></li>
       <li><a href="method/cf.Data.isclose.html#cf.Data.isclose">isclose() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="function/cf.isclose.html#cf.isclose">(in module cf)</a>
 </li>
+      </ul></li>
       <li><a href="attribute/cf.Query.iscontains.html#cf.Query.iscontains">iscontains (cf.Query attribute)</a>
 </li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.iscyclic.html#cf.AuxiliaryCoordinate.iscyclic">iscyclic (cf.AuxiliaryCoordinate attribute)</a>
@@ -6964,6 +7311,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="attribute/cf.RegridOperator.row.html#cf.RegridOperator.row">row (cf.RegridOperator attribute)</a>
 </li>
+      <li><a href="attribute/cf.Query.rtol.html#cf.Query.rtol">rtol (cf.Query attribute)</a>
+</li>
       <li><a href="function/cf.RTOL.html#cf.RTOL">RTOL() (in module cf)</a>
 </li>
       <li><a href="function/cf.rtol.html#cf.rtol">rtol() (in module cf)</a>
@@ -7313,7 +7662,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       <li><a href="method/cf.Data.set_units.html#cf.Data.set_units">set_units() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.Configuration.setdefault.html#cf.Configuration.setdefault">setdefault() (cf.Configuration method)</a>
+
+      <ul>
+        <li><a href="method/cf.Query.setdefault.html#cf.Query.setdefault">(cf.Query method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Data.seterr.html#cf.Data.seterr">seterr() (cf.Data static method)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.setprop.html#cf.AuxiliaryCoordinate.setprop">setprop() (cf.AuxiliaryCoordinate method)</a>
@@ -7848,10 +8201,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.to_memory.html#cf.RaggedIndexedContiguousArray.to_memory">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.RegridOperator.todense.html#cf.RegridOperator.todense">todense() (cf.RegridOperator method)</a>
-</li>
       <li><a href="method/cf.Constructs.todict.html#cf.Constructs.todict">todict() (cf.Constructs method)</a>
+
+      <ul>
+        <li><a href="method/cf.Data.todict.html#cf.Data.todict">(cf.Data method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Data.tolist.html#cf.Data.tolist">tolist() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.RegridOperator.tosparse.html#cf.RegridOperator.tosparse">tosparse() (cf.RegridOperator method)</a>
@@ -7994,14 +8349,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="attribute/cf.DimensionCoordinate.Units.html#cf.DimensionCoordinate.Units">(cf.DimensionCoordinate attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.DimensionCoordinate.units.html#cf.DimensionCoordinate.units">units (cf.DimensionCoordinate attribute)</a>
 
       <ul>
         <li><a href="attribute/cf.Domain.units.html#cf.Domain.units">(cf.Domain attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.DomainAncillary.Units.html#cf.DomainAncillary.Units">Units (cf.DomainAncillary attribute)</a>
 </li>
       <li><a href="attribute/cf.DomainAncillary.units.html#cf.DomainAncillary.units">units (cf.DomainAncillary attribute)</a>
@@ -8026,9 +8381,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="attribute/cf.List.units.html#cf.List.units">units (cf.List attribute)</a>
 </li>
-      <li><a href="attribute/cf.RaggedContiguousArray.Units.html#cf.RaggedContiguousArray.Units">Units (cf.RaggedContiguousArray attribute)</a>
+      <li><a href="attribute/cf.Query.Units.html#cf.Query.Units">Units (cf.Query attribute)</a>
 
       <ul>
+        <li><a href="attribute/cf.RaggedContiguousArray.Units.html#cf.RaggedContiguousArray.Units">(cf.RaggedContiguousArray attribute)</a>
+</li>
         <li><a href="attribute/cf.RaggedIndexedArray.Units.html#cf.RaggedIndexedArray.Units">(cf.RaggedIndexedArray attribute)</a>
 </li>
         <li><a href="attribute/cf.RaggedIndexedContiguousArray.Units.html#cf.RaggedIndexedContiguousArray.Units">(cf.RaggedIndexedContiguousArray attribute)</a>
@@ -8038,6 +8395,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="class/cf.Units.html#cf.Units">(class in cf)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.NetCDFArray.Units.html#cf.NetCDFArray.Units">Units() (cf.NetCDFArray method)</a>
+</li>
       <li><a href="method/cf.Field.unlimited.html#cf.Field.unlimited">unlimited() (cf.Field method)</a>
 </li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.unsafe_array.html#cf.AuxiliaryCoordinate.unsafe_array">unsafe_array (cf.AuxiliaryCoordinate attribute)</a>
@@ -8254,6 +8613,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.Field.weights.html#cf.Field.weights">weights() (cf.Field method)</a>
 </li>
+      <li><a href="attribute/cf.RegridOperator.weights_file.html#cf.RegridOperator.weights_file">weights_file (cf.RegridOperator attribute)</a>
+</li>
       <li><a href="attribute/cf.CellMethod.where.html#cf.CellMethod.where">where (cf.CellMethod attribute)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.where.html#cf.AuxiliaryCoordinate.where">where() (cf.AuxiliaryCoordinate method)</a>
@@ -8424,7 +8785,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

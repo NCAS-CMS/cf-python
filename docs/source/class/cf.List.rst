@@ -395,6 +395,23 @@ NetCDF
    ~cf.List.nc_has_variable
    ~cf.List.nc_set_variable
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.List.add_file_location
+   ~cf.List.cfa_clear_file_substitutions
+   ~cf.List.cfa_del_file_substitution
+   ~cf.List.cfa_file_substitutions
+   ~cf.List.cfa_update_file_substitutions
+   ~cf.List.del_file_location
+   ~cf.List.file_locations
 
 Aliases
 -------
@@ -577,6 +594,7 @@ Special
    ~cf.List.__str__
    ~cf.List.__array__
    ~cf.List.__data__
+   ~cf.List.__query_isclose__
 
 Deprecated
 ----------

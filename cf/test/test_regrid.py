@@ -1,6 +1,8 @@
+import atexit
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -9,13 +11,41 @@ import numpy as np
 
 import cf
 
-try:
-    import ESMF
-except Exception:
-    ESMF_imported = False
-else:
-    ESMF_imported = True
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_regrid.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+(tmpfile,) = tmpfiles
 
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
+
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
+esmpy_imported = False
+try:
+    import esmpy
+
+    esmpy_imported = True
+except ImportError:
+    try:
+        # Take the new name to use in preference to the old one.
+        import ESMF as esmpy
+
+        esmpy_imported = True
+    except ImportError:
+        pass
 
 all_methods = (
     "linear",
@@ -32,9 +62,9 @@ atol = 1e-12
 rtol = 0
 
 
-def ESMF_regrid_1d(method, src, dst, **kwargs):
+def esmpy_regrid_1d(method, src, dst, **kwargs):
     """Helper function that regrids one dimension of Field data using
-    pure ESMF.
+    pure esmpy.
 
     Used to verify `cf.Field.regridc`
 
@@ -43,12 +73,12 @@ def ESMF_regrid_1d(method, src, dst, **kwargs):
         Regridded numpy masked array.
 
     """
-    ESMF_regrid = cf.regrid.regrid(
+    esmpy_regrid = cf.regrid.regrid(
         "Cartesian",
         src,
         dst,
         method,
-        return_ESMF_regrid_operator=True,
+        return_esmpy_regrid_operator=True,
         **kwargs
     )
 
@@ -56,8 +86,12 @@ def ESMF_regrid_1d(method, src, dst, **kwargs):
 
     ndbounds = src.shape[1:3]
 
-    src_field = ESMF.Field(ESMF_regrid.srcfield.grid, "src", ndbounds=ndbounds)
-    dst_field = ESMF.Field(ESMF_regrid.dstfield.grid, "dst", ndbounds=ndbounds)
+    src_field = esmpy.Field(
+        esmpy_regrid.srcfield.grid, "src", ndbounds=ndbounds
+    )
+    dst_field = esmpy.Field(
+        esmpy_regrid.dstfield.grid, "dst", ndbounds=ndbounds
+    )
 
     fill_value = 1e20
     array = src.array
@@ -68,15 +102,15 @@ def ESMF_regrid_1d(method, src, dst, **kwargs):
     )
     dst_field.data[...] = fill_value
 
-    ESMF_regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
+    esmpy_regrid(src_field, dst_field, zero_region=esmpy.Region.SELECT)
 
     out = dst_field.data[:, 0, :, :]
 
     return np.ma.MaskedArray(out.copy(), mask=(out == fill_value))
 
 
-def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
-    """Helper function that regrids Field data using pure ESMF.
+def esmpy_regrid_Nd(coord_sys, method, src, dst, **kwargs):
+    """Helper function that regrids Field data using pure esmpy.
 
     Used to verify `cf.Field.regrids` and `cf.Field.regridc`
 
@@ -85,14 +119,19 @@ def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
         Regridded numpy masked array.
 
     """
-    ESMF_regrid = cf.regrid.regrid(
-        coord_sys, src, dst, method, return_ESMF_regrid_operator=True, **kwargs
+    esmpy_regrid = cf.regrid.regrid(
+        coord_sys,
+        src,
+        dst,
+        method,
+        return_esmpy_regrid_operator=True,
+        **kwargs
     )
 
     src = src.transpose(["X", "Y", "T"]).squeeze()
 
-    src_field = ESMF.Field(ESMF_regrid.srcfield.grid, "src")
-    dst_field = ESMF.Field(ESMF_regrid.dstfield.grid, "dst")
+    src_field = esmpy.Field(esmpy_regrid.srcfield.grid, "src")
+    dst_field = esmpy.Field(esmpy_regrid.dstfield.grid, "dst")
 
     fill_value = 1e20
     src_field.data[...] = np.ma.MaskedArray(src.array, copy=False).filled(
@@ -101,7 +140,7 @@ def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
     dst_field.data[...] = fill_value
 
-    ESMF_regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
+    esmpy_regrid(src_field, dst_field, zero_region=esmpy.Region.SELECT)
 
     return np.ma.MaskedArray(
         dst_field.data.copy(),
@@ -118,8 +157,7 @@ class RegridTest(unittest.TestCase):
     dst = dst_src[0]
     src = dst_src[1]
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    # @unittest.skipUnless(False, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_2d_field(self):
         """2-d regridding with Field destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -150,7 +188,7 @@ class RegridTest(unittest.TestCase):
                 for method in all_methods:
                     if use_dst_mask and method == "nearest_dtos":
                         # TODO: This test does not pass, but it seems to
-                        #       be problem with the ESMF "truth", rather
+                        #       be problem with the esmpy "truth", rather
                         #       than cf
                         continue
 
@@ -160,7 +198,7 @@ class RegridTest(unittest.TestCase):
                     x.transpose(["X", "Y", "T"], inplace=True)
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_Nd(
+                        y = esmpy_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -188,7 +226,7 @@ class RegridTest(unittest.TestCase):
                 for method in all_methods:
                     if use_dst_mask and method == "nearest_dtos":
                         # TODO: This test does not pass, but it seems to
-                        #       be problem with the ESMF "truth", rather
+                        #       be problem with the esmpy "truth", rather
                         #       than cf
                         continue
 
@@ -198,7 +236,7 @@ class RegridTest(unittest.TestCase):
                     x.transpose(["X", "Y", "T"], inplace=True)
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_Nd(
+                        y = esmpy_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -210,6 +248,7 @@ class RegridTest(unittest.TestCase):
 
                         if isinstance(a, np.ma.MaskedArray):
                             self.assertTrue((y.mask == a.mask).all())
+
                         else:
                             self.assertFalse(y.mask.any())
 
@@ -230,7 +269,7 @@ class RegridTest(unittest.TestCase):
                 ):
                     if use_dst_mask and method == "nearest_dtos":
                         # TODO: This test does not pass, but it seems to
-                        #       be problem with the ESMF "truth", rather
+                        #       be problem with the esmpy "truth", rather
                         #       than cf
                         continue
 
@@ -240,7 +279,7 @@ class RegridTest(unittest.TestCase):
                     x.transpose(["X", "Y", "T"], inplace=True)
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_Nd(
+                        y = esmpy_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -270,7 +309,7 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method).array
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_coords(self):
         """Spherical regridding with coords destination grid."""
         dst = self.dst.copy()
@@ -338,7 +377,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_2d_coords(self):
         """2-d Cartesian regridding with coords destination grid."""
         dst = self.dst.copy()
@@ -378,7 +417,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.src.regrids("foobar", method="conservative")
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_domain(self):
         """Spherical regridding with Domain destination grid."""
         dst = self.dst
@@ -400,7 +439,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_domain(self):
         """Spherical regridding with Domain destination grid."""
         dst = self.dst
@@ -424,7 +463,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_field_operator(self):
         """Spherical regridding with operator destination grid."""
         dst = self.dst
@@ -460,7 +499,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             dst.regrids(r)
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_non_coordinates(self):
         """Check setting of non-coordinate metadata."""
         dst = cf.example_field(1)
@@ -507,7 +546,7 @@ class RegridTest(unittest.TestCase):
         # Cell measures
         self.assertFalse(d1.cell_measures())
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_3d_field(self):
         """3-d Cartesian regridding with Field destination grid."""
         methods = list(all_methods)
@@ -541,7 +580,7 @@ class RegridTest(unittest.TestCase):
 
                 if use_dst_mask and method == "nearest_dtos":
                     # TODO: This test does not pass, but it seems to
-                    #       be problem with the ESMF "truth", rather
+                    #       be problem with the esmpy "truth", rather
                     #       than cf
                     continue
 
@@ -551,7 +590,7 @@ class RegridTest(unittest.TestCase):
                 x.transpose(["X", "Y", "T"], inplace=True)
                 a = x.array
 
-                y = ESMF_regrid_Nd(
+                y = esmpy_regrid_Nd(
                     "Cartesian",
                     method,
                     src,
@@ -587,7 +626,7 @@ class RegridTest(unittest.TestCase):
                 x.transpose(["X", "Y", "T"], inplace=True)
                 a = x.array
 
-                y = ESMF_regrid_Nd(
+                y = esmpy_regrid_Nd(
                     "Cartesian",
                     method,
                     src,
@@ -608,7 +647,7 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_field(self):
         """1-d Cartesian regridding with Field destination grid."""
         methods = list(all_methods)
@@ -637,7 +676,7 @@ class RegridTest(unittest.TestCase):
             for method in methods:
                 if use_dst_mask and method == "nearest_dtos":
                     # TODO: This test does not pass, but it seems to
-                    #       be problem with the ESMF "truth", rather
+                    #       be problem with the esmpy "truth", rather
                     #       than cf
                     continue
 
@@ -647,7 +686,7 @@ class RegridTest(unittest.TestCase):
                 x.transpose(["Y", "X", "T"], inplace=True)
                 a = x.array
 
-                y = ESMF_regrid_1d(
+                y = esmpy_regrid_1d(
                     method, src, dst, use_dst_mask=use_dst_mask, axes=axes
                 )
 
@@ -666,7 +705,7 @@ class RegridTest(unittest.TestCase):
             for method in methods:
                 if use_dst_mask and method == "nearest_dtos":
                     # TODO: This test does not pass, but it seems to
-                    #       be problem with the ESMF "truth", rather
+                    #       be problem with the esmpy "truth", rather
                     #       than cf
                     continue
 
@@ -676,7 +715,7 @@ class RegridTest(unittest.TestCase):
                 x.transpose(["Y", "X", "T"], inplace=True)
                 a = x.array
 
-                y = ESMF_regrid_1d(
+                y = esmpy_regrid_1d(
                     method,
                     src,
                     dst,
@@ -696,6 +735,47 @@ class RegridTest(unittest.TestCase):
         for method in ("conservative_2nd", "patch"):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_chunks(self):
+        """Regridding of chunked axes"""
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
+        )
+        dst, src = cf.read(filename, chunks={"latitude": 20, "longitude": 30})
+        self.assertEqual(src.data.numblocks, (1, 2, 2))
+        self.assertEqual(dst.data.numblocks, (1, 4, 4))
+
+        d0 = src.regrids(dst, method="linear")
+        self.assertEqual(d0.data.numblocks, (1, 1, 1))
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_weights_file(self):
+        """Regridding creation/use of weights file"""
+        dst = self.dst
+        src = self.src
+
+        try:
+            os.remove(tmpfile)
+        except OSError:
+            pass
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertTrue(os.path.isfile(tmpfile))
+        self.assertIsNone(r.weights_file)
+
+        r = src.regrids(
+            dst, method="linear", return_operator=True, weights_file=tmpfile
+        )
+        self.assertEqual(r.weights_file, tmpfile)
+
+        # Can't provide weights_file when dst is a RegridOperator
+        with self.assertRaises(ValueError):
+            self.assertEqual(
+                src.regrids(r, method="linear", weights_file=tmpfile)
+            )
 
 
 if __name__ == "__main__":

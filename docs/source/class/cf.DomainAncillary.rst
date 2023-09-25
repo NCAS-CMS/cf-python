@@ -452,8 +452,26 @@ NetCDF
    ~cf.DomainAncillary.nc_del_variable
    ~cf.DomainAncillary.nc_get_variable
    ~cf.DomainAncillary.nc_has_variable
-   ~cf.DomainAncillary.nc_set_variable 
+   ~cf.DomainAncillary.nc_set_variable
    
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.add_file_location
+   ~cf.DomainAncillary.cfa_clear_file_substitutions
+   ~cf.DomainAncillary.cfa_del_file_substitution
+   ~cf.DomainAncillary.cfa_file_substitutions
+   ~cf.DomainAncillary.cfa_update_file_substitutions
+   ~cf.DomainAncillary.del_file_location
+   ~cf.DomainAncillary.file_locations
+
 Aliases
 -------
 
@@ -635,6 +653,7 @@ Special
    ~cf.DomainAncillary.__str__
    ~cf.DomainAncillary.__array__
    ~cf.DomainAncillary.__data__
+   ~cf.DomainAncillary.__query_isclose__
 
 Deprecated
 ----------

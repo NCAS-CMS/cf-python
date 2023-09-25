@@ -1,6 +1,8 @@
 from math import prod
+from os import sep
 
 import cfdm
+import numpy as np
 
 from . import mixin
 from .auxiliarycoordinate import AuxiliaryCoordinate
@@ -12,6 +14,7 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
+    abspath,
     indices_shape,
     parse_indices,
 )
@@ -130,6 +133,141 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
+    def add_file_location(
+        self,
+        location,
+    ):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> f.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.add_file_location(location)
+
+        return location
+
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> d.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_file_substitutions(self):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> d.cfa_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            base: `str`
+                {{cfa base: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_del_file_substitution(
+                base,
+            )
+
+    def cfa_update_file_substitutions(
+        self,
+        substitutions,
+    ):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.cfa_update_file_substitutions({'base': '/data/model'})
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_update_file_substitutions(substitutions)
+
     def close(self):
         """Close all files referenced by the domain construct.
 
@@ -155,6 +293,183 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
+
+    def del_file_location(
+        self,
+        location,
+    ):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.del_file_location(location)
+
+        return location
+
+    @classmethod
+    def create_regular(cls, x_args, y_args, bounds=True):
+        """
+        Create a new domain with the regular longitudes and latitudes.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `cf.DimensionCoordinate.create_regular`
+
+        :Parameters:
+
+            x_args: sequence of numbers
+                {{regular args}}
+
+            y_args: sequence of numbers
+                {{regular args}}
+
+            bounds: `bool`, optional
+                If True (default), bounds will be created
+                for the coordinates, and the coordinate points will be the
+                midpoints of the bounds. If False, the given ranges represent
+                the coordinate points directly.
+
+        :Returns:
+
+            `Domain`
+                The newly created domain with the specified longitude and
+                latitude coordinates and bounds.
+
+        **Examples**
+
+        >>> import cf
+        >>> domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
+        >>> domain.dump()
+        --------
+        Domain:
+        --------
+        Domain Axis: latitude(180)
+        Domain Axis: longitude(360)
+        Dimension coordinate: longitude
+            standard_name = 'longitude'
+            units = 'degrees_east'
+            Data(longitude(360)) = [-179.5, ..., 179.5] degrees_east
+            Bounds:units = 'degrees_east'
+            Bounds:Data(longitude(360), 2) = [[-180.0, ..., 180.0]] degrees_east
+        Dimension coordinate: latitude
+            standard_name = 'latitude'
+            units = 'degrees_north'
+            Data(latitude(180)) = [-89.5, ..., 89.5] degrees_north
+            Bounds:units = 'degrees_north'
+            Bounds:Data(latitude(180), 2) = [[-90.0, ..., 90.0]] degrees_north
+
+        """
+
+        x_args = np.array(x_args)
+
+        if x_args.shape != (3,) or x_args.dtype.kind not in "fi":
+            raise ValueError(
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {x_args}."
+            )
+
+        y_args = np.array(y_args)
+
+        if y_args.shape != (3,) or y_args.dtype.kind not in "fi":
+            raise ValueError(
+                "The args argument was incorrectly formatted. "
+                f"Expected a sequence of three numbers, got {y_args}."
+            )
+
+        x_range = x_args[0:2]
+        y_range = y_args[0:2]
+
+        domain = cls()
+
+        if abs(x_range[1] - x_range[0]) > 360:
+            raise ValueError(
+                "The difference in x_range should not be greater than 360."
+            )
+
+        if y_range[0] < -90 or y_range[1] > 90:
+            raise ValueError(
+                "y_range must be within the range of -90 to 90 degrees."
+            )
+
+        longitude = domain._DimensionCoordinate.create_regular(
+            x_args, "degrees_east", "longitude", bounds=bounds
+        )
+
+        latitude = domain._DimensionCoordinate.create_regular(
+            y_args, "degrees_north", "latitude", bounds=bounds
+        )
+
+        domain_axis_longitude = domain.set_construct(
+            domain._DomainAxis(longitude.size), copy=False
+        )
+
+        domain_axis_latitude = domain.set_construct(
+            domain._DomainAxis(latitude.size), copy=False
+        )
+
+        domain.set_construct(
+            longitude, axes=[domain_axis_longitude], copy=False
+        )
+        domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
+
+        return domain
+
+    def file_locations(
+        self,
+    ):
+        """The locations of files containing parts of the components data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data arrays of any of the component
+        constructs (such as dimension coordinate constructs, cell
+        measure constructs, etc.).
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = set()
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.file_locations())
+
+        return out
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):

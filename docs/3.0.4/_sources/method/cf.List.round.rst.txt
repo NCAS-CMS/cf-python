@@ -1,7 +1,0 @@
-cf.List.round
-=============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.round

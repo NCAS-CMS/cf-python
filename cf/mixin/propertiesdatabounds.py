@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
 from ..data.data import _DEFAULT_CHUNKS
@@ -82,12 +83,13 @@ class PropertiesDataBounds(PropertiesData):
             findices = tuple(indices)
 
         cname = self.__class__.__name__
-        logger.debug(
-            f"{cname}.__getitem__: shape    = {self.shape}\n"
-            f"{cname}.__getitem__: indices2 = {indices2}\n"
-            f"{cname}.__getitem__: indices  = {indices}\n"
-            f"{cname}.__getitem__: findices = {findices}"
-        )  # pragma: no cover
+        if is_log_level_debug(logger):
+            logger.debug(
+                f"{cname}.__getitem__: shape    = {self.shape}\n"
+                f"{cname}.__getitem__: indices2 = {indices2}\n"
+                f"{cname}.__getitem__: indices  = {indices}\n"
+                f"{cname}.__getitem__: findices = {findices}"
+            )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
@@ -132,10 +134,11 @@ class PropertiesDataBounds(PropertiesData):
                         mask.insert_dimension(-1) for mask in findices[1]
                     ]
 
-                logger.debug(
-                    f"{self.__class__.__name__}.__getitem__: findices for "
-                    f"bounds = {tuple(findices)}"
-                )  # pragma: no cover
+                if is_log_level_debug(logger):
+                    logger.debug(
+                        f"{self.__class__.__name__}.__getitem__: findices for "
+                        f"bounds = {tuple(findices)}"
+                    )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
 
@@ -399,9 +402,6 @@ class PropertiesDataBounds(PropertiesData):
         """
         return self._unary_operation("__pos__", bounds=True)
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _binary_operation(self, other, method, bounds=True):
         """Implement binary arithmetic and comparison operations.
 
@@ -617,9 +617,12 @@ class PropertiesDataBounds(PropertiesData):
         if hasbounds != (other_bounds is not None):
             # TODO: add traceback
             # TODO: improve message below
-            logger.info(
-                "One has bounds, the other does not"
-            )  # pragma: no cover
+
+            if is_log_level_info(logger):
+                logger.info(
+                    "One has bounds, the other does not"
+                )  # pragma: no cover
+
             return False
 
         try:
@@ -638,8 +641,10 @@ class PropertiesDataBounds(PropertiesData):
         if not super()._equivalent_data(
             other, rtol=rtol, atol=atol, verbose=verbose
         ):
-            # TODO: improve message below
-            logger.info("Non-equivalent data arrays")  # pragma: no cover
+            if is_log_level_info(logger):
+                # TODO: improve message below
+                logger.info("Non-equivalent data arrays")  # pragma: no cover
+
             return False
 
         if hasbounds:
@@ -647,10 +652,12 @@ class PropertiesDataBounds(PropertiesData):
             if not self_bounds._equivalent_data(
                 other_bounds, rtol=rtol, atol=atol, verbose=verbose
             ):
-                logger.info(
-                    f"{self.__class__.__name__}: Non-equivalent bounds data: "
-                    f"{self_bounds.data!r}, {other_bounds.data!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Non-equivalent bounds "
+                        f"data: {self_bounds.data!r}, {other_bounds.data!r}"
+                    )  # pragma: no cover
+
                 return False
 
         # Still here? Then the data are equivalent.
@@ -836,7 +843,16 @@ class PropertiesDataBounds(PropertiesData):
         else:
             data = self.get_data(None)
             if data is not None:
-                return Data.zeros(self.shape, units=self.Units)
+                # Convert to "difference" units
+                #
+                # TODO: Think about temperature units in relation to
+                #       https://github.com/cf-convention/discuss/issues/101,
+                #       whenever that issue is resolved.
+                units = self.Units
+                if units.isreftime:
+                    units = Units(units._units_since_reftime)
+
+                return Data.zeros(self.shape, units=units)
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data"
@@ -1135,6 +1151,45 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             del data.dtype
 
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().add_file_location(location)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.add_file_location(location)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.add_file_location(location)
+
+        return location
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, bounds=True, inplace=False, i=False):
@@ -1181,6 +1236,121 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
             i=i,
         )
+
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_clear_file_substitutions()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.cfa_clear_file_substitutions())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(self, base):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa base: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> c.cfa_del_file_substitution('base')
+
+        """
+        super().cfa_del_file_substitution(base)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.cfa_del_file_substitution(base)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.cfa_del_file_substitution(base)
+
+    def cfa_file_substitutions(self):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> c.cfa_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_file_substitutions()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.cfa_file_substitutions({}))
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.cfa_file_substitutions({}))
+
+        return out
+
+    def cfa_update_file_substitutions(self, substitutions):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> c.cfa_add_file_substitutions({'base', '/data/model'})
+
+        """
+        super().cfa_update_file_substitutions(substitutions)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.cfa_update_file_substitutions(substitutions)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.cfa_update_file_substitutions(substitutions)
 
     def chunk(self, chunksize=None):
         """Partition the data array.
@@ -1299,7 +1469,14 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=True):
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`
@@ -1312,17 +1489,41 @@ class PropertiesDataBounds(PropertiesData):
 
             {{cull_graph: `bool`, optional}}
 
+                .. versionadded:: 3.14.0
+
+            {{relaxed_units: `bool`, optional}}
+
+                .. versionadded:: 3.15.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                {{class}} objects, prior to the concatenation, thereby
+                ensuring that the input constructs are not changed by
+                the concatenation process. If False then some or all
+                input constructs might be changed in-place, but the
+                concatenation process will be faster.
+
+                .. versionadded:: 3.15.1
+
         :Returns:
 
             TODO
 
         """
         variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
 
         if len(variables) == 1:
-            return variable0.copy()
+            return variable0
 
-        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
@@ -1330,6 +1531,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_bounds() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1339,6 +1542,8 @@ class PropertiesDataBounds(PropertiesData):
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
                 cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
             )
             out.set_interior_ring(interior_ring, copy=False)
 
@@ -1899,6 +2104,40 @@ class PropertiesDataBounds(PropertiesData):
 
         return super().get_property(prop, default)
 
+    def file_locations(self):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = super().file_locations()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.file_locations())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.file_locations())
+
+        return out
+
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
@@ -1969,6 +2208,45 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.flatten(axes, inplace=True)
 
         return v
+
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> c.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().del_file_location(location)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.del_file_location(location)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.del_file_location(location)
+
+        return location
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

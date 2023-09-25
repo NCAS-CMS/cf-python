@@ -433,7 +433,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
             self.assertTrue(
                 any(
-                    "Data: Different array values (atol=0.005, rtol=0)"
+                    "Data: Different array values (atol=0.005, rtol=0.0)"
                     in log_msg
                     for log_msg in catch.output
                 )
@@ -1173,6 +1173,14 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
+        # Check cached elements
+        str(d)
+        str(e)
+        f = cf.Data.concatenate([d, e], axis=1)
+        cached = f._get_cached_elements()
+        self.assertEqual(cached[0], d.first_element())
+        self.assertEqual(cached[-1], e.last_element())
+
         # Check concatenation with one invalid units
         d.override_units(cf.Units("foo"), inplace=1)
         with self.assertRaises(ValueError):
@@ -1212,6 +1220,12 @@ class DataTest(unittest.TestCase):
             f._get_cached_elements(),
             {0: d.first_element(), -1: e.last_element()},
         )
+
+        # Test deterministic
+        self.assertTrue(f.has_deterministic_name())
+        e._update_deterministic(False)
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertFalse(f.has_deterministic_name())
 
     def test_Data__contains__(self):
         """Test containment checking against Data."""
@@ -1475,6 +1489,17 @@ class DataTest(unittest.TestCase):
         indices = ("mask", (mask0, mask1), slice(None), slice(None))
 
         self.assertTrue(d[indices].count(), 9)
+
+        # Indices that have a 'to_dask_array' method
+        d = cf.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
+        indices = (cf.Data([1, 3]), cf.Data([0, 1, 2, 3, 4]) > 1)
+        self.assertEqual(d[indices].shape, (2, 3))
+
+        # ... and with a masked array
+        d.where(d < 20, cf.masked, inplace=True)
+        e = d[cf.Data([0, 7]), 0]
+        f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
+        self.assertTrue(e.equals(f))
 
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
@@ -2468,21 +2493,21 @@ class DataTest(unittest.TestCase):
 
     def test_Data_argmax(self):
         """Test the `argmax` Data method."""
-        d = cf.Data(np.arange(120).reshape(4, 5, 6))
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
 
-        self.assertEqual(d.argmax().array, 119)
+        self.assertEqual(d.argmax().array, 23)
 
         index = d.argmax(unravel=True)
-        self.assertEqual(index, (3, 4, 5))
-        self.assertEqual(d[index].array, 119)
+        self.assertEqual(index, (1, 2, 3))
+        self.assertEqual(d[index].array, 23)
 
         e = d.argmax(axis=1)
-        self.assertEqual(e.shape, (4, 6))
+        self.assertEqual(e.shape, (2, 4))
         self.assertTrue(
-            e.equals(cf.Data.full(shape=(4, 6), fill_value=4, dtype=int))
+            e.equals(cf.Data.full(shape=(2, 4), fill_value=2, dtype=int))
         )
 
-        self.assertEqual(d[d.argmax(unravel=True)].array, 119)
+        self.assertEqual(d[d.argmax(unravel=True)].array, 23)
 
         d = cf.Data([0, 4, 2, 3, 4])
         self.assertEqual(d.argmax().array, 1)
@@ -2490,6 +2515,31 @@ class DataTest(unittest.TestCase):
         # Bad axis
         with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
+
+    def test_Data_argmin(self):
+        """Test the `argmin` Data method."""
+        d = cf.Data(np.arange(23, -1, -1).reshape(2, 3, 4))
+
+        self.assertEqual(d.argmin().array, 23)
+
+        index = d.argmin(unravel=True)
+        self.assertEqual(index, (1, 2, 3))
+        self.assertEqual(d[index].array, 0)
+
+        e = d.argmin(axis=1)
+        self.assertEqual(e.shape, (2, 4))
+        self.assertTrue(
+            e.equals(cf.Data.full(shape=(2, 4), fill_value=2, dtype=int))
+        )
+
+        self.assertEqual(d[d.argmin(unravel=True)].array, 0)
+
+        d = cf.Data([4, 0, 2, 3, 0])
+        self.assertEqual(d.argmin().array, 1)
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            d.argmin(axis=d.ndim)
 
     def test_Data_percentile_median(self):
         """Test the `percentile` and `median` Data methods."""
@@ -2527,10 +2577,6 @@ class DataTest(unittest.TestCase):
                 category=RuntimeWarning,
                 message=".*All-NaN slice encountered.*",
             )
-            sup.filter(
-                category=UserWarning,
-                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
-            )
             for axis in [None] + self.axes_combinations:
                 for keepdims in (True, False):
                     for q in ranks:
@@ -2544,6 +2590,13 @@ class DataTest(unittest.TestCase):
                         b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
                         self.assertEqual(b1.shape, a1.shape)
                         self.assertTrue((b1.array == a1).all())
+
+        # Check for no warning when data is of masked type but with no
+        # missing values
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", category=UserWarning)
+            d = cf.Data(np.ma.arange(100))
+            d.percentile(ranks[0])
 
         # Test scalar input (not masked)
         a = np.array(9)
@@ -2564,10 +2617,6 @@ class DataTest(unittest.TestCase):
             sup.filter(
                 category=RuntimeWarning,
                 message=".*All-NaN slice encountered.*",
-            )
-            sup.filter(
-                category=UserWarning,
-                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             for keepdims in (True, False):
                 for q in ranks:
@@ -4326,6 +4375,12 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             del d.Units
 
+        # Adjusted cached values
+        d = cf.Data([1000, 2000, 3000], "m")
+        repr(d)
+        d.Units = cf.Units("km")
+        self.assertEqual(d._get_cached_elements(), {0: 1.0, 1: 2.0, -1: 3.0})
+
     def test_Data_get_data(self):
         """Test the `get_data` Data method."""
         d = cf.Data(9)
@@ -4394,7 +4449,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test `Data.get_filenames`."""
-        d = cf.Data.full((5, 8), 1, chunks=4)
+        d = cf.Data.ones((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
         f = cf.example_field(0)
@@ -4568,6 +4623,140 @@ class DataTest(unittest.TestCase):
 
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
+
+    def test_Data_has_deterministic_name(self):
+        """Test Data.has_deterministic_name"""
+        d = cf.Data([1, 2], "m")
+        e = cf.Data([4, 5], "km")
+        self.assertTrue(d.has_deterministic_name())
+        self.assertTrue(e.has_deterministic_name())
+        self.assertTrue((d + e).has_deterministic_name())
+        self.assertTrue((d + e.array).has_deterministic_name())
+        self.assertFalse((d + e.to_dask_array()).has_deterministic_name())
+
+        d._update_deterministic(False)
+        self.assertFalse(d.has_deterministic_name())
+        self.assertFalse((d + e).has_deterministic_name())
+
+    def test_Data_get_deterministic_name(self):
+        """Test Data.get_deterministic_name"""
+        d = cf.Data([1, 2], "m")
+        e = d.copy()
+        e.Units = cf.Units("metre")
+        self.assertEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        e = d + 1 - 1
+        self.assertNotEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        d._update_deterministic(False)
+        with self.assertRaises(ValueError):
+            d.get_deterministic_name()
+
+    def test_Data_cfa_aggregated_data(self):
+        """Test `Data` CFA aggregated_data methods"""
+        d = cf.Data(9)
+        aggregated_data = {
+            "location": "cfa_location",
+            "file": "cfa_file",
+            "address": "cfa_address",
+            "format": "cfa_format",
+            "tracking_id": "tracking_id",
+        }
+
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertIsNone(d.cfa_set_aggregated_data(aggregated_data))
+        self.assertTrue(d.cfa_has_aggregated_data())
+        self.assertEqual(d.cfa_get_aggregated_data(), aggregated_data)
+        self.assertEqual(d.cfa_del_aggregated_data(), aggregated_data)
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertEqual(d.cfa_get_aggregated_data(), {})
+        self.assertEqual(d.cfa_del_aggregated_data(), {})
+
+    def test_Data_cfa_file_substitutions(self):
+        """Test `Data` CFA file_substitutions methods"""
+        d = cf.Data(9)
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertIsNone(
+            d.cfa_update_file_substitutions({"base": "file:///data/"})
+        )
+        self.assertTrue(d.cfa_has_file_substitutions())
+        self.assertEqual(
+            d.cfa_file_substitutions(), {"${base}": "file:///data/"}
+        )
+
+        d.cfa_update_file_substitutions({"${base2}": "/home/data/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "file:///data/", "${base2}": "/home/data/"},
+        )
+
+        d.cfa_update_file_substitutions({"${base}": "/new/location/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "/new/location/", "${base2}": "/home/data/"},
+        )
+        self.assertEqual(
+            d.cfa_del_file_substitution("${base}"),
+            {"${base}": "/new/location/"},
+        )
+        self.assertEqual(
+            d.cfa_clear_file_substitutions(), {"${base2}": "/home/data/"}
+        )
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertEqual(d.cfa_file_substitutions(), {})
+        self.assertEqual(d.cfa_clear_file_substitutions(), {})
+        self.assertEqual(d.cfa_del_file_substitution("base"), {})
+
+    def test_Data_file_location(self):
+        """Test `Data` file location methods"""
+        f = cf.example_field(0)
+
+        self.assertEqual(
+            f.data.add_file_location("/data/model/"), "/data/model"
+        )
+
+        cf.write(f, file_A)
+        d = cf.read(file_A, chunks=4)[0].data
+        self.assertGreater(d.npartitions, 1)
+
+        e = d.copy()
+        location = os.path.dirname(os.path.abspath(file_A))
+
+        self.assertEqual(d.file_locations(), set((location,)))
+        self.assertEqual(d.add_file_location("/data/model/"), "/data/model")
+        self.assertEqual(d.file_locations(), set((location, "/data/model")))
+
+        # Check that we haven't changed 'e'
+        self.assertEqual(e.file_locations(), set((location,)))
+
+        self.assertEqual(d.del_file_location("/data/model/"), "/data/model")
+        self.assertEqual(d.file_locations(), set((location,)))
+        d.del_file_location("/invalid")
+        self.assertEqual(d.file_locations(), set((location,)))
+
+    def test_Data_todict(self):
+        """Test Data.todict"""
+        d = cf.Data([1, 2, 3, 4], chunks=2)
+        key = d.to_dask_array().name
+
+        x = d.todict()
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
+        e = d[0]
+        x = e.todict()
+        self.assertIn((key, 0), x)
+        self.assertNotIn((key, 1), x)
+
+        x = e.todict(optimize_graph=False)
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
 
 
 if __name__ == "__main__":

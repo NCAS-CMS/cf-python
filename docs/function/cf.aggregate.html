@@ -24,9 +24,10 @@
     <script src="../_static/copybutton.js"></script>
     <script src="../_static/toggleprompt.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.atol" href="cf.atol.html" />
+    <link rel="next" title="cf.climatology_cells" href="cf.climatology_cells.html" />
     <link rel="prev" title="cf.write" href="cf.write.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -39,10 +40,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
 
 
 
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
@@ -84,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -92,7 +97,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
       <li>Previous: <a href="cf.write.html" title="previous chapter">cf.write</a></li>
-      <li>Next: <a href="cf.atol.html" title="next chapter">cf.atol</a></li>
+      <li>Next: <a href="cf.climatology_cells.html" title="next chapter">cf.climatology_cells</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -130,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/aggregate.py#L1399-L2127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">field_ancillaries=None</em>, <em class="sig-param">cells=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/aggregate.py#L1939-L3058"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -153,10 +158,14 @@ are missing; the <em>field_identity</em> parameter forces the field
 construct identities to be taken from a particular property; and
 the <em>ncvar_identities</em> parameter forces field and metadata
 constructs to be identified by their netCDF file variable names.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <a class="reference internal" href="cf.climatology_cells.html#cf.climatology_cells" title="cf.climatology_cells"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.climatology_cells</span></code></a></p>
+</div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>fields: <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> or sequence of <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The field constructs to aggregate.</p>
+<dt>fields: sequence of <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, or sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field or domain constructs to aggregate.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
@@ -229,11 +238,40 @@ do not overlap (but they may share common boundary
 values). Ignored for a dimension coordinate construct that
 does not have bounds. See also the <em>contiguous</em> parameter.</p>
 </dd>
-<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated field constructs
-have adjacent dimension coordinate construct cells which
-overlap or share common boundary values. Ignored for a
-dimension coordinate construct that does not have
-bounds. See also the <em>overlap</em> parameter.</p>
+<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that the dimension coordinates of an
+aggregated field have no “gaps” (defined below) between
+neighbouring cells that came from different input fields.</p>
+<p>By default, or if <em>contiguous</em> is False, gaps may occur
+between neighbouring cells that came from different input
+fields.</p>
+<p>For aggregated dimension coordinates with bounds and
+non-zero cell sizes, a gap is when neighbouring cells
+originating from different input fields neither share
+common boundary values nor overlap each other.</p>
+<p>For aggregated dimension coordinates without bounds, or
+with bounds specifying zero cell sizes, the concept of a
+gap is generally ill-defined. In this case there is no
+restriction on the neighbouring cells originating from
+different input fields (i.e. <em>contiguous</em> is effectively
+taken as <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, regardless of its setting). However, if
+the <em>contiguous</em> parameter is True and a coordinate
+spacing condition defined by the <em>cells</em> parameter has
+also been passed, then the concept of a “gap” becomes well
+defined - a gap now occurs when the difference between
+neighbouring coordinates originating from different input
+fields does not meet the coordinate spacing condition. In
+this special case an aggregated field will also have the
+specified coordinate spacing between neighbouring cells
+that originated from different input fields.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An aggregated field may still have gaps between
+neighbouring cells that came from the same input
+field, regardless of the value of <em>contiguous</em>.
+However, such gaps may be controlled with a cell
+coordinate spacing condition defined by the
+<em>cells</em> parameter.</p>
+</div>
 </dd>
 <dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs
 with the same identity but missing units actually have
@@ -270,7 +308,7 @@ their long_name properties:
 </dd>
 <dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then force field and metadata constructs to be
 identified by their netCDF file variable names See also the
-<em>relaxed_identies</em> parameter.</p>
+<em>relaxed_identities</em> parameter.</p>
 </dd>
 <dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
 of non-standard CF properties (including
@@ -353,9 +391,193 @@ numbers. The default value is set by the
 numbers. The default value is set by the
 <a class="reference internal" href="cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a> function.</p>
 </dd>
-<dt>no_overlap:</dt><dd><p>Use the <em>overlap</em> parameter instead.</p>
+<dt>field_ancillaries: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new field ancillary constructs for each input field
+which has one or more of the given properties. For each
+input field, each property is converted to a field
+ancillary construct that spans the entire domain, with the
+constant value of the property, and the property itself is
+deleted.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.0.</span></p>
+</div>
 </dd>
-<dt>shared_nc_domain: deprecated at version 3.0.0</dt><dd><p>No longer required due to updated CF data model.</p>
+<dt>cells: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide conditions for dimension coordinate cells so that
+input field or domain constructs whose dimension
+coordinates match particular conditions will be aggregated
+separately from those which don’t. All other aggregation
+criteria apply as normal. This can be used, for instance,
+to ensure that monthly and daily averages of the same
+physical quantity are not aggregated together.</p>
+<p>Field or domain constructs that match any of the given
+conditions are otherwise aggregated in the usual manner, as are
+those which don’t match any of the given conditions.</p>
+<p><strong>Conditions format</strong></p>
+<p>The conditions are specified in a dictionary for which
+each key is a dimension coordinate identity, with a
+corresponding value of one or more conditions on the
+dimension coordinate cell sizes and/or coordinate
+spacings. For instance, the <em>cells</em> dictionary <code class="docutils literal notranslate"><span class="pre">{'T':</span>
+<span class="pre">{'cellsize':</span> <span class="pre">cf.D()}}</span></code> will cause fields or domains with
+time coordinates (<code class="docutils literal notranslate"><span class="pre">'T'</span></code>) whose cells all span 1 day
+(<code class="docutils literal notranslate"><span class="pre">cf.D()</span></code>) to be aggregated separately from all others.</p>
+<p>A dictionary key selects a dimension coordinate construct
+from each input field or domain construct by passing the
+key to its <code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code> method. For example, a
+key of <code class="docutils literal notranslate"><span class="pre">'T'</span></code> will select the dimension coordinate
+construct returned by <code class="docutils literal notranslate"><span class="pre">f.dimension_coordinate('T')</span></code>. If
+no such dimension coordinate construct exists, or if a
+dimension coordinate construct exists but none of the
+corresponding conditions are passed, then no special
+aggregation consideration is given to that axis for that
+field or domain. The dictionary may have any number of
+keys, defining conditions for any number of dimension
+coordinates. If multiple keys match the identity of the
+same dimension coordinate construct then the conditions
+corresponding to the first such key encountered when
+iterating through the dictionary are used.</p>
+<p>A dictionary value defines the dimension coordinate
+conditions as one, or an ordered sequence of, the
+following:</p>
+<ul class="simple">
+<li><p>A condition for the cell size (i.e. the absolute
+difference between the cell bounds) given as
+<code class="docutils literal notranslate"><span class="pre">{'cellsize':</span> <span class="pre">&lt;condition1&gt;}</span></code>.</p></li>
+<li><p>A condition for the cell coordinate spacing (i.e. the
+absolute difference between two neighbouring coordinate
+values) given as <code class="docutils literal notranslate"><span class="pre">{'spacing':</span> <span class="pre">&lt;condition2&gt;}</span></code>.</p></li>
+<li><p>Simultaneous conditions for the cell size and the cell
+coordinate spacing are given as
+<code class="docutils literal notranslate"><span class="pre">{'cellsize':</span> <span class="pre">&lt;condition1&gt;,</span> <span class="pre">'spacing':</span> <span class="pre">&lt;condition2&gt;}</span></code>
+(with arbitrary key order).</p></li>
+</ul>
+</dd>
+</dl>
+<blockquote>
+<div><p>where <code class="docutils literal notranslate"><span class="pre">&lt;condition1&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;condition2&gt;</span></code> must each be
+one of a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>, <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a>, scalar <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, scalar
+data_like object, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. A condition of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
+equivalent to that condition not being defined (which may
+be a useful setting for conditions that are generated
+automatically).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a> conditions <code class="docutils literal notranslate"><span class="pre">cf.M()</span></code> (1
+calendar month) and <code class="docutils literal notranslate"><span class="pre">cf.Y()</span></code> (1 calendar year)
+may be used, and are interpreted internally as
+the <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> conditions <code class="docutils literal notranslate"><span class="pre">cf.wi(28,</span> <span class="pre">31,</span> <span class="pre">'days')</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cf.wi(300,</span> <span class="pre">366,</span> <span class="pre">'days')</span></code> respectively.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using a <a class="reference internal" href="cf.isclose.html#cf.isclose" title="cf.isclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.isclose</span></code></a> query condition allows for
+control of the test’s sensitivity to floating
+point precision and rounding errors. See also
+the <em>rtol</em> and <em>atol</em> parameters.</p>
+</div>
+<p><strong>Units</strong></p>
+<p>Units must be provided on the conditions where applicable,
+since conditions without defined units do not match
+dimension coordinate constructs with defined units.</p>
+<p><strong>Multiple conditions</strong></p>
+<p>Multiple conditions for the same dimension coordinate
+construct may be defined by providing an ordered sequence
+of conditions. In this case, the conditions are tested in
+order, with the first one to be passed (if any) defining
+the aggregation separation for each input field or domain.</p>
+<p><strong>Coordinate spacing conditions</strong></p>
+<p>If a coordinate spacing condition has been passed then, by
+default, it does not apply to the spacing between
+neighbouring coordinates from different input
+fields. However, if the <em>contiguous</em> parameter is also
+True then this will ensure that aggregated fields will
+have the specified cell coordinate spacing throughout. See
+the <em>contiguous</em> parameter for more details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Potentially unexpected results might occur in
+the particular circumstance of multiple
+coordinate spacing conditions being applied to
+aggregatable input fields for which some, but
+not all, have a size 1 aggregation axis. The
+concept of cell coordinate spacing is undefined
+for the size 1 dimension coordinates and so they
+will pass any coordinate spacing condition,
+which in practice means they pass the first in
+the sequence. If the dimension coordinates with
+size greater than 1 also pass the first
+condition then the aggregation will proceed as
+expected, but if they pass one of the other
+coordinate spacing conditions then the fields
+with size 1 dimension coordinates will be
+aggregated separately.</p>
+</div>
+<p><strong>Climatological time cells</strong></p>
+<p>As a convenience, the configurable <a class="reference internal" href="cf.climatology_cells.html#cf.climatology_cells" title="cf.climatology_cells"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.climatology_cells</span></code></a>
+function returns a <em>cells</em> dictionary that may be suitable
+for the time axis aggregation of typical climate model
+simulation outputs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">fl</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">climatology_cells</span><span class="p">())</span>
+</pre></div>
+</div>
+<p><strong>Performance</strong></p>
+<p>The testing of the conditions has a computational
+overhead, as well as an I/O overhead if the dimension
+coordinate data are on disk. Try to avoid setting redundant
+conditions. For instance, if the inputs comprise monthly mean air
+temperature and daily mean precipitation fields, then the
+different field identities alone will ensure a correct
+aggregation. In this case, adding cell conditions of
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">[{'cellsize':</span> <span class="pre">cf.D()},</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.M()}]}</span></code>
+will not change the result, but tests will still be
+carried out.</p>
+<p>When setting a sequence of conditions, performance will be
+improved if the conditions towards the beginning of the
+sequence are those that are expected to be passed by the
+dimension coordinate constructs with the largest data
+arrays. This is because the conditions are tested in order
+until a condition passes, and subsequent conditions are
+not tested. Therefore, this strategy will minimise the
+amount of the most expensive tests, i.e. those on the
+largest data.</p>
+<dl class="simple">
+<dt><em>Parameter example</em></dt><dd><p>Equivalent ways to separate time cells of 1 day from
+other time cell sizes:
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.D()}}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.eq(1,</span> <span class="pre">'day')}}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.isclose(1,</span> <span class="pre">'day')}}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.Data(1,</span> <span class="pre">'day')}}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.h(24)}}</span></code>, etc.</p>
+</dd>
+<dt><em>Parameter example</em></dt><dd><p>Equivalent ways to separate time cells of 1 month, in
+any calendar, from other time cell sizes:
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.M()}}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.wi(28,</span> <span class="pre">31,</span> <span class="pre">'day')}}</span></code>.</p>
+</dd>
+<dt><em>Parameter example</em></dt><dd><p>To separate horizontal cells with size (2.5 degrees
+north, 3.75 degrees east):
+<code class="docutils literal notranslate"><span class="pre">{'Y':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.Data(2.5,</span> <span class="pre">'degreeN')},</span>
+<span class="pre">'X':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.Data(3.75,</span> <span class="pre">'degreeE')}}</span></code>.</p>
+</dd>
+<dt><em>Parameter example</em></dt><dd><p>To aggregate time cells of 1 day separately and time
+cells of 30 days separately, a sequence of two cell size
+conditions are provided:
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">[{'cellsize':</span> <span class="pre">cf.D(1)},</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.D(30)}]}</span></code>.</p>
+</dd>
+<dt><em>Parameter example</em></dt><dd><p>To aggregate 6-hourly instantaneous time cells, specify
+a cellsize of zero:
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.h(0),</span> <span class="pre">'spacing':</span> <span class="pre">cf.h(6)}}</span></code>.</p>
+</dd>
+<dt><em>Parameter example</em></dt><dd><p>To separate time cells of 5-day running means given for
+consecutive days:
+<code class="docutils literal notranslate"><span class="pre">{'T':</span> <span class="pre">{'cellsize':</span> <span class="pre">cf.D(5),</span> <span class="pre">'spacing':</span> <span class="pre">cf.D(1)}}</span></code>.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.2.</span></p>
+</div>
+</div></blockquote>
+<dl class="simple">
+<dt>no_overlap: deprecated at version 3.0.0</dt><dd><p>Use the <em>overlap</em> parameter instead.</p>
 </dd>
 <dt>info: deprecated at version 3.5.0</dt><dd><p>Use the <em>verbose</em> parameter instead.</p>
 </dd>
@@ -401,7 +623,7 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

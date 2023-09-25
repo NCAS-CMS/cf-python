@@ -1,7 +1,0 @@
-cf.CellMeasure.day
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.CellMeasure.day

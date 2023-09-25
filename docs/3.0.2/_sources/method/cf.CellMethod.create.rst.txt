@@ -1,7 +1,0 @@
-cf.CellMethod.create
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.create

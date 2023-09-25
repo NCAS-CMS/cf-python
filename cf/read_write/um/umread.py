@@ -8,7 +8,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-from cfdm import Constructs
+from cfdm import Constructs, is_log_level_info
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -35,12 +35,13 @@ logger = logging.getLogger(__name__)
 
 _cached_runid = {}
 _cached_latlon = {}
-_cached_time = {}
 _cached_ctime = {}
 _cached_size_1_height_coordinate = {}
-_cached_z_reference_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
+_cached_regular_array = {}
+_cached_regular_bounds = {}
+_cached_data = {}
 
 # --------------------------------------------------------------------
 # Constants
@@ -489,6 +490,7 @@ class UMField:
         verbose=None,
         implementation=None,
         select=None,
+        info=False,
         **kwargs,
     ):
         """**Initialisation**
@@ -544,6 +546,8 @@ class UMField:
 
         """
         self._bool = False
+
+        self.info = info
 
         self.implementation = implementation
 
@@ -638,8 +642,9 @@ class UMField:
 
         int_hdr = rec0.int_hdr
         self.int_hdr_dtype = int_hdr.dtype
-
+        self.real_hdr_dtype = rec0.real_hdr.dtype
         int_hdr = int_hdr.tolist()
+
         real_hdr = rec0.real_hdr.tolist()
         self.int_hdr = int_hdr
         self.real_hdr = real_hdr
@@ -661,6 +666,15 @@ class UMField:
         BPLON = real_hdr[bplon]
         BDX = real_hdr[bdx]
         BDY = real_hdr[bdy]
+
+        if not LBROW or not LBNPT:
+            logger.warn(
+                f"WARNING: Skipping STASH code {stash} with LBROW={LBROW}, "
+                f"LBNPT={LBNPT}, LBPACK={int_hdr[lbpack]} "
+                "(possibly runlength encoded)"
+            )  # pragma: no cover
+            self.field = (None,)
+            return
 
         if stash:
             section, item = divmod(stash, 1000)
@@ -793,7 +807,7 @@ class UMField:
 
         # The STASH code has been set in the PP header, so try to find
         # its standard_name from the conversion table
-        stash_records = stash2standard_name.get((submodel, stash), None)
+        stash_records = _stash2standard_name.get((submodel, stash), None)
 
         um_Units = None
         um_condition = None
@@ -1068,12 +1082,7 @@ class UMField:
             for cm in cell_methods:
                 self.implementation.set_cell_method(field, cm)
 
-            # Check for decreasing axes that aren't decreasing
-            down_axes = self.down_axes
-            logger.info(f"down_axes = {down_axes}")  # pragma: no cover
-
-            if down_axes:
-                field.flip(down_axes, inplace=True)
+            logger.info(f"down_axes = {self.down_axes}")  # pragma: no cover
 
             # Force cyclic X axis for particular values of LBHEM
             if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
@@ -1083,7 +1092,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": Data(360.0, units=xc.Units),
+                        "period": self.get_data(np.array(360.0), xc.Units),
                     },
                 )
 
@@ -1125,6 +1134,57 @@ class UMField:
         out.append("")
 
         return "\n".join(out)
+
+    def _reorder_z_axis(self, indices, z_axis, pmaxes):
+        """Reorder the Z axis `Rec` instances.
+
+        :Parameters:
+
+            indices: `list`
+                Aggregation axis indices. See `create_data` for
+                details.
+
+            z_axis: `int`
+                The identifier of the Z axis.
+
+            pmaxes: sequence of `int`
+                The aggregation axes, which include the Z axis.
+
+        :Returns:
+
+            `list`
+
+        **Examples**
+
+        >>> _reorder_z_axis([(0, <Rec A>), (1, <Rec B>)], 0, [0])
+        [(0, <Rec B>), (1, <Rec A>)]
+
+        >>> _reorder_z_axis(
+        ...     [(0, 0, <Rec A>),
+        ...      (0, 1, <Rec B>),
+        ...      (1, 0, <Rec C>),
+        ...      (1, 1, <Rec D>)],
+        ...     1, [0, 1]
+        ... )
+        [(0, 0, <Rec B>), (0, 1, <Rec A>), (1, 0, <Rec D>), (1, 1, <Rec C>)]
+
+        """
+        indices_new = []
+        zpos = pmaxes.index(z_axis)
+        aaa0 = indices[0]
+        indices2 = [aaa0]
+        for aaa in indices[1:]:
+            if aaa[zpos] > aaa0[zpos]:
+                indices2.append(aaa)
+            else:
+                indices_new.extend(indices2[::-1])
+                aaa0 = aaa
+                indices2 = [aaa0]
+
+        indices_new.extend(indices2[::-1])
+
+        indices = [a[:-1] + b[-1:] for a, b in zip(indices, indices_new)]
+        return indices
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
         """`atmosphere_hybrid_height_coordinate` when not an array axis.
@@ -1176,21 +1236,24 @@ class UMField:
 
         # "a" domain ancillary
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float  # Zsea
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,  # Zsea
         )
         bounds0 = np.array(
             [rec.real_hdr[brlev] for rec in self.z_recs],  # Zsea lower
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(self.field, da)
+        axis_key = self.implementation.set_domain_axis(
+            self.field, da, copy=False
+        )
         _axis["z"] = axis_key
 
         ac = self.implementation.initialise_DomainAncillary()
@@ -1237,8 +1300,9 @@ class UMField:
             dc = None
         else:
             array = array / toa_height
+            bounds = bounds / toa_height
             dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(dc, array, bounds, units=_Units[""])
+            dc = self.coord_data(dc, array, bounds, units=_Units["1"])
             self.implementation.set_properties(
                 dc,
                 {"standard_name": "atmosphere_hybrid_height_coordinate"},
@@ -1256,13 +1320,16 @@ class UMField:
 
         # "b" domain ancillary
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1313,19 +1380,22 @@ class UMField:
         field = self.field
 
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[brlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd1] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd1] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(field, da)
+        axisZ = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axisZ
 
         # ac = AuxiliaryCoordinate()
@@ -1343,13 +1413,16 @@ class UMField:
         )
 
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1428,7 +1501,7 @@ class UMField:
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(field, da)
+        axis_key = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axis_key
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -1634,13 +1707,13 @@ class UMField:
 
         """
         if array is not None:
-            array = Data(array, units=units, fill_value=fill_value)
-            self.implementation.set_data(c, array, copy=False)
+            data = self.get_data(array, units, fill_value)
+            self.implementation.set_data(c, data, copy=False)
 
         if bounds is not None:
-            bounds_data = Data(bounds, units=units, fill_value=fill_value)
+            data = self.get_data(bounds, units, fill_value, bounds=True)
             bounds = self.implementation.initialise_Bounds()
-            self.implementation.set_data(bounds, bounds_data, copy=False)
+            self.implementation.set_data(bounds, data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
 
         return c
@@ -1676,7 +1749,8 @@ class UMField:
 
         :Parameters:
 
-            c: Coordinate construct
+            c: `Coordinate`
+               A 1-d coordinate construct
 
             axiscode: `int`
 
@@ -1692,6 +1766,7 @@ class UMField:
             c.positive = positive
             if positive == "down" and axiscode != 4:
                 self.down_axes.add(domain_axis_key)
+                c.flip(inplace=True)
 
         return c
 
@@ -1834,7 +1909,8 @@ class UMField:
             `Data`
 
         """
-        logger.info("Creating data:")  # pragma: no cover
+        if self.info:
+            logger.info("Creating data:")  # pragma: no cover
 
         LBROW = self.lbrow
         LBNPT = self.lbnpt
@@ -1861,6 +1937,9 @@ class UMField:
         name = (UMArray().__class__.__name__ + "-" + token,)
         dsk = {}
         full_slice = Ellipsis
+        klass_name = UMArray().__class__.__name__
+
+        fmt = self.fmt
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -1879,19 +1958,19 @@ class UMField:
 
             subarray = UMArray(
                 filename=filename,
+                address=rec.hdr_offset,
                 shape=yx_shape,
                 dtype=data_type_in_file(rec),
-                header_offset=rec.hdr_offset,
-                data_offset=rec.data_offset,
-                disk_length=rec.disk_length,
-                fmt=self.fmt,
+                fmt=fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
                 units=units,
                 calendar=calendar,
             )
 
-            dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
+            key = f"{klass_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+            dsk[name + (0, 0)] = (getter, key, full_slice, False, False)
 
             dtype = data_type_in_file(rec)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
@@ -1908,18 +1987,23 @@ class UMField:
                 # ----------------------------------------------------
                 # 1-d partition matrix
                 # ----------------------------------------------------
+                z_axis = _axis.get(self.z_axis)
                 if nz > 1:
-                    pmaxes = [_axis[self.z_axis]]
+                    pmaxes = [z_axis]
                     data_shape = (nz, LBROW, LBNPT)
                 else:
                     pmaxes = [_axis["t"]]
                     data_shape = (nt, LBROW, LBNPT)
 
-                fmt = self.fmt
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                for i, rec in enumerate(recs):
+                indices = [(i, rec) for i, rec in enumerate(recs)]
+
+                if nz > 1 and z_axis in self.down_axes:
+                    indices = self._reorder_z_axis(indices, z_axis, pmaxes)
+
+                for i, rec in indices:
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -1928,11 +2012,9 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
+                        address=rec.hdr_offset,
                         shape=shape,
                         dtype=file_data_type,
-                        header_offset=rec.hdr_offset,
-                        data_offset=rec.data_offset,
-                        disk_length=rec.disk_length,
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
@@ -1940,9 +2022,11 @@ class UMField:
                         calendar=calendar,
                     )
 
+                    key = f"{klass_name}-{tokenize(subarray)}"
+                    dsk[key] = subarray
                     dsk[name + (i, 0, 0)] = (
                         getter,
-                        subarray,
+                        key,
                         full_slice,
                         False,
                         False,
@@ -1956,17 +2040,21 @@ class UMField:
                 # ----------------------------------------------------
                 # 2-d partition matrix
                 # ----------------------------------------------------
-                pmaxes = [_axis["t"], _axis[self.z_axis]]
+                z_axis = _axis[self.z_axis]
+                pmaxes = [_axis["t"], z_axis]
+
                 data_shape = (nt, nz, LBROW, LBNPT)
 
-                fmt = self.fmt
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                for i, rec in enumerate(recs):
-                    # Find T and Z axis indices
-                    t, z = divmod(i, nz)
+                indices = [
+                    divmod(i, nz) + (rec,) for i, rec in enumerate(recs)
+                ]
+                if z_axis in self.down_axes:
+                    indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
+                for t, z, rec in indices:
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -1975,11 +2063,9 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
+                        address=rec.hdr_offset,
                         shape=shape,
                         dtype=file_data_type,
-                        header_offset=rec.hdr_offset,
-                        data_offset=rec.data_offset,
-                        disk_length=rec.disk_length,
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
@@ -1987,9 +2073,11 @@ class UMField:
                         calendar=calendar,
                     )
 
+                    key = f"{klass_name}-{tokenize(subarray)}"
+                    dsk[key] = subarray
                     dsk[name + (t, z, 0, 0)] = (
                         getter,
-                        subarray,
+                        key,
                         full_slice,
                         False,
                         False,
@@ -2008,10 +2096,11 @@ class UMField:
             fill_value = None
 
         # Create the dask array
-        array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
+        dx = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
         # Create the Data object
-        data = Data(array, units=um_Units, fill_value=fill_value)
+        data = Data(dx, units=um_Units, fill_value=fill_value)
+        data._cfa_set_write(True)
 
         self.data = data
         self.data_axes = data_axes
@@ -2349,19 +2438,6 @@ class UMField:
             # Int or float
             return rec.get_type_and_num_words()[0]
 
-    #            rec_file = rec.file
-    #            # data_type = rec_file.c_interface.get_type_and_length(
-    #            data_type = rec_file.c_interface.get_type_and_num_words(
-    #                rec.int_hdr)[0]
-    #            if data_type == 'int':
-    #                # Integer
-    #                data_type = 'int%d' % (rec_file.word_size * 8)
-    #            else:
-    #                # Float
-    #                data_type = 'float%d' % (rec_file.word_size * 8)
-    #
-    #        return np.dtype(data_type)
-
     def printfdr(self, display=False):
         """Print out the contents of PP field headers.
 
@@ -2403,7 +2479,7 @@ class UMField:
         dc.id = "UM_pseudolevel"
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisP = self.implementation.set_domain_axis(self.field, da)
+        axisP = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["p"] = axisP
 
         self.implementation.set_dimension_coordinate(
@@ -2471,7 +2547,7 @@ class UMField:
         dc = _cached_size_1_height_coordinate.get(key, None)
 
         da = self.implementation.initialise_DomainAxis(size=1)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         if dc is not None:
@@ -2644,7 +2720,7 @@ class UMField:
             climatology = False
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["t"] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2691,7 +2767,7 @@ class UMField:
         # Note that `axis` might not be "t". For instance, it could be
         # "y" if the time coordinates are coming from extra data.
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis[axis] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2939,11 +3015,12 @@ class UMField:
             axiscode: `int`
 
             axis: `str`
-                'x' or 'y'
+                Which type of coordinate to create: ``'x'`` or
+                ``'y'``.
 
         :Returns:
 
-            `str, `DimensionCoordinate`
+            (`str`, `DimensionCoordinate`)
 
         """
         X = axiscode in (11, -11)
@@ -2959,7 +3036,9 @@ class UMField:
             size = self.lbnpt
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["x"] = axis_key
         else:
             delta = self.bdy
@@ -2967,7 +3046,9 @@ class UMField:
             size = self.lbrow
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["y"] = axis_key
 
             autocyclic = _autocyclic_false
@@ -2981,12 +3062,15 @@ class UMField:
                 while origin + delta * size < -360.0:
                     origin += 360.0
 
-            array = np.arange(
-                origin + delta,
-                origin + delta * (size + 0.5),
-                delta,
-                dtype=float,
-            )
+            array = _cached_regular_array.get((origin, delta, size))
+            if array is None:
+                array = np.arange(
+                    origin + delta,
+                    origin + delta * (size + 0.5),
+                    delta,
+                    dtype=float,
+                )
+                _cached_regular_array[(origin, delta, size)] = array
 
             # Create the coordinate bounds
             if axiscode in (13, 31, 40, 99):
@@ -2998,14 +3082,13 @@ class UMField:
                 # 99 = Other
                 bounds = None
             else:
-                delta_by_2 = 0.5 * delta
-                bounds = self.create_bounds_array(
-                    array - delta_by_2, array + delta_by_2
-                )
-        #                bounds = np.empty((size, 2), dtype=float)
-        #                bounds[:, 0] = array - delta_by_2
-        #                bounds[:, 1] = array + delta_by_2
-
+                bounds = _cached_regular_bounds.get((origin, delta, size))
+                if bounds is None:
+                    delta_by_2 = 0.5 * delta
+                    bounds = self.create_bounds_array(
+                        array - delta_by_2, array + delta_by_2
+                    )
+                    _cached_regular_bounds[(origin, delta, size)] = bounds
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
@@ -3013,9 +3096,6 @@ class UMField:
             upper_bounds = self.extra.get(axis + "_upper_bound", None)
             if lower_bounds is not None and upper_bounds is not None:
                 bounds = self.create_bounds_array(lower_bounds, upper_bounds)
-            #                bounds = np.empty((array.size, 2), dtype=float)
-            #                bounds[:, 0] = lower_bounds
-            #                bounds[:, 1] = upper_bounds
             else:
                 bounds = None
 
@@ -3023,13 +3103,13 @@ class UMField:
 
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, bounds, units=units)
-        dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
+        dc = self.coord_positive(dc, axiscode, axis_key)
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = Data(360.0, units=units)
+            autocyclic["period"] = self.get_data(np.array(360.0), units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
 
@@ -3038,6 +3118,61 @@ class UMField:
         )
 
         return key, dc, axis_key
+
+    def get_data(self, array, units, fill_value=None, bounds=False):
+        """Create data, or get it from the cache.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            array: `np.ndarray`
+                The data.
+
+            units: `Units
+                The units.
+
+            fill_value: scalar
+                The fill value.
+
+            bounds: `bool`
+                Whether or not the data are bounds of 1-d coordinates.
+
+        :Returns:
+
+            `Data`
+                An independent copy of the new data.
+
+        """
+        token = tokenize(array, units)
+        data = _cached_data.get(token)
+        if data is None:
+            data = Data(array, units=units, fill_value=fill_value)
+            if not bounds:
+                if array.size == 1:
+                    value = array.item(0)
+                    data._set_cached_elements({0: value, -1: value})
+                else:
+                    data._set_cached_elements(
+                        {
+                            0: array.item(0),
+                            1: array.item(1),
+                            -1: array.item(-1),
+                        }
+                    )
+            else:
+                data._set_cached_elements(
+                    {
+                        0: array.item(0),
+                        1: array.item(1),
+                        -2: array.item(-2),
+                        -1: array.item(-1),
+                    }
+                )
+
+            _cached_data[token] = data
+
+        return data.copy()
 
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
@@ -3102,9 +3237,11 @@ class UMField:
             `DimensionCoordinate`
 
         """
-        logger.info(
-            "Creating Z coordinates and bounds from BLEV, BRLEV and " "BRSVD1:"
-        )  # pragma: no cover
+        if self.info:
+            logger.info(
+                "Creating Z coordinates and bounds from BLEV, BRLEV and "
+                "BRSVD1:"
+            )  # pragma: no cover
 
         z_recs = self.z_recs
         array = tuple([rec.real_hdr.item(blev) for rec in z_recs])
@@ -3115,25 +3252,18 @@ class UMField:
         if _coord_positive.get(axiscode, None) == "down":
             bounds0, bounds1 = bounds1, bounds0
 
-            #        key = (axiscode, array, bounds0, bounds1)
-        #        dc = _cached_z_coordinate.get(key, None)
-
-        #        if dc is not None:
-        #            copy = True
-        #        else:
-        copy = False
-        array = np.array(array, dtype=float)
-        bounds0 = np.array(bounds0, dtype=float)
-        bounds1 = np.array(bounds1, dtype=float)
+        array = np.array(array, dtype=self.real_hdr_dtype)
+        bounds0 = np.array(bounds0, dtype=self.real_hdr_dtype)
+        bounds1 = np.array(bounds1, dtype=self.real_hdr_dtype)
         bounds = self.create_bounds_array(bounds0, bounds1)
 
-        if (bounds0 == bounds1).all():
+        if (bounds0 == bounds1).all() or np.allclose(bounds.min(), _pp_rmdi):
             bounds = None
         else:
             bounds = self.create_bounds_array(bounds0, bounds1)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -3151,210 +3281,11 @@ class UMField:
             self.field,
             dc,
             axes=[_axis["z"]],
-            copy=copy,
-            autocyclic=_autocyclic_false,
-        )
-
-        logger.info("    " + dc.dump(display=False))  # pragma: no cover
-
-        return dc
-
-    @_manage_log_level_via_verbose_attr
-    def z_reference_coordinate(self, axiscode):
-        """Create and return the Z reference coordinates."""
-        logger.info(
-            "Creating Z reference coordinates from BRLEV"
-        )  # pragma: no cover
-
-        array = np.array(
-            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
-        )
-
-        LBVC = self.lbvc
-        atol = self.atol
-
-        key = (axiscode, LBVC, array)
-        dc = _cached_z_reference_coordinate.get(key, None)
-
-        if dc is not None:
-            copy = True
-        else:
-            if not 128 <= LBVC <= 139:
-                bounds = []
-                for rec in self.z_recs:
-                    BRLEV = rec.real_hdr.item(brlev)
-                    BRSVD1 = rec.real_hdr.item(brsvd1)
-
-                    if abs(BRSVD1 - BRLEV) >= atol:
-                        bounds = None
-                        break
-
-                    bounds.append((BRLEV, BRSVD1))
-            else:
-                bounds = None
-
-            if bounds:
-                bounds = np.array((bounds,), dtype=float)
-
-            dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(
-                dc,
-                array,
-                bounds,
-                units=_axiscode_to_Units.setdefault(axiscode, None),
-            )
-            dc = self.coord_axis(dc, axiscode)
-            dc = self.coord_names(dc, axiscode)
-
-            if not dc.get("positive", True):  # ppp
-                dc.flip(i=True)
-
-            _cached_z_reference_coordinate[key] = dc
-            copy = False
-
-        self.implementation.set_dimension_coordinate(
-            self.field,
-            dc,
-            axes=[_axis["z"]],
-            copy=copy,
+            copy=False,
             autocyclic=_autocyclic_false,
         )
 
         return dc
-
-
-# _stash2standard_name = {}
-#
-# def load_stash2standard_name(table=None, delimiter='!', merge=True):
-#     '''Load a STASH to standard name conversion table.
-#
-# :Parameters:
-#
-#     table: `str`, optional
-#         Use the conversion table at this file location. By default the
-#         table will be looked for at
-#         ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
-#
-#     delimiter: `str`, optional
-#         The delimiter of the table columns. By default, ``!`` is taken
-#         as the delimiter.
-#
-#     merge: `bool`, optional
-#         If *table* is None then *merge* is taken as False, regardless
-#         of its given value.
-#
-# :Returns:
-#
-#     `None`
-#
-# *Examples*
-#
-# >>> load_stash2standard_name()
-# >>> load_stash2standard_name('my_table.txt')
-# >>> load_stash2standard_name('my_table2.txt', ',')
-# >>> load_stash2standard_name('my_table3.txt', merge=True)
-# >>> load_stash2standard_name('my_table4.txt', merge=False)
-#
-#     '''
-#     # 0  Model
-#     # 1  STASH code
-#     # 2  STASH name
-#     # 3  units
-#     # 4  valid from UM vn
-#     # 5  valid to   UM vn
-#     # 6  standard_name
-#     # 7  CF extra info
-#     # 8  PP extra info
-#
-#     if table is None:
-#         # Use default conversion table
-#         merge = False
-#         package_path = os.path.dirname(__file__)
-#         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-#
-#     lines = csv.reader(open(table, 'r'),
-#                        delimiter=delimiter, skipinitialspace=True)
-#
-#     raw_list = []
-#     [raw_list.append(line) for line in lines]
-#
-#     # Get rid of comments
-#     for line in raw_list[:]:
-#         if line[0].startswith('#'):
-#             raw_list.pop(0)
-#             continue
-#         break
-#
-#     # Convert to a dictionary which is keyed by (submodel, STASHcode)
-#     # tuples
-#
-#     (model, stash, name,
-#      units,
-#      valid_from, valid_to,
-#      standard_name, cf, pp) = list(range(9))
-#
-#     stash2sn = {}
-#     for x in raw_list:
-#         key = (int(x[model]), int(x[stash]))
-#
-#         if not x[units]:
-#             x[units] = None
-#
-#         try:
-#             cf_info = {}
-#             if x[cf]:
-#                 for d in x[7].split():
-#                     if d.startswith('height='):
-#                         cf_info['height'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                         if cf_info['height'] == '':
-#                             cf_info['height'][1] = '1'
-#
-#                     if d.startswith('below_'):
-#                         cf_info['below'] = re.split(_number_regex, d,
-#                                                      re.IGNORECASE)[1:4:2]
-#                        if cf_info['below'] == '':
-#                             cf_info['below'][1] = '1'
-#
-#                     if d.startswith('where_'):
-#                         cf_info['where'] = d.replace('where_', 'where ', 1)
-#                     if d.startswith('over_'):
-#                         cf_info['over'] = d.replace('over_', 'over ', 1)
-#
-#             x[cf] = cf_info
-#         except IndexError:
-#             pass
-#
-#         try:
-#             x[valid_from] = float(x[valid_from])
-#         except ValueError:
-#             x[valid_from] = None
-#
-#         try:
-#             x[valid_to] = float(x[valid_to])
-#         except ValueError:
-#             x[valid_to] = None
-#
-#         x[pp] = x[pp].rstrip()
-#
-#         line = (x[name:],)
-#
-#         if key in stash2sn:
-#             stash2sn[key] += line
-#         else:
-#             stash2sn[key] = line
-#
-#     if not merge:
-#         _stash2standard_name.clear()
-#
-#     _stash2standard_name.update(stash2sn)
-
-
-# ---------------------------------------------------------------------
-# Create the STASH code to standard_name conversion dictionary
-# ---------------------------------------------------------------------
-load_stash2standard_name()
-stash2standard_name = _stash2standard_name
 
 
 class UMRead(cfdm.read_write.IORead):
@@ -3447,6 +3378,13 @@ class UMRead(cfdm.read_write.IORead):
         >>> f = read('*/file[0-9].pp', um_version=708)
 
         """
+        if not _stash2standard_name:
+            # --------------------------------------------------------
+            # Create the STASH code to standard_name conversion
+            # dictionary
+            # --------------------------------------------------------
+            load_stash2standard_name()
+
         if endian:
             byte_ordering = endian + "_endian"
         else:
@@ -3468,6 +3406,8 @@ class UMRead(cfdm.read_write.IORead):
 
         f = self.file_open(filename)
 
+        info = is_log_level_info(logger)
+
         um = [
             UMField(
                 var,
@@ -3481,6 +3421,7 @@ class UMRead(cfdm.read_write.IORead):
                 verbose=verbose,
                 implementation=self.implementation,
                 select=select,
+                info=info,
             )
             for var in f.vars
         ]

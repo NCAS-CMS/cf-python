@@ -5,15 +5,17 @@ from functools import partial, reduce
 from itertools import product
 from numbers import Integral
 from operator import mul
+from os import sep
 
 import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_info
 from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
-from dask.base import is_dask_collection, tokenize
+from dask.base import collections_to_dsk, is_dask_collection, tokenize
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
 
@@ -28,15 +30,17 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _numpy_allclose,
     _section,
     active_storage,
+    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
     parse_indices,
     rtol,
 )
-from ..mixin_container import Container
+from ..mixin2 import CFANetCDF, Container
 from ..units import Units
 from .collapse import Collapse
 from .creation import generate_axis_identifiers, to_dask
@@ -91,14 +95,15 @@ _DEFAULT_HARDMASK = True
 # Contstants used to specify which `Data` components should be cleared
 # when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # =   0b0000
-_ARRAY = 1  # =  0b0001
-_CACHE = 2  # =  0b0010
+_NONE = 0  # =  0b0000
+_ARRAY = 1  # = 0b0001
+_CACHE = 2  # = 0b0010
+_CFA = 4  # =   0b0100
 _ACTIVE = 8  # = 0b1000
-_ALL = 15  # =   0b1111
+_ALL = 15  # =  0b1111
 
 
-class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
+class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -418,12 +423,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except AttributeError:
             compressed = ""
 
-        if compressed:
-            if init_options.get("from_array"):
-                raise ValueError(
-                    "Can't define 'from_array' initialisation options "
-                    "for compressed input arrays"
-                )
+        if compressed and init_options.get("from_array"):
+            raise ValueError(
+                "Can't define 'from_array' initialisation options "
+                "for compressed input arrays"
+            )
 
         # Bring the compressed data into memory without
         # decompressing it
@@ -449,29 +453,33 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        array = to_dask(array, chunks, **kwargs)
+        # Set whether or not we're sure that the Data instance has a
+        # determinsitic name
+        self._custom["deterministic"] = not is_dask_collection(array)
+
+        dx = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
             dt = True
 
         first_value = None
-        if not dt and array.dtype.kind == "O":
+        if not dt and dx.dtype.kind == "O":
             kwargs = init_options.get("first_non_missing_value", {})
-            first_value = first_non_missing_value(array, **kwargs)
+            first_value = first_non_missing_value(dx, **kwargs)
 
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
         # reference times
-        if dt and array.dtype.kind in "USO":
-            array, units = convert_to_reftime(array, units, first_value)
+        if dt and dx.dtype.kind in "USO":
+            dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, clear=_NONE)
+        self._set_dask(dx, clear=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -1238,6 +1246,43 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
+    def _cfa_del_write(self):
+        """Set the CFA write status of the data to `False`.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_get_write`, `_cfa_set_write`
+
+        :Returns:
+
+            `bool`
+                The CFA status prior to deletion.
+
+        """
+        return self._custom.pop("cfa_write", False)
+
+    def _cfa_set_term(self, value):
+        """Set the CFA aggregation instruction term status.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_get_term`, `cfa_set_term`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA aggregation instruction term status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if not value:
+            self._custom.pop("cfa_term", None)
+
+        self._custom["cfa_term"] = bool(value)
+
     def _clear_after_dask_update(self, clear=_ALL):
         """Remove components invalidated by updating the `dask` array.
 
@@ -1247,16 +1292,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_Array`, `_del_cached_elements`, `_set_dask`
+        .. seealso:: `_del_Array`, `_del_cached_elements`,
+                     `_cfa_del_write`, `_set_dask`
 
         :Parameters:
 
             clear: `int`, optional
                 Specify which components should be removed. Which
                 components are removed is determined by sequentially
-                combining *clear* with the ``_ARRAY`` and ``_CACHE``
-                integer-valued contants, using the bitwise AND
-                operator:
+                combining *clear* with the ``_ARRAY``, ``_CACHE`` and
+                ``_CFA`` integer-valued contants, using the bitwise
+                AND operator:
 
                 * If ``clear & _ARRAY`` is non-zero then a source
                   array is deleted.
@@ -1264,8 +1310,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 * If ``clear & _CACHE`` is non-zero then cached
                   element values are deleted.
 
+                * If ``clear & _CFA`` is non-zero then the CFA write
+                  status is set to `False`.
+
                 * If ``clear & _ACTIVE`` is non-zero then set the
                   active storage status to `False`.
+
+                * If ``clear`` is non-zero then the CFA term status is
+                  set to `False`.
 
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
@@ -1280,7 +1332,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 element values will be kept but all other components
                 will be removed.
 
-                .. versionadded:: 3.14.1
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -1297,6 +1349,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if clear & _CACHE:
             # Delete cached element values
             self._del_cached_elements()
+
+        if clear & _CFA:
+            # Set the CFA write status to False
+            self._cfa_del_write()
 
         if clear & _ACTIVE:
             # Set active storage to False
@@ -1374,9 +1430,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Specify which components should be removed. By default
                 *clear* is the ``_ALL`` integer-valued constant, which
                 results in all components being removed. See
-                `_clear_after_dask_update` for details.
-                If there is no dask array then no components are
-                removed, regardless of the value of *clear*.
+                `_clear_after_dask_update` for details. If there is
+                no dask array then no components are removed,
+                regardless of the value of *clear*.
 
         :Returns:
 
@@ -1397,6 +1453,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Traceback (most recent call last):
             ...
         RuntimeError: No dask array
+
         """
         try:
             out = self._custom.pop("dask")
@@ -1561,6 +1618,66 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["cached_elements"] = cache
 
+    def _cfa_set_write(self, status):
+        """Set the CFA write status of the data.
+
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_get_write`, `cfa_set_write`,
+                     `_cfa_del_write`, `cf.read`, `cf.write`,
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["cfa_write"] = bool(status)
+
+    def _update_deterministic(self, other):
+        """Update the deterministic name status.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `get_deterministic_name`,
+                     `has_deterministic_name`
+
+        :Parameters:
+
+            other: `bool` or `Data`
+                If `False` then set the deterministic name status to
+                `False`. If `True` then do not change the
+                deterministic name status. If `Data` then set the
+                deterministic name status to `False` if and only if
+                *other* has a False deterministic name status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if other is False:
+            self._custom["deterministic"] = False
+            return
+
+        if other is True:
+            return
+
+        custom = self._custom
+        deterministic = custom["deterministic"]
+        if deterministic:
+            custom["deterministic"] = (
+                deterministic and other._custom["deterministic"]
+            )
+
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         """Calculate the n-th discrete difference along the given axis.
@@ -1645,6 +1762,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = self.to_dask_array()
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
+
+        # Convert to "difference" units
+        #
+        # TODO: Think about temperature units in relation to
+        #       https://github.com/cf-convention/discuss/issues/101,
+        #       whenever that issue is resolved.
+        units = self.Units
+        if units.isreftime:
+            units = Units(units._units_since_reftime)
+            d.override_units(units, inplace=True)
 
         return d
 
@@ -1758,7 +1885,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [ 4  5  6  7]
          [ 8  9 10 11]]
 
-        Equivalant ways to create indices for the four bins ``[-inf, 2),
+        Equivalent ways to create indices for the four bins ``[-inf, 2),
         [2, 6), [6, 10), [10, inf)``
 
         >>> e = d.digitize([2, 6, 10])
@@ -1768,7 +1895,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [1 1 2 2]
          [2 2 3 3]]
 
-        Equivalant ways to create indices for the two bins ``(2, 6], (6, 10]``
+        Equivalent ways to create indices for the two bins ``(2, 6], (6, 10]``
 
         >>> e = d.digitize([2, 6, 10], upper=True, open_ends=False)
         >>> e = d.digitize([[2, 6], [6, 10]], upper=True, open_ends=False)
@@ -2377,6 +2504,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
 
+        d._update_deterministic(not is_dask_collection(q))
+
         return d
 
     @_inplace_enabled(default=False)
@@ -2462,6 +2591,110 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
+    def cfa_get_term(self):
+        """The CFA aggregation instruction term status.
+
+        If True then the data represents that of a non-standard CFA
+        aggregation instruction variable.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_set_term`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_get_term()
+        False
+
+        """
+        return bool(self._custom.get("cfa_term", False))
+
+    def cfa_get_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_get_write()
+        False
+
+        """
+        return bool(self._custom.get("cfa_write", False))
+
+    def cfa_set_term(self, status):
+        """Set the CFA aggregation instruction term status.
+
+        If True then the data represents that of a non-standard CFA
+        aggregation instruction variable.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_get_term`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA aggregation instruction term status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'cfa_set_term' only allows the CFA aggregation instruction "
+                "term write status to be set to False"
+            )
+
+        self._custom.pop("cfa_term", False)
+
+    def cfa_set_write(self, status):
+        """Set the CFA write status of the data.
+
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `cfa_get_write`, `cf.read`, `cf.write`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'cfa_set_write' only allows the CFA write status to be "
+                "set to False"
+            )
+
+        self._cfa_del_write()
+
     def compute(self):  # noqa: F811
         """A numpy view the data.
 
@@ -2476,7 +2709,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `compute` causes all delayed operations to be computed.
 
         .. versionadded:: 3.14.0
 
@@ -3505,13 +3738,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if axes is not None:
                 self._axes = axes
 
+            self._update_deterministic(other)
             return self
+
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
             if axes is not None:
                 data0._axes = axes
 
+            data0._update_deterministic(other)
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3573,8 +3809,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
-        from dask import delayed
-
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
@@ -3593,8 +3827,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         numblocks = dx.numblocks
         if not all(numblocks[i] == 1 for i in regrid_axes):
             chunks = [
-                (-1,) if i in regrid_axes else c
-                for i, c in enumerate(dx.chunks)
+                -1 if i in regrid_axes else c for i, c in enumerate(dx.chunks)
             ]
             dx = dx.rechunk(chunks)
 
@@ -3612,33 +3845,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
 
-        # Cast weights and mask arrays as dask arrays
-        weights = da.asanyarray(operator.weights)
-        row = da.asanyarray(operator.row)
-        col = da.asanyarray(operator.col)
-
         src_mask = operator.src_mask
         if src_mask is not None:
             src_mask = da.asanyarray(src_mask)
 
-        dst_mask = operator.dst_mask
-        if dst_mask is not None:
-            dst_mask = da.asanyarray(dst_mask)
-
-        # Create a delayed object that calculates the weights
-        # matrix
-        weights_func = partial(
-            regrid_weights,
-            src_shape=src_shape,
-            dst_shape=operator.dst_shape,
-            dtype=dst_dtype,
-            start_index=operator.start_index,
-        )
-        weights = delayed(weights_func, pure=True)(
-            weights=weights,
-            row=row,
-            col=col,
-            dst_mask=dst_mask,
+        weights_dst_mask = delayed(regrid_weights, pure=True)(
+            operator=operator, dst_dtype=dst_dtype
         )
 
         # Create a regridding function to apply to each chunk
@@ -3653,7 +3865,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = dx.map_blocks(
             regrid_func,
-            weights=weights,
+            weights_dst_mask=weights_dst_mask,
             ref_src_mask=src_mask,
             chunks=regridded_chunks,
             meta=np.array((), dtype=dst_dtype),
@@ -3661,10 +3873,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         d = self.copy()
         d._set_dask(dx)
+
+        # Don't know (yet) if 'operator' has a deterministic name
+        d._update_deterministic(False)
+
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull_graph=True, relaxed_units=False):
+    def concatenate(
+        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull_graph`
@@ -3688,26 +3906,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{cull_graph: `bool`, optional}}
 
-            relaxed_units: `bool`, optional
-                If True then allow the concatenation of data arrays
-                with invalid but otherwise equal units. By default, if
-                any data array has invalid units then the
-                concatenation will fail.
+                .. versionadded:: 3.14.0
 
-                A `Units` object is considered to be invalid if its
-                `!isvalid` attribute is `False`:
+            {{relaxed_units: `bool`, optional}}
 
-                >>> d = cf.Data(9, 'metre')
-                >>> d.Units.isvalid
-                True
-                >>> d = cf.Data(9)
-                >>> d.Units.isvalid
-                True
-                >>> d = cf.Data(9, 'bad-units')
-                >>> d.Units.isvalid
-                False
+                 .. versionadded:: 3.14.1
 
-                .. versionadded:: 3.14.1
+            copy: `bool`, optional
+                If True (the default) then make copies of the data, if
+                required, prior to the concatenation, thereby ensuring
+                that the input data arrays are not changed by the
+                concatenation process. If False then some or all input
+                data arrays might be changed in-place, but the
+                concatenation process will be faster.
+
+                .. versionadded:: 3.15.1
 
         :Returns:
 
@@ -3757,17 +3970,23 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             for d in data:
                 d.cull_graph()
 
-        data0 = data[0].copy()
+        data0 = data[0]
+        units0 = data0.Units
+
+        if copy:
+            data0 = data0.copy()
+            copied = True
+        else:
+            copied = False
 
         processed_data = []
-        units0 = data0.Units
         for index, data1 in enumerate(data):
-            copied = False  # to avoid making two copies in a given case
-
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
-                data1 = data1.copy()
-                copied = True
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
                 data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
@@ -3780,50 +3999,114 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ):
                 # Allow identical invalid units to be equal
                 pass
-            elif not units0.equivalent(units1):
+            elif units0.equals(units1):
+                pass
+            elif units0.equivalent(units1):
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
+                data1.Units = units0
+            else:
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-            elif not units0.equals(units1):
-                if not copied:
-                    data1 = data1.copy()
-
-                data1.Units = units0
 
             processed_data.append(data1)
+            copied = not copy  # to avoid making two copies in a given case
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
+        # Set the CFA write status
+        #
+        # Assume at first that all input data instances have True
+        # status, but ...
+        cfa = _CFA
+        for d in processed_data:
+            if not d.cfa_get_write():
+                # ... the CFA write status is False when any input
+                # data instance has False status ...
+                cfa = _NONE
+                break
+
+        if cfa != _NONE:
+            non_concat_axis_chunks0 = list(processed_data[0].chunks)
+            non_concat_axis_chunks0.pop(axis)
+            for d in processed_data[1:]:
+                non_concat_axis_chunks = list(d.chunks)
+                non_concat_axis_chunks.pop(axis)
+                if non_concat_axis_chunks != non_concat_axis_chunks0:
+                    # ... the CFA write status is False when any two
+                    # input data instances have different chunk
+                    # patterns for the non-concatenated axes.
+                    cfa = _NONE
+                    break
+
         # Set the active storage status
         active = _ACTIVE
         for d in processed_data:
             if not d.active_storage:
-                # Set the output active storage status to False when any
-                # input data instance has False status
+                # Set the output active storage status to False when
+                # any input data instance has False status
                 active = _NONE
                 break
 
-        # Set the new dask array, retaining the cached elements ...
-        data0._set_dask(dx, clear=_ALL ^ active)
+        # Set the new dask array
+        data0._set_dask(dx, clear=_ALL ^ cfa ^ active)
 
-        # Set the appropriate cached elements
+        # Set appropriate cached elements
         cached_elements = {}
         for i in (0, -1):
             element = processed_data[i]._get_cached_elements().get(i)
             if element is not None:
                 cached_elements[i] = element
 
-        data0._set_cached_elements(cached_elements)
+        if cached_elements:
+            data0._set_cached_elements(cached_elements)
 
-        # Manage cyclicity of axes: if join axis was cyclic, it is no longer
+        # Set whether or not the concatenated name is deterministic
+        deterministic = True
+        for d in processed_data:
+            if not d.has_deterministic_name():
+                deterministic = False
+                break
+
+        data0._update_deterministic(deterministic)
+
+        # Set the CFA-netCDF aggregated data instructions and file
+        # name substitutions by combining them from all of the input
+        # data instances, giving precedence to those towards the left
+        # hand side of the input list.
+        if data0.cfa_get_write():
+            aggregated_data = {}
+            substitutions = {}
+            for d in processed_data[::-1]:
+                aggregated_data.update(d.cfa_get_aggregated_data())
+                substitutions.update(d.cfa_file_substitutions())
+
+            if aggregated_data:
+                data0.cfa_set_aggregated_data(aggregated_data)
+
+            if substitutions:
+                data0.cfa_update_file_substitutions(substitutions)
+
+        # Set the CFA aggregation instruction term status
+        if data0.cfa_get_term():
+            for d in processed_data[1:]:
+                if not d.cfa_get_term():
+                    data0.cfa_set_term(False)
+                    break
+
+        # Manage cyclicity of axes: if join axis was cyclic, it is no
+        # longer.
         axis = data0._parse_axes(axis)[0]
         if axis in data0.cyclic():
             logger.warning(
                 f"Concatenating along a cyclic axis ({axis}) therefore the "
-                f"axis has been set as non-cyclic in the output."
+                "axis has been set as non-cyclic in the output."
             )
             data0.cyclic(axes=axis, iscyclic=False)
 
@@ -4294,9 +4577,25 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__pos__")
 
-    # ----------------------------------------------------------------
-    # Private attributes
-    # ----------------------------------------------------------------
+    def __query_isclose__(self, value, rtol, atol):
+        """Query interface method for an "is close" condition.
+
+        :Parameters:
+
+            value:
+                The object to test against.
+
+            rtol: number
+                The tolerance on relative numerical differences.
+
+            atol: number
+                The tolerance on absolute numerical differences.
+
+        .. versionadded:: 3.15.2
+
+        """
+        return self.isclose(value, rtol=rtol, atol=atol)
+
     @property
     def _Units(self):
         """Storage for the units.
@@ -4456,16 +4755,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except KeyError:
             pass
         else:
+            if not old_units or self.Units.equals(value):
+                self._Units = value
+                return
+
             if old_units and not old_units.equivalent(value):
                 raise ValueError(
                     f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
                     "Consider using the override_units method instead."
                 )
-
-            if not old_units or self.Units.equals(value):
-                self._Units = value
-                return
 
         dtype = self.dtype
         if dtype.kind in "iu":
@@ -4474,12 +4773,22 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             else:
                 dtype = _dtype_float
 
+        func = partial(cf_units, from_units=old_units, to_units=value)
+
         dx = self.to_dask_array()
-        dx = dx.map_blocks(
-            partial(cf_units, from_units=old_units, to_units=value),
-            dtype=dtype,
-        )
-        self._set_dask(dx)
+        dx = dx.map_blocks(func, dtype=dtype)
+
+        # Setting equivalent units doesn't affect the CFA write
+        # status. Nor does it invalidate any cached values, but only
+        # because we'll adjust those, too.
+        self._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+
+        # Adjust cached values for the new units
+        cache = self._get_cached_elements()
+        if cache:
+            self._set_cached_elements(
+                {index: func(value) for index, value in cache.items()}
+            )
 
         self._Units = value
 
@@ -4864,7 +5173,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `array` causes all delayed operations to be computed. The
+        returned `numpy` array is a deep copy of that returned by
+        created `compute`.
 
         .. seealso:: `datetime_array`, `compute`, `persist`
 
@@ -5749,6 +6060,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         If the data index is returned as a `tuple` (see the *unravel*
         parameter) then all delayed operations are computed.
 
+        .. versionadded:: 3.0.0
+
+        .. seealso:: `argmin`
+
         :Parameters:
 
             axis: `int`, optional
@@ -5777,7 +6092,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = d.argmax()
         >>> a
         <CF Data(): 5>
-        >>> a.array
+        >>> print(a.array)
         5
 
         >>> index = d.argmax(unravel=True)
@@ -5802,12 +6117,96 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> print(d.array)
         [[0 1 2]
          [3 5 5]]
-        >>> d.argmax(1)
+        >>> d.argmax(axis=1)
         <CF Data(2): [2, 1]>
 
         """
         dx = self.to_dask_array()
         a = dx.argmax(axis=axis)
+
+        if unravel and (axis is None or self.ndim <= 1):
+            # Return a multidimensional index tuple
+            return tuple(np.array(da.unravel_index(a, self.shape)))
+
+        return type(self)(a)
+
+    def argmin(self, axis=None, unravel=False):
+        """Return the indices of the minimum values along an axis.
+
+        If no axis is specified then the returned index locates the
+        minimum of the whole data.
+
+        In case of multiple occurrences of the minimum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `argmax`
+
+        :Parameters:
+
+            axis: `int`, optional
+                The specified axis over which to locate the minimum
+                values. By default the minimum over the flattened data
+                is located.
+
+            unravel: `bool`, optional
+                If True then when locating the minimum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the minima over a subset of the axes.
+
+        :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the minimum, or minima.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(5, -1, -1).reshape(2, 3))
+        >>> print(d.array)
+        [[5 4 3]
+         [2 1 0]]
+        >>> a = d.argmin()
+        >>> a
+        <CF Data(): 5>
+        >>> print(a.array)
+        5
+
+        >>> index = d.argmin(unravel=True)
+        >>> index
+        (1, 2)
+        >>> d[index]
+        <CF Data(1, 1): [[0]]>
+
+        >>> d.argmin(axis=0)
+        <CF Data(3): [1, 1, 1]>
+        >>> d.argmin(axis=1)
+        <CF Data(2): [2, 2]>
+
+        Only the location of the first occurrence is returned:
+
+        >>> d = cf.Data([4, 0, 2, 3, 0])
+        >>> d.argmin()
+        <CF Data(): 1>
+
+        >>> d = cf.Data(np.arange(5, -1, -1).reshape(2, 3))
+        >>> d[1, 1] = 0
+        >>> print(d.array)
+        [[5 4 3]
+         [2 0 0]]
+        >>> d.argmin(axis=1)
+        <CF Data(2): [2, 1]>
+
+        """
+        dx = self.to_dask_array()
+        a = dx.argmin(axis=axis)
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
@@ -5993,25 +6392,83 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Returns:
 
-                `Data`
+            `Data`
 
         """
         return self
 
+    def get_deterministic_name(self):
+        """Get the deterministic name for the data.
+
+        If there is a deterministic name then the data array may be
+        assumed to be 'equal' to that of another `Data` object with
+        the same deterministic name. This measure of equality is
+        different to that applied by the `equals` method in that NaN
+        and inf values are, in effect, always considered equal.
+
+        Note that the opposite is not always true. Two `Data` objects
+        that are considered equal by their `equals` methods might not
+        have the same deterministic name.
+
+        An exception is raised if there is no determinisitic name.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `has_deterministic_name`
+
+        :Returns:
+
+            `str`
+                The deterministic name.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
+        >>> d.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1 = cf.Data([1, 2, 3], 'metre')
+        >>> d1.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1.get_deterministic_name() == d.get_deterministic_name()
+        True
+        >>> d1.equals(d)
+        True
+
+        >>> e = d + 1 - 1
+        >>> e.get_deterministic_name()
+        '0b83ada62d4b014bae83c3de1c1d3a80'
+        >>> e.get_deterministic_name() == d.get_deterministic_name()
+        False
+        >>> e.equals(d)
+        True
+
+        """
+        if not self._custom["deterministic"]:
+            raise ValueError()
+
+        units = self._Units
+        return tokenize(
+            self.to_dask_array().name,
+            units.formatted(definition=True, names=True),
+            units._canonical_calendar,
+        )
+
     def get_filenames(self):
         """The names of files containing parts of the data array.
 
-        Returns the names of any files that are required to deliver
-        the computed data array. This list may contain fewer names
-        than the collection of file names that defined the data when
-        it was first instantiated, as could be the case after the data
-        has been subspaced.
+        Returns the names of any files that may be required to deliver
+        the computed data array. This set may contain fewer names than
+        the collection of file names that defined the data when it was
+        first instantiated, as could be the case after the data has
+        been subspaced.
 
         **Implementation**
 
         A `dask` chunk that contributes to the computed array is
         assumed to reference data within a file if that chunk's array
-        object has a callable `get_filename` method, the output of
+        object has a callable `get_filenames` method, the output of
         which is added to the returned `set`.
 
         :Returns:
@@ -6057,13 +6514,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         {'file_A.nc'}
 
         """
-        from dask.base import collections_to_dsk
-
         out = set()
-        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
-        for a in dsk.values():
+        for a in self.todict().values():
             try:
-                out.add(a.get_filename())
+                out.update(a.get_filenames())
             except AttributeError:
                 pass
 
@@ -6163,6 +6617,55 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         self.Units = Units(self.get_units(default=None), calendar)
+
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        updated = False
+        dsk = self.todict()
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.add_file_location(location)
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                continue
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
+
+        if updated:
+            dx = self.to_dask_array()
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
+
+        return location
 
     def set_units(self, value):
         """Set the units.
@@ -7623,18 +8126,59 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # ------------------------------------------------------------
         # Check that each instance has equal array values
         # ------------------------------------------------------------
-        # Check that each instance has the same units
+        self_dx = self.to_dask_array()
+        other_dx = other.to_dask_array()
+
+        # Check that each instance has the same units. Do this before
+        # any other possible short circuits.
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
-            logger.info(
-                f"{self.__class__.__name__}: Different Units "
-                f"({self.Units!r}, {other.Units!r})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different Units "
+                    f"({self_Units!r}, {other_Units!r})"
+                )
+
             return False
 
-        self_dx = self.to_dask_array()
-        other_dx = other.to_dask_array()
+        rtol = float(rtol)
+        atol = float(atol)
+
+        # Return False if there are different cached elements. This
+        # provides a possible short circuit for that case that two
+        # arrays are not equal (but not in the case that they are).
+        cache0 = self._get_cached_elements()
+        if cache0:
+            cache1 = other._get_cached_elements()
+            if cache1 and sorted(cache0) == sorted(cache1):
+                a = []
+                b = []
+                for key, value0 in cache0.items():
+                    value1 = cache1[key]
+                    if value0 is np.ma.masked or value1 is np.ma.masked:
+                        # Don't test on masked values - this logic is
+                        # determined elsewhere.
+                        continue
+
+                    # Make sure strings are unicode
+                    try:
+                        value0 = value0.decode()
+                        value1 = value1.decode()
+                    except AttributeError:
+                        pass
+
+                    a.append(value0)
+                    b.append(value1)
+
+                if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different array "
+                            f"values (atol={atol}, rtol={rtol})"
+                        )
+
+                    return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -7647,8 +8191,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self_dx,
                 other_dx,
                 masked_equal=True,
-                rtol=float(rtol),
-                atol=float(atol),
+                rtol=rtol,
+                atol=atol,
             )
         elif not self_is_numeric and not other_is_numeric:
             # If the array (say d) is fully masked, then the output of
@@ -7665,10 +8209,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 data_comparison = True
 
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
-            logger.info(
-                f"{self.__class__.__name__}: Different data types:"
-                f"{self_dx.dtype} != {other_dx.dtype}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types:"
+                    f"{self_dx.dtype} != {other_dx.dtype}"
+                )
+
             return False
 
         mask_comparison = da.all(
@@ -7680,10 +8226,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         result = da.logical_and(data_comparison, mask_comparison)
 
         if not result.compute():
-            logger.info(
-                f"{self.__class__.__name__}: Different array values ("
-                f"atol={atol}, rtol={rtol})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different array values ("
+                    f"atol={atol}, rtol={rtol})"
+                )
+
             return False
         else:
             return True
@@ -7745,7 +8293,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
-        # TODODASKAPI bring back expand_dime alias (or rather alias this to
+        # TODODASKAPI bring back expand_dims alias (or rather alias this to
         # that)
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -7768,8 +8316,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
 
-        # Inserting a dimension doesn't affect the cached elements
-        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        # Inserting a dimension doesn't affect the cached elements nor
+        # the CFA write status
+        d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -8190,6 +8739,29 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return hasattr(self.Units, "calendar")
 
+    def has_deterministic_name(self):
+        """Whether there is a deterministic name for the data.
+
+        See `get_deterministic_name` for details.
+
+        .. versionadded:: 3.15.1
+
+        .. seealso:: `get_deterministic_name`
+
+        :Returns:
+
+            `bool`
+                Whether or not there is a deterministic name.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
+
+        """
+        return self._custom["deterministic"]
+
     def has_units(self):
         """Whether units have been set.
 
@@ -8254,6 +8826,39 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = False
+
+    def file_locations(self):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = set()
+
+        for key, a in self.todict().items():
+            try:
+                out.update(a.file_locations())
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                pass
+
+        return out
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
@@ -8736,6 +9341,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
+        d._update_deterministic(a)
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -8805,6 +9411,46 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._asreftime(inplace=True)
 
         return d
+
+    def chunk_indices(self):
+        """Return indices that define each dask compute chunk.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `chunks`
+
+        :Returns:
+
+            `itertools.product`
+                An iterator over tuples of indices of the data array.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(405).reshape(3, 9, 15),
+        ...             chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> d.npartitions
+        6
+        >>> for index in d.chunk_indices():
+        ...     print(index)
+        ...
+        (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
+
+        """
+        from dask.utils import cached_cumsum
+
+        chunks = self.chunks
+
+        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+        indices = [
+            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
+            for starts, shapes in zip(cumdims, chunks)
+        ]
+        return product(*indices)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -9136,9 +9782,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             default: optional
                 Return the value of the *default* parameter if the
-                calendar has not been set.
-
-                {{default Exception}}
+                calendar has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
@@ -9176,6 +9821,55 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.override_calendar(None, inplace=True)
         return calendar
 
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        updated = False
+        dsk = self.todict()
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.del_file_location(location)
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                continue
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
+
+        if updated:
+            dx = self.to_dask_array()
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
+
+        return location
+
     def del_units(self, default=ValueError()):
         """Delete the units.
 
@@ -9185,10 +9879,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the units
-                has not been set.
-
-                {{default Exception}}
+                Return the value of the *default* parameter if the
+                units has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
@@ -9516,10 +10209,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             dx = da.isclose(self, y, atol=atol, rtol=rtol)
 
-            d = self.copy(array=False)
+            d = self.copy()
             d._set_dask(dx)
             d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
+            d._update_deterministic(not is_dask_collection(y))
+
             return d
 
     @_inplace_enabled(default=False)
@@ -10346,6 +11041,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         d._set_dask(dx)
 
+        # Don't know (yet) if 'x' and 'y' have a deterministic names
+        d._update_deterministic(False)
+
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -10742,31 +11440,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         shape = d.shape
 
         if axes is None:
-            axes = [i for i, n in enumerate(shape) if n == 1]
+            iaxes = tuple([i for i, n in enumerate(shape) if n == 1])
         else:
-            axes = d._parse_axes(axes)
+            iaxes = d._parse_axes(axes)
 
             # Check the squeeze axes
-            for i in axes:
+            for i in iaxes:
                 if shape[i] > 1:
                     raise ValueError(
                         f"Can't squeeze {d.__class__.__name__}: "
                         f"Can't remove axis of size {shape[i]}"
                     )
 
-        if not axes:
+        if not iaxes:
+            # Short circuit if the squeeze is a null operation
             return d
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
-        dx = dx.squeeze(axis=tuple(axes))
+        dx = dx.squeeze(axis=iaxes)
 
         # Squeezing a dimension doesn't affect the cached elements
         d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Remove the squeezed axes names
-        d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
+        d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
         return d
 
@@ -10831,6 +11530,53 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
+    def todict(self, optimize_graph=True):
+        """Return a dictionary of the dask graph key/value pairs.
+
+        .. versionadded:: 3.15.0
+
+        .. seealso:: `to_dask_array`, `tolist`
+
+        :Parameters:
+
+            `optimize_graph`: `bool`
+                If True, the default, then prior to being converted to
+                a dictionary, the graph is optimised to remove unused
+                chunks. Note that optimising the graph can add a
+                considerable performance overhead.
+
+        :Returns:
+
+            `dict`
+                The dictionary of the dask graph key/value pairs.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4], chunks=2)
+        >>> d.todict()
+        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4])}
+        >>> e = d[0]
+        >>> e.todict()
+        {('getitem-153fd24082bc067cf438a0e213b41ce6',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
+           0), (slice(0, 1, 1),)),
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2])}
+        >>> e.todict(optimize_graph=False)
+        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4]),
+         ('getitem-153fd24082bc067cf438a0e213b41ce6',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
+           0), (slice(0, 1, 1),))}
+
+        """
+        dx = self.to_dask_array()
+
+        if optimize_graph:
+            return collections_to_dsk((dx,), optimize_graph=True)
+
+        return dict(collections_to_dsk((dx,), optimize_graph=False))
+
     def tolist(self):
         """Return the data as a scalar or (nested) list.
 
@@ -10839,6 +11585,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         If ``N`` is 0 then, since the depth of the nested list is 0,
         it will not be a list at all, but a simple Python scalar.
+
+        .. sealso:: `todict`
 
         :Returns:
 
@@ -10919,8 +11667,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         ndim = d.ndim
         if axes is None:
-            if ndim <= 1:
-                return d
             iaxes = tuple(range(ndim - 1, -1, -1))
         else:
             iaxes = d._parse_axes(axes)
@@ -10929,9 +11675,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # Short circuit if the transpose is a null operation
             return d
 
-        # Note: _axes attribute is still important/utilised post-Daskification
-        # because e.g. axes labelled as cyclic by the _cyclic attribute use it
-        # to determine their position (see #discussion_r694096462 on PR #247).
+        # Note: The _axes attribute is important because e.g. axes
+        #       labelled as cyclic by the _cyclic attribute use it to
+        #       determine their position (see #discussion_r694096462
+        #       on PR #247).
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
@@ -10942,6 +11689,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             raise ValueError(
                 f"Can't transpose: Axes don't match array: {axes}"
             )
+
         d._set_dask(dx)
 
         return d

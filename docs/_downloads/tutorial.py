@@ -151,6 +151,8 @@ q.cyclic()
 q.constructs.domain_axis_identity('domainaxis1')
 print(q[:, -2:3])
 print(q[:, 3:-2:-1])
+lon = q.dimension_coordinate('X')
+print(q[:, lon > 180])
 t.data[0, [2, 3, 9], [4, 8]]
 q, t = cf.read('file.nc')
 t[:, 0, 0] = -1
@@ -167,6 +169,9 @@ t[0, 0, -1] /= -10
 print(t[0, 0, -1].array)
 t.data[0, 0, -1] = -99
 print(t[0, 0, -1].array)
+y = t.dimension_coordinate('Y')
+t[:, y > 0] = -6
+print(t)
 t[0, :, -2] = cf.masked
 print(t.array)
 t[0, 4, -2] = 99
@@ -758,9 +763,8 @@ print(q.creation_commands())
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
 v = nc.variables['ta']
-netcdf_array = cf.NetCDFArray(filename='file.nc', ncvar='ta',
-                               dtype=v.dtype, ndim=v.ndim,
-     		  	       shape=v.shape, size=v.size)
+netcdf_array = cf.NetCDFArray(filename='file.nc', address='ta',
+                               dtype=v.dtype, shape=v.shape)
 data_disk = cf.Data(netcdf_array)
 numpy_array = v[...]
 data_memory = cf.Data(numpy_array)

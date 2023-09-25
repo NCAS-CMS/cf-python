@@ -1,3 +1,112 @@
+version 3.15.4
+--------------
+
+**2023-??-??**
+
+* Record dimension coordinate cell characteristics
+  (https://github.com/NCAS-CMS/cf-python/issues/692)
+* New set of methods to query, set, del, and `get_cell_characterstics`
+* Fix bug in `cf.Field.match_by_construct` that always returned True for
+  1-d constructs whose axis is not in the data, even when the
+  criterion was not matched
+  (https://github.com/NCAS-CMS/cf-python/issues/691)
+
+version 3.15.3
+--------------
+
+**2023-08-31**
+
+* Prevent unlimited dimensions from being written to CFA-netCDF files
+  (https://github.com/NCAS-CMS/cf-python/issues/689)
+
+version 3.15.2
+--------------
+
+**2023-07-21**
+
+* Performance improvements to `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/675)
+* Performance improvements to `cf.read` when reading datasets with
+  compression-by-convention
+  (https://github.com/NCAS-CMS/cf-python/pull/671)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``weights_file`` (https://github.com/NCAS-CMS/cf-python/issues/675)
+* New keyword parameter to `cf.aggregate`: ``cells``
+  (https://github.com/NCAS-CMS/cf-python/issues/452)
+* New function: `cf.isclose`
+  (https://github.com/NCAS-CMS/cf-python/issues/661)
+* Allow `cf.Data` and other objects that have data (such as
+  `cf.DimensionCoordinate`) to be used as indices
+  (https://github.com/NCAS-CMS/cf-python/issues/677)
+* Fix bug that caused `cf.Field.regrids` and `cf.Field.regridc` to
+  fail when the regrid axes are chunked with more than one chunk
+  (https://github.com/NCAS-CMS/cf-python/issues/665)
+* Fix bug that caused `cf.read` to fail for some PP data with a single
+  vertical level (https://github.com/NCAS-CMS/cf-python/issues/667)
+* Changed dependency: ``1.10.1.1<=cfdm<1.10.2.0``
+
+----
+
+version 3.15.1
+--------------
+
+**2023-06-09**
+
+* New documentation cheat sheet
+  (https://github.com/NCAS-CMS/cf-python/issues/591)
+* Performance improvements to `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/640)
+* New methods: `cf.Data.argmin`, `cf.Field.argmin`
+  (https://github.com/NCAS-CMS/cf-python/issues/577)
+* Deprecate `cf.relative_vorticity` in favour of `cf.curl_xy`
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
+* Fix bug when using the ``-d`` option to the `cfa` script 
+  (https://github.com/NCAS-CMS/cf-python/issues/649)
+* Fix the return type from `cf.example_fields`
+  (https://github.com/NCAS-CMS/cf-python/pull/654)
+* Fix `set_data` when the units are invalid
+  (https://github.com/NCAS-CMS/cf-python/pull/646)
+* Fix `cf.Field.laplacian_xy`, `cf.Field.grad_xy`, `cf.curl_xy` and
+  `cf.div_xy` to work in cases when the dimension coordinates are
+  missing standard names
+  (https://github.com/NCAS-CMS/cf-python/pull/643)
+* Changed dependency: ``cfunits>=3.3.6``
+* Changed dependency: ``cftime>=1.6.2``
+
+----
+
+version 3.15.0
+--------------
+
+**2023-04-27**
+
+* Re-introduction of CFA-netCDF functionality for CFA-0.6
+  (https://github.com/NCAS-CMS/cf-python/issues/451,
+  https://github.com/NCAS-CMS/cf-python/issues/475,
+  https://github.com/NCAS-CMS/cf-python/issues/637)
+* New function: `cf.CFA`
+* New method: `cf.Data.get_cfa_write`
+* New method: `cf.Data.set_cfa_write`
+* Fix excessive memory use arising from `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/623)
+* Fixed bug in `cf.Field.read` when reading UM/PP data that are
+  run-length encoded
+  (https://github.com/NCAS-CMS/cf-python/issues/621)
+* Fixed bug in `cf.Field.compute_vertical_coordinates` that retained
+  incorrect bounds properties
+  (https://github.com/NCAS-CMS/cf-python/issues/626)
+* Removed benign UserWarning from `cf.Field.percentile`
+  (https://github.com/NCAS-CMS/cf-python/issues/619)
+* Handled the renaming of the ESMF Python interface from `ESMF` to
+  `esmpy` at version 8.4.0. Both module names are accepted for now.
+* Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
+* Changed (optional) dependency: ``8.0.0<=esmpy``
+* Changed (optional) dependency: ``1.10.0<=scipy``
+
+----
+
 version 3.14.1
 --------------
 
@@ -19,7 +128,7 @@ version 3.14.1
   (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
 * Changed dependency: ``cfunits>=3.3.5``
-* Changed dependency: ``8.0.0<=ESMPYcfdm<8.2.0``
+* Changed dependency: ``8.0.0<=ESMPY<8.2.0``
 
 ----
 
@@ -34,6 +143,8 @@ version 3.14.0
   https://github.com/NCAS-CMS/cf-python/issues/428)
 * Backwards incompatible API changes to facilitate the use of Dask
   (https://github.com/NCAS-CMS/cf-python/issues/579)
+* Removal of CFA-0.4 functionality (CFA-0.6 will introduced at a later
+  version).
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`

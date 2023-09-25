@@ -1,7 +1,0 @@
-cf.TimeDuration.bounds
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.TimeDuration.bounds

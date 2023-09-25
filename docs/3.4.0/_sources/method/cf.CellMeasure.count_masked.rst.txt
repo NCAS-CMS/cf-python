@@ -1,7 +1,0 @@
-cf.CellMeasure.count_masked
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMeasure.count_masked

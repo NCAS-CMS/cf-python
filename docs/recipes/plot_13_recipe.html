@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Calculate and plot the Niño 3.4 Index &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Overlay Geopotential height contours over Temperature anomalies" href="plot_14_recipe.html" />
+    <link rel="prev" title="Using mask to plot Aerosol Optical Depth" href="plot_12_recipe.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_12_recipe.html" title="previous chapter">Using mask to plot Aerosol Optical Depth</a></li>
+      <li>Next: <a href="plot_14_recipe.html" title="next chapter">Overlay Geopotential height contours over Temperature anomalies</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-13-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="calculate-and-plot-the-nino-3-4-index">
+<span id="sphx-glr-recipes-plot-13-recipe-py"></span><h1>Calculate and plot the Niño 3.4 Index<a class="headerlink" href="#calculate-and-plot-the-nino-3-4-index" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will calculate and plot the sea surface temperature (SST)
+anomaly in the Niño 3.4 region. According to <a class="reference external" href="https://climatedataguide.ucar.edu/climate-data/nino-sst-indices-nino-12-3-34-4-oni-and-tni">NCAR Climate Data Guide</a>,
+the Niño 3.4 anomalies may be thought of as representing the average equatorial
+SSTs across the Pacific from about the dateline to the South American coast.
+The Niño 3.4 index typically uses a 5-month running mean, and El Niño or La
+Niña events are defined when the Niño 3.4 SSTs exceed +/- 0.4 degrees Celsius for a
+period of six months or more.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python and cf-plot:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read and select the SST by index and look at its contents:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sst</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_SST.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sst</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=Sea surface temperature (ncvar%sst)
+----------------------------------------------------
+Data            : long_name=Sea surface temperature(long_name=time(996), long_name=latitude(721), long_name=longitude(1440)) K
+Dimension coords: long_name=time(996) = [1940-01-01 00:00:00, ..., 2022-12-01 00:00:00] gregorian
+                : long_name=latitude(721) = [90.0, ..., -90.0] degrees_north
+                : long_name=longitude(1440) = [0.0, ..., 359.75] degrees_east
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Set the units from Kelvin to degrees Celsius:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../attribute/cf.Field.Units.html#cf.Field.Units" title="cf.Field.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">sst</span><span class="o">.</span><span class="n">Units</span></a> <span class="o">=</span> <a href="../class/cf.Units.html#cf.Units" title="cf.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class"><span class="n">cf</span><span class="o">.</span><span class="n">Units</span></a><span class="p">(</span><span class="s2">&quot;degreesC&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>4. SST is subspaced for the Niño 3.4 region (5N-5S, 170W-120W) and as the
+dataset is using longitudes in 0-360 degrees East format, they are subtracted
+from 360 to convert them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sst</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">X</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="mi">360</span> <span class="o">-</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">360</span> <span class="o">-</span> <span class="mi">120</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Plot the various Niño regions using cf-plot. Here:</p></li>
+</ol>
+<ul class="simple">
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
+define the parts of the plot area, which is closed by
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to
+set the map limits and projection;</p></li>
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/setvars.html">cfplot.setvars</a> is used to
+set various attributes of the plot, like setting the land colour to grey;</p></li>
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/cscale.html">cfplot.cscale</a> is used to
+choose one of the colour maps amongst many available;</p></li>
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a> plots contour data
+from the <code class="docutils literal notranslate"><span class="pre">region</span></code> subspace at a specific time with no contour lines and a
+title;</p></li>
+<li><p>next, four Niño regions and labels are defined using
+<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html">Matplotlib’s Rectangle</a>
+and
+<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html">Text</a>
+function with cf-plot plot object (<code class="docutils literal notranslate"><span class="pre">cfp.plotvars.plot</span></code>):</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;cyl&quot;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">360</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=-</span><span class="mi">90</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/setvars.html#cfplot.setvars" title="cfplot.setvars" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span></a><span class="p">(</span><span class="n">land_color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="s2">&quot;scale1&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">region</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Niño Index Regions&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Niño 3.4 region(5N-5S, 170W-120W):</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class"><span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span></a><span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">170</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+    <span class="mi">50</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+    <span class="o">-</span><span class="mi">145</span><span class="p">,</span>
+    <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;3.4&quot;</span><span class="p">,</span>
+    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="c1"># Niño 1+2 region (0-10S, 90W-80W):</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class"><span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span></a><span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="mi">10</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">,</span>
+    <span class="n">hatch</span><span class="o">=</span><span class="s2">&quot;**&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+    <span class="o">-</span><span class="mi">85</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;1+2&quot;</span><span class="p">,</span>
+    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="c1"># Niño 3 region (5N-5S, 150W-90W):</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class"><span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span></a><span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+    <span class="mi">60</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">,</span>
+    <span class="n">hatch</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+    <span class="o">-</span><span class="mi">120</span><span class="p">,</span>
+    <span class="o">-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="c1"># Niño 4 region (5N-5S, 160E-150W):</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class"><span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span></a><span class="p">(</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">),</span>
+    <span class="mi">50</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">,</span>
+    <span class="n">hatch</span><span class="o">=</span><span class="s2">&quot;oo&quot;</span><span class="p">,</span>
+    <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Rectangle.html#matplotlib.patches.Rectangle" title="matplotlib.patches.Rectangle" class="sphx-glr-backref-module-matplotlib-patches sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rectangle</span></a><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+    <span class="o">-</span><span class="mi">175</span><span class="p">,</span>
+    <span class="o">-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+    <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+<span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_13_recipe_001.png" srcset="../_images/sphx_glr_plot_13_recipe_001.png" alt="plot 13 recipe" class = "sphx-glr-single-img"/><p>6. Calculate the Niño 3.4 index and standardize it to create an anomaly index.
+The <a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.collapse.html">collapse</a>
+method is used to calculate the mean over the longitude (X) and latitude (Y)
+dimensions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_index</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">region</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;X: Y: mean&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>7. The result, <code class="docutils literal notranslate"><span class="pre">nino34_index</span></code>, represents the average SST in the defined
+Niño 3.4 region for each time step. In the variable <code class="docutils literal notranslate"><span class="pre">base_period</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nino34_index</span></code> is subset to only include data from the years 1961 to 1990.
+This period is often used as a reference period for calculating anomalies.
+The variables <code class="docutils literal notranslate"><span class="pre">climatology</span></code> and <code class="docutils literal notranslate"><span class="pre">std_dev</span></code> include the mean and the
+standard deviation over the time (T) dimension of the <code class="docutils literal notranslate"><span class="pre">base_period</span></code> data
+respectively:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">base_period</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">nino34_index</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="mi">1961</span><span class="p">,</span> <span class="mi">1990</span><span class="p">)))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">climatology</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">base_period</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">)</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">std_dev</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">base_period</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;T: sd&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>8. The line for variable <code class="docutils literal notranslate"><span class="pre">nino34_anomaly</span></code> calculates the standardized
+anomaly for each time step in the <code class="docutils literal notranslate"><span class="pre">nino34_index</span></code> data. It subtracts the
+<code class="docutils literal notranslate"><span class="pre">climatology</span></code> from the <code class="docutils literal notranslate"><span class="pre">nino34_index</span></code> and then divides by the <code class="docutils literal notranslate"><span class="pre">std_dev</span></code>.
+The resulting <code class="docutils literal notranslate"><span class="pre">nino34_anomaly</span></code> data represents how much the SST in the Niño
+3.4 region deviates from the 1961-1990 average, in units of standard
+deviations. This is a common way to quantify climate anomalies like El Niño
+and La Niña events:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_anomaly</span></a> <span class="o">=</span> <span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_index</span></a> <span class="o">-</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">climatology</span></a><span class="p">)</span> <span class="o">/</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">std_dev</span></a>
+</pre></div>
+</div>
+<p>9. A moving average of the <code class="docutils literal notranslate"><span class="pre">nino34_anomaly</span></code> along the time axis, with a
+window size of 5 (i.e. an approximately 5-month moving average) is calculated
+using the
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/method/cf.Field.moving_window.html">moving_window</a>
+method. The <code class="docutils literal notranslate"><span class="pre">mode='nearest'</span></code> parameter is used to specify how to pad the
+data outside of the time range. The resulting <code class="docutils literal notranslate"><span class="pre">nino34_rolling</span></code> variable
+represents a smoothed version of the <code class="docutils literal notranslate"><span class="pre">nino34_anomaly</span></code> data. It removes
+short-term fluctuations and highlights longer-term trends or cycles:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_rolling</span></a> <span class="o">=</span> <a href="../method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">nino34_anomaly</span><span class="o">.</span><span class="n">moving_window</span></a><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>10. Define El Niño and La Niña events by creating Boolean masks to identify
+El Niño and La Niña events. Now plot SST anomalies in the Niño 3.4 region over
+time using cf-plot. Here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gset.html">cfplot.gset</a> sets the limits
+of the x-axis (years from 1940 to 2022) and y-axis (anomalies from -3
+degrees C to 3 degrees C) for the plot;</p></li>
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
+define the parts of the plot area, which is closed by
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/lineplot.html">cfplot.lineplot</a> plots
+the rolling Niño 3.4 index over time;</p></li>
+<li><p>a zero line and also horizontal dashed lines are drawn for El Niño and
+La Niña thresholds using
+<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhline.html">Matplotlib’s axhline</a>
+with cf-plot plot object (<code class="docutils literal notranslate"><span class="pre">cfp.plotvars.plot</span></code>);</p></li>
+<li><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html">fill_between</a>
+from Matplotlib is used with cf-plot plot object (<code class="docutils literal notranslate"><span class="pre">cfp.plotvars.plot</span></code>)
+to fill the area between the Niño 3.4 index and the El Niño/La Niña
+thresholds;</p></li>
+<li><p>similarly,
+<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html">cfplot.plotvars.plot.legend</a>
+is used to add a legend in the end:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">elnino</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_rolling</span></a> <span class="o">&gt;=</span> <span class="mf">0.4</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">lanina</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_rolling</span></a> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">0.4</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gset.html#cfplot.gset" title="cfplot.gset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gset</span></a><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="s2">&quot;1940-1-1&quot;</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="s2">&quot;2022-12-31&quot;</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<a href="https://ajheaps.github.io/cf-plot/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nino34_rolling</span></a><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;SST Anomaly in Niño 3.4 Region (5N-5S, 120-170W)&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Temperature anomaly ($\degree C$)&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Year&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+    <span class="mf">0.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;El Niño Threshold&quot;</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+    <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;La Niña Threshold&quot;</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">nino34_rolling</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="mf">0.4</span><span class="p">,</span>
+    <a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">nino34_rolling</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">(),</span>
+    <span class="n">where</span><span class="o">=</span><a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">elnino</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">(),</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">nino34_rolling</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span>
+    <a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">nino34_rolling</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">(),</span>
+    <span class="n">where</span><span class="o">=</span><a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lanina</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">(),</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_13_recipe_002.png" srcset="../_images/sphx_glr_plot_13_recipe_002.png" alt="SST Anomaly in Niño 3.4 Region (5N-5S, 120-170W)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 5 minutes  17.754 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-13-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_13_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_13_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_13_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_13_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-08-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

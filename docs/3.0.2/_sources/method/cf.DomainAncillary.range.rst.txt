@@ -1,7 +1,0 @@
-cf.DomainAncillary.range
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.range

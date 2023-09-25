@@ -1,7 +1,0 @@
-cf.CellMethod.get_axes
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CellMethod.get_axes

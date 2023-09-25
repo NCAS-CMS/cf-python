@@ -1,7 +1,0 @@
-cf.Bounds.contiguous
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Bounds.contiguous

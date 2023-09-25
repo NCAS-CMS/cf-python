@@ -1,7 +1,0 @@
-cf.DomainAncillary.all
-======================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DomainAncillary.all

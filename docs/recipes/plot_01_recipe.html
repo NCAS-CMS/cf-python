@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Calculating global mean temperature timeseries &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculating and plotting the global average temperature anomalies" href="plot_02_recipe.html" />
+    <link rel="prev" title="Recipes using cf" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><strong>Recipes using cf</strong></a></li>
+      <li>Next: <a href="plot_02_recipe.html" title="next chapter">Calculating and plotting the global average temperature anomalies</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-01-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="calculating-global-mean-temperature-timeseries">
+<span id="sphx-glr-recipes-plot-01-recipe-py"></span><h1>Calculating global mean temperature timeseries<a class="headerlink" href="#calculating-global-mean-temperature-timeseries" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe we will calculate and plot monthly and annual global mean temperature timeseries.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python and cf-plot:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read the field constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/cru_ts4.06.1901.2021.tmp.dat.nc&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))&gt;,
+ &lt;CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius&gt;]
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Select near surface temperature by index and look at its contents:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=near-surface temperature (ncvar%tmp)
+-----------------------------------------------------
+Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
+Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
+                : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north
+                : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Select latitude and longitude dimensions by identities, with two different techniques:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">lon</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;long_name=longitude&quot;</span><span class="p">)</span>
+<a href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">lat</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Print the description of near surface temperature using the dump method to show properties of all constructs:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-----------------------------------------------------
+Field: long_name=near-surface temperature (ncvar%tmp)
+-----------------------------------------------------
+Conventions = &#39;CF-1.4&#39;
+_FillValue = 9.96921e+36
+comment = &#39;Access to these data is available to any registered CEDA user.&#39;
+contact = &#39;support@ceda.ac.uk&#39;
+correlation_decay_distance = 1200.0
+history = &#39;Fri 29 Apr 14:35:01 BST 2022 : User f098 : Program makegridsauto.for
+           called by update.for&#39;
+institution = &#39;Data held at British Atmospheric Data Centre, RAL, UK.&#39;
+long_name = &#39;near-surface temperature&#39;
+missing_value = 9.96921e+36
+references = &#39;Information on the data is available at
+              http://badc.nerc.ac.uk/data/cru/&#39;
+source = &#39;Run ID = 2204291347. Data generated from:tmp.2204291209.dtb&#39;
+title = &#39;CRU TS4.06 Mean Temperature&#39;
+units = &#39;degrees Celsius&#39;
+
+Data(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) = [[[--, ..., --]]] degrees Celsius
+
+Domain Axis: long_name=latitude(360)
+Domain Axis: long_name=longitude(720)
+Domain Axis: long_name=time(1452)
+
+Dimension coordinate: long_name=time
+    calendar = &#39;gregorian&#39;
+    long_name = &#39;time&#39;
+    units = &#39;days since 1900-1-1&#39;
+    Data(long_name=time(1452)) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
+
+Dimension coordinate: long_name=latitude
+    long_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(long_name=latitude(360)) = [-89.75, ..., 89.75] degrees_north
+
+Dimension coordinate: long_name=longitude
+    long_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(long_name=longitude(720)) = [-179.75, ..., 179.75] degrees_east
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Latitude and longitude dimension coordinate cell bounds are absent, which are created and set:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">a</span></a> <span class="o">=</span> <a href="../method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds" title="cf.DimensionCoordinate.create_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lat</span><span class="o">.</span><span class="n">create_bounds</span></a><span class="p">()</span>
+<a href="../method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lat</span><span class="o">.</span><span class="n">set_bounds</span></a><span class="p">(</span><a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">a</span></a><span class="p">)</span>
+<a href="../method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump" title="cf.DimensionCoordinate.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lat</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Dimension coordinate: long_name=latitude
+    long_name = &#39;latitude&#39;
+    units = &#39;degrees_north&#39;
+    Data(360) = [-89.75, ..., 89.75] degrees_north
+    Bounds:units = &#39;degrees_north&#39;
+    Bounds:Data(360, 2) = [[-90.0, ..., 90.0]] degrees_north
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">b</span></a> <span class="o">=</span> <a href="../method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds" title="cf.DimensionCoordinate.create_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lon</span><span class="o">.</span><span class="n">create_bounds</span></a><span class="p">()</span>
+<a href="../method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lon</span><span class="o">.</span><span class="n">set_bounds</span></a><span class="p">(</span><a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">b</span></a><span class="p">)</span>
+<a href="../method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump" title="cf.DimensionCoordinate.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">lon</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Dimension coordinate: long_name=longitude
+    long_name = &#39;longitude&#39;
+    units = &#39;degrees_east&#39;
+    Data(720) = [-179.75, ..., 179.75] degrees_east
+    Bounds:units = &#39;degrees_east&#39;
+    Bounds:Data(720, 2) = [[-180.0, ..., 180.0]] degrees_east
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../attribute/cf.Bounds.array.html#cf.Bounds.array" title="cf.Bounds.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">b</span><span class="o">.</span><span class="n">array</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[-180.  -179.5]
+ [-179.5 -179. ]
+ [-179.  -178.5]
+ ...
+ [ 178.5  179. ]
+ [ 179.   179.5]
+ [ 179.5  180. ]]
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>Time dimension coordinate cell bounds are similarly created and set for cell sizes of one calendar month:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">time</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;long_name=time&quot;</span><span class="p">)</span>
+<a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">c</span></a> <span class="o">=</span> <a href="../method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds" title="cf.DimensionCoordinate.create_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">time</span><span class="o">.</span><span class="n">create_bounds</span></a><span class="p">(</span><span class="n">cellsize</span><span class="o">=</span><a href="../function/cf.M.html#cf.M" title="cf.M" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">M</span></a><span class="p">())</span>
+<a href="../method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">time</span><span class="o">.</span><span class="n">set_bounds</span></a><span class="p">(</span><a href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">c</span></a><span class="p">)</span>
+<a href="../method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump" title="cf.DimensionCoordinate.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">time</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Dimension coordinate: long_name=time
+    calendar = &#39;gregorian&#39;
+    long_name = &#39;time&#39;
+    units = &#39;days since 1900-1-1&#39;
+    Data(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
+    Bounds:calendar = &#39;gregorian&#39;
+    Bounds:units = &#39;days since 1900-1-1&#39;
+    Bounds:Data(1452, 2) = [[1901-01-01 00:00:00, ..., 2022-01-01 00:00:00]] gregorian
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><p>Calculate and plot the area weighted mean surface temperature for each time:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">global_avg</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;area: mean&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">global_avg</span></a><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Global mean surface temperature&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_01_recipe_001.png" srcset="../_images/sphx_glr_plot_01_recipe_001.png" alt="Global mean surface temperature" class = "sphx-glr-single-img"/><ol class="arabic simple" start="9">
+<li><p>Calculate and plot the annual global mean surface temperature:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_global_avg</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">global_avg</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><a href="../function/cf.Y.html#cf.Y" title="cf.Y" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">Y</span></a><span class="p">())</span>
+<a href="https://ajheaps.github.io/cf-plot/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_global_avg</span></a><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Annual global mean surface temperature&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_01_recipe_002.png" srcset="../_images/sphx_glr_plot_01_recipe_002.png" alt="Annual global mean surface temperature" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  10.607 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-01-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_01_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_01_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/plot_01_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_01_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-08-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

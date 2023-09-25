@@ -1,7 +1,0 @@
-cf.CoordinateConversion.equals
-==============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.CoordinateConversion.equals

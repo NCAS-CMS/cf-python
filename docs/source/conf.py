@@ -102,9 +102,12 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
-    "sphinx_gallery.gen_gallery",
 ]
 
+CF_DOCS_MODE = os.environ.get("CF_DOCS_MODE", "none")
+
+if CF_DOCS_MODE in ["dev-recipes", "latest", "archive"]:
+    extensions.append("sphinx_gallery.gen_gallery")
 
 # Spelling extension configuration: set British English and false positives
 spelling_lang = "en_GB"
@@ -152,6 +155,7 @@ intersphinx_mapping = {
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
     "cfplot": ("https://ajheaps.github.io/cf-plot", None),
     "dask": ("https://docs.dask.org/en/latest", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
 }
 
 # This extension is meant to help with the common pattern of having
@@ -270,7 +274,7 @@ html_theme = "alabaster"  # 'default' #'haiku' #'default'
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-    "show_related": "true",
+    "show_related": "false",
     "sidebar_collapse": "false",
     "fixed_sidebar": "true",
     "page_width": "85%",
@@ -302,12 +306,12 @@ html_title = "Documentation"
 
 # The name of an image file (relative to this directory) to place at
 # the top of the sidebar.
-# html_logo = None
+html_logo = "images/logo.svg"
 
 # The name of an image file (within the static path) to use as favicon
 # of the docs.  This file should be a Windows icon file (.ico) being
 # 16x16 or 32x32 pixels large.
-# html_favicon = None
+html_favicon = "_static/favicon.ico"
 
 # Add any paths that contain custom static files (such as style
 # sheets) here, relative to this directory. They are copied after the
@@ -386,6 +390,10 @@ sphinx_gallery_conf = {
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
 }
+
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # -- Options for LaTeX output -------------------------------------------------
 
