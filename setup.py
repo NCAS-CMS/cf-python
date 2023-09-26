@@ -318,6 +318,7 @@ setup(
         "cf.umread_lib",
         "cf.test",
         "cf.gridmappings",
+        "cf.gridmappings.abstract",
     ],
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],

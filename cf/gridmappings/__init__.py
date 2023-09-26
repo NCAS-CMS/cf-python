@@ -10,15 +10,13 @@ cf-conventions.html#appendix-grid-mappings
 This module should be kept up to date with the Appendix, by adding or
 amending appropriate classes.
 
+Note that abstract classes to support the creation of concrete classes
+for concrete Grid Mappinds are defined in the 'abstract' module, so
+not included in the listing below.
+
 """
 
 from .gridmapping import (
-    GridMapping,
-    AzimuthalGridMapping,
-    ConicGridMapping,
-    CylindricalGridMapping,
-    LatLonGridMapping,
-    PerspectiveGridMapping,
     AlbersEqualArea,
     AzimuthalEquidistant,
     Geostationary,
@@ -35,9 +33,5 @@ from .gridmapping import (
     Stereographic,
     TransverseMercator,
     VerticalPerspective,
-    convert_proj_angular_data_to_cf,
-    convert_cf_angular_data_to_proj,
-    _all_abstract_grid_mappings,
     _all_concrete_grid_mappings,
-    _get_cf_grid_mapping_from_name,
 )
