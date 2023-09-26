@@ -2611,6 +2611,11 @@ class FieldDomain:
         """Alias for `coordinate_references`."""
         return self.coordinate_references(*identities, **filter_kwargs)
 
+    def create_2d_lats_and_lons(self):
+        """TODO."""
+        # TODO functional code here to go from input to lat_data and lon_dat
+        pass
+
 
 def _create_ancillary_mask_component(mask_shape, ind, compress):
     """Create an ancillary mask component.

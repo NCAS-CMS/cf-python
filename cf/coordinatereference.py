@@ -49,25 +49,8 @@ def _totuple(a):
 
 def create_2d_lats_and_lons(projection, proj_1d_coors, crs_params):
     """TODO."""
-    # TODO functional code here to go from inputs to lat_data and lon_data
-
-    # Create latitude construct from data
-    lat_data = cf.Data(numpy.array(0))  # TODO: minimal dummy data for now
-    lat_dim = cf.DimensionCoordinate(data=lat_data)
-    lat_dim.set_properties(
-        {"standard_name": "latitude",
-         "units": "degrees_north"}
-    )
-
-    # Create longitude construct from data
-    lon_data = cf.Data(numpy.array(0))  # TODO: minimal dummy data for now
-    lon_dim = cf.DimensionCoordinate(data=lon_data)
-    lon_dim.set_properties(
-        {"standard_name": "longitude",
-         "units": "degrees_east"}
-    )
-
-    return lat_dim, lon_dim
+    # TODO functional code here to go from inputs to lat_data and lon_dat
+    pass
 
 
 class CoordinateReference(cfdm.CoordinateReference):
