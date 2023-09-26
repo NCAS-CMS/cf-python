@@ -1,7 +1,5 @@
 import cfdm
 
-from .gridmappings import *  # noqa: F403
-
 
 class CoordinateConversion(cfdm.CoordinateConversion):
     """A coordinate conversion component of a coordinate reference
