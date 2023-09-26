@@ -324,37 +324,6 @@ from .read_write import read, write
 
 from .regrid import RegridOperator
 
-from .gridmappings import (
-    GridMapping,
-    AzimuthalGridMapping,
-    ConicGridMapping,
-    CylindricalGridMapping,
-    LatLonGridMapping,
-    PerspectiveGridMapping,
-    AlbersEqualArea,
-    AzimuthalEquidistant,
-    Geostationary,
-    LambertAzimuthalEqualArea,
-    LambertConformalConic,
-    LambertCylindricalEqualArea,
-    Mercator,
-    ObliqueMercator,
-    Orthographic,
-    PolarStereographic,
-    RotatedLatitudeLongitude,
-    LatitudeLongitude,
-    Sinusoidal,
-    Stereographic,
-    TransverseMercator,
-    VerticalPerspective,
-    convert_proj_angular_data_to_cf,
-    convert_cf_angular_data_to_proj,
-    _all_abstract_grid_mappings,
-    _all_concrete_grid_mappings,
-    _get_cf_grid_mapping_from_name,
-)
-
-
 # Set up basic logging for the full project with a root logger
 import logging
 import sys

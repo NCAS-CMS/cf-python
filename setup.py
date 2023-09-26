@@ -317,6 +317,7 @@ setup(
         "cf.regrid",
         "cf.umread_lib",
         "cf.test",
+        "cf.gridmappings",
     ],
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],

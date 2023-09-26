@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
-from .constants import cr_canonical_units, cr_gm_valid_attr_names_are_numeric
-from .data import Data
-from .data.utils import is_numeric_dtype
-from .units import Units
+from ..constants import cr_canonical_units, cr_gm_valid_attr_names_are_numeric
+from ..data import Data
+from ..data.utils import is_numeric_dtype
+from ..units import Units
 
 PROJ_PREFIX = "+proj"
 
