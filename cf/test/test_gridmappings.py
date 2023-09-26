@@ -17,6 +17,16 @@ except ImportError:
     pass
 
 
+_all_abstract_grid_mappings = (
+    cf.GridMapping,
+    cf.AzimuthalGridMapping,
+    cf.ConicGridMapping,
+    cf.CylindricalGridMapping,
+    cf.LatLonGridMapping,
+    cf.PerspectiveGridMapping,
+)
+
+
 # These are those of the above which have required positional arguments
 all_concrete_grid_mappings_req_args = {
     "AlbersEqualArea": {"standard_parallel": (0.0, None)},
