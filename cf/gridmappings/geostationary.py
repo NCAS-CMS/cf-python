@@ -1,4 +1,5 @@
 from .abstract import PerspectiveGridMapping
+from .abstract.gridmappingbase import _validate_map_parameter
 
 
 class Geostationary(PerspectiveGridMapping):

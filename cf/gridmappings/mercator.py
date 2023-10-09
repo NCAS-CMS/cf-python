@@ -1,4 +1,5 @@
 from .abstract import CylindricalGridMapping
+from .abstract.gridmappingbase import _validate_map_parameter
 
 
 class Mercator(CylindricalGridMapping):

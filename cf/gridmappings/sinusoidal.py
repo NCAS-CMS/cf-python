@@ -1,4 +1,5 @@
 from .abstract import GridMapping
+from .abstract.gridmappingbase import _validate_map_parameter
 
 
 class Sinusoidal(GridMapping):

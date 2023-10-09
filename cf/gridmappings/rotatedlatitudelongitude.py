@@ -1,4 +1,5 @@
 from .abstract import LatLonGridMapping
+from .abstract.gridmappingbase import _validate_map_parameter
 
 
 class RotatedLatitudeLongitude(LatLonGridMapping):
