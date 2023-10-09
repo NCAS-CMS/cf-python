@@ -917,6 +917,14 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
+    def test_read_url(self):
+        """Test reading urls."""
+        for scheme in ("http", "https"):
+            remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
+            # Check that cf can access it
+            f = cf.read(remote)
+            self.assertEqual(len(f), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

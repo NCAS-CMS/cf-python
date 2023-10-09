@@ -1,7 +1,7 @@
 version 3.15.4
 --------------
 
-**2023-??-??**
+**2023-10-??**
 
 * Record dimension coordinate cell characteristics
   (https://github.com/NCAS-CMS/cf-python/issues/692)
@@ -10,6 +10,10 @@ version 3.15.4
   1-d constructs whose axis is not in the data, even when the
   criterion was not matched
   (https://github.com/NCAS-CMS/cf-python/issues/691)
+* Fix bug that prevented "https://" netCDF files from being read
+  (https://github.com/NCAS-CMS/cf-python/issues/699)
+
+----
 
 version 3.15.3
 --------------
