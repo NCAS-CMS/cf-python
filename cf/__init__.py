@@ -254,6 +254,9 @@ from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
+
+from .gridmappings import *
+
 from .data import Data
 from .data.array import (
     CFANetCDFArray,
@@ -323,6 +326,7 @@ from .cfimplementation import CFImplementation, implementation
 from .read_write import read, write
 
 from .regrid import RegridOperator
+
 
 # Set up basic logging for the full project with a root logger
 import logging

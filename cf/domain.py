@@ -18,7 +18,6 @@ from .functions import (
     indices_shape,
     parse_indices,
 )
-from .gridmappings import _get_cf_grid_mapping_from_name
 
 _empty_set = set()
 
@@ -628,7 +627,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             )
             if gm:
                 if as_class:
-                    gms[cref_name] = _get_cf_grid_mapping_from_name(gm)
+                    pass  # TODO UPDATE with class
                 else:
                     gms[cref_name] = gm
         return gms
