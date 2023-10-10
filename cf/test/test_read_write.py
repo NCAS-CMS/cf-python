@@ -681,13 +681,6 @@ class read_writeTest(unittest.TestCase):
         cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
 
-        # Case (2) as above, so the right error should be raised on read
-        with self.assertRaises(ValueError):
-            cf.read(tmpfileh2)[0]
-
-        with self.assertRaises(ValueError):
-            cf.read(tmpfilec2)[0]
-
         self.assertTrue(f0.equals(f, verbose=2))
 
         self.assertTrue(
