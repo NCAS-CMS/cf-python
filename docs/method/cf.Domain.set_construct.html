@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.set_construct<a class="headerlink" href="#cf-domain-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.set_construct">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">set_construct</code><span class="sig-paren">(</span><em class="sig-param">construct</em>, <em class="sig-param">key=None</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">set_axes=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">autocyclic={}</em>, <em class="sig-param">conform=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/mixin/fielddomain.py#L2219-L2402"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">set_construct</code><span class="sig-paren">(</span><em class="sig-param">construct</em>, <em class="sig-param">key=None</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">set_axes=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">autocyclic={}</em>, <em class="sig-param">conform=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/mixin/fielddomain.py#L2220-L2403"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <p>When inserting a construct with data, the domain axes constructs
 spanned by the data are either inferred, or specified with the
@@ -160,7 +160,7 @@ associated with a given domain axis construct).</p>
 <dd class="field-odd"><dl>
 <dt>construct:</dt><dd><p>The metadata construct to be inserted.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the construct. If
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the construct. If
 not set then a new, unique identifier is created
 automatically. If the identifier already exists then the
 existing construct will be replaced.</p>
@@ -169,7 +169,7 @@ existing construct will be replaced.</p>
 </dd>
 </dl>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Set the domain axes constructs that are spanned by the
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Set the domain axes constructs that are spanned by the
 construct’s data. If unset, and the <em>set_axes</em> parameter
 is True, then an attempt will be made to assign existing
 domain axis constructs to the data.</p>
@@ -189,23 +189,23 @@ axis construct key via the <a class="reference internal" href="cf.Domain.domain_
 </dd>
 </dl>
 </dd>
-<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not set the domain axes constructs that
+<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not set the domain axes constructs that
 are spanned by the data, even if the <em>axes</em> parameter has
 been set. By default the axes are set either according to
 the <em>axes</em> parameter, or an attempt will be made to assign
 existing domain axis constructs to the data.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the construct. By default the
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the construct. By default the
 construct is copied.</p>
 </dd>
-<dt>autocyclic: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Additional parameters for optimising the operation,
+<dt>autocyclic: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Additional parameters for optimising the operation,
 relating to coordinate periodicity and cyclicity. See
 the code for details.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.9.0.</span></p>
 </div>
 </dd>
-<dt>conform: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default), then attempt to replace
+<dt>conform: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default), then attempt to replace
 placeholder identities in <em>construct</em> with existing
 construct identifiers. Specifically, cell method
 construct axis specifiers (such as <code class="docutils literal notranslate"><span class="pre">'T'</span></code>) are mapped
@@ -222,7 +222,7 @@ identifiers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The construct identifier for the construct.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The construct identifier for the construct.</p>
 </dd>
 </dl>
 </dd>
@@ -246,7 +246,7 @@ identifiers.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-10-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

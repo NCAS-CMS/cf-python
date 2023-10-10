@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.15.4</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.15.3 for version 1.10 of the CF conventions.</p>
+<p>Version 3.15.4 for version 1.10 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in two executable
 scripts (<a class="reference download internal" download="" href="_downloads/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 28kB,
 <a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
@@ -461,7 +461,7 @@ instance or <code class="xref py py-obj docutils literal notranslate"><span clas
 <span id="reading-datasets"></span><h2><a class="toc-backref" href="#id382"><strong>Reading field constructs from datasets</strong></a><a class="headerlink" href="#reading-field-constructs-from-datasets" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function reads files from disk, or from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URLs <a class="footnote-reference brackets" href="#dap" id="id6">1</a>, and returns the contents in
 a <a class="reference internal" href="class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance that contains zero or more field constructs.</p>
-<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 with the addition of extra methods that operate on its field construct
 elements.</p>
 <p>The following file types can be read:</p>
@@ -596,7 +596,7 @@ as optionally displayed when the dataset is read.</p>
 levels of detail.</p>
 <section id="minimal-detail">
 <span id="id9"></span><h3><a class="toc-backref" href="#id385">Minimal detail</a><a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function, invoked on a variable by calling that variable
+<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function, invoked on a variable by calling that variable
 alone at the interpreter prompt, returns a short, one-line description:</p>
 <div class="literal-block-wrapper docutils container" id="id124">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the contents of the two field constructs from
@@ -620,7 +620,7 @@ spanned by the data array (“latitude” and “longitude” with sizes 5 and
 </section>
 <section id="medium-detail">
 <span id="id10"></span><h3><a class="toc-backref" href="#id386">Medium detail</a><a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function, invoked by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call on a field construct,
+<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function, invoked by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call on a field construct,
 returns similar information as the one-line output, along with short
 descriptions of the metadata constructs, which include the first and last
 values of their data arrays:</p>
@@ -870,7 +870,7 @@ not limited to:</p>
 <section id="field-lists">
 <span id="id13"></span><h2><a class="toc-backref" href="#id390"><strong>Field lists</strong></a><a class="headerlink" href="#field-lists" title="Permalink to this headline">¶</a></h2>
 <p>A field list, contained in a <a class="reference internal" href="class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance, is an ordered
-sequence of field constructs. It supports all of the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
+sequence of field constructs. It supports all of the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
 operations, such as indexing, iteration, and methods like
 <a class="reference internal" href="method/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id129">
@@ -1132,7 +1132,7 @@ that meet particular criteria (see
 <a class="reference internal" href="#filtering-metadata-constructs"><span class="std std-ref">Filtering metadata constructs</span></a>). It also behaves like a
 “read-only” Python dictionary, in that it has <a class="reference internal" href="method/cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>,
 <a class="reference internal" href="method/cf.Constructs.keys.html#cf.Constructs.keys" title="cf.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a> and <a class="reference internal" href="method/cf.Constructs.values.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a> methods that work exactly
-like their corresponding <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> methods. It also has a
+like their corresponding <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> methods. It also has a
 <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method and indexing like a Python dictionary (see
 <a class="reference internal" href="#metadata-construct-access"><span class="std std-ref">Metadata construct access</span></a> for details).</p>
 <div class="literal-block-wrapper docutils container" id="id134">
@@ -1372,7 +1372,7 @@ objects.</em></span><a class="headerlink" href="#id143" title="Permalink to this
 <p>Alternatively, date-time data may be created by providing date-time
 objects or <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601-like date-time strings</a>. Date-time objects may be
 <a class="reference external" href="https://unidata.github.io/cftime/api.html#cftime.datetime" title="(in cftime)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime.datetime</span></code></a> instances (as returned by the <a class="reference internal" href="function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a> and
-<a class="reference internal" href="function/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a> functions), Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, or
+<a class="reference internal" href="function/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a> functions), Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, or
 any other date-time object that has an equivalent API.</p>
 <div class="literal-block-wrapper docutils container" id="id144">
 <div class="code-block-caption"><span class="caption-text"><em>Creating a Data instance from a date-time objects.</em></span><a class="headerlink" href="#id144" title="Permalink to this code">¶</a></div>
@@ -1527,7 +1527,7 @@ using the ‘constructs’ keyword.</em></span><a class="headerlink" href="#id14
 </div>
 <p>There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
-data mask is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> where the the data has values, and <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> where
+data mask is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> where the the data has values, and <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> where
 the data is missing. The data mask may be inspected with the
 <a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a> attribute of the field construct, which returns the data
 mask in a field construct with the same metadata constructs as the
@@ -1598,7 +1598,7 @@ the <code class="docutils literal notranslate"><span class="pre">valid_max</span
 property, or lie outside of the range defined by the <code class="docutils literal notranslate"><span class="pre">valid_range</span></code>
 property.</p>
 <p>However, this automatic masking may be bypassed by setting the <em>mask</em>
-keyword of the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>. The mask, as defined in
+keyword of the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>. The mask, as defined in
 the dataset, may subsequently be applied manually with the
 <a class="reference internal" href="method/cf.Field.apply_masking.html#cf.Field.apply_masking" title="cf.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id153">
@@ -1660,7 +1660,7 @@ package</a>.</p></li>
 </ul>
 <ul class="simple">
 <li><p>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
 (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
 rather then producing a null result.</p></li>
 </ul>
@@ -1738,7 +1738,7 @@ around the data edges.</em></span><a class="headerlink" href="#id156" title="Per
 </pre></div>
 </div>
 </div>
-<p>An index that is a list of integers may also be provided as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<p>An index that is a list of integers may also be provided as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array, a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance, or a metadata construct
 that has data:</p>
 <div class="literal-block-wrapper docutils container" id="id157">
@@ -1791,7 +1791,7 @@ package</a>.</p></li>
 </ul>
 <ul class="simple">
 <li><p>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
 (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
 rather then producing a null result.</p></li>
 </ul>
@@ -1860,7 +1860,7 @@ rules</a>.</p>
 </pre></div>
 </div>
 </div>
-<p>An index that is a list of integers may also be provided as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<p>An index that is a list of integers may also be provided as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array, a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance, or a metadata construct
 that has data:</p>
 <div class="literal-block-wrapper docutils container" id="id163">
@@ -1906,7 +1906,7 @@ the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf
 <p>By default the data mask is “hard”, meaning that masked values can not
 be changed by assigning them to another value. This behaviour may be
 changed by setting the <a class="reference internal" href="attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
-construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft”.</p>
+construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft”.</p>
 <div class="literal-block-wrapper docutils container" id="id165">
 <div class="code-block-caption"><span class="caption-text"><em>Changing masked elements back to data values is only
 possible when the “hardmask” attribute is False.</em></span><a class="headerlink" href="#id165" title="Permalink to this code">¶</a></div>
@@ -1920,7 +1920,7 @@ possible when the “hardmask” attribute is False.</em></span><a class="header
 </pre></div>
 </div>
 </div>
-<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
+<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
 assume that the mask is <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.generic.html#modifying-the-mask">soft by default</a>. The
 reason for the difference is so that land-sea masks are, by default,
 preserved through assignment operations.</p>
@@ -2537,7 +2537,7 @@ the value of the “default” parameter is returned.</em></span><a class="heade
 </div>
 <p>The <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance accepts an
 optional second argument to be returned if the construct key does not
-exist, exactly like the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict.get</span></code></a> method.</p>
+exist, exactly like the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict.get</span></code></a> method.</p>
 <section id="metadata-construct-properties">
 <span id="id33"></span><h3><a class="toc-backref" href="#id409">Metadata construct properties</a><a class="headerlink" href="#metadata-construct-properties" title="Permalink to this headline">¶</a></h3>
 <p>Metadata constructs share the <a class="reference internal" href="#properties"><span class="std std-ref">same API as the field construct</span></a> for accessing their properties:</p>
@@ -3408,7 +3408,7 @@ north.</em></span><a class="headerlink" href="#id224" title="Permalink to this c
 <p>Subspace criteria may be provided for size 1 domain axes that are not
 spanned by the field construct’s data.</p>
 <p>Explicit indices may also be assigned to a domain axis identified by a
-metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence
+metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence
 of integers or Booleans.</p>
 <div class="literal-block-wrapper docutils container" id="id225">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans the 2nd,
@@ -3744,7 +3744,7 @@ index</span></a>.</p>
 <section id="sorting-and-selecting-from-field-lists">
 <span id="id56"></span><h2><a class="toc-backref" href="#id433"><strong>Sorting and selecting from field lists</strong></a><a class="headerlink" href="#sorting-and-selecting-from-field-lists" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> may be sorted in-place using the
-same syntax as a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by
+same syntax as a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by
 the values of the field constructs identities, but any sorting
 criteria are possible.</p>
 <div class="literal-block-wrapper docutils container" id="id233">
@@ -3883,8 +3883,8 @@ various criteria:</p>
 </tr>
 </tbody>
 </table>
-<p>Each of these methods returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct matches
-the given criteria, or else <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<p>Each of these methods returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct matches
+the given criteria, or else <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id236">
 <div class="code-block-caption"><span class="caption-text"><em>Match a field construct to its properties and metadata.</em></span><a class="headerlink" href="#id236" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -4684,7 +4684,7 @@ and metadata constructs.</em></span><a class="headerlink" href="#id255" title="P
 </div>
 <p>Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
-been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
 <div class="literal-block-wrapper docutils container" id="id256">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct that contains at least one
 instance of each type of metadata construct.</em></span><a class="headerlink" href="#id256" title="Permalink to this code">¶</a></div>
@@ -5145,7 +5145,7 @@ altered.</em></span><a class="headerlink" href="#id266" title="Permalink to this
 </pre></div>
 </div>
 </div>
-<p>Equivalently, the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function may be used:</p>
+<p>Equivalently, the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function may be used:</p>
 <div class="literal-block-wrapper docutils container" id="id267">
 <div class="code-block-caption"><span class="caption-text"><em>Copy a field construct with the built-in copy module.</em></span><a class="headerlink" href="#id267" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">copy</span>
@@ -5202,7 +5202,7 @@ constructs, should they not be equal, increase the verbosity
 of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code> method (or globally, see
 <a class="reference internal" href="#controlling-output-messages"><span class="std std-ref">Controlling output messages</span></a>),
 as demonstrated in an example above.</p>
-<p>Otherwise, for default verbosity, only a <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>
+<p>Otherwise, for default verbosity, only a <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>
 result will be given.</p>
 </div>
 <p>Equality is strict by default. This means that for two field
@@ -5287,10 +5287,10 @@ behaves in a similar manner.</em></span><a class="headerlink" href="#id272" titl
 <section id="field-list-equality">
 <span id="id70"></span><h3><a class="toc-backref" href="#id449">Field list equality</a><a class="headerlink" href="#field-list-equality" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has an <a class="reference internal" href="method/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>
-method that compares two field lists. It returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if
+method that compares two field lists. It returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if
 field constructs at the same index are equal. This method also has an
-<em>unordered</em> parameter that, when <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, treats the two field lists as
-unordered collections of field constructs, i.e. in this case <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is
+<em>unordered</em> parameter that, when <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, treats the two field lists as
+unordered collections of field constructs, i.e. in this case <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is
 returned if and only if field constructs are pair-wise equal,
 irrespective of their positions in the list.</p>
 <hr class="docutils" />
@@ -6186,7 +6186,7 @@ create a “flat” dataset, i.e. one without any sub-groups. This does
 not require the removal of the group structure from the field
 construct and all of its components (although that is possible), as it
 can be done via overriding the existing group structure by
-setting the <em>group</em> keyword to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+setting the <em>group</em> keyword to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id290">
 <div class="code-block-caption"><span class="caption-text"><em>Write the field construct to a file with the same group
 structure, and also to a flat file.</em></span><a class="headerlink" href="#id290" title="Permalink to this code">¶</a></div>
@@ -6493,7 +6493,7 @@ from a named field construct property,</p></li>
 <p>These parameters are also available to the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function via its
 <em>aggregate</em> parameter.</p>
 <p>Note that when reading <a class="reference internal" href="#pp-and-um-fields-files"><span class="std std-ref">PP and UM fields files</span></a> with <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, the <em>relaxed_units</em> option
-is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always available to field
+is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always available to field
 constructs derived from <a class="reference internal" href="#pp-and-um-fields-files"><span class="std std-ref">PP and UM fields files</span></a>.</p>
 <p>Field constructs that are logically similar but arranged differently
 are also aggregatable.</p>
@@ -6558,7 +6558,7 @@ uncompressed form of the data. The new subspace will no longer be
 compressed, i.e. its underlying arrays will be uncompressed, but the
 original data will remain compressed. It follows that all of the
 data in a field construct may be uncompressed by indexing the field
-construct with (indices equivalent to) <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</p></li>
+construct with (indices equivalent to) <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</p></li>
 </ul>
 <ul class="simple">
 <li><p>If data elements are modified by <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">assigning</span></a> to indices of the uncompressed form of the
@@ -9128,16 +9128,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -9321,7 +9321,7 @@ data instances instead. See
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
 identities” with the <a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a> function may
-help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
+help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
 property and netCDF variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), to also be considered when identifying
 constructs.</p></li>
 <li><p><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</p></li>
@@ -9690,7 +9690,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id376">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -9717,7 +9717,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -9986,7 +9986,7 @@ turn, until the origin function/method completes.</p>
 section</span></a>, namely either an integer or a corresponding string
 for example <code class="docutils literal notranslate"><span class="pre">verbose=2</span></code> or equivalently <code class="docutils literal notranslate"><span class="pre">verbose='INFO'</span></code>
 (or <code class="docutils literal notranslate"><span class="pre">verbose='info'</span></code> since case is ignored).</p>
-<p>By default, <em>verbose</em> is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the value of the
+<p>By default, <em>verbose</em> is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the value of the
 <a class="reference internal" href="function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting is used to determine which messages,
 if any, are filtered out.</p>
 <p class="rubric">Footnotes</p>
@@ -10017,7 +10017,7 @@ format can not reliably be detected automatically.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-10-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

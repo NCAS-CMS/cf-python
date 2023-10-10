@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
 
 
 
@@ -137,11 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Constructs.domain_axes<a class="headerlink" href="#cf-constructs-domain-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.domain_axes">
-<<<<<<< HEAD
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axes</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/constructs.py#L1105-L1204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axes" title="Permalink to this definition">¶</a></dt>
-=======
 <code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axes</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/constructs.py#L1091-L1190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axes" title="Permalink to this definition">¶</a></dt>
->>>>>>> 972cdaadceecfaa123a4956c50333c6bc1f0f56f
 <dd><p>Return domain axis constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -153,7 +149,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>identities: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt><dd><p>Select domain axis constructs that have an identity,
+<dt>identities: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt><dd><p>Select domain axis constructs that have an identity,
 defined by their <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods, that matches
 any of the given values.</p>
 <p>Additionally, the values are matched against construct
@@ -164,7 +160,7 @@ identifiers, with or without the <code class="docutils literal notranslate"><spa
 <span class="pre">filter_by_identity=(value,))</span></code> returns 1-d coordinate
 constructs that all span the same domain axis
 construct then that domain axis construct is
-selected. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for details.</p>
+selected. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for details.</p>
 <p>Additionally, if there is an associated <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> data
 array and a value matches the integer position of an
 array dimension, then the corresponding domain axis
@@ -172,9 +168,9 @@ construct is selected.</p>
 <p>If no values are provided then all domain axis
 constructs are selected.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -207,7 +203,7 @@ were selected.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-10-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

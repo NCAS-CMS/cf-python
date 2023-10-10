@@ -1734,7 +1734,7 @@ class PropertiesDataBounds(PropertiesData):
             return True
 
         # Check that each instance is the same type
-        if type(self) != type(other):
+        if type(self) is not type(other):
             print(
                 f"{self.__class__.__name__}: Different types: "
                 f"{self.__class__.__name__}, {other.__class__.__name__}"
