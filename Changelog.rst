@@ -1,7 +1,7 @@
 version 3.15.4
 --------------
 
-**2023-10-??**
+**2023-10-10**
 
 * Record dimension coordinate cell characteristics
   (https://github.com/NCAS-CMS/cf-python/issues/692)

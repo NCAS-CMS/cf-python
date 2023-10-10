@@ -1076,14 +1076,14 @@ class DimensionCoordinate(
                 the cell bounds) characteristic. May be a `Query`,
                 `TimeDuration`, scalar `Data`, scalar data_like
                 object, or `None`. A value of `None` means no
-                characteristc has been set.
+                characteristic has been set.
 
             spacing:
                 The cell spacing (i.e. the absolute difference between
                 two neighbouring coordinate values) characteristic.
                 May be a `Query`, `TimeDuration`, scalar `Data`,
                 scalar data_like object, or `None`. A value of `None`
-                means no characteristc has been set.
+                means no characteristic has been set.
 
         :Returns:
 

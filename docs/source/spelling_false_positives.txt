@@ -19,6 +19,7 @@ arctan
 arctanh
 arg
 argmax
+argmin
 args
 asdata
 asdatetime
@@ -115,6 +116,7 @@ datums
 ddof
 de
 debuginfo
+decadal
 decile
 deepcopy
 Dehesa
@@ -270,6 +272,7 @@ lshift
 lt
 Makefile
 mam
+matplotlib
 mercator
 metacharacters
 MiB
@@ -330,6 +333,7 @@ priori
 programmatically
 pseudolevels
 py
+pyplot
 radd
 RaggedContiguousArray
 RaggedIndexedArray
@@ -386,6 +390,7 @@ setmask
 setprop
 Signell
 sinh
+spacings
 spatiotemporal
 sqrt
 src
@@ -425,6 +430,7 @@ timeSeries
 timeSeriesProfile
 todense
 todict
+tokenize
 tolist
 tosparse
 trac

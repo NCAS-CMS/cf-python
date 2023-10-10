@@ -449,7 +449,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         # Set whether or not we're sure that the Data instance has a
-        # determinsitic name
+        # deterministic name
         self._custom["deterministic"] = not is_dask_collection(array)
 
         dx = to_dask(array, chunks, **kwargs)
@@ -6302,7 +6302,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         that are considered equal by their `equals` methods might not
         have the same deterministic name.
 
-        An exception is raised if there is no determinisitic name.
+        An exception is raised if there is no deterministic name.
 
         .. versionadded:: 3.15.1
 
@@ -6529,7 +6529,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             `str`
                 The new location as an absolute path with no trailing
-                separate pathname component separator.
+                path name component separator.
 
         **Examples**
 
@@ -8729,7 +8729,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             `set`
                 The unique file locations as absolute paths with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -9728,7 +9728,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             `str`
                 The removed location as an absolute path with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 

@@ -155,7 +155,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `str`
                 The new location as an absolute path with no trailing
-                separate pathname component separator.
+                path name component separator.
 
         **Examples**
 
@@ -316,7 +316,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `str`
                 The removed location as an absolute path with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -457,7 +457,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `set`
                 The unique file locations as absolute paths with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
