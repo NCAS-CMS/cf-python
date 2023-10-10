@@ -1,3 +1,20 @@
+version 3.15.4
+--------------
+
+**2023-10-??**
+
+* Record dimension coordinate cell characteristics
+  (https://github.com/NCAS-CMS/cf-python/issues/692)
+* New set of methods to query, set, del, and `get_cell_characterstics`
+* Fix bug in `cf.Field.match_by_construct` that always returned True for
+  1-d constructs whose axis is not in the data, even when the
+  criterion was not matched
+  (https://github.com/NCAS-CMS/cf-python/issues/691)
+* Fix bug that prevented "https://" netCDF files from being read
+  (https://github.com/NCAS-CMS/cf-python/issues/699)
+
+----
+
 version 3.15.3
 --------------
 
@@ -54,7 +71,7 @@ version 3.15.1
   (https://github.com/NCAS-CMS/cf-python/pull/654)
 * Fix `set_data` when the units are invalid
   (https://github.com/NCAS-CMS/cf-python/pull/646)
-* Fix `cf.Field.laplacian_xy`, cf.Field.grad_xy`, `cf.curl_xy` and
+* Fix `cf.Field.laplacian_xy`, `cf.Field.grad_xy`, `cf.curl_xy` and
   `cf.div_xy` to work in cases when the dimension coordinates are
   missing standard names
   (https://github.com/NCAS-CMS/cf-python/pull/643)

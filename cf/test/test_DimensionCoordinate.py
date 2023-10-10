@@ -696,6 +696,47 @@ class DimensionCoordinateTest(unittest.TestCase):
         )
         self.assertEqual(longitude_decreasing_no_bounds.units, "degrees_east")
 
+    def test_DimensionCoordinate_cell_characteristics(self):
+        """Test the `cell_characteristic` DimensionCoordinate methods."""
+        d = self.dim.copy()
+        self.assertFalse(d.has_cell_characteristics())
+        self.assertIsNone(d.get_cell_characteristics(None))
+        self.assertIsNone(d.set_cell_characteristics(cellsize=5, spacing=None))
+        self.assertTrue(d.has_cell_characteristics())
+        self.assertEqual(
+            d.get_cell_characteristics(),
+            {"cellsize": 5},
+        )
+        self.assertEqual(d.del_cell_characteristics(), {"cellsize": 5})
+        self.assertIsNone(d.del_cell_characteristics(None))
+
+        # Copy preserves cell charactersitics
+        d.set_cell_characteristics(1, 2)
+        e = d.copy()
+        self.assertEqual(
+            d.get_cell_characteristics(), e.get_cell_characteristics()
+        )
+        d.set_cell_characteristics(3, 4)
+        self.assertNotEqual(
+            d.get_cell_characteristics(), e.get_cell_characteristics()
+        )
+
+        # set_data clears cell characteristics
+        d.set_data(d.data)
+        self.assertIsNone(
+            d.get_cell_characteristics(None),
+        )
+
+        # set_bounds clears cell characteristics
+        self.assertIsNone(d.set_cell_characteristics(spacing=2, cellsize=1))
+        self.assertEqual(
+            d.get_cell_characteristics(),
+            {"cellsize": 1, "spacing": 2},
+        )
+        d.set_bounds(d.bounds)
+        with self.assertRaises(ValueError):
+            d.get_cell_characteristics()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

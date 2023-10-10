@@ -2311,7 +2311,7 @@ def aggregate(
             **Units**
 
             Units must be provided on the conditions where applicable,
-            since conditions without defined units do not match
+            since conditions without defined units will not match
             dimension coordinate constructs with defined units.
 
             **Multiple conditions**
@@ -2358,18 +2358,26 @@ def aggregate(
 
             >>> x = cf.aggregate(fl, cells=cf.climatology_cells())
 
+            **Storage of conditions**
+
+            All returned field or domain constructs that have passed
+            dimension coordinate cell conditions will have those
+            conditions stored on the appropriate dimension coordinate
+            constructs, retrievable via their
+            `DimensionCoordinate.get_cell_characteristics` methods.
+
             **Performance**
 
             The testing of the conditions has a computational
             overhead, as well as an I/O overhead if the dimension
-            coordinate data are on disk. Try to avoid setting redundant
-            conditions. For instance, if the inputs comprise monthly mean air
-            temperature and daily mean precipitation fields, then the
-            different field identities alone will ensure a correct
-            aggregation. In this case, adding cell conditions of
-            ``{'T': [{'cellsize': cf.D()}, {'cellsize': cf.M()}]}``
-            will not change the result, but tests will still be
-            carried out.
+            coordinate data are on disk. Try to avoid setting
+            redundant conditions. For instance, if the inputs comprise
+            monthly mean air temperature and daily mean precipitation
+            fields, then the different field identities alone will
+            ensure a correct aggregation. In this case, adding cell
+            conditions of ``{'T': [{'cellsize': cf.D()}, {'cellsize':
+            cf.M()}]}`` will not change the result, but tests will
+            still be carried out.
 
             When setting a sequence of conditions, performance will be
             improved if the conditions towards the beginning of the
@@ -2489,9 +2497,9 @@ def aggregate(
     # Initialise the cache of canonical metadata attributes
     canonical = _Canonical()
 
-    output_constructs = []
-
-    output_constructs_append = output_constructs.append
+    output_meta = []
+    output_meta_append = output_meta.append
+    output_meta_extend = output_meta.extend
 
     if exclude:
         exclude = " NOT"
@@ -2655,10 +2663,10 @@ def aggregate(
                 # This field does not have a structural signature, so
                 # it can't be aggregated. Put it straight into the
                 # output list and move on to the next input construct.
-                if not copy:
-                    output_constructs_append(f)
-                else:
-                    output_constructs_append(f.copy())
+                if copy:
+                    meta = meta.copy()
+
+                output_meta_append(meta)
 
             continue
 
@@ -2724,11 +2732,10 @@ def aggregate(
             # add it straight to the output list and move on to the
             # next signature.
             # --------------------------------------------------------
-            if not copy:
-                output_constructs_append(meta[0].field)
-            else:
-                output_constructs_append(meta[0].field.copy())
+            if copy:
+                meta[0] = meta[0].copy()
 
+            output_meta_append(meta[0])
             continue
 
         if not relaxed_units and not meta[0].units.isvalid:
@@ -2741,9 +2748,9 @@ def aggregate(
 
             if not exclude:
                 if copy:
-                    output_constructs.extend(m.field.copy() for m in meta)
+                    output_meta_extend(m.copy() for m in meta)
                 else:
-                    output_constructs.extend(m.field for m in meta)
+                    output_meta_extend(meta)
 
             continue
 
@@ -3035,11 +3042,16 @@ def aggregate(
             status = 1
             if not exclude:
                 if copy:
-                    output_constructs.extend((m.field.copy() for m in meta0))
+                    output_meta_extend(m.copy() for m in meta0)
                 else:
-                    output_constructs.extend((m.field for m in meta0))
+                    output_meta_extend(meta0)
         else:
-            output_constructs.extend((m.field for m in meta))
+            output_meta_extend(meta)
+
+    if cells:
+        _set_cell_conditions(output_meta)
+
+    output_constructs = [m.field for m in output_meta]
 
     aggregate.status = status
 
@@ -3056,6 +3068,52 @@ def aggregate(
         output_constructs = FieldList(output_constructs)
 
     return output_constructs
+
+
+def _set_cell_conditions(output_meta):
+    """Store the cell characteristics from any cell conditions.
+
+    The cell size and cell spacing characteristics are stored on the
+    appropriate dimension coordinate constructs.
+
+    .. versionadded:: 3.15.4
+
+    :Parameters:
+
+        output_meta: `list`
+            The list of `_Meta` objects, each of which contains an
+            output field or domain construct. The field or constructs
+            are updated in-place.
+
+    :Returns:
+
+        `None`
+
+    """
+    for m in output_meta:
+        for value in m.axis.values():
+            dim_index = value["dim_coord_index"]
+            if dim_index is None:
+                # There is no dimension coordinate construct for this
+                # axis
+                continue
+
+            cellsize = value["cellsize"][dim_index]
+            if cellsize is None:
+                # There is no cell size condition
+                continue
+
+            spacing = value["spacing"][dim_index]
+            if spacing is None:
+                # There is no cell spacing condition
+                continue
+
+            # Set the cell conditions on the dimension coordinate
+            # construct
+            dim_coord = m.field.dimension_coordinate(value["keys"][dim_index])
+            dim_coord.set_cell_characteristics(
+                cellsize=cellsize, spacing=spacing
+            )
 
 
 # --------------------------------------------------------------------
@@ -3179,7 +3237,7 @@ def climatology_cells(
       {'cellsize': <CF Query: (isclose 12 hour)>},
       {'cellsize': <CF TimeDuration: P1M (Y-M-01 00:00:00)>}]}
 
-    Add a condition that separately aggregates decadal data:
+    Add a condition for decadal data:
 
     >>> cells['T'].append({'cellsize': cf.wi(3600, 3660, 'day')})
     >>> cells
@@ -4169,6 +4227,7 @@ def _aggregate_2_fields(
     verbose=None,
     concatenate=True,
     data_concatenation=None,
+    cell_conditions=None,
     relaxed_units=False,
     copy=True,
 ):
@@ -4192,7 +4251,8 @@ def _aggregate_2_fields(
 
         data_concatenation: `dict`
             The dictionary that contains the data arrays for each
-            construct type that will need concatenating.
+            construct type that will need concatenating. Will be
+            updated in-place.
 
             .. versionadded:: 3.15.1
 
@@ -4248,10 +4308,6 @@ def _aggregate_2_fields(
     hash_values1 = m1.hash_values[a_identity]
 
     for i, (hash0, hash1) in enumerate(zip(hash_values0, hash_values1)):
-        # try:
-        #     hash_values0[i].append(hash_values1[i])
-        # except AttributeError:
-        #     hash_values0[i] = [hash_values0[i], hash_values1[i]]
         hash_values0[i] = hash_values0[i] + hash_values1[i]
 
     # N-d auxiliary coordinates
