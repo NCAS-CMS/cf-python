@@ -273,8 +273,8 @@ version 3.11.0
 * Fix for `cf.aggregate` failures when a datum or coordinate
   conversion parameter has an array value
   (https://github.com/NCAS-CMS/cf-python/issues/230)
-* Allow for regridding using a destination field featuring size 1 dimension(s)
-  (https://github.com/NCAS-CMS/cf-python/issues/250)
+* Allow for regridding using a destination field featuring size 1
+  dimension(s) (https://github.com/NCAS-CMS/cf-python/issues/250)
 * Fix bug that sometimes caused `cf.Field.autocyclic` to fail when
   setting a construct that is cyclic and has a defined period
 * Fix bug that sometimes caused a failure when reading PP extra data
