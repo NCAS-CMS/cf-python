@@ -46,15 +46,17 @@ _all_concrete_grid_mappings = (
 
 
 # These are those of the above which have required positional arguments
-all_concrete_grid_mappings_req_args = {
+all_grid_mappings_required_args = {
     "AlbersEqualArea": {"standard_parallel": (0.0, None)},
+    "ConicGridMapping": {"standard_parallel": (0.0, None)},
     "Geostationary": {"perspective_point_height": 1000},
-    "VerticalPerspective": {"perspective_point_height": 1000},
     "LambertConformalConic": {"standard_parallel": (1.0, 1.0)},
+    "PerspectiveGridMapping": {"perspective_point_height": 1000},
     "RotatedLatitudeLongitude": {
         "grid_north_pole_latitude": 0.0,
         "grid_north_pole_longitude": 0.0,
     },
+    "VerticalPerspective": {"perspective_point_height": 1000},
 }
 
 
@@ -78,73 +80,39 @@ class GridMappingsTest(unittest.TestCase):
         "f7": cf.RotatedLatitudeLongitude,
     }
 
-    # TODO: ignore the below for now, in short will create a new test file
-    # with a Oblique Mercator GM
-    #
-    # From a custom netCDF file with Oblique Mercator GM
-    # f_om = cf.read("oblique_mercator.nc")
-
-    # Create some coordinate references with different GMs to test on:
-    cr_aea = cf.CoordinateReference(
-        coordinates=["coordA", "coordB", "coordC"],
-        coordinate_conversion=cf.CoordinateConversion(
-            parameters={
-                "grid_mapping_name": "albers_conical_equal_area",
-                "standard_parallel": [10, 10],
-                "longitude_of_projection_origin": 45.0,
-                "false_easting": -1000,
-                "false_northing": 500,
-            }
-        ),
-    )
-    cr_aea_actual_proj_string = (
-        "+proj=aea +lat_1=10. +lat_2=10. +lon_0=45.0 +x_0=-1000. +y_0=-500."
-    )
-
-    cr_om = cf.CoordinateReference(
-        coordinates=["coordA", "coordB"],
-        coordinate_conversion=cf.CoordinateConversion(
-            parameters={
-                "grid_mapping_name": "oblique_mercator",
-                "latitude_of_projection_origin": -22.0,
-                "longitude_of_projection_origin": -59.0,
-                "false_easting": -12500.0,
-                "false_northing": -12500.0,
-                "azimuth_of_central_line": 89.999999,
-                "scale_factor_at_projection_origin": 1.0,
-                "inverse_flattening": 0.0,
-                "semi_major_axis": 6371229.0,
-            }
-        ),
-    )
-    cr_om_actual_proj_string = (
-        "+proj=omerc +lat_0=-22.00 +alpha=89.999999 +lonc=-59.00 "
-        "+x_0=-12500. +y_0=-12500. +ellps=sphere +a=6371229. +b=6371229. "
-        "+units=m +no_defs"
-    )
-
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__init__(self):
         """Test GridMapping object initiation."""
         for cls in _all_concrete_grid_mappings:
-            if cls.__name__ not in all_concrete_grid_mappings_req_args:
-                cls()
+            if cls.__name__ not in all_grid_mappings_required_args:
+                g = cls()
+                g.grid_mapping_name
+            else:
+                example_minimal_args = all_grid_mappings_required_args[
+                    cls.__name__
+                ]
+                g = cls(**example_minimal_args)
+                g.grid_mapping_name
 
-        # Shouldn't be able to instantiate any abstract classes, since
-        # abstract methods grid_mapping_name and proj_id must be defined
-        # further down in the inheritance chain to enable concrete classes.
         for cls in _all_abstract_grid_mappings:
-            with self.assertRaises(TypeError):
-                cls()
+            if cls.__name__ not in all_grid_mappings_required_args:
+                g = cls()
+                self.assertEqual(g.grid_mapping_name, None)
+            else:
+                example_minimal_args = all_grid_mappings_required_args[
+                    cls.__name__
+                ]
+                g = cls(**example_minimal_args)
+                self.assertEqual(g.grid_mapping_name, None)
 
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping__repr__str__(self):
         """Test all means of GridMapping inspection."""
         for cls in _all_concrete_grid_mappings:
-            if cls.__name__ not in all_concrete_grid_mappings_req_args:
+            if cls.__name__ not in all_grid_mappings_required_args:
                 g = cls()
             else:
-                example_minimal_args = all_concrete_grid_mappings_req_args[
+                example_minimal_args = all_grid_mappings_required_args[
                     cls.__name__
                 ]
                 g = cls(**example_minimal_args)

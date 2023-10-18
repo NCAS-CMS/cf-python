@@ -1,6 +1,5 @@
 import itertools
 import re
-from abc import ABC, abstractmethod
 
 from pyproj import CRS
 
@@ -338,8 +337,13 @@ def _validate_map_parameter(mp_name, mp_value):
         return mp_value
 
 
-class GridMapping(ABC):
+class GridMapping():
     """A container for a Grid Mapping recognised by the CF Conventions."""
+
+    # The value of the 'grid_mapping_name' attribute.
+    grid_mapping_name = None
+    # The PROJ projection identifier shorthand name.
+    proj_id = None
 
     def __init__(
         self,
@@ -459,22 +463,6 @@ class GridMapping(ABC):
 
         # TODO hook this up to the CF CR
         self.crs_wkt = None
-
-        # TODO hook up to the CF CR generally: in part 2.
-
-    @property
-    @classmethod
-    @abstractmethod
-    def grid_mapping_name(cls):
-        """The value of the 'grid_mapping_name' attribute."""
-        return
-
-    @property
-    @classmethod
-    @abstractmethod
-    def proj_id(cls):
-        """The PROJ projection identifier shorthand name."""
-        return
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
