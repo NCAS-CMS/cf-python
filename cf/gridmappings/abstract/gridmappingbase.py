@@ -518,3 +518,14 @@ class GridMapping():
 
        """
         return self.crs_wkt is not None
+
+    def is_latlon_gm():
+        """Whether the Grid Mapping is of LatitudeLongitude form.
+
+        :Returns:
+
+            `bool`
+                True only if the Grid Mapping is LatitudeLongitude.
+
+        """
+        return False
