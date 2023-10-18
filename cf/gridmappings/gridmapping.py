@@ -33,37 +33,37 @@ class GM():
             # syntax to consolidate this long if/elif.
             if not name:
                 pass  # TODOGM raise a custom exception
-            elif name is "albers_conical_equal_area":
+            elif name == "albers_conical_equal_area":
                 return AlbersEqualArea(*args, **kwargs)
-            elif name is "azimuthal_equidistant":
+            elif name == "azimuthal_equidistant":
                 return AzimuthalEquidistant(*args, **kwargs)
-            elif name is "geostationary":
+            elif name == "geostationary":
                 return Geostationary(*args, **kwargs)
-            elif name is "lambert_azimuthal_equal_area":
+            elif name == "lambert_azimuthal_equal_area":
                 return LambertAzimuthalEqualArea(*args, **kwargs)
-            elif name is "lambert_conformal_conic":
+            elif name == "lambert_conformal_conic":
                 return LambertConformalConic(*args, **kwargs)
-            elif name is "lambert_cylindrical_equal_area":
+            elif name == "lambert_cylindrical_equal_area":
                 return LambertCylindricalEqualArea(*args, **kwargs)
-            elif name is "latitude_longitude":
+            elif name == "latitude_longitude":
                 return LatitudeLongitude(*args, **kwargs)
-            elif name is "mercator":
+            elif name == "mercator":
                 return Mercator(*args, **kwargs)
-            elif name is "oblique_mercator":
+            elif name == "oblique_mercator":
                 return ObliqueMercator(*args, **kwargs)
-            elif name is "orthographic":
+            elif name == "orthographic":
                 return Orthographic(*args, **kwargs)
-            elif name is "polar_stereographic":
+            elif name == "polar_stereographic":
                 return PolarStereographic(*args, **kwargs)
-            elif name is "rotated_latitude_longitude":
+            elif name == "rotated_latitude_longitude":
                 return RotatedLatitudeLongitude(*args, **kwargs)
-            elif name is "sinusoidal":
+            elif name == "sinusoidal":
                 return Sinusoidal(*args, **kwargs)
-            elif name is "stereographic":
+            elif name == "stereographic":
                 return Stereographic(*args, **kwargs)
-            elif name is "transverse_mercator":
+            elif name == "transverse_mercator":
                 return TransverseMercator(*args, **kwargs)
-            elif name is "vertical_perspective":
+            elif name == "vertical_perspective":
                 return VerticalPerspective(*args, **kwargs)
             else:
                 pass  # TODOGM raise a custom exception
@@ -75,14 +75,3 @@ class GM():
     def create_crs():
         """TODOGM."""
         pass  # TODOGM
-
-    def is_latlon_gm():
-        """Whether the Grid Mapping is of LatitudeLongitude form.
-
-        :Returns:
-
-            `bool`
-                True only if the Grid Mapping is LatitudeLongitude.
-
-        """
-        return False
