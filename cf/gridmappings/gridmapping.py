@@ -77,5 +77,12 @@ class GM():
         pass  # TODOGM
 
     def is_latlon_gm():
-        """TODOGM."""
-        pass  # TODOGM
+        """Whether the Grid Mapping is of LatitudeLongitude form.
+
+        :Returns:
+
+            `bool`
+                True only if the Grid Mapping is LatitudeLongitude.
+
+        """
+        return False
