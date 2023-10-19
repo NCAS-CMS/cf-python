@@ -6720,10 +6720,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. note:: By default *weights* is `None`, resulting in
                           **unweighted calculations**.
 
-                .. note:: Unless *measure* is True, the units of
-                          weights are ignored default *weights* is
-                          `None`, resulting in **unweighted
-                          calculations**.
+                .. note:: Unless the *method* is ``'integral'``, the
+                          units of weights not combined with the
+                          field's units in the collapsed field.
 
                 If the alternative form of providing the collapse method
                 and axes combined as a CF cell methods-like string via the
