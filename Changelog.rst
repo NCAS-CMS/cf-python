@@ -1,3 +1,13 @@
+version 3.16.0
+--------------
+
+**2023-??-??**
+
+* Fix bug that caused `cf.Field.collapse` to give incorrect results
+  for the "sum", "sum_of_weights" and "sum_of_weights2" methods, only
+  in the case that weights have been requested
+  (https://github.com/NCAS-CMS/cf-python/issues/701)
+
 version 3.15.4
 --------------
 

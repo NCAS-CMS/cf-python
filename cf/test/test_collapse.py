@@ -723,7 +723,7 @@ class Field_collapseTest(unittest.TestCase):
 
         g = f.collapse("area: sum_of_weights", weights=w)
         self.assertTrue((g.array == wa.sum()).all())
-        self.assertEqual(g.Units, cf.Units("m2"))
+        self.assertEqual(g.Units, cf.Units("1"))
 
         g = f.collapse("area: sum_of_weights", weights=w, measure=True)
         self.assertTrue((g.array == wa.sum()).all())
@@ -744,7 +744,7 @@ class Field_collapseTest(unittest.TestCase):
 
         g = f.collapse("area: sum_of_weights2", weights=w)
         self.assertTrue((g.array == wa.sum()).all())
-        self.assertEqual(g.Units, cf.Units("m4"))
+        self.assertEqual(g.Units, cf.Units("1"))
 
         g = f.collapse("area: sum_of_weights2", weights=w, measure=True)
         self.assertTrue((g.array == wa.sum()).all())

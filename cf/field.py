@@ -5003,6 +5003,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     comp[key] = self._weights_scale(w, scale)
 
             for w in comp.values():
+                if not measure:
+                    w.override_units("1", inplace=True)
+
                 mn = w.minimum()
                 if mn <= 0:
                     raise ValueError(
@@ -6721,8 +6724,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                           **unweighted calculations**.
 
                 .. note:: Unless the *method* is ``'integral'``, the
-                          units of weights not combined with the
-                          field's units in the collapsed field.
+                          units of the weights are not combined with
+                          the field's units in the collapsed field.
 
                 If the alternative form of providing the collapse method
                 and axes combined as a CF cell methods-like string via the
@@ -6767,39 +6770,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   time you could set ``weights=('area', 'T')``.
 
             measure: `bool`, optional
-                Create weights which are cell measures, i.e. which
-                describe actual cell sizes (e.g. cell area) with
-                appropriate units (e.g. metres squared). By default the
-                weights units are ignored.
+                If True, and *weights* is not `None`, create weights
+                which are cell measures, i.e. which describe actual
+                cell sizes (e.g. cell area) with appropriate units
+                (e.g. metres squared). By default the weights units
+                are ignored.
 
                 Cell measures can be created for any combination of
-                axes. For example, cell measures for a time axis are the
-                time span for each cell with canonical units of seconds;
-                cell measures for the combination of four axes
-                representing time and three dimensional space could have
-                canonical units of metres cubed seconds.
+                axes. For example, cell measures for a time axis are
+                the time span for each cell with canonical units of
+                seconds; cell measures for the combination of four
+                axes representing time and three dimensional space
+                could have canonical units of metres cubed seconds.
 
-                When collapsing with the ``'integral'`` method, *measure*
-                must be True, and the units of the weights are
-                incorporated into the units of the returned field
+                When collapsing with the ``'integral'`` method,
+                *measure* must be True, and the units of the weights
+                are incorporated into the units of the returned field
                 construct.
 
                 .. note:: Specifying cell volume weights via
                           ``weights=['X', 'Y', 'Z']`` or
-                          ``weights=['area', 'Z']`` (or other equivalents)
-                          will produce **an incorrect result if the
-                          vertical dimension coordinates do not define the
-                          actual height or depth thickness of every cell
-                          in the domain**. In this case,
-                          ``weights='volume'`` should be used instead,
-                          which requires the field construct to have a
-                          "volume" cell measure construct.
+                          ``weights=['area', 'Z']`` (or other
+                          equivalents) will produce **an incorrect
+                          result if the vertical dimension coordinates
+                          do not define the actual height or depth
+                          thickness of every cell in the domain**. In
+                          this case, ``weights='volume'`` should be
+                          used instead, which requires the field
+                          construct to have a "volume" cell measure
+                          construct.
 
-                          If ``weights=True`` then care also needs to be
-                          taken, as a "volume" cell measure construct will
-                          be used if present, otherwise the cell volumes
-                          will be calculated using the size of the
-                          vertical coordinate cells.
+                          If ``weights=True`` then care also needs to
+                          be taken, as a "volume" cell measure
+                          construct will be used if present, otherwise
+                          the cell volumes will be calculated using
+                          the size of the vertical coordinate cells.
 
                 .. versionadded:: 3.0.2
 
