@@ -21,8 +21,47 @@ from .transversemercator import TransverseMercator
 from .verticalperspective import VerticalPerspective
 
 
+class InvalidGridMapping(Exception):
+    """Exception for a Grid Mapping which is not supported by CF.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+
+        TODOGM.
+
+    """
+
+    def __init__(self, grid_mapping, custom_message=None):
+        self.grid_mapping = grid_mapping
+        self.custom_message = custom_message
+
+    def __str__(self):
+        grid_mapping_name = self.grid_mapping.grid_mapping_name
+        if self.custom_message:
+            return self.custom_message
+        elif grid_mapping_name:
+            return (
+                f"Grid Mapping {self.grid_mapping} with grid_mapping_name "
+                f"{grid_mapping_name} is not supported by the CF "
+                "Conventions."
+            )
+        else:
+            return (
+                f"Grid Mapping {self.grid_mapping} missing grid_mapping_name "
+                "and therefore cannot be interpreted."
+            )
+
+
 class GM():
-    """A validated Grid Mapping supported by the CF Conventions."""
+    """A validated Grid Mapping supported by the CF Conventions.
+
+    .. versionadded:: GMVER
+
+    :Parameters:
+        TODOGM.
+
+    """
 
     def __new__(cls, *args, **kwargs):
         """TODOGM."""
