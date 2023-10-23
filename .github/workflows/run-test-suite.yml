@@ -60,7 +60,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        miniconda-version: 'latest'
+        miniconda-version: "latest"
         activate-environment: cf-latest
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
@@ -147,7 +147,7 @@ jobs:
       # passing at least for that job, avoiding useless coverage reports.
       uses: codecov/codecov-action@v3
       if: |
-        matrix.os == 'ubuntu-latest' && matrix.python-version == "3.9"
+        matrix.os == "ubuntu-latest" && matrix.python-version == "3.9"
       with:
         file: |
           ${{ github.workspace }}/main/cf/test/cf_coverage_reports/coverage.xml
