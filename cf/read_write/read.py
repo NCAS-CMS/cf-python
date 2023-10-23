@@ -990,7 +990,7 @@ def read(
         if info:
             logger.info(
                 f"{org_len} input field{_plural(org_len)} aggregated into "
-                f"{n} field{ _plural(n)}"
+                f"{n} field{_plural(n)}"
             )  # pragma: no cover
 
     # ----------------------------------------------------------------
