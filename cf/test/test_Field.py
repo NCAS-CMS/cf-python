@@ -441,7 +441,6 @@ class FieldTest(unittest.TestCase):
 
         for axes in axes_combinations(f):
             for method in (
-                "sum",
                 "min",
                 "max",
                 "minimum_absolute_value",
@@ -451,8 +450,6 @@ class FieldTest(unittest.TestCase):
                 "sample_size",
                 "sum_of_squares",
                 "median",
-                "sum_of_weights",
-                "sum_of_weights2",
             ):
                 for weights in (None, "area"):
                     a = f.collapse(method, axes=axes, weights=weights).data
@@ -462,10 +459,13 @@ class FieldTest(unittest.TestCase):
                     )
 
             for method in (
+                "sum",
                 "mean",
                 "mean_absolute_value",
                 "mean_of_upper_decile",
                 "root_mean_square",
+                "sum_of_weights",
+                "sum_of_weights2",
             ):
                 for weights in (None, "area"):
                     if weights is not None:

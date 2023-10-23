@@ -162,10 +162,11 @@ _collapse_weighted_methods = set(
         "average",
         "sd",
         "standard_deviation",
+        "sum",
         "var",
         "variance",
-        # 'sum_of_weights',
-        # 'sum_of_weights2',
+        "sum_of_weights",
+        "sum_of_weights2",
         "integral",
         "root_mean_square",
     )
@@ -5002,6 +5003,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     comp[key] = self._weights_scale(w, scale)
 
             for w in comp.values():
+                if not measure:
+                    w.override_units("1", inplace=True)
+
                 mn = w.minimum()
                 if mn <= 0:
                     raise ValueError(
@@ -6194,7 +6198,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group_span=None,
         group_contiguous=1,
         measure=False,
-        scale=1,
+        scale=None,
         radius="earth",
         great_circle=False,
         verbose=None,
@@ -6719,6 +6723,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. note:: By default *weights* is `None`, resulting in
                           **unweighted calculations**.
 
+                .. note:: Unless the *method* is ``'integral'``, the
+                          units of the weights are not combined with
+                          the field's units in the collapsed field.
+
                 If the alternative form of providing the collapse method
                 and axes combined as a CF cell methods-like string via the
                 *method* parameter has been used, then the *axes*
@@ -6762,56 +6770,57 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   time you could set ``weights=('area', 'T')``.
 
             measure: `bool`, optional
-                Create weights which are cell measures, i.e. which
-                describe actual cell sizes (e.g. cell area) with
-                appropriate units (e.g. metres squared). By default the
-                weights are normalised and have arbitrary units.
+                If True, and *weights* is not `None`, create weights
+                which are cell measures, i.e. which describe actual
+                cell sizes (e.g. cell area) with appropriate units
+                (e.g. metres squared). By default the weights units
+                are ignored.
 
                 Cell measures can be created for any combination of
-                axes. For example, cell measures for a time axis are the
-                time span for each cell with canonical units of seconds;
-                cell measures for the combination of four axes
-                representing time and three dimensional space could have
-                canonical units of metres cubed seconds.
+                axes. For example, cell measures for a time axis are
+                the time span for each cell with canonical units of
+                seconds; cell measures for the combination of four
+                axes representing time and three dimensional space
+                could have canonical units of metres cubed seconds.
 
-                When collapsing with the ``'integral'`` method, *measure*
-                must be True, and the units of the weights are
-                incorporated into the units of the returned field
+                When collapsing with the ``'integral'`` method,
+                *measure* must be True, and the units of the weights
+                are incorporated into the units of the returned field
                 construct.
 
                 .. note:: Specifying cell volume weights via
                           ``weights=['X', 'Y', 'Z']`` or
-                          ``weights=['area', 'Z']`` (or other equivalents)
-                          will produce **an incorrect result if the
-                          vertical dimension coordinates do not define the
-                          actual height or depth thickness of every cell
-                          in the domain**. In this case,
-                          ``weights='volume'`` should be used instead,
-                          which requires the field construct to have a
-                          "volume" cell measure construct.
+                          ``weights=['area', 'Z']`` (or other
+                          equivalents) will produce **an incorrect
+                          result if the vertical dimension coordinates
+                          do not define the actual height or depth
+                          thickness of every cell in the domain**. In
+                          this case, ``weights='volume'`` should be
+                          used instead, which requires the field
+                          construct to have a "volume" cell measure
+                          construct.
 
-                          If ``weights=True`` then care also needs to be
-                          taken, as a "volume" cell measure construct will
-                          be used if present, otherwise the cell volumes
-                          will be calculated using the size of the
-                          vertical coordinate cells.
+                          If ``weights=True`` then care also needs to
+                          be taken, as a "volume" cell measure
+                          construct will be used if present, otherwise
+                          the cell volumes will be calculated using
+                          the size of the vertical coordinate cells.
 
                 .. versionadded:: 3.0.2
 
             scale: number or `None`, optional
                 If set to a positive number then scale the weights so
                 that they are less than or equal to that number. If
-                set to `None` the weights are not scaled. In general
-                the default is for weights to be scaled to lie between
-                0 and 1; however if *measure* is True then the weights
-                are never scaled and the value of *scale* is taken as
-                `None`, regardless of its setting.
+                set to `None`, the default, then the weights are not
+                scaled.
 
                 *Parameter example:*
                   To scale all weights so that they lie between 0 and
-                  10 ``scale=10``.
+                  1 ``scale=1``.
 
                 .. versionadded:: 3.0.2
+
+                .. versionchanged:: 3.16.0 Default changed to `None`
 
             radius: optional
                 Specify the radius used for calculating the areas of
@@ -7698,6 +7707,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Parse the methods and axes
         # ------------------------------------------------------------
+        if measure and scale is not None:
+            raise ValueError(
+                "'scale' must be None when 'measure' is True. "
+                f"Got: scale={scale!r}"
+            )
+
         if ":" in method:
             # Convert a cell methods string (such as 'area: mean dim3:
             # dim2: max T: minimum height: variance') to a CellMethod
@@ -7916,8 +7931,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     g_weights = None
                 else:
                     if measure:
-                        # Never scale weights that are cell measures
-                        scale = None
+                        if method not in (
+                            "integral",
+                            "sum_of_weights",
+                            "sum_of_weights2",
+                        ):
+                            raise ValueError(
+                                f"Can't set measure=True for {method!r} "
+                                "collapses"
+                            )
                     elif method == "integral":
                         raise ValueError(
                             f"Must set measure=True for {method!r} collapses"
@@ -8006,8 +8028,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             d_kwargs = {}
             if weights is not None:
                 if measure:
-                    # Never scale weights that are cell measures
-                    scale = None
+                    if method not in (
+                        "integral",
+                        "sum_of_weights",
+                        "sum_of_weights2",
+                    ):
+                        raise ValueError(
+                            f"Can't set measure=True for {method!r} collapses"
+                        )
                 elif method == "integral":
                     raise ValueError(
                         f"Must set measure=True for {method!r} collapses"
