@@ -14,6 +14,12 @@ SCIPY_AVAILABLE = False
 try:
     from scipy.ndimage import convolve1d
 
+    # In some cases we don't need SciPy directly, since it is required by code
+    # here which uses 'convolve1d' under-the-hood. Without it installed, get:
+    #
+    # NameError: name 'convolve1d' is not defined. Did you
+    # mean: 'cf_convolve1d'?
+
     SCIPY_AVAILABLE = True
 # not 'except ImportError' as that can hide nested errors, catch anything:
 except Exception:
@@ -2330,6 +2336,9 @@ class FieldTest(unittest.TestCase):
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_Field_grad_xy(self):
         f = cf.example_field(0)
 
@@ -2415,6 +2424,9 @@ class FieldTest(unittest.TestCase):
             y.dimension_coordinate("X").standard_name, "longitude"
         )
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
 
