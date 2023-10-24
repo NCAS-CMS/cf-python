@@ -19,7 +19,8 @@ class LatitudeLongitude(LatLonGridMapping):
     grid_mapping_name = "latitude_longitude"
     proj_id = "latlong"
 
-    def is_latlon_gm():
+    @classmethod
+    def is_latlon_gm(cls):
         """Whether the Grid Mapping is of LatitudeLongitude form.
 
         :Returns:

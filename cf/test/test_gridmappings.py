@@ -142,6 +142,20 @@ class GridMappingsTest(unittest.TestCase):
         )
 
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    def test_grid_mapping_is_latlon_gm(self):
+        """Test the 'is_latlon_gm' method on all GridMappings."""
+        # In this one case we expect True...
+        # TODOGM: what about cf.RotatedLatitudeLongitude?
+        g = cf.LatitudeLongitude
+        self.assertTrue(g.is_latlon_gm())  # check on class
+        self.assertTrue(g().is_latlon_gm())  # check on instance
+
+        # ...and expect False for all other GridMappings
+        for cls in _all_concrete_grid_mappings:
+            if not issubclass(cls, cf.LatitudeLongitude):
+                self.assertFalse(cls.is_latlon_gm())
+
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping_map_parameter_validation(self):
         """Test the validation of map parameters to Grid Mapping classes."""
         g1 = cf.Mercator(
