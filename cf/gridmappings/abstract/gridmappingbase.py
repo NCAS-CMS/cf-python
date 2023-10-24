@@ -433,12 +433,10 @@ class GridMapping():
                           takes precedence.
 
         """
-        # Validate the arbitary kwargs
-        for kwarg, value in kwargs.items():
-            _validate_map_parameter(kwarg, value)
-
-        # The attributes which describe the ellipsoid and prime meridian,
-        # which may be included, when applicable, with any grid mapping.
+        # Validate map parameters that are valid for any GridMapping.
+        # These are attributes which describe the ellipsoid and prime meridian,
+        # which may be included, when applicable, with any grid mapping, as
+        # specified in Appendix F of the Conventions.
         self.earth_radius = _validate_map_parameter(
             "earth_radius", earth_radius
         )
@@ -461,8 +459,17 @@ class GridMapping():
             "semi_minor_axis", semi_minor_axis
         )
 
-        # TODO hook this up to the CF CR
-        self.crs_wkt = None
+    @classmethod
+    def is_latlon_gm(cls):
+        """Whether the Grid Mapping is of LatitudeLongitude form.
+
+        :Returns:
+
+            `bool`
+                True only if the Grid Mapping is LatitudeLongitude.
+
+        """
+        return False
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -518,15 +525,3 @@ class GridMapping():
 
        """
         return self.crs_wkt is not None
-
-    @classmethod
-    def is_latlon_gm(cls):
-        """Whether the Grid Mapping is of LatitudeLongitude form.
-
-        :Returns:
-
-            `bool`
-                True only if the Grid Mapping is LatitudeLongitude.
-
-        """
-        return False
