@@ -305,6 +305,7 @@ class DomainTest(unittest.TestCase):
             self.d.get_grid_mappings(as_class=True), {
                 'coordinatereference1': cf.RotatedLatitudeLongitude
             }
+        )
 
     def test_Domain_create_regular(self):
         domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))

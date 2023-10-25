@@ -255,7 +255,7 @@ from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
 
-from .gridmappings import *
+from .gridmappings import *  # noqa: F403
 
 from .data import Data
 from .data.array import (

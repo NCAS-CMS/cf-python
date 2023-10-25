@@ -2613,7 +2613,7 @@ class FieldDomain:
 
     @_inplace_enabled(default=False)
     def create_2d_lats_and_lons(
-            self, destination_crs="LatLonGridMapping", inplace=False):
+            self, destination_crs="LatitudeLongitude", inplace=False):
         """Create 2-dimensional latitude and longitude coordinates.
 
         The generated coordinates are added to the `{{class}}` as new
@@ -2630,10 +2630,10 @@ class FieldDomain:
                 grid on which to create the latitudes and longitudes.
                 It should be an identifier which corresponds to the
                 name of a CF Grid Mapping class. By default, the class
-                taken is cf.LatLonGridMapping with "LatLonGridMapping".
+                taken is cf.LatitudeLongitude with "LatitudeLongitude".
 
                 .. note:: Creating coordinates on a grid other than
-                          the default cf.LatLonGridMapping is not
+                          the default cf.LatitudeLongitude is not
                           yet supported.
 
             {{inplace: `bool`, optional}}
@@ -2648,14 +2648,14 @@ class FieldDomain:
 
         **Examples**
 
-        TODO
+        TODOGM
 
         """
-        if destination_crs is not "LatLonGridMapping":
+        if destination_crs != "LatitudeLongitude":
             raise NotImplementedError(
                 "Creating latitude and longitude coordinates for "
-                "a destination grid that is not described by the "
-                "LatLonGridMapping, the default, is not yet supported."
+                "a destination grid that is not described by "
+                "cf.LatitudeLongitude, the default, is not yet supported."
             )
 
         f = _inplace_enabled_define_and_cleanup(self)
