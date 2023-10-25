@@ -63,7 +63,7 @@ class GM():
 
     """
 
-    def __new__(cls, coordinate_reference, **kwargs):
+    def __new__(cls, coordinate_reference, **override_kwargs):
         """TODOGM."""
         if cls is GM:
             # TODOGM: what if no coordinate_conversion for cref?
@@ -74,12 +74,14 @@ class GM():
             if not name:  # Exit early before further parameter querying
                 raise InvalidGridMapping(name)
 
-            cref_params = cref.parameters()
-            cref_params.pop("grid_mapping_name")
+            kwargs = cref.parameters()
+            kwargs.pop("grid_mapping_name")  # will be set in creation
+
             # Left with those parameters to describe the GM, which must be
-            # validated as map parameters. Add to custom kwargs
-            # TODOGM: care to handle duplicate kwargs from custom and cref
-            kwargs.update(cref_params)
+            # validated as map parameters. Note x.update(y) will override x
+            # with any keys from y that are duplicates, avoiding issues
+            # from duplication of keyword inputs
+            kwargs.update(override_kwargs)
 
             # TODO: once cf Python minimum is v.3.10, use the new match/case
             # syntax to consolidate this long if/elif.

@@ -170,12 +170,18 @@ class GridMappingsTest(unittest.TestCase):
         self.assertEqual(r.grid_north_pole_longitude, 190.0)
 
         l = cf.GM(cr2)
-        self.f6.dump()
         self.assertTrue(isinstance(l, cf.LatitudeLongitude))
         self.assertEqual(l.grid_mapping_name, "latitude_longitude")
 
         with self.assertRaises(cf.InvalidGridMapping):
             cf.GM(cr0)
+
+        # Test creation with overriding of parameters from the CR
+        r = cf.GM(cr1, **{"grid_north_pole_latitude": -45})
+        self.assertTrue(isinstance(r, cf.RotatedLatitudeLongitude))
+        self.assertEqual(r.grid_mapping_name, "rotated_latitude_longitude")
+        self.assertEqual(r.grid_north_pole_latitude, -45)
+        self.assertEqual(r.grid_north_pole_longitude, 190.0)
         
         # TODOGM extend greatly - by creating CRs with more varied
         # 'grid_mapping_name' attributes with corresponding valid and invalid
