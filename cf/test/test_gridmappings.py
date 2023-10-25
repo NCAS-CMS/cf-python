@@ -160,12 +160,20 @@ class GridMappingsTest(unittest.TestCase):
         # Note f1 has cr0 with no GM and cr1 with 'rotated_latitude_longitude'
         cr0 = self.f1.coordinate_references('coordinatereference0').value()
         cr1 = self.f1.coordinate_references('coordinatereference1').value()
+        # Note f6 has just one CR, grid mapping name of ['latitude_longitude']
+        cr2 = self.f6.coordinate_references('coordinatereference0').value()
 
-        # cr1 has a valid attribute defined for that
         r = cf.GM(cr1)
         self.assertTrue(isinstance(r, cf.RotatedLatitudeLongitude))
         self.assertEqual(r.grid_mapping_name, "rotated_latitude_longitude")
-        # But cr0 has no 'grid_mapping_name' so should error
+        self.assertEqual(r.grid_north_pole_latitude, 38.0)
+        self.assertEqual(r.grid_north_pole_longitude, 190.0)
+
+        l = cf.GM(cr2)
+        self.f6.dump()
+        self.assertTrue(isinstance(l, cf.LatitudeLongitude))
+        self.assertEqual(l.grid_mapping_name, "latitude_longitude")
+
         with self.assertRaises(cf.InvalidGridMapping):
             cf.GM(cr0)
         
