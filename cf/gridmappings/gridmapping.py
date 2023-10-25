@@ -33,7 +33,7 @@ class InvalidGridMapping(Exception):
     """
 
     def __init__(self, gm_name_attr, custom_message=None):
-        self.gm_name_attr = grid_mapping_name_attr
+        self.gm_name_attr = gm_name_attr
         self.custom_message = custom_message
 
     def __str__(self):

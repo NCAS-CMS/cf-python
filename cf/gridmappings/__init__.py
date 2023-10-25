@@ -20,6 +20,7 @@ not included in the listing below.
 from .abstract import *
 from .gridmapping import (
     GM,
+    InvalidGridMapping,
     AlbersEqualArea,
     AzimuthalEquidistant,
     Geostationary,

@@ -145,7 +145,6 @@ class GridMappingsTest(unittest.TestCase):
     def test_grid_mapping_is_latlon_gm(self):
         """Test the 'is_latlon_gm' method on all GridMappings."""
         # In this one case we expect True...
-        # TODOGM: what about cf.RotatedLatitudeLongitude?
         g = cf.LatitudeLongitude
         self.assertTrue(g.is_latlon_gm())  # check on class
         self.assertTrue(g().is_latlon_gm())  # check on instance
@@ -154,6 +153,22 @@ class GridMappingsTest(unittest.TestCase):
         for cls in _all_concrete_grid_mappings:
             if not issubclass(cls, cf.LatitudeLongitude):
                 self.assertFalse(cls.is_latlon_gm())
+
+    @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
+    def test_grid_mapping_GM_class(self):
+        """Test factory creation with the GM class."""
+        # Note f1 has cr0 with no GM and cr1 with 'rotated_latitude_longitude'
+        cr0 = self.f1.coordinate_references('coordinatereference0').value()
+        cr1 = self.f1.coordinate_references('coordinatereference1').value()
+
+        # cr1 has a valid attribute defined for that
+        r = cf.GM(cr1)
+        # But cr0 has no 'grid_mapping_name' so should error
+        with self.assertRaises(cf.InvalidGridMapping):
+            cf.GM(cr0)
+        
+
+        # TODOGM extend greatly!
 
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping_map_parameter_validation(self):
