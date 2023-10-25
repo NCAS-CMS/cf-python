@@ -22,7 +22,7 @@ from .verticalperspective import VerticalPerspective
 
 
 class InvalidGridMapping(Exception):
-    """Exception for a Grid Mapping which is not supported by CF.
+    """Exception for a coordinate reference with unsupported Grid Mapping.
 
     .. versionadded:: GMVER
 
@@ -32,24 +32,24 @@ class InvalidGridMapping(Exception):
 
     """
 
-    def __init__(self, grid_mapping, custom_message=None):
-        self.grid_mapping = grid_mapping
+    def __init__(self, gm_name_attr, custom_message=None):
+        self.gm_name_attr = grid_mapping_name_attr
         self.custom_message = custom_message
 
     def __str__(self):
-        grid_mapping_name = self.grid_mapping.grid_mapping_name
         if self.custom_message:
             return self.custom_message
-        elif grid_mapping_name:
+        elif self.gm_name_attr:
             return (
-                f"Grid Mapping {self.grid_mapping} with grid_mapping_name "
-                f"{grid_mapping_name} is not supported by the CF "
-                "Conventions."
+                f"Coordinate reference construct with grid_mapping_name "
+                f"{self.gm_name_attr} corresponds to a Grid Mapping that "
+                "is not supported by the CF Conventions."
             )
         else:
             return (
-                f"Grid Mapping {self.grid_mapping} missing grid_mapping_name "
-                "and therefore cannot be interpreted."
+                f"A coordinate reference construct must have an attribute "
+                "'Coordinate conversion:grid_mapping_name' defined in order "
+                "to interpret it as a GM class. Missing 'grid_mapping_name'."
             )
 
 
@@ -63,15 +63,17 @@ class GM():
 
     """
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, coordinate_reference, **kwargs):
         """TODOGM."""
         if cls is GM:
-            name = cls.grid_mapping_name
+            name = coordinate_reference.coordinate_conversion.get_parameter(
+                "grid_mapping_name", default=None
+            )
 
             # TODO: once cf Python minimum is v.3.10, use the new match/case
             # syntax to consolidate this long if/elif.
             if not name:
-                pass  # TODOGM raise a custom exception
+                raise InvalidGridMapping(name)
             elif name == "albers_conical_equal_area":
                 return AlbersEqualArea(*args, **kwargs)
             elif name == "azimuthal_equidistant":
@@ -105,7 +107,7 @@ class GM():
             elif name == "vertical_perspective":
                 return VerticalPerspective(*args, **kwargs)
             else:
-                pass  # TODOGM raise a custom exception
+                raise InvalidGridMapping(name)
 
     def __init__(self, coordinate_reference):
         """TODOGM."""

@@ -621,6 +621,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         """
         gms = {}
+        # TODOGM: what if no coordinate_conversion for cref?
         for cref_name, cref in self.coordinate_references().items():
             gm = cref.coordinate_conversion.get_parameter(
                 "grid_mapping_name", default=None
