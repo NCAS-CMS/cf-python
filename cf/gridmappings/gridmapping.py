@@ -66,46 +66,55 @@ class GM():
     def __new__(cls, coordinate_reference, **kwargs):
         """TODOGM."""
         if cls is GM:
-            name = coordinate_reference.coordinate_conversion.get_parameter(
+            # TODOGM: what if no coordinate_conversion for cref?
+            cref = coordinate_reference.coordinate_conversion
+            name = cref.get_parameter(
                 "grid_mapping_name", default=None
             )
+            if not name:  # Exit early before further parameter querying
+                raise InvalidGridMapping(name)
+
+            cref_params = cref.parameters()
+            cref_params.pop("grid_mapping_name")
+            # Left with those parameters to describe the GM, which must be
+            # validated as map parameters. Add to custom kwargs
+            # TODOGM: care to handle duplicate kwargs from custom and cref
+            kwargs.update(cref_params)
 
             # TODO: once cf Python minimum is v.3.10, use the new match/case
             # syntax to consolidate this long if/elif.
-            if not name:
-                raise InvalidGridMapping(name)
-            elif name == "albers_conical_equal_area":
-                return AlbersEqualArea(*args, **kwargs)
+            if name == "albers_conical_equal_area":
+                return AlbersEqualArea(**kwargs)
             elif name == "azimuthal_equidistant":
-                return AzimuthalEquidistant(*args, **kwargs)
+                return AzimuthalEquidistant(**kwargs)
             elif name == "geostationary":
-                return Geostationary(*args, **kwargs)
+                return Geostationary(**kwargs)
             elif name == "lambert_azimuthal_equal_area":
-                return LambertAzimuthalEqualArea(*args, **kwargs)
+                return LambertAzimuthalEqualArea(**kwargs)
             elif name == "lambert_conformal_conic":
-                return LambertConformalConic(*args, **kwargs)
+                return LambertConformalConic(**kwargs)
             elif name == "lambert_cylindrical_equal_area":
-                return LambertCylindricalEqualArea(*args, **kwargs)
+                return LambertCylindricalEqualArea(**kwargs)
             elif name == "latitude_longitude":
-                return LatitudeLongitude(*args, **kwargs)
+                return LatitudeLongitude(**kwargs)
             elif name == "mercator":
-                return Mercator(*args, **kwargs)
+                return Mercator(**kwargs)
             elif name == "oblique_mercator":
-                return ObliqueMercator(*args, **kwargs)
+                return ObliqueMercator(**kwargs)
             elif name == "orthographic":
-                return Orthographic(*args, **kwargs)
+                return Orthographic(**kwargs)
             elif name == "polar_stereographic":
-                return PolarStereographic(*args, **kwargs)
+                return PolarStereographic(**kwargs)
             elif name == "rotated_latitude_longitude":
-                return RotatedLatitudeLongitude(*args, **kwargs)
+                return RotatedLatitudeLongitude(**kwargs)
             elif name == "sinusoidal":
-                return Sinusoidal(*args, **kwargs)
+                return Sinusoidal(**kwargs)
             elif name == "stereographic":
-                return Stereographic(*args, **kwargs)
+                return Stereographic(**kwargs)
             elif name == "transverse_mercator":
-                return TransverseMercator(*args, **kwargs)
+                return TransverseMercator(**kwargs)
             elif name == "vertical_perspective":
-                return VerticalPerspective(*args, **kwargs)
+                return VerticalPerspective(**kwargs)
             else:
                 raise InvalidGridMapping(name)
 

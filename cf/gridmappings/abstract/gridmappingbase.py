@@ -511,7 +511,7 @@ class GridMapping():
                  a `pyproj` `CRS` class that corresponds to the
                  Grid Mapping instance.
 
-       """
+        """
         return CRS.from_proj4(self.get_proj_string())
 
     def has_crs_wkt(self):

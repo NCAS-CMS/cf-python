@@ -163,12 +163,15 @@ class GridMappingsTest(unittest.TestCase):
 
         # cr1 has a valid attribute defined for that
         r = cf.GM(cr1)
+        self.assertTrue(isinstance(r, cf.RotatedLatitudeLongitude))
+        self.assertEqual(r.grid_mapping_name, "rotated_latitude_longitude")
         # But cr0 has no 'grid_mapping_name' so should error
         with self.assertRaises(cf.InvalidGridMapping):
             cf.GM(cr0)
         
-
-        # TODOGM extend greatly!
+        # TODOGM extend greatly - by creating CRs with more varied
+        # 'grid_mapping_name' attributes with corresponding valid and invalid
+        # parameters...
 
     @unittest.skipUnless(pyproj_imported, "Requires pyproj package.")
     def test_grid_mapping_map_parameter_validation(self):
