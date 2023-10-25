@@ -2,12 +2,30 @@ import datetime
 import faulthandler
 import unittest
 
+
+SCIPY_AVAILABLE = False
+try:
+    # We don't need SciPy directly in this test, it is only required by code
+    # here which uses 'convolve1d' under-the-hood. Without it installed, get:
+    #
+    # NameError: name 'convolve1d' is not defined. Did you
+    # mean: 'cf_convolve1d'?
+    import scipy
+
+    SCIPY_AVAILABLE = True
+# not 'except ImportError' as that can hide nested errors, catch anything:
+except Exception:
+    pass  # test with this dependency will then be skipped by unittest
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
 
 class MathTest(unittest.TestCase):
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_curl_xy(self):
         f = cf.example_field(0)
 
@@ -97,6 +115,9 @@ class MathTest(unittest.TestCase):
             c.dimension_coordinate("X").standard_name, "longitude"
         )
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_div_xy(self):
         f = cf.example_field(0)
 
@@ -185,6 +206,9 @@ class MathTest(unittest.TestCase):
             d.dimension_coordinate("X").standard_name, "longitude"
         )
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_differential_operators(self):
         f = cf.example_field(0)
 

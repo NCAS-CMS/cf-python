@@ -89,7 +89,7 @@ _requires = (
 )
 
 x = ", ".join(_requires)
-_error0 = f"cf v{ __version__} requires the modules {x}. "
+_error0 = f"cf v{__version__} requires the modules {x}. "
 
 try:
     import cfdm

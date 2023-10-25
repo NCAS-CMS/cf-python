@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.8]
+        python-version: ["3.8"]
     runs-on: ${{ matrix.os }}
 
     # The sequence of tasks that will be executed as part of this job:
@@ -52,7 +52,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        miniconda-version: 'latest'
+        miniconda-version: "latest"
         activate-environment: cf-latest
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
