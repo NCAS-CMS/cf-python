@@ -110,7 +110,7 @@ def convert_proj_angular_data_to_cf(proj_data, context=None):
     # indicating decimal degrees or radians with PROJ. Be strict about an
     # exact regex match, because anything not following the pattern (e.g.
     # something with extra letters) will be ambiguous for PROJ units.
-    valid_form = re.compile("(-?\d+(\.\d*)?)([rRdD°]?)")
+    valid_form = re.compile(r"(-?\d+(\.\d*)?)([rRdD°]?)")
     form = re.fullmatch(valid_form, proj_data)
     if form:
         comps = form.groups()
