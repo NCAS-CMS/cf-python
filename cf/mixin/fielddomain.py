@@ -2611,6 +2611,57 @@ class FieldDomain:
         """Alias for `coordinate_references`."""
         return self.coordinate_references(*identities, **filter_kwargs)
 
+    @_inplace_enabled(default=False)
+    def create_2d_lats_and_lons(
+            self, destination_crs="LatitudeLongitude", inplace=False):
+        """Create 2-dimensional latitude and longitude coordinates.
+
+        The generated coordinates are added to the `{{class}}` as new
+        auxiliary coordinates if the operation is in-place, else, by
+        default, a new copy of the `{{class}}` is returned with the
+        auxiliary coordinates included.
+
+        .. versionadded:: GMVER
+
+        :Parameters:
+
+            destination_crs: `str`
+                The coordinate reference system that defines the
+                grid on which to create the latitudes and longitudes.
+                It should be an identifier which corresponds to the
+                name of a CF Grid Mapping class. By default, the class
+                taken is cf.LatitudeLongitude with "LatitudeLongitude".
+
+                .. note:: Creating coordinates on a grid other than
+                          the default cf.LatitudeLongitude is not
+                          yet supported.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The {{class}} with the newly-created latitude and
+                longitude coordinates incorporated as new auxiliary
+                coordinate constructs, or `None` if the operation
+                was in-place.
+
+        **Examples**
+
+        TODOGM
+
+        """
+        if destination_crs != "LatitudeLongitude":
+            raise NotImplementedError(
+                "Creating latitude and longitude coordinates for "
+                "a destination grid that is not described by "
+                "cf.LatitudeLongitude, the default, is not yet supported."
+            )
+
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        # TODO functional code here to go from input to lat_data and lon_dat
+
 
 def _create_ancillary_mask_component(mask_shape, ind, compress):
     """Create an ancillary mask component.

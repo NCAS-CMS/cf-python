@@ -18,6 +18,7 @@ from .functions import (
     indices_shape,
     parse_indices,
 )
+from .gridmappings import GM, InvalidGridMapping
 
 _empty_set = set()
 
@@ -584,6 +585,59 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return self._default(
             default, message=f"{self.__class__.__name__} has no data"
         )
+
+    def get_grid_mappings(self, as_class=False):
+        """Returns coordinate conversions with their grid mappings.
+
+        .. versionadded:: GMVER
+
+        :Parameters:
+
+            as_class: `bool`, optional
+                If `True`, return the grid mapping as the equivalent
+                CF Grid Mapping class, for example
+                cf.RotatedLatitudeLongitude, rather than as a string
+                corresponding to the value of the 'grid_mapping_name'
+                attribute, for example 'rotated_latitude_longitude'.
+                By default the 'grid_mapping_name' value is returned.
+
+        :Returns:
+
+                `dict`
+                     CoordinateConversion construct identifiers with
+                     values of their 'grid_mapping_name' attribute,
+                     or corresponding CF Grid Mapping class if
+                     as_class is `True`, for all CoordinateConversions
+                     of the domain that have a 'grid_mapping_name'
+                     parameter defined.
+
+        **Examples**
+
+        >>> f.get_grid_mappings()
+        {'coordinatereference1': "rotated_latitude_longitude"}
+        >>> f.get_grid_mappings(as_class=True)
+        {'coordinatereference1': cf.gridmappings.RotatedLatitudeLongitude}
+        >>> g.get_grid_mappings()
+        {}
+
+        """
+        gms = {}
+        for cref_name, cref in self.coordinate_references().items():
+            # If there is no coordinate conversion or parameters set on one,
+            # this will give None, so is safe
+            gm = cref.coordinate_conversion.get_parameter(
+                "grid_mapping_name", default=None
+            )
+            if gm:
+                if as_class:
+                    try:
+                        gm_class = GM(cref)
+                        gms[cref_name] = gm_class
+                    except InvalidGridMapping:
+                        pass  # not a supported GM so don't add
+                else:
+                    gms[cref_name] = gm
+        return gms
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
