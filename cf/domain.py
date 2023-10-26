@@ -18,6 +18,7 @@ from .functions import (
     indices_shape,
     parse_indices,
 )
+from .gridmappings import GM, InvalidGridMapping
 
 _empty_set = set()
 
@@ -628,7 +629,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             )
             if gm:
                 if as_class:
-                    pass  # TODO UPDATE with class
+                    try:
+                        gm_class = GM(cref)
+                    except InvalidGridMapping:
+                        pass  # not a supported GM so don't add
+                    gms[cref_name] = gm_class
                 else:
                     gms[cref_name] = gm
         return gms

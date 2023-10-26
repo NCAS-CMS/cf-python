@@ -298,12 +298,15 @@ class DomainTest(unittest.TestCase):
     def test_Domain_get_grid_mappings(self):
         self.assertEqual(
             self.d.get_grid_mappings(), {
-                'coordinatereference1': 'rotated_latitude_longitude'
+                "coordinatereference1": "rotated_latitude_longitude"
             }
         )
         self.assertEqual(
             self.d.get_grid_mappings(as_class=True), {
-                'coordinatereference1': cf.RotatedLatitudeLongitude
+                "coordinatereference1": cf.RotatedLatitudeLongitude(
+                    grid_north_pole_latitude=38.0,
+                    grid_north_pole_longitude=190.0,
+                )
             }
         )
 

@@ -2633,11 +2633,15 @@ class FieldTest(unittest.TestCase):
     def test_Field_get_grid_mappings(self):
         self.assertEqual(
             self.f.get_grid_mappings(),
-            {'coordinatereference1': 'rotated_latitude_longitude'}
+            {"coordinatereference1": "rotated_latitude_longitude"}
         )
         self.assertEqual(
-            self.f.get_grid_mappings(as_class=True),
-            {'coordinatereference1': cf.RotatedLatitudeLongitude}
+            self.f.get_grid_mappings(as_class=True), {
+                "coordinatereference1": cf.RotatedLatitudeLongitude(
+                    grid_north_pole_latitude=38.0,
+                    grid_north_pole_longitude=190.0,
+                )
+            }
         )
         self.assertEqual(
             self.f0.get_grid_mappings(), {}
