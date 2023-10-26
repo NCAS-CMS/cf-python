@@ -66,17 +66,18 @@ class GM():
     def __new__(cls, coordinate_reference, **override_kwargs):
         """TODOGM."""
         if cls is GM:
-            # TODOGM: what if no coordinate_conversion for cref?
+            # If there is no coordinate conversion or parameters set on one,
+            # None will result from the pair of lines below, so is safe.
             conv = coordinate_reference.get_coordinate_conversion()
             name = conv.get_parameter(
                 "grid_mapping_name", default=None
             )
+
             if not name:  # Exit early before further parameter querying
                 raise InvalidGridMapping(name)
 
             kwargs = conv.parameters()
             kwargs.pop("grid_mapping_name")  # will be set in creation
-
             # Left with those parameters to describe the GM, which must be
             # validated as map parameters. Note x.update(y) will override x
             # with any keys from y that are duplicates, avoiding issues
