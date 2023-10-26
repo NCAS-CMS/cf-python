@@ -631,9 +631,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 if as_class:
                     try:
                         gm_class = GM(cref)
+                        gms[cref_name] = gm_class
                     except InvalidGridMapping:
                         pass  # not a supported GM so don't add
-                    gms[cref_name] = gm_class
                 else:
                     gms[cref_name] = gm
         return gms
