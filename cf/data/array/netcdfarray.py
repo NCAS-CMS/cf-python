@@ -19,14 +19,6 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
         """
         return super().__dask_tokenize__() + (self.get_mask(),)
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     @property
     def _lock(self):
         """Set the lock for use in `dask.array.from_array`.

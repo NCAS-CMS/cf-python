@@ -87,14 +87,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         return instance
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     @property
     def _cyclic(self):
         """Storage for axis cyclicity.

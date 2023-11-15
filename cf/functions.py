@@ -3034,7 +3034,7 @@ def environment(display=True, paths=True):
     psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py
     packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py
     numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py
-    scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
+    scipy: 1.10.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
     matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
     cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
     cfunits: 3.3.6 /home/username/cfunits/cfunits/__init__.py
@@ -3054,7 +3054,7 @@ def environment(display=True, paths=True):
     psutil: 5.9.0
     packaging: 21.3
     numpy: 1.22.2
-    scipy: 1.8.0
+    scipy: 1.10.0
     matplotlib: 3.4.3
     cftime: 1.6.0
     cfunits: 3.3.6
@@ -3082,7 +3082,7 @@ def environment(display=True, paths=True):
         "psutil": _get_module_info("psutil"),
         "packaging": _get_module_info("packaging"),
         "numpy": _get_module_info("numpy"),
-        "scipy": _get_module_info("scipy", try_except=True),
+        "scipy": _get_module_info("scipy"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
         # Finally the CF related Python libraries, with the cf version last
         # as it is the most relevant (cfdm penultimate for similar reason)

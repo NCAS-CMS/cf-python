@@ -14,6 +14,7 @@
 cf/test/dir/
 cf/test/*.nc
 cf/test/*.nca
+cf/test/*.cdl
 cf/test/*.txt
 
 # coverage reports from a running the test coverage script

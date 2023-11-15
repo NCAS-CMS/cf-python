@@ -110,14 +110,6 @@ class DimensionCoordinate(
             if chars is not None:
                 self._set_component("cell_characteristics", chars, copy=False)
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     def _centre(self, period):
         """It assumed, but not checked, that the period has been set.
 

@@ -3,10 +3,22 @@ version 3.16.0
 
 **2023-??-??**
 
+* Implemented the reading and manipulation of UGRID mesh topologies
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New methods: `cf.Field.cell_connectivity`,
+  `cf.Field.cell_connectivities`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New methods: `cf.Field.domain_topology`,
+  `cf.Field.domain_topologies`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New methods: `cf.Data.arctan2`, `cf.Data.masked-values`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
 * Fix bug that caused `cf.Field.collapse` to give incorrect results
   for the "sum", "sum_of_weights" and "sum_of_weights2" methods, only
   in the case that weights have been requested
   (https://github.com/NCAS-CMS/cf-python/issues/701)
+* Changed dependency: ``1.11.0.0<=cfdm<1.11.1.0``
+* New dependency: ``scipy>=1.10.0``
 
 version 3.15.4
 --------------
@@ -283,8 +295,8 @@ version 3.11.0
 * Fix for `cf.aggregate` failures when a datum or coordinate
   conversion parameter has an array value
   (https://github.com/NCAS-CMS/cf-python/issues/230)
-* Allow for regridding using a destination field featuring size 1 dimension(s)
-  (https://github.com/NCAS-CMS/cf-python/issues/250)
+* Allow for regridding using a destination field featuring size 1
+  dimension(s) (https://github.com/NCAS-CMS/cf-python/issues/250)
 * Fix bug that sometimes caused `cf.Field.autocyclic` to fail when
   setting a construct that is cyclic and has a defined period
 * Fix bug that sometimes caused a failure when reading PP extra data

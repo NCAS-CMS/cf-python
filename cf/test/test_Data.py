@@ -13,15 +13,7 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
-
-SCIPY_AVAILABLE = False
-try:
-    from scipy.ndimage import convolve1d
-
-    SCIPY_AVAILABLE = True
-# not 'except ImportError' as that can hide nested errors, catch anything:
-except Exception:
-    pass  # test with this dependency will then be skipped by unittest
+from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -638,9 +630,6 @@ class DataTest(unittest.TestCase):
     def test_Data_convolution_filter(self):
         """Test the `convolution_filter` Data method."""
         #        raise unittest.SkipTest("GSASL has no PLAIN support")
-        if not SCIPY_AVAILABLE:
-            raise unittest.SkipTest("SciPy must be installed for this test.")
-
         d = cf.Data(self.ma, units="m", chunks=(2, 4, 5, 3))
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
@@ -866,17 +855,6 @@ class DataTest(unittest.TestCase):
                 "sample_size": 1,
             },
         )
-
-        # NaN values aren't 'equal' to e/o, so check call works and that some
-        # representative values are as expected, in this case
-        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
-
-        self.assertEqual(len(s5), 16)
-        self.assertEqual(s5["minimum"], -2)
-        self.assertEqual(s5["sum"], 0)
-        self.assertEqual(s5["sample_size"], 6)
-        self.assertTrue(np.isnan(s5["mean"]))
-        self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
 
     def test_Data__init__dtype_mask(self):
         """Test `__init__` for Data with `dtype` and `mask` keywords."""
@@ -2868,7 +2846,6 @@ class DataTest(unittest.TestCase):
                         (d.mask.array == c.mask).all(),
                         "{}, {}, {}, {}".format(method, units, d.array, c),
                     )
-        # --- End: for
 
         # Also test masking behaviour: masking of invalid data occurs for
         # np.ma module by default but we don't want that so there is logic
@@ -2898,25 +2875,22 @@ class DataTest(unittest.TestCase):
         self.assertTrue(np.isposinf(g[2]))
         self.assertIs(g[3], cf.masked)
 
-        # AT2
-        #
-        # # Treat arctan2 separately (as is a class method & takes two inputs)
-        # for x in (1, -1):
-        #     a1 = 0.9 * x * self.ma
-        #     a2 = 0.5 * x * self.a
-        #     # Transform data for 'a' into range more appropriate for inverse:
-        #     a1 = np.sin(a1.data)
-        #     a2 = np.cos(a2.data)
+        # Treat arctan2 separately (class method taking two inputs)
+        for x in (1, -1):
+            a1 = 0.9 * x * self.ma
+            a2 = 0.5 * x * self.a
+            # Transform data into range more appropriate for inverse
+            a1 = np.sin(a1.data)
+            a2 = np.cos(a2.data)
 
-        #     c = np.ma.arctan2(a1, a2)
-        #     for units in (None, '', '1', 'radians', 'K'):
-        #         d1 = cf.Data(a1, units=units)
-        #         d2 = cf.Data(a2, units=units)
-        #         e = cf.Data.arctan2(d1, d2)
-        #         # Note: no inplace arg for arctan2 (operates on 2 arrays)
-        #         self.assertEqual(d1.shape, c.shape)
-        #         self.assertTrue((e.array == c).all())
-        #         self.assertTrue((d1.mask.array == c.mask).all())
+            c = np.ma.arctan2(a1, a2)
+            for units in (None, "", "1", "radians", "K"):
+                d1 = cf.Data(a1, units=units)
+                d2 = cf.Data(a2, units=units)
+                e = cf.Data.arctan2(d1, d2)
+                self.assertEqual(d1.shape, c.shape)
+                self.assertTrue((e.array == c).all())
+                self.assertTrue((d1.mask.array == c.mask).all())
 
     def test_Data_filled(self):
         """Test the `filled` Data method."""
@@ -4717,6 +4691,45 @@ class DataTest(unittest.TestCase):
         self.assertIsInstance(x, dict)
         self.assertIn((key, 0), x)
         self.assertIn((key, 1), x)
+
+    def test_Data_masked_values(self):
+        """Test Data.masked_values."""
+        array = np.array([[1, 1.1, 2, 1.1, 3]])
+        d = cf.Data(array)
+        e = d.masked_values(1.1)
+        ea = e.array
+        a = np.ma.masked_values(array, 1.1, rtol=cf.rtol(), atol=cf.atol())
+        self.assertTrue(np.isclose(ea, a).all())
+        self.assertTrue((ea.mask == a.mask).all())
+        self.assertIsNone(d.masked_values(1.1, inplace=True))
+        self.assertTrue(d.equals(e))
+
+        array = np.array([[1, 1.1, 2, 1.1, 3]])
+        d = cf.Data(array, mask_value=1.1)
+        da = e.array
+        self.assertTrue(np.isclose(da, a).all())
+        self.assertTrue((da.mask == a.mask).all())
+
+    def test_Data_sparse_array(self):
+        """Test Data based on sparse arrays."""
+        from scipy.sparse import csr_array
+
+        indptr = np.array([0, 2, 3, 6])
+        indices = np.array([0, 2, 2, 0, 1, 2])
+        data = np.array([1, 2, 3, 4, 5, 6])
+        s = csr_array((data, indices, indptr), shape=(3, 3))
+
+        d = cf.Data(s)
+        self.assertFalse((d.sparse_array != s).toarray().any())
+        self.assertTrue((d.array == s.toarray()).all())
+
+        d = cf.Data(s, dtype=float)
+        self.assertEqual(d.sparse_array.dtype, float)
+
+        # Can't mask sparse array during __init__
+        mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
+        with self.assertRaises(ValueError):
+            cf.Data(s, mask=mask)
 
 
 if __name__ == "__main__":

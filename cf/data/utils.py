@@ -999,3 +999,50 @@ def parse_weights(d, weights, axis=None):
     # Return the product of the weights components, which will be
     # broadcastable to d
     return reduce(mul, w)
+
+
+def normalize_chunks(chunks, shape=None, dtype=None):
+    """Normalize chunks to tuple of tuples.
+
+    The shape may contain sizes of ``nan``. This could occur when the
+    underlying data is compressed in a way which makes the shape
+    impossible to infer without actually uncompressing the data.
+
+    If *shape* contains no ``nan`` sizes then this function is
+    identical to `dask.array.core.normalize_chunks`. If it does, then
+    the output chunks for each such axis will be ``(nan,)``.
+
+    .. versionadded 3.16.0
+
+    :Parameters:
+
+        chunks: tuple, int, dict, or string
+            The chunks to be normalized. See
+            `dask.array.core.normalize_chunks` for details.
+
+        shape: `tuple`
+            The shape of the data.
+
+        dtype: data-type
+            The data-type for the data.
+
+    :Returns:
+
+        `tuple`
+            The normalized chunks.
+
+    """
+    from math import isnan, nan
+
+    from dask.array.core import normalize_chunks
+
+    if not any(map(isnan, shape)):
+        return normalize_chunks(chunks, shape=shape, dtype=dtype)
+
+    out = [
+        (nan,)
+        if isnan(size)
+        else normalize_chunks(chunk, shape=(size,), dtype=dtype)[0]
+        for chunk, size in zip(chunks, shape)
+    ]
+    return tuple(out)

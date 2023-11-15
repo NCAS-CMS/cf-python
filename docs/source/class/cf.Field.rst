@@ -272,14 +272,27 @@ Metadata constructs
    :template: method.rst
 
    ~cf.Field.auxiliary_coordinates
+   ~cf.Field.auxiliary_coordinate
+   ~cf.Field.cell_connectivities
+   ~cf.Field.cell_connectivity
    ~cf.Field.cell_measures
+   ~cf.Field.cell_measure
    ~cf.Field.cell_methods
+   ~cf.Field.cell_method
    ~cf.Field.coordinates
+   ~cf.Field.coordinate
    ~cf.Field.coordinate_references
+   ~cf.Field.coordinate_reference
    ~cf.Field.dimension_coordinates
+   ~cf.Field.dimension_coordinate
    ~cf.Field.domain_ancillaries
+   ~cf.Field.domain_ancillary
    ~cf.Field.domain_axes
+   ~cf.Field.domain_axis
+   ~cf.Field.domain_topologies
+   ~cf.Field.domain_topology
    ~cf.Field.field_ancillaries
+   ~cf.Field.field_ancillary
    ~cf.Field.construct
    ~cf.Field.construct_item
    ~cf.Field.construct_key
@@ -292,25 +305,16 @@ Metadata constructs
    ~cf.Field.get_data_axes
    ~cf.Field.has_data_axes
    ~cf.Field.set_data_axes
-   ~cf.Field.auxiliary_coordinate
    ~cf.Field.auxiliary_to_dimension
-   ~cf.Field.cell_measure
-   ~cf.Field.cell_method
-   ~cf.Field.coordinate
-   ~cf.Field.coordinate_reference
+   ~cf.Field.dimension_to_auxiliary
    ~cf.Field.coordinate_reference_domain_axes
    ~cf.Field.get_coordinate_reference
    ~cf.Field.set_coordinate_reference
    ~cf.Field.del_coordinate_reference
-   ~cf.Field.dimension_coordinate
-   ~cf.Field.dimension_to_auxiliary
-   ~cf.Field.domain_ancillary
-   ~cf.Field.domain_axis
    ~cf.Field.domain_axis_key
    ~cf.Field.domain_axis_position
    ~cf.Field.domain_mask
    ~cf.Field.del_domain_axis
-   ~cf.Field.field_ancillary
    ~cf.Field.map_axes
    ~cf.Field.climatological_time_axes
 

@@ -2803,63 +2803,6 @@ class PropertiesData(Properties):
 
         return out
 
-    # AT2
-    #
-    #    @classmethod
-    #    def arctan2(cls, y, x):
-    #        '''Take the "two-argument" trigonometric inverse tangent
-    #    element-wise for `y`/`x`.
-    #
-    #    Explicitly this returns, for all corresponding elements, the angle
-    #    between the positive `x` axis and the line to the point (`x`, `y`),
-    #    where the signs of both `x` and `y` are taken into account to
-    #    determine the quadrant. Such knowledge of the signs of `x` and `y`
-    #    are lost when the quotient is input to the standard "one-argument"
-    #    `arctan` function, such that use of `arctan` leaves the quadrant
-    #    ambiguous. `arctan2` may therefore be preferred.
-    #
-    #    Units are ignored in the calculation. The result has units of radians.
-    #
-    #    The "standard_name" and "long_name" properties are removed from
-    #    the result.
-    #
-    #    .. versionadded:: 3.2.0
-    #
-    #    .. seealso:: `arctan`, `tan`
-    #
-    #    :Parameters:
-    #
-    #        y: `Data`
-    #            The data array to provide the numerator elements, corresponding
-    #            to the `y` coordinates in the `arctan2` definition.
-    #
-    #        x: `Data`
-    #            The data array to provide the denominator elements,
-    #            corresponding to the `x` coordinates in the `arctan2`
-    #            definition.
-    #
-    #    :Returns:
-    #
-    #        The construct with the "two-argument" trigonometric inverse tangent
-    #        of data values. If the operation was in-place then `None` is
-    #        returned.
-    #
-    #    **Examples**
-    #
-    #    TODO
-    #
-    #        '''
-    #        # TODO: keeping metadata of just y, but should it be a combo of x & y?
-    #        out = y.copy()
-    #
-    #        data = Data.arctan2(x.get_data(None), y.get_data(None))
-    #        out.set_data(data, copy=False)
-    #
-    #        out.del_property('standard_name', None)
-    #        out.del_property('long_name', None)
-    #
-    #        return out
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):

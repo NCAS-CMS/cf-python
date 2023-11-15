@@ -32,6 +32,8 @@ Filtering
    ~cf.Constructs.filter_by_key
    ~cf.Constructs.filter_by_ncdim
    ~cf.Constructs.filter_by_ncvar
+   ~cf.Constructs.filter_by_cell
+   ~cf.Constructs.filter_by_connectivity
    ~cf.Constructs.filters_applied
    ~cf.Constructs.clear_filters_applied
    ~cf.Constructs.inverse_filter
