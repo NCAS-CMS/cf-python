@@ -67,6 +67,7 @@ Dask
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.compute
    ~cf.Data.cull_graph
    ~cf.Data.dask_compressed_array
    ~cf.Data.rechunk
@@ -83,7 +84,6 @@ Dask
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cf.Data.compute
    ~cf.Data.chunks
    ~cf.Data.npartitions
    ~cf.Data.numblocks
