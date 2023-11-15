@@ -33,6 +33,7 @@ cf.GatheredArray
    ~cf.GatheredArray.source
    ~cf.GatheredArray.subarray_shapes
    ~cf.GatheredArray.subarrays
+   ~cf.GatheredArray.subarray_parameters
    ~cf.GatheredArray.to_dask_array
    ~cf.GatheredArray.to_memory
 

@@ -665,16 +665,17 @@ class Field_collapseTest(unittest.TestCase):
 
     def test_Field_collapse_sum(self):
         f = cf.example_field(0)
-        w = f.weights("area", measure=True)
+        w = f.weights("area", measure=True).persist()
         a = f.array
         wa = w.array
         ws = a * wa
+        ws_sum = ws.sum()
 
         g = f.collapse("area: sum")
         self.assertTrue((g.array == a.sum()).all())
 
         g = f.collapse("area: sum", weights=w)
-        self.assertTrue((g.array == ws.sum()).all())
+        self.assertTrue((g.array == ws_sum).all())
         self.assertEqual(g.Units, cf.Units("1"))
 
         g = f.collapse("area: sum", weights=w, scale=1)
@@ -682,7 +683,7 @@ class Field_collapseTest(unittest.TestCase):
         self.assertEqual(g.Units, cf.Units("1"))
 
         g = f.collapse("area: sum", weights=w)
-        self.assertTrue((g.array == ws.sum()).all())
+        self.assertTrue((g.array == ws_sum).all())
         self.assertEqual(g.Units, cf.Units("1"))
 
         # Can't set measure=True for 'sum' collapses
@@ -691,13 +692,12 @@ class Field_collapseTest(unittest.TestCase):
 
     def test_Field_collapse_integral(self):
         f = cf.example_field(0)
-        w = f.weights("area", measure=True)
+        w = f.weights("area", measure=True).persist()
         a = f.array
         wa = w.array
-        ws = a * wa
 
         g = f.collapse("area: integral", weights=w, measure=True)
-        self.assertTrue((g.array == ws.sum()).all())
+        self.assertTrue((g.array == (a * wa).sum()).all())
         self.assertEqual(g.Units, cf.Units("m2"))
 
         # Must set the 'weights' parameter for 'integral' collapses
@@ -714,7 +714,7 @@ class Field_collapseTest(unittest.TestCase):
 
     def test_Field_collapse_sum_weights(self):
         f = cf.example_field(0)
-        w = f.weights("area", measure=True)
+        w = f.weights("area", measure=True).persist()
         wa = w.array
 
         g = f.collapse("area: sum_of_weights")
@@ -735,24 +735,44 @@ class Field_collapseTest(unittest.TestCase):
 
     def test_Field_collapse_sum_weights2(self):
         f = cf.example_field(0)
-        w = f.weights("area", measure=True)
+        w = f.weights("area", measure=True).persist()
         wa = w.array**2
+        wa_sum = wa.sum()
 
         g = f.collapse("area: sum_of_weights2")
         self.assertTrue((g.array == 40).all())
         self.assertEqual(g.Units, cf.Units())
 
         g = f.collapse("area: sum_of_weights2", weights=w)
-        self.assertTrue((g.array == wa.sum()).all())
+        self.assertTrue((g.array == wa_sum).all())
         self.assertEqual(g.Units, cf.Units("1"))
 
         g = f.collapse("area: sum_of_weights2", weights=w, measure=True)
-        self.assertTrue((g.array == wa.sum()).all())
+        self.assertTrue((g.array == wa_sum).all())
         self.assertEqual(g.Units, cf.Units("m4"))
 
         g = f.collapse("area: sum_of_weights2", weights=w, scale=1)
         self.assertTrue((g.array == (wa / wa.max()).sum()).all())
         self.assertEqual(g.Units, cf.Units("1"))
+
+    def test_Field_collapse_non_positive_weights(self):
+        f = cf.example_field(0)
+        w = f.weights("area").persist()
+
+        for method in (
+            "mean",
+            "sum",
+            "root_mean_square",
+            "variance",
+            "sum_of_weights",
+        ):
+            for x in (0, -3.14):
+                w[0, 0] = x
+                g = f.collapse(axes="area", method=method, weights=w)
+                with self.assertRaises(ValueError):
+                    # The check for non-positive weights occurs at
+                    # compute time
+                    g.array
 
 
 if __name__ == "__main__":

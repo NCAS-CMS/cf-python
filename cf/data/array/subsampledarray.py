@@ -72,16 +72,6 @@ class SubsampledArray(
 
     """
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        .. versionadded:: 3.0.0
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
@@ -151,7 +141,6 @@ class SubsampledArray(
         #       function of the tie point indices which haven't yet
         #       been accessed. Therefore, the chunks for the
         #       compressed dimensons need to be redefined later.
-        chunks = self.subarray_shapes(chunks)
         chunks = normalize_chunks(
             self.subarray_shapes(chunks),
             shape=self.shape,
@@ -192,7 +181,6 @@ class SubsampledArray(
 
             key = f"{subarray_name}-{tokenize(subarray)}"
             dsk[key] = subarray
-
             dsk[name + chunk_location] = (
                 getter,
                 key,

@@ -57,7 +57,7 @@ class aggregateTest(unittest.TestCase):
             g.equals(g0, verbose=2), "g != itself after aggregation"
         )
 
-        self.assertTrue(h[0].equals(f, verbose=-1), "h[0] != f")
+        self.assertTrue(h[0].equals(f, verbose=2), "h[0] != f")
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
@@ -609,6 +609,45 @@ class aggregateTest(unittest.TestCase):
         )
         condition = cells["T"][0]["cellsize"]
         self.assertTrue(condition.equals(cf.Y()))
+
+    def test_aggregate_ugrid(self):
+        """Test ugrid aggregation"""
+        f = cf.example_field(8)
+
+        # Test that aggregation over a non-ugrid axis (time, in this
+        # case) works.
+        g = f.copy()
+        t = g.dim("T")
+        cf.bounds_combination_mode("OR")
+        t += 72000
+        a = cf.aggregate([f, g])
+        self.assertEqual(len(a), 1)
+        a = a[0]
+        self.assertEqual(len(a.domain_topologies()), 1)
+        self.assertEqual(len(a.cell_connectivities()), 1)
+
+        # Test that aggregation over a non-ugrid axis doesn't work
+        # when the domain topology constructs are different
+        h = g.copy()
+        d = h.domain_topology()
+        d = d.data
+        d += 1
+        self.assertEqual(len(cf.aggregate([f, h])), 2)
+
+        # Test that aggregation over a non-ugrid axis doesn't work
+        # when the cell connnectivty constructs are different
+        h = g.copy()
+        c = h.cell_connectivity()
+        d = c.data
+        d += 1
+        self.assertEqual(len(cf.aggregate([f, h])), 2)
+
+        # Test that aggregation over a ugrid axis doesn't work
+        g = f.copy()
+        x = g.aux("X")
+        d = x.data
+        d += 0.1
+        self.assertEqual(len(cf.aggregate([f, g])), 2)
 
 
 if __name__ == "__main__":

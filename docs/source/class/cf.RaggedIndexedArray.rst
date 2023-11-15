@@ -34,6 +34,7 @@ cf.RaggedIndexedArray
    ~cf.RaggedIndexedArray.source
    ~cf.RaggedIndexedArray.subarray_shapes
    ~cf.RaggedIndexedArray.subarrays
+   ~cf.RaggedIndexedArray.subarray_parameters
    ~cf.RaggedIndexedArray.to_dask_array
    ~cf.RaggedIndexedArray.to_memory
 

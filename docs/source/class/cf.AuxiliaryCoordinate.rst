@@ -492,7 +492,14 @@ NetCDF
    ~cf.AuxiliaryCoordinate.nc_del_variable
    ~cf.AuxiliaryCoordinate.nc_get_variable
    ~cf.AuxiliaryCoordinate.nc_has_variable
-   ~cf.AuxiliaryCoordinate.nc_set_variable 
+   ~cf.AuxiliaryCoordinate.nc_set_variable
+   ~cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable
+   ~cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable
+   ~cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable
+   ~cf.AuxiliaryCoordinate.nc_node_coordinate_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable
+   ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups
    
 Groups
 ^^^^^^

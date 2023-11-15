@@ -8,6 +8,6 @@ recursive-exclude cf *.o *.so *.a .nfs*
 recursive-exclude cf/data *.rst
 prune cf/test
 recursive-include cf/test __init__.py test_*.py 
-recursive-include cf/test cfa_test.sh run_tests.py setup_create_field.py create_test_files.py individual_tests.sh
-recursive-include cf/test test_file.nc test_file[2-4].nc file.nc file[1-9].nc wgdos_packed.pp extra_data.pp file1.pp *.cdl
+recursive-include cf/test cfa_test.sh run_tests.py setup_create_field.py create_test_files*.py individual_tests.sh
+recursive-include cf/test test_file.nc test_file[2-4].nc file.nc file[1-9].nc ugrid_global_1.nc ugrid_global_2.nc wgdos_packed.pp extra_data.pp file1.pp *.cdl
 prune cf/test/dir
