@@ -1831,7 +1831,7 @@ class _Meta:
         construct that spans a new independent size 1 domain axis of
         the field, and the property is deleted.
 
-         ... versionadded:: 3.15.0
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -1890,7 +1890,7 @@ class _Meta:
         If a domain construct is being aggregated then it is always
         returned unchanged.
 
-         ... versionadded:: 3.15.0
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
