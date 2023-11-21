@@ -582,7 +582,7 @@ _docstring_substitution_definitions = {
     # weights measure
     "{{weights measure: `bool`, optional}}": """measure: `bool`, optional
                 If True then create weights that are actual cell sizes
-                with approriate units.""",
+                with appropriate units.""",
     # weights auto
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,

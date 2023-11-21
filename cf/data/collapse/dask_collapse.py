@@ -131,7 +131,7 @@ def sum_weights_chunk(
             raise ValueError(
                 "All collapse weights must be positive. "
                 f"Got a weight of {w_min!r}. Consider replacing "
-                "non-positve values with missing data."
+                "non-positive values with missing data."
             )
 
     dtype = double_precision_dtype(weights)
@@ -246,7 +246,7 @@ def cf_mean_chunk(
         check_weights: `bool`, optional
             If True then check that all weights are positive.
 
-             .. versionadded:: 3.16.0
+            .. versionadded:: 3.16.0
 
         See `dask.array.reductions` for details of the other
         parameters.
@@ -933,7 +933,7 @@ def cf_sum_chunk(
             If True, the default, then check that all weights are
             positive.
 
-             .. versionadded:: 3.16.0
+            .. versionadded:: 3.16.0
 
         See `dask.array.reductions` for details of the other
         parameters.
@@ -957,7 +957,7 @@ def cf_sum_chunk(
                 raise ValueError(
                     "All collapse weights must be positive. "
                     f"Got a weight of {w_min!r}. Consider replacing "
-                    "non-positve values with missing data."
+                    "non-positive values with missing data."
                 )
 
         x = np.multiply(x, weights, dtype=dtype)
