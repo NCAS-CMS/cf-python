@@ -113,12 +113,12 @@ class CellConnectivity(mixin.PropertiesData, cfdm.CellConnectivity):
 
             strict: `bool`, optional
                 If True then the identity is the first found of only
-                the `connectivity` attribute, "standard_name" property
+                the "connectivity" attribute, "standard_name" property
                 or the "id" attribute.
 
             relaxed: `bool`, optional
                 If True then the identity is the first found of only
-                the `connectivity `attribute, the "standard_name"
+                the "connectivity" attribute, the "standard_name"
                 property, the "id" attribute, the "long_name" property
                 or the netCDF variable name.
 
