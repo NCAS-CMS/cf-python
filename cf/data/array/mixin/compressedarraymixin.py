@@ -53,7 +53,7 @@ class CompressedArrayMixin:
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: 3.16.0
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
