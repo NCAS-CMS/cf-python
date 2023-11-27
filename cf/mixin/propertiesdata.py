@@ -4025,7 +4025,6 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
@@ -4354,7 +4353,6 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):

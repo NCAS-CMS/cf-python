@@ -2967,7 +2967,6 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, bounds=True, inplace=False):
@@ -3458,7 +3457,6 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, bounds=True, inplace=False, i=False):
