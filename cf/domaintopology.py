@@ -168,7 +168,7 @@ class DomainTopology(mixin.PropertiesData, cfdm.DomainTopology):
 
             relaxed: `bool`, optional
                 If True then the identity is the first found of only
-                the `cell `attribute, the "standard_name" property,
+                the `cell` attribute, the "standard_name" property,
                 the "id" attribute, the "long_name" property or the
                 netCDF variable name.
 

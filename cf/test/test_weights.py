@@ -6,7 +6,7 @@ import numpy as np
 import cf
 
 # A radius greater than 1. Used since weights based on the unit
-# spehere and non-speheres are tested separately.
+# sphere and non-spheres are tested separately.
 r = 2
 radius = cf.Data(r, "m")
 
@@ -225,7 +225,7 @@ class WeightsTest(unittest.TestCase):
         lon.set_geometry("line")
         lat.set_geometry("line")
 
-        # Cirumference of unit sphere
+        # Circumference of unit sphere
         cirumference = 2 * np.pi
         correct_weights = np.array(
             [3 * cirumference / 4, 5 * cirumference / 4]
@@ -274,7 +274,7 @@ class WeightsTest(unittest.TestCase):
         )
         lat.set_bounds(cf.Bounds(data=bounds))
 
-        # Cirumference of unit sphere
+        # Circumference of unit sphere
         cirumference = 2 * np.pi
         correct_weights = np.array([cirumference / 4] * 3)
 

@@ -3124,7 +3124,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Return weights for the data array values.
 
         The weights are those used during a statistical collapse of
-        the data. For example when computing a area weight average.
+        the data. For example when computing an area weight average.
 
         Weights for any combination of axes may be returned.
 
@@ -3159,7 +3159,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 * **Type 3** allows particular types of weights to be
                   defined for particular axes, and an exception will
-                  be raised if it is not possible to the create
+                  be raised if it is not possible to create the
                   weights.
 
             ..
@@ -3194,7 +3194,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                    coordinate constructs for geomtries
                                    or a UGRID mesh topology.
                                 5. Length calculated from 1-d auxiliary
-                                   coordinate constructs for geomtries
+                                   coordinate constructs for geometries
                                    or a UGRID mesh topology.
                                 6. Cell sizes of dimension coordinate
                                    constructs with bounds
@@ -3337,7 +3337,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 If True then allow, if required, the derivation of i)
                 area weights from polygon cells by assuming that each
                 cell part is a spherical polygon composed of great
-                circle segments; and ii) and the derivation of
+                circle segments; and ii) the derivation of
                 line-length weights line cells by assuming that each
                 line part is composed of great circle segments. Only
                 applies to geometry and UGRID cells.
@@ -3620,7 +3620,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # In rare edge cases (e.g. if a user sets
                 # `weights=f[0].cell_area` when they really meant
                 # `weights=f[0].cell_area()`) we reach this code but
-                # find that weights is not iterable. So check it is.x
+                # find that weights is not iterable. So check it is.
                 try:
                     weights = iter(weights)
                 except TypeError:
