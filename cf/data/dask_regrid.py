@@ -294,9 +294,7 @@ def regrid(
 
     n_dst_axes = len(dst_shape)
 
-    if n_src_axes == n_dst_axes:
-        pass
-    elif n_src_axes == 1 and n_dst_axes == 2:
+    if n_src_axes == 1 and n_dst_axes == 2:
         # The regridding operation increased the number of data axes
         # by 1 => modify 'axis_order' to contain the new axis.
         #
@@ -316,7 +314,7 @@ def regrid(
         #      [0,1,3,4,2]
         raxis0, raxis = axis_order[-2:]
         axis_order = [i if i <= raxis else i - 1 for i in axis_order[:-1]]
-    else:
+    elif n_src_axes != n_dst_axes:
         raise ValueError(
             f"Can't (yet) regrid from {n_src_axes} dimensions to "
             f"{n_dst_axes} dimensions"
