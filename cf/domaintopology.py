@@ -211,6 +211,11 @@ class DomainTopology(mixin.PropertiesData, cfdm.DomainTopology):
             return f"id%{n}"
 
         if relaxed:
+            if strict:
+                raise ValueError(
+                    "'relaxed' and 'strict' parameters cannot both be True"
+                )
+
             n = self.get_property("long_name", None)
             if n is not None:
                 return f"long_name={n}"
