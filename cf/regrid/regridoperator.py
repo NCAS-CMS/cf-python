@@ -623,7 +623,6 @@ class RegridOperator(mixin_Container, Container):
         # Note: It is much more efficient to access 'weights.indptr'
         #       and 'weights.data' directly, rather than iterating
         #       over rows of 'weights' and using 'weights.getrow'.
-        #        count_nonzero = np.count_nonzero
         indptr = weights.indptr.tolist()
         data = weights.data
         for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):

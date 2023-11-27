@@ -3456,8 +3456,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # All axes which have weights
         weights_axes = set()
 
-        #        if radius is not None:
-        #            radius = self.radius(default=radius)
 
         if weights is True and axes is not None:
             # --------------------------------------------------------
