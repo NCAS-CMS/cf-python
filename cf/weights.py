@@ -1003,7 +1003,7 @@ class Weights(Container, cfdm.Container):
         from .units import Units
 
         if spherical:
-            all_lengths = cls.central_angles(f, x, y)
+            all_lengths = cls._central_angles(f, x, y)
             all_lengths.override_units(Units("m"), inplace=True)
         else:
             delta_x = x.diff(axis=-1)
@@ -1045,7 +1045,7 @@ class Weights(Container, cfdm.Container):
         from .units import Units
 
         if spherical:
-            lengths = cls.central_angles(f, x, y)
+            lengths = cls._central_angles(f, x, y)
             lengths.override_units(Units("m"), inplace=True)
         else:
             delta_x = x.diff(axis=-1)
@@ -1208,7 +1208,7 @@ class Weights(Container, cfdm.Container):
         return True
 
     @classmethod
-    def interior_angles(cls, f, lon, lat, interior_rings=None):
+    def _interior_angles(cls, f, lon, lat, interior_rings=None):
         """Find the interior angles at spherical polygon vertices.
 
         The interior angle at a vertex is that formed by two adjacent
@@ -1233,7 +1233,7 @@ class Weights(Container, cfdm.Container):
 
         .. versionadded:: 3.16.0
 
-        .. seealso:: `central_angles`
+        .. seealso:: `_central_angles`
 
         :Parameters:
 
@@ -1314,7 +1314,7 @@ class Weights(Container, cfdm.Container):
         return alpha_P
 
     @classmethod
-    def central_angles(cls, f, lon, lat):
+    def _central_angles(cls, f, lon, lat):
         r"""Find the central angles for spherical great circle line segments.
 
         The central angle of two points on the sphere is the angle
@@ -1338,7 +1338,7 @@ class Weights(Container, cfdm.Container):
 
         .. versionadded:: 3.16.0
 
-        .. seealso:: `interior_angles`
+        .. seealso:: `_interior_angles`
 
         :Parameters:
 
@@ -1896,7 +1896,7 @@ class Weights(Container, cfdm.Container):
 
         from .units import Units
 
-        interior_angles = cls.interior_angles(f, x, y, interior_rings)
+        interior_angles = cls._interior_angles(f, x, y, interior_rings)
         areas = interior_angles.sum(-1, squeeze=True) - (N - 2) * pi
         areas.override_units(Units("m2"), inplace=True)
         return areas
