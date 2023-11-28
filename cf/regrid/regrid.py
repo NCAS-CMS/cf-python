@@ -410,7 +410,9 @@ def regrid(
                 "source and destination grids have coordinate arrays"
             )
 
-        if method == "nearest_dtos" and (src_grid.is_mesh is not dst_grid.is_mesh):
+        if method == "nearest_dtos" and (
+            src_grid.is_mesh is not dst_grid.is_mesh
+        ):
             raise ValueError(
                 f"{method!r} regridding is (at the moment) only available "
                 "when neither or both the source and destination grids are "
@@ -1153,7 +1155,9 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         elif n_axes == 2:
             coord_ids = axes[::-1]
         else:
-            raise ValueError("Can't provide 3 or more axes for mesh axis regridding")
+            raise ValueError(
+                "Can't provide 3 or more axes for mesh axis regridding"
+            )
 
         for coord_id in coord_ids:
             aux = f.auxiliary_coordinate(
@@ -2481,6 +2485,9 @@ def has_coordinate_arrays(grid):
         try:
             has_data = coord.has_data()
         except AttributeError:
+            # 'coord' is not a construct, because it doesn't have a
+            # `has_data` attribute, and so must be something that
+            # certainly has data (e.g. a numpy array).
             has_data = True
 
         if not has_data:
