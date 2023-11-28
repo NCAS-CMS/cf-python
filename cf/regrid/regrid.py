@@ -101,7 +101,7 @@ class Grid:
     # topology. E.g. '' or 'face'.
     mesh_location: str = ""
     # A domain topology construct that spans the regrid axis. A value
-    # of None means that the the grid is not a UGRID mesh topology.
+    # of None means that the grid is not a UGRID mesh topology.
     domain_topology: Any = None
     # The domain axis identifiers of new axes that result from the
     # regridding operation changing the number of data dimensions
@@ -1510,7 +1510,7 @@ def create_esmpy_grid(grid, mask=None):
                         f"{grid.method} regridding."
                     )
 
-        # Convert each bounds to a grid cwith no repeated values.
+        # Convert each bounds to a grid with no repeated values.
         if coords_1d:
             # Bounds for 1-d coordinates.
             #
@@ -2168,7 +2168,7 @@ def update_coordinates(src, dst, src_grid, dst_grid):
 
     Also, if the source grid is a mesh, remove the existing domain
     topology and cell connectivity constructs that span the regridding
-    axis; and if the destination grid is a mesh copy omain topology
+    axis; and if the destination grid is a mesh copy domain topology
     and cell connectivity constructs from the destination grid.
 
     .. versionadded:: 3.14.0
@@ -2402,7 +2402,7 @@ def update_data(src, regridded_data, src_grid):
     :Parameters:
 
         src`: `Field`
-            The regridded field construct, that will up updated
+            The regridded field construct, that will be updated
             in-place.
 
         regridded_data: `numpy.ndarray`

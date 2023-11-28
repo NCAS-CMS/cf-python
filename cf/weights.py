@@ -380,7 +380,7 @@ class Weights(Container, cfdm.Container):
 
                 nrefs = len(refs0)
                 if nrefs > 1 or nrefs != len(refs1):
-                    # The defining coordinate are associated with
+                    # The defining coordinates are associated with
                     # different numbers of coordinate references
                     equivalent_refs = False
                 elif not nrefs:
@@ -1808,7 +1808,7 @@ class Weights(Container, cfdm.Container):
     def _plane_polygon_areas(cls, x, y):
         r"""Calculate the areas of plane polygons.
 
-        The area, A, is of a plane polygon is given by the shoelace
+        The area, A, of a plane polygon is given by the shoelace
         formula:
 
         A={\frac {1}{2}}\sum _{i=1}^{n}x_{i}(y_{i+1}-y_{i-1})}
@@ -1827,13 +1827,13 @@ class Weights(Container, cfdm.Container):
             x: `Data`
                 The X coordinates of the polygon nodes, with no
                 duplication of the first and last nodes (i.e. the
-                polygons are represented by has ``N`` values, where
+                polygons are represented by ``N`` values, where
                 ``N`` is the number of edges).
 
             y: `Data`
                 The Y coordinates of the polygon nodes, with
-                wrap-araound duplication of the first and last nodes
-                (i.e. the polygons are represented by has ``N + 2``
+                wrap-around duplication of the first and last nodes
+                (i.e. the polygons are represented by ``N + 2``
                 values, where ``N`` is the number of edges).
 
         :Returns:
@@ -1867,14 +1867,14 @@ class Weights(Container, cfdm.Container):
 
             x: array_like
                 The X coordinates of the polygon nodes, with
-                wrap-araound duplication of the first and last nodes
-                (i.e. the polygons are represented by has ``N + 2``
+                wrap-around duplication of the first and last nodes
+                (i.e. the polygons are represented by ``N + 2``
                 values, where ``N`` is the number of edges).
 
             y: array_like
                 The Y coordinates of the polygon nodes, with
-                wrap-araound duplication of the first and last nodes
-                (i.e. the polygons are represented by has ``N + 2``
+                wrap-around duplication of the first and last nodes
+                (i.e. the polygons are represented by ``N + 2``
                 values, where ``N`` is the number of edges).
 
             N: array_like
