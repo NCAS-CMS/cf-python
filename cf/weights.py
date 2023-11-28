@@ -301,7 +301,6 @@ class Weights(Container, cfdm.Container):
         domain_axes = f.domain_axes(todict=True)
         for w in field_weights:
             t = w.analyse_items()
-            # TODO CHECK this with org
 
             if t["undefined_axes"]:
                 w_domain_axes_1 = w.domain_axes(
