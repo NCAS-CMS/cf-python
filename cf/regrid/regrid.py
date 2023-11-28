@@ -1156,7 +1156,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         elif n_axes == 2:
             coord_ids = axes[::-1]
         else:
-            raise ValueError("Can't provide 3 axes for mesh axis regridding")
+            raise ValueError("Can't provide 3 or more axes for mesh axis regridding")
 
         for coord_id in coord_ids:
             aux = f.auxiliary_coordinate(
