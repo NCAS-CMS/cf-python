@@ -1017,7 +1017,7 @@ class Weights(Container, cfdm.Container):
 
     @classmethod
     def _line_length_ugrid(cls, f, x, y, spherical):
-        """Creates line-length weights for line geometries.
+        """Creates line-length weights for UGRID edges.
 
         .. versionadded:: 3.16.0
 
