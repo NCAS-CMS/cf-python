@@ -410,10 +410,7 @@ def regrid(
                 "source and destination grids have coordinate arrays"
             )
 
-        if method == "nearest_dtos" and not (
-            (src_grid.is_mesh and dst_grid.is_mesh)
-            or (src_grid.is_grid and dst_grid.is_grid)
-        ):
+        if method == "nearest_dtos" and (src_grid.is_mesh is not dst_grid.is_mesh):
             raise ValueError(
                 f"{method!r} regridding is (at the moment) only available "
                 "when neither or both the source and destination grids are "
