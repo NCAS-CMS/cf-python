@@ -2470,8 +2470,8 @@ def has_coordinate_arrays(grid):
     :Returns:
 
         `bool`
-            True if and only if all grid coordinates have
-            representative arrays.
+            True if and only if there are grid coordinates and they
+            all have representative arrays.
 
     """
     if not grid.coords:
