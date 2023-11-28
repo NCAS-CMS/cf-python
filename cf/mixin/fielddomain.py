@@ -335,7 +335,8 @@ class FieldDomain:
 
                 raise ValueError(
                     f"Error: Can't specify {n_items} conditions for "
-                    f"{n_axes} {a}: {points}"
+                    f"{n_axes} {a}: {points}. Consider applying the "
+                    "conditions separately."
                 )
 
             create_mask = False

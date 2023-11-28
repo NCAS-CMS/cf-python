@@ -1,11 +1,14 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, RaggedArrayMixin
+from .mixin import ArrayMixin, CompressedArrayMixin
 
 
 class RaggedIndexedContiguousArray(
-    RaggedArrayMixin, ArrayMixin, Container, cfdm.RaggedIndexedContiguousArray
+    CompressedArrayMixin,
+    ArrayMixin,
+    Container,
+    cfdm.RaggedIndexedContiguousArray,
 ):
     """An underlying indexed contiguous ragged array.
 
@@ -29,13 +32,3 @@ class RaggedIndexedContiguousArray(
     .. versionadded:: 3.0.0
 
     """
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        .. versionadded:: 3.0.0
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)

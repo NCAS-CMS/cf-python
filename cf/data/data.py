@@ -18,6 +18,7 @@ from dask.array.core import normalize_chunks
 from dask.base import collections_to_dsk, is_dask_collection, tokenize
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
+from scipy.sparse import issparse
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked as cf_masked
@@ -178,6 +179,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         copy=True,
         dtype=None,
         mask=None,
+        mask_value=None,
         to_memory=False,
         init_options=None,
         _use_array=True,
@@ -265,6 +267,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 defined by the *array* parameter.
 
                 .. versionadded:: 3.0.5
+
+            mask_value: scalar array_like
+                Mask *array* where it is equal to *mask_value*, using
+                numerically tolerant floating point equality.
+
+                .. versionadded:: 3.16.0
 
             {{init source: optional}}
 
@@ -392,6 +400,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # No data has been set
             return
 
+        sparse_array = issparse(array)
+
         try:
             ndim = array.ndim
         except AttributeError:
@@ -482,7 +492,17 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Apply a mask
         if mask is not None:
+            if sparse_array:
+                raise ValueError("Can't mask sparse array")
+
             self.where(mask, cf_masked, inplace=True)
+
+        # Apply masked values
+        if mask_value is not None:
+            if sparse_array:
+                raise ValueError("Can't mask sparse array")
+
+            self.masked_values(mask_value, inplace=True)
 
     @property
     def dask_compressed_array(self):
@@ -766,14 +786,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return bool(self.to_dask_array())
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 
@@ -795,8 +807,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        . seealso:: `__setitem__`, `__keepdims_indexing__`,
-                    `__orthogonal_indexing__`
+        . seealso:: `__keepdims_indexing__`,
+                    `__orthogonal_indexing__`, `__setitem__`
 
         :Returns:
 
@@ -2618,7 +2630,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._cfa_del_write()
 
     def compute(self):  # noqa: F811
-        """A numpy view the data.
+        """A view of the computed data.
+
+        TODOUGRID
 
         In-place changes to the returned numpy array *might* affect
         the underlying dask array, depending on how the dask array has
@@ -2647,6 +2661,18 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> d = cf.Data([1, 2, 3.0], 'km')
         >>> d.compute()
         array([1., 2., 3.])
+
+        >>> from scipy.sparse import csr_array
+        >>> d = cf.Data(csr_array((2, 3)))
+        >>> d.compute()
+        <2x3 sparse array of type '<class 'numpy.float64'>'
+                with 0 stored elements in Compressed Sparse Row format>
+        >>>: d.array
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
+        >>> d.compute().toarray()
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
 
         """
         a = self.to_dask_array().compute()
@@ -3734,6 +3760,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
+        ndim = self.ndim
         src_shape = tuple(shape[i] for i in regrid_axes)
         if src_shape != operator.src_shape:
             raise ValueError(
@@ -3753,11 +3780,44 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             ]
             dx = dx.rechunk(chunks)
 
-        # Define the regridded chunksizes
-        regridded_chunks = tuple(
-            (regridded_sizes[i],) if i in regridded_sizes else c
-            for i, c in enumerate(dx.chunks)
-        )
+        # Define the regridded chunksizes (allowing for the regridded
+        # data to have more/fewer axes).
+        regridded_chunks = []  # The 'chunks' parameter to `map_blocks`
+        drop_axis = []  # The 'drop_axis' parameter to `map_blocks`
+        new_axis = []  # The 'new_axis' parameter to `map_blocks`
+        n = 0
+        for i, c in enumerate(dx.chunks):
+            if i in regridded_sizes:
+                sizes = regridded_sizes[i]
+                n_sizes = len(sizes)
+                if not n_sizes:
+                    drop_axis.append(i)
+                    continue
+
+                regridded_chunks.extend(sizes)
+                if n_sizes > 1:
+                    new_axis.extend(range(n + 1, n + n_sizes))
+                    n += n_sizes - 1
+            else:
+                regridded_chunks.extend(c)
+
+            n += 1
+
+        # Update the axis identifiers.
+        #
+        # This is necessary when regridding changes the number of data
+        # dimensions (e.g. as happens when regridding a mesh topology
+        # axis to/from separate lat and lon axes).
+        if new_axis:
+            axes = list(self._axes)
+            for i in new_axis:
+                axes.insert(i, new_axis_identifier(tuple(axes)))
+
+            self._axes = axes
+        elif drop_axis:
+            axes = self._axes
+            axes = [axes[i] for i in range(ndim) if i not in drop_axis]
+            self._axes = axes
 
         # Set the output data type
         if method in ("nearest_dtos", "nearest_stod"):
@@ -3765,7 +3825,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         else:
             dst_dtype = float
 
-        non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
+        non_regrid_axes = [i for i in range(ndim) if i not in regrid_axes]
 
         src_mask = operator.src_mask
         if src_mask is not None:
@@ -3790,6 +3850,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             weights_dst_mask=weights_dst_mask,
             ref_src_mask=src_mask,
             chunks=regridded_chunks,
+            drop_axis=drop_axis,
+            new_axis=new_axis,
             meta=np.array((), dtype=dst_dtype),
         )
 
@@ -5094,7 +5156,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         array = self.compute().copy()
-        if not isinstance(array, np.ndarray):
+        if issparse(array):
+            array = array.toarray()
+        elif not isinstance(array, np.ndarray):
             array = np.asanyarray(array)
 
         return array
@@ -5205,7 +5269,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return mask_data_obj
 
-    # `arctan2`, AT2 seealso
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -5215,7 +5278,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         .. versionadded:: 3.0.7
 
-        .. seealso:: `tan`, `arcsin`, `arccos`, `arctanh`
+        .. seealso:: `tan`, `arcsin`, `arccos`, `arctanh`, `arctan2`
 
         :Parameters:
 
@@ -5253,47 +5316,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d.override_units(_units_radians, inplace=True)
 
         return d
-
-    # AT2
-    #
-    #    @classmethod
-    #    def arctan2(cls, y, x):
-    #        '''Take the "two-argument" trigonometric inverse tangent
-    #    element-wise for `y`/`x`.
-    #
-    #    Explicitly this returns, for all corresponding elements, the angle
-    #    between the positive `x` axis and the line to the point (`x`, `y`),
-    #    where the signs of both `x` and `y` are taken into account to
-    #    determine the quadrant. Such knowledge of the signs of `x` and `y`
-    #    are lost when the quotient is input to the standard "one-argument"
-    #    `arctan` function, such that use of `arctan` leaves the quadrant
-    #    ambiguous. `arctan2` may therefore be preferred.
-    #
-    #    Units are ignored in the calculation. The result has units of radians.
-    #
-    #    .. versionadded:: 3.2.0
-    #
-    #    .. seealso:: `arctan`, `tan`
-    #
-    #    :Parameters:
-    #
-    #        y: `Data`
-    #            The data array to provide the numerator elements, corresponding
-    #            to the `y` coordinates in the `arctan2` definition.
-    #
-    #        x: `Data`
-    #            The data array to provide the denominator elements,
-    #            corresponding to the `x` coordinates in the `arctan2`
-    #            definition.
-    #
-    #    :Returns:
-    #
-    #        `Data`
-    #
-    #    **Examples**
-    #
-    #        '''
-    #        return cls(np.arctan2(y, x), units=_units_radians)
 
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
@@ -7334,6 +7356,96 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return data
 
+    @classmethod
+    def arctan2(cls, x1, x2):
+        """Element-wise arc tangent of ``x1/x2`` with correct quadrant.
+
+        The quadrant (i.e. branch) is chosen so that ``arctan2(y, x)``
+        is the signed angle in radians between the ray ending at the
+        origin and passing through the point ``(1, 0)``, and the ray
+        ending at the origin and passing through the point ``(x, y)``.
+        (Note the role reversal: the "y-coordinate" is the first
+        function parameter, the "x-coordinate" is the second.) By IEEE
+        convention, this function is defined for ``x = +/-0`` and for
+        either or both of ``y = +/-inf`` and ``x = +/-inf`` (see Notes
+        for specific values).
+
+        `arctan2` is identical to the ``atan2`` function of the
+        underlying C library. The following special values are defined
+        in the C standard:
+
+        ======  ======  ===================
+        *x1*    *x2*    ``arctan2(x1, x2)``
+        ======  ======  ===================
+        +/- 0   +0      +/- 0
+        +/- 0   -0      +/- pi
+        > 0     +/-inf  +0 / +pi
+        < 0     +/-inf  -0 / -pi
+        +/-inf  +inf    +/- (pi/4)
+        +/-inf  -inf    +/- (3*pi/4)
+        ======  ======  ===================
+
+        Note that ``+0`` and ``-0`` are distinct floating point
+        numbers, as are ``+inf`` and ``-inf``.
+
+        .. versionadded:: 3.16.0
+
+        .. seealso:: `arctan`, `tan`
+
+        :Parameters:
+
+            x1: array_like
+                Y coordinates.
+
+            x2: array_like
+                X coordinates. *x1* and *x2* must be broadcastable to
+                a common shape (which becomes the shape of the
+                output).
+
+        :Returns:
+
+            `Data`
+                Array of angles in radians, in the range ``(-pi,
+                pi]``.
+
+        **Examples**
+
+        >>> import numpy as np
+        >>> x = cf.Data([-1, +1, +1, -1])
+        >>> y = cf.Data([-1, -1, +1, +1])
+        >>> print((cf.Data.arctan2(y, x) * 180 / np.pi).array)
+        [-135.0 -45.0 45.0 135.0]
+        >>> x[1] = cf.masked
+        >>> y[1] = cf.masked
+        >>> print((cf.Data.arctan2(y, x) * 180 / np.pi).array)
+        [-135.0 -- 45.0 135.0]
+
+        >>> print(cf.Data.arctan2([0, 0, np.inf], [+0., -0., np.inf]).array)
+        [0.0 3.141592653589793 0.7853981633974483]
+
+        >>> print((cf.Data.arctan2([1, -1], [0, 0]) * 180 / np.pi).array)
+        [90.0 -90.0]
+
+        """
+        try:
+            y = x1.to_dask_array()
+        except AttributeError:
+            y = cls.asdata(x1).to_dask_array()
+
+        try:
+            x = x2.to_dask_array()
+        except AttributeError:
+            x = cls.asdata(x2).to_dask_array()
+
+        mask = da.ma.getmaskarray(y) | da.ma.getmaskarray(x)
+        y = da.ma.filled(y, 1)
+        x = da.ma.filled(x, 1)
+
+        dx = da.arctan2(y, x)
+        dx = da.ma.masked_array(dx, mask=mask)
+
+        return cls(dx, units=_units_radians)
+
     @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
         """Return all non-masked values in a one dimensional data array.
@@ -7760,6 +7872,45 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         return YMDhms(self, "second")
+
+    @property
+    def sparse_array(self):
+        """Return an independent `scipy` sparse array of the data.
+
+        In-place changes to the returned sparse array do not affect
+        the underlying dask array.
+
+        An `AttributeError` is raised if a sparse array representation
+        is not available.
+
+        **Performance**
+
+        `sparse_array` causes all delayed operations to be
+        computed. The returned sparse array is a deep copy of that
+        returned by created `compute`.
+
+        .. versionadded:: 3.16.0
+
+        .. seealso:: `array`
+
+        :Returns:
+
+                An independent `scipy` sparse array of the data.
+
+        **Examples**
+
+        >>> from scipy.sparse import issparse
+        >>> issparse(d.sparse_array)
+        True
+
+        """
+        array = self.compute()
+        if issparse(array):
+            return array.copy()
+
+        raise AttributeError(
+            "A sparse array representation of the data is not available"
+        )
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
@@ -9872,6 +10023,60 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
+    def masked_values(self, value, rtol=None, atol=None, inplace=False):
+        """Mask using floating point equality.
+
+        Masks the data where elements are approximately equal to the
+        given value. For integer types, exact equality is used.
+
+        .. versionadded:: 3.16.0
+
+        .. seealso:: `mask`
+
+        :Parameters:
+
+            value: number
+                Masking value.
+
+            {{rtol: number, optional}}
+
+            {{atol: number, optional}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The result of masking the data where approximately
+                equal to *value*, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 1.1, 2, 1.1, 3])
+        >>> e = d.masked_values(1.1)
+        >>> print(e.array)
+        [1.0 -- 2.0 -- 3.0]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if rtol is None:
+            rtol = self._rtol
+        else:
+            rtol = float(rtol)
+
+        if atol is None:
+            atol = self._atol
+        else:
+            atol = float(atol)
+
+        dx = d.to_dask_array()
+        dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
+        d._set_dask(dx)
+        return d
+
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def mid_range(
         self,
@@ -11168,7 +11373,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         .. versionadded:: 3.1.0
 
-        .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`
+        .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`, `arctan2`
 
 
         :Parameters:
@@ -11357,7 +11562,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):

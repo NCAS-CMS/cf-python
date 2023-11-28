@@ -19,7 +19,6 @@ Inspection
    :template: attribute.rst
 
    ~cf.Data.array
-   ~cf.Data.varray
    ~cf.Data.dtype
    ~cf.Data.ndim
    ~cf.Data.shape
@@ -28,6 +27,8 @@ Inspection
    ~cf.Data.dump
    ~cf.Data.inspect
    ~cf.Data.isscalar
+   ~cf.Data.sparse_array
+
    
 Units
 -----
@@ -324,6 +325,7 @@ Mask support
    ~cf.Data.filled
    ~cf.Data.harden_mask
    ~cf.Data.masked_invalid
+   ~cf.Data.masked_values
    ~cf.Data.del_fill_value
    ~cf.Data.get_fill_value
    ~cf.Data.has_fill_value
@@ -360,7 +362,7 @@ Trigonometric functions
    ~cf.Data.arcsin
    ~cf.Data.arccos
    ~cf.Data.arctan
-..  ~cf.Data.arctan2  [AT2]
+   ~cf.Data.arctan2
    
 Hyperbolic functions
 ^^^^^^^^^^^^^^^^^^^^
@@ -877,3 +879,5 @@ Deprecated
    :template: attribute.rst
 
    ~cf.Data.ispartitioned
+   ~cf.Data.varray
+

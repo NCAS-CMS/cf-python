@@ -40,6 +40,7 @@ class RegridOperator(mixin_Container, Container):
         dst_axes=None,
         dst=None,
         weights_file=None,
+        src_mesh_location=None,
     ):
         """**Initialisation**
 
@@ -124,6 +125,13 @@ class RegridOperator(mixin_Container, Container):
 
                  .. versionadded:: 3.15.2
 
+            src_mesh_location: `str`, optional
+                The UGRID mesh element of the source grid
+                (e.g. ``'face'``). An empty string should be used for
+                a non-UGRID source grid.
+
+                .. versionadded:: 3.16.0
+
         """
         super().__init__()
 
@@ -149,6 +157,7 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dst_axes", dst_axes, copy=False)
         self._set_component("dst", dst, copy=False)
         self._set_component("weights_file", weights_file, copy=False)
+        self._set_component("src_mesh_location", src_mesh_location, copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -314,6 +323,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("src_mask")
 
     @property
+    def src_mesh_location(self):
+        """The UGRID mesh element of the source grid.
+
+        .. versionadded:: 3.16.0
+
+        """
+        return self._get_component("src_mesh_location")
+
+    @property
     def src_shape(self):
         """The shape of the source grid.
 
@@ -391,6 +409,7 @@ class RegridOperator(mixin_Container, Container):
             dst_axes=self.dst_axes,
             dst=self.dst.copy(),
             weights_file=self.weights_file,
+            src_mesh_location=self.src_mesh_location,
         )
 
     @_display_or_return
@@ -431,6 +450,7 @@ class RegridOperator(mixin_Container, Container):
             "start_index",
             "src_axes",
             "dst_axes",
+            "src_mesh_location",
             "dst",
             "weights",
             "row",
@@ -603,11 +623,10 @@ class RegridOperator(mixin_Container, Container):
         # Note: It is much more efficient to access 'weights.indptr'
         #       and 'weights.data' directly, rather than iterating
         #       over rows of 'weights' and using 'weights.getrow'.
-        count_nonzero = np.count_nonzero
         indptr = weights.indptr.tolist()
         data = weights.data
         for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-            if not count_nonzero(data[i0:i1]):
+            if not data[i0:i1].size:
                 dst_mask[j] = True
 
         if not dst_mask.any():

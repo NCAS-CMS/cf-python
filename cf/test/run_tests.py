@@ -64,6 +64,10 @@ testsuite_setup_0.addTests(
     test_loader().discover(test_dir, pattern="create_test_files.py")
 )
 
+testsuite_setup_0b = unittest.TestSuite()
+testsuite_setup_0b.addTests(
+    test_loader().discover(test_dir, pattern="create_test_files_2.py")
+)
 # Build the test suite from the tests found in the test files.
 testsuite_setup_1 = unittest.TestSuite()
 testsuite_setup_1.addTests(
@@ -83,6 +87,7 @@ testsuite.addTests(all_test_cases)
 def run_test_suite_setup_0(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_0)
+    runner.run(testsuite_setup_0b)
 
 
 def run_doctests_only(verbosity=2):

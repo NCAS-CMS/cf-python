@@ -101,13 +101,25 @@ def regrid(
         dst_shape: sequence of `int`
             The shape of the destination grid.
 
-        axis_order, sequence of `int`
+        axis_order: sequence of `int`
             The axis order that transposes *a* so that the regrid axes
             become the trailing dimensions, ordered consistently with
             the order used to create the weights matrix; and the
             non-regrid axes become the leading dimensions.
 
-        ref_src_mask, `numpy.ndarray` or `None`
+            *Parameter example:*
+              If the regrid axes are in positions 2 and 1 for 4-d
+              data: ``[0, 3, 2, 1]``
+
+            *Parameter example:*
+              If the regrid axes are in positions 0 and 3 for 4-d
+              data: ``[1, 2, 0, 3]``
+
+            *Parameter example:*
+              If the regrid axis is in position 0 for 3-d data: ``[1,
+              2, 0]``
+
+        ref_src_mask: `numpy.ndarray` or `None`
             If a `numpy.ndarray` with shape *src_shape* then this is
             the reference source grid mask that was used during the
             creation of the weights matrix given by *weights*, and the
@@ -143,15 +155,15 @@ def regrid(
             **Linear regridding**
 
             Destination grid cell j will only be masked if a) it is
-            masked in destination grid definition; or b) ``w_ji >=
+            masked in the destination grid definition; or b) ``w_ji >=
             min_weight`` for those masked source grid cells i for
             which ``w_ji > 0``.
 
             **Conservative first-order regridding**
 
             Destination grid cell j will only be masked if a) it is
-            masked in destination grid definition; or b) The sum of
-            ``w_ji`` for all non-masked source grid cells i is
+            masked in the destination grid definition; or b) the sum
+            of ``w_ji`` for all non-masked source grid cells i is
             strictly less than *min_weight*.
 
     :Returns:
@@ -168,8 +180,9 @@ def regrid(
     # are the gathered regridding axes and whose left-hand dimension
     # represent of all the other dimensions.
     # ----------------------------------------------------------------
+    n_src_axes = len(src_shape)
     a = a.transpose(axis_order)
-    non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
+    non_regrid_shape = a.shape[: a.ndim - n_src_axes]
     dst_size, src_size = weights.shape
     a = a.reshape(-1, src_size)
     a = a.T
@@ -200,7 +213,7 @@ def regrid(
         if variable_mask or (src_mask is None and ref_src_mask.any()):
             raise ValueError(
                 f"Can't regrid with the {method!r} method when the source "
-                f"data mask varies over different {len(src_shape)}-d "
+                f"data mask varies over different {n_src_axes}-d "
                 "regridding slices"
             )
 
@@ -279,10 +292,38 @@ def regrid(
     a = a.T
     a = a.reshape(non_regrid_shape + tuple(dst_shape))
 
+    n_dst_axes = len(dst_shape)
+
+    if n_src_axes == 1 and n_dst_axes == 2:
+        # The regridding operation increased the number of data axes
+        # by 1 => modify 'axis_order' to contain the new axis.
+        #
+        # E.g. UGRID -> regular lat-lon could change 'axis_order' from
+        #      [0,2,1] to [0,3,1,2]
+        raxis = axis_order[-1]
+        axis_order = [
+            i if i <= raxis else i + n_dst_axes - 1 for i in axis_order
+        ]
+        axis_order[-1:] = range(raxis, raxis + n_dst_axes)
+    elif n_src_axes == 2 and n_dst_axes == 1:
+        # The regridding operation decreased the number of data axes
+        # by 1 => modify 'axis_order' to remove the removed axis.
+        #
+        # E.g. regular lat-lon -> UGRID could change 'axis_order' from
+        #      [0,2,4,5,1,3] to [0,2,3,4,1], or [0,2,4,5,3,1] to
+        #      [0,1,3,4,2]
+        raxis0, raxis = axis_order[-2:]
+        axis_order = [i if i <= raxis else i - 1 for i in axis_order[:-1]]
+    elif n_src_axes != n_dst_axes:
+        raise ValueError(
+            f"Can't (yet) regrid from {n_src_axes} dimensions to "
+            f"{n_dst_axes} dimensions"
+        )
+
     d = {k: i for i, k in enumerate(axis_order)}
     axis_reorder = [i for k, i in sorted(d.items())]
-    a = a.transpose(axis_reorder)
 
+    a = a.transpose(axis_reorder)
     return a
 
 
@@ -421,10 +462,10 @@ def _regrid(
             # destination cell j that intersects with unmasked cells
             # of the source grid.
             #
-            #     D_j = 1 - w_i1j - ... - w_iNj
+            #     D_j = w_i1j + ... + w_iNj
             #
-            # where w_iXj is the unmasked weight for masked source
-            # cell i and destination cell j.
+            # where each w_iXj is the weight for unmasked source cell
+            # i and destination cell j.
             dst_size = weights.shape[0]
             if dst_mask is None:
                 dst_mask = np.zeros((dst_size,), dtype=bool)
@@ -451,7 +492,7 @@ def _regrid(
                     continue
 
                 w = data[i0:i1]
-                D_j = 1 - w[mask].sum()
+                D_j = w[~mask].sum()
                 w = w / D_j
                 w[mask] = 0
                 data[i0:i1] = w

@@ -29,6 +29,8 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertEqual(self.r.weights.ndim, 2)
         self.assertIsNone(self.r.row)
         self.assertIsNone(self.r.col)
+        self.assertIsNone(self.r.weights_file)
+        self.assertEqual(self.r.src_mesh_location, "")
 
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)

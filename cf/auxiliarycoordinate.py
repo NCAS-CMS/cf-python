@@ -36,9 +36,7 @@ class AuxiliaryCoordinate(
 
     {{netCDF variable}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF UGRID node coordinate}}
 
     """
 
@@ -47,11 +45,3 @@ class AuxiliaryCoordinate(
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)

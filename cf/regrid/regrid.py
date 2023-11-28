@@ -5,6 +5,7 @@ from typing import Any
 
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_debug
 
 from ..functions import DeprecationError, regrid_logging
 from ..units import Units
@@ -55,26 +56,31 @@ class Grid:
     # expected by `Data._regrid`. E.g. ['domainaxis3', 'domainaxis2']
     axis_keys: list = field(default_factory=list)
     # The positions of the regrid axes, in the order expected by
-    # `Data._regrid`. E.g. [3, 2]
+    # `Data._regrid`. E.g. [3, 2] or [3]
     axis_indices: list = field(default_factory=list)
-    # The value of the *src_axes* or *dst_axes* parameter, as
-    # appropriate.
-    axes: Any = None
     # The domain axis identifiers of the regridding axes. E.g. {'X':
     # 'domainaxis2', 'Y': 'domainaxis1'} or ['domainaxis1',
-    # 'domainaxis2']
+    # 'domainaxis2'], or {'X': 'domainaxis2', 'Y': 'domainaxis2'}
+    axes: Any = None
+    # The number of regrid axes.
+    n_regrid_axes: int = 0
+    # The dimensionality of the regridding on this grid. Generally the
+    # same as *n_regrid_axes*, but for a regridding a UGRID mesh axis
+    # *n_regrid_axes* is 1 and *regridding_dimensionality* is 2.
+    regridding_dimensionality: int = 0
+    # The shape of the regridding axes, in the same order as the
+    # 'axis_keys' attribute. E.g. (96, 73) or (1243,)
     shape: tuple = None
     # The regrid axis coordinates, in the order expected by
-    # `esmpy.Grid`. If the coordinates are 2-d (or more) then the axis
-    # order of each coordinate object must be as expected by
-    # `esmpy.Grid`. E.g. (73, 96)
+    # `esmpy`. If the coordinates are 2-d (or more) then the axis
+    # order of each coordinate object must be as expected by `esmpy`.
     coords: list = field(default_factory=list)
     # The regrid axis coordinate bounds, in the order expected by
-    # `esmpy.Grid`. If the coordinates are 2-d (or more) then the axis
-    # order of each bounds object must be as expected by `esmpy.Grid`.
+    # `esmpy`. If the coordinates are 2-d (or more) then the axis
+    # order of each bounds object must be as expected by `esmpy`.
     bounds: list = field(default_factory=list)
-    # For spherical regridding, whether or not the longitude axis is
-    # cyclic.
+    # Only used if `mesh` is False. For spherical regridding, whether
+    # or not the longitude axis is cyclic.
     cyclic: Any = None
     # The coordinate system of the grid.
     coord_sys: str = ""
@@ -86,6 +92,24 @@ class Grid:
     # for a 2-d grid for which one of the dimensions is a size 2 dummy
     # dimension.
     dummy_size_2_dimension: bool = False
+    # Whether or not the grid is a structured grid.
+    is_grid: bool = False
+    # Whether or not the grid is a UGRID mesh.
+    is_mesh: bool = False
+    # The location on a UGRID mesh topology of the grid cells. An
+    # empty string means that the grid is not a UGRID mesh
+    # topology. E.g. '' or 'face'.
+    mesh_location: str = ""
+    # A domain topology construct that spans the regrid axis. A value
+    # of None means that the grid is not a UGRID mesh topology.
+    domain_topology: Any = None
+    # The domain axis identifiers of new axes that result from the
+    # regridding operation changing the number of data dimensions
+    # (e.g. by regridding a source UGRID (1-d) grid to a destination
+    # non-UGRID (2-d) grid, or vice versa). An empty list means that
+    # the regridding did not change the number of data axes. E.g. [],
+    # ['domainaxis3', 'domainaxis4'], ['domainaxis4']
+    new_axis_keys: list = field(default_factory=list)
 
 
 def regrid(
@@ -249,6 +273,9 @@ def regrid(
     if not inplace:
         src = src.copy()
 
+    spherical = coord_sys == "spherical"
+    cartesian = not spherical
+
     # ----------------------------------------------------------------
     # Parse and check parameters
     # ----------------------------------------------------------------
@@ -284,16 +311,9 @@ def regrid(
             f"using the {method!r} regridding method."
         )
 
-    # Parse the axes
-    if coord_sys == "spherical":
-        n_axes = 2
-    elif not create_regrid_operator:
-        n_axes = len(dst_axes)
-    elif coord_sys == "Cartesian":
+    if cartesian:
         if isinstance(axes, str):
             axes = (axes,)
-
-        n_axes = len(axes)
 
         if src_axes is None:
             src_axes = axes
@@ -312,12 +332,6 @@ def regrid(
             )
         elif isinstance(dst_axes, str):
             dst_axes = (dst_axes,)
-
-    if n_axes != 2 and method in ("conservative_2nd", "patch"):
-        raise ValueError(
-            f"{method!r} regridding is only available for 2-d regridding, "
-            f"but {n_axes}-d regridding has been requested."
-        )
 
     if isinstance(dst, src._Domain):
         use_dst_mask = False
@@ -349,7 +363,7 @@ def regrid(
         # Convert a sequence of Coordinates that define the
         # destination grid into a Domain object
         use_dst_mask = False
-        if coord_sys == "spherical":
+        if spherical:
             dst, dst_axes = spherical_coords_to_domain(
                 dst,
                 dst_axes=dst_axes,
@@ -372,7 +386,44 @@ def regrid(
         coord_sys, src, "source", method, src_cyclic, axes=src_axes
     )
 
+    if is_log_level_debug(logger):
+        logger.debug(
+            f"Source Grid:\n{src_grid}\nDestination Grid:\n{dst_grid}\n"
+        )  # pragma: no cover
+
     conform_coordinate_units(src_grid, dst_grid)
+
+    if method in ("conservative_2nd", "patch"):
+        if not (
+            src_grid.regridding_dimensionality == 2
+            and dst_grid.regridding_dimensionality == 2
+        ):
+            raise ValueError(
+                f"{method!r} regridding is only available for 2-d regridding"
+            )
+    elif method in ("nearest_dtos", "nearest_stod"):
+        if not has_coordinate_arrays(src_grid) and not has_coordinate_arrays(
+            dst_grid
+        ):
+            raise ValueError(
+                f"{method!r} regridding is only available when both the "
+                "source and destination grids have coordinate arrays"
+            )
+
+        if method == "nearest_dtos" and (
+            src_grid.is_mesh is not dst_grid.is_mesh
+        ):
+            raise ValueError(
+                f"{method!r} regridding is (at the moment) only available "
+                "when neither or both the source and destination grids are "
+                "a UGRID mesh"
+            )
+
+    elif cartesian and (src_grid.is_mesh or dst_grid.is_mesh):
+        raise ValueError(
+            "Cartesian regridding is (at the moment) only available when "
+            "neither the source nor destination grid is a UGRID mesh"
+        )
 
     if create_regrid_operator:
         # ------------------------------------------------------------
@@ -399,7 +450,7 @@ def regrid(
                 dst_mask = None
 
         # Create the destination esmpy.Grid
-        dst_esmpy_grid = create_esmpy_grid(dst_grid, mask=grid_dst_mask)
+        dst_esmpy_grid = create_esmpy_grid(dst_grid, grid_dst_mask)
         del grid_dst_mask
 
         # Create a mask for the source grid
@@ -424,9 +475,13 @@ def regrid(
                 grid_src_mask = src_mask
 
         # Create the source esmpy.Grid
-        src_esmpy_grid = create_esmpy_grid(src_grid, mask=grid_src_mask)
-
+        src_esmpy_grid = create_esmpy_grid(src_grid, grid_src_mask)
         del grid_src_mask
+
+        if is_log_level_debug(logger):
+            logger.debug(
+                f"Source ESMF Grid:\n{src_esmpy_grid}\nDestination ESMF Grid:\n{dst_esmpy_grid}\n"
+            )  # pragma: no cover
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
@@ -449,8 +504,9 @@ def regrid(
 
         # Still here? Then we've finished with esmpy, so finalise the
         # esmpy manager. This is done to free up any Persistent
-        # Execution Threads (PETs) created by the esmpy Virtual Machine
-        # (https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation).
+        # Execution Threads (PETs) created by the esmpy Virtual
+        # Machine:
+        # https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation
         del esmpy_manager
 
         if src_grid.dummy_size_2_dimension:
@@ -481,12 +537,12 @@ def regrid(
             dst_axes=dst_axes,
             dst=dst,
             weights_file=weights_file if from_file else None,
+            src_mesh_location=src_grid.mesh_location,
         )
     else:
         if weights_file is not None:
             raise ValueError(
-                "Can't provide a 'weights_file' when 'dst' is a "
-                "RegridOperator"
+                "Can't provide a weights file when 'dst' is a RegridOperator"
             )
 
         # Check that the given regrid operator is compatible with the
@@ -502,9 +558,24 @@ def regrid(
     # ----------------------------------------------------------------
     # Still here? Then do the regridding
     # ----------------------------------------------------------------
-    regridded_axis_sizes = {
-        axis: size for axis, size in zip(src_grid.axis_indices, dst_grid.shape)
-    }
+    if src_grid.n_regrid_axes == dst_grid.n_regrid_axes:
+        regridded_axis_sizes = {
+            src_iaxis: (dst_size,)
+            for src_iaxis, dst_size in zip(
+                src_grid.axis_indices, dst_grid.shape
+            )
+        }
+    elif src_grid.n_regrid_axes == 1:
+        # Fewer source grid axes than destination grid axes (e.g. mesh
+        # regridded to lat/lon).
+        regridded_axis_sizes = {src_grid.axis_indices[0]: dst_grid.shape}
+    elif dst_grid.n_regrid_axes == 1:
+        # More source grid axes than destination grid axes
+        # (e.g. lat/lon regridded to mesh).
+        src_axis_indices = sorted(src_grid.axis_indices)
+        regridded_axis_sizes = {src_axis_indices[0]: (dst_grid.shape[0],)}
+        for src_iaxis in src_axis_indices[1:]:
+            regridded_axis_sizes[src_iaxis] = ()
 
     regridded_data = src.data._regrid(
         method=method,
@@ -517,18 +588,16 @@ def regrid(
     # ----------------------------------------------------------------
     # Update the regridded metadata
     # ----------------------------------------------------------------
-    update_non_coordinates(
-        src, dst, regrid_operator, src_grid=src_grid, dst_grid=dst_grid
-    )
+    update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator)
 
-    update_coordinates(src, dst, src_grid=src_grid, dst_grid=dst_grid)
+    update_coordinates(src, dst, src_grid, dst_grid)
 
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
-    src.set_data(regridded_data, axes=src.get_data_axes(), copy=False)
+    update_data(src, regridded_data, src_grid)
 
-    if coord_sys == "spherical":
+    if coord_sys == "spherical" and dst_grid.is_grid:
         # Set the cyclicity of the longitude axis of the new field
         key, x = src.dimension_coordinate("X", default=(None, None), item=True)
         if x is not None and x.Units.equivalent(Units("degrees")):
@@ -780,8 +849,11 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     """
     data_axes = f.constructs.data_axes()
 
-    coords_1d = False
-    coords_2d = False
+    dim_coords_1d = False
+    aux_coords_2d = False
+    aux_coords_1d = False
+    domain_topology = None
+    mesh_location = ""
 
     # Look for 1-d X and Y dimension coordinates
     lon_key_1d, lon_1d = f.dimension_coordinate(
@@ -796,11 +868,11 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         y_axis = data_axes[lat_key_1d][0]
         if lon_1d.Units.islongitude and lat_1d.Units.islatitude:
             # Found 1-d latitude and longitude dimension coordinates
-            coords_1d = True
+            dim_coords_1d = True
             lon = lon_1d
             lat = lat_1d
 
-    if not coords_1d:
+    if not dim_coords_1d:
         # Look for 2-d X and Y auxiliary coordinates
         lon_key, lon = f.auxiliary_coordinate(
             "X", filter_by_naxes=(2,), item=True, default=(None, None)
@@ -815,7 +887,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
             and lat.Units.islatitude
         ):
             # Found 2-d latitude and longitude auxiliary coordinates
-            coords_2d = True
+            aux_coords_2d = True
 
             lon_axes = data_axes[lon_key]
             lat_axes = data_axes[lat_key]
@@ -848,16 +920,48 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
                     f"spanned by the {name} grid latitude and longitude "
                     "coordinates"
                 )
+        else:
+            domain_topology, mesh_location, mesh_axis = get_mesh(f)
+            if mesh_location in ("face", "point"):
+                lon = f.auxiliary_coordinate(
+                    "X",
+                    filter_by_axis=(mesh_axis,),
+                    axis_mode="exact",
+                    default=None,
+                )
+                lat = f.auxiliary_coordinate(
+                    "Y",
+                    filter_by_axis=(mesh_axis,),
+                    axis_mode="exact",
+                    default=None,
+                )
+                if (
+                    lon is not None
+                    and lat is not None
+                    and lon.Units.islongitude
+                    and lat.Units.islatitude
+                ):
+                    # Found 1-d latitude and longitude auxiliary
+                    # coordinates for a UGRID mesh topology
+                    aux_coords_1d = True
+                    x_axis = mesh_axis
+                    y_axis = mesh_axis
+            elif mesh_location:
+                raise ValueError(
+                    f"Can't regrid {'from' if name == 'source' else 'to'} "
+                    f"a {name} grid comprising an unstructured mesh of "
+                    f"{mesh_location!r} cells"
+                )
 
-    if x_axis == y_axis:
+    if not (dim_coords_1d or aux_coords_2d or aux_coords_1d):
+        raise ValueError(
+            "Could not find 1-d nor 2-d latitude and longitude coordinates"
+        )
+
+    if not mesh_location and x_axis == y_axis:
         raise ValueError(
             "The X and Y axes must be distinct, but they are "
             f"the same for {name} field {f!r}."
-        )
-
-    if not (coords_1d or coords_2d):
-        raise ValueError(
-            "Could not find 1-d nor 2-d latitude and longitude coordinates"
         )
 
     # Get X and Y axis sizes
@@ -880,23 +984,34 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     coords = [lon, lat]  # esmpy order
 
     # Convert 2-d coordinate arrays to esmpy axis order = [X, Y]
-    if coords_2d:
+    if aux_coords_2d:
         for dim, coord_key in enumerate((lon_key, lat_key)):
             coord_axes = data_axes[coord_key]
             esmpy_order = [coord_axes.index(axis) for axis in (x_axis, y_axis)]
             coords[dim] = coords[dim].transpose(esmpy_order)
 
-    bounds = get_bounds(method, coords)
-
     # Set cyclicity of X axis
-    if cyclic is None:
+    if mesh_location:
+        cyclic = None
+    elif cyclic is None:
         cyclic = f.iscyclic(x_axis)
+    else:
+        cyclic = bool(cyclic)
 
+    axes = {"X": x_axis, "Y": y_axis}
     axis_keys = [y_axis, x_axis]
-    axis_sizes = [y_size, x_size]
+    shape = (y_size, x_size)
+    if mesh_location:
+        axis_keys = axis_keys[0:1]
+        shape = shape[0:1]
+
+    n_regrid_axes = len(axis_keys)
+    regridding_dimensionality = n_regrid_axes
+    if mesh_location:
+        regridding_dimensionality += 1
 
     if f.construct_type == "domain":
-        axis_indices = [0, 1]
+        axis_indices = list(range(n_regrid_axes))
     else:
         # Make sure that the data array spans all of the regridding
         # axes. This might change 'f' in-place.
@@ -910,17 +1025,25 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         data_axes = f.get_data_axes()
         axis_indices = [data_axes.index(key) for key in axis_keys]
 
+    is_mesh = bool(mesh_location)
+
     return Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
-        axes={"X": x_axis, "Y": y_axis},
-        shape=tuple(axis_sizes),
+        axes=axes,
+        n_regrid_axes=n_regrid_axes,
+        regridding_dimensionality=regridding_dimensionality,
+        shape=shape,
         coords=coords,
-        bounds=bounds,
-        cyclic=bool(cyclic),
+        bounds=get_bounds(method, coords, mesh_location),
+        cyclic=cyclic,
         coord_sys="spherical",
         method=method,
         name=name,
+        is_mesh=is_mesh,
+        is_grid=not is_mesh,
+        mesh_location=mesh_location,
+        domain_topology=domain_topology,
     )
 
 
@@ -983,6 +1106,32 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         axis_keys.append(key)
         axis_sizes.append(domain_axis.size)
 
+    domain_topology, mesh_location, mesh_axis = get_mesh(f)
+    if mesh_location:
+        # There is a domain topology axis
+        if list(set(axis_keys)) == [mesh_axis]:
+            # There is a unique regridding axis, and its the domain
+            # topology axis.
+            if mesh_location not in ("face", "point"):
+                raise ValueError(
+                    f"Can't regrid {'from' if name == 'source' else 'to'} "
+                    f"a {name} grid comprising an unstructured mesh of "
+                    f"{mesh_location!r} cells"
+                )
+
+            axis_keys = axis_keys[0:1]
+            axis_sizes = axis_sizes[0:1]
+        elif mesh_axis in axis_keys:
+            raise ValueError(
+                "Can't do Cartesian regridding for a combination of "
+                f"mesh and non-mesh axes: {axis_keys}"
+            )
+        else:
+            # None of the regridding axes have a domain topology
+            domain_topology = None
+            mesh_location = None
+            mesh_axis = None
+
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
     else:
@@ -998,18 +1147,44 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         data_axes = f.get_data_axes()
         axis_indices = [data_axes.index(key) for key in axis_keys]
 
+    cyclic = False
     coords = []
-    for key in axis_keys[::-1]:
-        coord = f.dimension_coordinate(filter_by_axis=(key,), default=None)
-        if coord is None:
+    if mesh_location:
+        if n_axes == 1:
+            coord_ids = ["X", "Y"]
+        elif n_axes == 2:
+            coord_ids = axes[::-1]
+        else:
             raise ValueError(
-                f"No unique {name} dimension coordinate for domain axis "
-                f"{key!r}."
+                "Can't provide 3 or more axes for mesh axis regridding"
             )
 
-        coords.append(coord)
+        for coord_id in coord_ids:
+            aux = f.auxiliary_coordinate(
+                coord_id,
+                filter_by_axis=(mesh_axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            if aux is None:
+                raise ValueError(
+                    f"Could not find {coord_id!r} 1-d mesh auxiliary "
+                    "coordinates"
+                )
 
-    bounds = get_bounds(method, coords)
+            coords.append(aux)
+    else:
+        for key in axis_keys[::-1]:
+            dim = f.dimension_coordinate(filter_by_axis=(key,), default=None)
+            if dim is None:
+                raise ValueError(
+                    f"No unique {name} dimension coordinate for domain axis "
+                    f"{key!r}."
+                )
+
+            coords.append(dim)
+
+    bounds = get_bounds(method, coords, mesh_location)
 
     dummy_size_2_dimension = False
     if len(coords) == 1:
@@ -1026,18 +1201,31 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             coords.append(data)
             dummy_size_2_dimension = True
 
+    n_regrid_axes = len(axis_keys)
+    regridding_dimensionality = n_regrid_axes
+    if mesh_location:
+        regridding_dimensionality += 1
+
+    is_mesh = bool(mesh_location)
+
     return Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         axes=axis_keys,
+        n_regrid_axes=n_regrid_axes,
+        regridding_dimensionality=regridding_dimensionality,
         shape=tuple(axis_sizes),
         coords=coords,
         bounds=bounds,
-        cyclic=False,
+        cyclic=cyclic,
         coord_sys="Cartesian",
         method=method,
         name=name,
         dummy_size_2_dimension=dummy_size_2_dimension,
+        is_mesh=is_mesh,
+        is_grid=not is_mesh,
+        mesh_location=mesh_location,
+        domain_topology=domain_topology,
     )
 
 
@@ -1120,8 +1308,8 @@ def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
             carried out. See the *dst* parameter for details.
 
             If False then only the computationally cheap tests are
-            performed (checking that the coordinate system, cyclicity
-            and grid shape are the same).
+            performed (checking that the coordinate system, cyclicity,
+            grid shape, and mesh location are the same).
 
     :Returns:
 
@@ -1134,13 +1322,15 @@ def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
     if regrid_operator.coord_sys != src_grid.coord_sys:
         raise ValueError(
             f"Can't regrid {src!r} with {regrid_operator!r}: "
-            "Coordinate system mismatch"
+            "Coordinate system mismatch: "
+            f"{src_grid.coord_sys!r} != {regrid_operator.coord_sys!r}"
         )
 
     if regrid_operator.src_cyclic != src_grid.cyclic:
         raise ValueError(
             f"Can't regrid {src!r} with {regrid_operator!r}: "
-            "Source grid cyclicity mismatch"
+            "Source grid cyclicity mismatch: "
+            f"{src_grid.cyclic!r} != {regrid_operator.src_cyclic!r}"
         )
 
     if regrid_operator.src_shape != src_grid.shape:
@@ -1148,6 +1338,13 @@ def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
             f"Can't regrid {src!r} with {regrid_operator!r}: "
             "Source grid shape mismatch: "
             f"{src_grid.shape} != {regrid_operator.src_shape}"
+        )
+
+    if regrid_operator.src_mesh_location != src_grid.mesh_location:
+        raise ValueError(
+            f"Can't regrid {src!r} with {regrid_operator!r}: "
+            "Source grid mesh location mismatch: "
+            f"{src_grid.mesh_location} != {regrid_operator.src_mesh_location}"
         )
 
     if not check_coordinates:
@@ -1220,26 +1417,33 @@ def esmpy_initialise():
     return esmpy.Manager(debug=bool(regrid_logging()))
 
 
-def create_esmpy_grid(grid=None, mask=None):
-    """Create an `esmpy` Grid.
+def create_esmpy_grid(grid, mask=None):
+    """Create an `esmpy.Grid` or `esmpy.Mesh`.
 
     .. versionadded:: 3.14.0
 
     :Parameters:
 
         grid: `Grid`
+            The definition of the source or destination grid.
 
         mask: array_like, optional
             The grid mask. If `None` (the default) then there are no
-            masked cells, other must be a Boolean array, with True for
-            masked elements, that broadcasts to the esmpy N-d
+            masked cells, otherwise must be a Boolean array, with True
+            for masked elements, that broadcasts to the esmpy
             coordinates.
 
     :Returns:
 
-        `esmpy.Grid`
+        `esmpy.Grid` or `esmpy.Mesh`
+            The `esmpy.Grid` or `esmpy.Mesh` derived from *grid*.
 
     """
+    if grid.is_mesh:
+        # Create an `esmpy.Mesh`
+        return create_esmpy_mesh(grid, mask)
+
+    # Create an `esmpy.Grid`
     coords = grid.coords
     bounds = grid.bounds
     cyclic = grid.cyclic
@@ -1440,6 +1644,110 @@ def create_esmpy_grid(grid=None, mask=None):
     return esmpy_grid
 
 
+def create_esmpy_mesh(grid, mask=None):
+    """Create an `esmpy.Mesh`.
+
+    .. versionadded:: 3.16.0
+
+    .. seealso:: `create_esmpy_grid`
+
+    :Parameters:
+
+        grid: `Grid`
+            The definition of the source or destination grid.
+
+        mask: array_like, optional
+            The mesh mask. If `None` (the default) then there are no
+            masked cells, otherwise must be a 1-d Boolean array, with
+            True for masked elements.
+
+    :Returns:
+
+        `esmpy.Mesh`
+            The `esmpy.Mesh` derived from *grid*.
+
+    """
+    if grid.mesh_location != "face":
+        raise ValueError(
+            f"Can't regrid {'from' if grid.name == 'source' else 'to'} "
+            f"a {grid.name} grid of UGRID {grid.mesh_location!r} cells"
+        )
+
+    if grid.coord_sys == "spherical":
+        coord_sys = esmpy.CoordSys.SPH_DEG
+    else:
+        # Cartesian
+        coord_sys = esmpy.CoordSys.CART
+
+    # Create an empty esmpy.Mesh
+    esmpy_mesh = esmpy.Mesh(
+        parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
+    )
+
+    element_conn = grid.domain_topology.normalise().array
+    element_count = element_conn.shape[0]
+    element_types = np.ma.count(element_conn, axis=1)
+    element_conn = np.ma.compressed(element_conn)
+
+    # Element coordinates
+    if grid.coords:
+        try:
+            element_coords = [c.array for c in grid.coords]
+        except AttributeError:
+            # The coordinate constructs have no data
+            element_coords = None
+        else:
+            element_coords = np.stack(element_coords, axis=-1)
+    else:
+        element_coords = None
+
+    node_ids, index = np.unique(element_conn, return_index=True)
+    node_coords = [b.data.compressed().array[index] for b in grid.bounds]
+    node_coords = np.stack(node_coords, axis=-1)
+    node_count = node_ids.size
+    node_owners = np.zeros(node_count)
+
+    # Add nodes. This must be done before `add_elements`.
+    esmpy_mesh.add_nodes(
+        node_count=node_count,
+        node_ids=node_ids,
+        node_coords=node_coords,
+        node_owners=node_owners,
+    )
+
+    # Mask
+    if mask is not None:
+        if mask.dtype != bool:
+            raise ValueError(
+                "'mask' must be None or a Boolean array. "
+                f"Got: dtype={mask.dtype}"
+            )
+
+        # Note: 'mask' has True/False for masked/unmasked elements,
+        #       but the esmpy mask requires 0/1 for masked/unmasked
+        #       elements.
+        mask = np.invert(mask).astype("int32")
+        if mask.all():
+            # There are no masked elements
+            mask = None
+
+    # Add elements. This must be done after `add_nodes`.
+    #
+    # Note: The element_ids should start at 1, since when writing the
+    #       weights to a file, these ids are used for the column
+    #       indices.
+    esmpy_mesh.add_elements(
+        element_count=element_count,
+        element_ids=np.arange(1, element_count + 1),
+        element_types=element_types,
+        element_conn=element_conn,
+        element_mask=mask,
+        element_area=None,
+        element_coords=element_coords,
+    )
+    return esmpy_mesh
+
+
 def create_esmpy_weights(
     method,
     src_esmpy_grid,
@@ -1547,8 +1855,28 @@ def create_esmpy_weights(
         # Create the weights using ESMF
         from_file = False
 
-        src_esmpy_field = esmpy.Field(src_esmpy_grid, "src")
-        dst_esmpy_field = esmpy.Field(dst_esmpy_grid, "dst")
+        src_mesh_location = src_grid.mesh_location
+        if not src_mesh_location:
+            src_meshloc = None
+        elif src_mesh_location == "face":
+            src_meshloc = esmpy.api.constants.MeshLoc.ELEMENT
+        elif src_mesh_location == "point":
+            src_meshloc = esmpy.api.constants.MeshLoc.NODE
+
+        dst_mesh_location = dst_grid.mesh_location
+        if not dst_mesh_location:
+            dst_meshloc = None
+        elif dst_mesh_location == "face":
+            dst_meshloc = esmpy.api.constants.MeshLoc.ELEMENT
+        elif dst_mesh_location == "point":
+            dst_meshloc = esmpy.api.constants.MeshLoc.NODE
+
+        src_esmpy_field = esmpy.Field(
+            src_esmpy_grid, name="src", meshloc=src_meshloc
+        )
+        dst_esmpy_field = esmpy.Field(
+            dst_esmpy_grid, name="dst", meshloc=dst_meshloc
+        )
 
         mask_values = np.array([0], dtype="int32")
 
@@ -1625,7 +1953,7 @@ def create_esmpy_weights(
             v.start_index = start_index
             v[...] = row
 
-            v = nc.createVariable("col", i_dtype, ("n_s",))
+            v = nc.createVariable("col", i_dtype, ("n_s",), zlib=True)
             v.long_name = "Source/col indices"
             v.start_index = start_index
             v[...] = col
@@ -1727,7 +2055,7 @@ def contiguous_bounds(b, cyclic=False, period=None):
     return True
 
 
-def get_bounds(method, coords):
+def get_bounds(method, coords, mesh_location):
     """Get coordinate bounds needed for defining an `esmpy.Grid`.
 
     .. versionadded:: 3.14.0
@@ -1740,23 +2068,34 @@ def get_bounds(method, coords):
         coords: sequence of `Coordinate`
             The coordinates that define an `esmpy.Grid`.
 
+        mesh_location: `str`
+            The UGRID mesh element of the source grid
+            (e.g. ``'face'``). An empty string should be used for a
+            non-UGRID source grid.
+
+            .. versionadded:: 3.16.0
+
     :Returns:
 
         `list`
-            The coordinate bounds. Will be an empty list if the
-            regridding method is not conservative.
+            The coordinate bounds. Will be an empty list if there are
+            no bounds, or if bounds are not needed for the regridding.
 
     """
-    if not conservative_regridding(method):
-        bounds = []
-    else:
-        bounds = [c.get_bounds(None) for c in coords]
-        for c, b in zip(coords, bounds):
-            if b is None:
-                raise ValueError(
-                    f"All coordinates must have bounds for {method!r} "
-                    f"regridding: {c!r}"
-                )
+    if not mesh_location and not conservative_regridding(method):
+        return []
+
+    if mesh_location == "point":
+        # Node cells have no bounds
+        return []
+
+    bounds = [c.get_bounds(None) for c in coords]
+    for c, b in zip(coords, bounds):
+        if b is None:
+            raise ValueError(
+                f"All coordinates must have bounds for {method!r} "
+                f"regridding: {c!r}"
+            )
 
     return bounds
 
@@ -1807,8 +2146,10 @@ def get_mask(f, grid):
     mask = da.ma.getmaskarray(f.data.to_dask_array())
     mask = mask[tuple(index)]
 
-    # Reorder the mask axes to grid.axes_keys
-    mask = da.transpose(mask, axes=np.argsort(regrid_axes).tolist())
+    # Reorder the mask axes to grid.axis_keys
+    axes = np.argsort(regrid_axes).tolist()
+    if len(axes) > 1:
+        mask = da.transpose(mask, axes=axes)
 
     return mask
 
@@ -1819,6 +2160,13 @@ def update_coordinates(src, dst, src_grid, dst_grid):
     Replace the existing coordinate constructs that span the regridding
     axes with those from the destination grid.
 
+    Also, if the source grid is a mesh, remove the existing domain
+    topology and cell connectivity constructs that span the regridding
+    axis; and if the destination grid is a mesh copy domain topology
+    and cell connectivity constructs from the destination grid.
+
+    .. versionadded:: 3.14.0
+
     :Parameters:
 
         src: `Field`
@@ -1827,10 +2175,10 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         dst: `Field` or `Domain`
             The field or domain containing the destination grid.
 
-        src_grid: `Grid`
+        src_grid: `Grid` or `Mesh`
             The definition of the source grid.
 
-        dst_grid: `Grid`
+        dst_grid: `Grid` or `Mesh`
             The definition of the destination grid.
 
     :Returns:
@@ -1841,43 +2189,76 @@ def update_coordinates(src, dst, src_grid, dst_grid):
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
-    # Remove the source coordinates of new field
-    for key in src.coordinates(
-        filter_by_axis=src_axis_keys, axis_mode="or", todict=True
+    # Remove the source coordinate, domain topology and cell
+    # connectivity constructs from regridded field.
+    for key in src.constructs(
+        filter_by_type=(
+            "dimension_coordinate",
+            "auxiliary_coordinate",
+            "domain_topology",
+            "cell_connectivity",
+        ),
+        filter_by_axis=src_axis_keys,
+        axis_mode="or",
+        todict=True,
     ):
         src.del_construct(key)
 
     # Domain axes
     src_domain_axes = src.domain_axes(todict=True)
     dst_domain_axes = dst.domain_axes(todict=True)
-    for src_axis, dst_axis in zip(src_axis_keys, dst_axis_keys):
-        src_domain_axis = src_domain_axes[src_axis]
-        dst_domain_axis = dst_domain_axes[dst_axis]
+    if src_grid.n_regrid_axes == dst_grid.n_regrid_axes:
+        # Change the size of the regridded domain axes
+        for src_axis, dst_axis in zip(src_axis_keys, dst_axis_keys):
+            src_domain_axis = src_domain_axes[src_axis]
+            dst_domain_axis = dst_domain_axes[dst_axis]
 
-        src_domain_axis.set_size(dst_domain_axis.size)
+            src_domain_axis.set_size(dst_domain_axis.size)
 
-        ncdim = dst_domain_axis.nc_get_dimension(None)
-        if ncdim is not None:
-            src_domain_axis.nc_set_dimension(ncdim)
+            ncdim = dst_domain_axis.nc_get_dimension(None)
+            if ncdim is not None:
+                src_domain_axis.nc_set_dimension(ncdim)
+    else:
+        # The regridding has changed the number of data axes (e.g. by
+        # regridding a source mesh grid to a destination non-mesh
+        # grid, or vice versa), so insert new domain axis constructs
+        # for all of the new axes.
+        src_axis_keys = [
+            src.set_construct(dst_domain_axes[dst_axis].copy())
+            for dst_axis in dst_axis_keys
+        ]
+        src_grid.new_axis_keys = src_axis_keys
 
-    # Coordinates
     axis_map = {
         dst_axis: src_axis
         for dst_axis, src_axis in zip(dst_axis_keys, src_axis_keys)
     }
     dst_data_axes = dst.constructs.data_axes()
 
-    for key, aux in dst.coordinates(
+    # Copy coordinates constructs from the destination grid
+    for key, coord in dst.coordinates(
         filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
     ).items():
         axes = [axis_map[axis] for axis in dst_data_axes[key]]
-        src.set_construct(aux, axes=axes)
+        src.set_construct(coord, axes=axes)
+
+    # Copy domain topology and cell connectivity constructs from the
+    # destination grid
+    if dst_grid.is_mesh:
+        for key, topology in dst.constructs(
+            filter_by_type=("domain_topology", "cell_connectivity"),
+            filter_by_axis=dst_axis_keys,
+            axis_mode="exact",
+            todict=True,
+        ).items():
+            axes = [axis_map[axis] for axis in dst_data_axes[key]]
+            src.set_construct(topology, axes=axes)
 
 
-def update_non_coordinates(
-    src, dst, regrid_operator, src_grid=None, dst_grid=None
-):
+def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
     """Update the coordinate references of the regridded field.
+
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1923,14 +2304,17 @@ def update_non_coordinates(
             src.del_coordinate_reference(ref_key)
 
     # ----------------------------------------------------------------
-    # Delete source grid cell measures and field ancillaries that span
-    # any of the regridding axes
+    # Delete source grid cell measure and field ancillary constructs
+    # that span any of the regridding axes.
     # ----------------------------------------------------------------
     for key in src.constructs(
-        filter_by_type=("cell_measure", "field_ancillary"), todict=True
+        filter_by_type=("cell_measure", "field_ancillary"),
+        filter_by_axis=src_axis_keys,
+        axis_mode="or",
+        todict=True,
     ):
-        if set(data_axes[key]).intersection(src_axis_keys):
-            src.del_construct(key)
+        #        if set(data_axes[key]).intersection(src_axis_keys):
+        src.del_construct(key)
 
     # ----------------------------------------------------------------
     # Regrid any remaining source domain ancillaries that span all of
@@ -2000,3 +2384,113 @@ def update_non_coordinates(
 
         if axes and set(axes).issubset(dst_axis_keys):
             src.set_coordinate_reference(ref, parent=dst, strict=True)
+
+
+def update_data(src, regridded_data, src_grid):
+    """Insert the regridded field data.
+
+    .. versionadded:: 3.16.0
+
+    .. seealso: `update_coordinates`, `update_non_coordinates`
+
+    :Parameters:
+
+        src`: `Field`
+            The regridded field construct, that will be updated
+            in-place.
+
+        regridded_data: `numpy.ndarray`
+            The regridded array
+
+        src_grid: `Grid`
+            The definition of the source grid.
+
+    :Returns:
+
+        `None`
+
+    """
+    data_axes = src.get_data_axes()
+    if src_grid.new_axis_keys:
+        # The regridding has changed the number of data axes (e.g. by
+        # regridding a source UGRID grid to a destination non-UGRID
+        # grid, or vice versa) => delete the old, superceded domain
+        # axis construct and update the list of data axes.
+        data_axes = list(data_axes)
+        index = data_axes.index(src_grid.axis_keys[0])
+        for axis in src_grid.axis_keys:
+            data_axes.remove(axis)
+            src.del_construct(axis)
+
+        data_axes[index:index] = src_grid.new_axis_keys
+
+    src.set_data(regridded_data, axes=data_axes, copy=False)
+
+
+def get_mesh(f):
+    """Get domain topology mesh information.
+
+    .. versionadded:: 3.16.0
+
+    :Parameters:
+
+        f: `Field` or `Domain`
+            The construct from which to get the mesh information.
+
+    :Returns:
+
+       3-`tuple`
+           If the field or domain has no domain topology construct
+           then ``(None, None, None)`` is returned. Otherwise the
+           tuple contains:
+
+           * The domain topology construct
+           * The mesh location of the domain topology (e.g. ``'face'``)
+           * The identifier of domain axis construct that is spanned
+             by the domain topology construct
+
+    """
+    key, domain_topology = f.domain_topology(item=True, default=(None, None))
+    if domain_topology is None:
+        return (None, None, None)
+
+    return (
+        domain_topology,
+        domain_topology.get_cell(""),
+        f.get_data_axes(key)[0],
+    )
+
+
+def has_coordinate_arrays(grid):
+    """Whether all grid coordinates have representative arrays.
+
+    .. versionadded:: 3.16.0
+
+    :Parameters:
+
+        grid: `Grid`
+            The definition of the grid.
+
+    :Returns:
+
+        `bool`
+            True if and only if there are grid coordinates and they
+            all have representative arrays.
+
+    """
+    if not grid.coords:
+        return False
+
+    for coord in grid.coords:
+        try:
+            has_data = coord.has_data()
+        except AttributeError:
+            # 'coord' is not a construct, because it doesn't have a
+            # `has_data` attribute, and so must be something that
+            # certainly has data (e.g. a numpy array).
+            has_data = True
+
+        if not has_data:
+            return False
+
+    return True
