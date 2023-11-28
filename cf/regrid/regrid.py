@@ -1703,13 +1703,6 @@ def create_esmpy_mesh(grid, mask=None):
     node_count = node_ids.size
     node_owners = np.zeros(node_count)
 
-    #    print (
-    #        'index=',index,
-    #        'index.shape=',index.shape,
-    #        'node_ids=',node_ids,
-    #        'node_ids.shape=',node_ids.shape,
-    #        'node_coords=',node_coords,
-    #        'node_coords.shape=',node_coords.shape)
     # Add nodes. This must be done before `add_elements`.
     esmpy_mesh.add_nodes(
         node_count=node_count,
