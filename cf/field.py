@@ -1801,7 +1801,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             item1.transpose(transpose_axes, inplace=True)
 
         if item0.shape != item1.shape:
-            # add traceback TODO
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different shapes: "
+                    f"{item0.shape} != {item1.shape}"
+                )  # pragma: no cover
+
             return False
 
         flip_axes = [
@@ -1820,7 +1825,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if not item0._equivalent_data(
             item1, rtol=rtol, atol=atol, verbose=verbose
         ):
-            # add traceback TODO
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent data"
+                )  # pragma: no cover
+
             return False
 
         return True
@@ -3455,7 +3464,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # All axes which have weights
         weights_axes = set()
-
 
         if weights is True and axes is not None:
             # --------------------------------------------------------
