@@ -16,12 +16,15 @@ vn=$1
 dir=~/tmp/test_cf-python
 rm -fr $dir
 
+tar ztvf dist/cf-python-$vn.tar.gz
+
 pip install dist/cf-python-$vn.tar.gz -t $dir --no-deps
 
 export PYTHONPATH=$dir:$PYTHONPATH
 export PATH=$dir/bin:$PATH
 
 cd $dir/cf/test
+ls -o
 
 ./individual_tests.sh
 test_result_status=$?

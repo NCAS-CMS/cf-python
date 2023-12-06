@@ -324,6 +324,7 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
+    include_package_data=True,
     # install_requires=[
     #     'netCDF4>=1.5.3',
     #     'cftime>=1.1.3',
