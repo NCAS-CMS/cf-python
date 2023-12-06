@@ -1,3 +1,27 @@
+version 3.16.0
+--------------
+
+**2023-??-??**
+
+* Implemented the reading and manipulation of UGRID mesh topologies
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New methods: `cf.Field.cell_connectivity`,
+  `cf.Field.cell_connectivities`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New methods: `cf.Field.domain_topology`,
+  `cf.Field.domain_topologies`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New method: `cf.Data.masked-values`
+  (https://github.com/NCAS-CMS/cf-python/issues/696)
+* New method: `cf.Data.arctan2`
+  (https://github.com/NCAS-CMS/cf-python/issues/38)
+* Fix bug that caused `cf.Field.collapse` to give incorrect results
+  for the "sum", "sum_of_weights" and "sum_of_weights2" methods, only
+  in the case that weights have been requested
+  (https://github.com/NCAS-CMS/cf-python/issues/701)
+* Changed dependency: ``1.11.0.0<=cfdm<1.11.1.0``
+* New dependency: ``scipy>=1.10.0``
+
 version 3.15.4
 --------------
 
@@ -5,7 +29,7 @@ version 3.15.4
 
 * Record dimension coordinate cell characteristics
   (https://github.com/NCAS-CMS/cf-python/issues/692)
-* New set of methods to query, set, del, and `get_cell_characterstics`
+* New set of methods to query, set, del, and `get_cell_characteristics`
 * Fix bug in `cf.Field.match_by_construct` that always returned True for
   1-d constructs whose axis is not in the data, even when the
   criterion was not matched

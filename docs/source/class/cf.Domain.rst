@@ -119,12 +119,23 @@ Metadata constructs
    :template: method.rst
 
    ~cf.Domain.auxiliary_coordinates
+   ~cf.Domain.auxiliary_coordinate
+   ~cf.Domain.cell_connectivities
+   ~cf.Domain.cell_connectivity
    ~cf.Domain.cell_measures
+   ~cf.Domain.cell_measure
    ~cf.Domain.coordinates
+   ~cf.Domain.coordinate
    ~cf.Domain.coordinate_references
+   ~cf.Domain.coordinate_reference
    ~cf.Domain.dimension_coordinates
+   ~cf.Domain.dimension_coordinate
    ~cf.Domain.domain_ancillaries
+   ~cf.Domain.domain_ancillary
    ~cf.Domain.domain_axes
+   ~cf.Domain.domain_axis
+   ~cf.Domain.domain_topologies
+   ~cf.Domain.domain_topology
    ~cf.Domain.construct
    ~cf.Domain.construct_item
    ~cf.Domain.construct_key
@@ -137,19 +148,12 @@ Metadata constructs
    ~cf.Domain.get_data_axes
    ~cf.Domain.has_data_axes
    ~cf.Domain.set_data_axes
-   ~cf.Domain.auxiliary_coordinate
    ~cf.Domain.auxiliary_to_dimension
-   ~cf.Domain.cell_measure
-   ~cf.Domain.coordinate
-   ~cf.Domain.coordinate_reference
+   ~cf.Domain.dimension_to_auxiliary
    ~cf.Domain.coordinate_reference_domain_axes
    ~cf.Domain.get_coordinate_reference
    ~cf.Domain.set_coordinate_reference
    ~cf.Domain.del_coordinate_reference
-   ~cf.Domain.dimension_coordinate
-   ~cf.Domain.dimension_to_auxiliary
-   ~cf.Domain.domain_ancillary
-   ~cf.Domain.domain_axis
    ~cf.Domain.domain_axis_key
    ~cf.Domain.del_domain_axis
    ~cf.Domain.climatological_time_axes

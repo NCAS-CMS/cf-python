@@ -44,6 +44,7 @@ cf.RegridOperator
    ~cf.RegridOperator.src_cyclic
    ~cf.RegridOperator.src_mask
    ~cf.RegridOperator.src_shape
+   ~cf.RegridOperator.src_mesh_location
    ~cf.RegridOperator.start_index
    ~cf.RegridOperator.weights
    ~cf.RegridOperator.weights_file

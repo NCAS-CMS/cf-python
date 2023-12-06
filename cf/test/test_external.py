@@ -173,7 +173,7 @@ class ExternalVariableTest(unittest.TestCase):
         # cell measure.
         f_lon_thirds = [f[:, :3], f[:, 3:6], f[:, 6:]]
 
-        g = cf.aggregate(f_lon_thirds)
+        g = cf.aggregate(f_lon_thirds, verbose=2)
 
         self.assertEqual(len(g), 1)
 

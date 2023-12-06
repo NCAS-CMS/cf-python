@@ -31,7 +31,7 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-class DSGTest(unittest.TestCase):
+class GatheringTest(unittest.TestCase):
     gathered = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "gathered.nc"
     )

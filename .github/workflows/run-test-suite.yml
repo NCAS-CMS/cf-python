@@ -24,7 +24,8 @@ jobs:
       matrix:
         # Skip older ubuntu-16.04 & macos-10.15 to save usage resource
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.8, 3.9]
+        # Note: keep versions quoted as strings else 3.10 taken as 3.1, etc.
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
     runs-on: ${{ matrix.os }}
@@ -59,7 +60,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        miniconda-version: 'latest'
+        miniconda-version: "latest"
         activate-environment: cf-latest
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
@@ -146,7 +147,7 @@ jobs:
       # passing at least for that job, avoiding useless coverage reports.
       uses: codecov/codecov-action@v3
       if: |
-        matrix.os == 'ubuntu-latest' && matrix.python-version == 3.8
+        matrix.os == "ubuntu-latest" && matrix.python-version == "3.9"
       with:
         file: |
           ${{ github.workspace }}/main/cf/test/cf_coverage_reports/coverage.xml

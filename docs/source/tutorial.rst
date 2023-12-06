@@ -120,7 +120,8 @@ elements.
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
-  datasets for any version of CF up to and including CF-|version|.
+  datasets for any version of CF up to and including CF-|version|,
+  including :ref:`UGRID <UGRID-mesh-topolgies>` datasets.
 
 ..
 
@@ -2670,6 +2671,45 @@ When a field construct containing geometries is written to disk, a
 CF-netCDF geometry container variable is automatically created, and
 the cells encoded with the :ref:`compression <Compression>` techniques
 defined in the CF conventions.
+
+----
+
+.. _UGRID-mesh-topologies:
+		
+**UGRID mesh topologies**
+-------------------------
+
+A `UGRID_` mesh topology defines the geospatial topology of cells
+arranged in two or three dimensions in real space but indexed by a
+single dimension. It explicitly describes the topological
+relationships between cells, i.e. spatial relationships which do not
+depend on the cell locations, via a mesh of connected nodes. See the
+`domain topology construct`_ and `cell connectivity construct`_
+descriptions in the CF data model (from CF-1.11) for more details,
+including on how the mesh relates to the cells of the domain.
+
+.. code-block:: python
+   :caption: *Inspect a dataset containing a UGRID mesh topology.*
+
+   >>> f = cf.example_field(8)
+   >>> print(f)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+   Cell methods    : time(2): point (interval: 3600 s)
+   Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+   Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                   : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+   Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+   Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+..
+   COMMENTED OUT UNTIL THIS WORKS! When a field construct containing a
+   UGRID mesh topology is written to disk, a CF-netCDF UGRID mesh
+   topology variable is automatically created which will be shared by
+   any data variables that can make use of the same mesh.
+
+----
 
 .. _Domain-ancillaries:
 		
@@ -6992,3 +7032,4 @@ if any, are filtered out.
 .. _geometries:                       http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/cf-conventions/cf-conventions.html#groups
 .. _Lossy compression by coordinate subsampling: http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
+.. _UGRID:                            https://cfconventions.org/cf-conventions/cf-conventions.html#ugrid-conventions

@@ -73,9 +73,9 @@ installation and source code.
 
 """
 
-__Conventions__ = "CF-1.10"
-__date__ = "2023-10-10"
-__version__ = "3.15.4"
+__Conventions__ = "CF-1.11"
+__date__ = "2023-??-??"
+__version__ = "3.16.0"
 
 _requires = (
     "numpy",
@@ -86,10 +86,11 @@ _requires = (
     "psutil",
     "dask",
     "packaging",
+    "scipy",
 )
 
 x = ", ".join(_requires)
-_error0 = f"cf v{ __version__} requires the modules {x}. "
+_error0 = f"cf v{__version__} requires the modules {x}. "
 
 try:
     import cfdm
@@ -144,6 +145,11 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
+try:
+    import scipy
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
 # Check the version of packaging
 _minimum_vn = "20.0"
 if Version(packaging.__version__) < Version(_minimum_vn):
@@ -193,8 +199,8 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.10.1.2"
-_maximum_vn = "1.10.2.0"
+_minimum_vn = "1.11.0.0"
+_maximum_vn = "1.11.1.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
@@ -216,6 +222,14 @@ if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
         f"or later. Got {platform.python_version()}"
+    )
+
+# Check the version of scipy
+_minimum_vn = "1.10.0"
+if Version(scipy.__version__) < Version(_minimum_vn):
+    raise RuntimeError(
+        f"Bad scipy version: cf requires scipy>={_minimum_vn}. "
+        f"Got {scipy.__version__} at {scipy.__file__}"
     )
 
 from .constructs import Constructs
@@ -248,18 +262,23 @@ from .domainlist import DomainList
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .coordinatereference import CoordinateReference
+from .cellconnectivity import CellConnectivity
 from .cellmethod import CellMethod
 from .cellmeasure import CellMeasure
 from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
+from .domaintopology import DomainTopology
 from .fieldancillary import FieldAncillary
 from .field import Field
 from .data import Data
 from .data.array import (
+    BoundsFromNodesArray,
+    CellConnectivityArray,
     CFANetCDFArray,
     FullArray,
     GatheredArray,
     NetCDFArray,
+    PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,

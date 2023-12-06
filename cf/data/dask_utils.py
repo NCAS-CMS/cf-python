@@ -9,6 +9,7 @@ from functools import partial
 import dask.array as da
 import numpy as np
 from dask.core import flatten
+from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..functions import atol as cf_atol
@@ -126,12 +127,6 @@ def cf_contains(a, value):
 
     """
     return np.array(value in a).reshape((1,) * a.ndim)
-
-
-try:
-    from scipy.ndimage import convolve1d
-except ImportError:
-    pass
 
 
 def cf_convolve1d(a, window=None, axis=-1, origin=0):

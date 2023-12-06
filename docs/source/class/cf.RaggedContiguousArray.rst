@@ -35,6 +35,7 @@ cf.RaggedContiguousArray
    ~cf.RaggedContiguousArray.source
    ~cf.RaggedContiguousArray.subarray_shapes
    ~cf.RaggedContiguousArray.subarrays
+   ~cf.RaggedContiguousArray.subarray_parameters
    ~cf.RaggedContiguousArray.to_dask_array
    ~cf.RaggedContiguousArray.to_memory
 
