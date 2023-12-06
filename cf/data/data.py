@@ -2632,14 +2632,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def compute(self):  # noqa: F811
         """A view of the computed data.
 
-        TODOUGRID
-
-        In-place changes to the returned numpy array *might* affect
-        the underlying dask array, depending on how the dask array has
+        In-place changes to the returned array *might* affect the
+        underlying dask array, depending on how the dask array has
         been defined, including any delayed operations.
 
-        The returned numpy array has the same mask hardness and fill
-        values as the data.
+        The returned array has the same mask hardness and fill values
+        as the data.
 
         Compare with `array`.
 
@@ -2653,8 +2651,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `numpy.ndarray`
-                The numpy view of the data.
+                An in-memory view of the data
 
         **Examples**
 
