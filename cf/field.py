@@ -3200,7 +3200,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                    dimension coordinate constructs
                                    with bounds
                                 4. Area calculated from 1-d auxiliary
-                                   coordinate constructs for geomtries
+                                   coordinate constructs for geometries
                                    or a UGRID mesh topology.
                                 5. Length calculated from 1-d auxiliary
                                    coordinate constructs for geometries

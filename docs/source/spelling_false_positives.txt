@@ -84,6 +84,7 @@ Colour
 conda
 config
 conformant
+connectivities
 contigious
 contiguousness
 contruct
@@ -183,6 +184,7 @@ fx
 fy
 GatheredArray
 ge
+geopotential
 Geosci
 Geosciences
 geospatial
@@ -303,6 +305,8 @@ netcdf
 netCDF
 NetCDFArray
 netcdftime
+Niña
+Niño
 Nino
 nondimensional
 nonzero
@@ -444,6 +448,7 @@ Typecode
 u
 udunits
 Udunits
+UGRID
 umread
 umversion
 un
