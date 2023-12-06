@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.FieldAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/fieldancillary.py#L6-L40"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/fieldancillary.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.fieldancillary.FieldAncillary</span></code></p>
 <p>A field ancillary construct of the CF data model.</p>
 <p>The field ancillary construct provides metadata which are
@@ -157,7 +157,16 @@ parent field construct but does not contribute to the domain’s
 definition, unlike, for instance, an auxiliary coordinate
 construct or domain ancillary construct.</p>
 <p><strong>NetCDF interface</strong></p>
-<p>{{netcdf variable}}</p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cf.FieldAncillary.nc_set_variable.html#cf.FieldAncillary.nc_set_variable" title="cf.FieldAncillary.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.FieldAncillary.nc_get_variable.html#cf.FieldAncillary.nc_get_variable" title="cf.FieldAncillary.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.FieldAncillary.nc_del_variable.html#cf.FieldAncillary.nc_del_variable" title="cf.FieldAncillary.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
+<a class="reference internal" href="../method/cf.FieldAncillary.nc_has_variable.html#cf.FieldAncillary.nc_has_variable" title="cf.FieldAncillary.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cf.FieldAncillary.nc_set_variable.html#cf.FieldAncillary.nc_set_variable" title="cf.FieldAncillary.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.FieldAncillary.nc_get_variable.html#cf.FieldAncillary.nc_get_variable" title="cf.FieldAncillary.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.FieldAncillary.nc_variable_groups.html#cf.FieldAncillary.nc_variable_groups" title="cf.FieldAncillary.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cf.FieldAncillary.nc_clear_variable_groups.html#cf.FieldAncillary.nc_clear_variable_groups" title="cf.FieldAncillary.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cf.FieldAncillary.nc_set_variable_groups.html#cf.FieldAncillary.nc_set_variable_groups" title="cf.FieldAncillary.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -421,13 +430,13 @@ parameters are not deep copied.</p>
 <td><p>True if the data array is scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.ndim.html#cf.FieldAncillary.ndim" title="cf.FieldAncillary.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
-<td><p>The number of dimensions in the data array.</p></td>
+<td><p>The number of data dimensions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.shape.html#cf.FieldAncillary.shape" title="cf.FieldAncillary.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>A tuple of the data array’s dimension sizes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.size.html#cf.FieldAncillary.size" title="cf.FieldAncillary.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
-<td><p>The number of elements in the data array.</p></td>
+<td><p>The number elements in the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.varray.html#cf.FieldAncillary.varray" title="cf.FieldAncillary.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
 <td><p>A numpy array view of the data.</p></td>
@@ -1353,7 +1362,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

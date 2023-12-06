@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/data/data.py#L104-L12975"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">mask_value=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/data/data.py#L105-L13176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.mixin.deprecations.DataClassDeprecationsMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.cfanetcdf.CFANetCDF</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -269,6 +269,12 @@ defined by the <em>array</em> parameter.</p>
 <p><span class="versionmodified added">New in version 3.0.5.</span></p>
 </div>
 </dd>
+<dt>mask_value: scalar array_like</dt><dd><p>Mask <em>array</em> where it is equal to <em>mask_value</em>, using
+numerically tolerant floating point equality.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.0.</span></p>
+</div>
+</dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>All other parameters, apart from <em>copy</em>, are ignored
@@ -397,32 +403,32 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
 <td><p>A numpy array copy of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
-<td><p>A numpy array view of the data array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
 <td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>Number of dimensions in the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.shape.html#cf.Data.shape" title="cf.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.shape.html#cf.Data.shape" title="cf.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Tuple of the data array’s dimension sizes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.size.html#cf.Data.size" title="cf.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.size.html#cf.Data.size" title="cf.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>Number of elements in the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.nbytes.html#cf.Data.nbytes" title="cf.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.nbytes.html#cf.Data.nbytes" title="cf.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></p></td>
 <td><p>Total number of bytes consumed by the elements of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.dump.html#cf.Data.dump" title="cf.Data.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.dump.html#cf.Data.dump" title="cf.Data.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
 <td><p>Return a string containing a full description of the instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.inspect.html#cf.Data.inspect" title="cf.Data.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.inspect.html#cf.Data.inspect" title="cf.Data.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
 <td><p>Inspect the object for debugging.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data is a 0-d scalar array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.sparse_array.html#cf.Data.sparse_array" title="cf.Data.sparse_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse_array</span></code></a></p></td>
+<td><p>Return an independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.11.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -491,28 +497,31 @@ performance.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cull_graph.html#cf.Data.cull_graph" title="cf.Data.cull_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cull_graph</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a></p></td>
+<td><p>A view of the computed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cull_graph.html#cf.Data.cull_graph" title="cf.Data.cull_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cull_graph</span></code></a></p></td>
 <td><p>Remove unnecessary tasks from the dask graph in-place.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dask_compressed_array.html#cf.Data.dask_compressed_array" title="cf.Data.dask_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_compressed_array</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.dask_compressed_array.html#cf.Data.dask_compressed_array" title="cf.Data.dask_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_compressed_array</span></code></a></p></td>
 <td><p>Returns a dask array of the compressed data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
 <td><p>Change the chunk structure of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.chunk_indices.html#cf.Data.chunk_indices" title="cf.Data.chunk_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_indices</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.chunk_indices.html#cf.Data.chunk_indices" title="cf.Data.chunk_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_indices</span></code></a></p></td>
 <td><p>Return indices that define each dask compute chunk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.todict.html#cf.Data.todict" title="cf.Data.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.todict.html#cf.Data.todict" title="cf.Data.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
 <td><p>Return a dictionary of the dask graph key/value pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_dask_array.html#cf.Data.to_dask_array" title="cf.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.to_dask_array.html#cf.Data.to_dask_array" title="cf.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
 <td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_deterministic_name.html#cf.Data.get_deterministic_name" title="cf.Data.get_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deterministic_name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_deterministic_name.html#cf.Data.get_deterministic_name" title="cf.Data.get_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deterministic_name</span></code></a></p></td>
 <td><p>Get the deterministic name for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.has_deterministic_name.html#cf.Data.has_deterministic_name" title="cf.Data.has_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_deterministic_name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.has_deterministic_name.html#cf.Data.has_deterministic_name" title="cf.Data.has_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_deterministic_name</span></code></a></p></td>
 <td><p>Whether there is a deterministic name for the data.</p></td>
 </tr>
 </tbody>
@@ -524,16 +533,13 @@ performance.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a></p></td>
-<td><p>A numpy view the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
 <td><p>The chunk sizes for each dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.npartitions.html#cf.Data.npartitions" title="cf.Data.npartitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.npartitions.html#cf.Data.npartitions" title="cf.Data.npartitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></a></p></td>
 <td><p>The total number of chunks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.numblocks.html#cf.Data.numblocks" title="cf.Data.numblocks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.numblocks.html#cf.Data.numblocks" title="cf.Data.numblocks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></a></p></td>
 <td><p>The number of chunks along each dimension.</p></td>
 </tr>
 </tbody>
@@ -926,19 +932,22 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.masked_invalid.html#cf.Data.masked_invalid" title="cf.Data.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.del_fill_value.html#cf.Data.del_fill_value" title="cf.Data.del_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_fill_value</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.masked_values.html#cf.Data.masked_values" title="cf.Data.masked_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_values</span></code></a></p></td>
+<td><p>Mask using floating point equality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.del_fill_value.html#cf.Data.del_fill_value" title="cf.Data.del_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_fill_value</span></code></a></p></td>
 <td><p>Delete the fill value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_fill_value.html#cf.Data.get_fill_value" title="cf.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_fill_value.html#cf.Data.get_fill_value" title="cf.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></p></td>
 <td><p>Return the missing data value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.has_fill_value.html#cf.Data.has_fill_value" title="cf.Data.has_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_fill_value</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.has_fill_value.html#cf.Data.has_fill_value" title="cf.Data.has_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_fill_value</span></code></a></p></td>
 <td><p>Whether a fill value has been set.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a></p></td>
 <td><p>Set the missing data value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.soften_mask.html#cf.Data.soften_mask" title="cf.Data.soften_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.soften_mask.html#cf.Data.soften_mask" title="cf.Data.soften_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></a></p></td>
 <td><p>Force the mask to soft.</p></td>
 </tr>
 </tbody>
@@ -995,6 +1004,9 @@ performance.</p></li>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.arctan.html#cf.Data.arctan" title="cf.Data.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
 <td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.arctan2.html#cf.Data.arctan2" title="cf.Data.arctan2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan2</span></code></a></p></td>
+<td><p>Element-wise arc tangent of <code class="docutils literal notranslate"><span class="pre">x1/x2</span></code> with correct quadrant.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1959,6 +1971,9 @@ augmented assignments, modify the data in-place.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ispartitioned.html#cf.Data.ispartitioned" title="cf.Data.ispartitioned"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ispartitioned</span></code></a></p></td>
 <td><p>True if the data array is partitioned.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
+<td><p>A numpy array view of the data array.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -1972,7 +1987,7 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

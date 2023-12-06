@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.varray" href="cf.Data.varray.html" />
+    <link rel="next" title="cf.Data.dtype" href="cf.Data.dtype.html" />
     <link rel="prev" title="cf.Data" href="../class/cf.Data.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -98,7 +98,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="../class/cf.Data.html" title="previous chapter">cf.Data</a></li>
-      <li>Next: <a href="cf.Data.varray.html" title="next chapter">cf.Data.varray</a></li>
+      <li>Next: <a href="cf.Data.dtype.html" title="next chapter">cf.Data.dtype</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -143,14 +143,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 underlying dask array.</p>
 <p>The returned numpy array has the same mask hardness and fill
 values as the data.</p>
-<p>Compare with <a class="reference internal" href="cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
+<p>Compare with <a class="reference internal" href="../method/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
 <p><strong>Performance</strong></p>
 <p><a class="reference internal" href="#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> causes all delayed operations to be computed. The
 returned <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is a deep copy of that returned by
-created <a class="reference internal" href="cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
+created <a class="reference internal" href="../method/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>, <a class="reference internal" href="cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>, <a class="reference internal" href="../method/cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p>
+<p><a class="reference internal" href="cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>, <a class="reference internal" href="../method/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>, <a class="reference internal" href="../method/cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p>
 </div>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="s1">&#39;km&#39;</span><span class="p">)</span>
@@ -186,7 +186,7 @@ created <a class="reference internal" href="cf.Data.compute.html#cf.Data.compute
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

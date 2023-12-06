@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/field.py#L14381-L14662"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L13175-L13468"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Regrid the field to a new latitude and longitude grid.</p>
 <p>Regridding is the process of interpolating the field data
 values while preserving the qualities of the original data,
@@ -167,6 +167,10 @@ present.</p>
 supported, but are not necessary in some cases, for example if
 the points on either side are together without a gap (as is
 the case for NEMO model outputs).</p>
+<p><strong>UGRID meshes</strong></p>
+<p>Data defined on UGRID face or node cells may be regridded to
+any other latitude-longitude grid, including other UGRID
+meshes.</p>
 <p><strong>Cyclicity of the X axis</strong></p>
 <p>The cyclicity of the X (longitude) axes of the source and
 destination grids (i.e. whether or not the first and last
@@ -441,8 +445,7 @@ cells <code class="docutils literal notranslate"><span class="pre">i</span></cod
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
 </div>
 </dd>
-<dt>weights_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><blockquote>
-<div><p>Provide a netCDF file that contains, or will contain,
+<dt>weights_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide a netCDF file that contains, or will contain,
 the regridding weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then
 the weights are computed in memory for regridding
 between the source and destination grids, and no file
@@ -478,9 +481,36 @@ no checks will be applied to it.</p>
 <p>The computation of the weights can be much more costly
 than the regridding itself, in which case reading
 pre-calculated weights can improve performance.</p>
-</div></blockquote>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.2.</span></p>
+</div>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+string equal ignoring case to one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'INFO'</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
+</ul>
+<p>set for the duration of the method call only as the
+minimum cut-off for the verboseness level of displayed
+output (log) messages, regardless of the
+globally-configured <a class="reference internal" href="../function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>. Note that
+increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
+case of maximal and extreme verbosity.</p>
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
+messages will be shown according to the value of the
+<a class="reference internal" href="../function/cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
+<p>Overall, the higher a non-negative integer or
+equivalent string that is set (up to a maximum of
+<code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for increasing verbosity, the more
+description that is printed to convey information
+about the operation.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.0.</span></p>
 </div>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
@@ -568,7 +598,7 @@ operation was in-place; or the regridding operator if
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

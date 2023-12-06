@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.15.0``):
+   you want to install, e.g. ``3.16.0``):
 
    .. code-block:: console
 
@@ -201,8 +201,10 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.1.2 or up to,
-  but not including, 1.10.2.0.
+* `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
+
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.0.0 or up to,
+  but not including, 1.11.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
 
@@ -252,10 +254,6 @@ environments for which these features are not required.
      $ conda install -c conda-forge esmpy>=8.0.0
 
   or may be installed from source.
-
-.. rubric:: Convolution filters, derivatives and relative vorticity
-
-* `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
 .. rubric:: Subspacing based on N-dimensional construct cells (N > 1)
             containing a given value

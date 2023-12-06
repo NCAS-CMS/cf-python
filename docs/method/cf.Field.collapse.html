@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=1</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">remove_vertical_crs=True</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/field.py#L6174-L8257"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">remove_vertical_crs=True</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L4941-L7051"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -728,6 +728,12 @@ value of <em>measure</em>.</p>
 <p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in
 <strong>unweighted calculations</strong>.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless the <em>method</em> is <code class="docutils literal notranslate"><span class="pre">'integral'</span></code>, the
+units of the weights are not combined with
+the field’s units in the collapsed field.</p>
+</div>
 <p>If the alternative form of providing the collapse method
 and axes combined as a CF cell methods-like string via the
 <em>method</em> parameter has been used, then the <em>axes</em>
@@ -770,37 +776,39 @@ time you could set <code class="docutils literal notranslate"><span class="pre">
 </dd>
 </dl>
 </dd>
-<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Create weights which are cell measures, i.e. which
-describe actual cell sizes (e.g. cell area) with
-appropriate units (e.g. metres squared). By default the
-weights are normalised and have arbitrary units.</p>
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>weights</em> is not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, create weights
+which are cell measures, i.e. which describe actual
+cell sizes (e.g. cell area) with appropriate units
+(e.g. metres squared). By default the weights units
+are ignored.</p>
 <p>Cell measures can be created for any combination of
-axes. For example, cell measures for a time axis are the
-time span for each cell with canonical units of seconds;
-cell measures for the combination of four axes
-representing time and three dimensional space could have
-canonical units of metres cubed seconds.</p>
-<p>When collapsing with the <code class="docutils literal notranslate"><span class="pre">'integral'</span></code> method, <em>measure</em>
-must be True, and the units of the weights are
-incorporated into the units of the returned field
+axes. For example, cell measures for a time axis are
+the time span for each cell with canonical units of
+seconds; cell measures for the combination of four
+axes representing time and three dimensional space
+could have canonical units of metres cubed seconds.</p>
+<p>When collapsing with the <code class="docutils literal notranslate"><span class="pre">'integral'</span></code> method,
+<em>measure</em> must be True, and the units of the weights
+are incorporated into the units of the returned field
 construct.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Specifying cell volume weights via
 <code class="docutils literal notranslate"><span class="pre">weights=['X',</span> <span class="pre">'Y',</span> <span class="pre">'Z']</span></code> or
-<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other equivalents)
-will produce <strong>an incorrect result if the
-vertical dimension coordinates do not define the
-actual height or depth thickness of every cell
-in the domain</strong>. In this case,
-<code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be used instead,
-which requires the field construct to have a
-“volume” cell measure construct.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to be
-taken, as a “volume” cell measure construct will
-be used if present, otherwise the cell volumes
-will be calculated using the size of the
-vertical coordinate cells.</p>
+<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other
+equivalents) will produce <strong>an incorrect
+result if the vertical dimension coordinates
+do not define the actual height or depth
+thickness of every cell in the domain</strong>. In
+this case, <code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be
+used instead, which requires the field
+construct to have a “volume” cell measure
+construct.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to
+be taken, as a “volume” cell measure
+construct will be used if present, otherwise
+the cell volumes will be calculated using
+the size of the vertical coordinate cells.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.2.</span></p>
@@ -808,18 +816,18 @@ vertical coordinate cells.</p>
 </dd>
 <dt>scale: number or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If set to a positive number then scale the weights so
 that they are less than or equal to that number. If
-set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> the weights are not scaled. In general
-the default is for weights to be scaled to lie between
-0 and 1; however if <em>measure</em> is True then the weights
-are never scaled and the value of <em>scale</em> is taken as
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, regardless of its setting.</p>
+set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights are not
+scaled.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To scale all weights so that they lie between 0 and
-10 <code class="docutils literal notranslate"><span class="pre">scale=10</span></code>.</p>
+1 <code class="docutils literal notranslate"><span class="pre">scale=1</span></code>.</p>
 </dd>
 </dl>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.2.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.16.0: </span>Default changed to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </div>
 </dd>
 <dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of
@@ -1757,7 +1765,7 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

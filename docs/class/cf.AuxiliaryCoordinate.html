@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.AuxiliaryCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/auxiliarycoordinate.py#L6-L57"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/auxiliarycoordinate.py#L6-L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which
@@ -169,9 +169,17 @@ constructs.</p>
 <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups" title="cf.AuxiliaryCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
 <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
 methods.</p>
-<p>The netCDF variable group structure may be accessed with the
-<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups" title="cf.AuxiliaryCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
-<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
+<p>The netCDF UGRID node coordinate variable name may be accessed
+with the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable</span></code></a>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_node_coordinate_variable</span></code></a>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_node_coordinate_variable</span></code></a>, and
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_node_coordinate_variable</span></code></a> methods.</p>
+<p>The netCDF UGRID node coordinate variable group structure may be
+accessed with the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable</span></code></a>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_node_coordinate_variable</span></code></a>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_node_coordinate_groups</span></code>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_node_coordinate_variable_groups</span></code></a>, and
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable_groups</span></code></a> methods.</p>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -616,13 +624,13 @@ parameters are not deep copied.</p>
 <td><p>True if the data array is scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.ndim.html#cf.AuxiliaryCoordinate.ndim" title="cf.AuxiliaryCoordinate.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
-<td><p>The number of dimensions in the data array.</p></td>
+<td><p>The number of data dimensions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.shape.html#cf.AuxiliaryCoordinate.shape" title="cf.AuxiliaryCoordinate.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>A tuple of the data array’s dimension sizes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.size.html#cf.AuxiliaryCoordinate.size" title="cf.AuxiliaryCoordinate.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
-<td><p>The number of elements in the data array.</p></td>
+<td><p>The number of elements in the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.varray.html#cf.AuxiliaryCoordinate.varray" title="cf.AuxiliaryCoordinate.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
 <td><p>A numpy array view of the data.</p></td>
@@ -1090,6 +1098,27 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_del_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_node_coordinate_variable</span></code></a></p></td>
+<td><p>Remove the netCDF node coordinate variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_get_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_node_coordinate_variable</span></code></a></p></td>
+<td><p>Return the netCDF node coordinate variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_has_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_node_coordinate_variable</span></code></a></p></td>
+<td><p>Whether the netCDF node coordinate variable name is set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_node_coordinate_variable_groups.html#cf.AuxiliaryCoordinate.nc_node_coordinate_variable_groups" title="cf.AuxiliaryCoordinate.nc_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_node_coordinate_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF node coordinate variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable.html#cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable" title="cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable</span></code></a></p></td>
+<td><p>Set the netCDF node coordinate variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF node_coordinate_variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_node_coordinate_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF node coordinate variable group hierarchy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1569,7 +1598,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

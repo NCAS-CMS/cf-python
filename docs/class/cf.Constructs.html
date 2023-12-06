@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.4</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Constructs">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.4/cf/constructs.py#L11-L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">domain_topology=None</em>, <em class="sig-param">cell_connectivity=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/constructs.py#L11-L205"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
 <p>The container has similarities to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> in that it presents the
@@ -169,6 +169,8 @@ either <code class="docutils literal notranslate"><span class="pre">x</span> <sp
 <li><p>dimension coordinate constructs</p></li>
 <li><p>domain ancillary constructs</p></li>
 <li><p>domain axis constructs</p></li>
+<li><p>domain topology constructs</p></li>
+<li><p>cell connectivity constructs</p></li>
 <li><p>cell method constructs</p></li>
 <li><p>field ancillary constructs</p></li>
 </ul>
@@ -223,6 +225,25 @@ constructs.</p>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_axis='domainaxis'</span></code></p>
 </dd>
 </dl>
+</dd>
+<dt>domain_topology: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain topology constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'domaintopology'</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+</div>
+</dd>
+<dt>cell_connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell connectivity
+constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'cellconnectivity'</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+</div>
 </dd>
 <dt>cell_method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell method constructs.</p>
 <dl class="simple">
@@ -300,6 +321,12 @@ are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_ncvar.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></p></td>
 <td><p>Select domain axis constructs by netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_cell.html#cf.Constructs.filter_by_cell" title="cf.Constructs.filter_by_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_cell</span></code></a></p></td>
+<td><p>Select domain topology constructs by cell type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_connectivity.html#cf.Constructs.filter_by_connectivity" title="cf.Constructs.filter_by_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_connectivity</span></code></a></p></td>
+<td><p>Select cell connectivity constructs by connectivity type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a></p></td>
 <td><p>A history of filters that have been applied.</p></td>
@@ -476,7 +503,7 @@ are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-10-10.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
