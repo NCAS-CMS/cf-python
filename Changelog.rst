@@ -11,7 +11,7 @@ version 3.16.0
 * New methods: `cf.Field.domain_topology`,
   `cf.Field.domain_topologies`
   (https://github.com/NCAS-CMS/cf-python/issues/696)
-* New method: `cf.Data.masked-values`
+* New method: `cf.Data.masked_values`
   (https://github.com/NCAS-CMS/cf-python/issues/696)
 * New method: `cf.Data.arctan2`
   (https://github.com/NCAS-CMS/cf-python/issues/38)
