@@ -1,7 +1,7 @@
 version 3.16.0
 --------------
 
-**2023-??-??**
+**2023-12-06**
 
 * Implemented the reading and manipulation of UGRID mesh topologies
   (https://github.com/NCAS-CMS/cf-python/issues/696)
