@@ -442,13 +442,13 @@ CFA
    :toctree: ../method/
    :template: method.rst
 	      
+   ~cf.Field.file_locations
    ~cf.Field.add_file_location
+   ~cf.Field.del_file_location
    ~cf.Field.cfa_clear_file_substitutions
    ~cf.Field.cfa_del_file_substitution
    ~cf.Field.cfa_file_substitutions
    ~cf.Field.cfa_update_file_substitutions
-   ~cf.Field.del_file_location
-   ~cf.Field.file_locations
 
 Geometries
 ^^^^^^^^^^
