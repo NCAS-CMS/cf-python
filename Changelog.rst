@@ -1,3 +1,12 @@
+version 3.17.0
+--------------
+
+**2024-??-??**
+
+* Fix bug that caused `cf.Field.del_file_location` to fail when
+  updating its metdata constructs
+  (http://github.com/NCAS-CMS/cf-python/issues/707)
+
 version 3.16.0
 --------------
 
