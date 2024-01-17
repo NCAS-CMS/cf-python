@@ -2543,7 +2543,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
-                c.del_file_location(location, inplace=True)
+                c.del_file_location(location)
 
         return location
 
