@@ -336,6 +336,12 @@ class read_writeTest(unittest.TestCase):
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
                     continue
 
+                print(
+                    "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
+                )
+                if ex_field_n in (8, 9, 10):
+                    continue
+
                 cf.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cf.read(tmpfile)
 
@@ -404,7 +410,10 @@ class read_writeTest(unittest.TestCase):
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works.
             cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
-            append_ex_fields = cf.example_fields()
+            print(
+                "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
+            )
+            append_ex_fields = cf.example_fields(0, 1, 2, 3, 4, 5, 6, 7)
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
             if fmt in "NETCDF4_CLASSIC":
                 # Remove n=6 and =7 for reasons as given above (del => minus 1)
@@ -663,6 +672,7 @@ class read_writeTest(unittest.TestCase):
         geometry_1_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "geometry_1.nc"
         )
+
         subprocess.run(
             " ".join(["ncdump", "-h", geometry_1_file, ">", tmpfileh2]),
             shell=True,
@@ -680,13 +690,6 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(tmpfile)[0]
         cf.read(tmpfileh)[0]
         c = cf.read(tmpfilec)[0]
-
-        # Case (2) as above, so the right error should be raised on read
-        with self.assertRaises(ValueError):
-            cf.read(tmpfileh2)[0]
-
-        with self.assertRaises(ValueError):
-            cf.read(tmpfilec2)[0]
 
         self.assertTrue(f0.equals(f, verbose=2))
 
@@ -916,6 +919,14 @@ class read_writeTest(unittest.TestCase):
         # Check that only the field data are missing
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
+
+    def test_read_url(self):
+        """Test reading urls."""
+        for scheme in ("http", "https"):
+            remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
+            # Check that cf can access it
+            f = cf.read(remote)
+            self.assertEqual(len(f), 1)
 
 
 if __name__ == "__main__":

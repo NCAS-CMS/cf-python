@@ -1,3 +1,5 @@
+:orphan:
+
 cf.Data.partition_configuration
 ===============================
 

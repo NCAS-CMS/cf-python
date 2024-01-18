@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.implementation<a class="headerlink" href="#cf-implementation" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.implementation">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">implementation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/cfimplementation.py#L178-L227"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.implementation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">implementation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/cfimplementation.py#L188-L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.implementation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a container for the CF data model implementation.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.1.0.</span></p>
@@ -158,6 +158,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <span class="go">&lt;CFImplementation: &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">classes</span><span class="p">()</span>
 <span class="go">{&#39;AuxiliaryCoordinate&#39;: cf.auxiliarycoordinate.AuxiliaryCoordinate,</span>
+<span class="go"> &#39;BoundsFromNodesArray&#39;: cf.data.array.boundsfromnodesarray.BoundsFromNodesArray,</span>
+<span class="go"> &#39;CellConnectivity&#39;: cf.cellconnectivity.CellConnectivity,</span>
+<span class="go"> &#39;CellConnectivityArray&#39;: cf.data.array.cellconnectivityarray.CellConnectivityArray,</span>
 <span class="go"> &#39;CellMeasure&#39;: cf.cellmeasure.CellMeasure,</span>
 <span class="go"> &#39;CellMethod&#39;: cf.cellmethod.CellMethod,</span>
 <span class="go"> &#39;CFANetCDFArray&#39;: cf.data.array.cfanetcdfarray.CFANetCDFArray,</span>
@@ -166,6 +169,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <span class="go"> &#39;Domain&#39;: cf.domain.Domain,</span>
 <span class="go"> &#39;DomainAncillary&#39;: cf.domainancillary.DomainAncillary,</span>
 <span class="go"> &#39;DomainAxis&#39;: cf.domainaxis.DomainAxis,</span>
+<span class="go"> &#39;DomainTopology&#39;: cf.domaintopology.DomainTopology,</span>
 <span class="go"> &#39;Field&#39;: cf.field.Field,</span>
 <span class="go"> &#39;FieldAncillary&#39;: cf.fieldancillary.FieldAncillary,</span>
 <span class="go"> &#39;Bounds&#39;: cf.bounds.Bounds,</span>
@@ -181,6 +185,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <span class="go"> &#39;Data&#39;: cf.data.data.Data,</span>
 <span class="go"> &#39;GatheredArray&#39;: cf.data.array.gatheredarray.GatheredArray,</span>
 <span class="go"> &#39;NetCDFArray&#39;: cf.data.array.netcdfarray.NetCDFArray,</span>
+<span class="go"> &#39;PointTopologyArray&#39;: &lt;class &#39;cf.data.array.pointtopologyarray.PointTopologyArray&#39;&gt;,</span>
 <span class="go"> &#39;RaggedContiguousArray&#39;: cf.data.array.raggedcontiguousarray.RaggedContiguousArray,</span>
 <span class="go"> &#39;RaggedIndexedArray&#39;: cf.data.array.raggedindexedarray.RaggedIndexedArray,</span>
 <span class="go"> &#39;RaggedIndexedContiguousArray&#39;: cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,</span>
@@ -200,7 +205,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

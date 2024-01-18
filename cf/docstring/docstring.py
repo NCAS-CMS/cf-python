@@ -478,7 +478,7 @@ _docstring_substitution_definitions = {
                 .. note:: No checks are performed on an existing file
                           to ensure that the weights are appropriate
                           for the source field and the values of the
-                          keyword parameters. Inapproriate weights
+                          keyword parameters. Inappropriate weights
                           will produce incorrect results.
 
                           However, when regridding using weights from
@@ -500,7 +500,7 @@ _docstring_substitution_definitions = {
 
                 The computation of the weights can be much more costly
                 than the regridding itself, in which case reading
-                pre-calcuated weights can improve performance.""",
+                pre-calculated weights can improve performance.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to
@@ -573,6 +573,27 @@ _docstring_substitution_definitions = {
                           `numpy.arange` while creating the points, one should
                           verify that that the number of grid points are
                           returned as expected.""",
+    # weights weights
+    "{{weights weights: `dict`}}": """weights: `dict`
+                A dictionary that will get updated in place with any
+                created weights.""",
+    # weights weights_axes
+    "{{weights weights_axes: `set`}}": """weights_axes: `set`
+                A `set` that will get updated in place with the domain
+                axis identifiers of the weights axes.""",
+    # weights methods
+    "{{weights methods: `bool`, optional}}": """methods: `bool`, optional
+                If True then add a description of the method used to
+                create the weights to the *weights* dictionary, as
+                opposed to the actual weights.""",
+    # weights measure
+    "{{weights measure: `bool`, optional}}": """measure: `bool`, optional
+                If True then create weights that are actual cell sizes
+                with appropriate units.""",
+    # weights auto
+    "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
+                If True then return `False` if weights can't be found,
+                rather than raising an exception.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

@@ -1357,18 +1357,27 @@ Spherical source domain         Spherical destination domain
 `Latitude-longitude`_           `Rotated latitude-longitude`_
 `Latitude-longitude`_           `Plane projection`_
 `Latitude-longitude`_           `Tripolar`_
+`Latitude-longitude`_           `UGRID mesh`_
 `Rotated latitude-longitude`_   `Latitude-longitude`_
 `Rotated latitude-longitude`_   `Rotated latitude-longitude`_
 `Rotated latitude-longitude`_   `Plane projection`_
 `Rotated latitude-longitude`_   `Tripolar`_
+`Rotated latitude-longitude`_   `UGRID mesh`_
 `Plane projection`_             `Latitude-longitude`_
 `Plane projection`_             `Rotated latitude-longitude`_
 `Plane projection`_             `Plane projection`_
 `Plane projection`_             `Tripolar`_
+`Plane projection`_             `UGRID mesh`_
 `Tripolar`_                     `Latitude-longitude`_
 `Tripolar`_                     `Rotated latitude-longitude`_
 `Tripolar`_                     `Plane projection`_
 `Tripolar`_                     `Tripolar`_
+`Tripolar`_                     `UGRID mesh`_
+`UGRID mesh`_                   `Latitude-longitude`_
+`UGRID mesh`_                   `Rotated latitude-longitude`_
+`UGRID mesh`_                   `Plane projection`_
+`UGRID mesh`_                   `Tripolar`_
+`UGRID mesh`_                   `UGRID mesh`_
 ==============================  ==============================
 
 The most convenient usage is when the destination domain exists

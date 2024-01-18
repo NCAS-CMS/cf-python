@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_fields<a class="headerlink" href="#cf-example-fields" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_fields">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/examplefield.py#L15-L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/examplefield.py#L15-L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return example field constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -147,52 +147,62 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>n: zero or more <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the example field constructs to return, any
+<dt>n: zero or more <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the example field constructs to return, any
 combination of:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 9%" />
-<col style="width: 91%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>n</em></p></th>
-<th class="head"><p>Description</p></th>
+<th class="head"><p>Field construct description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p>A field construct with properties as well as a
-cell method construct and dimension coordinate
-constructs with bounds.</p></td>
+<td><p>Cell method and dimension coordinate metadata
+constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>A field construct with properties as well as at
-least one of every type of metadata construct.</p></td>
+<td><p>Cell method, dimension coordinate, auxiliary
+coordinate, cell measure, coordinate reference,
+domain ancillary and field ancillary metadata
+constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
-<td><p>A field construct that contains a monthly time
-series at each latitude-longitude location.</p></td>
+<td><p>A monthly time series at each latitude-longitude
+location.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
-<td><p>A field construct that contains discrete sampling
-geometry (DSG) “timeSeries” features.</p></td>
+<td><p>Discrete sampling geometry (DSG) “timeSeries”
+features.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
-<td><p>A field construct that contains discrete sampling
-geometry (DSG) “timeSeriesProfile” features.</p></td>
+<td><p>Discrete sampling geometry (DSG)
+“timeSeriesProfile” features.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
-<td><p>A field construct that contains a 12 hourly time
-series at each latitude-longitude location.</p></td>
+<td><p>A 12 hourly time series at each latitude-longitude
+location.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
-<td><p>A field construct that has polygon geometry
-coordinate cells with interior ring variables.</p></td>
+<td><p>Polygon geometry coordinate cells with interior
+ring variables.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
-<td><p>A field construct that has rotated pole dimension
-coordinate constructs and 2-d latitude and
-longitude auxiliary coordinate constructs.</p></td>
+<td><p>Rotated pole dimension coordinate constructs and
+2-d latitude and longitude auxiliary coordinate
+constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p>A UGRID mesh topology of face cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">9</span></code></p></td>
+<td><p>A UGRID mesh topology of edge cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>A UGRID mesh topology of point cells.</p></td>
 </tr>
 </tbody>
 </table>
@@ -222,7 +232,10 @@ be output in the order that they are given.</p>
 <span class="go"> &lt;CF Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K&gt;,</span>
 <span class="go"> &lt;CF Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K&gt;,</span>
 <span class="go"> &lt;CF Field: precipitation_amount(cf_role=timeseries_id(2), time(4))&gt;,</span>
-<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K&gt;,</span>
+<span class="go"> &lt;CF Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa&gt;]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -253,7 +266,7 @@ be output in the order that they are given.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.auxiliary_coordinate" href="cf.Field.auxiliary_coordinate.html" />
+    <link rel="next" title="cf.Field.auxiliary_to_dimension" href="cf.Field.auxiliary_to_dimension.html" />
     <link rel="prev" title="cf.Field.set_construct" href="cf.Field.set_construct.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -98,7 +98,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.set_construct.html" title="previous chapter">cf.Field.set_construct</a></li>
-      <li>Next: <a href="cf.Field.auxiliary_coordinate.html" title="next chapter">cf.Field.auxiliary_coordinate</a></li>
+      <li>Next: <a href="cf.Field.auxiliary_to_dimension.html" title="next chapter">cf.Field.auxiliary_to_dimension</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.replace_construct<a class="headerlink" href="#cf-field-replace-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.replace_construct">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">replace_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">new=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/mixin/fielddomain.py#L2152-L2217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.replace_construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">replace_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">new=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/mixin/fielddomain.py#L2154-L2219"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.replace_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace a metadata construct.</p>
 <p>Replacement assigns the same construct key and, if applicable, the
 domain axes of the original construct to the new, replacing
@@ -159,7 +159,7 @@ construct.</p>
 <dt>new:</dt><dd><p>The new construct to replace that selected by the
 <em>identity</em> parameter.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the new construct. By default
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the new construct. By default
 the construct is copied.</p>
 </dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code>
@@ -193,7 +193,7 @@ criteria.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

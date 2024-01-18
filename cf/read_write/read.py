@@ -5,6 +5,7 @@ from glob import glob
 from numbers import Integral
 from os.path import isdir
 from re import Pattern
+from urllib.parse import urlparse
 
 from cfdm import is_log_level_info
 from numpy.ma.core import MaskError
@@ -883,7 +884,8 @@ def read(
         # Expand variables
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
-        if file_glob.startswith("http://"):
+        scheme = urlparse(file_glob).scheme
+        if scheme in ("https", "http"):
             # Do not glob a URL
             files2 = (file_glob,)
         else:
@@ -988,7 +990,7 @@ def read(
         if info:
             logger.info(
                 f"{org_len} input field{_plural(org_len)} aggregated into "
-                f"{n} field{ _plural(n)}"
+                f"{n} field{_plural(n)}"
             )  # pragma: no cover
 
     # ----------------------------------------------------------------

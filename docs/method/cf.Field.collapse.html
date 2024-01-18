@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=1</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">remove_vertical_crs=True</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/field.py#L6174-L8257"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">a=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">group=None</em>, <em class="sig-param">regroup=False</em>, <em class="sig-param">within_days=None</em>, <em class="sig-param">within_years=None</em>, <em class="sig-param">over_days=None</em>, <em class="sig-param">over_years=None</em>, <em class="sig-param">coordinate=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">group_span=None</em>, <em class="sig-param">group_contiguous=1</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">remove_vertical_crs=True</em>, <em class="sig-param">_create_zero_size_cell_bounds=False</em>, <em class="sig-param">_update_cell_methods=True</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_debug=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L4941-L7051"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -520,7 +520,7 @@ deviations with two separate collapse calls:</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the collapse method. All of the axes specified by
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the collapse method. All of the axes specified by
 the <em>axes</em> parameter are collapsed simultaneously by this
 method. The method is given by one of the following
 strings (see
@@ -686,7 +686,7 @@ multiannual means of calendar monthly minima:</p>
 </pre></div>
 </div>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The axes to be collapsed, defined by those which would be
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The axes to be collapsed, defined by those which would be
 selected by passing each given axis description to a call
 of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
 example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
@@ -725,8 +725,14 @@ value of <em>scale</em> may be modified depending on the
 value of <em>measure</em>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in
+<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in
 <strong>unweighted calculations</strong>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless the <em>method</em> is <code class="docutils literal notranslate"><span class="pre">'integral'</span></code>, the
+units of the weights are not combined with
+the field’s units in the collapsed field.</p>
 </div>
 <p>If the alternative form of providing the collapse method
 and axes combined as a CF cell methods-like string via the
@@ -740,14 +746,14 @@ e.g. <code class="docutils literal notranslate"><span class="pre">'T:</span> <sp
 the second collapse.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Setting <em>weights</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is generally a good
+<p>Setting <em>weights</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is generally a good
 way to ensure that all collapses are
 appropriately weighted according to the field
 construct’s metadata. In this case, if it is not
 possible to create weights for any axis then an
 exception will be raised.</p>
 <p>However, care needs to be taken if <em>weights</em> is
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when cell volume weights are desired. The
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when cell volume weights are desired. The
 volume weights will be taken from a “volume”
 cell measure construct if one exists, otherwise
 the cell volumes will be calculated as being
@@ -770,56 +776,58 @@ time you could set <code class="docutils literal notranslate"><span class="pre">
 </dd>
 </dl>
 </dd>
-<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Create weights which are cell measures, i.e. which
-describe actual cell sizes (e.g. cell area) with
-appropriate units (e.g. metres squared). By default the
-weights are normalised and have arbitrary units.</p>
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>weights</em> is not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, create weights
+which are cell measures, i.e. which describe actual
+cell sizes (e.g. cell area) with appropriate units
+(e.g. metres squared). By default the weights units
+are ignored.</p>
 <p>Cell measures can be created for any combination of
-axes. For example, cell measures for a time axis are the
-time span for each cell with canonical units of seconds;
-cell measures for the combination of four axes
-representing time and three dimensional space could have
-canonical units of metres cubed seconds.</p>
-<p>When collapsing with the <code class="docutils literal notranslate"><span class="pre">'integral'</span></code> method, <em>measure</em>
-must be True, and the units of the weights are
-incorporated into the units of the returned field
+axes. For example, cell measures for a time axis are
+the time span for each cell with canonical units of
+seconds; cell measures for the combination of four
+axes representing time and three dimensional space
+could have canonical units of metres cubed seconds.</p>
+<p>When collapsing with the <code class="docutils literal notranslate"><span class="pre">'integral'</span></code> method,
+<em>measure</em> must be True, and the units of the weights
+are incorporated into the units of the returned field
 construct.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Specifying cell volume weights via
 <code class="docutils literal notranslate"><span class="pre">weights=['X',</span> <span class="pre">'Y',</span> <span class="pre">'Z']</span></code> or
-<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other equivalents)
-will produce <strong>an incorrect result if the
-vertical dimension coordinates do not define the
-actual height or depth thickness of every cell
-in the domain</strong>. In this case,
-<code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be used instead,
-which requires the field construct to have a
-“volume” cell measure construct.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to be
-taken, as a “volume” cell measure construct will
-be used if present, otherwise the cell volumes
-will be calculated using the size of the
-vertical coordinate cells.</p>
+<code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> (or other
+equivalents) will produce <strong>an incorrect
+result if the vertical dimension coordinates
+do not define the actual height or depth
+thickness of every cell in the domain</strong>. In
+this case, <code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be
+used instead, which requires the field
+construct to have a “volume” cell measure
+construct.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">weights=True</span></code> then care also needs to
+be taken, as a “volume” cell measure
+construct will be used if present, otherwise
+the cell volumes will be calculated using
+the size of the vertical coordinate cells.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.2.</span></p>
 </div>
 </dd>
-<dt>scale: number or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If set to a positive number then scale the weights so
+<dt>scale: number or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If set to a positive number then scale the weights so
 that they are less than or equal to that number. If
-set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> the weights are not scaled. In general
-the default is for weights to be scaled to lie between
-0 and 1; however if <em>measure</em> is True then the weights
-are never scaled and the value of <em>scale</em> is taken as
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, regardless of its setting.</p>
+set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights are not
+scaled.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To scale all weights so that they lie between 0 and
-10 <code class="docutils literal notranslate"><span class="pre">scale=10</span></code>.</p>
+1 <code class="docutils literal notranslate"><span class="pre">scale=1</span></code>.</p>
 </dd>
 </dl>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.2.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.16.0: </span>Default changed to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </div>
 </dd>
 <dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of
@@ -836,7 +844,7 @@ default radius taken as 6371229 metres.</p>
 <p><span class="versionmodified added">New in version 3.0.2.</span></p>
 </div>
 </dd>
-<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i) area
+<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i) area
 weights from polygon geometry cells by assuming that each
 cell part is a spherical polygon composed of great circle
 segments; and ii) and the derivation of line-length
@@ -846,7 +854,7 @@ line part is composed of great circle segments.</p>
 <p><span class="versionmodified added">New in version 3.2.0.</span></p>
 </div>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then size 1 collapsed axes are removed from the
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then size 1 collapsed axes are removed from the
 output data array. By default the axes which are collapsed
 are retained in the result’s data array.</p>
 </dd>
@@ -893,7 +901,7 @@ input coordinates.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default.</p>
 <p>If the collapse is a climatological time
 collapse over years or over days then
@@ -1024,7 +1032,7 @@ in.</p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 <td><p>Define groups that contain the given
 number of elements. The first group
 starts with the first axis element and
@@ -1039,9 +1047,9 @@ group which may contain fewer elements
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></td>
 <td><p>Define groups by selecting elements that
-map to the same value in the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+map to the same value in the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array. The array must contain integers
 and have the same length as the axis to
 be collapsed and its sequence of values
@@ -1052,7 +1060,7 @@ integer value in the numpy array. Upon
 output, the collapsed axis is arranged in
 order of increasing group number. See the
 <em>regroup</em> parameter, which allows the
-creation of such a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> for a
+creation of such a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> for a
 given grouped collapse.</p>
 <ul class="simple">
 <li><p>The groups do not have to be in runs of
@@ -1101,8 +1109,8 @@ ignoring the 2nd, 6th and 7th elements:
 </dd>
 </dl>
 </dd>
-<dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then, for grouped collapses, do not collapse the
-field construct, but instead return a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of
+<dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then, for grouped collapses, do not collapse the
+field construct, but instead return a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of
 integers which identifies the groups defined by the
 <em>group</em> parameter. Each group contains the elements which
 correspond to a common non-negative integer value in the
@@ -1136,7 +1144,7 @@ to a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="c
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default.</p>
 <p>If the groups are defined by the <em>group</em>
 parameter (i.e. collapses other than
@@ -1169,15 +1177,15 @@ sufficiently small.</p></td>
 range. For example, when creating 3-month means, the
 <em>group_span</em> parameter can be used to allow groups which
 only contain 1 or 2 months of data.</p>
-<p>By default, <em>group_span</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This means that only
+<p>By default, <em>group_span</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This means that only
 groups whose span equals the size specified by the
 definition of the groups are collapsed; unless the groups
 have been defined by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> objects, in which
 case then the default behaviour is to collapse all groups,
 regardless of their size.</p>
-<p>In effect, the <em>group_span</em> parameter defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>
+<p>In effect, the <em>group_span</em> parameter defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>
 unless the groups have been defined by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
-objects, in which case <em>group_span</em> defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+objects, in which case <em>group_span</em> defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <p>The different behaviour when the groups have been defined
 by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> objects is necessary because a
 <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object can only define the composition of a group,
@@ -1186,7 +1194,7 @@ to specify a group span in this case).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Prior to version 3.1.0, the default value of
-<em>group_span</em> was effectively <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<em>group_span</em> was effectively <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 </div>
 <p>In general, the span of a group is the absolute difference
 between the lower bound of its first element and the upper
@@ -1211,20 +1219,20 @@ parameters, and is otherwise ignored.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default. Apply a value of
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on how the
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on how the
 groups have been defined.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a></p></td>
 <td><p>Ignore groups whose span is not equal to
 the size specified by the definition of
 the groups. Only applicable if the groups
 are defined by a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a> or
-<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object, and this is the default in
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object, and this is the default in
 this case.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a></p></td>
 <td><p>Collapse all groups, regardless of their
 size. This is the default if the groups
 are defined by one to more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
@@ -1240,7 +1248,7 @@ assumed.</p></td>
 <td><p>Ignore groups whose span is not equals to
 the given time duration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 <td><p>Ignore groups that contain fewer than the
 given number of elements</p></td>
 </tr>
@@ -1263,7 +1271,7 @@ any groups that span less than three months:
 </dd>
 </dl>
 </dd>
-<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify how to treat groups whose elements are not
+<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify how to treat groups whose elements are not
 contiguous or have overlapping cells. For example, when
 creating a December to February means, the
 <em>group_contiguous</em> parameter can be used to allow groups
@@ -1507,7 +1515,7 @@ December within each year: <code class="docutils literal notranslate"><span clas
 </dd>
 <dt>over_days: optional</dt><dd><p>Define the groups for creating CF “over days”
 climatological statistics.</p>
-<p>By default (or if <em>over_days</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
+<p>By default (or if <em>over_days</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
 contains all elements for which the time coordinate cell
 lower bounds have a common time of day but different
 dates, and for which the time coordinate cell upper bounds
@@ -1611,7 +1619,7 @@ ignoring all other months: <code class="docutils literal notranslate"><span clas
 </dd>
 <dt>over_years: optional</dt><dd><p>Define the groups for creating CF “over years”
 climatological statistics.</p>
-<p>By default (or if <em>over_years</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
+<p>By default (or if <em>over_years</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
 contains all elements for which the time coordinate cell
 lower bounds have a common date of the year but different
 years, and for which the time coordinate cell upper bounds
@@ -1710,7 +1718,7 @@ spanning 2001 to 2005: <code class="docutils literal notranslate"><span class="p
 </dd>
 </dl>
 </dd>
-<dt>remove_vertical_crs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then remove a vertical
+<dt>remove_vertical_crs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then remove a vertical
 coordinate reference construct and all of its domain
 ancillary constructs if any of its coordinate
 constructs or domain ancillary constructs span any
@@ -1725,8 +1733,8 @@ non-parametric vertical coordinate values.</p>
 <p><span class="versionmodified added">New in version 3.14.1.</span></p>
 </div>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
@@ -1735,8 +1743,8 @@ non-parametric vertical coordinate values.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The collapsed field construct. Alternatively, if the
-<em>regroup</em> parameter is True then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The collapsed field construct. Alternatively, if the
+<em>regroup</em> parameter is True then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is
 returned.</p>
 </dd>
 </dl>
@@ -1757,7 +1765,7 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

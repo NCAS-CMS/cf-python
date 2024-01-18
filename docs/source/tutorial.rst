@@ -120,7 +120,8 @@ elements.
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
-  datasets for any version of CF up to and including CF-|version|.
+  datasets for any version of CF up to and including CF-|version|,
+  including :ref:`UGRID <UGRID-mesh-topolgies>` datasets.
 
 ..
 
@@ -362,7 +363,7 @@ components, and shows the first and last values of all data arrays:
    ----------------------------------
    Field: specific_humidity (ncvar%q)
    ----------------------------------
-   Conventions = 'CF-1.7'
+   Conventions = 'CF-1.11'
    project = 'research'
    standard_name = 'specific_humidity'
    units = '1'
@@ -396,7 +397,7 @@ components, and shows the first and last values of all data arrays:
    ---------------------------------
    Field: air_temperature (ncvar%ta)
    ---------------------------------
-   Conventions = 'CF-1.7'
+   Conventions = 'CF-1.11'
    project = 'research'
    standard_name = 'air_temperature'
    units = 'K'
@@ -622,7 +623,7 @@ retrieved with the `~Field.properties` method:
 
    >>> q, t = cf.read('file.nc')
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -670,19 +671,19 @@ properties may be removed with the `~Field.clear_properties` and
 	     
    >>> original = t.properties()
    >>> original
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.set_properties({'foo': 'bar', 'units': 'K'})
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.clear_properties()
-    {'Conventions': 'CF-1.7',
+    {'Conventions': 'CF-1.11',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
@@ -691,7 +692,7 @@ properties may be removed with the `~Field.clear_properties` and
    {'units': 'K'}
    >>> t.set_properties(original)
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -732,7 +733,7 @@ A field construct's identity may be any one of the following
    'air_temperature'
    >>> t.identities()
    ['air_temperature',
-    'Conventions=CF-1.7',
+    'Conventions=CF-1.11',
     'project=research',
     'units=K',
     'standard_name=air_temperature',
@@ -2671,6 +2672,45 @@ CF-netCDF geometry container variable is automatically created, and
 the cells encoded with the :ref:`compression <Compression>` techniques
 defined in the CF conventions.
 
+----
+
+.. _UGRID-mesh-topologies:
+		
+**UGRID mesh topologies**
+-------------------------
+
+A `UGRID_` mesh topology defines the geospatial topology of cells
+arranged in two or three dimensions in real space but indexed by a
+single dimension. It explicitly describes the topological
+relationships between cells, i.e. spatial relationships which do not
+depend on the cell locations, via a mesh of connected nodes. See the
+`domain topology construct`_ and `cell connectivity construct`_
+descriptions in the CF data model (from CF-1.11) for more details,
+including on how the mesh relates to the cells of the domain.
+
+.. code-block:: python
+   :caption: *Inspect a dataset containing a UGRID mesh topology.*
+
+   >>> f = cf.example_field(8)
+   >>> print(f)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+   Cell methods    : time(2): point (interval: 3600 s)
+   Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+   Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                   : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+   Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+   Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+..
+   COMMENTED OUT UNTIL THIS WORKS! When a field construct containing a
+   UGRID mesh topology is written to disk, a CF-netCDF UGRID mesh
+   topology variable is automatically created which will be shared by
+   any data variables that can make use of the same mesh.
+
+----
+
 .. _Domain-ancillaries:
 		
 Domain ancillaries
@@ -4484,7 +4524,7 @@ the desired field construct. The commands are produced by the
    >>> print(q.creation_commands())
    # field: specific_humidity
    f = cf.Field()
-   f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+   f.set_properties({'Conventions': 'CF-1.11', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
    d = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
    f.set_data(d)
    f.nc_set_variable('q')
@@ -5271,7 +5311,7 @@ The new dataset is structured as follows:
    		humidity:coordinates = "time" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    		:project = "research" ;
    }
 
@@ -5421,7 +5461,7 @@ attribute from the file.
 	     
    >>> f.set_property('information', 'variable information')
    >>> f.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'information': 'variable information',
     'project': 'research',
     'standard_name': 'specific_humidity',
@@ -5449,7 +5489,7 @@ constructs.
    >>> f_file = cf.read('f_file.nc')[0]
    >>> f_file.nc_global_attributes()
    >>> f_file.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.11',
     'history': 'created in 2019',
     'information': 'variable information',
     'model': 'model_A',
@@ -5560,7 +5600,7 @@ The new dataset is structured as follows (note, relative to file
    		humidity:cell_methods = "area: mean" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    		:project = "research" ;
    }
 
@@ -5652,7 +5692,7 @@ sub-group:
    	   	   lon:bounds = "lon_bnds" ;
    
    // global attributes:
-   		   :Conventions = "CF-1.8" ;
+   		   :Conventions = "CF-1.11" ;
    		   :comment = "comment" ;
    
    group: forecast {
@@ -5758,7 +5798,7 @@ netCDF variable and netCDF dimensions.
    	   	   q:cell_methods = "area: mean" ;
    		   
    // global attributes:
-   		   :Conventions = "CF-1.8" ;
+   		   :Conventions = "CF-1.11" ;
    		   :comment = "comment" ;
    }
 
@@ -5812,7 +5852,7 @@ This is illustrated with the files ``parent.nc`` (found in the
    		eastward_wind:cell_measures = "area: areacella" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    		:external_variables = "areacella" ;
    }
 
@@ -5834,7 +5874,7 @@ and ``external.nc`` (found in the :ref:`sample datasets
    		areacella:standard_name = "cell_area" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    }
 
 The dataset in ``parent.nc`` may be read *without* specifying the
@@ -6198,7 +6238,7 @@ The contiguous case is is illustrated with the file ``contiguous.nc``
    		humidity:_FillValue = -999.9 ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    		:featureType = "timeSeries" ;
    }
 
@@ -6354,7 +6394,7 @@ The content of the new file is:
    		air_temperature:standard_name = "air_temperature" ;
    
    // global attributes:
-		:Conventions = "CF-1.7" ;
+		:Conventions = "CF-1.11" ;
 		:featureType = "timeSeries" ;
    data:
    
@@ -6455,7 +6495,7 @@ This is illustrated with the file ``gathered.nc`` (found in the
    		pr:units = "kg m2 s-1" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    }
 
 Reading and inspecting this file shows the data presented in
@@ -6629,7 +6669,7 @@ The content of the new file is:
    		precipitation_flux:standard_name = "precipitation_flux" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.11" ;
    data:
    
     list = 1, 4, 5 ;
@@ -6992,3 +7032,4 @@ if any, are filtered out.
 .. _geometries:                       http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
 .. _Hierarchical groups:              http://cfconventions.org/cf-conventions/cf-conventions.html#groups
 .. _Lossy compression by coordinate subsampling: http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
+.. _UGRID:                            https://cfconventions.org/cf-conventions/cf-conventions.html#ugrid-conventions

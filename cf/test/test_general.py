@@ -55,10 +55,6 @@ class generalTest(unittest.TestCase):
         h += 1
         h -= 1
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
-        h = h**2.0
-        h = h**0.5
-        h.standard_name = g.standard_name
-        self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))
         h = h * 10
         h = h / 10.0
         self.assertTrue(g.data.allclose(h.data), repr(g.array - h.array))

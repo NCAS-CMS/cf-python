@@ -47,6 +47,8 @@ class Constructs(cfdm.Constructs):
     * dimension coordinate constructs
     * domain ancillary constructs
     * domain axis constructs
+    * domain topology constructs
+    * cell connectivity constructs
     * cell method constructs
     * field ancillary constructs
 
@@ -126,9 +128,6 @@ class Constructs(cfdm.Constructs):
                 ]
                 construct.flip(iaxes, inplace=True)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def close(self):
         """Close all files referenced by the metadata constructs.
 

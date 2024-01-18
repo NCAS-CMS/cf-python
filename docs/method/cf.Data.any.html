@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.any<a class="headerlink" href="#cf-data-any" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.any">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">any</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">keepdims=True</em>, <em class="sig-param">split_every=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/data/data.py#L5675-L5736"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.any" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">any</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">keepdims=True</em>, <em class="sig-param">split_every=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/data/data.py#L5694-L5755"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.any" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test whether any data array elements evaluate to True.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -146,19 +146,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axis: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Axis or axes along which a logical OR reduction is
-performed. The default (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) is to perform a
+<dt>axis: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Axis or axes along which a logical OR reduction is
+performed. The default (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) is to perform a
 logical OR over all the dimensions of the input
 array. <em>axis</em> may be negative, in which case it counts
 from the last to the first axis.</p>
 </dd>
-<dt>keepdims: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default, the axes which are collapsed are left in
+<dt>keepdims: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default, the axes which are collapsed are left in
 the result as dimensions with size one, so that the
 result will broadcast correctly against the input
 array. If set to False then collapsed axes are removed
 from the data.</p>
 </dd>
-<dt>split_every: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Determines the depth of the recursive aggregation. If
+<dt>split_every: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Determines the depth of the recursive aggregation. If
 set to or more than the number of input chunks, the
 aggregation will be performed in two steps, one
 partial collapse per input chunk and a single
@@ -230,7 +230,7 @@ value. A default can also be set globally with the
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -32,11 +32,3 @@ class DomainAncillary(mixin.PropertiesDataBounds, cfdm.DomainAncillary):
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)

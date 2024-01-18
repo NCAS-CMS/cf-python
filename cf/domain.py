@@ -87,14 +87,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         return instance
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     @property
     def _cyclic(self):
         """Storage for axis cyclicity.
@@ -155,7 +147,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `str`
                 The new location as an absolute path with no trailing
-                separate pathname component separator.
+                path name component separator.
 
         **Examples**
 
@@ -316,7 +308,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `str`
                 The removed location as an absolute path with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -457,7 +449,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `set`
                 The unique file locations as absolute paths with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -674,6 +666,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             return f"id%{n}"
 
         if relaxed:
+            if strict:
+                raise ValueError(
+                    "'relaxed' and 'strict' parameters cannot both be True"
+                )
+
             n = self.get_property("long_name", None)
             if n is not None:
                 return f"long_name={n}"

@@ -1,3 +1,5 @@
+:orphan:
+
 cf.DomainAncillary.__query_wo__
 ===============================
 

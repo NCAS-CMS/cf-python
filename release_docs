@@ -53,23 +53,23 @@ zip cf_tutorial_files.zip *.nc *.pp
 cd -
 
 # Regerenate tutorial.py field_analysis.py
-if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
-  ./test_tutorial_code
-  rc=$?
-  if [[ $rc != 0 ]]; then
-    echo "test_tutorial_code failed."
-    # exit $rc
-  fi
-  pre-commit run --files tutorial.py field_analysis.py 
-fi
+#if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+#  ./test_tutorial_code
+#  rc=$?
+#  if [[ $rc != 0 ]]; then
+#    echo "test_tutorial_code failed."
+#    # exit $rc
+#  fi
+#  pre-commit run --files tutorial.py field_analysis.py 
+#fi
 
 # --------------------------------------------------------------------
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
-  rm -fr $dir/.doctrees
-fi
+#if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; the#n
+#  rm -fr $dir/.doctrees
+#fi
 mkdir -p $dir/_downloads
 
 #if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then

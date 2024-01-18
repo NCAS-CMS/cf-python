@@ -166,3 +166,12 @@
 * Upload the new release to Zenodo: https://zenodo.org/record/3961353
 
 * Copy the archive docs to https://github.com/NCAS-CMS/cf-python-docs
+
+* Move and commit the previously-generated archived copy of the documentation to https://github.com/NCAS-CMS/cf-python-docs (fork or clone that repo first):
+
+  ```bash
+  mv docs/<vn>/ ~/cf-python-docs/
+  cd ~/cf-python-docs/
+  git add <vn>/
+  # Then commit and push to the NCAS-CMS repo (named origin or upstream as appropriate)
+  ```

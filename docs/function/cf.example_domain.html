@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.15.3</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_domain<a class="headerlink" href="#cf-example-domain" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_domain">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.3/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an example domain construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -147,51 +147,59 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>n: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Select the example domain construct to return, one of:</p>
+<dt>n: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Select the example domain construct to return, one of:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 9%" />
-<col style="width: 91%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>n</em></p></th>
-<th class="head"><p>Description</p></th>
+<th class="head"><p>Domain construct description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p>A domain construct dimension coordinate constructs
-with bounds.</p></td>
+<td><p>Dimension coordinate metadata constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>A domain construct with at least one of every
-possible type of metadata construct.</p></td>
+<td><p>Dimension coordinate, auxiliary coordinate, cell
+measure, coordinate reference, domain ancillary
+and field ancillary metadata constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
-<td><p>A domain construct dimension coordinate constructs
-with bounds.
-series at each latitude-longitude location.</p></td>
+<td><p>A monthly time series at each latitude-longitude
+location.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
-<td><p>A domain construct for discrete sampling geometry
-(DSG) “timeSeries” features.</p></td>
+<td><p>Discrete sampling geometry (DSG) “timeSeries”
+features.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
-<td><p>A domain construct or discrete sampling geometry
-(DSG) “timeSeriesProfile” features.</p></td>
+<td><p>Discrete sampling geometry (DSG)
+“timeSeriesProfile” features.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
-<td><p>A domain construct dimension coordinate constructs
-with bounds.</p></td>
+<td><p>A 12 hourly time series at each latitude-longitude
+location.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
-<td><p>A domain construct that has polygon geometry
-coordinate cells with interior ring variables.</p></td>
+<td><p>Polygon geometry coordinate cells with interior
+ring variables.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
-<td><p>A domain construct that has rotated pole dimension
-coordinate constructs and 2-d latitude and
-longitude auxiliary coordinate constructs.</p></td>
+<td><p>Rotated pole dimension coordinate constructs and
+2-d latitude and longitude auxiliary coordinate
+constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p>A UGRID mesh topology of face cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">9</span></code></p></td>
+<td><p>A UGRID mesh topology of edge cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>A UGRID mesh topology of point cells.</p></td>
 </tr>
 </tbody>
 </table>
@@ -305,7 +313,7 @@ the domain construct is derived.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

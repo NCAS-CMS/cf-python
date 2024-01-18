@@ -1,7 +1,9 @@
 """This class is not in the cf.mixin package because it needs to be
 imported by cf.Data, and some of the other mixin classes in cf.mixin
-themsleves import cf.Data, which would lead to a circular import
-situation."""
+themselves import cf.Data, which would lead to a circular import
+situation.
+
+"""
 from .docstring import _docstring_substitution_definitions
 
 
@@ -11,6 +13,16 @@ class Container:
     .. versionadded:: 3.7.0
 
     """
+
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        .. versionadded:: 3.16.0
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
 
     def __docstring_substitutions__(self):
         """Define docstring substitutions that apply to this class and

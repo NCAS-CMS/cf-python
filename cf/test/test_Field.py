@@ -9,15 +9,7 @@ import unittest
 
 import numpy
 import numpy as np
-
-SCIPY_AVAILABLE = False
-try:
-    from scipy.ndimage import convolve1d
-
-    SCIPY_AVAILABLE = True
-# not 'except ImportError' as that can hide nested errors, catch anything:
-except Exception:
-    pass  # test with this dependency will then be skipped by unittest
+from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -71,6 +63,10 @@ class FieldTest(unittest.TestCase):
     indexed_contiguous = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         "DSG_timeSeriesProfile_indexed_contiguous.nc",
+    )
+    ugrid_global = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "ugrid_global_1.nc",
     )
 
     chunk_sizes = (100000, 300, 34, 17)
@@ -441,7 +437,6 @@ class FieldTest(unittest.TestCase):
 
         for axes in axes_combinations(f):
             for method in (
-                "sum",
                 "min",
                 "max",
                 "minimum_absolute_value",
@@ -451,8 +446,6 @@ class FieldTest(unittest.TestCase):
                 "sample_size",
                 "sum_of_squares",
                 "median",
-                "sum_of_weights",
-                "sum_of_weights2",
             ):
                 for weights in (None, "area"):
                     a = f.collapse(method, axes=axes, weights=weights).data
@@ -462,10 +455,13 @@ class FieldTest(unittest.TestCase):
                     )
 
             for method in (
+                "sum",
                 "mean",
                 "mean_absolute_value",
                 "mean_of_upper_decile",
                 "root_mean_square",
+                "sum_of_weights",
+                "sum_of_weights2",
             ):
                 for weights in (None, "area"):
                     if weights is not None:
@@ -1690,9 +1686,6 @@ class FieldTest(unittest.TestCase):
     def test_Field_construct_key(self):
         self.f.construct_key("grid_longitude")
 
-    @unittest.skipIf(
-        not SCIPY_AVAILABLE, "scipy must be installed for this test."
-    )
     def test_Field_convolution_filter(self):
         f = cf.read(self.filename1)[0]
 
@@ -1725,9 +1718,6 @@ class FieldTest(unittest.TestCase):
             (gx[:, 1] == [135, 180, 225, 270, 315, 360, 360, 360]).all()
         )
 
-    @unittest.skipIf(
-        not SCIPY_AVAILABLE, "scipy must be installed for this test."
-    )
     def test_Field_moving_window(self):
         weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
@@ -1868,9 +1858,6 @@ class FieldTest(unittest.TestCase):
 
         self.assertEqual(len(g.cell_methods()), len(f.cell_methods()) + 1)
 
-    @unittest.skipIf(
-        not SCIPY_AVAILABLE, "scipy must be installed for this test."
-    )
     def test_Field_derivative(self):
         f = cf.example_field(0)
         f[...] = np.arange(9)[1:] * 45
@@ -2629,6 +2616,18 @@ class FieldTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             f.auxiliary_to_dimension("latitude")
+
+    def test_Field_subspace_ugrid(self):
+        f = cf.read(self.ugrid_global)[0]
+
+        with self.assertRaises(ValueError):
+            # Can't specify 2 conditions for 1 axis
+            g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
+
+        g = f.subspace(X=cf.wi(40, 70))
+        g = g.subspace(Y=cf.wi(-20, 30))
+        self.assertTrue(g.aux("X").data.range() < 30)
+        self.assertTrue(g.aux("Y").data.range() < 50)
 
 
 if __name__ == "__main__":

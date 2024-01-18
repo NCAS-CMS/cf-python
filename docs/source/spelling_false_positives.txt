@@ -19,6 +19,7 @@ arctan
 arctanh
 arg
 argmax
+argmin
 args
 asdata
 asdatetime
@@ -83,6 +84,7 @@ Colour
 conda
 config
 conformant
+connectivities
 contigious
 contiguousness
 contruct
@@ -115,6 +117,7 @@ datums
 ddof
 de
 debuginfo
+decadal
 decile
 deepcopy
 Dehesa
@@ -181,6 +184,7 @@ fx
 fy
 GatheredArray
 ge
+geopotential
 Geosci
 Geosciences
 geospatial
@@ -270,6 +274,7 @@ lshift
 lt
 Makefile
 mam
+matplotlib
 mercator
 metacharacters
 MiB
@@ -300,6 +305,8 @@ netcdf
 netCDF
 NetCDFArray
 netcdftime
+Niña
+Niño
 Nino
 nondimensional
 nonzero
@@ -330,6 +337,7 @@ priori
 programmatically
 pseudolevels
 py
+pyplot
 radd
 RaggedContiguousArray
 RaggedIndexedArray
@@ -386,6 +394,7 @@ setmask
 setprop
 Signell
 sinh
+spacings
 spatiotemporal
 sqrt
 src
@@ -425,6 +434,7 @@ timeSeries
 timeSeriesProfile
 todense
 todict
+tokenize
 tolist
 tosparse
 trac
@@ -438,6 +448,7 @@ Typecode
 u
 udunits
 Udunits
+UGRID
 umread
 umversion
 un

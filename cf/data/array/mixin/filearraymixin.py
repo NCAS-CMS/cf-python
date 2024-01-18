@@ -125,8 +125,7 @@ class FileArrayMixin:
 
             `tuple`
                 The file locations, one for each file, as absolute
-                paths with no trailing separate pathname component
-                separator.
+                paths with no trailing path name component separator.
 
         **Examples**
 

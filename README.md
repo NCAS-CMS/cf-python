@@ -85,52 +85,34 @@ The `cf` package uses
 of its array manipulation and can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
-
 * create new field constructs in memory,
-
-* write and append field constructs to netCDF datasets on disk,
-
+* write and append field and domain constructs to netCDF datasets on disk,
+* read, create, and manipulate UGRID mesh topologies,
 * read, write, and create coordinates defined by geometry cells,
-
 * read netCDF and CDL datasets containing hierarchical groups,
-
 * inspect field constructs,
-
 * test whether two field constructs are the same,
-
 * modify field construct metadata and data,
-
 * create subspaces of field constructs,
-
 * write field constructs to netCDF datasets on disk,
-
 * incorporate, and create, metadata stored in external files,
-
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed by
   subsampling), whilst presenting a view of the data in its
   uncompressed form,
-
 * combine field constructs arithmetically,
-
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
-
-* perform statistical collapses on field constructs,
-
+* perform weighted statistical collapses on field constructs,
+  including those with geometry cells and UGRID mesh topologies,
 * perform histogram, percentile and binning operations on field
   constructs,
-
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
-  methods,
-
+  methods, to and from structured and unstructured grids,
 * apply convolution filters to field constructs,
-
 * create running means from field constructs,
-
 * apply differential operators to field constructs,
-
 * create derived quantities (such as relative vorticity).
 
 Visualization

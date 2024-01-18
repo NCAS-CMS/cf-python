@@ -1170,7 +1170,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `str`
                 The new location as an absolute path with no trailing
-                separate pathname component separator.
+                path name component separator.
 
         **Examples**
 
@@ -1549,65 +1549,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    # AT2
-    #
-    #    @classmethod
-    #    def arctan2(cls, y, x, bounds=True):
-    #        '''Take the "two-argument" trigonometric inverse tangent
-    #    element-wise for `y`/`x`.
-    #
-    #    Explicitly this returns, for all corresponding elements, the angle
-    #    between the positive `x` axis and the line to the point (`x`, `y`),
-    #    where the signs of both `x` and `y` are taken into account to
-    #    determine the quadrant. Such knowledge of the signs of `x` and `y`
-    #    are lost when the quotient is input to the standard "one-argument"
-    #    `arctan` function, such that use of `arctan` leaves the quadrant
-    #    ambiguous. `arctan2` may therefore be preferred.
-    #
-    #    Units are ignored in the calculation. The result has units of radians.
-    #
-    #    .. versionadded:: 3.2.0
-    #
-    #    .. seealso:: `arctan`, `tan`
-    #
-    #    :Parameters:
-    #
-    #        y: `Data`
-    #            The data array to provide the numerator elements, corresponding
-    #            to the `y` coordinates in the `arctan2` definition.
-    #
-    #        x: `Data`
-    #            The data array to provide the denominator elements,
-    #            corresponding to the `x` coordinates in the `arctan2`
-    #            definition.
-    #
-    #        bounds: `bool`, optional
-    #            If False then do not alter any bounds. By default any
-    #            bounds are also altered. Note that bounds will only be changed
-    #            if both `x` and `y` have bounds to consider.
-    #
-    #    :Returns:
-    #
-    #        The construct with the "two-argument" trigonometric inverse tangent
-    #        of data values. If the operation was in-place then `None` is
-    #        returned.
-    #
-    #    **Examples**
-    #
-    #    TODO
-    #
-    #        '''
-    #        out = super().arctan2(y, x)
-    #
-    #        if bounds:
-    #            bounds_y = y.get_bounds(None)
-    #            bounds_x = x.get_bounds(None)
-    #            if bounds_x is not None and bounds_y is not None:
-    #                bounds = Data.arctan2(x.get_bounds(), y.get_bounds())
-    #                out.set_bounds(bounds, copy=False)
-    #
-    #        return out
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, bounds=True, inplace=False, i=False):
@@ -1734,7 +1675,7 @@ class PropertiesDataBounds(PropertiesData):
             return True
 
         # Check that each instance is the same type
-        if type(self) != type(other):
+        if type(self) is not type(other):
             print(
                 f"{self.__class__.__name__}: Different types: "
                 f"{self.__class__.__name__}, {other.__class__.__name__}"
@@ -2118,7 +2059,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `set`
                 The unique file locations as absolute paths with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -2228,7 +2169,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `str`
                 The removed location as an absolute path with no
-                trailing separate pathname component separator.
+                trailing path name component separator.
 
         **Examples**
 
@@ -3026,7 +2967,6 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, bounds=True, inplace=False):
@@ -3517,7 +3457,6 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
         )
 
-    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, bounds=True, inplace=False, i=False):

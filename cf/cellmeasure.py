@@ -31,14 +31,6 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
 
     """
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return super().__repr__().replace("<", "<CF ", 1)
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -162,6 +154,11 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
             return f"id%{n}"
 
         if relaxed:
+            if strict:
+                raise ValueError(
+                    "'relaxed' and 'strict' parameters cannot both be True"
+                )
+
             n = self.get_property("long_name", None)
             if n is not None:
                 return f"long_name={n}"

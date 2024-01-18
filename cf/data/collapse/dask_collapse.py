@@ -75,7 +75,9 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
     return x
 
 
-def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
+def sum_weights_chunk(
+    x, weights=None, square=False, N=None, check_weights=True, **kwargs
+):
     """Sum the weights.
 
     .. versionadded:: 3.14.0
@@ -103,6 +105,12 @@ def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
             the sum (of the squares) of weights. Ignored of *weights*
             is not `None`.
 
+        check_weights: `bool`, optional
+            If True, the default, then check that all weights are
+            positive.
+
+            .. versionadded:: 3.16.0
+
     :Returns:
 
         `numpy.ndarray`
@@ -117,6 +125,14 @@ def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
             N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
+    elif check_weights:
+        w_min = weights.min()
+        if w_min <= 0:
+            raise ValueError(
+                "All collapse weights must be positive. "
+                f"Got a weight of {w_min!r}. Consider replacing "
+                "non-positive values with missing data."
+            )
 
     dtype = double_precision_dtype(weights)
     if square:
@@ -210,7 +226,14 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # mean
 # --------------------------------------------------------------------
-def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
+def cf_mean_chunk(
+    x,
+    weights=None,
+    dtype="f8",
+    computing_meta=False,
+    check_weights=True,
+    **kwargs,
+):
     """Chunk calculations for the mean.
 
      This function is passed to `dask.array.reduction` as its *chunk*
@@ -220,7 +243,13 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
 
     :Parameters:
 
-        See `dask.array.reductions` for details of the parameters.
+        check_weights: `bool`, optional
+            If True then check that all weights are positive.
+
+            .. versionadded:: 3.16.0
+
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -240,7 +269,9 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     # N, sum
     d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
 
-    d["V1"] = sum_weights_chunk(x, weights, N=d["N"], **kwargs)
+    d["V1"] = sum_weights_chunk(
+        x, weights, N=d["N"], check_weights=False, **kwargs
+    )
     d["weighted"] = weights is not None
 
     return d
@@ -881,7 +912,14 @@ def cf_sample_size_agg(
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
-def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
+def cf_sum_chunk(
+    x,
+    weights=None,
+    dtype="f8",
+    computing_meta=False,
+    check_weights=True,
+    **kwargs,
+):
     """Chunk calculations for the sum.
 
     This function is passed to `dask.array.reduction` as its *chunk*
@@ -891,7 +929,14 @@ def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
 
     :Parameters:
 
-        See `dask.array.reductions` for details of the parameters.
+        check_weights: `bool`, optional
+            If True, the default, then check that all weights are
+            positive.
+
+            .. versionadded:: 3.16.0
+
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -906,6 +951,15 @@ def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
         return x
 
     if weights is not None:
+        if check_weights:
+            w_min = weights.min()
+            if w_min <= 0:
+                raise ValueError(
+                    "All collapse weights must be positive. "
+                    f"Got a weight of {w_min!r}. Consider replacing "
+                    "non-positive values with missing data."
+                )
+
         x = np.multiply(x, weights, dtype=dtype)
 
     d = cf_sample_size_chunk(x, **kwargs)
@@ -1159,7 +1213,9 @@ def cf_var_chunk(
     d["part"] = part
 
     if weighted and ddof == 1:
-        d["V2"] = sum_weights_chunk(x, weights, square=True, **kwargs)
+        d["V2"] = sum_weights_chunk(
+            x, weights, square=True, check_weights=False, **kwargs
+        )
     else:
         d["V2"] = None
 

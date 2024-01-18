@@ -3,6 +3,7 @@ import cfdm
 from . import (
     AuxiliaryCoordinate,
     Bounds,
+    CellConnectivity,
     CellMeasure,
     CellMethod,
     CoordinateConversion,
@@ -13,6 +14,7 @@ from . import (
     Domain,
     DomainAncillary,
     DomainAxis,
+    DomainTopology,
     Field,
     FieldAncillary,
     Index,
@@ -25,9 +27,12 @@ from . import (
 )
 from .data import Data
 from .data.array import (
+    BoundsFromNodesArray,
+    CellConnectivityArray,
     CFANetCDFArray,
     GatheredArray,
     NetCDFArray,
+    PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
@@ -144,6 +149,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 _implementation = CFImplementation(
     cf_version=CF(),
     AuxiliaryCoordinate=AuxiliaryCoordinate,
+    CellConnectivity=CellConnectivity,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
     CFANetCDFArray=CFANetCDFArray,
@@ -152,6 +158,7 @@ _implementation = CFImplementation(
     Domain=Domain,
     DomainAncillary=DomainAncillary,
     DomainAxis=DomainAxis,
+    DomainTopology=DomainTopology,
     Field=Field,
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
@@ -165,8 +172,11 @@ _implementation = CFImplementation(
     NodeCountProperties=NodeCountProperties,
     PartNodeCountProperties=PartNodeCountProperties,
     Data=Data,
+    BoundsFromNodesArray=BoundsFromNodesArray,
+    CellConnectivityArray=CellConnectivityArray,
     GatheredArray=GatheredArray,
     NetCDFArray=NetCDFArray,
+    PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
@@ -194,6 +204,9 @@ def implementation():
     <CFImplementation: >
     >>> i.classes()
     {'AuxiliaryCoordinate': cf.auxiliarycoordinate.AuxiliaryCoordinate,
+     'BoundsFromNodesArray': cf.data.array.boundsfromnodesarray.BoundsFromNodesArray,
+     'CellConnectivity': cf.cellconnectivity.CellConnectivity,
+     'CellConnectivityArray': cf.data.array.cellconnectivityarray.CellConnectivityArray,
      'CellMeasure': cf.cellmeasure.CellMeasure,
      'CellMethod': cf.cellmethod.CellMethod,
      'CFANetCDFArray': cf.data.array.cfanetcdfarray.CFANetCDFArray,
@@ -202,6 +215,7 @@ def implementation():
      'Domain': cf.domain.Domain,
      'DomainAncillary': cf.domainancillary.DomainAncillary,
      'DomainAxis': cf.domainaxis.DomainAxis,
+     'DomainTopology': cf.domaintopology.DomainTopology,
      'Field': cf.field.Field,
      'FieldAncillary': cf.fieldancillary.FieldAncillary,
      'Bounds': cf.bounds.Bounds,
@@ -217,6 +231,7 @@ def implementation():
      'Data': cf.data.data.Data,
      'GatheredArray': cf.data.array.gatheredarray.GatheredArray,
      'NetCDFArray': cf.data.array.netcdfarray.NetCDFArray,
+     'PointTopologyArray': <class 'cf.data.array.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': cf.data.array.raggedcontiguousarray.RaggedContiguousArray,
      'RaggedIndexedArray': cf.data.array.raggedindexedarray.RaggedIndexedArray,
      'RaggedIndexedContiguousArray': cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
