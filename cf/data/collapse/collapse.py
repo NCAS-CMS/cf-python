@@ -15,12 +15,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
     **Active storage reductions**
 
     A collapse method (such as `max`, `var`, etc.) will attempt to
-    make use of active storage reductions if:
+    make use of active storage reductions if both of the following are
+    true:
 
-    * The collapse method's *active_storage* parameter is set to True.
+    1. The collapse method's *active_storage* parameter is True.
 
-    * The method has a corresponding active chunk function defined in
-      the `collapse_active.active_chunk_functions` dictionary.
+    2. The method has a corresponding active chunk function defined in
+       the `collapse_active.active_chunk_functions` dictionary.
 
     These conditions alone are not sufficient active storage
     reductions to occur. In addition, the graph of the `dask` array is

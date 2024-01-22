@@ -230,9 +230,9 @@ def actify(a, method, axis=None):
 
         axis = validate_axis(axis, a.ndim)
 
-    # Loop round the nodes of the dask graph, looking for data
+    # Loop round the nodes of the dask graph looking for data
     # definitions that point to files and which support active storage
-    # operations, and modify the dask grpah when we find them.
+    # operations, and modify the dask graph when we find them.
     #
     # The elements are traversed in reverse order so that the data
     # defintions come out first, allowing for the potential of a

@@ -324,8 +324,9 @@ _docstring_substitution_definitions = {
     # Collapse chunk_function
     "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
                 Provides the ``chunk`` parameter to
-                `dask.array.reduction`. If unset then an approriate
-                default function will be used.""",
+                `dask.array.reduction`. If unset then an appropriate
+                default function from `cf.data.collapse.dask_collapse`
+                will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By

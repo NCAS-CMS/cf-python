@@ -1,9 +1,9 @@
-from ..array.mixin import ActiveStorageMixin
+#from ..array.mixin import ActiveStorageMixin
 from ..array.netcdfarray import NetCDFArray
 from .mixin import FragmentArrayMixin
 
 
-class NetCDFFragmentArray(ActiveStorageMixin, FragmentArrayMixin, NetCDFArray):
+class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
