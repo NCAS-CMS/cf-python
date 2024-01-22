@@ -663,22 +663,22 @@ CFA
    :toctree: ../method/
    :template: method.rst
 	  
+   ~cf.Data.file_locations
+   ~cf.Data.del_file_location
    ~cf.Data.add_file_location
    ~cf.Data.cfa_clear_file_substitutions
-   ~cf.Data.cfa_del_aggregated_data
-   ~cf.Data.cfa_del_file_substitution
    ~cf.Data.cfa_file_substitutions
+   ~cf.Data.cfa_update_file_substitutions
+   ~cf.Data.cfa_del_file_substitution
+   ~cf.Data.cfa_has_file_substitutions
+   ~cf.Data.cfa_del_aggregated_data
    ~cf.Data.cfa_get_aggregated_data
+   ~cf.Data.cfa_has_aggregated_data
+   ~cf.Data.cfa_set_aggregated_data
    ~cf.Data.cfa_get_term
    ~cf.Data.cfa_get_write
-   ~cf.Data.cfa_has_aggregated_data
-   ~cf.Data.cfa_has_file_substitutions
-   ~cf.Data.cfa_set_aggregated_data
    ~cf.Data.cfa_set_term
    ~cf.Data.cfa_set_write
-   ~cf.Data.cfa_update_file_substitutions
-   ~cf.Data.del_file_location
-   ~cf.Data.file_locations
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
