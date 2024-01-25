@@ -46,13 +46,19 @@ class ActiveStorageMixin:
             if missing_values is None:
                 missing_values = {}
 
+        try:
+            s3 = self.get_s3()
+        except AttributeError:
+            s3 = {}
+                
         active = Active(
-            self.get_filename(), self.get_ncvar(), **missing_values
+            self.get_filename(), self.get_address(), **missing_values,
+            # **s3
         )
         active.method = method
         active.components = True
         try:
-            active.lock = self._dask_lock
+            active.lock = self._lock
         except AttributeError:
             pass
 
@@ -64,7 +70,7 @@ class ActiveStorageMixin:
         The new instance is a deep copy of the original, with the
         additional setting of the active storage method and axis.
 
-        .. versionadded:: ACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `set_active_axis`, `set_active_method`
 

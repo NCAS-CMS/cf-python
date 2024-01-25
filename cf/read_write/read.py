@@ -62,6 +62,7 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
+        s3=None
 ):
     """Read field or domain constructs from files.
 
@@ -664,6 +665,16 @@ def read(
 
             .. versionadded:: 3.15.0
 
+        s3: `None` or `dict` , optional
+            TODOACTIVEDOCS
+
+            .. versionadded:: (cfdm) ACTIVEVERSION
+
+        _no_HDF: `bool`, optional
+            TODOACTIVEDOCS
+
+            .. versionadded:: (cfdm) ACTIVEVERSION
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -885,8 +896,8 @@ def read(
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
         scheme = urlparse(file_glob).scheme
-        if scheme in ("https", "http"):
-            # Do not glob a URL
+        if scheme in ("https", "http", "s3"):
+            # Do not glob a remote URL
             files2 = (file_glob,)
         else:
             # Glob files on disk
@@ -955,6 +966,7 @@ def read(
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
+                s3=s3,
             )
 
             # --------------------------------------------------------
@@ -1069,6 +1081,7 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
+    s3=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1103,6 +1116,11 @@ def _read_a_file(
             See `cf.read` for details.
 
             .. versionadded:: 3.15.0
+
+        s3: `dict`, optional
+            TODOACTIVEDOCS
+
+            .. versionadded:: AVTIVEVERSION
 
     :Returns:
 
@@ -1177,6 +1195,7 @@ def _read_a_file(
                 mask=mask,
                 warn_valid=warn_valid,
                 domain=domain,
+                s3=s3,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

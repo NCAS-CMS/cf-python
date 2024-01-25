@@ -2,10 +2,8 @@ import cfdm
 from dask.utils import SerializableLock
 
 from ...mixin_container import Container
+from .locks import _lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
-
-# Global lock for netCDF file access
-_lock = SerializableLock()
 
 
 class HDFArray(ActiveStorageMixin, FileArrayMixin, ArrayMixin, Container, cfdm.HDFArray):
@@ -28,10 +26,10 @@ class HDFArray(ActiveStorageMixin, FileArrayMixin, ArrayMixin, Container, cfdm.H
         """Set the lock for use in `dask.array.from_array`.
 
         Returns a lock object because concurrent reads are not
-        currently supported by the netCDF-C library. The lock object
-        will be the same for all `NetCDFArray` instances, regardless
-        of the dataset they access, which means that access to all
-        netCDF files coordinates around the same lock.
+        currently supported by the HDF5 library. The lock object will
+        be the same for all `NetCDFArray` and `HDFArray` instances,
+        regardless of the dataset they access, which means that access
+        to all netCDF and HDF files coordinates around the same lock.
 
         .. versionadded:: HDFVER
 

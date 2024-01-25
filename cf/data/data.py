@@ -96,12 +96,12 @@ _DEFAULT_HARDMASK = True
 # Contstants used to specify which `Data` components should be cleared
 # when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # =  0b0000
-_ARRAY = 1  # = 0b0001
-_CACHE = 2  # = 0b0010
-_CFA = 4  # =   0b0100
+_NONE = 0  # =   0b0000
+_ARRAY = 1  # =  0b0001
+_CACHE = 2  # =  0b0010
+_CFA = 4  # =    0b0100
 _ACTIVE = 8  # = 0b1000
-_ALL = 15  # =  0b1111
+_ALL = 15  # =   0b1111
 
 
 class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
@@ -1328,9 +1328,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 * If ``clear & _ACTIVE`` is non-zero then set the
                   active storage status to `False`.
 
-                * If ``clear`` is non-zero then the CFA term status is
-                  set to `False`.
-
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
                 removed.
@@ -1411,8 +1408,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
                 "difficult to diagnose, as dask will have silently "
-                "trapped it and returned NotImplemented (for "
-                "instance, see dask.array.core.elemwise). Print "
+                "trapped it and returned NotImplemented (see, for "
+                "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
                 "way to go if the cause of the error is not obvious."
             )
@@ -8111,7 +8108,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = Collapse().unique(
             dx,
             split_every=split_every,
-            active_storage=d.active_storage and active_storage(),
         )
 
         d._set_dask(dx)

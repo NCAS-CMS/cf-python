@@ -1,4 +1,5 @@
 from functools import wraps
+import logging
 
 
 # --------------------------------------------------------------------
@@ -203,11 +204,13 @@ def actify(a, method, axis=None):
             `None`.
 
     """
+    print ('runing actify')
     try:
         from activestorage import Active  # noqa: F401
     except ModuleNotFoundError:
         # The active storage class dependency is not met, so using
         # active storage is not possible.
+        print('oops')
         return a, None
 
     from numbers import Integral
@@ -258,8 +261,8 @@ def actify(a, method, axis=None):
         try:
             dsk[key] = value.actify(method, axis)
         except AttributeError:
-            # This data definition doesn't support active storage
-            # reductions
+            # This data definition doesn't have an 'actify' method,
+            # and so doesn't support active storage reductions.
             ok_to_actify = False
             break
 
@@ -281,8 +284,10 @@ def actify(a, method, axis=None):
 def active_storage(method):
     """A decorator that enables active storage reductions.
 
-    This decorator is intended for `Collapse` methods. Active storage
-    operations are only carried out when the conditions are right.
+    This decorator is intended for `Collapse` methods. When a
+    `Collapse` method is decorated, active storage operations are only
+    carried out when the conditions are right. See `Collapse` for
+    details.
 
     .. versionadded:: ACTIVEVERSION
 
