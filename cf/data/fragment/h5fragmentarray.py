@@ -3,10 +3,10 @@ from ..array.hdfarray import HDFArray
 from .mixin import FragmentArrayMixin
 
 
-class NetCDFFragmentArray(FragmentArrayMixin, HDFArray):
+class H5FragmentArray(FragmentArrayMixin, HDFArray):
     """A CFA fragment array stored in a netCDF file.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: ACTIVEVERSION
 
     """
 

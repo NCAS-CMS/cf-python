@@ -12,7 +12,7 @@ from .netcdfarray import NetCDFArray
 
 # Store fragment array classes.
 _FragmentArray = {
-#    "h5": H5FragmentArray,
+    "h5": None, #H5FragmentArray,
     "nc": NetCDFFragmentArray,
     "um": UMFragmentArray,
     "full": FullFragmentArray,

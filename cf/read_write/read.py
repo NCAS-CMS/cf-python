@@ -63,6 +63,7 @@ def read(
     domain=False,
     cfa=None,
     s3=None,
+    _no_HDF=False,
 ):
     """Read field or domain constructs from files.
 
@@ -976,6 +977,7 @@ def read(
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
+                _no_HDF=_no_HDF,
                 s3=s3,
             )
 
@@ -1091,6 +1093,7 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
+                _no_HDF=False,
     s3=None,
 ):
     """Read the contents of a single file into a field list.
@@ -1206,6 +1209,7 @@ def _read_a_file(
                 warn_valid=warn_valid,
                 domain=domain,
                 s3=s3,
+                _no_HDF=_no_HDF
             )
         except MaskError:
             # Some data required for field interpretation is missing,

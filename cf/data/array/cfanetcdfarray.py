@@ -6,18 +6,19 @@ import numpy as np
 
 from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
-from .mixin import CFAMixin
+#from .mixin import CFAMixin
 from .netcdfarray import NetCDFArray
 
 # Store fragment array classes.
 _FragmentArray = {
+#    "nc": H5FragmentArray,
     "nc": NetCDFFragmentArray,
     "um": UMFragmentArray,
     "full": FullFragmentArray,
 }
 
 
-class CFANetCDFArray(CFAMixin, NetCDFArray):
+class CFANetCDFArray(NetCDFArray):
     """A CFA aggregated array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -35,6 +36,7 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
         instructions=None,
         substitutions=None,
         term=None,
+            s3=None,
         source=None,
         copy=True,
         x=None,
@@ -102,6 +104,10 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
 
                 .. versionadded:: 3.15.0
 
+            {{s3: `dict` or `None`, optional}}
+
+                .. versionadded:: ACTIVEVERSION
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -140,7 +146,7 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
 
             location = x["location"]
             ndim = location.shape[0]
-            print("location =", location.shape, repr(location))
+#            print("location =", location.shape, repr(location))
             compressed = np.ma.compressed
             chunks = [compressed(i).tolist() for i in location]
             #            print(chunks)
@@ -177,23 +183,25 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
 
                 if not a.ndim:
                     a = np.full(f.shape, a, dtype=a.dtype)
-
+                    if np.ma.is_masked(f):
+                        a = np.ma.array(a, mask=f.mask)
+                    
                 if not fmt.ndim:
                     fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
 
                 if extra_dimension:
-                    print("-----")
-                    import copy
-
-                    print(f.shape, repr(f))
+#                    print("-----")
+#                    import copy
+#
+#                    print(f.shape, repr(f))
                     #                    if f.shape == (780, 1, 1, 2):
                     #                        for frag_loc, loc in zip(positions, locations):
                     #                            print(frag_loc, loc)
                     aggregated_data = {
                         frag_loc: {
                             "location": loc,
-                            "filename": f[frag_loc].tolist(),
-                            "address": a[frag_loc].tolist(),
+                            "filename": compressed(f[frag_loc]).tolist(),
+                            "address": compressed(a[frag_loc]).tolist(),
                             "format": fmt[frag_loc].item(),
                         }
                         for frag_loc, loc in zip(positions, locations)
@@ -680,6 +688,8 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
             fragment_arrays = _FragmentArray.copy()
             fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
 
+        s3 = self.get_s3()
+            
         dsk = {}
         for (
             u_indices,
@@ -700,6 +710,10 @@ class CFANetCDFArray(CFAMixin, NetCDFArray):
                     "Can't get FragmentArray class for unknown "
                     f"fragment dataset format: {fragment_format!r}"
                 )
+
+            if s3 and kwargs['address'] == 'nc':
+                # Pass on any S3 file system options 
+                kwargs['s3'] = s3            
 
             fragment = FragmentArray(
                 dtype=dtype,

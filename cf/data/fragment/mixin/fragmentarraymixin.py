@@ -71,7 +71,7 @@ class FragmentArrayMixin:
                         "\n\n"
                         "Consider re-creating the data with exactly one "
                         "dask compute chunk per fragment (e.g. by setting "
-                        "'chunks=None' as a keyword to cf.read)."
+                        "chunks=None as a keyword to cf.read)."
                     )
 
                 array = array.reshape(self.shape)

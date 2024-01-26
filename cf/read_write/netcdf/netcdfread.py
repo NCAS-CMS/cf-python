@@ -955,10 +955,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # Already processed this term
                 continue
 
-            array = g["variables"][term_ncvar][...]
-            aggregation_instructions[term_ncvar] = self._cfa_conform_array(
-                array
-            )
+            array = g["variables"][term_ncvar][...] # DCH HERE no missing
+#            if g['original_HDF']:
+#                v = g["variables"][term_ncvar]
+#                from ...data.array import HDFArray
+#                array = HDFArray._mask2(array, v.dtype, v.attrs, isvlen=v.dtype.kind == "O")
+
+            array = self._cfa_conform_array(array) # Do we ant to do this?
+            aggregation_instructions[term_ncvar] = array
+
+            print (term_ncvar, g["variables"][term_ncvar].dtype, repr(array))
 
             if term == "file":
                 # Find URI substitutions that may be stored in the
@@ -979,7 +985,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     # precedence over those defined in the file.
                     subs.update(g["cfa_options"].get("substitutions", {}))
                     g["cfa_file_substitutions"][term_ncvar] = subs
-
+                            
         g["cfa_aggregated_data"][ncvar] = out
         return out
 
@@ -999,6 +1005,36 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 The conformed array.
 
         """
+        string_type = isinstance(array, str)
+
+        if string_type:
+            print (888888)
+            # --------------------------------------------------------
+            # A netCDF string type scalar variable comes out as Python
+            # str object, so convert it to a numpy array.
+            # --------------------------------------------------------
+            array = np.array(array, dtype=f"U{len(array)}")
+
+        kind = array.dtype.kind
+        if not string_type and kind in "SU":
+            # Collapse by concatenation the outermost (fastest
+            # varying) dimension of char array into
+            # memory. E.g. [['a','b','c']] becomes ['abc']
+            if kind == "U":
+                array = array.astype("S", copy=False)
+
+            array = netCDF4.chartostring(array)
+            shape = array.shape
+            array = np.array([x.rstrip() for x in array.flat], dtype="U")
+            array = np.reshape(array, shape)
+            array = np.ma.masked_where(array == "", array)
+        elif not string_type and kind == "O":
+            array = array.astype("U", copy=False)
+            print (11111111, repr(array))
+            array = np.ma.where(array == "", np.ma.masked, array)
+
+        return array
+    
         if isinstance(array, str):
             # string
             return np.array(array, dtype=f"S{len(array)}").astype("U")

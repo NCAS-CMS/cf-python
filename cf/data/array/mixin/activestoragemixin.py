@@ -52,8 +52,7 @@ class ActiveStorageMixin:
             s3 = {}
                 
         active = Active(
-            self.get_filename(), self.get_address(), **missing_values,
-            # **s3
+            self.get_filename(), self.get_address(), s3=s3, **missing_values,
         )
         active.method = method
         active.components = True
