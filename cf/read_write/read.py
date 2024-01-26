@@ -62,7 +62,7 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
-        s3=None
+    s3=None,
 ):
     """Read field or domain constructs from files.
 
@@ -665,8 +665,18 @@ def read(
 
             .. versionadded:: 3.15.0
 
-        s3: `None` or `dict` , optional
-            TODOACTIVEDOCS
+        s3: `dict` or `None`, optional
+            Keyword parameters to be passed to `s3fs.S3FileSystem` to
+            control the opening of files in an S3 object store. By
+            default, or if `None`, then ``s3={'anon': True}``. Ignored
+            for file names that don't start with ``s3:``.
+
+            If and only if *s3* has no ``'endpoint_url'`` key, then
+            one will be automatically derived from the *filename*. For
+            example, if *filename* was
+            ``'s3://object-store/data/file.nc'``, then an
+            ``'endpoint_url'`` key with value
+            ``'https://object-store'`` would be created.
 
             .. versionadded:: (cfdm) ACTIVEVERSION
 
@@ -1118,7 +1128,7 @@ def _read_a_file(
             .. versionadded:: 3.15.0
 
         s3: `dict`, optional
-            TODOACTIVEDOCS
+            See `cf.read` for details.
 
             .. versionadded:: AVTIVEVERSION
 

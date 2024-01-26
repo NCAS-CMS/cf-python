@@ -6,6 +6,7 @@ import numpy as np
 
 from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
+from .mixin import CFAMixin
 from .netcdfarray import NetCDFArray
 
 # Store fragment array classes.
@@ -16,7 +17,7 @@ _FragmentArray = {
 }
 
 
-class CFANetCDFArray(NetCDFArray):
+class CFANetCDFArray(CFAMixin, NetCDFArray):
     """A CFA aggregated array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -139,8 +140,10 @@ class CFANetCDFArray(NetCDFArray):
 
             location = x["location"]
             ndim = location.shape[0]
-
-            chunks = [i.compressed().tolist() for i in location]
+            print("location =", location.shape, repr(location))
+            compressed = np.ma.compressed
+            chunks = [compressed(i).tolist() for i in location]
+            #            print(chunks)
             shape = [sum(c) for c in chunks]
             positions = chunk_positions(chunks)
             locations = chunk_locations(chunks)
@@ -179,6 +182,13 @@ class CFANetCDFArray(NetCDFArray):
                     fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
 
                 if extra_dimension:
+                    print("-----")
+                    import copy
+
+                    print(f.shape, repr(f))
+                    #                    if f.shape == (780, 1, 1, 2):
+                    #                        for frag_loc, loc in zip(positions, locations):
+                    #                            print(frag_loc, loc)
                     aggregated_data = {
                         frag_loc: {
                             "location": loc,

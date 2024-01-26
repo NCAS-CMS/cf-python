@@ -654,6 +654,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
+        print(g["s3"])
 
         # Get the kwargs needed to instantiate a general NetCDFArray
         # instance
@@ -664,8 +665,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
-        # Get rid of the incorrect shape of (). This will end up
-        # getting set correctly by the CFANetCDFArray instance.
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the CFANetCDFArray instance.
         kwargs.pop("shape", None)
 
         aggregated_data = g["cfa_aggregated_data"][ncvar]
