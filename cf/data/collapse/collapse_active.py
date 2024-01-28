@@ -1,5 +1,5 @@
-from functools import wraps
 import logging
+from functools import wraps
 
 
 # --------------------------------------------------------------------
@@ -204,13 +204,13 @@ def actify(a, method, axis=None):
             `None`.
 
     """
-    print ('runing actify')
+    print("runing actify")
     try:
         from activestorage import Active  # noqa: F401
     except ModuleNotFoundError:
         # The active storage class dependency is not met, so using
         # active storage is not possible.
-        print('oops')
+        print("oops")
         return a, None
 
     from numbers import Integral

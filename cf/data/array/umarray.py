@@ -303,6 +303,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         """
         units = self._get_component("units", False)
         if units is False:
+            # TODOHDF mocve to def _get_attr
             units = None
 
             if not _stash2standard_name:

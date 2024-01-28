@@ -1,9 +1,9 @@
-#from ..array.mixin import ActiveStorageMixin
-from ..array.hdfarray import HDFArray
+# from ..array.mixin import ActiveStorageMixin
+from ..array.h5netcdfarray import H5netcdfArray
 from .mixin import FragmentArrayMixin
 
 
-class H5FragmentArray(FragmentArrayMixin, HDFArray):
+class H5FragmentArray(FragmentArrayMixin, H5netcdfArray):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: ACTIVEVERSION
@@ -20,7 +20,7 @@ class H5FragmentArray(FragmentArrayMixin, HDFArray):
         aggregated_calendar=False,
         units=False,
         calendar=None,
-            s3=None,
+        s3=None,
         source=None,
         copy=True,
     ):

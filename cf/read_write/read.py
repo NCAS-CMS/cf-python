@@ -1093,7 +1093,7 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
-                _no_HDF=False,
+    _no_HDF=False,
     s3=None,
 ):
     """Read the contents of a single file into a field list.
@@ -1209,7 +1209,7 @@ def _read_a_file(
                 warn_valid=warn_valid,
                 domain=domain,
                 s3=s3,
-                _no_HDF=_no_HDF
+                _no_HDF=_no_HDF,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

@@ -3,7 +3,7 @@ from .cellconnectivityarray import CellConnectivityArray
 from .cfanetcdfarray import CFANetCDFArray
 from .fullarray import FullArray
 from .gatheredarray import GatheredArray
-from .hdfarray import HDFArray
+from .h5netcdfarray import H5netcdfArray
 from .netcdfarray import NetCDFArray
 from .pointtopologyarray import PointTopologyArray
 from .raggedcontiguousarray import RaggedContiguousArray

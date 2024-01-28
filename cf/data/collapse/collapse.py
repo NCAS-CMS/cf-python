@@ -440,7 +440,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        print ('min: active_stoege =', active_storage)
+        print("min: active_stoege =", active_storage)
         from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
 
         if chunk_function is None:

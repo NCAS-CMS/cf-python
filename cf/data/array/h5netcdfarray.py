@@ -6,10 +6,16 @@ from .locks import _lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
 
 
-class HDFArray(ActiveStorageMixin, FileArrayMixin, ArrayMixin, Container, cfdm.HDFArray):
+class H5netcdfArray(
+    ActiveStorageMixin,
+    FileArrayMixin,
+    ArrayMixin,
+    Container,
+    cfdm.H5netcdfArray,
+):
     """An array stored in a netCDF file.]
 
-        .. versionadded:: HDFVER
+    .. versionadded:: HDFVER
 
     """
 

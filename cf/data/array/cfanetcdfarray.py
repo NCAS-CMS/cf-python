@@ -6,12 +6,13 @@ import numpy as np
 
 from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
-#from .mixin import CFAMixin
+
+# from .mixin import CFAMixin
 from .netcdfarray import NetCDFArray
 
 # Store fragment array classes.
 _FragmentArray = {
-#    "nc": H5FragmentArray,
+    #    "nc": H5FragmentArray,
     "nc": NetCDFFragmentArray,
     "um": UMFragmentArray,
     "full": FullFragmentArray,
@@ -36,7 +37,7 @@ class CFANetCDFArray(NetCDFArray):
         instructions=None,
         substitutions=None,
         term=None,
-            s3=None,
+        s3=None,
         source=None,
         copy=True,
         x=None,
@@ -146,10 +147,8 @@ class CFANetCDFArray(NetCDFArray):
 
             location = x["location"]
             ndim = location.shape[0]
-#            print("location =", location.shape, repr(location))
             compressed = np.ma.compressed
             chunks = [compressed(i).tolist() for i in location]
-            #            print(chunks)
             shape = [sum(c) for c in chunks]
             positions = chunk_positions(chunks)
             locations = chunk_locations(chunks)
@@ -172,7 +171,7 @@ class CFANetCDFArray(NetCDFArray):
             else:
                 a = x["address"]
                 f = x["file"]
-                fmt = x["format"]
+                file_fmt = x["format"]
 
                 extra_dimension = f.ndim > ndim
                 if extra_dimension:
@@ -180,42 +179,91 @@ class CFANetCDFArray(NetCDFArray):
                     fragment_shape = f.shape[:-1]
                 else:
                     fragment_shape = f.shape
-
-                if not a.ndim:
-                    a = np.full(f.shape, a, dtype=a.dtype)
-                    if np.ma.is_masked(f):
-                        a = np.ma.array(a, mask=f.mask)
                     
-                if not fmt.ndim:
-                    fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
-
-                if extra_dimension:
-#                    print("-----")
-#                    import copy
-#
-#                    print(f.shape, repr(f))
-                    #                    if f.shape == (780, 1, 1, 2):
-                    #                        for frag_loc, loc in zip(positions, locations):
-                    #                            print(frag_loc, loc)
-                    aggregated_data = {
-                        frag_loc: {
-                            "location": loc,
-                            "filename": compressed(f[frag_loc]).tolist(),
-                            "address": compressed(a[frag_loc]).tolist(),
-                            "format": fmt[frag_loc].item(),
-                        }
-                        for frag_loc, loc in zip(positions, locations)
-                    }
+                if not a.ndim:
+                    a = (a.item(),)
+#                    a = np.full(f.shape, a, dtype=a.dtype)
+#                    if np.ma.is_masked(f):
+#                        a = np.ma.array(a, mask=f.mask)
+                    scalar_address = True
                 else:
-                    aggregated_data = {
-                        frag_loc: {
-                            "location": loc,
-                            "filename": (f[frag_loc].item(),),
-                            "address": (a[frag_loc].item(),),
-                            "format": fmt[frag_loc].item(),
-                        }
-                        for frag_loc, loc in zip(positions, locations)
-                    }
+                    scalar_address = False
+
+                if not file_fmt.ndim:
+                    #                    fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
+                    file_fmt = (file_fmt.item(),)
+                    scalar_fmt = True
+                else:
+                    scalar_fmt = False
+
+                #if extra_dimension:
+                #    for  frag_loc, loc in zip(positions, locations):
+                #        if not scalar_address:
+                #            address = compressed(a[frag_loc]).tolist()
+                #        else:
+                #            address = a
+                #
+                #        if not scalar_fmt:
+                #            file_fmt = compressed(fmt[frag_loc].tolist())
+                #        else:
+                #            file_fmt = fmt
+                #            
+                #        aggregated_data['frag_loc'] = {
+                #                "location": loc,
+                #                "filename": compressed(f[frag_loc]).tolist(),
+                #                "address": address, 
+                #                "format": file_fmt,
+                #            }
+                #    #aggregated_data = {
+                #    #    frag_loc: {
+                #    #        "location": loc,
+                #    #        "filename": compressed(f[frag_loc]).tolist(),
+                #    #        "address": compressed(a[frag_loc]).tolist(),
+                #    #        "format": fmt[frag_loc].item(),
+                #    #    }
+                #    #    for frag_loc, loc in zip(positions, locations)
+                #    #}
+                #else:
+                for  frag_loc, location in zip(positions, locations):
+                    if extra_dimension:
+                        filename = compressed(f[frag_loc]).tolist()
+                        n_files = len(filenames)
+                        if scalar_address:
+                            address = a * n_files
+                        else:
+                            address = compressed(a[frag_loc].tolist())
+
+                        if not scalar_fmt:
+                            fmt = file_fmt * n_files
+                        else:
+                            fmt = compressed(file_fmt[frag_loc]).tolist()
+                    else:
+                        filename = (f[frag_loc].item(),)                       
+                        if scalar_address:
+                            address = a
+                        else:
+                            address = (a[frag_loc].item(),)
+                            
+                        if scalar_fmt:
+                            fmt = file_fmt
+                        else:
+                            fmt = file_fmt[frag_loc].item()
+                                                
+                    aggregated_data['frag_loc'] = {
+                        "location": location,
+                        "filename": filename,
+                        "address": address, 
+                        "format": fmt,
+                    }             
+#                    aggregated_data = {
+#                        frag_loc: {
+#                            "location": loc,
+#                            "filename": (f[frag_loc].item(),),
+#                            "address": (a[frag_loc].item(),),
+#                            "format": fmt[frag_loc].item(),
+#                        }
+#                        for frag_loc, loc in zip(positions, locations)
+#                    }
 
                 # Apply string substitutions to the fragment filenames
                 if substitutions:
@@ -689,7 +737,7 @@ class CFANetCDFArray(NetCDFArray):
             fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
 
         s3 = self.get_s3()
-            
+
         dsk = {}
         for (
             u_indices,
@@ -711,9 +759,9 @@ class CFANetCDFArray(NetCDFArray):
                     f"fragment dataset format: {fragment_format!r}"
                 )
 
-            if s3 and kwargs['address'] == 'nc':
-                # Pass on any S3 file system options 
-                kwargs['s3'] = s3            
+            if s3 and kwargs["address"] == "nc":
+                # Pass on any S3 file system options
+                kwargs["s3"] = s3
 
             fragment = FragmentArray(
                 dtype=dtype,
