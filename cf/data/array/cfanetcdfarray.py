@@ -196,6 +196,7 @@ class CFANetCDFArray(NetCDFArray):
                 else:
                     scalar_fmt = False
 
+                    
                 #if extra_dimension:
                 #    for  frag_loc, loc in zip(positions, locations):
                 #        if not scalar_address:
