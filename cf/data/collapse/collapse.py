@@ -15,18 +15,20 @@ class Collapse(metaclass=DocstringRewriteMeta):
     **Active storage reductions**
 
     A collapse method (such as `max`, `var`, etc.) will attempt to
-    make use of active storage reductions if both of the following are
-    true:
+    make use of active storage reductions if all of the following
+    conditions are met:
 
-    1. The collapse method's *active_storage* parameter is True.
+      1. it is possible to import the `activestorage.Active` class;
 
-    2. The method has a corresponding active chunk function defined in
-       the `collapse_active.active_chunk_functions` dictionary.
+      2. the collapse method's *active_storage* parameter is True;
 
-    These conditions alone are not sufficient active storage
-    reductions to occur. In addition, the graph of the `dask` array is
-    inspected to confirm that making use of active storage is
-    possible, and if so the graph is modified to expect the per-chunk
+      3. the method has a corresponding active chunk function defined
+         in the `collapse_active.active_chunk_functions` dictionary;
+
+      4. inspection of the graph of the `dask` array confirms that
+         making use of active storage is possible;
+
+    in which case the Dask graph is modified to expect the per-chunk
     reductions to be carried out externally.
 
     See `cf.data.collapse.actify` for details.
@@ -117,6 +119,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_max_agg, cf_max_chunk, cf_max_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_max_chunk
 
         check_input_dtype(a)
@@ -243,6 +246,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_mean_chunk
 
         check_input_dtype(a)
@@ -376,6 +380,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_range_chunk
 
         check_input_dtype(a, allowed="fi")
@@ -440,10 +445,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        print("min: active_stoege =", active_storage)
         from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_min_chunk
 
         check_input_dtype(a)
@@ -571,6 +576,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_range_chunk
 
         check_input_dtype(a, allowed="fi")
@@ -641,6 +647,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_mean_combine, cf_rms_agg, cf_rms_chunk
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_rms_chunk
 
         check_input_dtype(a)
@@ -713,6 +720,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sample_size_chunk
 
         check_input_dtype(a)
@@ -783,6 +791,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_sum_agg, cf_sum_chunk, cf_sum_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sum_chunk
 
         check_input_dtype(a)
@@ -861,6 +870,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sum_of_weights_chunk
 
         check_input_dtype(a)
@@ -936,6 +946,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sum_of_weights_chunk
 
         check_input_dtype(a)
@@ -984,6 +995,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_unique_agg, cf_unique_chunk
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_unique_chunk
 
         check_input_dtype(a, "fibUS")
@@ -1064,6 +1076,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_var_agg, cf_var_chunk, cf_var_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_var_chunk
 
         check_input_dtype(a)

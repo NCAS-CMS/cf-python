@@ -105,7 +105,7 @@ class CFANetCDFArray(NetCDFArray):
 
                 .. versionadded:: 3.15.0
 
-            {{s3: `dict` or `None`, optional}}
+            {{init s3: `dict` or `None`, optional}}
 
                 .. versionadded:: ACTIVEVERSION
 
@@ -179,25 +179,24 @@ class CFANetCDFArray(NetCDFArray):
                     fragment_shape = f.shape[:-1]
                 else:
                     fragment_shape = f.shape
-                    
+
                 if not a.ndim:
                     a = (a.item(),)
-#                    a = np.full(f.shape, a, dtype=a.dtype)
-#                    if np.ma.is_masked(f):
-#                        a = np.ma.array(a, mask=f.mask)
+                    #                    a = np.full(f.shape, a, dtype=a.dtype)
+                    #                    if np.ma.is_masked(f):
+                    #                        a = np.ma.array(a, mask=f.mask)
                     scalar_address = True
                 else:
                     scalar_address = False
 
                 if not file_fmt.ndim:
                     #                    fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
-                    file_fmt = (file_fmt.item(),)
+                    file_fmt = file_fmt.item()
                     scalar_fmt = True
                 else:
                     scalar_fmt = False
 
-                    
-                #if extra_dimension:
+                # if extra_dimension:
                 #    for  frag_loc, loc in zip(positions, locations):
                 #        if not scalar_address:
                 #            address = compressed(a[frag_loc]).tolist()
@@ -208,11 +207,11 @@ class CFANetCDFArray(NetCDFArray):
                 #            file_fmt = compressed(fmt[frag_loc].tolist())
                 #        else:
                 #            file_fmt = fmt
-                #            
+                #
                 #        aggregated_data['frag_loc'] = {
                 #                "location": loc,
                 #                "filename": compressed(f[frag_loc]).tolist(),
-                #                "address": address, 
+                #                "address": address,
                 #                "format": file_fmt,
                 #            }
                 #    #aggregated_data = {
@@ -224,47 +223,47 @@ class CFANetCDFArray(NetCDFArray):
                 #    #    }
                 #    #    for frag_loc, loc in zip(positions, locations)
                 #    #}
-                #else:
-                for  frag_loc, location in zip(positions, locations):
+                # else:
+                for frag_loc, location in zip(positions, locations):
                     if extra_dimension:
                         filename = compressed(f[frag_loc]).tolist()
-                        n_files = len(filenames)
+                        n_files = len(filename)
                         if scalar_address:
                             address = a * n_files
                         else:
                             address = compressed(a[frag_loc].tolist())
 
-                        if not scalar_fmt:
-                            fmt = file_fmt * n_files
+                        if scalar_fmt:
+                            fmt = file_fmt
                         else:
                             fmt = compressed(file_fmt[frag_loc]).tolist()
                     else:
-                        filename = (f[frag_loc].item(),)                       
+                        filename = (f[frag_loc].item(),)
                         if scalar_address:
                             address = a
                         else:
                             address = (a[frag_loc].item(),)
-                            
+
                         if scalar_fmt:
                             fmt = file_fmt
                         else:
                             fmt = file_fmt[frag_loc].item()
-                                                
-                    aggregated_data['frag_loc'] = {
+
+                    aggregated_data[frag_loc] = {
                         "location": location,
                         "filename": filename,
-                        "address": address, 
+                        "address": address,
                         "format": fmt,
-                    }             
-#                    aggregated_data = {
-#                        frag_loc: {
-#                            "location": loc,
-#                            "filename": (f[frag_loc].item(),),
-#                            "address": (a[frag_loc].item(),),
-#                            "format": fmt[frag_loc].item(),
-#                        }
-#                        for frag_loc, loc in zip(positions, locations)
-#                    }
+                    }
+                #                    aggregated_data = {
+                #                        frag_loc: {
+                #                            "location": loc,
+                #                            "filename": (f[frag_loc].item(),),
+                #                            "address": (a[frag_loc].item(),),
+                #                            "format": fmt[frag_loc].item(),
+                #                        }
+                #                        for frag_loc, loc in zip(positions, locations)
+                #                    }
 
                 # Apply string substitutions to the fragment filenames
                 if substitutions:

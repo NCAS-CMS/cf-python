@@ -1,4 +1,3 @@
-import logging
 from functools import wraps
 
 
@@ -168,19 +167,18 @@ def actify(a, method, axis=None):
     reductions are possible, and if not then the dask array is
     returned unchanged.
 
-    It is assumed that:
+    .. note:: It is assumed that the `!active_storage` attribute of
+              the `Data` object that provided the dask array *a* is
+              `True`. If this is not the case then an error at compute
+              time is likely.
 
-    * The method has a corresponding active function defined in the
-      `active_chunk_functions` dictionary. If this is not the case
-      then an error will occur at definition time.
-
-    * The `!active_storage` attribute of the `Data` object that
-      provided the dask array *a* is `True`. If this is not the case
-      then an error at compute time is likely.
+              The value of the `!active_storage` attribute is
+              registered via the *active_storage* parameter of
+              `Collapse` methods.
 
     .. versionadded:: ACTIVEVERSION
 
-    .. seealso:: `active_storage`
+    .. seealso:: `active_storage`, `cf.data.collapse.Collapse`
 
     :Parameters:
 
@@ -188,8 +186,10 @@ def actify(a, method, axis=None):
             The array to be collapsed.
 
         method: `str`
-            The name of the reduction method. Must be a key of the
-            `active_chunk_functions` dictionary.
+            The name of the reduction method. If the method does not
+            have a corresponding active function in the
+            `active_chunk_functions` dictionary then active
+            compuations are not carried out.
 
         axis: (sequence of) `int`, optional
             Axis or axes along which to operate. By default,
@@ -204,13 +204,11 @@ def actify(a, method, axis=None):
             `None`.
 
     """
-    print("runing actify")
     try:
         from activestorage import Active  # noqa: F401
     except ModuleNotFoundError:
         # The active storage class dependency is not met, so using
         # active storage is not possible.
-        print("oops")
         return a, None
 
     from numbers import Integral
@@ -218,6 +216,11 @@ def actify(a, method, axis=None):
     import dask.array as da
     from dask.array.utils import validate_axis
     from dask.base import collections_to_dsk
+
+    if method not in active_chunk_functions:
+        # The method does not have a corresponding active function, so
+        # return the input data unchanged.
+        return a, None
 
     # Parse axis
     if axis is None:

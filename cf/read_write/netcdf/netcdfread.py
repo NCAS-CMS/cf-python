@@ -961,12 +961,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             array = variable[...]
             array = cfdm.MaskScale.apply(
-                variable, array, mask=True, scale=True
+                variable, array, mask=True, scale=True, always_mask=False
             )
             # array = self._cfa_conform_array(array) # Do we ant to do this?
             aggregation_instructions[term_ncvar] = array
-
-            print(term_ncvar, g["variables"][term_ncvar].dtype, array)
 
             if term == "file":
                 # Find URI substitutions that may be stored in the

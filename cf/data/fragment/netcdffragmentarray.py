@@ -64,7 +64,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, H5netcdfArray):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
-            {{s3: `dict` or `None`, optional}}
+            {{init s3: `dict` or `None`, optional}}
 
                 .. versionadded:: ACTIVEVERSION
 

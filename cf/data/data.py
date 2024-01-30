@@ -34,7 +34,6 @@ from ..functions import (
     _numpy_allclose,
     _section,
     abspath,
-    active_storage,
     atol,
     default_netCDF_fillvals,
     free_memory,

@@ -1,5 +1,4 @@
 import cfdm
-from dask.utils import SerializableLock
 
 from ...mixin_container import Container
 from .locks import _lock
