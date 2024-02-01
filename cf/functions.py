@@ -268,7 +268,6 @@ def configuration(
 
             .. versionaddedd:: ACTIVEVERSION
 
-
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -564,11 +563,17 @@ class regrid_logging(ConstantAccess):
 
     **Examples**
 
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
     False
-    >>> cf.regrid_logging(True)
+    >>> print(cf.regrid_logging(True))
     False
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
+    True
+    >>> with cf.regrid_logging(False):
+    ...     print(cf.regrid_logging())
+    ...
+    False
+    >>> print(cf.regrid_logging())
     True
 
     """
@@ -693,13 +698,19 @@ class relaxed_identities(ConstantAccess):
     >>> org = cf.relaxed_identities()
     >>> org
     False
-    >>> cf.relaxed_identities(True)
+    >>> print(cf.relaxed_identities(True))
     False
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
     True
-    >>> cf.relaxed_identities(org)
+    >>> print(cf.relaxed_identities(org))
     True
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
+    False
+    >>> with cf.relaxed_identities(True):
+    ...     print(cf.relaxed_identities())
+    ...
+    True
+    >>> print(cf.relaxed_identities())
     False
 
     """
@@ -816,18 +827,24 @@ class tempdir(ConstantAccess):
 
     :Returns:
 
-        `str`
-            The directory prior to the change, or the current
-            directory if no new value was specified.
+        `Constant`
+            The directory name prior to the change, or the name of the
+            current directory if no new value was specified.
 
     **Examples**
 
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
     '/tmp'
     >>> old = cf.tempdir('/home/me/tmp')
-    >>> cf.tempdir(old)
+    >>> print(cf.tempdir(old))
     '/home/me/tmp'
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
+    '/tmp'
+    >>> with cf.tempdir('~/NEW_TMP'):
+    ...     print(cf.tempdir())
+    ...
+    /home/me/NEW_TMP
+    >>> print(cf.tempdir())
     '/tmp'
 
     """
@@ -1095,11 +1112,6 @@ class bounds_combination_mode(ConstantAccess):
     OR
     >>> print(cf.bounds_combination_mode())
     AND
-
-    Use as a context manager:
-
-    >>> print(cf.bounds_combination_mode())
-    AND
     >>> with cf.bounds_combination_mode('XOR'):
     ...     print(cf.bounds_combination_mode())
     ...
@@ -1168,11 +1180,17 @@ class active_storage(ConstantAccess):
     **Examples**
 
     >>> cf.active_storage()
-    True
-    >>> cf.active_storage(False)
-    True
-    >>> cf.active_storage()
     False
+    >>> cf.active_storage(True)
+    False
+    >>> cf.active_storage()
+    True
+    >>> with cf.active_storage(False):
+    ...     print(cf.active_storage())
+    ...
+    False
+    >>> cf.active_storage()
+    True
 
     """
 

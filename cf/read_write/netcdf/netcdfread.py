@@ -956,14 +956,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 continue
 
             variable = g["variables"][term_ncvar]
-            if g["original_netCDF"]:
+            if g["original_netCDF4"]:
                 variable.set_auto_maskandscale(False)
 
             array = variable[...]
             array = cfdm.MaskScale.apply(
                 variable, array, mask=True, scale=True, always_mask=False
             )
-            # array = self._cfa_conform_array(array) # Do we ant to do this?
+            # array = self._cfa_conform_array(array)
             aggregation_instructions[term_ncvar] = array
 
             if term == "file":
