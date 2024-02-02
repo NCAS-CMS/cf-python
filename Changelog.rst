@@ -6,6 +6,8 @@ version 3.17.0
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
+* Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
+* Changed dependency: ``cfunits>=3.3.7``
 
 version 3.16.0
 --------------
