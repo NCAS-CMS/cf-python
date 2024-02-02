@@ -10,7 +10,10 @@ class NetCDFArray(
 ):
     """An array stored in a netCDF file.
 
-    TODOACTIVEDOCS
+    **Active storage reductions**
+
+    Active storage reduction may be enabled with the `actify`
+    method. See `cf.data.collapse.Collapse` for details.
 
     """
 

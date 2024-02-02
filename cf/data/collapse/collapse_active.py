@@ -1,5 +1,10 @@
 from functools import wraps
 
+try:
+    from activestorage import Active
+except ModuleNotFoundError:
+    Active = None
+
 
 # --------------------------------------------------------------------
 # Define the active functions
@@ -204,10 +209,8 @@ def actify(a, method, axis=None):
             `None`.
 
     """
-    try:
-        from activestorage import Active  # noqa: F401
-    except ModuleNotFoundError:
-        # The active storage class dependency is not met, so using
+    if Active is None:
+        # The active storage import dependency is not met, so using
         # active storage is not possible.
         return a, None
 

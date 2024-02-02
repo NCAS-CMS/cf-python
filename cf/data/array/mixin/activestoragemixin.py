@@ -5,7 +5,7 @@ except ModuleNotFoundError:
 
 
 class ActiveStorageMixin:
-    """TODOACTIVEDOCS.
+    """Mixin class for enabling active storage reductions.
 
     .. versionadded:: ACTIVEVERSION
 
@@ -59,6 +59,8 @@ class ActiveStorageMixin:
         )
         active.method = method
         active.components = True
+
+        # Provide a file lock
         try:
             active.lock = self._lock
         except AttributeError:
@@ -79,24 +81,37 @@ class ActiveStorageMixin:
         :Parameters:
 
             method: `str`
-                TODOACTIVEDOCS
+                The name of the reduction method.
+
+                *Parameter example:*
+                  ``'min'``
 
             axis: `None` or (sequence of) `int`, optional
-                TODOACTIVEDOCS
+                Axis or axes along which to operate. By default, or if
+                `None`, flattened input is used.
 
         :Returns:
 
             `{{class}}`
-                TODOACTIVEDOCS
+                The new `{{class}}`` instance that ues an active
+                storage operation.
 
         """
+        if Active is None:
+            # The active storage import dependency is not met, so
+            # using active storage is not possible.
+            raise AttributeError(
+                f"Can't actify {self.__class__.__name__} when "
+                "activestorage.Active is not available"
+            )
+
         a = self.copy()
         a.set_active_method(method)
         a.set_active_axis(axis)
         return a
 
     def get_active_axis(self):
-        """TODOACTIVEDOCS.
+        """Return the active storage reduction axes.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -104,13 +119,15 @@ class ActiveStorageMixin:
 
         :Returns:
 
-            TODOACTIVEDOCS
+            `None` or (sequence of) `int
+                The active storage reduction axes. `None` signifies
+                that all axes will be reduced.
 
         """
         return self._custom.get("active_axis")
 
     def get_active_method(self):
-        """TODOACTIVEDOCS.
+        """Return the name of the active storage reduction method.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -119,14 +136,14 @@ class ActiveStorageMixin:
         :Returns:
 
             `str` or `None`
-                The name of the active reduction method, or `None` if
-                one hasn't been set.
+                The name of the active storage reduction method, or
+                `None` if one hasn't been set.
 
         """
         return self._custom.get("active_method")
 
     def set_active_axis(self, value):
-        """TODOACTIVEDOCS.
+        """Set the active storage reduction axes.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -134,7 +151,9 @@ class ActiveStorageMixin:
 
         :Parameters:
 
-            TODOACTIVEDOCS
+            value: `None` or (sequence of) `int`
+                The active storage reduction axes. If `None` then all
+                axes will be reduced.
 
         :Returns:
 
@@ -144,7 +163,7 @@ class ActiveStorageMixin:
         self._custom["active_axis"] = value
 
     def set_active_method(self, value):
-        """TODOACTIVEDOCS.
+        """Set the name of the active storage reduction method.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -152,7 +171,8 @@ class ActiveStorageMixin:
 
         :Parameters:
 
-            TODOACTIVEDOCS
+            value: `str`
+                The active storage reduction method.
 
         :Returns:
 
