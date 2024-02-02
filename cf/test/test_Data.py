@@ -4502,43 +4502,45 @@ class DataTest(unittest.TestCase):
 
     def test_Data_active_storage(self):
         """Test `Data.active_storage`."""
-        d = cf.Data([[9, 8]])
-        self.assertFalse(d.active_storage)
+        with cf.active_storage(True):
+            d = cf.Data([[9, 8]])
+            self.assertFalse(d.active_storage)
 
-        d._set_active_storage(True)
-        self.assertTrue(d.active_storage)
-        d._del_active_storage()
-        self.assertFalse(d.active_storage)
+            d._set_active_storage(True)
+            self.assertTrue(d.active_storage)
+            d._del_active_storage()
+            self.assertFalse(d.active_storage)
 
-        # Check that operations correctly set active_storage to False,
-        # in particular those that do not invokde `Data._set_dask`.
-        d._set_active_storage(True)
-        d.transpose(inplace=True)
-        self.assertFalse(d.active_storage)
+            # Check that operations correctly set active_storage to
+            # False, in particular those that do not invokde
+            # `Data._set_dask`.
+            d._set_active_storage(True)
+            d.transpose(inplace=True)
+            self.assertFalse(d.active_storage)
 
-        d._set_active_storage(True)
-        d[...] = -1
-        self.assertFalse(d.active_storage)
+            d._set_active_storage(True)
+            d[...] = -1
+            self.assertFalse(d.active_storage)
 
-        d._set_active_storage(True)
-        d.persist(inplace=True)
-        self.assertFalse(d.active_storage)
+            d._set_active_storage(True)
+            d.persist(inplace=True)
+            self.assertFalse(d.active_storage)
 
-        d._set_active_storage(True)
-        d.rechunk(1, inplace=True)
-        self.assertFalse(d.active_storage)
+            d._set_active_storage(True)
+            d.rechunk(1, inplace=True)
+            self.assertFalse(d.active_storage)
 
-        # Test with data on disk
-        n = cf.NetCDFArray(
-            "test_file.nc",
-            "eastward_wind",
-            shape=(1, 9, 10),
-            dtype=np.dtype(float),
-        )
-        d = cf.Data(n)
-        self.assertTrue(d.active_storage)
-        d = cf.Data(n, to_memory=True)
-        self.assertFalse(d.active_storage)
+            # Test with data on disk
+            n = cf.NetCDFArray(
+                "test_file.nc",
+                "eastward_wind",
+                shape=(1, 9, 10),
+                dtype=np.dtype(float),
+            )
+            d = cf.Data(n)
+            self.assertTrue(d.active_storage)
+            d = cf.Data(n, to_memory=True)
+            self.assertFalse(d.active_storage)
 
     def test_Data_cull_graph(self):
         """Test `Data.cull`"""

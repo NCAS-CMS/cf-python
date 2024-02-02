@@ -15,23 +15,34 @@ class Collapse(metaclass=DocstringRewriteMeta):
     **Active storage reductions**
 
     A collapse method (such as `max`, `var`, etc.) will attempt to
-    make use of active storage reductions if all of the following
+    make use of active storage reductions when all of the following
     conditions are met:
 
-      1. it is possible to import the `activestorage.Active` class;
+      * the collapse is over all axes;
 
-      2. the collapse method's *active_storage* parameter is True;
+      * the collapse is unweighted;
 
-      3. the method has a corresponding active chunk function defined
-         in the `collapse_active.active_chunk_functions` dictionary;
+      * the data is not compressed by convention (note that netCDF
+        numeric packing is not considered here to be a compression by
+        convention techinigue);
 
-      4. inspection of the graph of the `dask` array confirms that
-         making use of active storage is possible;
+      * it is possible to import the `activestorage.Active` class;
+
+      * the collapse method's *active_storage* parameter is True;
+
+      * the collapse method's *chunk_function* parameter is `None`;
+
+      * the method has a corresponding active chunk function defined
+        in the `cf.data.collapse.active_chunk_functions` dictionary;
+
+      * inspection of the graph of the `dask` array with
+        `cf.data.collapse.actify` confirms that making use of active
+        storage is possible;
 
     in which case the Dask graph is modified to expect the per-chunk
     reductions to be carried out externally.
 
-    See `cf.data.collapse.actify` for details.
+    See `cf.data.collapse.active_storage` for details.
 
     .. versionadded:: 3.14.0
 

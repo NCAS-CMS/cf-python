@@ -34,6 +34,9 @@ from ..functions import (
     _numpy_allclose,
     _section,
     abspath,
+)
+from ..functions import active_storage as cf_active_storage
+from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -4778,7 +4781,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         False
 
         """
-        return self._custom.get("active_storage", False)
+        return (
+            self._custom.get("active_storage", False)
+            and bool(cf_active_storage())
+            and not self.get_compression_type()
+        )
 
     @property
     def Units(self):

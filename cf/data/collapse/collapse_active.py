@@ -1,9 +1,12 @@
+import logging
 from functools import wraps
 
 try:
     from activestorage import Active
 except ModuleNotFoundError:
     Active = None
+
+logger = logging.getLogger(__name__)
 
 
 # --------------------------------------------------------------------
@@ -175,11 +178,9 @@ def actify(a, method, axis=None):
     .. note:: It is assumed that the `!active_storage` attribute of
               the `Data` object that provided the dask array *a* is
               `True`. If this is not the case then an error at compute
-              time is likely.
-
-              The value of the `!active_storage` attribute is
-              registered via the *active_storage* parameter of
-              `Collapse` methods.
+              time is likely. The value of the `Data` object's
+              `!active_storage` attribute is registered via the
+              *active_storage* parameter of `Collapse` methods.
 
     .. versionadded:: ACTIVEVERSION
 
@@ -281,6 +282,7 @@ def actify(a, method, axis=None):
     # active storage reductions => redefine the dask array from the
     # actified dask graph, and set the active storage reduction chunk
     # function.
+    logger.warn("Using activestorage.Active to collapse data")
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
         active_chunk_functions[method],
@@ -319,13 +321,18 @@ def active_storage(method):
             ):
                 # Attempt to actify the dask array and provide a new
                 # chunk function
-                a, chunk_function = actify(
-                    args[0],
+                if args:
+                    dask_array = args[0]
+                else:
+                    dask_array = kwargs.pop("a")
+
+                dask_array, chunk_function = actify(
+                    dask_array,
                     method=method,
                     axis=kwargs.get("axis"),
                 )
                 args = list(args)
-                args[0] = a
+                args[0] = dask_array
 
                 if chunk_function is not None:
                     # The dask array has been actified, so update the

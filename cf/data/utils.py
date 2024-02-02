@@ -14,7 +14,6 @@ from ..cfdatetime import (
     rt2dt,
     st2rt,
 )
-from ..functions import active_storage
 from ..units import Units
 from .dask_utils import cf_YMDhms
 
@@ -863,7 +862,7 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
-        "active_storage": d.active_storage and active_storage(),
+        "active_storage": d.active_storage,
     }
 
     weights = parse_weights(d, weights, axis)

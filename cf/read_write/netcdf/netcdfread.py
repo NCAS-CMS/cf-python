@@ -956,13 +956,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 continue
 
             variable = g["variables"][term_ncvar]
-            if g["original_netCDF4"]:
-                variable.set_auto_maskandscale(False)
-
-            array = variable[...]
-            array = cfdm.MaskScale.apply(
-                variable, array, mask=True, scale=True, always_mask=False
+            array = cfdm.VariableIndexer(
+                variable, mask=True, scale=True, always_masked=False
             )
+            array = array[...]
+
             # array = self._cfa_conform_array(array)
             aggregation_instructions[term_ncvar] = array
 
@@ -988,74 +986,3 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         g["cfa_aggregated_data"][ncvar] = out
         return out
-
-
-#    def _cfa_conform_array(self, array):
-#        """Conform an array so that it is suitable for CFA processing.
-#
-#        .. versionadded: 3.15.0
-#
-#        :Parameters:
-#
-#            array: `np.ndarray`
-#                The array to conform.
-#
-#        :Returns:
-#
-#            array: `np.ndarray`
-#                The conformed array.
-#
-#        """
-#        string_type = isinstance(array, str)
-#
-#        if string_type:
-#            print (888888)
-#            # --------------------------------------------------------
-#            # A netCDF string type scalar variable comes out as Python
-#            # str object, so convert it to a numpy array.
-#            # --------------------------------------------------------
-#            array = np.array(array, dtype=f"U{len(array)}")
-#
-#        kind = array.dtype.kind
-#        if not string_type and kind in "SU":
-#            # Collapse by concatenation the outermost (fastest
-#            # varying) dimension of char array into
-#            # memory. E.g. [['a','b','c']] becomes ['abc']
-#            if kind == "U":
-#                array = array.astype("S", copy=False)
-#
-#            array = netCDF4.chartostring(array)
-#            shape = array.shape
-#            array = np.array([x.rstrip() for x in array.flat], dtype="U")
-#            array = np.reshape(array, shape)
-#            array = np.ma.masked_where(array == "", array)
-#        elif not string_type and kind == "O":
-#            array = array.astype("U", copy=False)
-#            print (11111111, repr(array))
-#            array = np.ma.where(array == "", np.ma.masked, array)
-#
-#        return array
-#
-#        if isinstance(array, str):
-#            # string
-#            return np.array(array, dtype=f"S{len(array)}").astype("U")
-#
-#        kind = array.dtype.kind
-#        if kind == "O":
-#            # string
-#            return array.astype("U")
-#
-#        if kind in "SU":
-#            # char
-#            if kind == "U":
-#                array = array.astype("S")
-#
-#            array = netCDF4.chartostring(array)
-#            shape = array.shape
-#            array = np.array([x.rstrip() for x in array.flat], dtype="S")
-#            array = np.reshape(array, shape)
-#            array = np.ma.masked_where(array == b"", array)
-#            return array.astype("U")
-#
-#        # number
-#        return array
