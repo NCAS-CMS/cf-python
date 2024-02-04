@@ -4768,9 +4768,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         If the `active_storage` attribute is `True` then reductions
         (such as calculating the minimum value of the data) will
-        attempt to use active storage capabilities, falling back on
-        the usual (non-active) techniques if an active storage
-        operation fails for any reason.
+        *attempt* to use active storage capabilities, falling back on
+        the usual (non-active) techniques if the conditionsa are not
+        right.
 
         .. versionadded:: ACTIVEVERSION
 

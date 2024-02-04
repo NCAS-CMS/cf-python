@@ -226,6 +226,7 @@ def actify(a, method, axis=None):
         # return the input data unchanged.
         return a, None
 
+    print(9992, axis)
     # Parse axis
     if axis is None:
         axis = tuple(range(a.ndim))
@@ -236,6 +237,7 @@ def actify(a, method, axis=None):
         if len(axis) != a.ndim:
             # Can't (yet) use active storage to collapse a subset of
             # the axes, so return the input data unchanged.
+            print(9993)
             return a, None
 
         axis = validate_axis(axis, a.ndim)
@@ -282,7 +284,7 @@ def actify(a, method, axis=None):
     # active storage reductions => redefine the dask array from the
     # actified dask graph, and set the active storage reduction chunk
     # function.
-    logger.warn("Using activestorage.Active to collapse data")
+    logger.warning("Using activestorage.Active to collapse chunks")
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
         active_chunk_functions[method],

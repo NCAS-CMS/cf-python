@@ -62,13 +62,13 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
-    s3=None,
-    library=None,
+    storage_options=None,
+    netCDF_backend=None,
 ):
     """Read field or domain constructs from files.
 
-    The following file formats are supported: CF-netCDF, CFA-netCDF,
-    CDL, UM fields file, and PP.
+    The following file formats are supported: netCDF, CFA-netCDF, CDL,
+    UM fields file, and PP.
 
     Input datasets are mapped to constructs in memory which are
     returned as elements of a `FieldList` or if the *domain* parameter
@@ -667,26 +667,38 @@ def read(
 
             .. versionadded:: 3.15.0
 
-        s3: `dict` or `None`, optional
-            Keyword parameters to be passed to `s3fs.S3FileSystem` to
-            control the opening of files in an S3 object store. By
-            default, or if `None`, then a value of ``{'anon': True}``
-            is used. Ignored for file names that don't start with
-            ``s3:``.
+        storage_options: `dict` or `None`, optional
+            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
+            file-system backend to control the opening of files in an
+            S3 object store. By default, or if `None`, then a value of
+            ``{'anon': True}`` is used. Ignored for file names that
+            don't start with ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key (which
-            will always be the case when *s3* is `None`), then one
-            will be automatically derived from the file name and
+            If and only if *s3* has no ``'endpoint_url'`` key, then
+            one will be automatically derived from the file name and
             included in the keyword parameters. For example, for a
-            file name of ``'s3://object-store/data/file.nc'``, then an
-            ``'endpoint_url'`` key with value
-            ``'https://object-store'`` would be created. To disable
-            this behaviour, assign `None` to the ``'endpoint_url'``
-            key.
+            file name of ``'s3://store/data/file.nc'``, an
+            ``'endpoint_url'`` key with value ``'https://store'``
+            would be created. To disable this behaviour, assign `None`
+            to the ``'endpoint_url'`` key.
+
+            *Parameter example:*
+              ``{'anon': True}``
+
+            *Parameter example:*
+              For a file name of ``'s3://store/data/file.nc'``, the
+              following are equivalent: ``{'anon': True}`` and
+              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+
+            *Parameter example:*
+             ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
+              'client_kwargs': {'endpoint_url': 'http://some-s3.com',
+              'config_kwargs': {'s3': {'addressing_style':
+              'virtual'}}``
 
             .. versionadded:: (cfdm) ACTIVEVERSION
 
-        library: `str` or `None`, optional
+        netCDF_backend: `str` or `None`, optional
             Specify which library to use for opening input files. By
             default, or if `None`, then `netCDF4` will used unless it
             fails to open a given file, in which case `h5netcdf` will
@@ -987,8 +999,8 @@ def read(
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
-                library=library,
-                s3=s3,
+                netCDF_backend=netCDF_backend,
+                storage_options=storage_options,
             )
 
             # --------------------------------------------------------
@@ -1103,8 +1115,8 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
-    library=None,
-    s3=None,
+    netCDF_backend=None,
+    storage_options=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1140,12 +1152,12 @@ def _read_a_file(
 
             .. versionadded:: 3.15.0
 
-        s3: `dict` or `None`, optional
+        storage_options: `dict` or `None`, optional
             See `cf.read` for details.
 
             .. versionadded:: ACTIVEVERSION
 
-        library: `str` or `None`, optional
+        netCDF_backend: `str` or `None`, optional
             See `cf.read` for details.
 
             .. versionadded:: ACTIVEVERSION
@@ -1223,8 +1235,8 @@ def _read_a_file(
                 mask=mask,
                 warn_valid=warn_valid,
                 domain=domain,
-                s3=s3,
-                library=library,
+                storage_options=storage_options,
+                netCDF_backend=netCDF_backend,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

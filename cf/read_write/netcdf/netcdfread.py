@@ -654,7 +654,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-        print(g["s3"])
+        print(g["storage_options"])
 
         # Get the kwargs needed to instantiate a general NetCDFArray
         # instance

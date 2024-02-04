@@ -47,14 +47,14 @@ class ActiveStorageMixin:
                 missing_values = {}
 
         try:
-            s3 = self.get_s3()
+            storage_options = self.get_storage_options()
         except AttributeError:
-            s3 = {}
+            storage_options = {}
 
         active = Active(
             self.get_filename(),
             self.get_address(),
-            s3=s3,
+            #            storage_options=storage_options,
             **missing_values,
         )
         active.method = method
@@ -66,7 +66,10 @@ class ActiveStorageMixin:
         except AttributeError:
             pass
 
-        return active[indices]
+        print(active.__dict__)
+        out = active[indices]
+        print(repr(out))
+        return out
 
     def actify(self, method, axis=None):
         """Return a new actified `{{class}}` instance.
