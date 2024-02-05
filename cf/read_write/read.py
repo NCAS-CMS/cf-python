@@ -683,18 +683,15 @@ def read(
             to the ``'endpoint_url'`` key.
 
             *Parameter example:*
-              ``{'anon': True}``
-
-            *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
               following are equivalent: ``{'anon': True}`` and
               ``{'anon': True, 'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
-             ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
-              'client_kwargs': {'endpoint_url': 'http://some-s3.com',
-              'config_kwargs': {'s3': {'addressing_style':
-              'virtual'}}``
+              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
+              'endpoint_url': None, 'client_kwargs': {'endpoint_url':
+              'http://some-s3.com', 'config_kwargs': {'s3':
+              {'addressing_style': 'virtual'}}}}``
 
             .. versionadded:: (cfdm) ACTIVEVERSION
 

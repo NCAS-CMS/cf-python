@@ -8,18 +8,17 @@ from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
 
 # from .mixin import CFAMixin
-from .netcdfarray import NetCDFArray
+from .netcdf4array import NetCDF4Array
 
 # Store fragment array classes.
 _FragmentArray = {
-    #    "nc": H5FragmentArray,
     "nc": NetCDFFragmentArray,
     "um": UMFragmentArray,
     "full": FullFragmentArray,
 }
 
 
-class CFANetCDFArray(NetCDFArray):
+class CFANetCDFArray(NetCDF4Array):
     """A CFA aggregated array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -37,7 +36,7 @@ class CFANetCDFArray(NetCDFArray):
         instructions=None,
         substitutions=None,
         term=None,
-        s3=None,
+        storage_options=None,
         source=None,
         copy=True,
         x=None,
@@ -105,7 +104,7 @@ class CFANetCDFArray(NetCDFArray):
 
                 .. versionadded:: 3.15.0
 
-            {{init s3: `dict` or `None`, optional}}
+            {{init storage_options: `dict` or `None`, optional}}
 
                 .. versionadded:: ACTIVEVERSION
 
@@ -182,48 +181,16 @@ class CFANetCDFArray(NetCDFArray):
 
                 if not a.ndim:
                     a = (a.item(),)
-                    #                    a = np.full(f.shape, a, dtype=a.dtype)
-                    #                    if np.ma.is_masked(f):
-                    #                        a = np.ma.array(a, mask=f.mask)
                     scalar_address = True
                 else:
                     scalar_address = False
 
                 if not file_fmt.ndim:
-                    #                    fmt = np.full(fragment_shape, fmt, dtype=fmt.dtype)
                     file_fmt = file_fmt.item()
                     scalar_fmt = True
                 else:
                     scalar_fmt = False
 
-                # if extra_dimension:
-                #    for  frag_loc, loc in zip(positions, locations):
-                #        if not scalar_address:
-                #            address = compressed(a[frag_loc]).tolist()
-                #        else:
-                #            address = a
-                #
-                #        if not scalar_fmt:
-                #            file_fmt = compressed(fmt[frag_loc].tolist())
-                #        else:
-                #            file_fmt = fmt
-                #
-                #        aggregated_data['frag_loc'] = {
-                #                "location": loc,
-                #                "filename": compressed(f[frag_loc]).tolist(),
-                #                "address": address,
-                #                "format": file_fmt,
-                #            }
-                #    #aggregated_data = {
-                #    #    frag_loc: {
-                #    #        "location": loc,
-                #    #        "filename": compressed(f[frag_loc]).tolist(),
-                #    #        "address": compressed(a[frag_loc]).tolist(),
-                #    #        "format": fmt[frag_loc].item(),
-                #    #    }
-                #    #    for frag_loc, loc in zip(positions, locations)
-                #    #}
-                # else:
                 for frag_loc, location in zip(positions, locations):
                     if extra_dimension:
                         filename = compressed(f[frag_loc]).tolist()
@@ -255,15 +222,6 @@ class CFANetCDFArray(NetCDFArray):
                         "address": address,
                         "format": fmt,
                     }
-                #                    aggregated_data = {
-                #                        frag_loc: {
-                #                            "location": loc,
-                #                            "filename": (f[frag_loc].item(),),
-                #                            "address": (a[frag_loc].item(),),
-                #                            "format": fmt[frag_loc].item(),
-                #                        }
-                #                        for frag_loc, loc in zip(positions, locations)
-                #                    }
 
                 # Apply string substitutions to the fragment filenames
                 if substitutions:
@@ -736,7 +694,7 @@ class CFANetCDFArray(NetCDFArray):
             fragment_arrays = _FragmentArray.copy()
             fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
 
-        s3 = self.get_s3()
+        storage_options = self.get_storage_options(endpoint_url=False)
 
         dsk = {}
         for (
@@ -759,9 +717,9 @@ class CFANetCDFArray(NetCDFArray):
                     f"fragment dataset format: {fragment_format!r}"
                 )
 
-            if s3 and kwargs["address"] == "nc":
+            if storage_options and kwargs["address"] == "nc":
                 # Pass on any S3 file system options
-                kwargs["s3"] = s3
+                kwargs["storage_options"] = storage_options
 
             fragment = FragmentArray(
                 dtype=dtype,

@@ -278,7 +278,7 @@ from .data.array import (
     FullArray,
     GatheredArray,
     H5netcdfArray,
-    NetCDFArray,
+    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,

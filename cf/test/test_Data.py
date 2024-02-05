@@ -4531,7 +4531,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(d.active_storage)
 
             # Test with data on disk
-            n = cf.NetCDFArray(
+            n = cf.NetCDF4Array(
                 "test_file.nc",
                 "eastward_wind",
                 shape=(1, 9, 10),

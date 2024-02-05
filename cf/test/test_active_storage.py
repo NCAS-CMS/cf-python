@@ -7,8 +7,6 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import numpy as np
-
 import cf
 
 try:

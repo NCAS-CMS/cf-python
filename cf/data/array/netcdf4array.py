@@ -35,10 +35,10 @@ class NetCDF4Array(
 
         Returns a lock object because concurrent reads are not
         currently supported by the netCDF and HDF libraries. The lock
-        object will be the same for all `NetCDFArray` and `HDFArray`
-        instances, regardless of the dataset they access, which means
-        that access to all netCDF and HDF files coordinates around the
-        same lock.
+        object will be the same for all `NetCDF4Array` and
+        `H5netcdfArray` instances, regardless of the dataset they
+        access, which means that access to all netCDF and HDF files
+        coordinates around the same lock.
 
         .. versionadded:: 3.14.0
 

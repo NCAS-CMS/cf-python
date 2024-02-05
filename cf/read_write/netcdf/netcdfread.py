@@ -957,7 +957,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             variable = g["variables"][term_ncvar]
             array = cfdm.VariableIndexer(
-                variable, mask=True, scale=True, always_masked=False
+                variable, mask=True, scale=True, always_mask=False
             )
             array = array[...]
 
