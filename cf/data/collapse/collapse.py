@@ -18,6 +18,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
     make use of active storage reductions when all of the following
     conditions are met:
 
+      * `cf.active_storage()` is True;
+
+      * it is possible to import the `activestorage.Active` class;
+
       * the collapse is over all axes;
 
       * the collapse is unweighted;
@@ -26,11 +30,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
         numeric packing is not considered here to be a compression by
         convention techinigue);
 
-      * it is possible to import the `activestorage.Active` class;
+      * the `Collapse` method's *active_storage* parameter is True;
 
-      * the collapse method's *active_storage* parameter is True;
-
-      * the collapse method's *chunk_function* parameter is `None`;
+      * the `Collapse` method's *chunk_function* parameter is `None`;
 
       * the method has a corresponding active chunk function defined
         in the `cf.data.collapse.active_chunk_functions` dictionary;

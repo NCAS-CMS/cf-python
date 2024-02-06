@@ -58,6 +58,7 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
@@ -411,14 +412,13 @@ def read(
             parameter.
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
+            If True (the default) then mask by convention the data of
+            field and metadata constructs.
 
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.
 
             The masking by convention of a PP or UM array depends on
             the value of BMDI in the lookup header. A value other than
@@ -429,6 +429,15 @@ def read(
             for details.
 
             .. versionadded:: 3.4.0
+
+        unpack: `bool`, optional
+            If True (the default) then unpack by convention when
+            reading data from disk.
+
+            A netCDF array is unpacked depending on the values of the
+            netCDF attributes ``add_offset`` and ``scale_factor``.
+
+            .. versionadded:: (cfdm) ACTIVEVERSION
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -668,32 +677,33 @@ def read(
             .. versionadded:: 3.15.0
 
         storage_options: `dict` or `None`, optional
-            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
-            file-system backend to control the opening of files in an
-            S3 object store. By default, or if `None`, then a value of
-            ``{'anon': True}`` is used. Ignored for file names that
-            don't start with ``s3:``.
+            Key/value pairs to be passed on to the creation of
+            `s3fs.S3FileSystem` file systems to control the opening of
+            files in S3 object stores. Ignored for files not in an S3
+            object store, i.e. those whose names do not start with
+            ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key, then
-            one will be automatically derived from the file name and
-            included in the keyword parameters. For example, for a
-            file name of ``'s3://store/data/file.nc'``, an
-            ``'endpoint_url'`` key with value ``'https://store'``
-            would be created. To disable this behaviour, assign `None`
-            to the ``'endpoint_url'`` key.
+            By default, or if `None`, then a value of ``{'anon':
+            True}`` is used.
+
+            If an ``'endpoint_url'`` key is not in *storage_options*
+            then one will be automatically derived for accessing each
+            S3 file. For example, for a file name of
+            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+            with value ``'https://store'`` would be created.
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``{'anon': True}`` and
-              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+              following are equivalent: ``None``, ``{'anon': True}``,
+              and ``{'anon': True, 'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
-              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
-              'endpoint_url': None, 'client_kwargs': {'endpoint_url':
-              'http://some-s3.com', 'config_kwargs': {'s3':
-              {'addressing_style': 'virtual'}}}}``
+              ``{'key: 'scaleway-api-key...', 'secret':
+              'scaleway-secretkey...', 'endpoint_url':
+              'https://s3.fr-par.scw.cloud', 'client_kwargs':
+              {'region_name': 'fr-par'}}``
 
-            .. versionadded:: (cfdm) ACTIVEVERSION
+            .. versionadded:: ACTIVEVERSION
 
         netCDF_backend: `str` or `None`, optional
             Specify which library to use for opening input files. By
@@ -703,7 +713,14 @@ def read(
             ``'h5netcdf'`` will force the use of the `netCDF4` or
             `h5netcdf` libraries respectively.
 
-            .. versionadded:: (cfdm) ACTIVEVERSION
+            .. note:: The *netCDF_backend* parameter does not affect
+                      the opening of netCDF fragment files that define
+                      the data of aggregated variables. For these,
+                      `netCDF4` is used for local files and those
+                      accessed via OPenDAP, and `h5netcdf` is used for
+                      fragement files in S3 object stores.
+
+            .. versionadded:: ACTIVEVERSION
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -992,6 +1009,7 @@ def read(
                 height_at_top_of_model=height_at_top_of_model,
                 chunks=chunks,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
@@ -1107,6 +1125,7 @@ def _read_a_file(
     extra=None,
     height_at_top_of_model=None,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     select=None,
@@ -1230,6 +1249,7 @@ def _read_a_file(
                 warnings=warnings,
                 extra_read_vars=extra_read_vars,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 domain=domain,
                 storage_options=storage_options,

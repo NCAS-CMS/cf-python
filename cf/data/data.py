@@ -34,9 +34,6 @@ from ..functions import (
     _numpy_allclose,
     _section,
     abspath,
-)
-from ..functions import active_storage as cf_active_storage
-from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -4764,13 +4761,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     # ----------------------------------------------------------------
     @property
     def active_storage(self):
-        """Whether or not active storage recductions are possible.
+        """Whether or not active storage reductions are possible.
 
-        If the `active_storage` attribute is `True` then reductions
-        (such as calculating the minimum value of the data) will
-        *attempt* to use active storage capabilities, falling back on
-        the usual (non-active) techniques if the conditionsa are not
-        right.
+        When the `active_storage` attribute is False it signifies that
+        active storage reductions are not available.
+
+        When the `active_storage` attribute is True it signifies that
+        active storage reductions are possible, but only when all of
+        the conditions described by `cf.data.collapse.Collapse` are
+        met.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -4783,7 +4782,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return (
             self._custom.get("active_storage", False)
-            and bool(cf_active_storage())
             and not self.get_compression_type()
         )
 

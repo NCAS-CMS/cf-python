@@ -52,7 +52,7 @@ class ActiveStorageTest(unittest.TestCase):
         with cf.active_storage(True):
             self.assertTrue(cf.active_storage())
             self.assertTrue(f.data.active_storage)
-            active_array = f.collapse("mean").array
+            active_array = f.collapse("mean", weights=False).array
 
         self.assertEqual(array, active_array)
 

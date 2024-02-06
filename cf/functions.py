@@ -266,7 +266,7 @@ def configuration(
             reductions or False to disable them). The default is to
             not change the current behaviour.
 
-            .. versionaddedd:: ACTIVEVERSION
+            .. versionadded:: ACTIVEVERSION
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer

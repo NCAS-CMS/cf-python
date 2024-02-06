@@ -12,16 +12,16 @@ class H5netcdfArray(
     Container,
     cfdm.H5netcdfArray,
 ):
-    """An array stored in a netCDF file.]
+    """A netCDF array accessed with `h5netcdf`.
 
-    .. versionadded:: HDFVER
+    .. versionadded:: ACTIVEVERSION
 
     """
 
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: HDFVER
+        .. versionadded:: ACTIVEVERSION
 
         """
         return super().__dask_tokenize__() + (self.get_mask(),)
@@ -37,7 +37,7 @@ class H5netcdfArray(
         that access to all netCDF and HDF files coordinates around the
         same lock.
 
-        .. versionadded:: HDFVER
+        .. versionadded:: ACTIVEVERSION
 
         """
         return _lock

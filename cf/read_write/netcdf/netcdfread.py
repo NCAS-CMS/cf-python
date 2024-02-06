@@ -649,14 +649,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Returns:
 
             (`CFANetCDFArray`, `dict`)
-                The new `NetCDFArray` instance and dictionary of the
-                kwargs used to create it.
+                The new `CFANetCDFArray` instance and dictionary of
+                the kwargs used to create it.
 
         """
         g = self.read_vars
-        print(g["storage_options"])
 
-        # Get the kwargs needed to instantiate a general NetCDFArray
+        # Get the kwargs needed to instantiate a general netCDF array
         # instance
         kwargs = self._create_netcdfarray(
             ncvar,
@@ -728,13 +727,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Returns:
 
             (`CFANetCDFArray`, `dict`)
-                The new `NetCDFArray` instance and dictionary of the
-                kwargs used to create it.
+                The new `CFANetCDFArray` instance and dictionary of
+                the kwargs used to create it.
 
         """
         g = self.read_vars
 
-        # Get the kwargs needed to instantiate a general NetCDFArray
+        # Get the kwargs needed to instantiate a general netCDF array
         # instance
         kwargs = self._create_netcdfarray(
             ncvar,
@@ -956,13 +955,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 continue
 
             variable = g["variables"][term_ncvar]
-            array = cfdm.VariableIndexer(
-                variable, mask=True, scale=True, always_mask=False
+            array = cfdm.NetCDFIndexer(
+                variable, mask=True, unpack=True, always_mask=False
             )
-            array = array[...]
-
-            # array = self._cfa_conform_array(array)
-            aggregation_instructions[term_ncvar] = array
+            aggregation_instructions[term_ncvar] = array[...]
 
             if term == "file":
                 # Find URI substitutions that may be stored in the

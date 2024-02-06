@@ -104,7 +104,32 @@ class CFANetCDFArray(NetCDF4Array):
 
                 .. versionadded:: 3.15.0
 
-            {{init storage_options: `dict` or `None`, optional}}
+            storage_options: `dict` or `None`, optional
+                Key/value pairs to be passed on to the creation of
+                `s3fs.S3FileSystem` file systems to control the
+                opening of fragment files in an S3 object
+                stores. Ignored for fragment files not in S3 object
+                stores, i.e. those whose names do not start with
+                ``s3:``.
+
+                If an ``'endpoint_url'`` key is not in
+                *storage_options* then one will be automatically
+                derived for accessing each S3 fragment file. For
+                example, for a fragment file name of
+                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
+                key with value ``'https://store'`` would be created.
+
+                *Parameter example:*
+                  For a fragment file name of
+                  ``'s3://store/data/file.nc'``, the following are
+                  equivalent: ``None``, ``{}`` and ``{'endpoint_url':
+                  'https://store'}``.
+
+                *Parameter example:*
+                  ``{'key: 'scaleway-api-key...', 'secret':
+                  'scaleway-secretkey...', 'endpoint_url':
+                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
+                  {'region_name': 'fr-par'}}``
 
                 .. versionadded:: ACTIVEVERSION
 
@@ -380,6 +405,39 @@ class CFANetCDFArray(NetCDF4Array):
 
         """
         return self._get_component("fragment_shape")
+
+    def get_storage_options(self):
+        """Return `s3fs.S3FileSystem` options for accessing S3 fragment files.
+
+        If an ``'endpoint_url'`` key is not in the returned options,
+        then one will be automatically derived for accessing each S3
+        fragment file. For example, for a fragment file name of
+        ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key with
+        value ``'https://store'`` would be created.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Returns:
+
+            `dict` or `None`
+                The `s3fs.S3FileSystem` options.
+
+        **Examples**
+
+        >>> f.get_storage_options()
+        {}
+
+        >>> f.get_storage_options()
+        {'anon': True}
+
+        >>> f.get_storage_options()
+        {'key: 'scaleway-api-key...',
+         'secret': 'scaleway-secretkey...',
+         'endpoint_url': 'https://s3.fr-par.scw.cloud',
+         'client_kwargs': {'region_name': 'fr-par'}}
+
+        """
+        return super().get_storage_options(create_endpoint_url=False)
 
     def get_term(self, default=ValueError()):
         """The CFA aggregation instruction term for the data, if set.
@@ -694,7 +752,7 @@ class CFANetCDFArray(NetCDF4Array):
             fragment_arrays = _FragmentArray.copy()
             fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
 
-        storage_options = self.get_storage_options(endpoint_url=False)
+        storage_options = self.get_storage_options()
 
         dsk = {}
         for (

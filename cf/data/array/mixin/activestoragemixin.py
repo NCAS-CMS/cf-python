@@ -54,7 +54,7 @@ class ActiveStorageMixin:
         active = Active(
             self.get_filename(),
             self.get_address(),
-            #            storage_options=storage_options,
+            storage_options=storage_options,
             **missing_values,
         )
         active.method = method
@@ -66,10 +66,7 @@ class ActiveStorageMixin:
         except AttributeError:
             pass
 
-        print(active.__dict__)
-        out = active[indices]
-        print(repr(out))
-        return out
+        return active[indices]
 
     def actify(self, method, axis=None):
         """Return a new actified `{{class}}` instance.

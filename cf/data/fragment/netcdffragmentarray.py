@@ -16,9 +16,12 @@ class NetCDFFragmentArray(
     cfdm.data.mixin.FileArrayMixin,
     Array,
 ):
-    """Mixin class for a CFA fragment array.
+    """A netCDF fragment array.
 
-    .. versionadded:: 3.15.0
+    Access will either with `netCDF4` (for local and OPenDAP files) or
+    `h5netcdf` (for S3 files).
+
+    .. versionadded:: ACTIVEVERSION
 
     """
 

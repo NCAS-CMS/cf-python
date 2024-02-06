@@ -6,6 +6,8 @@ try:
 except ModuleNotFoundError:
     Active = None
 
+from ...functions import active_storage as cf_active_storage
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,7 +26,7 @@ def active_min(a, **kwargs):
 
     .. versionadded:: ACTIVEVERSION
 
-    .. seealso:: `actify`
+    .. seealso:: `actify`, `active_storage`
 
     :Parameters:
 
@@ -59,7 +61,7 @@ def active_max(a, **kwargs):
 
     .. versionadded:: ACTIVEVERSION
 
-    .. seealso:: `actify`
+    .. seealso:: `actify`, `active_storage`
 
     :Parameters:
 
@@ -94,7 +96,7 @@ def active_mean(a, **kwargs):
 
     .. versionadded:: ACTIVEVERSION
 
-    .. seealso:: `actify`
+    .. seealso:: `actify`, `active_storage`
 
     :Parameters:
 
@@ -133,7 +135,7 @@ def active_sum(a, **kwargs):
 
     .. versionadded:: ACTIVEVERSION
 
-    .. seealso:: `actify`
+    .. seealso:: `actify`, `active_storage`
 
     :Parameters:
 
@@ -226,7 +228,6 @@ def actify(a, method, axis=None):
         # return the input data unchanged.
         return a, None
 
-    print(9992, axis)
     # Parse axis
     if axis is None:
         axis = tuple(range(a.ndim))
@@ -237,7 +238,6 @@ def actify(a, method, axis=None):
         if len(axis) != a.ndim:
             # Can't (yet) use active storage to collapse a subset of
             # the axes, so return the input data unchanged.
-            print(9993)
             return a, None
 
         axis = validate_axis(axis, a.ndim)
@@ -296,8 +296,7 @@ def active_storage(method):
 
     This decorator is intended for `Collapse` methods. When a
     `Collapse` method is decorated, active storage operations are only
-    carried out when the conditions are right. See `Collapse` for
-    details.
+    carried out when the conditions are right.
 
     .. versionadded:: ACTIVEVERSION
 
@@ -320,6 +319,7 @@ def active_storage(method):
                 and method in active_chunk_functions
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
+                and cf_active_storage()
             ):
                 # Attempt to actify the dask array and provide a new
                 # chunk function
@@ -347,3 +347,6 @@ def active_storage(method):
         return wrapper
 
     return decorator
+
+
+2

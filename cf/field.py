@@ -6777,7 +6777,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             data_axes = f.get_data_axes()
             iaxes = [
                 data_axes.index(axis)
-                for axis in collapse_axes
+                for axis in collapse_axes_all_sizes
                 if axis in data_axes
             ]
 

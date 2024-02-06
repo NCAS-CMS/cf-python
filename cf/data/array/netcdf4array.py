@@ -12,7 +12,7 @@ class NetCDF4Array(
     Container,
     cfdm.NetCDF4Array,
 ):
-    """An array stored in a netCDF file.
+    """A netCDF array accessed with `netCDF4`.
 
     **Active storage reductions**
 
