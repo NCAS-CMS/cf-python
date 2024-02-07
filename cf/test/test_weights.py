@@ -291,6 +291,43 @@ class WeightsTest(unittest.TestCase):
         )
         self.assertEqual(w.Units, cf.Units("m"))
 
+    def test_weights_cell_measures_coordinates(self):
+        import cf
+
+        f = cf.example_field(0)
+
+        areas1 = f.cell_area()
+        areas2 = areas1.copy()
+        areas2[...] = -1
+
+        c = cf.CellMeasure(source=areas2)
+        c.set_measure("area")
+        f.set_construct(c)
+
+        w = f.weights(True, measure=True)
+        self.assertTrue(w.data.allclose(areas2.data))
+
+        w = f.weights(True, measure=True, cell_measures=False)
+        self.assertTrue(w.data.allclose(areas1.data))
+
+        w = f.weights(True, measure=True, coordinates=False)
+        self.assertTrue(w.data.allclose(areas2.data))
+
+        with self.assertRaises(ValueError):
+            w = f.weights(True, cell_measures=False, coordinates=False)
+
+        w = f.weights("area", measure=True)
+        self.assertTrue(w.data.allclose(areas2.data))
+
+        w = f.weights("area", measure=True, cell_measures=False)
+        self.assertTrue(w.data.allclose(areas1.data))
+
+        w = f.weights("area", measure=True, coordinates=False)
+        self.assertTrue(w.data.allclose(areas2.data))
+
+        with self.assertRaises(ValueError):
+            w = f.weights("area", cell_measures=False, coordinates=False)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

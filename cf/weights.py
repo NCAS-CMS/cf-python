@@ -138,12 +138,11 @@ class Weights(Container, cfdm.Container):
 
             if ycoord.Units.equivalent(radians):
                 ycoord = ycoord.clip(-90, 90, units=Units("degrees"))
-                ycoord.sin(inplace=True)
-
+                ysin = ycoord.sin()
                 if methods:
                     weights[(yaxis,)] = f"linear sine {ycoord.identity()}"
                 else:
-                    cells = ycoord.cellsize
+                    cells = ysin.cellsize
                     if measure:
                         cells = cells * radius
 
@@ -1521,6 +1520,16 @@ class Weights(Container, cfdm.Container):
             )
 
         key, clm = m.popitem()
+
+        if not clm.has_data():
+            if auto:
+                return False
+
+            raise ValueError(
+                f"Can't find weights: Cell measure {m!r} has no data, "
+                "possibly because it is external. "
+                "Consider setting cell_measures=False"
+            )
 
         clm_axes0 = f.get_data_axes(key)
 
