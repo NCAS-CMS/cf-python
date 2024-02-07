@@ -5,11 +5,11 @@ version 3.17.0
 
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
   `cf.Field.weights`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/709)
 * Added the ``cell_measures``, ``coordinates``,
   ``return_cell_measure``, and ``methods`` keyword arguments to
   `cf.Field.cell_area`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/709)
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
