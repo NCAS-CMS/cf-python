@@ -15,8 +15,9 @@ def to_dask(array, chunks, **from_array_options):
 
         array: array_like
             The array to be converted to a `dask` array. Examples of
-            valid types include `numpy` arrays, `dask` arrays, `Array`
-            subclasses, `list`, `tuple`, scalars.
+            valid types include anything with a `to_dask_array`
+            method, `numpy` arrays, `dask` arrays, `xarray` arrays,
+            `cf.Array` subclasses, `list`, `tuple`, scalars.
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
             Specify the chunking of the returned dask array.  Any
@@ -67,6 +68,11 @@ def to_dask(array, chunks, **from_array_options):
             return array.to_dask_array(chunks=chunks)
         except TypeError:
             return array.to_dask_array()
+
+    if type(array).__module__.split(".")[0] == "xarray":
+        data = getattr(array, "data", None)
+        if data is not None:
+            return da.asanyarray(data)
 
     if not isinstance(
         array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
