@@ -3494,18 +3494,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.3.0
 
             cell_measures: `bool`, optional
+
                 If True, the default, then area and volume cell
                 measure constructs are considered for weights creation
-                when *weights* of `True`, ``'area'``, or ``'volume'``,
-                Ignored for other values of *weights*.
+                when *weights* is `True`, ``'area'``, or
+                ``'volume'``. If False then cell measure constructs
+                are ignored for these *weights*.
 
                 .. versionadded:: 3.17.0
 
             coordinates: `bool`, optional
                 If True, the default, then coordinate constructs are
-                considered for weights creation when *weights* of
-                `True` or ``'area'``. Ignored for other values of
-                *weights*.
+                considered for weights creation for *weights* of
+                `True` or ``'area'``. If False then cell measure
+                constructs are ignored for these *weights*.
 
                 .. versionadded:: 3.17.0
 
