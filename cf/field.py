@@ -3494,7 +3494,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.3.0
 
             cell_measures: `bool`, optional
-
                 If True, the default, then area and volume cell
                 measure constructs are considered for weights creation
                 when *weights* is `True`, ``'area'``, or
