@@ -2709,7 +2709,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self),
             "clip",
             (a_min, a_max),
-            delete_props=False,
             inplace=inplace,
             i=i,
             units=units,

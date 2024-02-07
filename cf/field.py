@@ -3618,7 +3618,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 comp,
                 weights_axes,
                 methods=methods,
-                auto=False,  # True
+                auto=True,
             ):
                 # Found area weights from cell measures
                 pass
