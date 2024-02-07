@@ -54,7 +54,7 @@ class ActiveStorageMixin:
         active = Active(
             self.get_filename(),
             self.get_address(),
-            storage_options=storage_options,
+            # storage_options=storage_options,
             **missing_values,
         )
         active.method = method

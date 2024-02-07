@@ -1,11 +1,11 @@
-from ..array.netcdf4array import NetCDF4Array
+from ..array.h5netcdfarray import H5netcdfArray
 from .mixin import FragmentArrayMixin
 
 
-class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
-    """A netCDF fragment array accessed with `netCDF4`.
+class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
+    """A netCDF fragment array accessed with `h5netcdf`.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: ACTIVEVERSION
 
     """
 
