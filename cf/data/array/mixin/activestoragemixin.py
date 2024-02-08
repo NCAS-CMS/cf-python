@@ -34,28 +34,19 @@ class ActiveStorageMixin:
         """
         method = self.get_active_method()
         if method is None:
-            # Normal read by local client. Returns a numpy array.
+            # Do a normal read by local client. Returns an un-reduced
+            # numpy array.
             return super().__getitem__(indices)
 
-        # Active storage reduction. Returns a dictionary.
-        try:
-            missing_values = self.get_missing_values()
-        except AttributeError:
-            missing_values = {}
-        else:
-            if missing_values is None:
-                missing_values = {}
-
-        try:
-            storage_options = self.get_storage_options()
-        except AttributeError:
-            storage_options = {}
-
+        # Still here? Then do an active storage reduction. Returns a
+        # dictionary of reduced values.
         active = Active(
             self.get_filename(),
             self.get_address(),
-            # storage_options=storage_options,
-            **missing_values,
+            # dtype=self.dtype,
+            # missing_values=self.get_missing_values(None),
+            # storage_options=self.get_storage_options(),
+            # active_storage_url=None,
         )
         active.method = method
         active.components = True
