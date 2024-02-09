@@ -189,11 +189,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         :Parameters:
 
             array: optional
-                The array of values. May be any scalar or array-like
-                object, including another `Data` instance.
+                The array of values. May be a scalar or array-like
+                object, including another `Data` instance, anything
+                with a `!to_dask_array` method, `numpy` array, `dask`
+                array, `xarray` array, `cf.Array` subclass, `list`,
+                `tuple`, scalar.
 
                 *Parameter example:*
-                  ``array=[34.6]``
+                  ``array=34.6``
 
                 *Parameter example:*
                   ``array=[[1, 2], [3, 4]]``
