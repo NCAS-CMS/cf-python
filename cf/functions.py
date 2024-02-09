@@ -173,6 +173,7 @@ def configuration(
     relaxed_identities=None,
     bounds_combination_mode=None,
     active_storage=None,
+    active_storage_url=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -191,6 +192,8 @@ def configuration(
     * `regrid_logging`
     * `relaxed_identities`
     * `bounds_combination_mode`
+    * `active_storage`
+    * `active_storage_url`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -268,6 +271,13 @@ def configuration(
 
             .. versionadded:: ACTIVEVERSION
 
+        active_storage_url: `str` or `Constant`, optional
+            The new value TODOACTIVE (either True to enable active
+            storage reductions or False to disable them). The default
+            is to not change the current behaviour.
+
+            .. versionadded:: ACTIVEVERSION
+
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -297,7 +307,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 82873466.88000001}
+     'chunksize': 82873466.88000001,
+     'active_storage': False,
+     'active_storage_url': ''}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -311,7 +323,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': ''}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -320,7 +334,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': ''}
 
     Use as a context manager:
 
@@ -332,7 +348,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': ''}
     >>> with cf.configuration(atol=9, rtol=10):
     ...     print(cf.configuration())
     ...
@@ -343,7 +361,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': ''}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -352,7 +372,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': ''}
 
     """
     if of_fraction is not None:
@@ -384,6 +406,7 @@ def configuration(
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
         active_storage=active_storage,
+        active_storage_url=active_storage_url,
     )
 
 
@@ -434,6 +457,7 @@ def _configuration(_Configuration, **kwargs):
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
         "active_storage": active_storage,
+        "active_storage_url": active_storage_url,
     }
 
     old_values = {}
@@ -1159,7 +1183,7 @@ class bounds_combination_mode(ConstantAccess):
 
 
 class active_storage(ConstantAccess):
-    """Whether or not to allow active storage reductions.
+    """Whether or not to attempt active storage reductions.
 
     .. versionadded:: ACTIVEVERSION
 
@@ -1181,20 +1205,20 @@ class active_storage(ConstantAccess):
 
     >>> cf.active_storage()
     False
-    >>> cf.active_storage(True)
-    False
-    >>> cf.active_storage()
-    True
-    >>> with cf.active_storage(False):
+    >>> with cf.active_storage(True):
     ...     print(cf.active_storage())
     ...
+    True
+    >>> cf.active_storage()
+    False
+    >>> cf.active_storage(True)
     False
     >>> cf.active_storage()
     True
 
     """
 
-    _name = "ACTIVE_STORAGE"
+    _name = "active_storage"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1216,6 +1240,66 @@ class active_storage(ConstantAccess):
 
         """
         return bool(arg)
+
+
+class active_storage_url(ConstantAccess):
+    """The URL location of the active storage reducer.
+
+    .. versionadded:: ACTIVEVERSION
+
+    .. seealso:: `configuration`
+
+    :Parameters:
+
+        arg: `str` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> cf.active_storage_url()
+    ''
+     >>> with cf.active_storage_url('http://active/storage/location'):
+    ...     print(cf.active_storage_url())
+    ...
+    'http://active/storage/location'
+    >>> cf.active_storage_url()
+    ''
+    >>> cf.active_storage_url('http://other/location')
+    ''
+    >>> cf.active_storage_url()
+    'http://other/location'
+
+    """
+
+    _name = "active_storage_url"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: ACTIVEVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return str(arg)
 
 
 def CF():

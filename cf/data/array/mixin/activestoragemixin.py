@@ -33,7 +33,7 @@ class ActiveStorageMixin:
 
         """
         method = self.get_active_method()
-        if method is None:
+        if method is None or Active is None:
             # Do a normal read by local client. Returns an un-reduced
             # numpy array.
             return super().__getitem__(indices)
@@ -43,10 +43,8 @@ class ActiveStorageMixin:
         active = Active(
             self.get_filename(),
             self.get_address(),
-            # dtype=self.dtype,
-            # missing_values=self.get_missing_values(None),
             # storage_options=self.get_storage_options(),
-            # active_storage_url=None,
+            # active_storage_url=self.get_active_storage_url(),
         )
         active.method = method
         active.components = True
@@ -59,7 +57,7 @@ class ActiveStorageMixin:
 
         return active[indices]
 
-    def actify(self, method, axis=None):
+    def actify(self, method, axis=None, active_storage_url=""):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -81,6 +79,10 @@ class ActiveStorageMixin:
                 Axis or axes along which to operate. By default, or if
                 `None`, flattened input is used.
 
+            active_storage_url: `str`, optional
+                Axis or axes along which to operate. By default, or if
+                `None`, flattened input is used.
+
         :Returns:
 
             `{{class}}`
@@ -88,17 +90,10 @@ class ActiveStorageMixin:
                 storage operation.
 
         """
-        if Active is None:
-            # The active storage import dependency is not met, so
-            # using active storage is not possible.
-            raise AttributeError(
-                f"Can't actify {self.__class__.__name__} when "
-                "activestorage.Active is not available"
-            )
-
         a = self.copy()
         a.set_active_method(method)
         a.set_active_axis(axis)
+        a.set_active_storage_url(active_storage_url)
         return a
 
     def get_active_axis(self):
@@ -132,6 +127,22 @@ class ActiveStorageMixin:
 
         """
         return self._custom.get("active_method")
+
+    def get_active_storage_url(self):
+        """Return the the active storage URL.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `set_active_storage_url`
+
+        :Returns:
+
+            `str`
+                The active storage URL. An empty string specifies no
+                URL.
+
+        """
+        self._custom.get("active_storage_url", "")
 
     def set_active_axis(self, value):
         """Set the active storage reduction axes.
@@ -171,3 +182,22 @@ class ActiveStorageMixin:
 
         """
         self._custom["active_method"] = value
+
+    def set_active_storage_url(self, value):
+        """Set the active storage URL.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `get_active_storage_url`
+
+        :Parameters:
+
+            value: `str`
+                The active storage URL.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["active_storage_url"] = value

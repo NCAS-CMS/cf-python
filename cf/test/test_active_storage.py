@@ -49,8 +49,9 @@ class ActiveStorageTest(unittest.TestCase):
         self.assertFalse(cf.active_storage())
         array = f.collapse("mean", weights=False).array
 
-        with cf.active_storage(True):
+        with cf.configuration(active_storage=True, active_storage_url="dummy"):
             self.assertTrue(cf.active_storage())
+            self.assertTrue(cf.active_storage_url())
             self.assertTrue(f.data.active_storage)
             active_array = f.collapse("mean", weights=False).array
 
@@ -64,8 +65,10 @@ class ActiveStorageTest(unittest.TestCase):
         # f = f[0]
         #
         # array = f.collapse("mean", weights=False).array
-        # with cf.active_storage(True):
+        #
+        # with cf.active_storage(True, active_storage_url="dummy"):
         #     self.assertTrue(cf.active_storage())
+        #     self.assertTrue(cf.active_storage_url())
         #     self.assertTrue(f.data.active_storage)
         #     active_array = f.collapse("mean").array
         #

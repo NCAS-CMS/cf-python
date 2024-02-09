@@ -7,6 +7,7 @@ except ModuleNotFoundError:
     Active = None
 
 from ...functions import active_storage as cf_active_storage
+from ...functions import active_storage_url
 
 logger = logging.getLogger(__name__)
 
@@ -249,6 +250,7 @@ def actify(a, method, axis=None):
     # The elements are traversed in reverse order so that the data
     # defintions come out first, allowing for the potential of a
     # faster short circuit when using active storage is not possible.
+    url = str(active_storage_url())
     ok_to_actify = True
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
@@ -268,7 +270,7 @@ def actify(a, method, axis=None):
         # to files, so try to insert an actified copy into the dask
         # graph.
         try:
-            dsk[key] = value.actify(method, axis)
+            dsk[key] = value.actify(method, axis, active_storage_url=url)
         except AttributeError:
             # This data definition doesn't have an 'actify' method,
             # and so doesn't support active storage reductions.
@@ -284,7 +286,10 @@ def actify(a, method, axis=None):
     # active storage reductions => redefine the dask array from the
     # actified dask graph, and set the active storage reduction chunk
     # function.
-    logger.warning("Using activestorage.Active to collapse chunks")
+    logger.warning(
+        "At compute time chunks will be collapsed with "
+        f"active storage URL: {active_storage_url()}"
+    )
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
         active_chunk_functions[method],
@@ -320,6 +325,7 @@ def active_storage(method):
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
                 and cf_active_storage()
+                and active_storage_url()
             ):
                 # Attempt to actify the dask array and provide a new
                 # chunk function
@@ -347,6 +353,3 @@ def active_storage(method):
         return wrapper
 
     return decorator
-
-
-2

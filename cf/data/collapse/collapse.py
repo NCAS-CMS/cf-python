@@ -20,6 +20,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * `cf.active_storage()` is True;
 
+      * An active storage URL has been set with
+        `cf.active_storage_url`;
+
       * it is possible to import the `activestorage.Active` class;
 
       * the collapse is over all axes;

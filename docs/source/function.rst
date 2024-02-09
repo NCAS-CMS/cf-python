@@ -145,6 +145,17 @@ Resource management
    cf.TEMPDIR
    cf.TOTAL_MEMORY
 
+Active storage reductions
+-------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cf.active_storage
+   cf.active_storage_url
+
 Miscellaneous
 -------------
 
