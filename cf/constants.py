@@ -64,7 +64,7 @@ CONSTANTS = {
     "BOUNDS_COMBINATION_MODE": "AND",
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
     "active_storage": False,
-    "active_storage_url": "",
+    "active_storage_url": None,
 }
 
 masked = np.ma.masked

@@ -57,7 +57,7 @@ class ActiveStorageMixin:
 
         return active[indices]
 
-    def actify(self, method, axis=None, active_storage_url=""):
+    def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -79,9 +79,8 @@ class ActiveStorageMixin:
                 Axis or axes along which to operate. By default, or if
                 `None`, flattened input is used.
 
-            active_storage_url: `str`, optional
-                Axis or axes along which to operate. By default, or if
-                `None`, flattened input is used.
+            active_storage_url: `str` or `None`, optional
+                The URL of the active storage server.
 
         :Returns:
 
@@ -90,6 +89,19 @@ class ActiveStorageMixin:
                 storage operation.
 
         """
+        if Active is None:
+            raise AttributeError(
+                "Can't actify {self.__class__.__name__} when "
+                "activestorage.Active is not available"
+            )
+
+        attributes = self.get_attributes({})
+        if "add_offset" in attributes or "scale_factor" in attributes:
+            raise AttributeError(
+                "Can't actify {self.__class__.__name__} when "
+                "the data has been numerically packed"
+            )
+
         a = self.copy()
         a.set_active_method(method)
         a.set_active_axis(axis)

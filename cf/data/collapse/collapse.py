@@ -20,7 +20,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * `cf.active_storage()` is True;
 
-      * An active storage URL has been set with
+      * an active storage URL has been set with
         `cf.active_storage_url`;
 
       * it is possible to import the `activestorage.Active` class;
@@ -29,8 +29,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * the collapse is unweighted;
 
-      * the data is not compressed by convention (note that netCDF
-        numeric packing is not considered here to be a compression by
+      * the data is not compressed by convention (netCDF numeric
+        packing is not considered here to be a compression by
         convention techinigue);
 
       * the `Collapse` method's *active_storage* parameter is True;

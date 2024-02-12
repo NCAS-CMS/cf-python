@@ -32,8 +32,8 @@ class FragmentArrayMixin:
         .. versionadded:: 3.15.0
 
         """
-        # TODOACTIVE: modify this for the case when
-        #             super().__getitem__(tuple(indices)) returns a
+        # TODOACTIVE: modify this for the active storage case of
+        #             super().__getitem__(tuple(indices)) returning a
         #             dictionary
 
         indices = self._parse_indices(indices)

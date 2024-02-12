@@ -6,7 +6,6 @@ import os
 import platform
 import re
 import sys
-import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
@@ -19,7 +18,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import cfdm
 import netCDF4
@@ -271,10 +270,9 @@ def configuration(
 
             .. versionadded:: ACTIVEVERSION
 
-        active_storage_url: `str` or `Constant`, optional
-            The new value TODOACTIVE (either True to enable active
-            storage reductions or False to disable them). The default
-            is to not change the current behaviour.
+        active_storage_url: `str` or `None` or `Constant`, optional
+            The new value (either a new URL string or `None` to remove
+            the URL). The default is to not change the value.
 
             .. versionadded:: ACTIVEVERSION
 
@@ -309,7 +307,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -325,7 +323,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -336,7 +334,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
 
     Use as a context manager:
 
@@ -350,7 +348,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
     >>> with cf.configuration(atol=9, rtol=10):
     ...     print(cf.configuration())
     ...
@@ -363,7 +361,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -374,7 +372,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': ''}
+     'active_storage_url': None}
 
     """
     if of_fraction is not None:
@@ -1251,7 +1249,7 @@ class active_storage_url(ConstantAccess):
 
     :Parameters:
 
-        arg: `str` or `Constant`, optional
+        arg: `str` or `None` or `Constant`, optional
             Provide a value that will apply to all subsequent
             operations.
 
@@ -1263,16 +1261,16 @@ class active_storage_url(ConstantAccess):
 
     **Examples**
 
-    >>> cf.active_storage_url()
-    ''
+    >>> print(cf.active_storage_url())
+    None
      >>> with cf.active_storage_url('http://active/storage/location'):
     ...     print(cf.active_storage_url())
     ...
     'http://active/storage/location'
-    >>> cf.active_storage_url()
-    ''
-    >>> cf.active_storage_url('http://other/location')
-    ''
+    >>> print(cf.active_storage_url())
+    None
+    >>> print(cf.active_storage_url('http://other/location'))
+    None
     >>> cf.active_storage_url()
     'http://other/location'
 
@@ -1299,6 +1297,9 @@ class active_storage_url(ConstantAccess):
                 insertion into the `CONSTANTS` dictionary.
 
         """
+        if arg is None:
+            return arg
+
         return str(arg)
 
 
@@ -2720,7 +2721,7 @@ def relpath(filename, start=None):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename
 
@@ -2758,7 +2759,7 @@ def dirname(filename):
     'http://data/archive'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename.rpartition("/")[0]
 
@@ -2797,9 +2798,9 @@ def pathjoin(path1, path2):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(path1)
+    u = urlparse(path1)
     if u.scheme != "":
-        return urllib.parse.urljoin(path1, path2)
+        return urljoin(path1, path2)
 
     return _os_path_join(path1, path2)
 
@@ -3246,6 +3247,9 @@ def environment(display=True, paths=True):
         "dask": _get_module_info("dask"),
         # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "s3fs": _get_module_info("s3fs"),
         "psutil": _get_module_info("psutil"),
         "packaging": _get_module_info("packaging"),
         "numpy": _get_module_info("numpy"),

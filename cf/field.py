@@ -5314,6 +5314,46 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           ...                within_years=cf.seasons(), weights=True)
 
 
+        **Active storage collapses**
+
+        When the data being collapsed are stored remotely, the
+        collapse calculations may be carried out on a server that is
+        close (in a network distance sense) to the data, thereby
+        removing the time and power costs of transfering the entire
+        un-collapsed data to the local client. Whether or not this
+        will occur is determined on a case-by-case basis, and will
+        only be done if all of the following criteria are met:
+
+        * the collapse method is registered as having an active
+          storage counterpart, i.e. one of ``'mean'``, ``'maximum'``,
+          ``'minimum'``, or ``'sum'``;
+
+        * the collapse is over all axes;
+
+        * the collapse is unweighted;
+
+        * `cf.active_storage()` is True;
+
+        * a URL of the active storage server has been set with
+          `cf.active_storage_url`;
+
+        * the data values are in netCDF files on disk (rather than in
+          any other file format, or in memory);
+
+        * the `!active_storage` attribute of the `Data` being
+          collapsed is `True`. In general, it will only be `True` for
+          data that is not compressed by convention (including
+          numerical packing), and has not had any other operations
+          applied to it;
+
+        * it is possible to import the `activestorage.Active` class.
+
+        The performance improvements from using active storage
+        operations will increase the closer the active storage server
+        is to the data storage. If the active storage server is
+        sufficiently far away from the data then it may be faster to
+        do a normal, non-active operation.
+
         .. versionadded:: 1.0
 
         .. seealso:: `bin`, `cell_area`, `convolution_filter`,

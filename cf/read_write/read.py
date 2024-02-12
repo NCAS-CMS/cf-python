@@ -63,8 +63,8 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
-    storage_options=None,
     netCDF_backend=None,
+    storage_options=None,
 ):
     """Read field or domain constructs from files.
 
@@ -676,6 +676,23 @@ def read(
 
             .. versionadded:: 3.15.0
 
+        netCDF_backend: `str` or `None`, optional
+            Specify which library to use for opening input files. By
+            default, or if `None`, then `netCDF4` will used unless it
+            fails to open a given file, in which case `h5netcdf` will
+            be used. Setting *library* to ``'netCDF4'`` or
+            ``'h5netcdf'`` will force the use of the `netCDF4` or
+            `h5netcdf` libraries respectively.
+
+            .. note:: The *netCDF_backend* parameter does not affect
+                      the opening of netCDF fragment files that define
+                      the data of aggregated variables. For these,
+                      `netCDF4` is used for local files and those
+                      accessed via OPenDAP, and `h5netcdf` is used for
+                      fragement files in S3 object stores.
+
+            .. versionadded:: ACTIVEVERSION
+
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
             `s3fs.S3FileSystem` file systems to control the opening of
@@ -702,23 +719,6 @@ def read(
               'scaleway-secretkey...', 'endpoint_url':
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
-
-            .. versionadded:: ACTIVEVERSION
-
-        netCDF_backend: `str` or `None`, optional
-            Specify which library to use for opening input files. By
-            default, or if `None`, then `netCDF4` will used unless it
-            fails to open a given file, in which case `h5netcdf` will
-            be used. Setting *library* to ``'netCDF4'`` or
-            ``'h5netcdf'`` will force the use of the `netCDF4` or
-            `h5netcdf` libraries respectively.
-
-            .. note:: The *netCDF_backend* parameter does not affect
-                      the opening of netCDF fragment files that define
-                      the data of aggregated variables. For these,
-                      `netCDF4` is used for local files and those
-                      accessed via OPenDAP, and `h5netcdf` is used for
-                      fragement files in S3 object stores.
 
             .. versionadded:: ACTIVEVERSION
 

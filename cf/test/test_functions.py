@@ -85,7 +85,7 @@ class functionTest(unittest.TestCase):
             "log_level": "INFO",
             "chunksize": 8e9,
             "active_storage": True,
-            "active_storage_url": "",
+            "active_storage_url": None,
         }
 
         # Test the setting of each lone item.
