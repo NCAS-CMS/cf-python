@@ -2463,7 +2463,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : time(1) = [2019-01-01 00:00:00]
         Cell measures   : measure:area(latitude(5), longitude(8)) = [[4271287143027.272, ..., 4271287143027.272]] m2
-        >>> f.cell_area(methods=1)
+        >>> f.cell_area(methods=True)
         {(0, 1): 'area cell measure'}
 
         """
