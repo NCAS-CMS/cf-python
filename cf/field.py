@@ -5113,18 +5113,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Collapse weights**
 
-        The calculations of means, standard deviations and variances are,
-        by default, **not weighted**. For weights to be incorporated in
-        the collapse, the axes to be weighted must be identified with the
-        *weights* keyword.
+        .. warning:: By default, the collapse calculations are **not**
+                     weighted.
+
+                     For weights to be incorporated in the collapse,
+                     the *weights* keyword must be set.
 
         Weights are either derived from the field construct's metadata
-        (such as cell sizes), or may be provided explicitly in the form of
-        other field constructs containing data of weights values. In
-        either case, the weights actually used are those derived by the
-        `weights` method of the field construct with the same weights
-        keyword value. Collapsed axes that are not identified by the
-        *weights* keyword are unweighted during the collapse operation.
+        (such as cell sizes), or may be provided explicitly in the
+        form of other field constructs containing data of weights
+        values. In either case, the weights actually used are those
+        derived by the `weights` method of the field construct with
+        the same *weights* keyword value. Collapsed axes that are not
+        identified by the *weights* keyword are unweighted during the
+        collapse operation.
 
         *Example:*
           Create a weighted time average:
@@ -5324,27 +5326,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         will occur is determined on a case-by-case basis, and will
         only be done if all of the following criteria are met:
 
-        * the collapse method is registered as having an active
-          storage counterpart, i.e. one of ``'mean'``, ``'maximum'``,
+        * the collapse method is one of ``'mean'``, ``'maximum'``,
           ``'minimum'``, or ``'sum'``;
 
         * the collapse is over all axes;
 
         * the collapse is unweighted;
 
-        * `cf.active_storage()` is True;
+        * `cf.active_storage()` is `True`;
 
         * a URL of the active storage server has been set with
           `cf.active_storage_url`;
 
-        * the data values are in netCDF files on disk (rather than in
-          any other file format, or in memory);
+        * the data values are in netCDF-4 files on disk (rather than
+          in any other file format, or in memory) and are not
+          numerically packed;
 
         * the `!active_storage` attribute of the `Data` being
-          collapsed is `True`. In general, it will only be `True` for
-          data that is not compressed by convention (including
-          numerical packing), and has not had any other operations
-          applied to it;
+          collapsed is `True`, indicating that active storage
+          operations may be possible. In general, it will only be
+          `True` for data that are in files on disk, are not
+          compressed by convention and have not had any other
+          operations applied;
 
         * it is possible to import the `activestorage.Active` class.
 

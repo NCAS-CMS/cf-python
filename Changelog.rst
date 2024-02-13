@@ -3,11 +3,19 @@ version 3.17.0
 
 **2024-??-??**
 
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cf-python/issues/712)
+* New class `cfdm.H5netcdfArray`
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.2.0``
 * Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
 * Changed dependency: ``cfunits>=3.3.7``
+
+----
 
 version 3.16.0
 --------------
@@ -33,6 +41,8 @@ version 3.16.0
 * Changed dependency: ``1.11.0.0<=cfdm<1.11.1.0``
 * New dependency: ``scipy>=1.10.0``
 
+----
+  
 version 3.15.4
 --------------
 

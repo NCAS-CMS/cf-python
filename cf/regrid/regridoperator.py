@@ -18,6 +18,8 @@ class RegridOperator(mixin_Container, Container):
     information, such as the grid shapes; the CF metadata for the
     destination grid; and the source grid coordinates.
 
+    .. versionadded:: 3.10.0
+
     """
 
     def __init__(
@@ -550,6 +552,8 @@ class RegridOperator(mixin_Container, Container):
         any further modification of the weights to account for missing
         values in the source grid will always involve row-slicing.
 
+        .. versionadded:: 3.14.0
+
         :Returns:
 
             `None`
@@ -572,7 +576,7 @@ class RegridOperator(mixin_Container, Container):
                 # Read the weights from the weights file
                 from netCDF4 import Dataset
 
-                from ..data.array.netcdfarray import _lock
+                from ..data.array.locks import _lock
 
                 _lock.acquire()
                 nc = Dataset(weights_file, "r")

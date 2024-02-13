@@ -260,8 +260,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Note: We don't cache elements from CFA variables, because
         #       the data are in fragment files which have not been
-        #       opened; and may not not even be openable, such as
-        #       could be the case if a fragement was on tape storage.
+        #       opened and may not not even be openable (such as could
+        #       be the case if a fragment file was on tape storage).
 
         # Set the CFA write status to True iff each non-aggregated
         # axis has exactly one dask storage chunk
@@ -940,6 +940,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         aggregation_instructions = g["cfa_aggregation_instructions"]
         variable_attributes = g["variable_attributes"]
 
+        # Loop round aggregation instruction terms
         out = {}
         for x in self._parse_x(
             ncvar,

@@ -437,7 +437,7 @@ def read(
             A netCDF array is unpacked depending on the values of the
             netCDF attributes ``add_offset`` and ``scale_factor``.
 
-            .. versionadded:: (cfdm) ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -689,9 +689,9 @@ def read(
                       the data of aggregated variables. For these,
                       `netCDF4` is used for local files and those
                       accessed via OPenDAP, and `h5netcdf` is used for
-                      fragement files in S3 object stores.
+                      fragment files in S3 object stores.
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
@@ -720,7 +720,7 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -1171,12 +1171,12 @@ def _read_a_file(
         storage_options: `dict` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         netCDF_backend: `str` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
     :Returns:
 

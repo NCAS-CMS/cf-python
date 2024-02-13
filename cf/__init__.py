@@ -13,9 +13,16 @@ can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 
+* read field constructs and domain constructs from netCDF, CDL, PP and
+  UM datasets with a choice of netCDF backends,
+
+* read files from OPeNDAP servers and S3 object stores,
+
 * create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
+
+* read, write, and manipulate UGRID mesh topologies,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -74,8 +81,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.11"
-__date__ = "2023-12-06"
-__version__ = "3.16.0"
+__date__ = "2024-??-??"
+__version__ = "3.17.0"
 
 _requires = (
     "numpy",
@@ -278,6 +285,7 @@ from .data.array import (
     FullArray,
     GatheredArray,
     H5netcdfArray,
+    NetCDFArray,
     NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,

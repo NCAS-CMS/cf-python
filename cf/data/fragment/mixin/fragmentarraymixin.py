@@ -32,7 +32,8 @@ class FragmentArrayMixin:
         .. versionadded:: 3.15.0
 
         """
-        # TODOACTIVE: modify this for the active storage case of
+        # TODOACTIVE: Placeholder note to modify this for the active
+        #             storage case of
         #             super().__getitem__(tuple(indices)) returning a
         #             dictionary
 
@@ -116,8 +117,8 @@ class FragmentArrayMixin:
                 if isinstance(array, dict):
                     # 'array' is a dictionary.
                     raise ValueError(
-                        "TODOACTIVE. This error is notification of an "
-                        "unreplaced placeholder for dealing with active "
+                        "TODOACTIVE. Placeholder notification thatn "
+                        "we can't yet dealing with active "
                         "storage reductions on CFA fragments."
                     )
                 else:

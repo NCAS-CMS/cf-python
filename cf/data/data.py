@@ -1476,7 +1476,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _del_active_storage(self):
         """Set the active storage reduction status to False.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `active_storage`, `_set_active_storage`
 
@@ -1561,7 +1561,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _set_active_storage(self, value):
         """Set the active storage reduction status.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `active_storage`, `_del_active_storage`
 
@@ -4771,7 +4771,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         the conditions described by `cf.data.collapse.Collapse` are
         met.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         **Examples**
 

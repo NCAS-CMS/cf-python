@@ -1923,7 +1923,7 @@ def create_esmpy_weights(
             from netCDF4 import Dataset
 
             from .. import __version__
-            from ..data.array.netcdfarray import _lock
+            from ..data.array.locks import _lock
 
             if (
                 max(dst_esmpy_field.data.size, src_esmpy_field.data.size)

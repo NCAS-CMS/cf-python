@@ -21,7 +21,8 @@ class NetCDFFragmentArray(
     Access will either with `netCDF4` (for local and OPenDAP files) or
     `h5netcdf` (for S3 files).
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.15.0
+
 
     """
 
@@ -81,7 +82,7 @@ class NetCDFFragmentArray(
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: ACTIVEVERSION
+                .. versionadded:: 3.17.0
 
             {{init source: optional}}
 
@@ -198,7 +199,7 @@ class NetCDFFragmentArray(
         }
 
         # Loop round the files, returning as soon as we find one that
-        # works.
+        # is accessible.
         filenames = self.get_filenames()
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename

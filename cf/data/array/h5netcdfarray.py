@@ -14,14 +14,19 @@ class H5netcdfArray(
 ):
     """A netCDF array accessed with `h5netcdf`.
 
-    .. versionadded:: ACTIVEVERSION
+    **Active storage reductions**
+
+    Active storage reduction may be enabled with the `actify`
+    method. See `cf.data.collapse.Collapse` for details.
+
+    .. versionadded:: 3.17.0
 
     """
 
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         """
         return super().__dask_tokenize__() + (self.get_mask(),)
@@ -37,7 +42,7 @@ class H5netcdfArray(
         that access to all netCDF and HDF files coordinates around the
         same lock.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         """
         return _lock

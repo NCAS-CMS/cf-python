@@ -211,7 +211,8 @@ def configuration(
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`, `bounds_combination_mode`
+                 `relaxed_identities`, `bounds_combination_mode`,
+                 `active_storage`, `active_storage_url`
 
     :Parameters:
 
@@ -268,13 +269,13 @@ def configuration(
             reductions or False to disable them). The default is to
             not change the current behaviour.
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         active_storage_url: `str` or `None` or `Constant`, optional
             The new value (either a new URL string or `None` to remove
             the URL). The default is to not change the value.
 
-            .. versionadded:: ACTIVEVERSION
+            .. versionadded:: 3.17.0
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
@@ -1183,9 +1184,9 @@ class bounds_combination_mode(ConstantAccess):
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
-    .. seealso:: `configuration`
+    .. seealso:: `active_storage_url`, `configuration`
 
     :Parameters:
 
@@ -1221,7 +1222,7 @@ class active_storage(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: ACTIVEVERSION
+        .. versionaddedd:: 3.17.0
 
         :Parameters:
 
@@ -1243,9 +1244,9 @@ class active_storage(ConstantAccess):
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
-    .. seealso:: `configuration`
+    .. seealso::  `active_storage`, `configuration`
 
     :Parameters:
 
@@ -1263,7 +1264,7 @@ class active_storage_url(ConstantAccess):
 
     >>> print(cf.active_storage_url())
     None
-     >>> with cf.active_storage_url('http://active/storage/location'):
+    >>> with cf.active_storage_url('http://active/storage/location'):
     ...     print(cf.active_storage_url())
     ...
     'http://active/storage/location'
@@ -1281,7 +1282,7 @@ class active_storage_url(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: ACTIVEVERSION
+        .. versionaddedd:: 3.17.0
 
         :Parameters:
 

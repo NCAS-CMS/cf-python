@@ -6,8 +6,6 @@ import numpy as np
 
 from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
-
-# from .mixin import CFAMixin
 from .netcdf4array import NetCDF4Array
 
 # Store fragment array classes.
@@ -131,7 +129,7 @@ class CFANetCDFArray(NetCDF4Array):
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: ACTIVEVERSION
+                .. versionadded:: 3.17.0
 
             {{init source: optional}}
 
@@ -219,9 +217,8 @@ class CFANetCDFArray(NetCDF4Array):
                 for frag_loc, location in zip(positions, locations):
                     if extra_dimension:
                         filename = compressed(f[frag_loc]).tolist()
-                        n_files = len(filename)
                         if scalar_address:
-                            address = a * n_files
+                            address = a * len(filename)
                         else:
                             address = compressed(a[frag_loc].tolist())
 
@@ -230,6 +227,7 @@ class CFANetCDFArray(NetCDF4Array):
                         else:
                             fmt = compressed(file_fmt[frag_loc]).tolist()
                     else:
+                        print(f.shape, frag_loc, address)
                         filename = (f[frag_loc].item(),)
                         if scalar_address:
                             address = a
@@ -347,12 +345,14 @@ class CFANetCDFArray(NetCDF4Array):
         >>> a.get_fragment_shape()
         (2, 1, 1, 1)
         >>> a.get_aggregated_data()
-        {(0, 0, 0, 0): {'file': 'January-June.nc',
-          'address': 'temp',
+        {(0, 0, 0, 0): {
+          'file': ('January-June.nc',),
+          'address': ('temp',),
           'format': 'nc',
           'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
-         (1, 0, 0, 0): {'file': 'July-December.nc',
-          'address': 'temp',
+         (1, 0, 0, 0): {
+          'file': ('July-December.nc',),
+          'address': ('temp',),
           'format': 'nc',
           'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
 
@@ -415,7 +415,7 @@ class CFANetCDFArray(NetCDF4Array):
         ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key with
         value ``'https://store'`` would be created.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: 3.17.0
 
         :Returns:
 
@@ -462,13 +462,18 @@ class CFANetCDFArray(NetCDF4Array):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
+        A fragmented dimenion (i.e. one spanned by two or fragments)
+        will always have a subarray size equal to the size of each of
+        its fragments, overriding any other size implied by the
+        *shapes* parameter.
+
         .. versionadded:: 3.14.0
 
         .. seealso:: `subarrays`
 
         :Parameters:
 
-           shapes: `int`, sequence, `dict` or `str`, optional
+            shapes: `int`, sequence, `dict` or `str`, optional
                 Define the subarray shapes.
 
                 Any value accepted by the *chunks* parameter of the
@@ -509,7 +514,8 @@ class CFANetCDFArray(NetCDF4Array):
 
         from dask.array.core import normalize_chunks
 
-        # Indices of fragmented dimensions
+        # Positions of fragmented dimensions (i.e. those spanned by
+        # two or more fragments)
         f_dims = self.get_fragmented_dimensions()
 
         shape = self.shape
@@ -522,8 +528,9 @@ class CFANetCDFArray(NetCDF4Array):
             zip(self.get_fragment_shape(), self.shape)
         ):
             if dim in f_dims:
-                # This aggregated dimension is spanned by more than
-                # one fragment.
+                # This aggregated dimension is spanned by two or more
+                # fragments => set the chunks to be the same size as
+                # the each fragment.
                 c = []
                 index = [0] * ndim
                 for j in range(n_fragments):
@@ -535,8 +542,8 @@ class CFANetCDFArray(NetCDF4Array):
                 chunks.append(tuple(c))
             else:
                 # This aggregated dimension is spanned by exactly one
-                # fragment. Store None, for now, in the expectation
-                # that it will get overwrittten.
+                # fragment => store `None` for now. This will get
+                # overwritten from 'shapes'.
                 chunks.append(None)
 
         if isinstance(shapes, (str, Number)) or shapes is None:

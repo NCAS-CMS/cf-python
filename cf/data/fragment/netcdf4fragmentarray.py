@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
     """A netCDF fragment array accessed with `netCDF4`.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: 3.17.0
 
     """
 
@@ -64,8 +64,6 @@ class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
             {{aggregated_calendar: `str` or `None`, optional}}
 
             {{init storage_options: `dict` or `None`, optional}}
-
-                .. versionadded:: ACTIVEVERSION
 
             {{init source: optional}}
 

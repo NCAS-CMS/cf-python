@@ -342,15 +342,14 @@ construct.
 Collapse weights
 ^^^^^^^^^^^^^^^^
 
-.. The calculations of means, standard deviations and variances are,
-   by default, not weighted. For weights to be incorporated in the
-   collapse, the axes to be weighted must be identified with the
-   *weights* keyword.
+.. warning:: By default, the collapse calculations are **not**
+             weighted.
 
-For weights to be incorporated in the collapse, the axes to be
-weighted must be identified with the *weights* keyword. A collapse by
-a particular method is either never weighted, or may be weighted, or
-is always weighted, as described in the following table:
+             For weights to be incorporated in the collapse, the
+             *weights* keyword must be set.
+
+A collapse by a particular method is either never weighted, or may be
+weighted, or is always weighted, as described in the following table:
 
 ============================  ============================  ========
 Method                        Description                   Weighted  
@@ -852,6 +851,47 @@ method constructs.
                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
+
+.. _Active-storage-collapses:
+
+Active storage collapses
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+When the data being collapsed are stored remotely, the collapse
+calculations may be carried out on a server that is close (in a
+network distance sense) to the data, thereby removing the time and
+power costs of transfering the entire un-collapsed data to the local
+client. Whether or not this will occur is determined on a case-by-case
+basis, and will only be done if all of the following criteria are met:
+
+* the collapse method is one of ``'mean'``, ``'maximum'``,
+  ``'minimum'``, or ``'sum'``;
+
+* the collapse is over all axes;
+
+* the collapse is unweighted;
+
+* `cf.active_storage()` is `True`;
+
+* a URL of the active storage server has been set with
+  `cf.active_storage_url`;
+
+* the data values are in netCDF-4 files on disk (rather than in any
+  other file format, or in memory) and are not numerically packed;
+
+* the `~cf.Data.active_storage` attribute of the `Data` being
+  collapsed is `True`, indicating that active storage operations may
+  be possible. In general, it will only be `True` for data that are in
+  files on disk, are not compressed by convention and have not had any
+  other operations applied;
+
+
+* it is possible to import the `activestorage.Active` class.
+
+The performance improvements from using active storage operations will
+increase the closer the active storage server is to the data
+storage. If the active storage server is sufficiently far away from
+the data then it may be faster to do a normal, non-active operation.
 
 ----
    

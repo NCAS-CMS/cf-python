@@ -59,11 +59,16 @@ The `cf` package uses :ref:`Dask <Performance>` for all of its array
 manipulation and can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF, CDL, PP and UM datasets,
+  constructs <domain construct>` from netCDF, CDL, PP and UM datasets
+  with a choice of netCDF backends,
+
+* read files from OPeNDAP servers and S3 object stores,
 
 * create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
+
+* read, write, and manipulate UGRID mesh topologies,
 
 * read, write, and create coordinates defined by geometry cells,
 

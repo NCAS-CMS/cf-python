@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 class ActiveStorageMixin:
     """Mixin class for enabling active storage reductions.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     """
 
@@ -29,7 +29,7 @@ class ActiveStorageMixin:
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         """
         method = self.get_active_method()
@@ -63,7 +63,7 @@ class ActiveStorageMixin:
         The new instance is a deep copy of the original, with the
         additional setting of the active storage method and axis.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `set_active_axis`, `set_active_method`
 
@@ -114,7 +114,7 @@ class ActiveStorageMixin:
     def get_active_axis(self):
         """Return the active storage reduction axes.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `set_active_axis`
 
@@ -130,7 +130,7 @@ class ActiveStorageMixin:
     def get_active_method(self):
         """Return the name of the active storage reduction method.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `set_active_method`
 
@@ -146,7 +146,7 @@ class ActiveStorageMixin:
     def get_active_storage_url(self):
         """Return the the active storage URL.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `set_active_storage_url`
 
@@ -162,7 +162,7 @@ class ActiveStorageMixin:
     def set_active_axis(self, value):
         """Set the active storage reduction axes.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `get_active_axis`
 
@@ -182,7 +182,7 @@ class ActiveStorageMixin:
     def set_active_method(self, value):
         """Set the name of the active storage reduction method.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `get_active_method`
 
@@ -201,7 +201,7 @@ class ActiveStorageMixin:
     def set_active_storage_url(self, value):
         """Set the active storage URL.
 
-        .. versionadded:: ACTIVEVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `get_active_storage_url`
 

@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.16.0``):
+   you want to install, e.g. ``3.17.0``):
 
    .. code-block:: console
 
@@ -200,6 +200,13 @@ Required
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
+
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
+  newer.
+
+* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+
+* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.2.0 or newer.
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 

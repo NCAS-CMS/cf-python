@@ -1,46 +1,16 @@
-import cfdm
+class NetCDFArray:
+    """A netCDF array accessed with `netCDF4`.
 
-from ...mixin_container import Container
-from .locks import _lock
-from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
-
-
-class NetCDF4Array(
-    ActiveStorageMixin,
-    FileArrayMixin,
-    ArrayMixin,
-    Container,
-    cfdm.NetCDF4Array,
-):
-    """An array stored in a netCDF file.
-
-    **Active storage reductions**
-
-    Active storage reduction may be enabled with the `actify`
-    method. See `cf.data.collapse.Collapse` for details.
+    Deprecated at version 3.17.0 and is no longer available. Use
+    `cf.NetCDF4Array` instead.
 
     """
 
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
+    def __init__(self, *args, **kwargs):
+        """**Initialisation**"""
+        from ..functions import DeprecationError
 
-        .. versionadded:: 3.15.0
-
-        """
-        return super().__dask_tokenize__() + (self.get_mask(),)
-
-    @property
-    def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
-
-        Returns a lock object because concurrent reads are not
-        currently supported by the netCDF and HDF libraries. The lock
-        object will be the same for all `NetCDFArray` and `HDFArray`
-        instances, regardless of the dataset they access, which means
-        that access to all netCDF and HDF files coordinates around the
-        same lock.
-
-        .. versionadded:: 3.14.0
-
-        """
-        return _lock
+        raise DeprecationError(
+            f"{self.__class__.__name__} was deprecated at version 3.17.0 "
+            "and is no longer available. Use cf.NetCDF4Array instead."
+        )

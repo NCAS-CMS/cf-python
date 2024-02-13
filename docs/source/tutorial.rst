@@ -241,6 +241,9 @@ The `cf.read` function has optional parameters to
   read recursively, and to allow directories which resolve to symbolic
   links; and
   
+* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
+  files.
+
 * configure parameters for :ref:`reading PP and UM fields files
   <PP-and-UM-fields-files>`.
   
@@ -4606,8 +4609,9 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The `cf.read`
 function creates data in this manner. A pointer to an array in a
-netCDF file can be stored in a `cf.NetCDFArray` instance, which is is
-used to initialise a `cf.Data` instance.
+netCDF file can be stored in a `cf.NetCDFArray` or
+`~cf.H5netcdfAarray` instance, which is is used to initialise a
+`cf.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package

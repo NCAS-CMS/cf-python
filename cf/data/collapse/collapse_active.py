@@ -25,7 +25,7 @@ def active_min(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `actify`, `active_storage`
 
@@ -60,7 +60,7 @@ def active_max(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `actify`, `active_storage`
 
@@ -95,7 +95,7 @@ def active_mean(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `actify`, `active_storage`
 
@@ -134,7 +134,7 @@ def active_sum(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `actify`, `active_storage`
 
@@ -185,7 +185,7 @@ def actify(a, method, axis=None):
               `!active_storage` attribute is registered via the
               *active_storage* parameter of `Collapse` methods.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `active_storage`, `cf.data.collapse.Collapse`
 
@@ -303,7 +303,7 @@ def active_storage(method):
     `Collapse` method is decorated, active storage operations are only
     carried out when the conditions are right.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     .. seealso:: `actify`, `cf.data.collapse.Collapse`
 

@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
     """A netCDF fragment array accessed with `h5netcdf`.
 
-    .. versionadded:: ACTIVEVERSION
+    .. versionadded:: 3.17.0
 
     """
 
@@ -64,8 +64,6 @@ class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
             {{aggregated_calendar: `str` or `None`, optional}}
 
             {{init storage_options: `dict` or `None`, optional}}
-
-                .. versionadded:: ACTIVEVERSION
 
             {{init source: optional}}
 
