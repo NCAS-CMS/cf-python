@@ -10,6 +10,8 @@ version 3.17.0
   ``return_cell_measure``, and ``methods`` keyword arguments to
   `cf.Field.cell_area`
   (https://github.com/NCAS-CMS/cf-python/issues/709)
+* Allow `cf.Data` to be initialised with `xarray.DataAarray`
+  (https://github.com/NCAS-CMS/cf-python/issues/706)
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
