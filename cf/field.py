@@ -2400,7 +2400,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             return_cell_measure: `bool`, optional
                 If True, then return a cell measure construct instead
-                of a field construct.
+                of the default, a field construct.
 
                 .. versionadded:: 3.17.0
 
