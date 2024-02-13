@@ -2496,6 +2496,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         if methods:
+            if return_cell_measure:
+                raise ValueError(
+                    "Can't set both the 'methods' and 'return_cell_measure'"
+                    "parameters."
+                )
             return w
 
         if return_cell_measure:
