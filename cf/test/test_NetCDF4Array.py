@@ -129,19 +129,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(len(n.get_filenames()), 2)
         self.assertTrue((n[...] == f.array).all())
 
-    def test_NetCDF4Array_active_method(self):
-        n = self.n
-        self.assertIsNone(n.get_active_method())
-        self.assertIsNone(n.set_active_method("min"))
-        self.assertEqual(n.get_active_method(), "min")
-
-    def test_NetCDF4Array_active_axis(self):
-        # Create instance with non-existent file
-        n = self.n
-        self.assertIsNone(n.get_active_axis())
-        self.assertIsNone(n.set_active_axis((1, 2)))
-        self.assertEqual(n.get_active_axis(), (1, 2))
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

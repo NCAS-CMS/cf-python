@@ -44,7 +44,7 @@ class ActiveStorageMixin:
             self.get_filename(),
             self.get_address(),
             # storage_options=self.get_storage_options(),
-            # active_storage_url=self.get_active_storage_url(),
+            # active_storage_url=self.get_active_url(),
         )
         active.method = method
         active.components = True
@@ -57,7 +57,7 @@ class ActiveStorageMixin:
 
         return active[indices]
 
-    def actify(self, method, axis=None, active_storage_url=None):
+    def actify(self, method, axis=None, active_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -79,7 +79,7 @@ class ActiveStorageMixin:
                 Axis or axes along which to operate. By default, or if
                 `None`, flattened input is used.
 
-            active_storage_url: `str` or `None`, optional
+            active_url: `str` or `None`, optional
                 The URL of the active storage server.
 
         :Returns:
@@ -106,9 +106,9 @@ class ActiveStorageMixin:
             )
 
         a = self.copy()
-        a.set_active_method(method)
-        a.set_active_axis(axis)
-        a.set_active_storage_url(active_storage_url)
+        a._custom["active_method"] = method
+        a._custom["active_axis"] = axis
+        a._custom["active_url"] = active_url
         return a
 
     def get_active_axis(self):
@@ -116,13 +116,13 @@ class ActiveStorageMixin:
 
         .. versionadded:: 3.17.0
 
-        .. seealso:: `set_active_axis`
+        .. seealso:: `get_active_method`, `get_active_url`
 
         :Returns:
 
-            `None` or (sequence of) `int
-                The active storage reduction axes. `None` signifies
-                that all axes will be reduced.
+            `None` or (sequence of) `int`
+                The active storage reduction axes, or `None` if there
+                is no active storage reduction.
 
         """
         return self._custom.get("active_axis")
@@ -132,87 +132,29 @@ class ActiveStorageMixin:
 
         .. versionadded:: 3.17.0
 
-        .. seealso:: `set_active_method`
+        .. seealso:: `get_active_axis`, `get_active_url`
 
         :Returns:
 
             `str` or `None`
                 The name of the active storage reduction method, or
-                `None` if one hasn't been set.
+                `None` if there is no active storage reduction.
 
         """
         return self._custom.get("active_method")
 
-    def get_active_storage_url(self):
+    def get_active_url(self):
         """Return the the active storage URL.
 
         .. versionadded:: 3.17.0
 
-        .. seealso:: `set_active_storage_url`
+        .. seealso:: `get_active_axis`, `get_active_method`
 
         :Returns:
 
-            `str`
-                The active storage URL. An empty string specifies no
-                URL.
+            `str` or `None`
+                The active storage URL, or `None` if there is no
+                active storage reduction.
 
         """
-        self._custom.get("active_storage_url", "")
-
-    def set_active_axis(self, value):
-        """Set the active storage reduction axes.
-
-        .. versionadded:: 3.17.0
-
-        .. seealso:: `get_active_axis`
-
-        :Parameters:
-
-            value: `None` or (sequence of) `int`
-                The active storage reduction axes. If `None` then all
-                axes will be reduced.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._custom["active_axis"] = value
-
-    def set_active_method(self, value):
-        """Set the name of the active storage reduction method.
-
-        .. versionadded:: 3.17.0
-
-        .. seealso:: `get_active_method`
-
-        :Parameters:
-
-            value: `str`
-                The active storage reduction method.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._custom["active_method"] = value
-
-    def set_active_storage_url(self, value):
-        """Set the active storage URL.
-
-        .. versionadded:: 3.17.0
-
-        .. seealso:: `get_active_storage_url`
-
-        :Parameters:
-
-            value: `str`
-                The active storage URL.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._custom["active_storage_url"] = value
+        self._custom.get("active_url")

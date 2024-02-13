@@ -227,7 +227,6 @@ class CFANetCDFArray(NetCDF4Array):
                         else:
                             fmt = compressed(file_fmt[frag_loc]).tolist()
                     else:
-                        print(f.shape, frag_loc, address)
                         filename = (f[frag_loc].item(),)
                         if scalar_address:
                             address = a

@@ -268,6 +268,11 @@ environments for which these features are not required.
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
   or newer.
 
+.. rubric:: Active storage collapses
+
+* `activestorage <https://pypi.org/project/activestorage>`_, version 1.0.0
+  or newer.
+
 ----
 
 .. _Tests:

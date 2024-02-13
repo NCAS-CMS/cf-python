@@ -5342,14 +5342,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           in any other file format, or in memory) and are not
           numerically packed;
 
-        * the `!active_storage` attribute of the `Data` being
-          collapsed is `True`, indicating that active storage
+        * the `!active_storage` attribute of the `cf.Data` object
+          being collapsed is `True`, indicating that active storage
           operations may be possible. In general, it will only be
           `True` for data that are in files on disk, are not
           compressed by convention and have not had any other
           operations applied;
 
-        * it is possible to import the `activestorage.Active` class.
+        * it is possible to import the external `activestorage.Active`
+          class.
 
         The performance improvements from using active storage
         operations will increase the closer the active storage server

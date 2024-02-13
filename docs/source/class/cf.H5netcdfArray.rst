@@ -86,6 +86,19 @@ Miscellaneous
    ~cf.H5netcdfArray.copy
    ~cf.H5netcdfArray.to_memory
    
+Active storage
+--------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cf.H5netcdfArray.actify
+   ~cf.H5netcdfArray.get_active_url
+   ~cf.H5netcdfArray.get_active_method
+   ~cf.H5netcdfArray.get_active_axis
+   
 Special
 -------
 
@@ -123,71 +136,3 @@ Deprecated
    :template: method.rst                  
                                           
    ~cf.H5netcdfArray.get_missing_values
-----------------------------------------------
-cf.H5netcdfArray
-===============
-
-----
-
-.. autoclass:: cf.H5netcdfArray
-   :no-members:
-   :no-inherited-members:
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.H5netcdfArray.add_file_location
-   ~cf.H5netcdfArray.close
-   ~cf.H5netcdfArray.copy
-   ~cf.H5netcdfArray.del_file_location
-   ~cf.H5netcdfArray.file_locations
-   ~cf.H5netcdfArray.filename
-   ~cf.H5netcdfArray.get_address
-   ~cf.H5netcdfArray.get_addresses
-   ~cf.H5netcdfArray.get_format
-   ~cf.H5netcdfArray.get_formats
-   ~cf.H5netcdfArray.get_calendar
-   ~cf.H5netcdfArray.get_compression_type
-   ~cf.H5netcdfArray.get_filename
-   ~cf.H5netcdfArray.get_filenames
-   ~cf.H5netcdfArray.get_group
-   ~cf.H5netcdfArray.get_groups
-   ~cf.H5netcdfArray.get_mask
-   ~cf.H5netcdfArray.get_missing_values 
-   ~cf.H5netcdfArray.get_ncvar
-   ~cf.H5netcdfArray.get_subspace
-   ~cf.H5netcdfArray.get_units
-   ~cf.H5netcdfArray.get_varid
-   ~cf.H5netcdfArray.open
-   ~cf.H5netcdfArray.to_memory
-   ~cf.H5netcdfArray.Units
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/	    
-   :template: attribute.rst
-   
-   ~cf.H5netcdfArray.array
-   ~cf.H5netcdfArray.dtype
-   ~cf.H5netcdfArray.file_address
-   ~cf.H5netcdfArray.ndim
-   ~cf.H5netcdfArray.shape
-   ~cf.H5netcdfArray.size
-
-Special
--------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-      
-   ~cf.H5netcdfArray.__getitem__

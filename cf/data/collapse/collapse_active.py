@@ -270,7 +270,7 @@ def actify(a, method, axis=None):
         # to files, so try to insert an actified copy into the dask
         # graph.
         try:
-            dsk[key] = value.actify(method, axis, active_storage_url=url)
+            dsk[key] = value.actify(method, axis, active_url=url)
         except AttributeError:
             # This data definition doesn't have an 'actify' method,
             # and so doesn't support active storage reductions.

@@ -5,7 +5,7 @@ version 3.17.0
 
 * Allow access to netCDF-4 files in S3 object stores
   (https://github.com/NCAS-CMS/cf-python/issues/712)
-* New class `cfdm.H5netcdfArray`
+* New class `cf.H5netcdfArray`
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
@@ -181,8 +181,8 @@ version 3.14.1
 
 ----
 
-version 3.14.0
---------------
+version 3.14.0 (*first Dask version*)
+-------------------------------------
 
 **2023-01-31**
 
@@ -216,8 +216,8 @@ version 3.14.0
 
 ----
 
-version 3.13.1
---------------
+version 3.13.1 (*last LAMA version*)
+------------------------------------
 
 **2022-10-17**
 
