@@ -2394,7 +2394,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             methods: `bool`, optional
                 If True, then return a dictionary describing the method
-                used to create the cell areas.
+                used to create the cell areas instead of the default,
+                a field construct.
 
                 .. versionadded:: 3.17.0
 
