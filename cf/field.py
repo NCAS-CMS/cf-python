@@ -11,6 +11,7 @@ from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
 from . import (
     AuxiliaryCoordinate,
     Bounds,
+    CellMeasure,
     CellMethod,
     Constructs,
     Count,
@@ -2338,11 +2339,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         self,
         radius="earth",
         great_circle=False,
-        set=False,
+        cell_measures=True,
+        coordinates=True,
+        methods=False,
+        return_cell_measure=False,
         insert=False,
         force=False,
     ):
-        """Return a field containing horizontal cell areas.
+        """Return the horizontal cell areas.
 
         .. versionadded:: 1.0
 
@@ -2374,21 +2378,92 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.2.0
 
+            cell_measures: `bool`, optional
+                If True, the default, then area cell measure
+                constructs are considered for cell area
+                creation. Otherwise they are ignored.
+
+                .. versionadded:: 3.17.0
+
+            coordinates: `bool`, optional
+                If True, the default, then coordinate constructs are
+                considered for cell area creation. Otherwise they are
+                ignored.
+
+                .. versionadded:: 3.17.0
+
+            methods: `bool`, optional
+                If True, then return a dictionary describing the method
+                used to create the cell areas instead of the default,
+                a field construct.
+
+                .. versionadded:: 3.17.0
+
+            return_cell_measure: `bool`, optional
+                If True, then return a cell measure construct instead
+                of the default, a field construct.
+
+                .. versionadded:: 3.17.0
+
             insert: deprecated at version 3.0.0
 
             force: deprecated at version 3.0.0
 
         :Returns:
 
-            `Field`
-                A field construct containing the horizontal cell
-                areas.
+            `Field`, `CellMeasure`, or `dict`
+                A field construct, or cell measure construct containing
+                the horizontal cell areas if *return_cell_measure* is True,
+                or a dictionary describing the method used to create the
+                cell areas if *methods* is True.
 
         **Examples**
 
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
         >>> a = f.cell_area()
+        >>> a
+        <CF Field: cell_area(latitude(5), longitude(8)) m2>
+        >>> print(a.array)
+        [[4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12
+          4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12]
+         [1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13
+          1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13]
+         [3.18813213e+13 3.18813213e+13 3.18813213e+13 3.18813213e+13
+          3.18813213e+13 3.18813213e+13 3.18813213e+13 3.18813213e+13]
+         [1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13
+          1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13]
+         [4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12
+          4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12]]
+        >>> f.cell_area(methods=True)
+        {(1,): 'linear longitude', (0,): 'linear sine latitude'}
+
         >>> a = f.cell_area(radius=cf.Data(3389.5, 'km'))
-        >>> a = f.cell_area(insert=True)
+
+        >>> c = f.cell_area(return_cell_measure=True)
+        >>> c
+        <CF CellMeasure: measure:area(5, 8) m2>
+        >>> f.set_construct(c)
+        'cellmeasure0'
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        Cell measures   : measure:area(latitude(5), longitude(8)) = [[4271287143027.272, ..., 4271287143027.272]] m2
+        >>> f.cell_area(methods=True)
+        {(0, 1): 'area cell measure'}
 
         """
         if insert:
@@ -2415,9 +2490,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             measure=True,
             scale=None,
             great_circle=great_circle,
+            cell_measures=cell_measures,
+            coordinates=coordinates,
+            methods=methods,
         )
 
-        w.set_property("standard_name", "cell_area", copy=False)
+        if methods:
+            if return_cell_measure:
+                raise ValueError(
+                    "Can't set both the 'methods' and 'return_cell_measure'"
+                    "parameters."
+                )
+            return w
+
+        if return_cell_measure:
+            w = CellMeasure(source=w, copy=False)
+            w.set_measure("area")
+        else:
+            w.set_property("standard_name", "cell_area", copy=False)
 
         return w
 
@@ -3128,6 +3218,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         data=False,
         great_circle=False,
         axes=None,
+        cell_measures=True,
+        coordinates=True,
         **kwargs,
     ):
         """Return weights for the data array values.
@@ -3194,19 +3286,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                               following methods, in order of
                               preference,
 
-                                1. Volume cell measures
+                              If the *cell_measures* parameter is
+                              True:
+
+                                1. Volume cell measures (see the note
+                                   on the *measure* parameter)
+
                                 2. Area cell measures
+
+                              If the *coordinates* parameter is True:
+
                                 3. Area calculated from X and Y
                                    dimension coordinate constructs
                                    with bounds
+
                                 4. Area calculated from 1-d auxiliary
-                                   coordinate constructs for geometries
-                                   or a UGRID mesh topology.
-                                5. Length calculated from 1-d auxiliary
-                                   coordinate constructs for geometries
-                                   or a UGRID mesh topology.
+                                   coordinate constructs for
+                                   geometries or a UGRID mesh
+                                   topology.
+
+                                5. Length calculated from 1-d
+                                   auxiliary coordinate constructs for
+                                   geometries or a UGRID mesh
+                                   topology.
+
                                 6. Cell sizes of dimension coordinate
                                    constructs with bounds
+
                                 7. Equal weights
 
                               and the outer product of these weights
@@ -3245,20 +3351,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 field by the following methods, in
                                 order of preference,
 
-                                1. Area cell measures.
-                                2. X and Y dimension coordinate
-                                   constructs with bounds.
-                                3. X and Y 1-d auxiliary coordinate
-                                   constructs for polygon cells
-                                   defined by geometries or a UGRID
-                                   mesh topology.
+                                If the *cell_measures* parameter is
+                                True:
+
+                                  1. Area cell measures.
+
+                                If the *coordinates* parameter is
+                                True:
+
+                                  2. X and Y dimension coordinate
+                                     constructs with bounds.
+
+                                  3. X and Y 1-d auxiliary coordinate
+                                     constructs for polygon cells
+                                     defined by geometries or a UGRID
+                                     mesh topology.
 
                                 Set the *methods* parameter to find
                                 out how the weights were actually
                                 created.
 
                   ``'volume'``  Cell volume weights from the field
-                                construct's volume cell measure construct.
+                                construct's volume cell measure
+                                construct (see the note on the
+                                *measure* parameter). Requires the
+                                *cell_measures* parameter to be True.
 
                   `str`         Weights from the cell sizes of the
                                 dimension coordinate construct with this
@@ -3381,6 +3498,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.3.0
 
+            cell_measures: `bool`, optional
+                If True, the default, then area and volume cell
+                measure constructs are considered for weights creation
+                when *weights* is `True`, ``'area'``, or
+                ``'volume'``. If False then cell measure constructs
+                are ignored for these *weights*.
+
+                .. versionadded:: 3.17.0
+
+            coordinates: `bool`, optional
+                If True, the default, then coordinate constructs are
+                considered for weights creation for *weights* of
+                `True` or ``'area'``. If False then coordinate
+                constructs are ignored for these *weights*.
+
+                .. versionadded:: 3.17.0
+
             kwargs: deprecated at version 3.0.0.
 
         :Returns:
@@ -3476,18 +3610,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Auto-detect all weights
             # --------------------------------------------------------
             # Volume weights
-            if Weights.cell_measure(
+            if cell_measures and Weights.cell_measure(
                 self, "volume", comp, weights_axes, methods=methods, auto=True
             ):
                 # Found volume weights from cell measures
                 pass
 
-            elif Weights.cell_measure(
-                self, "area", comp, weights_axes, methods=methods, auto=True
+            elif cell_measures and Weights.cell_measure(
+                self,
+                "area",
+                comp,
+                weights_axes,
+                methods=methods,
+                auto=True,
             ):
                 # Found area weights from cell measures
                 pass
-            elif Weights.area_XY(
+            elif coordinates and Weights.area_XY(
                 self,
                 comp,
                 weights_axes,
@@ -3502,44 +3641,45 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             domain_axes = self.domain_axes(todict=True)
 
-            for da_key in domain_axes:
-                if Weights.polygon_area(
-                    self,
-                    da_key,
-                    comp,
-                    weights_axes,
-                    measure=measure,
-                    radius=radius,
-                    great_circle=great_circle,
-                    methods=methods,
-                    auto=True,
-                ):
-                    # Found area weights from polygon geometries
-                    pass
-                elif Weights.line_length(
-                    self,
-                    da_key,
-                    comp,
-                    weights_axes,
-                    measure=measure,
-                    radius=radius,
-                    great_circle=great_circle,
-                    methods=methods,
-                    auto=True,
-                ):
-                    # Found linear weights from line geometries
-                    pass
-                elif Weights.linear(
-                    self,
-                    da_key,
-                    comp,
-                    weights_axes,
-                    measure=measure,
-                    methods=methods,
-                    auto=True,
-                ):
-                    # Found linear weights from dimension coordinates
-                    pass
+            if coordinates:
+                for da_key in domain_axes:
+                    if Weights.polygon_area(
+                        self,
+                        da_key,
+                        comp,
+                        weights_axes,
+                        measure=measure,
+                        radius=radius,
+                        great_circle=great_circle,
+                        methods=methods,
+                        auto=True,
+                    ):
+                        # Found area weights from polygon geometries
+                        pass
+                    elif Weights.line_length(
+                        self,
+                        da_key,
+                        comp,
+                        weights_axes,
+                        measure=measure,
+                        radius=radius,
+                        great_circle=great_circle,
+                        methods=methods,
+                        auto=True,
+                    ):
+                        # Found linear weights from line geometries
+                        pass
+                    elif Weights.linear(
+                        self,
+                        da_key,
+                        comp,
+                        weights_axes,
+                        measure=measure,
+                        methods=methods,
+                        auto=True,
+                    ):
+                        # Found linear weights from dimension coordinates
+                        pass
 
             weights_axes = []
             for key in comp:
@@ -3615,11 +3755,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             fields = []
             axes = []
-            cell_measures = []
+            measures = []
 
             if isinstance(weights, str):
                 if weights in ("area", "volume"):
-                    cell_measures = (weights,)
+                    measures = (weights,)
                 else:
                     axes.append(weights)
             else:
@@ -3631,7 +3771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     weights = iter(weights)
                 except TypeError:
                     raise TypeError(
-                        f"Invalid type of 'weights' parameter: {weights}"
+                        f"Invalid type of 'weights' parameter: {weights!r}"
                     )
 
                 for w in tuple(weights):
@@ -3639,10 +3779,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         fields.append(w)
                     elif isinstance(w, Data):
                         raise ValueError(
-                            f"Invalid weight {w} in sequence of weights."
+                            f"Invalid weight {w!r} in sequence of weights."
                         )
                     elif w in ("area", "volume"):
-                        cell_measures.append(w)
+                        measures.append(w)
                     else:
                         axes.append(w)
 
@@ -3650,7 +3790,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             Weights.field(self, fields, comp, weights_axes)
 
             # Volume weights
-            if "volume" in cell_measures:
+            if "volume" in measures:
+                if not cell_measures:
+                    raise ValueError(
+                        "Can't create weights: Unable to use  "
+                        "volume cell measures when cell_meaures=False"
+                    )
+
                 Weights.cell_measure(
                     self,
                     "volume",
@@ -3661,41 +3807,51 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 )
 
             # Area weights
-            if "area" in cell_measures:
-                if Weights.cell_measure(
-                    self,
-                    "area",
-                    comp,
-                    weights_axes,
-                    methods=methods,
-                    auto=True,
-                ):
-                    # Found area weights from cell measures
-                    pass
-                elif Weights.area_XY(
-                    self,
-                    comp,
-                    weights_axes,
-                    measure=measure,
-                    radius=radius,
-                    methods=methods,
-                    auto=True,
-                ):
-                    # Found area weights from X and Y dimension
-                    # coordinates
-                    pass
-                else:
-                    # Found area weights from UGRID/geometry cells
-                    Weights.polygon_area(
+            if "area" in measures:
+                area_weights = False
+                if cell_measures:
+                    if Weights.cell_measure(
                         self,
-                        None,
+                        "area",
+                        comp,
+                        weights_axes,
+                        methods=methods,
+                        auto=True,
+                    ):
+                        # Found area weights from cell measures
+                        area_weights = True
+
+                if not area_weights and coordinates:
+                    if Weights.area_XY(
+                        self,
                         comp,
                         weights_axes,
                         measure=measure,
                         radius=radius,
-                        great_circle=great_circle,
                         methods=methods,
-                        auto=False,
+                        auto=True,
+                    ):
+                        # Found area weights from X and Y dimension
+                        # coordinates
+                        area_weights = True
+                    else:
+                        Weights.polygon_area(
+                            self,
+                            None,
+                            comp,
+                            weights_axes,
+                            measure=measure,
+                            radius=radius,
+                            great_circle=great_circle,
+                            methods=methods,
+                            auto=False,
+                        )
+                        # Found area weights from UGRID/geometry cells
+                        area_weights = True
+
+                if not area_weights:
+                    raise ValueError(
+                        "Can't create weights: Unable to find cell areas"
                     )
 
             for axis in axes:
@@ -3743,26 +3899,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         auto=False,
                     )
 
-            # Check for area weights specified by X and Y axes
-            # separately and replace them with area weights
-            xaxis = self.domain_axis("X", key=True, default=None)
-            yaxis = self.domain_axis("Y", key=True, default=None)
-            if xaxis != yaxis and (xaxis,) in comp and (yaxis,) in comp:
-                del comp[(xaxis,)]
-                del comp[(yaxis,)]
-                weights_axes.discard(xaxis)
-                weights_axes.discard(yaxis)
-                if not Weights.cell_measure(
-                    self, "area", comp, weights_axes, methods=methods
-                ):
-                    Weights.area_XY(
-                        self,
-                        comp,
-                        weights_axes,
-                        measure=measure,
-                        radius=radius,
-                        methods=methods,
-                    )
+                # Check for area weights specified by X and Y axes
+                # separately and replace them with area weights
+                xaxis = self.domain_axis("X", key=True, default=None)
+                yaxis = self.domain_axis("Y", key=True, default=None)
+                if xaxis != yaxis and (xaxis,) in comp and (yaxis,) in comp:
+                    del comp[(xaxis,)]
+                    del comp[(yaxis,)]
+                    weights_axes.discard(xaxis)
+                    weights_axes.discard(yaxis)
+                    if not Weights.cell_measure(
+                        self, "area", comp, weights_axes, methods=methods
+                    ):
+                        Weights.area_XY(
+                            self,
+                            comp,
+                            weights_axes,
+                            measure=measure,
+                            radius=radius,
+                            methods=methods,
+                        )
 
         if not methods:
             if scale is not None:

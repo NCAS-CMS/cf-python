@@ -900,6 +900,13 @@ class FieldTest(unittest.TestCase):
         y = f.dimension_coordinate("Y")
         self.assertTrue(y.has_bounds())
 
+        ca = f.cell_area(return_cell_measure=True)
+        self.assertIsInstance(ca, cf.CellMeasure)
+        self.assertEqual(ca.get_measure(), "area")
+
+        m = f.cell_area(methods=True)
+        self.assertIsInstance(m, dict)
+
     def test_Field_radius(self):
         f = self.f.copy()
 
