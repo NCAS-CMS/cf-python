@@ -89,17 +89,20 @@ class ActiveStorageMixin:
                 storage operation.
 
         """
-        if Active is None:
-            raise AttributeError(
-                "Can't actify {self.__class__.__name__} when "
-                "activestorage.Active is not available"
-            )
-
+        # Don't actify when the data are packed. Note: There may come
+        # a time when activestorage.Active can cope with packed data,
+        # in which cas we can remove this test.
         attributes = self.get_attributes({})
         if "add_offset" in attributes or "scale_factor" in attributes:
             raise AttributeError(
                 "Can't actify {self.__class__.__name__} when "
                 "the data has been numerically packed"
+            )
+
+        if Active is None:
+            raise AttributeError(
+                "Can't actify {self.__class__.__name__} when "
+                "activestorage.Active is not available"
             )
 
         a = self.copy()

@@ -51,28 +51,14 @@ class ActiveStorageTest(unittest.TestCase):
 
         with cf.configuration(active_storage=True, active_storage_url="dummy"):
             self.assertTrue(cf.active_storage())
-            self.assertTrue(cf.active_storage_url())
+            self.assertEqual(cf.active_storage_url(), "dummy")
             self.assertTrue(f.data.active_storage)
             active_array = f.collapse("mean", weights=False).array
 
         self.assertEqual(array, active_array)
 
-        # Masked values (not yet working)
-        # self.assertFalse(cf.active_storage())
-        # f[0] = cf.masked
-        # cf.write(f, tmpfile2)
-        # f = cf.read(tmpfile2, chunks={"latitude": (4, 1), "longitude": (3, 5)})
-        # f = f[0]
-        #
-        # array = f.collapse("mean", weights=False).array
-        #
-        # with cf.active_storage(True, active_storage_url="dummy"):
-        #     self.assertTrue(cf.active_storage())
-        #     self.assertTrue(cf.active_storage_url())
-        #     self.assertTrue(f.data.active_storage)
-        #     active_array = f.collapse("mean").array
-        #
-        # self.assertEqual(array, active_array)
+        # TODOACTIVE: Test with masked values (not yet working in
+        #             activestorage.Active)
 
 
 if __name__ == "__main__":
