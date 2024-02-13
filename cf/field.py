@@ -3506,7 +3506,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             coordinates: `bool`, optional
                 If True, the default, then coordinate constructs are
                 considered for weights creation for *weights* of
-                `True` or ``'area'``. If False then cell measure
+                `True` or ``'area'``. If False then coordinate
                 constructs are ignored for these *weights*.
 
                 .. versionadded:: 3.17.0
