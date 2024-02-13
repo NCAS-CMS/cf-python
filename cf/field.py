@@ -2412,11 +2412,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field`, `CellMeasure`, or `dict`
-                A field construct, or cell measure construct if
-                *return_cell_measure* is True, containing the
-                horizontal cell areas. If *methods* is True then a
-                dictionary describing the method used to create the
-                cell areas is returned.
+                A field construct, or cell measure construct containing
+                the horizontal cell areas if *return_cell_measure* is True,
+                or a dictionary describing the method used to create the
+                cell areas if *methods* is True.
 
         **Examples**
 
