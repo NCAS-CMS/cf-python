@@ -292,7 +292,6 @@ class WeightsTest(unittest.TestCase):
         self.assertEqual(w.Units, cf.Units("m"))
 
     def test_weights_cell_measures_coordinates(self):
-        import cf
 
         f = cf.example_field(0)
 
