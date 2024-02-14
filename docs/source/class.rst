@@ -79,9 +79,8 @@ Data classes
    cf.Data
    cf.H5netcdfArray
    cf.NetCDF4Array
-   cf.CFANetCDFArray
    cf.FullArray
-   cf.UMAarray
+   cf.UMArray
    
 Data compression classes
 ------------------------

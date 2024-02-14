@@ -4609,20 +4609,20 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The `cf.read`
 function creates data in this manner. A pointer to an array in a
-netCDF file can be stored in a `cf.NetCDFArray` or
+netCDF file can be stored in a `cf.NetCDF4Array` or
 `~cf.H5netcdfAarray` instance, which is is used to initialise a
 `cf.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
-             and use it to create a NetCDFArray instance with which to
-             initialise a Data instance.*
+             and use it to create a NetCDF4Array instance with which
+             to initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
-   >>> netcdf_array = cf.NetCDFArray(filename='file.nc', address='ta',
-   ...	                               dtype=v.dtype, shape=v.shape)
+   >>> netcdf_array = cf.NetCDF4Array(filename='file.nc', address='ta',
+   ...	                              dtype=v.dtype, shape=v.shape)
    >>> data_disk = cf.Data(netcdf_array)
 
   
@@ -4638,7 +4638,7 @@ netCDF file can be stored in a `cf.NetCDFArray` or
 
 Note that data type, number of dimensions, dimension sizes and number
 of elements of the array on disk that are used to initialise the
-`cf.NetCDFArray` instance are those expected by the CF data model,
+`cf.NetCDF4Array` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
 netCDF character array of shape ``(12, 9)`` is viewed in cf as a

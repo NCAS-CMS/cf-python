@@ -292,6 +292,7 @@ from .data.array import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    UMArray,
 )
 
 from .data.fragment import (
