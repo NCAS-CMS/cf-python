@@ -96,6 +96,8 @@ class Grid:
     is_grid: bool = False
     # Whether or not the grid is a UGRID mesh.
     is_mesh: bool = False
+    # Whether or not the grid is a location stream.
+    is_locstream: bool = False
     # The location on a UGRID mesh topology of the grid cells. An
     # empty string means that the grid is not a UGRID mesh
     # topology. E.g. '' or 'face'.
@@ -103,6 +105,9 @@ class Grid:
     # A domain topology construct that spans the regrid axis. A value
     # of None means that the grid is not a UGRID mesh topology.
     domain_topology: Any = None
+    # TODO A domain topology construct that spans the regrid axis. A value
+    # of None means that the grid is not a UGRID mesh topology.
+    featureType: str = ""
     # The domain axis identifiers of new axes that result from the
     # regridding operation changing the number of data dimensions
     # (e.g. by regridding a source UGRID (1-d) grid to a destination
@@ -853,7 +858,9 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     aux_coords_2d = False
     aux_coords_1d = False
     domain_topology = None
-    mesh_location = ""
+
+    domain_topology, mesh_location, mesh_axis = get_mesh(f)
+    featureType, dsg_axis = get_dsg(f)
 
     # Look for 1-d X and Y dimension coordinates
     lon_key_1d, lon_1d = f.dimension_coordinate(
@@ -873,6 +880,8 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
             lat = lat_1d
 
     if not dim_coords_1d:
+        domain_topology, mesh_location, mesh_axis = get_mesh(f)
+
         # Look for 2-d X and Y auxiliary coordinates
         lon_key, lon = f.auxiliary_coordinate(
             "X", filter_by_naxes=(2,), item=True, default=(None, None)
@@ -920,8 +929,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
                     f"spanned by the {name} grid latitude and longitude "
                     "coordinates"
                 )
-        else:
-            domain_topology, mesh_location, mesh_axis = get_mesh(f)
+        elif domain_topology is not None:
             if mesh_location in ("face", "point"):
                 lon = f.auxiliary_coordinate(
                     "X",
@@ -952,13 +960,38 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
                     f"a {name} grid comprising an unstructured mesh of "
                     f"{mesh_location!r} cells"
                 )
+        elif featureType:
+            print(999)
+            lon = f.auxiliary_coordinate(
+                "X",
+                filter_by_axis=(dsg_axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            lat = f.auxiliary_coordinate(
+                "Y",
+                filter_by_axis=(dsg_axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            if (
+                    lon is not None
+                    and lat is not None
+                    and lon.Units.islongitude
+                    and lat.Units.islatitude
+            ):
+                # Found 1-d latitude and longitude auxiliary
+                # coordinates for a UGRID mesh topology
+                aux_coords_1d = True
+                x_axis = dsg_axis
+                y_axis = dsg_axis
 
     if not (dim_coords_1d or aux_coords_2d or aux_coords_1d):
         raise ValueError(
             "Could not find 1-d nor 2-d latitude and longitude coordinates"
         )
 
-    if not mesh_location and x_axis == y_axis:
+    if not (mesh_location or featureType) and x_axis == y_axis:
         raise ValueError(
             "The X and Y axes must be distinct, but they are "
             f"the same for {name} field {f!r}."
@@ -991,7 +1024,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
             coords[dim] = coords[dim].transpose(esmpy_order)
 
     # Set cyclicity of X axis
-    if mesh_location:
+    if mesh_location or featureType:
         cyclic = None
     elif cyclic is None:
         cyclic = f.iscyclic(x_axis)
@@ -1001,13 +1034,13 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     axes = {"X": x_axis, "Y": y_axis}
     axis_keys = [y_axis, x_axis]
     shape = (y_size, x_size)
-    if mesh_location:
+    if mesh_location or featureType:
         axis_keys = axis_keys[0:1]
         shape = shape[0:1]
 
     n_regrid_axes = len(axis_keys)
     regridding_dimensionality = n_regrid_axes
-    if mesh_location:
+    if mesh_location or featureType:
         regridding_dimensionality += 1
 
     if f.construct_type == "domain":
@@ -1026,6 +1059,8 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         axis_indices = [data_axes.index(key) for key in axis_keys]
 
     is_mesh = bool(mesh_location)
+    is_locstream = bool(featureType)
+    is_grid = not is_mesh and not is_locstream
 
     return Grid(
         axis_keys=axis_keys,
@@ -1040,10 +1075,12 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         coord_sys="spherical",
         method=method,
         name=name,
+        is_grid=is_grid,
         is_mesh=is_mesh,
-        is_grid=not is_mesh,
+        is_locstream=is_locstream,
         mesh_location=mesh_location,
         domain_topology=domain_topology,
+        featureType=featureType,
     )
 
 
@@ -1372,7 +1409,7 @@ def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
     return True
 
 
-def esmpy_initialise():
+def  esmpy_initialise():
     """Initialise the `esmpy` manager.
 
     The is a null operation if the manager has already been
@@ -1442,6 +1479,10 @@ def create_esmpy_grid(grid, mask=None):
     if grid.is_mesh:
         # Create an `esmpy.Mesh`
         return create_esmpy_mesh(grid, mask)
+
+    if grid.is_locstream:
+        # Create an `esmpy.LocStream`
+        return create_esmpy_locstream(grid, mask)
 
     # Create an `esmpy.Grid`
     coords = grid.coords
@@ -1747,6 +1788,76 @@ def create_esmpy_mesh(grid, mask=None):
     )
     return esmpy_mesh
 
+def create_esmpy_locstream(grid, mask=None):
+    """TODO Create an `esmpy.Mesh`.
+
+    .. versionadded:: 3.??.0
+
+    .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`
+
+    :Parameters:
+
+        grid: `Grid`
+            The definition of the source or destination grid.
+
+        mask: array_like, optional
+            The mesh mask. If `None` (the default) then there are no
+            masked cells, otherwise must be a 1-d Boolean array, with
+            True for masked elements.
+
+    :Returns:
+
+        `esmpy.LocStream`
+            The `esmpy.LocStream` derived from *grid*.
+
+    """
+    if grid.coord_sys == "spherical":
+        coord_sys = esmpy.CoordSys.SPH_DEG
+    else:
+        # Cartesian
+        coord_sys = esmpy.CoordSys.CART
+
+    lon =  grid.coords[0]
+    lat =  grid.coords[1]
+
+    # Create an empty esmpy.Mesh
+    location_count = lon.size
+    esmpy_locstream = esmpy.LocStream(location_count, coord_sys=coord_sys)
+
+    # Add coordinates (must be of type type R8)
+    esmpy_locstream["ESMF:Lon"] = lon.array.astype(float)
+    esmpy_locstream["ESMF:Lat"] = lat.array.astype(float)
+
+#     maybe always set mask?,
+
+
+20240214 204229.529 ERROR            PET0 ESMF_PointList.F90:500 ESMF_PointListCreateFrmLocStream Wrong argument specified  - - LocStream has no masking info for use with specified mask values
+20240214 204229.529 ERROR            PET0 ESMF_FieldRegrid.F90:1647 ESMF_FieldRegridStoreNX Wrong argument specified  - Internal subroutine call returned Error
+20240214 204229.529 ERROR            PET0 ESMF_FieldRegrid.F90:980 ESMF_FieldRegridStoreNX Wrong argument specified  - Internal subroutine call returned Error
+20240214 204229.529 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Wrong argument specified  - Internal subroutine call returned Error
+20240214 204229.529 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Wrong argument specified  - Internal subroutine call returned Error
+20240214 204229.529 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Wrong argument specified  - Internal subroutine call returned Error
+20240214 204244.267 INFO             PET0 Finalizing ESMF
+PET0.ESMF_LogFile (END)
+
+
+    # Mask
+    if mask is not None:
+        if mask.dtype != bool:
+            raise ValueError(
+                "'mask' must be None or a Boolean array. "
+                f"Got: dtype={mask.dtype}"
+            )
+
+        # Note: 'mask' has True/False for masked/unmasked elements,
+        #       but the esmpy mask requires 0/1 int32 for
+        #       masked/unmasked elements.
+        mask = np.invert(mask).astype("int32")
+        if not mask.all():
+            # There are masked elements
+            esmpy_locstream["ESMF:Mask"] = mask
+
+    return esmpy_locstream
 
 def create_esmpy_weights(
     method,
@@ -1856,20 +1967,20 @@ def create_esmpy_weights(
         from_file = False
 
         src_mesh_location = src_grid.mesh_location
-        if not src_mesh_location:
-            src_meshloc = None
-        elif src_mesh_location == "face":
+        if src_mesh_location == "face":
             src_meshloc = esmpy.api.constants.MeshLoc.ELEMENT
         elif src_mesh_location == "point":
             src_meshloc = esmpy.api.constants.MeshLoc.NODE
+        elif not src_mesh_location:
+            src_meshloc = None
 
         dst_mesh_location = dst_grid.mesh_location
-        if not dst_mesh_location:
-            dst_meshloc = None
-        elif dst_mesh_location == "face":
+        if dst_mesh_location == "face":
             dst_meshloc = esmpy.api.constants.MeshLoc.ELEMENT
         elif dst_mesh_location == "point":
             dst_meshloc = esmpy.api.constants.MeshLoc.NODE
+        elif not dst_mesh_location:
+            dst_meshloc = None
 
         src_esmpy_field = esmpy.Field(
             src_esmpy_grid, name="src", meshloc=src_meshloc
@@ -2459,6 +2570,34 @@ def get_mesh(f):
         domain_topology.get_cell(""),
         f.get_data_axes(key)[0],
     )
+
+def get_dsg(f):
+    """TODO Get domain topology mesh information.
+
+    .. versionadded:: 3.16.0
+
+    :Parameters:
+
+        f: `Field` or `Domain`
+            The construct from which to get the mesh information.
+
+    :Returns:
+
+       3-`tuple`
+           If the field or domain has no domain topology construct
+           then ``(None, None, None)`` is returned. Otherwise the
+           tuple contains:
+
+           * The domain topology construct
+           * The mesh location of the domain topology (e.g. ``'face'``)
+           * The identifier of domain axis construct that is spanned
+             by the domain topology construct
+
+    """
+    if f.ndim != 1:
+        return ("", None)
+
+    return (f.get_property('featureType', ""), f.get_data_axes()[0],)
 
 
 def has_coordinate_arrays(grid):
