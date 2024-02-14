@@ -43,8 +43,8 @@ class ActiveStorageMixin:
         active = Active(
             self.get_filename(),
             self.get_address(),
-            # storage_options=self.get_storage_options(),
-            # active_storage_url=self.get_active_url(),
+            storage_options=self.get_storage_options(),
+            active_storage_url=self.get_active_url(),
         )
         active.method = method
         active.components = True

@@ -288,7 +288,7 @@ def actify(a, method, axis=None):
     # function.
     logger.warning(
         "At compute time chunks will be collapsed with "
-        f"active storage URL: {active_storage_url()}"
+        f"active storage at URL {active_storage_url()}"
     )
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
