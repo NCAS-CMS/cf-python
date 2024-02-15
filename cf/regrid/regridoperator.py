@@ -41,6 +41,7 @@ class RegridOperator(mixin_Container, Container):
         dst=None,
         weights_file=None,
         src_mesh_location=None,
+        dst_featureType=None,
     ):
         """**Initialisation**
 
@@ -132,6 +133,13 @@ class RegridOperator(mixin_Container, Container):
 
                 .. versionadded:: 3.16.0
 
+            dst_featureType: `str`, opational
+                The discrete sampling geometry (DSG) featureType of
+                the destination grid (e.g. ``'trajectory'``). An empty
+                string should be used for a non-DSG destination grid.
+
+                .. versionadded:: LOCVER
+
         """
         super().__init__()
 
@@ -158,6 +166,7 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dst", dst, copy=False)
         self._set_component("weights_file", weights_file, copy=False)
         self._set_component("src_mesh_location", src_mesh_location, copy=False)
+        self._set_component("dst_featureType", dst_featureType, copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -211,6 +220,15 @@ class RegridOperator(mixin_Container, Container):
         """Whether or not the destination grid longitude axis is
         cyclic."""
         return self._get_component("dst_cyclic")
+
+    @property
+    def dst_featureType(self):
+        """The DSG featureType of the destination grid.
+
+        .. versionadded:: LOCVER
+
+        """
+        return self._get_component("dst_featureType")
 
     @property
     def dst_mask(self):
@@ -410,6 +428,7 @@ class RegridOperator(mixin_Container, Container):
             dst=self.dst.copy(),
             weights_file=self.weights_file,
             src_mesh_location=self.src_mesh_location,
+            dst_featureType=self.dst_featureType,
         )
 
     @_display_or_return
@@ -451,6 +470,7 @@ class RegridOperator(mixin_Container, Container):
             "src_axes",
             "dst_axes",
             "src_mesh_location",
+            "dst_featureType",
             "dst",
             "weights",
             "row",

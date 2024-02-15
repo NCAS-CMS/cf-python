@@ -1,6 +1,7 @@
 """Worker functions for regridding."""
 import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
 import dask.array as da
@@ -961,7 +962,6 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
                     f"{mesh_location!r} cells"
                 )
         elif featureType:
-            print(999)
             lon = f.auxiliary_coordinate(
                 "X",
                 filter_by_axis=(dsg_axis,),
@@ -1789,9 +1789,9 @@ def create_esmpy_mesh(grid, mask=None):
     return esmpy_mesh
 
 def create_esmpy_locstream(grid, mask=None):
-    """TODO Create an `esmpy.Mesh`.
+    """Create an `esmpy.LocStream`.
 
-    .. versionadded:: 3.??.0
+    .. versionadded:: LOCVER
 
     .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`
 
@@ -1813,35 +1813,26 @@ def create_esmpy_locstream(grid, mask=None):
     """
     if grid.coord_sys == "spherical":
         coord_sys = esmpy.CoordSys.SPH_DEG
+        x_key = "ESMF:Lon" 
+        y_key = "ESMF:Lat" 
     else:
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
+        x_key = "ESMF:X"
+        y_key = "ESMF:Y"
 
-    lon =  grid.coords[0]
-    lat =  grid.coords[1]
+    x =  grid.coords[0]
+    y =  grid.coords[1]
 
-    # Create an empty esmpy.Mesh
-    location_count = lon.size
-    esmpy_locstream = esmpy.LocStream(location_count, coord_sys=coord_sys)
+    # Create an empty esmpy.LocStream
+    location_count = x.size
+    esmpy_locstream = esmpy.LocStream(location_count, coord_sys=coord_sys, name=grid.featureType)
 
-    # Add coordinates (must be of type type R8)
-    esmpy_locstream["ESMF:Lon"] = lon.array.astype(float)
-    esmpy_locstream["ESMF:Lat"] = lat.array.astype(float)
-
-#     maybe always set mask?,
-
-
-20240214 204229.529 ERROR            PET0 ESMF_PointList.F90:500 ESMF_PointListCreateFrmLocStream Wrong argument specified  - - LocStream has no masking info for use with specified mask values
-20240214 204229.529 ERROR            PET0 ESMF_FieldRegrid.F90:1647 ESMF_FieldRegridStoreNX Wrong argument specified  - Internal subroutine call returned Error
-20240214 204229.529 ERROR            PET0 ESMF_FieldRegrid.F90:980 ESMF_FieldRegridStoreNX Wrong argument specified  - Internal subroutine call returned Error
-20240214 204229.529 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Wrong argument specified  - Internal subroutine call returned Error
-20240214 204229.529 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Wrong argument specified  - Internal subroutine call returned Error
-20240214 204229.529 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Wrong argument specified  - Internal subroutine call returned Error
-20240214 204244.267 INFO             PET0 Finalizing ESMF
-PET0.ESMF_LogFile (END)
-
-
-    # Mask
+    # Add coordinates (must be of type type float64)
+    esmpy_locstream[x_key] = x.array.astype(float)
+    esmpy_locstream[y_key] = y.array.astype(float)
+       
+    # Add mask (always required, and must be of type int32)
     if mask is not None:
         if mask.dtype != bool:
             raise ValueError(
@@ -1850,12 +1841,14 @@ PET0.ESMF_LogFile (END)
             )
 
         # Note: 'mask' has True/False for masked/unmasked elements,
-        #       but the esmpy mask requires 0/1 int32 for
-        #       masked/unmasked elements.
+        #       but the esmpy mask requires 0/1 for masked/unmasked
+        #       elements.
         mask = np.invert(mask).astype("int32")
-        if not mask.all():
-            # There are masked elements
-            esmpy_locstream["ESMF:Mask"] = mask
+    else:
+        # No masked points
+        mask = np.full((location_count,), 1, dtype='int32')
+
+    esmpy_locstream["ESMF:Mask"] = mask
 
     return esmpy_locstream
 
@@ -2048,10 +2041,12 @@ def create_esmpy_weights(
             nc = Dataset(weights_file, "w", format="NETCDF4")
             nc.title = (
                 f"{src_grid.coord_sys.capitalize()} {src_grid.method} "
-                f"regridding weights from source grid shape {src_grid.shape} "
-                f"to destination grid shape {dst_grid.shape}."
+                f"regridding weights from source {grid_type(src_grid)} "
+                f"with shape {src_grid.shape} to destination "
+                f"{grid_type(dst_grid)} with shape {dst_grid.shape}"
             )
-            nc.source = f"cf-python v{__version__}"
+            nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
+            nc.history = f"Created at {datetime.now()}"
 
             nc.createDimension("n_s", weights.size)
 
@@ -2092,7 +2087,17 @@ def create_esmpy_weights(
 
     return weights, row, col, start_index, from_file
 
+def grid_type(grid):
+    """TODO"""
+    if grid.is_grid:
+        return "structured grid"
 
+    if grid.is_mesh:
+        return "UGRID mesh"
+
+    if grid.is_locstream:
+        return f"DSG {grid.featureType}"
+    
 def contiguous_bounds(b, cyclic=False, period=None):
     """Determine whether or not bounds are contiguous.
 
