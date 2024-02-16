@@ -38,13 +38,20 @@ class ActiveStorageMixin:
             # numpy array.
             return super().__getitem__(indices)
 
+        import urllib
         # Still here? Then do an active storage reduction. Returns a
         # dictionary of reduced values.
+
+        # Hack for testing!
+        filename = self.get_filename()
+        filename = urllib.parse.urlparse(filename).path[1:]
+
         active = Active(
-            self.get_filename(),
+            filename,
             self.get_address(),
+            storage_type ='s3',  # Hack for testing!
             storage_options=self.get_storage_options(),
-            active_storage_url=self.get_active_url(),
+            active_storage_url=self.get_active_storage_url(),
         )
         active.method = method
         active.components = True
@@ -57,7 +64,7 @@ class ActiveStorageMixin:
 
         return active[indices]
 
-    def actify(self, method, axis=None, active_url=None):
+    def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -79,7 +86,7 @@ class ActiveStorageMixin:
                 Axis or axes along which to operate. By default, or if
                 `None`, flattened input is used.
 
-            active_url: `str` or `None`, optional
+            active_storage_url: `str` or `None`, optional
                 The URL of the active storage server.
 
         :Returns:
@@ -108,7 +115,7 @@ class ActiveStorageMixin:
         a = self.copy()
         a._custom["active_method"] = method
         a._custom["active_axis"] = axis
-        a._custom["active_url"] = active_url
+        a._custom["active_storage_url"] = active_storage_url
         return a
 
     def get_active_axis(self):
@@ -116,7 +123,7 @@ class ActiveStorageMixin:
 
         .. versionadded:: 3.17.0
 
-        .. seealso:: `get_active_method`, `get_active_url`
+        .. seealso:: `get_active_method`, `get_active_storage_url`
 
         :Returns:
 
@@ -132,7 +139,7 @@ class ActiveStorageMixin:
 
         .. versionadded:: 3.17.0
 
-        .. seealso:: `get_active_axis`, `get_active_url`
+        .. seealso:: `get_active_axis`, `get_active_storage_url`
 
         :Returns:
 
@@ -143,7 +150,7 @@ class ActiveStorageMixin:
         """
         return self._custom.get("active_method")
 
-    def get_active_url(self):
+    def get_active_storage_url(self):
         """Return the the active storage URL.
 
         .. versionadded:: 3.17.0
@@ -157,4 +164,4 @@ class ActiveStorageMixin:
                 active storage reduction.
 
         """
-        self._custom.get("active_url")
+        return self._custom.get("active_storage_url")

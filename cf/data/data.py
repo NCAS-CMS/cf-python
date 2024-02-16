@@ -4027,15 +4027,17 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         data0 = data[0]
         units0 = data0.Units
-
+        print ('data0.a_s=', data0.active_storage)
+    
         if copy:
             data0 = data0.copy()
             copied = True
         else:
             copied = False
-
+           
         processed_data = []
         for index, data1 in enumerate(data):
+            print ('data1.a_s=', data1.active_storage)
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
                 if not copied:
@@ -4106,6 +4108,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             if not d.active_storage:
                 # Set the output active storage status to False when
                 # any input data instance has False status
+                print ('nuking active in concatenate')
                 active = _NONE
                 break
 
@@ -4780,6 +4783,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         False
 
         """
+#        return True
         return (
             self._custom.get("active_storage", False)
             and not self.get_compression_type()

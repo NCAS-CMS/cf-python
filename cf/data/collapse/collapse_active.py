@@ -270,7 +270,7 @@ def actify(a, method, axis=None):
         # to files, so try to insert an actified copy into the dask
         # graph.
         try:
-            dsk[key] = value.actify(method, axis, active_url=url)
+            dsk[key] = value.actify(method, axis, active_storage_url=url)
         except AttributeError:
             # This data definition doesn't have an 'actify' method,
             # and so doesn't support active storage reductions.
@@ -288,7 +288,7 @@ def actify(a, method, axis=None):
     # function.
     logger.warning(
         "At compute time chunks will be collapsed with "
-        f"active storage at URL {active_storage_url()}"
+        f"active storage at URL {url}"
     )
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
