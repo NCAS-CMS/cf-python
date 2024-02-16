@@ -99,6 +99,8 @@ class Grid:
     is_mesh: bool = False
     # Whether or not the grid is a location stream.
     is_locstream: bool = False
+    # The type of grid.
+    type: str = "unknown"
     # The location on a UGRID mesh topology of the grid cells. An
     # empty string means that the grid is not a UGRID mesh
     # topology. E.g. '' or 'face'.
@@ -106,8 +108,9 @@ class Grid:
     # A domain topology construct that spans the regrid axis. A value
     # of None means that the grid is not a UGRID mesh topology.
     domain_topology: Any = None
-    # TODO A domain topology construct that spans the regrid axis. A value
-    # of None means that the grid is not a UGRID mesh topology.
+    # The featureType of a discrete sampling geometry grid. An empty
+    # string means that the grid is not a DSG. E.g. '' or
+    # 'trajectory'.
     featureType: str = ""
     # The domain axis identifiers of new axes that result from the
     # regridding operation changing the number of data dimensions
@@ -544,6 +547,7 @@ def regrid(
             dst=dst,
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
+            dst_featureType=dst_grid.featureType,
         )
     else:
         if weights_file is not None:
@@ -975,10 +979,10 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
                 default=None,
             )
             if (
-                    lon is not None
-                    and lat is not None
-                    and lon.Units.islongitude
-                    and lat.Units.islatitude
+                lon is not None
+                and lat is not None
+                and lon.Units.islongitude
+                and lat.Units.islatitude
             ):
                 # Found 1-d latitude and longitude auxiliary
                 # coordinates for a UGRID mesh topology
@@ -1062,7 +1066,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     is_locstream = bool(featureType)
     is_grid = not is_mesh and not is_locstream
 
-    return Grid(
+    grid = Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         axes=axes,
@@ -1082,6 +1086,9 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         domain_topology=domain_topology,
         featureType=featureType,
     )
+
+    set_grid_type(grid)
+    return grid
 
 
 def Cartesian_grid(f, name=None, method=None, axes=None):
@@ -1144,10 +1151,11 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         axis_sizes.append(domain_axis.size)
 
     domain_topology, mesh_location, mesh_axis = get_mesh(f)
+    featureType, dsg_axis = get_dsg(f)
     if mesh_location:
         # There is a domain topology axis
         if list(set(axis_keys)) == [mesh_axis]:
-            # There is a unique regridding axis, and its the domain
+            # There is a unique regridding axis, and it's the domain
             # topology axis.
             if mesh_location not in ("face", "point"):
                 raise ValueError(
@@ -1168,6 +1176,21 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             domain_topology = None
             mesh_location = None
             mesh_axis = None
+    elif featureType:
+        if list(set(axis_keys)) == [dsg_axis]:
+            # There is a unique regridding axis, and it's the DSG
+            # axis.
+            axis_keys = axis_keys[0:1]
+            axis_sizes = axis_sizes[0:1]
+        elif dsg_axis in axis_keys:
+            raise ValueError(
+                "Can't do Cartesian regridding for a combination of "
+                f"DSG and non-DSG axes: {axis_keys}"
+            )
+        else:
+            # None of the regridding axes have are DSG axes
+            featureType = None
+            dsg_axis = None
 
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
@@ -1186,26 +1209,37 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     cyclic = False
     coords = []
-    if mesh_location:
+    if mesh_location or featureType:        
         if n_axes == 1:
             coord_ids = ["X", "Y"]
         elif n_axes == 2:
             coord_ids = axes[::-1]
+        elif mesh:
+            raise ValueError(
+                "Can't provide 3 or more axes for Cartesian mesh axis "
+                "regridding"
+            )
         else:
             raise ValueError(
-                "Can't provide 3 or more axes for mesh axis regridding"
+                "Can't provide 3 or more axes for Cartesian DSG axis"
+                "regridding"
             )
+            
+        if mesh:
+            axis = mesh_axis
+        else:
+            axis = dsg_axis
 
         for coord_id in coord_ids:
             aux = f.auxiliary_coordinate(
                 coord_id,
-                filter_by_axis=(mesh_axis,),
+                filter_by_axis=(axis,),
                 axis_mode="exact",
                 default=None,
             )
             if aux is None:
                 raise ValueError(
-                    f"Could not find {coord_id!r} 1-d mesh auxiliary "
+                    f"Could not find {coord_id!r} 1-d auxiliary "
                     "coordinates"
                 )
 
@@ -1240,12 +1274,14 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     n_regrid_axes = len(axis_keys)
     regridding_dimensionality = n_regrid_axes
-    if mesh_location:
+    if mesh_location or featureType:
         regridding_dimensionality += 1
 
     is_mesh = bool(mesh_location)
+    is_locstream = bool(featureType)
+    is_grid = not is_mesh and not is_locstream
 
-    return Grid(
+    grid = Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         axes=axis_keys,
@@ -1263,7 +1299,11 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         is_grid=not is_mesh,
         mesh_location=mesh_location,
         domain_topology=domain_topology,
+        featureType=featureType,
     )
+
+    set_grid_type(grid)
+    return grid
 
 
 def conform_coordinate_units(src_grid, dst_grid):
@@ -1409,7 +1449,7 @@ def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
     return True
 
 
-def  esmpy_initialise():
+def esmpy_initialise():
     """Initialise the `esmpy` manager.
 
     The is a null operation if the manager has already been
@@ -1788,6 +1828,7 @@ def create_esmpy_mesh(grid, mask=None):
     )
     return esmpy_mesh
 
+
 def create_esmpy_locstream(grid, mask=None):
     """Create an `esmpy.LocStream`.
 
@@ -1813,25 +1854,27 @@ def create_esmpy_locstream(grid, mask=None):
     """
     if grid.coord_sys == "spherical":
         coord_sys = esmpy.CoordSys.SPH_DEG
-        x_key = "ESMF:Lon" 
-        y_key = "ESMF:Lat" 
+        x_key = "ESMF:Lon"
+        y_key = "ESMF:Lat"
     else:
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
         x_key = "ESMF:X"
         y_key = "ESMF:Y"
 
-    x =  grid.coords[0]
-    y =  grid.coords[1]
+    x = grid.coords[0]
+    y = grid.coords[1]
 
     # Create an empty esmpy.LocStream
     location_count = x.size
-    esmpy_locstream = esmpy.LocStream(location_count, coord_sys=coord_sys, name=grid.featureType)
+    esmpy_locstream = esmpy.LocStream(
+        location_count, coord_sys=coord_sys, name=grid.featureType
+    )
 
     # Add coordinates (must be of type type float64)
     esmpy_locstream[x_key] = x.array.astype(float)
     esmpy_locstream[y_key] = y.array.astype(float)
-       
+
     # Add mask (always required, and must be of type int32)
     if mask is not None:
         if mask.dtype != bool:
@@ -1846,11 +1889,12 @@ def create_esmpy_locstream(grid, mask=None):
         mask = np.invert(mask).astype("int32")
     else:
         # No masked points
-        mask = np.full((location_count,), 1, dtype='int32')
+        mask = np.full((location_count,), 1, dtype="int32")
 
     esmpy_locstream["ESMF:Mask"] = mask
 
     return esmpy_locstream
+
 
 def create_esmpy_weights(
     method,
@@ -2041,9 +2085,9 @@ def create_esmpy_weights(
             nc = Dataset(weights_file, "w", format="NETCDF4")
             nc.title = (
                 f"{src_grid.coord_sys.capitalize()} {src_grid.method} "
-                f"regridding weights from source {grid_type(src_grid)} "
+                f"regridding weights from source {src_grid.type} "
                 f"with shape {src_grid.shape} to destination "
-                f"{grid_type(dst_grid)} with shape {dst_grid.shape}"
+                f"{dst_grid.type} with shape {dst_grid.shape}"
             )
             nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
             nc.history = f"Created at {datetime.now()}"
@@ -2087,17 +2131,7 @@ def create_esmpy_weights(
 
     return weights, row, col, start_index, from_file
 
-def grid_type(grid):
-    """TODO"""
-    if grid.is_grid:
-        return "structured grid"
 
-    if grid.is_mesh:
-        return "UGRID mesh"
-
-    if grid.is_locstream:
-        return f"DSG {grid.featureType}"
-    
 def contiguous_bounds(b, cyclic=False, period=None):
     """Determine whether or not bounds are contiguous.
 
@@ -2576,33 +2610,36 @@ def get_mesh(f):
         f.get_data_axes(key)[0],
     )
 
-def get_dsg(f):
-    """TODO Get domain topology mesh information.
 
-    .. versionadded:: 3.16.0
+def get_dsg(f):
+    """Get domain discrete sampling geometry information.
+
+    .. versionadded:: 3.17.0
 
     :Parameters:
 
         f: `Field` or `Domain`
-            The construct from which to get the mesh information.
+            The construct from which to get the DSG information.
 
     :Returns:
 
-       3-`tuple`
-           If the field or domain has no domain topology construct
-           then ``(None, None, None)`` is returned. Otherwise the
-           tuple contains:
+       2-`tuple`
+           If the field or domain is not a DSG then ``(None, None)``
+           is returned. Otherwise the tuple contains:
 
-           * The domain topology construct
-           * The mesh location of the domain topology (e.g. ``'face'``)
+           * The featureType (e.g. ``'trajectory'``)
            * The identifier of domain axis construct that is spanned
-             by the domain topology construct
+             by the DSG.
 
     """
-    if f.ndim != 1:
-        return ("", None)
+    featureType = f.get_property("featureType", None)
+    if featureType is None or f.ndim != 1:
+        return (None, None)
 
-    return (f.get_property('featureType', ""), f.get_data_axes()[0],)
+    return (
+        featureType,
+        f.get_data_axes()[0],
+    )
 
 
 def has_coordinate_arrays(grid):
@@ -2638,3 +2675,26 @@ def has_coordinate_arrays(grid):
             return False
 
     return True
+
+
+def set_grid_type(grid):
+    """Set the ``type`` attribute of a `Grid` instance in-place.
+
+    .. versionadded:: 3.17.0
+
+    :Parameters:
+
+        grid: `Grid`
+            The definition of the grid.
+
+    :Returns:
+
+        `None`
+
+    """
+    if grid.is_grid:
+        grid.type = "structured grid"
+    elif grid.is_mesh:
+        grid.type = "UGRID {grid.mesh_location} mesh"
+    elif grid.is_locstream:
+        grid.type = f"DSG {grid.featureType}"

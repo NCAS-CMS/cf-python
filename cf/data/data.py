@@ -3799,7 +3799,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                     new_axis.extend(range(n + 1, n + n_sizes))
                     n += n_sizes - 1
             else:
-                regridded_chunks.extend(c)
+                regridded_chunks.append(c)
 
             n += 1
 
