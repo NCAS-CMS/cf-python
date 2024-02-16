@@ -314,6 +314,27 @@ def regrid(
         #      [0,1,3,4,2]
         raxis0, raxis = axis_order[-2:]
         axis_order = [i if i <= raxis else i - 1 for i in axis_order[:-1]]
+    elif n_src_axes == 3 and n_dst_axes == 1:
+        # The regridding operation decreased the number of data axes
+        # by 2 => modify 'axis_order' to remove the removed axes.
+        #
+        # E.g. regular Z-lat-lon -> DSG could change 'axis_order' from
+        #      [0,2,5,1,3,4] to [0,2,3,1], or [0,2,4,5,3,1] to
+        #      [0,1,2,3]
+        raxis0, raxis1 = axis_order[-2:]
+        if raxis0 > raxis1:
+            raxis0, raxis1 = raxis1, raxis0
+
+        new = []
+        for i in axis_order[:-2]:
+            if i <= raxis0:
+                new.append(i)
+            elif raxis0 < i <= raxis1:
+                new.append(i-1)
+            else:
+                 new.append(i - 2)
+
+        axis_order = new
     elif n_src_axes != n_dst_axes:
         raise ValueError(
             f"Can't (yet) regrid from {n_src_axes} dimensions to "
