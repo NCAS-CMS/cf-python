@@ -1192,6 +1192,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             featureType = None
             dsg_axis = None
 
+    print ( axis_keys  ,  axis_sizes )
+        
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
     else:
@@ -1209,27 +1211,41 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     cyclic = False
     coords = []
-    if mesh_location or featureType:        
+    if mesh_location:
         if n_axes == 1:
             coord_ids = ["X", "Y"]
         elif n_axes == 2:
             coord_ids = axes[::-1]
-        elif mesh:
+        else:
             raise ValueError(
                 "Can't provide 3 or more axes for Cartesian mesh axis "
                 "regridding"
             )
-        else:
+
+        axis = mesh_axis
+        for coord_id in coord_ids:
+            aux = f.auxiliary_coordinate(
+                coord_id,
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            if aux is None:
+                raise ValueError(
+                    f"Could not find {coord_id!r} 1-d auxiliary "
+                    "coordinates"
+                )
+
+            coords.append(aux)
+    elif featureType:        
+        if n_axes == 1:
             raise ValueError(
-                "Can't provide 3 or more axes for Cartesian DSG axis"
+                "Can't provide 2 or more axes for Cartesian DSG axis"
                 "regridding"
             )
             
-        if mesh:
-            axis = mesh_axis
-        else:
-            axis = dsg_axis
-
+        axis = dsg_axis
+        print (coord_ids, axis)
         for coord_id in coord_ids:
             aux = f.auxiliary_coordinate(
                 coord_id,
