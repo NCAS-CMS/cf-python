@@ -391,10 +391,10 @@ def regrid(
     # Create descriptions of the source and destination grids
     # ----------------------------------------------------------------
     dst_grid = get_grid(
-        coord_sys, dst, "destination", method, dst_cyclic, axes=dst_axes, xyz=z
+        coord_sys, dst, "destination", method, dst_cyclic, axes=dst_axes, z=z
     )
     src_grid = get_grid(
-        coord_sys, src, "source", method, src_cyclic, axes=src_axes, xyz=z
+        coord_sys, src, "source", method, src_cyclic, axes=src_axes, z=z
     )
 
     if is_log_level_debug(logger):
@@ -584,10 +584,8 @@ def regrid(
     elif dst_grid.n_regrid_axes == 1:
         # More source grid axes than destination grid axes
         # (e.g. lat/lon regridded to mesh).
-        print('here 1')
         src_axis_indices = sorted(src_grid.axis_indices)
         regridded_axis_sizes = {src_axis_indices[0]: (dst_grid.shape[0],)}
-        print ('rwerwerwe', src_axis_indices, regridded_axis_sizes )
         for src_iaxis in src_axis_indices[1:]:
             regridded_axis_sizes[src_iaxis] = ()
 
@@ -794,7 +792,7 @@ def Cartesian_coords_to_domain(dst, domain_class=None):
     return d, axis_keys
 
 
-def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None, xyz=None):
+def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None, spherical_z=None):
     """Get axis and coordinate information for regridding.
 
     See `spherical_grid` and `Cartesian_grid` for details.
@@ -807,14 +805,14 @@ def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None, xyz=N
     """
     if coord_sys == "spherical":
         return spherical_grid(
-            f, name=name, method=method, cyclic=cyclic, axes=axes
+            f, name=name, method=method, cyclic=cyclic, axes=axes, spherical_z=spherical_z
         )
 
     # Cartesian
     return Cartesian_grid(f, name=name, method=method, axes=axes)
 
 
-def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False):
+def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_z=False):
     """Get latitude and longitude coordinate information.
 
     Retrieve the latitude and longitude coordinates of a field, as
@@ -861,8 +859,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False)
             The grid definition.
 
     """
-    print ("\n",name)
-    xyz = "log"
+    spherical_z = "log"
     
     data_axes = f.constructs.data_axes()
 
@@ -1034,11 +1031,17 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False)
     if mesh_location or featureType:
         regridding_dimensionality += 1
 
-    if xyz:
+    if spherical_z:
         # ------------------------------------------------------------
         # TODO
         # ------------------------------------------------------------
-        if mesh_location or featureType:
+        if mesh_location:
+            raise ValueError(
+                f"Can't (yet) 3-d spherically regrid "
+                f"{'from' if name == 'source' else 'to'} a {name} grid "
+                f"comprising an unstructured mesh of {mesh_location!r} cells"
+            )
+        elif featureType:
             z_key, z_1d = f.auxiliary_coordinate(
                 "Z",
                 filter_by_axis=(axis1,),
@@ -1051,11 +1054,12 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False)
             
             z = z_1d
             z_axis = axis1
+
+            regridding_dimensionality += 1
         else:
             z_key, z_1d = f.dimension_coordinate(
                 "Z", item=True, default=(None, None)
             )
-            print (z_key, z_1d)            
             if z_1d is not None:
                 z_axis = data_axes[z_key][0]
                 z = z_1d
@@ -1073,25 +1077,21 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False)
                           if axis not in (x_axis, y_axis)][0]
                 
                 coord_axes = data_axes[z_key]
-                print (coord_axes)
                 esmpy_order = [coord_axes.index(axis)
                                for axis in (x_axis, y_axis, z_axis)]
                 z  = z_3d.transpose(esmpy_order)
 
+        if spherical_z == "log":
+            z = z.log()
+        
         coords.append(z)  # esmpy order
 
-        axes['Z'] = z_axis
-        axis_keys.insert(0, z_axis)
-
-        z_size = domain_axes[z_axis].size
-        shape = (z_size,) + shape
+        if not (mesh_location or featureType):
+            axes['Z'] = z_axis
+            axis_keys.insert(0, z_axis)
+            z_size = domain_axes[z_axis].size
+            shape = (z_size,) + shape
     
-        if mesh_location or featureType:
-            regridding_dimensionality += 1
-
-        if xyz == "log":
-            coords[2] = coords[2].log()
-        
     if f.construct_type == "domain":
         axis_indices = list(range(n_regrid_axes))
     else:
@@ -1130,11 +1130,11 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, xyz=False)
         mesh_location=mesh_location,
         domain_topology=domain_topology,
         featureType=featureType,
-        z=xyz
+        z=spherical_z
     )
 
     set_grid_type(grid)
-    print(grid)
+    print (grid)
     return grid
 
 
@@ -1197,11 +1197,15 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         axis_keys.append(key)
         axis_sizes.append(domain_axis.size)
 
-    domain_topology, mesh_location, mesh_axis = get_mesh(f)
-    featureType, dsg_axis = get_dsg(f)
+    domain_topology, mesh_location, axis1 = get_mesh(f)
+    if not mesh_location:
+        featureType, axis1 = get_dsg(f)
+    else:
+        featureType, axis1 = (None, None)
+
     if mesh_location:
         # There is a domain topology axis
-        if list(set(axis_keys)) == [mesh_axis]:
+        if tuple(set(axis_keys)) == (axis1,):
             # There is a unique regridding axis, and it's the domain
             # topology axis.
             if mesh_location not in ("face", "point"):
@@ -1213,7 +1217,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
             axis_keys = axis_keys[0:1]
             axis_sizes = axis_sizes[0:1]
-        elif mesh_axis in axis_keys:
+        elif axis1 in axis_keys:
             raise ValueError(
                 "Can't do Cartesian regridding for a combination of "
                 f"mesh and non-mesh axes: {axis_keys}"
@@ -1222,14 +1226,14 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             # None of the regridding axes have a domain topology
             domain_topology = None
             mesh_location = None
-            mesh_axis = None
+            axis1 = None
     elif featureType:
-        if list(set(axis_keys)) == [dsg_axis]:
+        if tuple(set(axis_keys)) == (axis1,)
             # There is a unique regridding axis, and it's the DSG
             # axis.
             axis_keys = axis_keys[0:1]
             axis_sizes = axis_sizes[0:1]
-        elif dsg_axis in axis_keys:
+        elif axis1 in axis_keys:
             raise ValueError(
                 "Can't do Cartesian regridding for a combination of "
                 f"DSG and non-DSG axes: {axis_keys}"
@@ -1237,10 +1241,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         else:
             # None of the regridding axes have are DSG axes
             featureType = None
-            dsg_axis = None
+            axis1 = None
 
-    print ( axis_keys  ,  axis_sizes )
-        
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
     else:
@@ -1258,7 +1260,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     cyclic = False
     coords = []
-    if mesh_location:
+    if mesh_location or featureType:
         if n_axes == 1:
             coord_ids = ["X", "Y"]
         elif n_axes == 2:
@@ -1269,35 +1271,10 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
                 "regridding"
             )
 
-        axis = mesh_axis
         for coord_id in coord_ids:
             aux = f.auxiliary_coordinate(
                 coord_id,
-                filter_by_axis=(axis,),
-                axis_mode="exact",
-                default=None,
-            )
-            if aux is None:
-                raise ValueError(
-                    f"Could not find {coord_id!r} 1-d auxiliary "
-                    "coordinates"
-                )
-
-            coords.append(aux)
-    elif featureType:
-        print (axes ,  axis_keys,    axis_sizes)
-        if n_axes > 1:
-            raise ValueError(
-                "Can't provide 2 or more axes for Cartesian featureType "
-                "axis regridding"
-            )
-            
-        axis = dsg_axis
-        print (coord_ids, axis)
-        for coord_id in coord_ids:
-            aux = f.auxiliary_coordinate(
-                coord_id,
-                filter_by_axis=(axis,),
+                filter_by_axis=(axis1,),
                 axis_mode="exact",
                 default=None,
             )
@@ -1364,6 +1341,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         mesh_location=mesh_location,
         domain_topology=domain_topology,
         featureType=featureType,
+        z=None
     )
 
     set_grid_type(grid)
@@ -2628,7 +2606,6 @@ def update_data(src, regridded_data, src_grid):
         `None`
 
     """
-    print (src_grid)
     data_axes = src.get_data_axes()
     if src_grid.new_axis_keys:
         # The regridding has changed the number of data axes (e.g. by
@@ -2636,7 +2613,7 @@ def update_data(src, regridded_data, src_grid):
         # grid, or vice versa) => delete the old, superceded domain
         # axis construct and update the list of data axes.
         data_axes = list(data_axes)
-    ppp    index = data_axes.index(src_grid.axis_keys[0])
+        index = data_axes.index(src_grid.axis_keys[0])
         for axis in src_grid.axis_keys:
             data_axes.remove(axis)
             src.del_construct(axis)
