@@ -42,6 +42,8 @@ class RegridOperator(mixin_Container, Container):
         weights_file=None,
         src_mesh_location=None,
         dst_featureType=None,
+        dimensionality=None,
+        ln_z=False,
     ):
         """**Initialisation**
 
@@ -167,6 +169,8 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("weights_file", weights_file, copy=False)
         self._set_component("src_mesh_location", src_mesh_location, copy=False)
         self._set_component("dst_featureType", dst_featureType, copy=False)
+        self._set_component("dimensionality", dimensionality, copy=False)
+        self._set_component("ln_z", ln_z, copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -192,6 +196,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("coord_sys")
+
+    @property
+    def dimensionality(self):
+        """TODO
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dimensionality")
 
     @property
     def dst(self):
@@ -255,6 +268,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("dst_shape")
+
+    @property
+    def ln_z(self):
+        """TODO
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("ln_z")
 
     @property
     def method(self):
@@ -471,6 +493,8 @@ class RegridOperator(mixin_Container, Container):
             "dst_axes",
             "src_mesh_location",
             "dst_featureType",
+            "dimensionality",
+            "ln_z",
             "dst",
             "weights",
             "row",

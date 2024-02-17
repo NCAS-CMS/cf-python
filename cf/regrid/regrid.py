@@ -55,6 +55,8 @@ class Grid:
 
     # Identify the grid as 'source' or 'destination'.
     name: str = ""
+    # TODO
+    type: str = ""
     # The domain axis identifiers of the regrid axes, in the order
     # expected by `Data._regrid`. E.g. ['domainaxis3', 'domainaxis2']
     axis_keys: list = field(default_factory=list)
@@ -69,8 +71,8 @@ class Grid:
     n_regrid_axes: int = 0
     # The dimensionality of the regridding on this grid. Generally the
     # same as *n_regrid_axes*, but for a regridding a UGRID mesh axis
-    # *n_regrid_axes* is 1 and *regridding_dimensionality* is 2.
-    regridding_dimensionality: int = 0
+    # *n_regrid_axes* is 1 and *dimensionality* is 2.
+    dimensionality: int = 0
     # The shape of the regridding axes, in the same order as the
     # 'axis_keys' attribute. E.g. (96, 73) or (1243,)
     shape: tuple = None
@@ -120,7 +122,10 @@ class Grid:
     # ['domainaxis3', 'domainaxis4'], ['domainaxis4']
     new_axis_keys: list = field(default_factory=list)
     #
-    z: bool = False
+    spherical_3d: bool = False
+    #
+    ln_z: bool = False
+
 
 def regrid(
     coord_sys,
@@ -134,7 +139,8 @@ def regrid(
     src_axes=None,
     dst_axes=None,
     axes=None,
-    z=False,
+    spherical_3d=False,
+    ln_z=False,
     ignore_degenerate=True,
     return_operator=False,
     check_coordinates=False,
@@ -296,9 +302,12 @@ def regrid(
         method = regrid_operator.method
         dst_cyclic = regrid_operator.dst_cyclic
         dst_axes = regrid_operator.dst_axes
+        ln_z = regrid_operator.ln_z
         if regrid_operator.coord_sys == "Cartesian":
             src_axes = regrid_operator.src_axes
 
+        spherical_3d =  regrid_operator.coord_sys == "spherical" and regrid_operator.dimensionality == 3
+            
         create_regrid_operator = False
     else:
         create_regrid_operator = True
@@ -391,10 +400,24 @@ def regrid(
     # Create descriptions of the source and destination grids
     # ----------------------------------------------------------------
     dst_grid = get_grid(
-        coord_sys, dst, "destination", method, dst_cyclic, axes=dst_axes, z=z
+        coord_sys,
+        dst,
+        "destination",
+        method,
+        dst_cyclic,
+        axes=dst_axes,
+        spherical_3d=spherical_3d,
+        ln_z=ln_z,
     )
     src_grid = get_grid(
-        coord_sys, src, "source", method, src_cyclic, axes=src_axes, z=z
+        coord_sys,
+        src,
+        "source",
+        method,
+        src_cyclic,
+        axes=src_axes,
+        spherical_3d=spherical_3d,
+        ln_z=ln_z,
     )
 
     if is_log_level_debug(logger):
@@ -402,12 +425,18 @@ def regrid(
             f"Source Grid:\n{src_grid}\nDestination Grid:\n{dst_grid}\n"
         )  # pragma: no cover
 
+    if src_grid.dimensionality != dst_grid.dimensionality:
+        raise ValueERror("TODO 45")
+        
+    if src_grid.ln_z != dst_grid.ln_z:
+        raise ValueERror("TODO 45")
+        
     conform_coordinate_units(src_grid, dst_grid)
 
     if method in ("conservative_2nd", "patch"):
         if not (
-            src_grid.regridding_dimensionality == 2
-            and dst_grid.regridding_dimensionality == 2
+            src_grid.dimensionality == 2
+            and dst_grid.dimensionality == 2
         ):
             raise ValueError(
                 f"{method!r} regridding is only available for 2-d regridding"
@@ -550,6 +579,8 @@ def regrid(
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
             dst_featureType=dst_grid.featureType,
+            dimensionality=src_grid.dimensionality,ln_z=src_grid.ln_z
+
         )
     else:
         if weights_file is not None:
@@ -792,7 +823,16 @@ def Cartesian_coords_to_domain(dst, domain_class=None):
     return d, axis_keys
 
 
-def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None, spherical_z=None):
+def get_grid(
+    coord_sys,
+    f,
+    name=None,
+    method=None,
+    cyclic=None,
+    axes=None,
+    spherical_3d=False,
+    ln_z=False,
+):
     """Get axis and coordinate information for regridding.
 
     See `spherical_grid` and `Cartesian_grid` for details.
@@ -805,14 +845,28 @@ def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None, spher
     """
     if coord_sys == "spherical":
         return spherical_grid(
-            f, name=name, method=method, cyclic=cyclic, axes=axes, spherical_z=spherical_z
+            f,
+            name=name,
+            method=method,
+            cyclic=cyclic,
+            axes=axes,
+            spherical_3d=spherical_3d,
+            ln_z=ln_z,
         )
 
     # Cartesian
     return Cartesian_grid(f, name=name, method=method, axes=axes)
 
 
-def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_z=False):
+def spherical_grid(
+    f,
+    name=None,
+    method=None,
+    cyclic=None,
+    axes=None,
+    spherical_3d=False,
+    ln_z=False,
+):
     """Get latitude and longitude coordinate information.
 
     Retrieve the latitude and longitude coordinates of a field, as
@@ -859,19 +913,17 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
             The grid definition.
 
     """
-    spherical_z = "log"
-    
     data_axes = f.constructs.data_axes()
 
     dim_coords_1d = False
     aux_coords_2d = False
     aux_coords_1d = False
-    
     domain_topology, mesh_location, axis1 = get_mesh(f)
+
     if not mesh_location:
         featureType, axis1 = get_dsg(f)
-    else:
-        featureType, axis1 = (None, None)
+    else :
+        featureType = None
 
     # Look for 1-d X and Y dimension coordinates
     lon_key_1d, lon_1d = f.dimension_coordinate(
@@ -880,7 +932,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
     lat_key_1d, lat_1d = f.dimension_coordinate(
         "Y", item=True, default=(None, None)
     )
-    
+
     if lon_1d is not None and lat_1d is not None:
         x_axis = data_axes[lon_key_1d][0]
         y_axis = data_axes[lat_key_1d][0]
@@ -889,7 +941,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
             dim_coords_1d = True
             lon = lon_1d
             lat = lat_1d
-            
+
     if not dim_coords_1d:
         domain_topology, mesh_location, mesh_axis = get_mesh(f)
 
@@ -940,15 +992,15 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
                     f"spanned by the {name} grid latitude and longitude "
                     "coordinates"
                 )
-            
+
         elif mesh_location is not None or featureType is not None:
             if mesh_location and mesh_location not in ("face", "point"):
                 raise ValueError(
                     f"Can't regrid {'from' if name == 'source' else 'to'} "
-                    f"a {name} grid comprising an unstructured mesh of "
+                    f"a {name} an unstructured mesh of "
                     f"{mesh_location!r} cells"
                 )
-            
+
             lon = f.auxiliary_coordinate(
                 "X",
                 filter_by_axis=(axis1,),
@@ -962,17 +1014,17 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
                 default=None,
             )
             if (
-                    lon is not None
-                    and lat is not None
-                    and lon.Units.islongitude
-                    and lat.Units.islatitude
+                lon is not None
+                and lat is not None
+                and lon.Units.islongitude
+                and lat.Units.islatitude
             ):
                 # Found 1-d latitude and longitude auxiliary
                 # coordinates for a UGRID mesh topology
                 aux_coords_1d = True
                 x_axis = axis1
                 y_axis = axis1
-                
+
     if not (dim_coords_1d or aux_coords_2d or aux_coords_1d):
         raise ValueError(
             "Could not find 1-d nor 2-d latitude and longitude coordinates"
@@ -983,12 +1035,12 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
             "The X and Y axes must be distinct, but they are "
             f"the same for {name} field {f!r}."
         )
-  
+
     # Get X and Y axis sizes
     domain_axes = f.domain_axes(todict=True)
     x_size = domain_axes[x_axis].size
     y_size = domain_axes[y_axis].size
- 
+
     # Source grid size 1 dimensions are problematic for esmpy for some
     # methods
     if (
@@ -1002,7 +1054,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
         )
 
     coords = [lon, lat]  # esmpy order
-    
+
     # Convert 2-d coordinate arrays to esmpy axis order = [X, Y]
     if aux_coords_2d:
         for dim, coord_key in enumerate((lon_key, lat_key)):
@@ -1031,15 +1083,15 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
     if mesh_location or featureType:
         regridding_dimensionality += 1
 
-    if spherical_z:
+    if spherical_3d:
         # ------------------------------------------------------------
         # TODO
         # ------------------------------------------------------------
         if mesh_location:
             raise ValueError(
-                f"Can't (yet) 3-d spherically regrid "
-                f"{'from' if name == 'source' else 'to'} a {name} grid "
-                f"comprising an unstructured mesh of {mesh_location!r} cells"
+                f"Can't 3-d spherically regrid "
+                f"{'from' if name == 'source' else 'to'} a {name} "
+                f"unstructured mesh of {mesh_location!r} cells"
             )
         elif featureType:
             z_key, z_1d = f.auxiliary_coordinate(
@@ -1047,15 +1099,13 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
                 filter_by_axis=(axis1,),
                 axis_mode="exact",
                 item=True,
-                default=(None, None)
+                default=(None, None),
             )
             if z_1d is None:
-                raise ValueError("TODO")
-            
+                raise ValueError("TODO 9876")
+
             z = z_1d
             z_axis = axis1
-
-            regridding_dimensionality += 1
         else:
             z_key, z_1d = f.dimension_coordinate(
                 "Z", item=True, default=(None, None)
@@ -1066,32 +1116,41 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
             else:
                 # Look for 3-d Z auxiliary coordinates
                 z_key, z_3d = f.auxiliary_coordinate(
-                    "Z", filter_by_naxes=(3,), axis_mode="exact",
+                    "Z",
+                    filter_by_naxes=(3,),
+                    axis_mode="exact",
                     item=True,
-                    default=(None, None)
+                    default=(None, None),
                 )
                 if z_3d is None:
-                    raise ValueError("TODO")
-                
-                z_axis = [axis for axis in data_axes[z_key]
-                          if axis not in (x_axis, y_axis)][0]
-                
-                coord_axes = data_axes[z_key]
-                esmpy_order = [coord_axes.index(axis)
-                               for axis in (x_axis, y_axis, z_axis)]
-                z  = z_3d.transpose(esmpy_order)
+                    raise ValueError("TODO abcd")
 
-        if spherical_z == "log":
+                z_axis = [
+                    axis
+                    for axis in data_axes[z_key]
+                    if axis not in (x_axis, y_axis)
+                ][0]
+
+                coord_axes = data_axes[z_key]
+                esmpy_order = [
+                    coord_axes.index(axis) for axis in (x_axis, y_axis, z_axis)
+                ]
+                z = z_3d.transpose(esmpy_order)
+
+        if ln_z:
+            # Regrid in ln(z) coordinates
             z = z.log()
-        
+
         coords.append(z)  # esmpy order
 
         if not (mesh_location or featureType):
-            axes['Z'] = z_axis
+            axes["Z"] = z_axis
             axis_keys.insert(0, z_axis)
             z_size = domain_axes[z_axis].size
             shape = (z_size,) + shape
-    
+
+        regridding_dimensionality += 1
+
     if f.construct_type == "domain":
         axis_indices = list(range(n_regrid_axes))
     else:
@@ -1106,35 +1165,36 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None, spherical_
         # `Data._regrid`.
         data_axes = f.get_data_axes()
         axis_indices = [data_axes.index(key) for key in axis_keys]
-       
+
     is_mesh = bool(mesh_location)
     is_locstream = bool(featureType)
     is_grid = not is_mesh and not is_locstream
 
     grid = Grid(
+        name=name,
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         axes=axes,
         n_regrid_axes=n_regrid_axes,
-        regridding_dimensionality=regridding_dimensionality,
+        dimensionality=regridding_dimensionality,
         shape=shape,
         coords=coords,
         bounds=get_bounds(method, coords, mesh_location),
         cyclic=cyclic,
         coord_sys="spherical",
         method=method,
-        name=name,
         is_grid=is_grid,
         is_mesh=is_mesh,
         is_locstream=is_locstream,
         mesh_location=mesh_location,
         domain_topology=domain_topology,
         featureType=featureType,
-        z=spherical_z
+        spherical_3d=spherical_3d,
+        ln_z=ln_z,
     )
 
     set_grid_type(grid)
-    print (grid)
+    print(grid)
     return grid
 
 
@@ -1228,7 +1288,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             mesh_location = None
             axis1 = None
     elif featureType:
-        if tuple(set(axis_keys)) == (axis1,)
+        if tuple(set(axis_keys)) == (axis1,):
             # There is a unique regridding axis, and it's the DSG
             # axis.
             axis_keys = axis_keys[0:1]
@@ -1280,8 +1340,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             )
             if aux is None:
                 raise ValueError(
-                    f"Could not find {coord_id!r} 1-d auxiliary "
-                    "coordinates"
+                    f"Could not find {coord_id!r} 1-d auxiliary " "coordinates"
                 )
 
             coords.append(aux)
@@ -1327,7 +1386,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         axis_indices=axis_indices,
         axes=axis_keys,
         n_regrid_axes=n_regrid_axes,
-        regridding_dimensionality=regridding_dimensionality,
+        dimensionality=regridding_dimensionality,
         shape=tuple(axis_sizes),
         coords=coords,
         bounds=bounds,
@@ -1337,11 +1396,11 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         name=name,
         dummy_size_2_dimension=dummy_size_2_dimension,
         is_mesh=is_mesh,
-        is_grid=not is_mesh,
+        is_locstream=is_locstream,
+        is_grid=is_grid,
         mesh_location=mesh_location,
         domain_topology=domain_topology,
         featureType=featureType,
-        z=None
     )
 
     set_grid_type(grid)
@@ -1356,7 +1415,7 @@ def conform_coordinate_units(src_grid, dst_grid):
 
     .. versionadded:: 3.14.0
 
-    .. seealso:: `get_spherical_grid`, `regrid`
+    .. seealso:: `spherical_grid`, `regrid`
 
     :Parameters:
 
@@ -1373,7 +1432,7 @@ def conform_coordinate_units(src_grid, dst_grid):
     """
     if src_grid.coord_sys == "spherical":
         # For spherical coordinate systems, the units will have
-        # already been checked in `get_spherical_grid`.
+        # already been checked in `spherical_grid`.
         return
 
     for src, dst in zip(
@@ -1573,7 +1632,6 @@ def create_esmpy_grid(grid, mask=None):
 
     num_peri_dims = 0
     periodic_dim = 0
-    spherical = False
     if grid.coord_sys == "spherical":
         spherical = True
         lon, lat = 0, 1
@@ -1583,27 +1641,51 @@ def create_esmpy_grid(grid, mask=None):
             periodic_dim = lon
     else:
         # Cartesian
+        spherical = False
         coord_sys = esmpy.CoordSys.CART
 
     # Parse coordinates for the esmpy.Grid and get its shape
     n_axes = len(coords)
-    coords_1d = coords[0].ndim == 1
-
     coords = [np.asanyarray(c) for c in coords]
-    if coords_1d:
-        # 1-d coordinates for N-d regridding
-        shape = [c.size for c in coords]
-        coords = [
-            c.reshape([c.size if i == dim else 1 for i in range(n_axes)])
-            for dim, c in enumerate(coords)
-        ]
-    elif n_axes == 2:
-        # 2-d coordinates for 2-d regridding
-        shape = coords[0].shape
-    else:
-        raise ValueError(
-            "Coordinates must be 1-d, or possibly 2-d for 2-d regridding"
-        )
+    shape = [None] * n_axes
+    for dim, c in enumerate(coords[:]):
+        ndim = c.ndim
+        if ndim == 1:
+            # 1-d
+            shape[dim] = c.size
+            c = c.reshape([c.size if i == dim else 1 for i in range(n_axes)])
+        elif ndim == 2:
+            # 2-d lat or lon
+            shape[:ndim] = c.shape
+            if n_axes == 3:
+                c = c.reshape(c.shape + (1,))
+        elif ndim == 3:
+            # 3-d Z
+            shape[:ndim] = c.shape
+        else:
+            raise ValueError("TODO 123456: ")
+
+        coords[dim] = c
+
+    #    # Parse coordinates for the esmpy.Grid and get its shape
+    #    n_axes = len(coords)
+    #    coords_1d = coords[0].ndim == 1
+    #
+    #    coords = [np.asanyarray(c) for c in coords]
+    #    if coords_1d:
+    #        # 1-d coordinates for N-d regridding
+    #        shape = [c.size for c in coords]
+    #        coords = [
+    #            c.reshape([c.size if i == dim else 1 for i in range(n_axes)])
+    #            for dim, c in enumerate(coords)
+    #        ]
+    #    elif n_axes == 2:
+    #        # 2-d coordinates for 2-d regridding
+    #        shape = coords[0].shape
+    #    else:
+    #        raise ValueError(
+    #            "Coordinates must be 1-d, or possibly 2-d for 2-d regridding"
+    #        )
 
     # Parse bounds for the esmpy.Grid
     if bounds:
@@ -1634,22 +1716,24 @@ def create_esmpy_grid(grid, mask=None):
                         f"{grid.method} regridding."
                     )
 
-        # Convert each bounds to a grid with no repeated values.
-        if coords_1d:
-            # Bounds for 1-d coordinates.
-            #
-            # E.g. if the esmpy.Grid is (X, Y) then for non-cyclic
-            #      bounds <CF Bounds: longitude(96, 2) degrees_east>
-            #      we create a new bounds array with shape (97, 1);
-            #      and for non-cyclic bounds <CF Bounds: latitude(73,
-            #      2) degrees_north> we create a new bounds array with
-            #      shape (1, 74). When multiplied, these arrays would
-            #      create the 2-d (97, 74) bounds grid expected by
-            #      esmpy.Grid.
-            #
-            #      Note that if the X axis were cyclic, then its new
-            #      bounds array would have shape (96, 1).
-            for dim, b in enumerate(bounds):
+        # Convert each bounds to a grid with no repeated values
+        for dim, b in enumerate(bounds[:]):
+            ndim = b.ndim
+            if ndim == 2:
+                # Bounds for 1-d coordinates.
+                #
+                # E.g. if the esmpy.Grid is (X, Y) then for non-cyclic
+                #      bounds <CF Bounds: longitude(96, 2)
+                #      degrees_east> we create a new bounds array with
+                #      shape (97, 1); and for non-cyclic bounds <CF
+                #      Bounds: latitude(73, 2) degrees_north> we
+                #      create a new bounds array with shape (1,
+                #      74). When multiplied, these arrays would create
+                #      the 2-d (97, 74) bounds grid expected by
+                #      esmpy.Grid.
+                #
+                #      Note that if the X axis were cyclic, then its
+                #      new bounds array would have shape (96, 1).
                 if spherical and cyclic and dim == lon:
                     tmp = b[:, 0]
                 else:
@@ -1661,37 +1745,100 @@ def create_esmpy_grid(grid, mask=None):
                 tmp = tmp.reshape(
                     [tmp.size if i == dim else 1 for i in range(n_axes)]
                 )
-                bounds[dim] = tmp
-        else:
-            # Bounds for 2-d coordinates
-            #
-            # E.g. if the esmpy.Grid is (X, Y) then for bounds <CF
-            #      Bounds: latitude(96, 73, 2) degrees_north> with a
-            #      non-cyclic X axis, we create a new bounds array
-            #      with shape (97, 74).
-            #
-            #      Note that if the X axis were cyclic, then the new
-            #      bounds array would have shape (96, 74).
-            if spherical and cyclic:
-                for dim, b in enumerate(bounds):
-                    n, m = b.shape[0:2]
+            elif ndim == 3:
+                # Bounds for 2-d coordinates
+                #
+                # E.g. if the esmpy.Grid is (X, Y) then for bounds <CF
+                #      Bounds: latitude(96, 73, 2) degrees_north> with
+                #      a non-cyclic X axis, we create a new bounds
+                #      array with shape (97, 74).
+                #
+                #      Note that if the X axis were cyclic, then the
+                #      new bounds array would have shape (96, 74).
+                n, m = b.shape[:2]
+                if spherical and cyclic:
                     tmp = np.empty((n, m + 1), dtype=b.dtype)
                     tmp[:, :m] = b[:, :, 0]
                     if dim == lon:
                         tmp[:, m] = b[:, -1, 0]
                     else:
                         tmp[:, m] = b[:, -1, 1]
-
-                    bounds[dim] = tmp
-            else:
-                for dim, b in enumerate(bounds):
-                    n, m = b.shape[0:2]
+                else:
                     tmp = np.empty((n + 1, m + 1), dtype=b.dtype)
                     tmp[:n, :m] = b[:, :, 0]
                     tmp[:n, m] = b[:, -1, 1]
                     tmp[n, :m] = b[-1, :, 3]
                     tmp[n, m] = b[-1, -1, 2]
-                    bounds[dim] = tmp
+
+                if n_axes == 3:
+                    tmp = tmp.reshape(tmp.shape + (1,))
+        
+            elif ndim == 4:
+                # Bounds for 3-d coordinates
+                raise ValueError(
+                    "Bounds for 3-d coordinates: Can't do this yet!"
+                )
+
+            bounds[dim] = tmp
+
+    #        # Convert each bounds to a grid with no repeated values.
+    #        if coords_1d:
+    #            # Bounds for 1-d coordinates.
+    #            #
+    #            # E.g. if the esmpy.Grid is (X, Y) then for non-cyclic
+    #            #      bounds <CF Bounds: longitude(96, 2) degrees_east>
+    #            #      we create a new bounds array with shape (97, 1);
+    #            #      and for non-cyclic bounds <CF Bounds: latitude(73,
+    #            #      2) degrees_north> we create a new bounds array with
+    #            #      shape (1, 74). When multiplied, these arrays would
+    #            #      create the 2-d (97, 74) bounds grid expected by
+    #            #      esmpy.Grid.
+    #            #
+    #            #      Note that if the X axis were cyclic, then its new
+    #            #      bounds array would have shape (96, 1).
+    #            for dim, b in enumerate(bounds[:]):
+    #                if spherical and cyclic and dim == lon:
+    #                    tmp = b[:, 0]
+    #                else:
+    #                    n = b.shape[0]
+    #                    tmp = np.empty((n + 1,), dtype=b.dtype)
+    #                    tmp[:n] = b[:, 0]
+    #                    tmp[n] = b[-1, 1]
+    #
+    #                tmp = tmp.reshape(
+    #                    [tmp.size if i == dim else 1 for i in range(n_axes)]
+    #                )
+    #                bounds[dim] = tmp
+    #        else:
+    #            # Bounds for 2-d coordinates
+    #            #
+    #            # E.g. if the esmpy.Grid is (X, Y) then for bounds <CF
+    #            #      Bounds: latitude(96, 73, 2) degrees_north> with a
+    #            #      non-cyclic X axis, we create a new bounds array
+    #            #      with shape (97, 74).
+    #            #
+    #            #      Note that if the X axis were cyclic, then the new
+    #            #      bounds array would have shape (96, 74).
+    #            if spherical and cyclic:
+    #                for dim, b in enumerate(bounds):
+    #                    n, m = b.shape[0:2]
+    #                    tmp = np.empty((n, m + 1), dtype=b.dtype)
+    #                    tmp[:, :m] = b[:, :, 0]
+    #                    if dim == lon:
+    #                        tmp[:, m] = b[:, -1, 0]
+    #                    else:
+    #                        tmp[:, m] = b[:, -1, 1]
+    #
+    #                    bounds[dim] = tmp
+    #            else:
+    #                for dim, b in enumerate(bounds):
+    #                    n, m = b.shape[0:2]
+    #                    tmp = np.empty((n + 1, m + 1), dtype=b.dtype)
+    #                    tmp[:n, :m] = b[:, :, 0]
+    #                    tmp[:n, m] = b[:, -1, 1]
+    #                    tmp[n, :m] = b[-1, :, 3]
+    #                    tmp[n, m] = b[-1, -1, 2]
+    #                    bounds[dim] = tmp
 
     # Define the esmpy.Grid stagger locations
     if bounds:
@@ -1764,7 +1911,7 @@ def create_esmpy_grid(grid, mask=None):
             #       masked/unmasked elements.
             grid_mask[...] = np.invert(mask).astype("int32")
 
-    print (esmpy_grid)
+    print(esmpy_grid)
     return esmpy_grid
 
 
@@ -1897,29 +2044,23 @@ def create_esmpy_locstream(grid, mask=None):
     """
     if grid.coord_sys == "spherical":
         coord_sys = esmpy.CoordSys.SPH_DEG
-        x_key = "ESMF:Lon"
-        y_key = "ESMF:Lat"
-        z_key = "ESMF:Radius"
+        keys = ("ESMF:Lon", "ESMF:Lat", "ESMF:Radius")
     else:
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
-        x_key = "ESMF:X"
-        y_key = "ESMF:Y"
-        z_key = "ESMF:Z"
+        keys = ("ESMF:X", "ESMF:Y", "ESMF:Z")
 
     # Create an empty esmpy.LocStream
-    location_count=grid.shape[0]
+    location_count = grid.shape[0]
     esmpy_locstream = esmpy.LocStream(
         location_count=location_count,
         coord_sys=coord_sys,
-        name=grid.featureType
+        name=grid.featureType,
     )
 
-    # Add coordinates (must be of type type float64)
-    esmpy_locstream[x_key] = grid.coords[0].array.astype(float)
-    esmpy_locstream[y_key] = grid.coords[1].array.astype(float)
-    if grid.z:
-        esmpy_locstream[z_key] = grid.coords[2].array.astype(float)
+    # Add coordinates (must be of type float64)
+    for coord, key in zip(grid.coords, keys):
+        esmpy_locstream[key] = coord.array.astype(float)
 
     # Add mask (always required, and must be of type int32)
     if mask is not None:
@@ -1938,7 +2079,8 @@ def create_esmpy_locstream(grid, mask=None):
         mask = np.full((location_count,), 1, dtype="int32")
 
     esmpy_locstream["ESMF:Mask"] = mask
-    print (esmpy_locstream)
+
+    print(esmpy_locstream)
     return esmpy_locstream
 
 
@@ -2741,6 +2883,6 @@ def set_grid_type(grid):
     if grid.is_grid:
         grid.type = "structured grid"
     elif grid.is_mesh:
-        grid.type = "UGRID {grid.mesh_location} mesh"
+        grid.type = f"UGRID {grid.mesh_location} mesh"
     elif grid.is_locstream:
         grid.type = f"DSG {grid.featureType}"

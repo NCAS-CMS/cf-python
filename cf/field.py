@@ -13348,6 +13348,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         check_coordinates=False,
         min_weight=None,
         weights_file=None,
+        vertical=False,
+        ln_z=False,
         verbose=None,
         inplace=False,
         i=False,
@@ -13620,6 +13622,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_coordinates=check_coordinates,
             min_weight=min_weight,
             weights_file=weights_file,
+            spherical_3d=vertical,
+            ln_z=ln_z,
             inplace=inplace,
         )
 
