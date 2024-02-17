@@ -3758,7 +3758,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         from .dask_regrid import regrid, regrid_weights
-        print (regrid_axes, regridded_sizes)
+
         shape = self.shape
         ndim = self.ndim
         src_shape = tuple(shape[i] for i in regrid_axes)

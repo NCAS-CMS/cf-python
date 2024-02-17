@@ -13348,6 +13348,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         check_coordinates=False,
         min_weight=None,
         weights_file=None,
+        src_z=None,
+        dst_z=None,
+        z=None,
+        ln_z=None,
         verbose=None,
         inplace=False,
         i=False,
@@ -13357,9 +13361,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         {{regridding overview}}
 
-        The 2-d regridding takes place on a sphere, with the grid
-        being defined by latitude and longitude spherical polar
-        coordinates.
+        The 2-d or 3-d regridding takes place on a sphere, with the
+        grid being defined by latitude and longitude spherical polar
+        coordinates, and any available vertical coordinates. In 3-d
+        the case, the regridding may be done assuming linear or log
+        linear weights in the vertical.
 
         **Latitude and longitude coordinates**
 
@@ -13393,7 +13399,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Data defined on UGRID face or node cells may be regridded to
         any other latitude-longitude grid, including other UGRID
-        meshes.
+        meshes and DSG feature types.
+
+        **DSG feature types*
+
+        Data on any latitude-longitude grid (including tripolar and
+        UGRID meshes may be regridded to any DSG feature type
 
         **Cyclicity of the X axis**
 
@@ -13525,7 +13536,56 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{weights_file: `str` or `None`, optional}}
 
+                Ignored if *dst* is a `RegridOperator`.
+
                 .. versionadded:: 3.15.2
+
+            src_z: optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then 3-d spherical regridding is enabled
+                by identifying the source grid vertical coordinates
+                from which to derive the vertical component of the
+                regridding weights. The vertical coordinate construct
+                may be 1-d or 3-d and is defined by the unique
+                construct returned by ``f.coordinate(src_z)``
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
+            dst_z: optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then 3-d spherical regridding is enabled
+                by identifying the destination grid vertical
+                coordinates from which to derive the vertical
+                component of the regridding weights. The vertical
+                coordinate construct may be 1-d or 3-d.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
+            z: optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would
+                contain identical values. If not `None` then 3-d
+                spherical regridding is enabled. See *src_z* and
+                *dst_z* for details.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Example:*
+                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
+
+                .. versionadded:: 3.17.0
+
+            {{ln_z: `bool` or `None`, optional}}
+
+                .. versionadded:: 3.17.0
 
             {{verbose: `int` or `str` or `None`, optional}}
 
@@ -13620,6 +13680,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_coordinates=check_coordinates,
             min_weight=min_weight,
             weights_file=weights_file,
+            src_z=src_z,
+            dst_z=dst_z,
+            z=z,
+            ln_z=ln_z,
             inplace=inplace,
         )
 
@@ -13639,6 +13703,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         check_coordinates=False,
         min_weight=None,
         weights_file=None,
+        src_z=None,
+        dst_z=None,
+        z=None,
+        ln_z=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13776,6 +13844,42 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.15.2
 
+            src_z: optional
+                If not `None` then *src_z* specifies the identity of a
+                vertical coordinate construct of the source grid. On
+                its own this make no difference to the result, but it
+                allows the setting of *ln_z* to True.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
+            dst_z: optional
+                If not `None` then *dst_z* specifies the identity of a
+                vertical coordinate construct of the destination
+                grid. On its own this make no difference to the
+                result, but it allows the setting of *ln_z* to True.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
+            z: optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would
+                contain identical values.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Example:*
+                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
+
+                .. versionadded:: 3.17.0
+
+            {{ln_z: `bool` or `None`, optional}}
+
+                .. versionadded:: 3.17.0
+
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
@@ -13864,6 +13968,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_coordinates=check_coordinates,
             min_weight=min_weight,
             weights_file=weights_file,
+            src_z=src_z,
+            dst_z=dst_z,
+            z=z,
+            ln_z=ln_z,
             inplace=inplace,
         )
 

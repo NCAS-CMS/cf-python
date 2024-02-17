@@ -41,7 +41,13 @@ class RegridOperator(mixin_Container, Container):
         dst=None,
         weights_file=None,
         src_mesh_location=None,
+        dst_mesh_location=None,
+        src_featureType=None,
         dst_featureType=None,
+        dimensionality=None,
+        src_z=None,
+        dst_z=None,
+        ln_z=False,
     ):
         """**Initialisation**
 
@@ -128,17 +134,53 @@ class RegridOperator(mixin_Container, Container):
 
             src_mesh_location: `str`, optional
                 The UGRID mesh element of the source grid
-                (e.g. ``'face'``). An empty string should be used for
-                a non-UGRID source grid.
+                (e.g. ``'face'``).
 
                 .. versionadded:: 3.16.0
 
-            dst_featureType: `str`, opational
-                The discrete sampling geometry (DSG) featureType of
-                the destination grid (e.g. ``'trajectory'``). An empty
-                string should be used for a non-DSG destination grid.
+            dst_mesh_location: `str`, optional
+                The UGRID mesh element of the destination grid
+                (e.g. ``'face'``).
 
-                .. versionadded:: LOCVER
+                .. versionadded:: 3.17.0
+
+            src_featureType: `str`, optional
+                The discrete sampling geometry (DSG) featureType the
+                source grid (e.g. ``'trajectory'``).
+
+                .. versionadded:: 3.17.0
+
+            dst_featureType: `str`, optional
+                The DSG featureType the destination grid
+                (e.g. ``'trajectory'``).
+
+                .. versionadded:: 3.17.0
+
+            src_z: `str`, optional
+                The identity of the source grid vertical coordinates
+                used to calculate the weights.
+
+                .. versionadded:: 3.17.0
+
+            dst_z: `str`, optional
+                The identity of the destination grid vertical
+                coordinates used to calculate the weights.
+
+                .. versionadded:: 3.17.0
+
+            ln_z: `bool`, optional
+                Whether or not the weights were calculated with the
+                natural logarithm of vertical coordinates.
+
+                .. versionadded:: 3.17.0
+
+            dimensionality: `int`, optional
+                The number of physical regridding dimensions. This may
+                differ from the corresponding number of storage
+                dimensions in the source or destination grids, if
+                either has an unstructured mesh or a DSG featureType.
+
+                .. versionadded:: 3.17.0
 
         """
         super().__init__()
@@ -166,7 +208,13 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dst", dst, copy=False)
         self._set_component("weights_file", weights_file, copy=False)
         self._set_component("src_mesh_location", src_mesh_location, copy=False)
+        self._set_component("dst_mesh_location", dst_mesh_location, copy=False)
+        self._set_component("src_featureType", src_featureType, copy=False)
         self._set_component("dst_featureType", dst_featureType, copy=False)
+        self._set_component("dimensionality", dimensionality, copy=False)
+        self._set_component("src_z", src_z, copy=False)
+        self._set_component("dst_z", dst_z, copy=False)
+        self._set_component("ln_z", ln_z, copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -192,6 +240,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("coord_sys")
+
+    @property
+    def dimensionality(self):
+        """The number of physical regridding dimensions.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dimensionality")
 
     @property
     def dst(self):
@@ -248,6 +305,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("dst_mask")
 
     @property
+    def dst_mesh_location(self):
+        """The UGRID mesh element of the destination grid.
+
+        .. versionadded:: 3.16.0
+
+        """
+        return self._get_component("dst_mesh_location")
+
+    @property
     def dst_shape(self):
         """The shape of the destination grid.
 
@@ -255,6 +321,24 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("dst_shape")
+
+    @property
+    def dst_z(self):
+        """The identity of the destination grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dst_z")
+
+    @property
+    def ln_z(self):
+        """Whether or not vertical weights are based on ln(z).
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("ln_z")
 
     @property
     def method(self):
@@ -324,6 +408,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("src_cyclic")
 
     @property
+    def src_featureType(self):
+        """The DSG featureType of the source grid.
+
+        .. versionadded:: LOCVER
+
+        """
+        return self._get_component("src_featureType")
+
+    @property
     def src_mask(self):
         """The source grid mask that was applied during the weights
         creation.
@@ -357,6 +450,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("src_shape")
+
+    @property
+    def src_z(self):
+        """The identity of the source grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("src_z")
 
     @property
     def start_index(self):
@@ -428,7 +530,12 @@ class RegridOperator(mixin_Container, Container):
             dst=self.dst.copy(),
             weights_file=self.weights_file,
             src_mesh_location=self.src_mesh_location,
+            dst_mesh_location=self.dst_mesh_location,
+            src_featureType=self.src_featureType,
             dst_featureType=self.dst_featureType,
+            src_z=self.src_z,
+            dst_z=self.dst_z,
+            ln_z=self.ln_z,
         )
 
     @_display_or_return
@@ -458,6 +565,7 @@ class RegridOperator(mixin_Container, Container):
         for attr in (
             "coord_sys",
             "method",
+            "dimensionality",
             "src_shape",
             "dst_shape",
             "src_cyclic",
@@ -470,7 +578,12 @@ class RegridOperator(mixin_Container, Container):
             "src_axes",
             "dst_axes",
             "src_mesh_location",
+            "dst_mesh_location",
+            "src_featureType",
             "dst_featureType",
+            "src_z",
+            "dst_z",
+            "ln_z",
             "dst",
             "weights",
             "row",

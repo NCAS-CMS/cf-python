@@ -330,9 +330,9 @@ def regrid(
             if i <= raxis0:
                 new.append(i)
             elif raxis0 < i <= raxis1:
-                new.append(i-1)
+                new.append(i - 1)
             else:
-                 new.append(i - 2)
+                new.append(i - 2)
 
         axis_order = new
     elif n_src_axes != n_dst_axes:
