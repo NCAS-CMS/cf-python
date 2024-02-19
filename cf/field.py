@@ -405,9 +405,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"{self.constructs.domain_axis_identity(_)!r} axis"
                     )
 
-                new = new.roll(shift=shift, axis=iaxis)
+                new = new.roll(axis=iaxis, shift=shift)
         else:
             new = self.copy()
+
+        data = new.data
 
         # ------------------------------------------------------------
         # Subspace the field construct's data

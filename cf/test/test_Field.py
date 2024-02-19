@@ -656,6 +656,13 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
 
+        # Test with cyclic subspace
+        f.cyclic("grid_longitude")
+        g = f[:, -3:-5:1]
+        self.assertEqual(g.shape, (10, 7))
+        self.assertTrue(np.allclose(f[:, -3:].array, g[:, :3].array))
+        self.assertTrue(f[:, :4].equals(g[:, 3:]))
+
     def test_Field__setitem__(self):
         f = self.f.copy().squeeze()
 
