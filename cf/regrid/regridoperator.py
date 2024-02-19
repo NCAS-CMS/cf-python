@@ -45,7 +45,8 @@ class RegridOperator(mixin_Container, Container):
         src_featureType=None,
         dst_featureType=None,
         dimensionality=None,
-        z_coordinate=None,
+        src_z=None,
+        dst_z=None,
         ln_z=False,
     ):
         """**Initialisation**
@@ -155,9 +156,15 @@ class RegridOperator(mixin_Container, Container):
 
                 .. versionadded:: 3.17.0
 
-            z_coordinate: `str`, optional
-                The identity of the vertical coordiantes used to
-                calculate the weights.
+            src_z: `str`, optional
+                The identity of the source grid vertical coordinates
+                used to calculate the weights.
+
+                .. versionadded:: 3.17.0
+
+            dst_z: `str`, optional
+                The identity of the destination grid vertical
+                coordinates used to calculate the weights.
 
                 .. versionadded:: 3.17.0
 
@@ -205,7 +212,8 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("src_featureType", src_featureType, copy=False)
         self._set_component("dst_featureType", dst_featureType, copy=False)
         self._set_component("dimensionality", dimensionality, copy=False)
-        self._set_component("z_coordinate", z_coordinate, copy=False)
+        self._set_component("src_z", src_z, copy=False)
+        self._set_component("dst_z", dst_z, copy=False)
         self._set_component("ln_z", ln_z, copy=False)
 
     def __repr__(self):
@@ -313,6 +321,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("dst_shape")
+
+    @property
+    def dst_z(self):
+        """The identity of the destination grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dst_z")
 
     @property
     def ln_z(self):
@@ -435,6 +452,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("src_shape")
 
     @property
+    def src_z(self):
+        """The identity of the source grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("src_z")
+
+    @property
     def start_index(self):
         """The start index of the row and column indices.
 
@@ -466,15 +492,6 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("weights_file")
-
-    @property
-    def z_coordinate(self):
-        """The identity of the vertical coordinates.
-
-        .. versionadded:: 3.17.0
-
-        """
-        return self._get_component("z_coordinate")
 
     def copy(self):
         """Return a deep copy.
@@ -516,7 +533,8 @@ class RegridOperator(mixin_Container, Container):
             dst_mesh_location=self.dst_mesh_location,
             src_featureType=self.src_featureType,
             dst_featureType=self.dst_featureType,
-            z_coordinate=self.z_coordinate,
+            src_z=self.src_z,
+            dst_z=self.dst_z,
             ln_z=self.ln_z,
         )
 
@@ -563,7 +581,8 @@ class RegridOperator(mixin_Container, Container):
             "dst_mesh_location",
             "src_featureType",
             "dst_featureType",
-            "z_coordinate",
+            "src_z",
+            "dst_z",
             "ln_z",
             "dst",
             "weights",

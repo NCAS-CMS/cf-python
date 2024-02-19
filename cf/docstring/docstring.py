@@ -587,6 +587,46 @@ _docstring_substitution_definitions = {
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
+    "{{src_z: `str` or `None`, optional}}": """src_z: `str` or `None`, optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then enable 3-d spherical regridding by
+                identifying the source grid vertical coordinates from
+                which to derive the vertical component of the
+                regridding weights. The vertical coordinates may be
+                1-d or 3-d and will have an identity, defined by its
+                `!identities` method, that matches *src_z*.
+
+                Ignored if *dst* is a `RegridOperator`.""",
+    # dst_z
+    "{{dst_z: `str` or `None`, optional}": """dst_z: `str` or `None`, optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then enable 3-d spherical regridding by
+                identifying the destination grid vertical coordinates
+                from which to derive the vertical component of the
+                regridding weights. The vertical coordinates may be
+                1-d or 3-d and will have an identity, defined by its
+                `!identities` method, that matches *dst_z*.""",
+    # src_z
+    "{{z: `str`, optional}}": """z: `str`, optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would
+                contain identical sequences.
+
+                *Example:*
+                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.""",
+    # ln_z
+    "{{ln_z: `bool` or `None`, optional}}": """ln_z: `bool` or `None`, optional
+                If True then when *z*, *src_z* or *dst_z* is set,
+                calculate the vertical component of the regridding
+                weights using the natural logarithm of the vertical
+                coordinate values. If False then the weights are
+                calculated using unaltered vertical values. If `None`,
+                the default, then an exception is raised if *z*,
+                *src_z* or *dst_z* has also been set.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

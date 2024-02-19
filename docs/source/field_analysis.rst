@@ -1342,43 +1342,16 @@ Spherical regridding
 ^^^^^^^^^^^^^^^^^^^^
 
 Regridding from and to spherical coordinate systems using the
-`~cf.Field.regrids` method is only available for the 'X' and 'Y' axes
-simultaneously. All other axes are unchanged. The calculation of the
-regridding weights is based on areas and distances on the surface of
-the sphere, rather in :ref:`Euclidean space <Cartesian-regridding>`.
+`~cf.Field.regrids` method is available for the 'X', 'Y' and (if
+requested) 'Z' axes simultaneously. All other axes are unchanged. The
+calculation of the regridding weights is based on areas and distances
+on the surface of the sphere, rather in :ref:`Euclidean space
+<Cartesian-regridding>`.
 
-The following combinations of spherical source and destination domain
-coordinate systems are available to the `~Field.regrids` method:
-		   
-==============================  ==============================
-Spherical source domain         Spherical destination domain
-==============================  ==============================
-`Latitude-longitude`_           `Latitude-longitude`_
-`Latitude-longitude`_           `Rotated latitude-longitude`_
-`Latitude-longitude`_           `Plane projection`_
-`Latitude-longitude`_           `Tripolar`_
-`Latitude-longitude`_           `UGRID mesh`_
-`Rotated latitude-longitude`_   `Latitude-longitude`_
-`Rotated latitude-longitude`_   `Rotated latitude-longitude`_
-`Rotated latitude-longitude`_   `Plane projection`_
-`Rotated latitude-longitude`_   `Tripolar`_
-`Rotated latitude-longitude`_   `UGRID mesh`_
-`Plane projection`_             `Latitude-longitude`_
-`Plane projection`_             `Rotated latitude-longitude`_
-`Plane projection`_             `Plane projection`_
-`Plane projection`_             `Tripolar`_
-`Plane projection`_             `UGRID mesh`_
-`Tripolar`_                     `Latitude-longitude`_
-`Tripolar`_                     `Rotated latitude-longitude`_
-`Tripolar`_                     `Plane projection`_
-`Tripolar`_                     `Tripolar`_
-`Tripolar`_                     `UGRID mesh`_
-`UGRID mesh`_                   `Latitude-longitude`_
-`UGRID mesh`_                   `Rotated latitude-longitude`_
-`UGRID mesh`_                   `Plane projection`_
-`UGRID mesh`_                   `Tripolar`_
-`UGRID mesh`_                   `UGRID mesh`_
-==============================  ==============================
+Spherical regridding can occur between source and destination grids
+that comprise any pairing of `Latitude-longitude`_, `Rotated
+latitude-longitude`_, `Plane projection`_, `Tripolar`_, `UGRID mesh`_,
+and `DSG feature type`_ coordinate systems.
 
 The most convenient usage is when the destination domain exists
 in another field construct. In this case, all you need to specify is the
@@ -1541,13 +1514,11 @@ point will not participate in the regridding.
 Vertical regridding
 ^^^^^^^^^^^^^^^^^^^
 
-The only option for regridding along a vertical axis is to use
-Cartesian regridding. However, care must be taken to ensure that the
-vertical axis is transformed so that it's coordinate values vary
-linearly. For example, to regrid data on one set of vertical pressure
-coordinates to another set, the pressure coordinates may first be
-transformed into the logarithm of pressure, and then changed back to
-pressure coordinates after the regridding operation.
+Vertical regridding may either be incorporated into spherical or
+Cartesian regridding, but in both cases the vertical coordinates need
+to be explicitly identified, and whether or not to calculate the
+regridding weights according to the natual logarthm of the vertical
+coordinate values.
 
 .. code-block:: python
    :caption: *Regrid a field construct from one set of pressure levels
@@ -1566,19 +1537,8 @@ pressure coordinates after the regridding operation.
    Auxiliary coords: latitude(grid_latitude(11), grid_longitude(10)) = [[67.12, ..., 66.07]] degrees_north
                    : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east
    Coord references: grid_mapping_name:rotated_latitude_longitude
-   >>> z_p = v.construct('Z')
-   >>> print(z_p.array)
-   [850. 700. 500. 250.  50.]
-   >>> z_ln_p = z_p.log()
-   >>> z_ln_p.axis = 'Z'
-   >>> print(z_ln_p.array)
-   [6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]
-   >>> _ = v.replace_construct('Z', new=z_ln_p)
-   >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
-   >>> new_z_ln_p = new_z_p.log()
-   >>> new_z_ln_p.axis = 'Z'
-   >>> new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
-   >>> new_v.replace_construct('Z', new=new_z_p)
+   >>> new_z = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
+   >>> new_v = v.regridc([new_z], axes='Z', method='linear', z='Z', ln_z=True)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
    -------------------------------
@@ -1591,11 +1551,6 @@ pressure coordinates after the regridding operation.
    Auxiliary coords: latitude(grid_latitude(11), grid_longitude(10)) = [[67.12, ..., 66.07]] degrees_north
                    : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east
    Coord references: grid_mapping_name:rotated_latitude_longitude
-
-Note that the `~Field.replace_construct` method of the field construct
-is used to directly replace the vertical dimension coordinate construct,
-without having to manually match up the corresponding domain axis
-construct and construct key.
 
 ----
    
@@ -2549,3 +2504,5 @@ See `cf.curl_xy` for details and examples.
 .. _Latitude-longitude:         http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude
 .. _Rotated latitude-longitude: http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole
 .. _Plane projection:           http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
+.. _UGRID mesh:                 https://cfconventions.org/cf-conventions/cf-conventions.html#mesh-topology-variables
+.. _DSG feature type:           https://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries

@@ -35,7 +35,8 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertFalse(self.r.dst_mesh_location)
         self.assertFalse(self.r.src_featureType)
         self.assertFalse(self.r.dst_featureType)
-        self.assertIsNone(self.r.z_coordinate)
+        self.assertIsNone(self.r.src_z)
+        self.assertIsNone(self.r.dst_z)
         self.assertFalse(self.r.ln_z)
 
     def test_RegridOperator_copy(self):
