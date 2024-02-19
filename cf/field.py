@@ -13348,8 +13348,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         check_coordinates=False,
         min_weight=None,
         weights_file=None,
-        vertical=False,
-        ln_z=False,
+        z_coordinate=None,
+        ln_z=None,
         verbose=None,
         inplace=False,
         i=False,
@@ -13529,6 +13529,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.15.2
 
+            z_coordinate: `str` or `None`, optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then enable 3-d spherical regridding by
+                identifying the vertical coordinates from which to
+                derive the vertical component of the regridding
+                weights in both the source and destination
+                domains. The vertical coordinates may be 1-d or 3-d
+                and will have an identity, defined by its
+                `!identities` method, that matches *z_coordinate*.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
+            ln_z: `bool` or `None`, optional
+                If True then when 3-d spherical regridding is enabled
+                (see *z_coordinate*) calculate the vertical component
+                of the regridding weights using the natural logarithm
+                of the vertical coordinate values. If False then the
+                weights are calculated using unaltered vertical
+                values. If `None`, the default, then an exception is
+                raised if *z_coordinate* has also been set.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                .. versionadded:: 3.17.0
+
             {{verbose: `int` or `str` or `None`, optional}}
 
                 .. versionadded:: 3.16.0
@@ -13622,7 +13651,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_coordinates=check_coordinates,
             min_weight=min_weight,
             weights_file=weights_file,
-            spherical_3d=vertical,
+            z_coordinate=z_coordinate,
             ln_z=ln_z,
             inplace=inplace,
         )
@@ -13643,6 +13672,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         check_coordinates=False,
         min_weight=None,
         weights_file=None,
+        # z_coordinate=None,  # TODO placeholder
+        # ln_z=None,  # TODO placeholder
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13868,6 +13899,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_coordinates=check_coordinates,
             min_weight=min_weight,
             weights_file=weights_file,
+            # z_coordinate=z_coordinate,  # TODO placeholder
+            # ln_z=ln_z,  # TODO placeholder
             inplace=inplace,
         )
 
