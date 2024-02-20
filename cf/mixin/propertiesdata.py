@@ -1890,20 +1890,30 @@ class PropertiesData(Properties):
 
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width, inplace=False):
-        """TODO
+        """Pad an axis with missing data.
 
         :Parameters:
 
-            pad_width: `int` or sequence of array_like
-                Number of values padded before and after the edges of
-                the axis. ``(pad, pad)``, ``(pad,)`` and `int` yield
-                the same before and after pad for each edge.
+            axis: `int`
+                Select the axis for which the padding is to be
+                applied.
+
+            {{pad_width: sequence of `int`}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}]` or `None`
+                The {{class}} with padded data, or `None` if the
+                operation was in-place.
 
         """
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "pad_missing",
-            axis=axis, pad_width=pad_width,
+            axis=axis,
+            pad_width=pad_width,
             inplace=inplace,
         )
 

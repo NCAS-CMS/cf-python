@@ -587,6 +587,10 @@ _docstring_substitution_definitions = {
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
+    # pad_width
+    "{{pad_width: sequence of `int`}}": """pad_width: sequence of `int`
+                Number of values to pad before and after the edges of
+                the axis.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

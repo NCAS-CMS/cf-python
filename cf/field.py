@@ -11954,34 +11954,77 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return f
 
     @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width,
-        inplace=False):
-        """TODO
+    def pad_missing(self, axis, pad_width, inplace=False):
+        """Pad an axis with missing data.
+
+         The field's data and all metadata constructs that span the
+         axis are padded.
 
         :Parameters:
 
-            axis: `str` or `int`
-                Select the domain axis which is to be padded, defined
-                by that which would be selected by passing the given
-                axis description to a call of the field construct's
-                `domain_axis` method. For example, for a value of
-                ``'X'``, the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
+             axis: `str` or `int`
+                 Select the domain axis which is to be padded, defined
+                 by that which would be selected by passing the given
+                 axis description to a call of the field construct's
+                 `domain_axis` method. For example, for a value of
+                 ``'X'``, the domain axis construct returned by
+                 ``f.domain_axis('X')`` is selected.
 
-            pad_width: (sequence of) `int`
-                Number of values padded before and after the edges of
-                the axis. ``(pad, pad)``, ``(pad,)`` and ``pad`` yield
-                the same before and after pad for each edge.
+             {{pad_width: sequence of `int`}}
 
-            {{pad_width: (sequence of) `int`}}
+             {{inplace: `bool`, optional}}
 
-            {{inplace: `bool`, optional}}
+         :Returns:
 
-        :Returns:
+             `Field` or `None`
+                 The padded field construct, or `None` if the operation
+                 was in-place.
 
-            `Field` or `None`
-                The padded field construct, or `None` if the operation
-                was in-place.
+        **Examples*
+
+        >>>  f = cf.example_field(6)
+        >>> print(f)
+        Field: precipitation_amount (ncvar%pr)
+        --------------------------------------
+        Data            : precipitation_amount(cf_role=timeseries_id(2), time(4))
+        Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00] gregorian
+        Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                        : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                        : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]
+                        : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+        Coord references: grid_mapping_name:latitude_longitude
+        >>> print(f.array)
+        [[1. 2. 3. 4.]
+         [5. 6. 7. 8.]]
+        >>> g = f.pad_missing('T', (0, 5))
+        >>> print(g)
+        Field: precipitation_amount (ncvar%pr)
+        --------------------------------------
+        Data            : precipitation_amount(cf_role=timeseries_id(2), time(9))
+        Dimension coords: time(9) = [2000-01-16 12:00:00, ..., --] gregorian
+        Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                        : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                        : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]
+                        : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+        Coord references: grid_mapping_name:latitude_longitude
+        >>> print(g.array)
+        [[1.0 2.0 3.0 4.0 -- -- -- -- --]
+         [5.0 6.0 7.0 8.0 -- -- -- -- --]]
+        >>> h = g.pad_missing('cf_role=timeseries_id', (0, 1))
+        >>> print(h)
+        Field: precipitation_amount (ncvar%pr)
+        --------------------------------------
+        Data            : precipitation_amount(cf_role=timeseries_id(3), time(9))
+        Dimension coords: time(9) = [2000-01-16 12:00:00, ..., --] gregorian
+        Auxiliary coords: latitude(cf_role=timeseries_id(3)) = [25.0, 7.0, --] degrees_north
+                        : longitude(cf_role=timeseries_id(3)) = [10.0, 40.0, --] degrees_east
+                        : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [x1, y2, --]
+                        : altitude(cf_role=timeseries_id(3), 3, 4) = [[[1.0, ..., --]]] m
+        Coord references: grid_mapping_name:latitude_longitude
+        >>> print(h.array)
+        [[1.0 2.0 3.0 4.0 -- -- -- -- --]
+         [5.0 6.0 7.0 8.0 -- -- -- -- --]
+         [ --  --  --  -- -- -- -- -- --]]
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -11997,8 +12040,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             raise ValueError(
                 f"Can't pad_missing: Bad axis specification: {axis!r}"
             )
-        
-        data_axes = f.get_data_axes()        
+
+        data_axes = f.get_data_axes()
         axis = axis1[0]
         iaxis = data_axes.index(axis)
 
@@ -12006,13 +12049,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         super(Field, f).pad_missing(iaxis, pad_width, inplace=True)
 
         # Set new domain axis size
-        domain_axis =f.domain_axis(axis)
+        domain_axis = f.domain_axis(axis)
         domain_axis.set_size(f.shape[iaxis])
 
         data_axes = f.constructs.data_axes()
-        for key, construct in f.constructs.filter_by_data().items():
+        for key, construct in f.constructs.filter_by_data(todict=True).items():
             construct_axes = data_axes[key]
-
             if axis not in construct_axes:
                 continue
 
@@ -12021,7 +12063,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             construct.pad_missing(iaxis, pad_width, inplace=True)
 
         return f
-    
+
     def percentile(
         self,
         ranks,

@@ -3875,16 +3875,24 @@ class PropertiesDataBounds(PropertiesData):
         print(cf_inspect(self))  # pragma: no cover
 
     @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width,
-        inplace=False):
-        """TODO
+    def pad_missing(self, axis, pad_width, inplace=False):
+        """Pad an axis with missing data.
 
         :Parameters:
 
-            pad_width: (sequence of) `int`
-                Number of values padded before and after the edges of
-                the axis. ``(pad, pad)``, ``(pad,)`` and ``pad`` yield
-                the same before and after pad for each edge.
+            axis: `int`
+                Select the axis for which the padding is to be
+                applied.
+
+            {{pad_width: sequence of `int`}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}]` or `None`
+                The {{class}} with padded data, or `None` if the
+                operation was in-place.
 
         """
         return self._apply_superclass_data_oper(
@@ -3892,7 +3900,8 @@ class PropertiesDataBounds(PropertiesData):
             "pad_missing",
             bounds=True,
             interior_ring=True,
-            axis=axis, pad_width=pad_width,
+            axis=axis,
+            pad_width=pad_width,
             inplace=inplace,
         )
 
