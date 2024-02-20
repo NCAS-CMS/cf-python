@@ -15,6 +15,9 @@ version 3.17.0
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
+* Fix bug that caused incorrect data arrays in some cyclic subspaces
+  created by `cf.Field.subspace` and `cf.Field.__getitem__`
+  (https://github.com/NCAS-CMS/cf-python/issues/713)
 
 version 3.16.0
 --------------
