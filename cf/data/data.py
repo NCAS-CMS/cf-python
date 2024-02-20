@@ -2181,6 +2181,56 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
+    def pad_missing(self, axis, pad_width, inplace=False):
+        """TODO
+
+        :Parameters:
+
+            pad_width: `int` or sequence of array_like
+                Number of values padded before and after the edges of
+                the axis. ``(pad, pad)``, ``(pad,)`` and `int` yield
+                the same before and after pad for each edge.
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        mask0 = da.ma.getmaskarray(dx)
+        shape0 = dx.shape
+     
+        try:
+            pad_width0, pad_width1 = pad_width
+        except TypeError:
+            try:
+                pad_width0=  pad_width1 = pad_width[0]
+            except TypeError:
+                pad_width0=  pad_width1 = pad_width
+
+        pad_width = [(0, 0)] * dx.ndim
+        pad_width[axis] = (pad_width0,  pad_width1 )
+                
+        dx = da.pad(dx, pad_width, mode='constant', constant_values=0)
+        mask = da.pad(mask0, pad_width, mode='constant', constant_values=0)
+
+        index = [slice(None)] * dx.ndim
+        start = pad_width0
+        stop = start + shape0[axis]
+        index[axis] = slice(start, stop)
+        mask[tuple(index)] = mask0
+
+        if pad_width0 > 0:
+            index[axis] = slice(0, start)
+            mask[tuple(index)] = True
+
+        if pad_width1 > 0:
+            index[axis] = slice(stop, None)
+            mask[tuple(index)] = True
+
+        dx = da.ma.masked_where(mask,dx)
+                     
+        d._set_dask(dx)
+        return d
+        
+    @_inplace_enabled(default=False)
     def percentile(
         self,
         ranks,
@@ -2192,6 +2242,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         interpolation=None,
         interpolation2=None,
     ):
+
         """Compute percentiles of the data along the specified axes.
 
         The default is to compute the percentiles along a flattened

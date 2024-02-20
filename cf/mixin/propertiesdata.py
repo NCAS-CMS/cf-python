@@ -1888,6 +1888,25 @@ class PropertiesData(Properties):
             "ERROR: Can't get the minimum when there is no data array"
         )
 
+    @_inplace_enabled(default=False)
+    def pad_missing(self, axis, pad_width, inplace=False):
+        """TODO
+
+        :Parameters:
+
+            pad_width: `int` or sequence of array_like
+                Number of values padded before and after the edges of
+                the axis. ``(pad, pad)``, ``(pad,)`` and `int` yield
+                the same before and after pad for each edge.
+
+        """
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "pad_missing",
+            axis=axis, pad_width=pad_width,
+            inplace=inplace,
+        )
+
     def period(self, *value, **config):
         """Return or set the period of the data.
 

@@ -2150,7 +2150,7 @@ class FieldDomain:
                 axes = (axes,)
 
         return [self.domain_axis(x, key=True) for x in axes]
-
+      
     def replace_construct(
         self, *identity, new=None, copy=True, **filter_kwargs
     ):

@@ -11953,6 +11953,75 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
+    @_inplace_enabled(default=False)
+    def pad_missing(self, axis, pad_width,
+        inplace=False):
+        """TODO
+
+        :Parameters:
+
+            axis: `str` or `int`
+                Select the domain axis which is to be padded, defined
+                by that which would be selected by passing the given
+                axis description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'X'``, the domain axis construct returned by
+                ``f.domain_axis('X')`` is selected.
+
+            pad_width: (sequence of) `int`
+                Number of values padded before and after the edges of
+                the axis. ``(pad, pad)``, ``(pad,)`` and ``pad`` yield
+                the same before and after pad for each edge.
+
+            {{pad_width: (sequence of) `int`}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The padded field construct, or `None` if the operation
+                was in-place.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        try:
+            axis1 = f._parse_axes(axis)
+        except ValueError:
+            raise ValueError(
+                f"Can't pad_missing: Bad axis specification: {axis!r}"
+            )
+
+        if len(axis1) != 1:
+            raise ValueError(
+                f"Can't pad_missing: Bad axis specification: {axis!r}"
+            )
+        
+        data_axes = f.get_data_axes()        
+        axis = axis1[0]
+        iaxis = data_axes.index(axis)
+
+        # Pad the field
+        super(Field, f).pad_missing(iaxis, pad_width, inplace=True)
+
+        # Set new domain axis size
+        domain_axis =f.domain_axis(axis)
+        domain_axis.set_size(f.shape[iaxis])
+
+        data_axes = f.constructs.data_axes()
+        for key, construct in f.constructs.filter_by_data().items():
+            construct_axes = data_axes[key]
+
+            if axis not in construct_axes:
+                continue
+
+            # Pad the construct
+            iaxis = construct_axes.index(axis)
+            construct.pad_missing(iaxis, pad_width, inplace=True)
+
+        return f
+    
     def percentile(
         self,
         ranks,
