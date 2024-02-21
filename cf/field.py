@@ -8719,7 +8719,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 metadata constructs that don't already include it. By
                 default, metadata constructs are not changed.
 
-                .. versionadded:: (cfdm) 3.17.0
+                .. versionadded:: 3.17.0
 
             {{inplace: `bool`, optional}}
 
