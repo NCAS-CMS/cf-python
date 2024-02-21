@@ -3,6 +3,8 @@ version 3.17.0
 
 **2024-??-??**
 
+* New keyword parameter to `cf.Field.insert_dimension`:
+  ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
   `cf.Field.weights`
   (https://github.com/NCAS-CMS/cf-python/issues/709)
@@ -18,6 +20,7 @@ version 3.17.0
 * Fix bug that caused incorrect data arrays in some cyclic subspaces
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
   (https://github.com/NCAS-CMS/cf-python/issues/713)
+* Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
 
 version 3.16.0
 --------------

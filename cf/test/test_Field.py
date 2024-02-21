@@ -1143,6 +1143,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.ndim, f.ndim + 1)
         self.assertEqual(g.get_data_axes()[1:], f.get_data_axes())
 
+        self.assertEqual(g.cell_measure().ndim, 2)
+        h = g.insert_dimension(None, constructs=True)
+        self.assertEqual(h.cell_measure().ndim, 3)
+
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
