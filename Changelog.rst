@@ -3,6 +3,8 @@ version 3.17.0
 
 **2024-??-??**
 
+* New keyword parameter to `cf.Field.insert_dimension`:
+  ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
   `cf.Field.weights`
   (https://github.com/NCAS-CMS/cf-python/issues/709)
