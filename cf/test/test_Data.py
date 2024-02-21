@@ -4731,6 +4731,19 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cf.Data(s, mask=mask)
 
+    def test_Data_pad_missing(self):
+        """Test Data.pad_missing."""
+        d = cf.Data(np.arange(6).reshape(2, 3))
+
+        self.assertIsNone(d.pad_missing(1, (1, 2), inplace=True))
+        self.assertEqual(d.shape, (2, 6))
+        self.assertTrue(d[:, 0].mask.all())
+        self.assertTrue(d[:, 4:].mask.all())
+
+        e = d.pad_missing(0, (0, 1))
+        self.assertEqual(e.shape, (3, 6))
+        self.assertTrue(e[2, :].mask.all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

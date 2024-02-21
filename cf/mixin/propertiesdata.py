@@ -1904,7 +1904,7 @@ class PropertiesData(Properties):
 
         :Returns:
 
-            `{{class}]` or `None`
+            `{{class}}` or `None`
                 The {{class}} with padded data, or `None` if the
                 operation was in-place.
 

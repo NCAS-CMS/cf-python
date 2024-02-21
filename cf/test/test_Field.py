@@ -2658,6 +2658,19 @@ class FieldTest(unittest.TestCase):
         f.del_file_location("/invalid")
         self.assertEqual(f.file_locations(), set((location,)))
 
+    def test_Data_pad_missing(self):
+        """Test Field.pad_missing."""
+        f = cf.example_field(0)
+
+        self.assertIsNone(f.pad_missing("X", (1, 2), inplace=True))
+        self.assertEqual(f.shape, (5, 11))
+        self.assertTrue(f[:, 0].mask.all())
+        self.assertTrue(f[:, 9:].mask.all())
+
+        g = f.pad_missing("Y", (0, 1))
+        self.assertEqual(g.shape, (6, 11))
+        self.assertTrue(g[5, :].mask.all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

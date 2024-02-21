@@ -3920,7 +3920,15 @@ def _sort_indices(m, canonical_axes):
     """
     canonical_axes = [m.id_to_axis[identity] for identity in canonical_axes]
     sort_indices = tuple([m.sort_indices[axis] for axis in canonical_axes])
-    needs_sorting = sort_indices != (slice(None),) * len(sort_indices)
+    try:
+        needs_sorting = sort_indices != (slice(None),) * len(sort_indices)
+    except ValueError:
+        # An element of 'sort_indices' is a numpy array with two or
+        # more elements, resulting in an "ValueError: The truth value
+        # of an array with more than one element is ambiguous. Use
+        # a.any() or a.all()" exception.
+        needs_sorting = True
+
     return sort_indices, needs_sorting
 
 

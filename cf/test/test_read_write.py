@@ -920,7 +920,6 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
-    @unittest.skipUnless(False, "Target file currently unavailable")
     def test_read_url(self):
         """Test reading urls."""
         for scheme in ("http", "https"):

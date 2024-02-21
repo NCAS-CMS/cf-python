@@ -2206,6 +2206,22 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 The padded data, or `None` if the operation was
                 in-place.
 
+        **Examples**
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> e = d.pad_missing(1, (1, 2))
+        >>> print(e.array)
+        [[-- 0 1 2 -- --]
+         [-- 3 4 5 -- --]]
+        >>> f = e.pad_missing(0, (0, 1))
+        >>> print(f.array)
+        [[--  0  1  2 -- --]
+         [--  3  4  5 -- --]
+         [-- -- -- -- -- --]]
+
         """
         try:
             pad_width0, pad_width1 = pad_width
