@@ -8714,7 +8714,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 data array. By default the new axis has position 0, the
                 slowest varying position.
 
-            constructs: `bool`
+            constructs: `bool`, optional
                 If True then also insert the new axis into all
                 metadata constructs that don't already include it. By
                 default, metadata constructs are not changed.
