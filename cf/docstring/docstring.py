@@ -493,7 +493,9 @@ _docstring_substitution_definitions = {
 
                 The computation of the weights can be much more costly
                 than the regridding itself, in which case reading
-                pre-calculated weights can improve performance.""",
+                pre-calculated weights can improve performance.
+
+                Ignored if *dst* is a `RegridOperator`.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to
@@ -591,42 +593,27 @@ _docstring_substitution_definitions = {
                 If `None`, the default, then the regridding is 2-d in
                 the latitude-longitude plane.
 
-                If not `None` then enable 3-d spherical regridding by
-                identifying the source grid vertical coordinates from
-                which to derive the vertical component of the
-                regridding weights. The vertical coordinates may be
-                1-d or 3-d and will have an identity, defined by its
-                `!identities` method, that matches *src_z*.
-
-                Ignored if *dst* is a `RegridOperator`.""",
-    # dst_z
-    "{{dst_z: `str` or `None`, optional}": """dst_z: `str` or `None`, optional
-                If `None`, the default, then the regridding is 2-d in
-                the latitude-longitude plane.
-
-                If not `None` then enable 3-d spherical regridding by
-                identifying the destination grid vertical coordinates
+                If not `None` then 3-d spherical regridding is enabled
+                by identifying the source grid vertical coordinates
                 from which to derive the vertical component of the
-                regridding weights. The vertical coordinates may be
-                1-d or 3-d and will have an identity, defined by its
-                `!identities` method, that matches *dst_z*.""",
-    # src_z
-    "{{z: `str`, optional}}": """z: `str`, optional
-                The *z* parameter is a convenience that may be used to
-                replace both *src_z* and *dst_z* when they would
-                contain identical sequences.
-
-                *Example:*
-                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.""",
+                regridding weights. The vertical coordinate construct
+                may be 1-d or 3-d and is specified by having *src_z*
+                as one of the identities defined by its `!identities`
+                method.""",
     # ln_z
     "{{ln_z: `bool` or `None`, optional}}": """ln_z: `bool` or `None`, optional
                 If True then when *z*, *src_z* or *dst_z* is set,
                 calculate the vertical component of the regridding
                 weights using the natural logarithm of the vertical
-                coordinate values. If False then the weights are
-                calculated using unaltered vertical values. If `None`,
-                the default, then an exception is raised if *z*,
-                *src_z* or *dst_z* has also been set.""",
+                coordinate values. This option should be used if the
+                quantity being regridded varies approximately linearly
+                with logarithm of the vertical coordinates. If False
+                then the weights are calculated using unaltered
+                vertical values. If `None`, the default, then an
+                exception is raised if any of *z*, *src_z* or *dst_z*
+                have also been set.
+
+                Ignored if *dst* is a `RegridOperator`.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

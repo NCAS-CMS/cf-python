@@ -281,35 +281,42 @@ def regrid(
 
             .. versionadded:: 3.15.2
 
-        src_z: `str` or `None`, optional
+        src_z: optional
             The identity of the source grid vertical coordinates used
-            to calculate the weights.
+            to calculate the weights. If `None` then no vertical axis
+            is identified, and in the spherical case regridding will
+            be 2-d.
 
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        dst_z: `str` or `None`, optional
+        dst_z: optional
             The identity of the destination grid vertical coordinates
-            used to calculate the weights.
+            used to calculate the weights. If `None` then no vertical
+            axis is identified, and in the spherical case regridding
+            will be 2-d.
 
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.17.0
 
-        z: `str`, optional
+        z: optional
             The *z* parameter is a convenience that may be used to
             replace both *src_z* and *dst_z* when they would contain
-            identical sequences.
+            identical values.
 
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.17.0
 
-        ln_z: `booll` or `None`, optional
-            Whether or not the weights were calculated with the
+        ln_z: `bool` or `None`, optional
+            Whether or not the weights are to be calculated with the
             natural logarithm of vertical coordinates.
+
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.17.0
 
@@ -350,7 +357,7 @@ def regrid(
     else:
         create_regrid_operator = True
 
-        # Check the z, src_z, dst_z, and ln_z parameters
+        # Parse the z, src_z, dst_z, and ln_z parameters
         if z is not None:
             if dst_z is None:
                 dst_z = z
@@ -371,7 +378,7 @@ def regrid(
 
         if ln_z is None and src_z is not None:
             raise ValueError(
-                "When 'z', 'src_z', 'or 'dst_z' has been set, "
+                "When 'z', 'src_z', 'or 'dst_z' have been set, "
                 "'ln_z' can not be None."
             )
 
@@ -438,7 +445,7 @@ def regrid(
         except TypeError:
             raise TypeError(
                 "The 'dst' parameter must be one of Field, Domain, "
-                f"RegridOperator, or a sequence of Coordinate. Got {dst!r}"
+                f"RegridOperator, or a sequence of Coordinate. Got: {dst!r}"
             )
         except IndexError:
             # This error will get trapped in one of the following
@@ -448,18 +455,18 @@ def regrid(
         # Convert a sequence of Coordinates that define the
         # destination grid into a Domain object
         use_dst_mask = False
-        dst_z = None
         if spherical:
-            dst, dst_axes = spherical_coords_to_domain(
+            dst, dst_axes, dst_z = spherical_coords_to_domain(
                 dst,
                 dst_axes=dst_axes,
                 cyclic=dst_cyclic,
+                dst_z=dst_z,
                 domain_class=src._Domain,
             )
         else:
             # Cartesian
             dst, dst_axes, dst_z = Cartesian_coords_to_domain(
-                dst, dst_z, domain_class=src._Domain
+                dst, dst_z=dst_z, domain_class=src._Domain
             )
 
     # ----------------------------------------------------------------
@@ -727,7 +734,7 @@ def regrid(
 
 
 def spherical_coords_to_domain(
-    dst, dst_axes=None, cyclic=None, z=None, domain_class=None
+    dst, dst_axes=None, cyclic=None, dst_z=None, domain_class=None
 ):
     """Convert a sequence of `Coordinate` to spherical grid definition.
 
@@ -757,16 +764,14 @@ def spherical_coords_to_domain(
             inferred from the coordinates, defaulting to `False` if it
             can not be determined.
 
-        z: `str` or `None
-            If `None` then the regridding is 2-d in the
-            latitude-longitude plane.
+        dst_z: optional
+            If `None`, the default, then it assumed that none of the
+            coordinate consructs in *dst* are vertical coordinates.
 
-            If not `None` then enable 3-d spherical regridding by
-            identifying the destination grid vertical coordinates from
-            which to derive the vertical component of the regridding
-            weights. The vertical coordinates may be 1-d or 3-d and
-            will have an identity, defined by its `!identities`
-            method, that matches *z*.
+            Otherwise identify the destination grid vertical
+            coordinate construct as the unique construct returned by
+            ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
+            returned by this function.
 
             .. versionadded:: 3.17.0
 
@@ -775,13 +780,27 @@ def spherical_coords_to_domain(
 
     :Returns:
 
-        `Domain`, `dict`
-            The new domain containing the grid; and a dictionary
-            identifying the domain axis identifiers of the X and Y
-            regrid axes (as defined by the *dst_axes* parameter of
-            `cf.Field.regrids`).
+        3-`tuple`
+            * The new domain containing the grid
+            * A dictionary identifying the domain axis identifiers of
+              the regrid axes (as defined by the *dst_axes* parameter
+              of `cf.Field.regrids`)
+            * The value of *dst_z*. Either `None`, or replaced with
+              its construct identifier in the output `Domain`.
 
     """
+    if dst_z is None:
+        if len(dst) != 2:
+            raise ValueError(
+                "Expected a sequence of latitude and longitude "
+                f"coordinate constructs. Got: {dst!r}"
+            )
+    elif len(dst) != 3:
+        raise ValueError(
+            "Expected a sequence of latitude, longitude, and vertical "
+            f"coordinate constructs. Got: {dst!r}"
+        )
+
     coords = {}
     for c in dst:
         try:
@@ -792,20 +811,20 @@ def spherical_coords_to_domain(
             elif c.Units.islongitude:
                 c.standard_name = "longitude"
                 coords["lon"] = c
-            elif z is not None and c.Z:
+            elif dst_z is not None:
                 coords["Z"] = c
         except AttributeError:
             pass
 
-    if z is None:
-        if len(coords) != 2:
-            raise ValueError(
-                "Expected a sequence of latitude and longitude "
-                f"coordinate constructs. Got: {dst!r}"
-            )
-    elif len(coords) != 3:
+    if "lat" not in coords or "lon" not in coords:
         raise ValueError(
-            "Expected a sequence of latitude, longitude, and vertical "
+            "Expected a sequence that includes latitude and longitude "
+            f"coordinate constructs. Got: {dst!r}"
+        )
+
+    if dst_z is not None and "Z" not in coords:
+        raise ValueError(
+            "Expected a sequence that includes vertical "
             f"coordinate constructs. Got: {dst!r}"
         )
 
@@ -816,47 +835,37 @@ def spherical_coords_to_domain(
         axis_sizes = [coords["lat"].size, coords["lon"].size]
         if coords["lon"].ndim != 1:
             raise ValueError(
-                "When 'dst' is a sequence of latitude and longitude "
-                "coordinates, they must have the same number of dimensions."
+                "When 'dst' is a sequence  containing latitude and "
+                "longitude coordinate constructs, they must have the "
+                f"same shape. Got: {dst!r}"
             )
     elif coords["lat"].ndim == 2:
         message = (
-            "When 'dst' is a sequence of 2-d latitude and longitude "
-            "coordinates, then 'dst_axes' must be either "
-            "{'X': 0, 'Y': 1} or {'X': 1, 'Y': 0}"
+            "When 'dst' is a sequence containing 2-d latitude and longitude "
+            "coordinate constructs, 'dst_axes' must be dictionary with at "
+            "least the keys {'X': 0, 'Y': 1} or {'X': 1, 'Y': 0}. "
+            f"Got: {dst_axes!r}"
         )
 
         if dst_axes is None:
             raise ValueError(message)
 
         axis_sizes = coords["lat"].shape
-        if dst_axes["X"] == 0:
+        if dst_axes.get("X") == 0 and dst_axes.get("Y") == 1:
             axis_sizes = axis_sizes[::-1]
-        elif dst_axes["Y"] != 0:
+        elif not (dst_axes.get("X") == 1 and dst_axes.get("Y") == 0):
             raise ValueError(message)
 
         if coords["lat"].shape != coords["lon"].shape:
             raise ValueError(
                 "When 'dst' is a sequence of latitude and longitude "
-                "coordinates, they must have the same shape."
+                f"coordinates, they must have the same shape. Got: {dst!r}"
             )
     elif coords["lat"].ndim > 2:
         raise ValueError(
             "When 'dst' is a sequence of latitude and longitude "
             "coordinates, they must be either 1-d or 2-d."
         )
-    else:
-        z_coord = coords.get("Z")
-        if (
-            z_coord is not None
-            and z_coord.ndim == 3
-            and (dst_axes is None or "Z" not in dst_axes or dst_axes["Z"] != 2)
-        ):
-            raise ValueError(
-                "When 'dst' is a sequence of latitude, longitude, and  "
-                "vertical coordinates, then 'dst_axes' must be either "
-                "{'X': 0, 'Y': 1, 'Z': 2} or {'X': 1, 'Y': 0, 'Z': 2}"
-            )
 
     d = domain_class()
 
@@ -891,7 +900,7 @@ def spherical_coords_to_domain(
 
     dst_axes = {"Y": axis_keys[0], "X": axis_keys[1]}
 
-    if "Z" in coords:
+    if dst_z is not None:
         # ------------------------------------------------------------
         # Deal with Z coordinates
         # ------------------------------------------------------------
@@ -900,22 +909,37 @@ def spherical_coords_to_domain(
             z_axis = d.set_construct(d._DomainAxis(z_coord.size), copy=False)
             d.set_construct(z_coord, axes=z_axis, copy=False)
         elif z_coord.ndim == 3:
+            if dst_axes is None or "Z" not in dst_axes or dst_axes["Z"] != 2:
+                raise ValueError(
+                    "When 'dst' is a sequence containing a 3-d vertical "
+                    "coordinate construct, 'dst_axes' must be either "
+                    "{'X': 0, 'Y': 1, 'Z': 2} or {'X': 1, 'Y': 0, 'Z': 2}. "
+                    f"Got: {dst_axes!r}"
+                )
+
             z_axis = d.set_construct(
                 d._DomainAxis(z_coord.shape[2]), copy=False
             )
-            d.set_construct(z_coord, axes=coord_axes + (z_axis,), copy=False)
-
-            raise ValueError(
-                "When 'dst' is a sequence of latitude and longitude "
-                "coordinates, they must have the same number of dimensions."
+            z_key = d.set_construct(
+                z_coord, axes=coord_axes + (z_axis,), copy=False
             )
 
+        # Check that z_coord is indeed a vertical coordinate
+        # construct, and replace 'dst_z' with its construct
+        # identifier.
+        key = d.coordinate(dst_z, key=True, default=None)
+        if key != z_key:
+            raise ValueError(
+                f"Could not find destination {dst_z!r} vertical coordinates"
+            )
+
+        dst_z = key
         dst_axes["Z"] = z_axis
 
-    return d, dst_axes
+    return d, dst_axes, dst_z
 
 
-def Cartesian_coords_to_domain(dst, z, domain_class=None):
+def Cartesian_coords_to_domain(dst, dst_z=None, domain_class=None):
     """Convert a sequence of `Coordinate` to Cartesian grid definition.
 
     .. versionadded:: 3.14.0
@@ -929,11 +953,14 @@ def Cartesian_coords_to_domain(dst, z, domain_class=None):
             field regridding axes defined elsewhere by the *src_axes*
             or *axes* parameter.
 
-        z: `str` or `None`
-            Identify the destination grid vertical coordinates from
-            which to derive the vertical component of the regridding
-            weights. The vertical coordinates will have an identity,
-            defined by its `!identities` method, that matches *z*.
+        dst_z: optional
+            If `None`, the default, then it assumed that none of the
+            coordinate consructs in *dst* are vertical coordinates.
+
+            Otherwise identify the destination grid vertical
+            coordinate construct as the unique construct returned by
+            ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
+            returned by this function.
 
             .. versionadded:: 3.17.0
 
@@ -942,26 +969,35 @@ def Cartesian_coords_to_domain(dst, z, domain_class=None):
 
     :Returns:
 
-        `Domain`, `list`
-            The new domain containing the grid; and a list identifying
-            the domain axis identifiers of the regrid axes (as defined
-            by the *dst_axes* parameter of `cf.Field.regridc`).
+        3-`tuple`
+            * The new domain containing the grid
+            * A list identifying the domain axis identifiers of the
+              regrid axes (as defined by the *dst_axes* parameter of
+              `cf.Field.regridc`)
+            * The value of *dst_z*. Either `None`, or replaced with
+              its construct identifier in the output `Domain`.
 
     """
-    if not dst:
-        pass
-
     d = domain_class()
 
     axis_keys = []
     for coord in dst:
         axis = d.set_construct(d._DomainAxis(coord.size), copy=False)
-        coord_key = d.set_construct(coord, axes=axis, copy=True)
+        d.set_construct(coord, axes=axis, copy=True)
         axis_keys.append(axis)
-        if z in coord.identities():
-            z = coord_key
 
-    return d, axis_keys, z
+    if dst_z is not None:
+        # Check that there are vertical coordinates, and replace
+        # 'dst_z' with its construct identifier.
+        z_key = d.coordinate(dst_z, key=True, default=None)
+        if z_key is None:
+            raise ValueError(
+                f"Could not find destination {dst_z!r} vertical coordinates"
+            )
+
+        dst_z = z_key
+
+    return d, axis_keys, dst_z
 
 
 def get_grid(
@@ -982,6 +1018,15 @@ def get_grid(
 
         coord_sys: `str`
             The coordinate system of the source and destination grids.
+
+        ln_z: `bool` or `None`, optional
+            Whether or not the weights are to be calculated with the
+            natural logarithm of vertical coordinates.
+
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
+
+            .. versionadded:: 3.17.0
 
     """
     if coord_sys == "spherical":
@@ -1049,6 +1094,25 @@ def spherical_grid(
               When *f* is a `Field`, ``axes={'X': 1, 'Y': 0}``, where
               ``0`` and ``1`` are axis positions in the 2-d
               coordinates of *f*.
+
+        z: optional
+            If `None`, the default, then the regridding is 2-d in
+            the latitude-longitude plane.
+
+            If not `None` then 3-d spherical regridding is enabled by
+            identifying the grid vertical coordinates from which to
+            derive the vertical component of the regridding
+            weights. The vertical coordinate construct may be 1-d or
+            3-d and is defined by the unique construct returned by
+            ``f.coordinate(src_z)``
+
+            .. versionadded:: 3.17.0
+
+        ln_z: `bool` or `None`, optional
+            Whether or not the weights are to be calculated with the
+            natural logarithm of vertical coordinates.
+
+            .. versionadded:: 3.17.0
 
     :Returns:
 
@@ -1385,6 +1449,18 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         axes: sequence of `str`
             Specifiers for the dimension coordinates to be
             retrieved. See `cf.Field.domain_axes` for details.
+
+        z: optional
+            If not `None` then *src_z* specifies the identity of a
+            vertical coordinate construct of the source grid.
+
+            .. versionadded:: 3.17.0
+
+        ln_z: `bool` or `None`, optional
+            Whether or not the weights are to be calculated with the
+            natural logarithm of vertical coordinates.
+
+            .. versionadded:: 3.17.0
 
     :Returns:
 

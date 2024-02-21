@@ -13529,17 +13529,50 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{weights_file: `str` or `None`, optional}}
 
+                Ignored if *dst* is a `RegridOperator`.
+
                 .. versionadded:: 3.15.2
 
-            {{src_z: `str` or `None`, optional}}
+            src_z: optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then 3-d spherical regridding is enabled
+                by identifying the source grid vertical coordinates
+                from which to derive the vertical component of the
+                regridding weights. The vertical coordinate construct
+                may be 1-d or 3-d and is defined by the unique
+                construct returned by ``f.coordinate(src_z)``
+
+                Ignored if *dst* is a `RegridOperator`.
 
                 .. versionadded:: 3.17.0
 
-            {{dst_z: `str` or `None`, optional}}
+            dst_z: optional
+                If `None`, the default, then the regridding is 2-d in
+                the latitude-longitude plane.
+
+                If not `None` then 3-d spherical regridding is enabled
+                by identifying the destination grid vertical
+                coordinates from which to derive the vertical
+                component of the regridding weights. The vertical
+                coordinate construct may be 1-d or 3-d.
+
+                Ignored if *dst* is a `RegridOperator`.
 
                 .. versionadded:: 3.17.0
 
-            {{z: `str`, optional}}
+            z: optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would
+                contain identical values. If not `None` then 3-d
+                spherical regridding is enabled. See *src_z* and
+                *dst_z* for details.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Example:*
+                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
                 .. versionadded:: 3.17.0
 
@@ -13804,15 +13837,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.15.2
 
-            {{src_z: `str` or `None`, optional}}
+            src_z: optional
+                If not `None` then *src_z* specifies the identity of a
+                vertical coordinate construct of the source grid. On
+                its own this make no difference to the result, but it
+                allows the setting of *ln_z* to True.
+
+                Ignored if *dst* is a `RegridOperator`.
 
                 .. versionadded:: 3.17.0
 
-            {{dst_z: `str` or `None`, optional}}
+            dst_z: optional
+                If not `None` then *dst_z* specifies the identity of a
+                vertical coordinate construct of the destination
+                grid. On its own this make no difference to the
+                result, but it allows the setting of *ln_z* to True.
+
+                Ignored if *dst* is a `RegridOperator`.
 
                 .. versionadded:: 3.17.0
 
-            {{z: `str`, optional}}
+            z: optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would
+                contain identical values.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Example:*
+                  ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
                 .. versionadded:: 3.17.0
 
