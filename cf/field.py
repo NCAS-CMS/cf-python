@@ -11960,6 +11960,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          The field's data and all metadata constructs that span the
          axis are padded.
 
+        .. versionadded:: 3.17.0
+
         :Parameters:
 
              axis: `str` or `int`
