@@ -290,6 +290,8 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
+            .. versionadded:: 3.17.0
+
         dst_z: optional
             The identity of the destination grid vertical coordinates
             used to calculate the weights. If `None` then no vertical
@@ -1869,6 +1871,9 @@ def esmpy_initialise():
                 "patch": esmpy.RegridMethod.PATCH,
             }
         )
+        reverse = {value: key for key, value in esmpy_methods.items()}
+        esmpy_methods.update(reverse)
+
         # ... diverge from esmpy with respect to name for bilinear
         # method by using 'linear' because 'bi' implies 2D linear
         # interpolation, which could mislead or confuse for Cartesian
@@ -2477,18 +2482,47 @@ def create_esmpy_weights(
             else:
                 i_dtype = "i8"
 
+            upper_bounds = src_esmpy_grid.upper_bounds
+            if len(upper_bounds) > 1:
+                upper_bounds = upper_bounds[0]
+
+            src_shape = tuple(upper_bounds)
+
+            upper_bounds = dst_esmpy_grid.upper_bounds
+            if len(upper_bounds) > 1:
+                upper_bounds = upper_bounds[0]
+
+            dst_shape = tuple(upper_bounds)
+
+            regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
+            if src_grid.ln_z:
+                regrid_method += f", ln {src_grid.method} in vertical"
+
             _lock.acquire()
             nc = Dataset(weights_file, "w", format="NETCDF4")
+
             nc.title = (
-                f"{src_grid.coord_sys.capitalize()} {src_grid.method} "
-                f"regridding weights from source {src_grid.type} "
-                f"with shape {src_grid.shape} to destination "
-                f"{dst_grid.type} with shape {dst_grid.shape}"
+                f"Regridding weights from source {src_grid.type} "
+                f"with shape {src_shape} to destination "
+                f"{dst_grid.type} with shape {dst_shape}"
             )
             nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
             nc.history = f"Created at {datetime.now()}"
+            nc.regrid_method = regrid_method
+            nc.ESMF_unmapped_action = r.unmapped_action
+            nc.ESMF_ignore_degenerate = int(r.ignore_degenerate)
 
             nc.createDimension("n_s", weights.size)
+            nc.createDimension("src_grid_rank", src_esmpy_grid.rank)
+            nc.createDimension("dst_grid_rank", dst_esmpy_grid.rank)
+
+            v = nc.createVariable("src_grid_dims", i_dtype, ("src_grid_rank",))
+            v.long_name = "Source grid shape"
+            v[...] = src_shape
+
+            v = nc.createVariable("dst_grid_dims", i_dtype, ("dst_grid_rank",))
+            v.long_name = "Destination grid shape"
+            v[...] = dst_shape
 
             v = nc.createVariable("S", weights.dtype, ("n_s",))
             v.long_name = "Weights values"
