@@ -589,25 +589,14 @@ _docstring_substitution_definitions = {
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
-    "{{src_z: `str` or `None`, optional}}": """src_z: `str` or `None`, optional
-                If `None`, the default, then the regridding is 2-d in
-                the latitude-longitude plane.
-
-                If not `None` then 3-d spherical regridding is enabled
-                by identifying the source grid vertical coordinates
-                from which to derive the vertical component of the
-                regridding weights. The vertical coordinate construct
-                may be 1-d or 3-d and is specified by having *src_z*
-                as one of the identities defined by its `!identities`
-                method.""",
     # ln_z
     "{{ln_z: `bool` or `None`, optional}}": """ln_z: `bool` or `None`, optional
-                If True then when *z*, *src_z* or *dst_z* is set,
+                If True when *z*, *src_z* or *dst_z* are also set,
                 calculate the vertical component of the regridding
                 weights using the natural logarithm of the vertical
                 coordinate values. This option should be used if the
                 quantity being regridded varies approximately linearly
-                with logarithm of the vertical coordinates. If False
+                with logarithm of the vertical coordinates. If False,
                 then the weights are calculated using unaltered
                 vertical values. If `None`, the default, then an
                 exception is raised if any of *z*, *src_z* or *dst_z*
@@ -622,30 +611,30 @@ _docstring_substitution_definitions = {
                 True, or a tuple of both if *item* is True.""",
     # regrid RegridOperator
     "{{regrid RegridOperator}}": """* `RegridOperator`: The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  with the *return_operator* parameter set to True.
+                operator that has been returned by a previous call
+                with the *return_operator* parameter set to True.
 
-                  Unlike the other options, for which the regrid
-                  weights need to be calculated, the regrid operator
-                  already contains the weights. Therefore, for cases
-                  where multiple fields with the same source grids
-                  need to be regridded to the same destination grid,
-                  using a regrid operator can give performance
-                  improvements by avoiding having to calculate the
-                  weights for each source field. Note that for the
-                  other types of *dst* parameter, the calculation of
-                  the regrid weights is not a lazy operation.
+                Unlike the other options, for which the regrid weights
+                need to be calculated, the regrid operator already
+                contains the weights. Therefore, for cases where
+                multiple fields with the same source grids need to be
+                regridded to the same destination grid, using a regrid
+                operator can give performance improvements by avoiding
+                having to calculate the weights for each source
+                field. Note that for the other types of *dst*
+                parameter, the calculation of the regrid weights is
+                not a lazy operation.
 
-                  .. note:: The source grid of the regrid operator is
-                            immediately checked for compatibility with
-                            the grid of the source field. By default
-                            only the computationally cheap tests are
-                            performed (checking that the coordinate
-                            system, cyclicity and grid shape are the
-                            same), with the grid coordinates not being
-                            checked. The coordinates check will be
-                            carried out, however, if the
-                            *check_coordinates* parameter is True.""",
+                .. note:: The source grid of the regrid operator is
+                          immediately checked for compatibility with
+                          the grid of the source field. By default
+                          only the computationally cheap tests are
+                          performed (checking that the coordinate
+                          system, cyclicity and grid shape are the
+                          same), with the grid coordinates not being
+                          checked. The coordinates check will be
+                          carried out, however, if the
+                          *check_coordinates* parameter is True.""",
     # Returns cfa_file_substitutions
     "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
                 whose key/value pairs are the file name parts to be
