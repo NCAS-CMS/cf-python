@@ -3,6 +3,9 @@ version 3.17.0
 
 **2024-??-??**
 
+* Fix occasional bug when calculating UGRID cell areas when
+  non-spatial coordinates span the discrete axis
+  (https://github.com/NCAS-CMS/cf-python/issues/721)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
   `cf.Field.weights`
   (https://github.com/NCAS-CMS/cf-python/issues/709)
