@@ -18,6 +18,57 @@ filename = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "create_test_files_2.npz"
 )
 arrays = np.load(filename)
+new_array = np.array(
+    [
+        [
+            [
+                [280.85, 283.29, 283.32, 273.15],
+                [280.76, 282.11, 284.05, 273.15],
+                [281.65, 282.57, 283.24, 286.95],
+                [282.2, 281.78, 281.49, 281.41],
+            ],
+            [
+                [280.47, 281.28, 281.57, 282.19],
+                [280.63, 281.34, 281.72, 282.27],
+                [281.23, 281.72, 281.87, 281.73],
+                [281.53, 281.57, 281.46, 281.33],
+            ],
+            [
+                [280.15, 280.73, 281.09, 281.52],
+                [280.6, 280.89, 281.06, 281.44],
+                [281.2, 281.46, 281.3, 281.09],
+                [281.29, 281.44, 281.41, 281.27],
+            ],
+            [
+                [279.46, 280.1, 280.64, 281.1],
+                [279.9, 280.2, 280.26, 280.54],
+                [280.95, 281.06, 280.75, 280.64],
+                [280.76, 281.06, 280.72, 280.76],
+            ],
+            [
+                [279.49, 279.74, 279.99, 280.28],
+                [279.66, 279.99, 280.14, 280.26],
+                [279.84, 279.94, 280.12, 280.39],
+                [279.84, 279.88, 280.0, 280.39],
+            ],
+            [
+                [279.48, 279.76, 280.02, 280.05],
+                [279.5, 279.83, 280.07, 280.29],
+                [279.4, 279.74, 280.04, 280.28],
+                [279.23, 279.5, 279.91, 280.33],
+            ],
+        ]
+    ],
+    dtype="float32",
+)
+
+# --------------------------------------------------------------------
+# Add a new array
+# --------------------------------------------------------------------
+# new_key = <new key>
+# new_arrays = dict(arrays)
+# new_arrays[new_key] = <new_array>
+# np.savez("create_test_files_2", **new_arrays)
 
 
 def _make_broken_bounds_cdl(filename):
@@ -88,7 +139,7 @@ variables:
 
 
 def _make_regrid_file(filename):
-    n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
+    n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = "CF-" + VN
 
@@ -202,7 +253,7 @@ def _make_regrid_file(filename):
 
 
 def _make_cfa_file(filename):
-    n = netCDF4.Dataset(filename, "w", format="NETCDF4")
+    n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = f"CF-{VN} CFA-0.6.2"
     n.comment = (
@@ -272,9 +323,132 @@ def _make_cfa_file(filename):
     return filename
 
 
-broken_bounds_file = _make_broken_bounds_cdl("broken_bounds.cdl")
+def _make_regrid_xyz_file(filename):
+    n = netCDF4.Dataset(filename, "w")
 
+    n.Conventions = "CF-" + VN
+
+    n.createDimension("time", 1)
+    n.createDimension("air_pressure", 6)
+    n.createDimension("bounds2", 2)
+    n.createDimension("latitude", 4)
+    n.createDimension("longitude", 4)
+
+    latitude = n.createVariable("latitude", "f8", ("latitude",))
+    latitude.standard_name = "latitude"
+    latitude.units = "degrees_north"
+    latitude.bounds = "latitude_bounds"
+    latitude[...] = [49.375, 50.625, 51.875, 53.125]
+
+    longitude = n.createVariable("longitude", "f8", ("longitude",))
+    longitude.standard_name = "longitude"
+    longitude.units = "degrees_east"
+    longitude.bounds = "longitude_bounds"
+    longitude[...] = [0.9375, 2.8125, 4.6875, 6.5625]
+
+    longitude_bounds = n.createVariable(
+        "longitude_bounds", "f8", ("longitude", "bounds2")
+    )
+    longitude_bounds[...] = [
+        [0, 1.875],
+        [1.875, 3.75],
+        [3.75, 5.625],
+        [5.625, 7.5],
+    ]
+
+    latitude_bounds = n.createVariable(
+        "latitude_bounds", "f8", ("latitude", "bounds2")
+    )
+    latitude_bounds[...] = [
+        [48.75, 50],
+        [50, 51.25],
+        [51.25, 52.5],
+        [52.5, 53.75],
+    ]
+
+    time = n.createVariable("time", "f4", ("time",))
+    time.standard_name = "time"
+    time.units = "days since 1860-1-1"
+    time.axis = "T"
+    time[...] = 183.041666666667
+
+    air_pressure = n.createVariable("air_pressure", "f4", ("air_pressure",))
+    air_pressure.units = "hPa"
+    air_pressure.standard_name = "air_pressure"
+    air_pressure.axis = "Z"
+    air_pressure[...] = [1000, 955, 900, 845, 795, 745]
+
+    ta = n.createVariable(
+        "ta", "f4", ("time", "air_pressure", "latitude", "longitude")
+    )
+    ta.standard_name = "air_temperature"
+    ta.units = "K"
+    ta.cell_methods = "time: point"
+    ta[...] = arrays["ta"]
+
+    n.close()
+
+    return filename
+
+
+def _make_dsg_trajectory_file(filename):
+    n = netCDF4.Dataset(filename, "w")
+
+    n.Conventions = "CF-" + VN
+    n.featureType = "trajectory"
+
+    n.createDimension("obs", 258)
+
+    latitude = n.createVariable("latitude", "f4", ("obs",))
+    latitude.standard_name = "latitude"
+    latitude.units = "degrees_north"
+    latitude[...] = arrays["dsg_latitude"]
+
+    longitude = n.createVariable("longitude", "f4", ("obs",))
+    longitude.standard_name = "longitude"
+    longitude.units = "degrees_east"
+    longitude[...] = arrays["dsg_longitude"]
+
+    time = n.createVariable("time", "f4", ("obs",))
+    time.standard_name = "time"
+    time.units = "days since 1900-01-01 00:00:00"
+    time.axis = "T"
+    time[...] = arrays["dsg_time"]
+
+    air_pressure = n.createVariable("air_pressure", "f4", ("obs",))
+    air_pressure.units = "hPa"
+    air_pressure.standard_name = "air_pressure"
+    air_pressure.axis = "Z"
+    air_pressure[...] = arrays["dsg_air_pressure"]
+
+    altitude = n.createVariable("altitude", "f4", ("obs",))
+    altitude.units = "m"
+    altitude.standard_name = "altitude"
+    altitude[...] = arrays["dsg_altitude"]
+
+    campaign = n.createVariable("campaign", str, ())
+    campaign.cf_role = "trajectory_id"
+    campaign.long_name = "campaign"
+    campaign[...] = "FLIGHT"
+
+    O3_TECO = n.createVariable("O3_TECO", "f8", ("obs",))
+    O3_TECO.standard_name = "mole_fraction_of_ozone_in_air"
+    O3_TECO.units = "ppb"
+    O3_TECO.cell_methods = "time: point"
+    O3_TECO.coordinates = (
+        "time altitude air_pressure latitude longitude campaign"
+    )
+    O3_TECO[...] = arrays["dsg_O3_TECO"]
+
+    n.close()
+
+    return filename
+
+
+broken_bounds_file = _make_broken_bounds_cdl("broken_bounds.cdl")
 regrid_file = _make_regrid_file("regrid.nc")
+regrid_xyz_file = _make_regrid_xyz_file("regrid_xyz.nc")
+dsg_trajectory_file = _make_dsg_trajectory_file("dsg_trajectory.nc")
 
 cfa_file = _make_cfa_file("cfa.nc")
 

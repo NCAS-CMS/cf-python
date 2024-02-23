@@ -68,8 +68,23 @@ def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
         **kwargs
     )
 
-    src_field = esmpy.Field(esmpy_regrid.srcfield.grid, name="src")
-    dst_field = esmpy.Field(esmpy_regrid.dstfield.grid, name="dst")
+    src_meshloc = None
+    dst_meshloc = None
+
+    domain_topology = src.domain_topology(default=None)
+    if domain_topology is not None:
+        src_meshloc = meshloc[domain_topology.get_cell()]
+
+    domain_topology = dst.domain_topology(default=None)
+    if domain_topology is not None:
+        dst_meshloc = meshloc[domain_topology.get_cell()]
+
+    src_field = esmpy.Field(
+        esmpy_regrid.srcfield.grid, meshloc=src_meshloc, name="src"
+    )
+    dst_field = esmpy.Field(
+        esmpy_regrid.dstfield.grid, meshloc=dst_meshloc, name="dst"
+    )
 
     fill_value = 1e20
 
@@ -92,12 +107,16 @@ def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
 class RegridFeatureTypeTest(unittest.TestCase):
     # Get the test source and destination fields
     src_grid_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid44.nc"
+        os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
+    )
+    src_mesh_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "ugrid_global_1.nc"
     )
     dst_featureType_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "dsg44.nc"
+        os.path.dirname(os.path.abspath(__file__)), "dsg_trajectory.nc"
     )
     src_grid = cf.read(src_grid_file)[0]
+    src_mesh = cf.read(src_mesh_file)[0]
     dst_featureType = cf.read(dst_featureType_file)[0]
 
     def setUp(self):
@@ -187,10 +206,45 @@ class RegridFeatureTypeTest(unittest.TestCase):
                         self.assertFalse(y.mask.any())
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_mesh_to_featureType_2d(self):
+        self.assertFalse(cf.regrid_logging())
+
+        dst = self.dst_featureType.copy()
+        src = self.src_mesh.copy()
+
+        # Mask some destination grid points
+        dst[20:25] = cf.masked
+
+        coord_sys = "spherical"
+
+        for src_masked in (False, True):
+            if src_masked:
+                src = src.copy()
+                src[20:30] = cf.masked
+
+            # Loop over whether or not to use the destination grid
+            # masked points
+            for use_dst_mask in (False, True):
+                kwargs = {"use_dst_mask": use_dst_mask}
+                for method in methods:
+                    x = src.regrids(dst, method=method, **kwargs)
+                    a = x.array
+
+                    y = esmpy_regrid(coord_sys, method, src, dst, **kwargs)
+
+                    self.assertEqual(y.size, a.size)
+                    self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
+
+                    if isinstance(a, np.ma.MaskedArray):
+                        self.assertTrue((y.mask == a.mask).all())
+                    else:
+                        self.assertFalse(y.mask.any())
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_featureType_cartesian(self):
         self.assertFalse(cf.regrid_logging())
 
-        # Cartesian regridding involving meshesDSG featureTypes is not
+        # Cartesian regridding involving DSG featureTypes is not
         # currently supported
         src = self.src_grid
         dst = self.dst_featureType
