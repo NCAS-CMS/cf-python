@@ -1652,7 +1652,7 @@ class Weights(Container, cfdm.Container):
         )
 
         for key, aux in auxiliary_coordinates_1d.items():
-            if aux.ctype not in "XYZ":
+            if str(aux.ctype) not in "XYZ":
                 continue
 
             aux_axis = f.get_data_axes(key)[0]
