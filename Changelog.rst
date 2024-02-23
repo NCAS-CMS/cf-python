@@ -3,6 +3,9 @@ version 3.17.0
 
 **2024-??-??**
 
+* Fix occasional bug when calculating UGRID cell areas when
+  non-spatial coordinates span the discrete axis
+  (https://github.com/NCAS-CMS/cf-python/issues/721)
 * New keyword parameter to `cf.Field.insert_dimension`:
   ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
