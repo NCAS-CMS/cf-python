@@ -13361,9 +13361,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         {{regridding overview}}
 
-        The 2-d regridding takes place on a sphere, with the grid
-        being defined by latitude and longitude spherical polar
-        coordinates.
+        The 2-d or 3-d regridding takes place on a sphere, with the
+        grid being defined by latitude and longitude spherical polar
+        coordinates, and any available vertical coordinates. In 3-d
+        the case, the regridding may be done assuming linear or log
+        linear weights in the vertical.
 
         **Latitude and longitude coordinates**
 
@@ -13397,7 +13399,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Data defined on UGRID face or node cells may be regridded to
         any other latitude-longitude grid, including other UGRID
-        meshes.
+        meshes and DSG feature types.
+
+        **DSG feature types*
+
+        Data on any latitude-longitude grid (including tripolar and
+        UGRID meshes may be regridded to any DSG feature type
 
         **Cyclicity of the X axis**
 
