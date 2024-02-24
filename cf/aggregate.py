@@ -210,6 +210,7 @@ class _Meta:
         (
             "Type",
             "Identity",
+            "featureType",
             "Units",
             "Cell_methods",
             "Data",
@@ -389,6 +390,8 @@ class _Meta:
         if field_identity:
             self.identity = f.get_property(field_identity, None)
 
+        self.featureType = f.get_property('featureType', None)
+            
         construct_axes = f.constructs.data_axes()
 
         # ------------------------------------------------------------
@@ -1560,6 +1563,9 @@ class _Meta:
             default=None,
         )
 
+        if self.featureType and coord.get_property('cf_role', None):
+            print(11111, repr(coord))
+
         if identity is not None:
             all_coord_identities = self.all_coord_identities.setdefault(
                 axes, set()
@@ -1773,6 +1779,9 @@ class _Meta:
         Cell_methods = self.cell_methods
         Data = self.has_field_data
 
+        # FeatureType
+        featureType = self.featureType
+        
         # Properties
         Properties = self.properties
 
@@ -1918,6 +1927,7 @@ class _Meta:
         self.signature = self._structural_signature(
             Type=Type,
             Identity=Identity,
+            featureType=featureType,
             Units=Units,
             Cell_methods=Cell_methods,
             Data=Data,
@@ -4132,6 +4142,9 @@ def _group_fields(meta, axis, info=False):
 
         hash0 = hash1
 
+        if m0.featureType and not count:
+            print(9999999999999)
+        
         if count == 1:
             # --------------------------------------------------------
             # Exactly one axis has different 1-d coordinate values
@@ -4233,10 +4246,24 @@ def _group_fields(meta, axis, info=False):
             # aggregate anything in this entire group.
             # --------------------------------------------------------
             if info:
+                coord_ids = []
+                for k, v in m0.axis.items():
+                    coord_ids.extend([repr(i) for i in v['ids']])
+                
+                if len(coord_ids) > 1:
+                    coord_ids =  (
+                        f"{', '.join(coord_ids[:-1])} and {coord_ids[-1]}"
+                    )
+                elif coord_ids:
+                    coord_ids =  coord_ids[0]
+                else:
+                    coord_ids = ""
+                                            
                 meta[
                     0
                 ].message = (
-                    "Some fields have identical sets of 1-d coordinates."
+                    f"Some fields have identical sets of 1-d {coord_ids} "
+                    "coordinates."
                 )
 
             return ()
