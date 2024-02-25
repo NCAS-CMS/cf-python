@@ -505,6 +505,7 @@ class _Meta:
                         "identity": dim_identity,
                         "key": dim_coord_key,
                         "units": units,
+                        "cf_role": None,
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": hasbounds,
                         "coordrefs": self.find_coordrefs(axis),
@@ -542,11 +543,14 @@ class _Meta:
                     aux_coord, aux_identity, relaxed_units=relaxed_units
                 )
 
+                cf_role = self.featureType and aux_coord.get_property("cf_role", None)
+
                 info_aux.append(
                     {
                         "identity": aux_identity,
                         "key": key,
                         "units": units,
+                        "cf_role": cf_role,
                         "hasdata": aux_coord.has_data(),
                         "hasbounds": aux_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(key),
@@ -595,6 +599,7 @@ class _Meta:
                 "ids": "identity",
                 "keys": "key",
                 "units": "units",
+                "cf_role": "cf_role",
                 "hasdata": "hasdata",
                 "hasbounds": "hasbounds",
                 "coordrefs": "coordrefs",
@@ -1821,6 +1826,7 @@ class _Meta:
                         ]
                     ),
                 ),
+                ("cf_role", axis[identity]["cf_role"]),
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
