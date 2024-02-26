@@ -405,9 +405,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"{self.constructs.domain_axis_identity(_)!r} axis"
                     )
 
-                new = new.roll(shift=shift, axis=iaxis)
+                new = new.roll(axis=iaxis, shift=shift)
         else:
             new = self.copy()
+
+        data = new.data
 
         # ------------------------------------------------------------
         # Subspace the field construct's data
@@ -8685,7 +8687,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )  # pragma: no cover
 
     @_inplace_enabled(default=False)
-    def insert_dimension(self, axis, position=0, inplace=False):
+    def insert_dimension(
+        self, axis, position=0, constructs=False, inplace=False
+    ):
         """Insert a size 1 axis into the data array.
 
         .. versionadded:: 3.0.0
@@ -8709,6 +8713,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Specify the position that the new axis will have in the
                 data array. By default the new axis has position 0, the
                 slowest varying position.
+
+            constructs: `bool`, optional
+                If True then also insert the new axis into all
+                metadata constructs that don't already include it. By
+                default, metadata constructs are not changed.
+
+                .. versionadded:: 3.17.0
 
             {{inplace: `bool`, optional}}
 
@@ -8753,23 +8764,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
 
         """
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        if axis is None:
-            axis = f.set_construct(self._DomainAxis(1))
-        else:
-            axis = f.domain_axis(
-                axis,
-                key=True,
-                default=ValueError("Can't identify a unique axis to insert"),
-            )
-
-        # Expand the dims in the field construct's data array
-        super(Field, f).insert_dimension(
-            axis=axis, position=position, inplace=True
+        return super().insert_dimension(
+            axis=axis,
+            position=position,
+            constructs=constructs,
+            inplace=inplace,
         )
-
-        return f
 
     def indices(self, *mode, **kwargs):
         """Create indices that define a subspace of the field construct.
