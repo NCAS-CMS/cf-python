@@ -649,6 +649,21 @@ class aggregateTest(unittest.TestCase):
         d += 0.1
         self.assertEqual(len(cf.aggregate([f, g])), 2)
 
+    def test_aggregate_trajectory(self):
+        """Test DSG trajectory aggregation"""
+        # Test that aggregation occurs when the tractory_id axes have
+        # identical 1-d auxiliary coordinates
+        f = cf.example_field(11)
+        g = cf.aggregate([f, f], relaxed_identities=True)
+        self.assertEqual(len(g), 1)
+
+        g = g[0]
+        self.assertTrue(
+            g.subspace(**{"cf_role=trajectory_id": [0]}).equals(
+                g.subspace(**{"cf_role=trajectory_id": [1]})
+            )
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

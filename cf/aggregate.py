@@ -600,6 +600,7 @@ class _Meta:
 
                     return
 
+                identity = f"ncvar%{identity}"
                 size = domain_axis.get_size()
 
             axis_identities = {
