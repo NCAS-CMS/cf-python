@@ -2181,7 +2181,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width, inplace=False):
+    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
 
         :Parameters:
@@ -2196,7 +2196,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 *Parameter example:*
                   Pad the last axis: ``axis=-1``.
 
-            {{pad_width: sequence of `int`}}
+            {{pad_width: sequence of `int`, optional}}
+
+            {{to_size: `int`, optional}}
 
             {{inplace: `bool`, optional}}
 
@@ -2222,11 +2224,44 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [--  3  4  5 -- --]
          [-- -- -- -- -- --]]
 
+        >>> g = d.pad_missing(1, to_size=5)
+        >>> print(g.array)
+        [[0 1 2 -- --]
+         [3 4 5 -- --]]
+
         """
-        try:
-            pad_width0, pad_width1 = pad_width
-        except (TypeError, ValueError):
-            raise ValueError("'pad_width' must be a sequence of two integers")
+        if not 0 <= axis < self.ndim:
+            raise ValueError(
+                f"'axis' must be a valid dimension position. Got {axis}"
+            )
+
+        if to_size is not None:
+            # Set pad_width from to_size
+            if pad_width is not None:
+                raise ValueError("Can't set both 'pad_width' and 'to_size'")
+
+            pad_width = (0, to_size - self.shape[axis])
+        elif pad_width is None:
+            raise ValueError("Must set either 'pad_width' or 'to_size'")
+
+        pad_width = np.asarray(pad_width)
+        if pad_width.shape != (2,) or not pad_width.dtype.kind == "i":
+            raise ValueError(
+                "'pad_width' must be a sequence of two integers. "
+                f"Got: {pad_width}"
+            )
+
+        pad_width = tuple(pad_width)
+        if any(n < 0 for n in pad_width):
+            if to_size is not None:
+                raise ValueError(
+                    f"'to_size' ({to_size}) must not be smaller than the "
+                    f"original axis size ({self.shape[axis]})"
+                )
+
+            raise ValueError(
+                f"Can't set a negative number of pad values. Got: {pad_width}"
+            )
 
         d = _inplace_enabled_define_and_cleanup(self)
 

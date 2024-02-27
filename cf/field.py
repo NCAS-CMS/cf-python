@@ -11954,7 +11954,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return f
 
     @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width, inplace=False):
+    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
 
          The field's data and all metadata constructs that span the
@@ -11972,7 +11972,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                  ``'X'``, the domain axis construct returned by
                  ``f.domain_axis('X')`` is selected.
 
-             {{pad_width: sequence of `int`}}
+             {{pad_width: sequence of `int`, optional}}
+
+             {{to_size: `int`, optional}}
 
              {{inplace: `bool`, optional}}
 
@@ -11984,7 +11986,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples*
 
-        >>>  f = cf.example_field(6)
+        >>> f = cf.example_field(6)
         >>> print(f)
         Field: precipitation_amount (ncvar%pr)
         --------------------------------------
@@ -12028,6 +12030,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [5.0 6.0 7.0 8.0 -- -- -- -- --]
          [ --  --  --  -- -- -- -- -- --]]
 
+        >>> print(f.pad_missing('time', to_size=6))
+        Field: precipitation_amount (ncvar%pr)
+        --------------------------------------
+        Data            : precipitation_amount(cf_role=timeseries_id(2), time(6))
+        Dimension coords: time(6) = [2000-01-16 12:00:00, ..., --] gregorian
+        Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                        : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                        : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]
+                        : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+        Coord references: grid_mapping_name:latitude_longitude
+
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -12048,7 +12061,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         iaxis = data_axes.index(axis)
 
         # Pad the field
-        super(Field, f).pad_missing(iaxis, pad_width, inplace=True)
+        super(Field, f).pad_missing(
+            iaxis, pad_width=pad_width, to_size=to_size, inplace=True
+        )
 
         # Set new domain axis size
         domain_axis = f.domain_axis(axis)
@@ -12062,7 +12077,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Pad the construct
             iaxis = construct_axes.index(axis)
-            construct.pad_missing(iaxis, pad_width, inplace=True)
+            construct.pad_missing(
+                iaxis, pad_width=pad_width, to_size=to_size, inplace=True
+            )
 
         return f
 

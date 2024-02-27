@@ -588,9 +588,13 @@ _docstring_substitution_definitions = {
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
     # pad_width
-    "{{pad_width: sequence of `int`}}": """pad_width: sequence of `int`
+    "{{pad_width: sequence of `int`, optional}}": """pad_width: sequence of `int`, optional
                 Number of values to pad before and after the edges of
                 the axis.""",
+    # to_size
+    "{{to_size: `int`, optional}}": """to_size: `int`, optional
+                Pad the axis after so that the new axis has the given
+                size.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

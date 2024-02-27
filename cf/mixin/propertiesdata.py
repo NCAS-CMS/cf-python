@@ -1889,7 +1889,7 @@ class PropertiesData(Properties):
         )
 
     @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width, inplace=False):
+    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
 
         :Parameters:
@@ -1898,7 +1898,9 @@ class PropertiesData(Properties):
                 Select the axis for which the padding is to be
                 applied.
 
-            {{pad_width: sequence of `int`}}
+            {{pad_width: sequence of `int`, optional}}
+
+            {{to_size: `int`, optional}}
 
             {{inplace: `bool`, optional}}
 
@@ -1914,6 +1916,7 @@ class PropertiesData(Properties):
             "pad_missing",
             axis=axis,
             pad_width=pad_width,
+            to_size=to_size,
             inplace=inplace,
         )
 
