@@ -18,6 +18,8 @@ class RegridOperator(mixin_Container, Container):
     information, such as the grid shapes; the CF metadata for the
     destination grid; and the source grid coordinates.
 
+    .. versionadded:: 3.10.0
+
     """
 
     def __init__(
@@ -113,6 +115,11 @@ class RegridOperator(mixin_Container, Container):
                 or 1-based indexing. By default 0-based indexing is
                 used.
 
+                If *row* and *col* are to be read from a weights file
+                and their netCDF variables have ``start_index``
+                attributes, then these will be used in preference to
+                *start_index*.
+
             parameters: Deprecated at version 3.14.0
                 Use keyword parameters instead.
 
@@ -156,15 +163,17 @@ class RegridOperator(mixin_Container, Container):
 
                 .. versionadded:: 3.17.0
 
-            src_z: `str`, optional
+            src_z: optional
                 The identity of the source grid vertical coordinates
-                used to calculate the weights.
+                used to calculate the weights. If `None` then no
+                source grid vertical axis is identified
 
                 .. versionadded:: 3.17.0
 
-            dst_z: `str`, optional
+            dst_z: optional
                 The identity of the destination grid vertical
-                coordinates used to calculate the weights.
+                coordinates used to calculate the weights. If `None`
+                then no destination grid vertical axis is identified,
 
                 .. versionadded:: 3.17.0
 
@@ -214,7 +223,7 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dimensionality", dimensionality, copy=False)
         self._set_component("src_z", src_z, copy=False)
         self._set_component("dst_z", dst_z, copy=False)
-        self._set_component("ln_z", ln_z, copy=False)
+        self._set_component("ln_z", bool(ln_z), copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -282,7 +291,7 @@ class RegridOperator(mixin_Container, Container):
     def dst_featureType(self):
         """The DSG featureType of the destination grid.
 
-        .. versionadded:: LOCVER
+        .. versionadded:: 3.17.0
 
         """
         return self._get_component("dst_featureType")
@@ -411,7 +420,7 @@ class RegridOperator(mixin_Container, Container):
     def src_featureType(self):
         """The DSG featureType of the source grid.
 
-        .. versionadded:: LOCVER
+        .. versionadded:: 3.17.0
 
         """
         return self._get_component("src_featureType")
@@ -463,6 +472,10 @@ class RegridOperator(mixin_Container, Container):
     @property
     def start_index(self):
         """The start index of the row and column indices.
+
+        If `row` and `col` are to be read from a weights file and
+        their netCDF variables have ``start_index`` attributes, then
+        these will be used in preference to `start_index`.
 
         .. versionadded:: 3.14.0
 
@@ -683,6 +696,11 @@ class RegridOperator(mixin_Container, Container):
         any further modification of the weights to account for missing
         values in the source grid will always involve row-slicing.
 
+        If the weights are already in a sparse array format then no
+        action is taken.
+
+        .. versionadded:: 3.13.0
+
         :Returns:
 
             `None`
@@ -699,6 +717,10 @@ class RegridOperator(mixin_Container, Container):
 
         from scipy.sparse import csr_array
 
+        start_index = self.start_index
+        col_start_index = None
+        row_start_index = None
+
         if weights is None:
             weights_file = self.weights_file
             if weights_file is not None:
@@ -712,6 +734,17 @@ class RegridOperator(mixin_Container, Container):
                 weights = nc.variables["S"][...]
                 row = nc.variables["row"][...]
                 col = nc.variables["col"][...]
+
+                try:
+                    col_start_index = nc.variables["col"].start_index
+                except AttributeError:
+                    col_start_index = 1
+
+                try:
+                    row_start_index = nc.variables["row"].start_index
+                except AttributeError:
+                    row_start_index = 1
+
                 nc.close()
                 _lock.release()
             else:
@@ -721,11 +754,16 @@ class RegridOperator(mixin_Container, Container):
                     "be set"
                 )
 
-        # Convert to sprase array format
-        start_index = self.start_index
-        if start_index:
-            row = row - start_index
+        # Convert to sparse array format
+        if col_start_index:
+            col = col - col_start_index
+        elif start_index:
             col = col - start_index
+
+        if row_start_index:
+            row = row - row_start_index
+        elif start_index:
+            row = row - start_index
 
         src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
@@ -753,9 +791,12 @@ class RegridOperator(mixin_Container, Container):
         else:
             dst_mask = np.zeros((dst_size,), dtype=bool)
 
-        # Note: It is much more efficient to access 'weights.indptr'
-        #       and 'weights.data' directly, rather than iterating
-        #       over rows of 'weights' and using 'weights.getrow'.
+        # Performance note:
+        #
+        # It is much more efficient to access 'weights.indptr' and
+        # 'weights.data' directly, rather than iterating over rows of
+        # 'weights' and using 'weights.getrow'.
+
         indptr = weights.indptr.tolist()
         data = weights.data
         for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):

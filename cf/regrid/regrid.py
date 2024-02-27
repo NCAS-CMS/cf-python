@@ -497,7 +497,7 @@ def regrid(
 
     if is_log_level_debug(logger):
         logger.debug(
-            f"Source Grid:\n{src_grid}\nDestination Grid:\n{dst_grid}\n"
+            f"Source Grid:\n{src_grid}\n\nDestination Grid:\n{dst_grid}\n"
         )  # pragma: no cover
 
     conform_coordinates(src_grid, dst_grid)
@@ -598,7 +598,7 @@ def regrid(
 
         if is_log_level_debug(logger):
             logger.debug(
-                f"Source ESMF Grid:\n{src_esmpy_grid}\nDestination ESMF Grid:\n{dst_esmpy_grid}\n"
+                f"Source ESMF Grid:\n{src_esmpy_grid}\n\nDestination ESMF Grid:\n{dst_esmpy_grid}\n"
             )  # pragma: no cover
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
@@ -2460,8 +2460,8 @@ def create_esmpy_weights(
             #
             # To do this, only retain the indices that correspond to
             # the top left quarter of the weights matrix in dense
-            # form. I.e. if w is the NxM (N, M both even) dense form
-            # of the weights, then this is equivalent to w[:N//2,
+            # form. I.e. if w is the NxM dense form of the weights (N,
+            # M both even), then this is equivalent to w[:N//2,
             # :M//2].
             index = np.where(
                 (row <= dst_esmpy_field.data.size // 2)

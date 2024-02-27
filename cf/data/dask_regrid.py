@@ -54,8 +54,7 @@ def regrid(
             source grid cells i. Note that it is typical that for a
             given j most w_ji will be zero, reflecting the fact only a
             few source grid cells intersect a particular destination
-            grid cell. I.e. *weights* is typically a very sparse
-            matrix.
+            grid cell. I.e. *weights* is usually a very sparse matrix.
 
             If the destination grid has masked cells, either because
             it spans areas outside of the source grid, or by selection
