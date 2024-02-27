@@ -3920,7 +3920,22 @@ def _sort_indices(m, canonical_axes):
     """
     canonical_axes = [m.id_to_axis[identity] for identity in canonical_axes]
     sort_indices = tuple([m.sort_indices[axis] for axis in canonical_axes])
-    needs_sorting = sort_indices != (slice(None),) * len(sort_indices)
+
+    # Whether or not one or more of the axes needs sorting
+    needs_sorting = False
+    for sort_index in sort_indices:
+        # Note: sort_index can only be a slice object or a numpy array
+        #       (see `_create_hash_and_first_values`)
+        if isinstance(sort_index, slice):
+            if sort_index != slice(None):
+                # sort_index is a slice other than slice(None)
+                needs_sorting = True
+                break
+        elif sort_index.size > 1:
+            # sort_index is an array of 2 or more integers
+            needs_sorting = True
+            break
+
     return sort_indices, needs_sorting
 
 
