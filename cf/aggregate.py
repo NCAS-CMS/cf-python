@@ -4905,7 +4905,7 @@ def f_identity(meta):
 
 
 def dsg_featureType_axis(meta, axis):
-    """Return True if the given axis is a DSG featureType axis.
+    """True if the given axis is a DSG featureType axis.
 
     A DSG featureType axis has no dimension coordinates and at least
     one 1-d auxiliary coordinate with a ``cf-role`` property.
