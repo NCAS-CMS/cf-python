@@ -9,6 +9,13 @@ version 3.17.0
   to regrid the vertical axis in logarithmic coordinates to
   `cf.Field.regrids` and `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/715)
+* New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
+  (https://github.com/NCAS-CMS/cf-python/issues/717)
+* Fix occasional bug when calculating UGRID cell areas when
+  non-spatial coordinates span the discrete axis
+  (https://github.com/NCAS-CMS/cf-python/issues/721)
+* New keyword parameter to `cf.Field.insert_dimension`:
+  ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
   `cf.Field.weights`
   (https://github.com/NCAS-CMS/cf-python/issues/709)
@@ -21,6 +28,9 @@ version 3.17.0
 * Fix bug that caused `cf.Field.del_file_location` to fail when
   updating its metdata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
+* Fix bug that caused incorrect data arrays in some cyclic subspaces
+  created by `cf.Field.subspace` and `cf.Field.__getitem__`
+  (https://github.com/NCAS-CMS/cf-python/issues/713)
 
 version 3.16.0
 --------------

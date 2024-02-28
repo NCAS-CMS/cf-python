@@ -603,6 +603,14 @@ _docstring_substitution_definitions = {
                 have also been set.
 
                 Ignored if *dst* is a `RegridOperator`.""",
+    # pad_width
+    "{{pad_width: sequence of `int`, optional}}": """pad_width: sequence of `int`, optional
+                Number of values to pad before and after the edges of
+                the axis.""",
+    # to_size
+    "{{to_size: `int`, optional}}": """to_size: `int`, optional
+                Pad the axis after so that the new axis has the given
+                size.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

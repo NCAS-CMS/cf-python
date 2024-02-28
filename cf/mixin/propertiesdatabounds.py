@@ -3874,6 +3874,40 @@ class PropertiesDataBounds(PropertiesData):
         """
         print(cf_inspect(self))  # pragma: no cover
 
+    @_inplace_enabled(default=False)
+    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
+        """Pad an axis with missing data.
+
+        :Parameters:
+
+            axis: `int`
+                Select the axis for which the padding is to be
+                applied.
+
+            {{pad_width: sequence of `int`, optional}}
+
+            {{to_size: `int`, optional}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The {{class}} with padded data, or `None` if the
+                operation was in-place.
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "pad_missing",
+            bounds=True,
+            interior_ring=True,
+            axis=axis,
+            pad_width=pad_width,
+            to_size=to_size,
+            inplace=inplace,
+        )
+
     def period(self, *value, **config):
         """Return or set the period for cyclic values.
 
