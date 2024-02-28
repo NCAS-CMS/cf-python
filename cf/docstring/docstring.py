@@ -146,17 +146,14 @@ _docstring_substitution_definitions = {
                   destination interpolation for which each destination
                   point is mapped to the closest source point. A
                   source point can be mapped to multiple destination
-                  points. Some source points may not be mapped. Useful
-                  for regridding categorical data.
+                  points. Useful for regridding categorical data.
 
                 * ``'nearest_dtos'``: Nearest neighbour destination to
                   source interpolation for which each source point is
                   mapped to the closest destination point. A
                   destination point can be mapped to multiple source
-                  points, in which case the destination is the sum of
-                  the source values. Some destination points may not
-                  be mapped. Useful for regridding of categorical
-                  data.
+                  points. Some destination points may not be
+                  mapped. Useful for regridding of categorical data.
 
                 * `None`: This is the default and can only be used
                   when *dst* is a `RegridOperator`.""",
