@@ -5,6 +5,11 @@ version 3.17.0
 
 * Allow DSG tractories with identical `trajectory_id` values to be
   aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
+* New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
+  (https://github.com/NCAS-CMS/cf-python/issues/717)
+* Fix occasional bug when calculating UGRID cell areas when
+  non-spatial coordinates span the discrete axis
+  (https://github.com/NCAS-CMS/cf-python/issues/721)
 * New keyword parameter to `cf.Field.insert_dimension`:
   ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
 * Added the ``cell_measures`` and ``coordinates`` keyword arguments to
