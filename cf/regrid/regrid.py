@@ -2053,7 +2053,13 @@ def create_esmpy_grid(grid, mask=None):
 
             bounds[dim] = tmp
 
-    # Define the esmpy.Grid stagger locations
+    # Define the esmpy.Grid stagger locations. For details see
+    #
+    # 2-d:
+    # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc2d
+    #
+    # 3-d:
+    # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc3d
     if bounds:
         if n_axes == 3:
             staggerlocs = [
