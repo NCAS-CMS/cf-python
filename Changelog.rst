@@ -3,6 +3,8 @@ version 3.17.0
 
 **2024-??-??**
 
+* Allow DSG tractories with identical `trajectory_id` values to be
+  aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
 * New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
   (https://github.com/NCAS-CMS/cf-python/issues/717)
 * Fix occasional bug when calculating UGRID cell areas when
