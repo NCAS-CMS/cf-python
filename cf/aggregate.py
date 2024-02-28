@@ -4173,7 +4173,7 @@ def _group_fields(meta, axis, info=False):
         # axis we can still aggregate it, because it's OK to aggregate
         # featureTypes with the timeseries_id, profile_id, or
         # trajectory_id.
-        if not count and dsg_featureType_axis(m0, axis):
+        if not count and dsg_feature_type_axis(m0, axis):
             a_identity = axis
             count = 1
 
@@ -4904,7 +4904,7 @@ def f_identity(meta):
     return identity
 
 
-def dsg_featureType_axis(meta, axis):
+def dsg_feature_type_axis(meta, axis):
     """True if the given axis is a DSG featureType axis.
 
     A DSG featureType axis has no dimension coordinates and at least
