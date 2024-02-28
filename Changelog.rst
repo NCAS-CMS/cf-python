@@ -27,9 +27,6 @@ version 3.17.0
 * Fix bug that caused incorrect data arrays in some cyclic subspaces
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
   (https://github.com/NCAS-CMS/cf-python/issues/713)
-* Fix occasional bug when calculating UGRID cell areas when
-  non-spatial coordinates span the discrete axis
-  (https://github.com/NCAS-CMS/cf-python/issues/721)
 
 version 3.16.0
 --------------
