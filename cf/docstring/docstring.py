@@ -115,43 +115,48 @@ _docstring_substitution_definitions = {
                 * ``'bilinear'``: Deprecated alias for ``'linear'``.
 
                 * ``'conservative_1st'``: First order conservative
-                  interpolation. Preserves the area integral of the
-                  data across the interpolation from source to
-                  destination. It uses the proportion of the area of
-                  the overlapping source and destination cells to
-                  determine appropriate weights.
+                  interpolation. Preserves the integral of the source
+                  field across the regridding. Weight calculation is
+                  based on the ratio of source cell area overlapped
+                  with the corresponding destination cell area.
 
                 * ``'conservative'``: Alias for ``'conservative_1st'``
 
                 * ``'conservative_2nd'``: Second-order conservative
-                  interpolation. As with first order conservative
-                  interpolation, preserves the area integral of the
-                  field between source and destination using a
-                  weighted sum, with weights based on the
-                  proportionate area of intersection. In addition the
-                  second-order conservative method takes the source
-                  gradient into account, so it yields a smoother
-                  destination field that typically better matches the
-                  source data.
+                  interpolation. Preserves the integral of the source
+                  field across the regridding. Weight calculation is
+                  based on the ratio of source cell area overlapped
+                  with the corresponding destination cell area. The
+                  second-order conservative calculation also includes
+                  the gradient across the source cell, so in general
+                  it gives a smoother, more accurate representation of
+                  the source field. This is particularly true when
+                  going from a coarse to finer grid.
 
-                * ``'patch'`` Patch recovery interpolation. A second
-                  degree 2-d polynomial regridding method, which uses
-                  a least squares algorithm to calculate the
-                  polynomials. This method typically results in
-                  better approximations to values and derivatives when
+                * ``'patch'`` Patch recovery interpolation. Patch
+                  rendezvous method of taking the least squares fit of
+                  the surrounding surface patches. This is a higher
+                  order method that may produce interpolation weights
+                  that may be slightly less than 0 or slightly greater
+                  than 1. This method typically results in better
+                  approximations to values and derivatives when
                   compared to bilinear interpolation.
 
-                * ``'nearest_stod'``: Nearest neighbour interpolation
-                  for which each destination point is mapped to the
-                  closest source point. Useful for extrapolation of
-                  categorical data. Some destination cells may be
-                  unmapped.
+                * ``'nearest_stod'``: Nearest neighbour source to
+                  destination interpolation for which each destination
+                  point is mapped to the closest source point. A
+                  source point can be mapped to multiple destination
+                  points. Some source points may not be mapped. Useful
+                  for regridding categorical data.
 
-                * ``'nearest_dtos'``: Nearest neighbour interpolation
-                  for which each source point is mapped to the
-                  destination point. Useful for extrapolation of
-                  categorical data. All destination cells will be
-                  mapped.
+                * ``'nearest_dtos'``: Nearest neighbour destination to
+                  source interpolation for which each source point is
+                  mapped to the closest destination point. A
+                  destination point can be mapped to multiple source
+                  points, in which case the destination is the sum of
+                  the source values. Some destination points may not
+                  be mapped. Useful for regridding of categorical
+                  data.
 
                 * `None`: This is the default and can only be used
                   when *dst* is a `RegridOperator`.""",
