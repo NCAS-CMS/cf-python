@@ -54,6 +54,7 @@ _signature_properties = set(
         "add_offset",
         "calendar",
         "cell_methods",
+        "featureType",
         "_FillValue",
         "flag_masks",
         "flag_meanings",
@@ -210,6 +211,7 @@ class _Meta:
         (
             "Type",
             "Identity",
+            "featureType",
             "Units",
             "Cell_methods",
             "Data",
@@ -389,6 +391,10 @@ class _Meta:
         if field_identity:
             self.identity = f.get_property(field_identity, None)
 
+        # Set the DSG featureType
+        featureType = f.get_property("featureType", None)
+        self.featureType = featureType
+
         construct_axes = f.constructs.data_axes()
 
         # ------------------------------------------------------------
@@ -502,6 +508,7 @@ class _Meta:
                         "identity": dim_identity,
                         "key": dim_coord_key,
                         "units": units,
+                        "cf_role": None,
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": hasbounds,
                         "coordrefs": self.find_coordrefs(axis),
@@ -539,11 +546,18 @@ class _Meta:
                     aux_coord, aux_identity, relaxed_units=relaxed_units
                 )
 
+                # Set the cf_role for DSGs
+                if not featureType:
+                    cf_role = None
+                else:
+                    cf_role = aux_coord.get_property("cf_role", None)
+
                 info_aux.append(
                     {
                         "identity": aux_identity,
                         "key": key,
                         "units": units,
+                        "cf_role": cf_role,
                         "hasdata": aux_coord.has_data(),
                         "hasbounds": aux_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(key),
@@ -586,12 +600,14 @@ class _Meta:
 
                     return
 
+                identity = f"ncvar%{identity}"
                 size = domain_axis.get_size()
 
             axis_identities = {
                 "ids": "identity",
                 "keys": "key",
                 "units": "units",
+                "cf_role": "cf_role",
                 "hasdata": "hasdata",
                 "hasbounds": "hasbounds",
                 "coordrefs": "coordrefs",
@@ -1773,6 +1789,9 @@ class _Meta:
         Cell_methods = self.cell_methods
         Data = self.has_field_data
 
+        # DSG FeatureType
+        featureType = self.featureType
+
         # Properties
         Properties = self.properties
 
@@ -1812,6 +1831,7 @@ class _Meta:
                         ]
                     ),
                 ),
+                ("cf_role", axis[identity]["cf_role"]),
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
@@ -1918,6 +1938,7 @@ class _Meta:
         self.signature = self._structural_signature(
             Type=Type,
             Identity=Identity,
+            featureType=featureType,
             Units=Units,
             Cell_methods=Cell_methods,
             Data=Data,
@@ -4147,6 +4168,15 @@ def _group_fields(meta, axis, info=False):
 
         hash0 = hash1
 
+        # If 'count' is 0 then all of the 1-d coordinates have the
+        # same values across fields. However, for a DSG featureType
+        # axis we can still aggregate it, because it's OK to aggregate
+        # featureTypes with the timeseries_id, profile_id, or
+        # trajectory_id.
+        if not count and dsg_feature_type_axis(m0, axis):
+            a_identity = axis
+            count = 1
+
         if count == 1:
             # --------------------------------------------------------
             # Exactly one axis has different 1-d coordinate values
@@ -4248,10 +4278,22 @@ def _group_fields(meta, axis, info=False):
             # aggregate anything in this entire group.
             # --------------------------------------------------------
             if info:
-                meta[
-                    0
-                ].message = (
-                    "Some fields have identical sets of 1-d coordinates."
+                coord_ids = []
+                for k, v in m0.axis.items():
+                    coord_ids.extend([repr(i) for i in v["ids"]])
+
+                if len(coord_ids) > 1:
+                    coord_ids = (
+                        f"{', '.join(coord_ids[:-1])} and {coord_ids[-1]}"
+                    )
+                elif coord_ids:
+                    coord_ids = coord_ids[0]
+                else:
+                    coord_ids = ""
+
+                meta[0].message = (
+                    f"Some fields have identical sets of 1-d {coord_ids} "
+                    "coordinates."
                 )
 
             return ()
@@ -4839,6 +4881,19 @@ def _aggregate_2_fields(
 
 
 def f_identity(meta):
+    """Return the field identity for logging strings.
+
+    :Parameters:
+
+        meta: `_Meta`
+            The `_Meta` instance containing the field.
+
+    :Returns:
+
+        `str`
+            The identity.
+
+    """
     identity = meta.identity
     f_identity = meta.field.identity()
     if f_identity == identity:
@@ -4847,3 +4902,38 @@ def f_identity(meta):
         identity = f"{meta.identity!r} ({f_identity})"
 
     return identity
+
+
+def dsg_feature_type_axis(meta, axis):
+    """True if the given axis is a DSG featureType axis.
+
+    A DSG featureType axis has no dimension coordinates and at least
+    one 1-d auxiliary coordinate with a ``cf-role`` property.
+
+    :Parameters:
+
+        meta: `_Meta`
+            The `_Meta` instance
+
+        axis: `str`
+            One of the axes in ``meta.axis_ids``.
+
+    :Returns:
+
+        `bool`
+            `True` if the given axis is a DSG featureType axis.
+
+    """
+    if not meta.featureType:
+        # The field/domain is not a DSG
+        return False
+
+    coords = meta.axis[axis]
+    if coords["dim_coord_index"] is not None:
+        # The axis has dimension coordinates
+        return False
+
+    # Return True if one of the 1-d auxiliary coordinates has a
+    # cf_role property
+    cf_role = coords["cf_role"]
+    return cf_role.count(None) != len(cf_role)

@@ -195,6 +195,7 @@ Expanding the data
    :template: method.rst
 
    ~cf.Data.halo
+   ~cf.Data.pad_missing
 	    
 Binary operations
 ^^^^^^^^^^^^^^^^^

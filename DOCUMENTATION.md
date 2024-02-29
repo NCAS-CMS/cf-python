@@ -5,7 +5,7 @@
   sphinx-copybutton==0.5.1
   sphinx-toggleprompt==0.2.0
   sphinxcontrib-spelling==4.3.0
-  serializinghtml-serializinghtml==1.1.5
+  sphinxcontrib.serializinghtml==1.1.5
   sphinx==2.4.5
 
 * The `.py` files to generate recipes are stored in `docs/source/recipes/`.
