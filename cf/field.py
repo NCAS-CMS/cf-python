@@ -2385,27 +2385,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 constructs are considered for cell area
                 creation. Otherwise they are ignored.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             coordinates: `bool`, optional
                 If True, the default, then coordinate constructs are
                 considered for cell area creation. Otherwise they are
                 ignored.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             methods: `bool`, optional
                 If True, then return a dictionary describing the method
                 used to create the cell areas instead of the default,
                 a field construct.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             return_cell_measure: `bool`, optional
                 If True, then return a cell measure construct instead
                 of the default, a field construct.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             insert: deprecated at version 3.0.0
 
@@ -3507,7 +3507,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``'volume'``. If False then cell measure constructs
                 are ignored for these *weights*.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             coordinates: `bool`, optional
                 If True, the default, then coordinate constructs are
@@ -3515,7 +3515,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `True` or ``'area'``. If False then coordinate
                 constructs are ignored for these *weights*.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             kwargs: deprecated at version 3.0.0.
 
@@ -8719,7 +8719,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 metadata constructs that don't already include it. By
                 default, metadata constructs are not changed.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: 3.16.1
 
             {{inplace: `bool`, optional}}
 
@@ -11960,7 +11960,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          The field's data and all metadata constructs that span the
          axis are padded.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: 3.16.1
 
         :Parameters:
 
