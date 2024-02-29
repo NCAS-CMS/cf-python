@@ -2977,9 +2977,18 @@ def aggregate(
         # ------------------------------------------------------------
         if axes is None:
             # Aggregation will be over as many axes as possible
-            aggregating_axes = meta[0].axis_ids
+            m0 = meta[0]
+            aggregating_axes = m0.axis_ids[:]
+
+            # For DSG feature types, only consider aggregating the
+            # feature dimension(s).
+            if m0.featureType:
+                for axis in aggregating_axes[:]:
+                    if not dsg_feature_type_axis(m0, axis):
+                        aggregating_axes.remove(axis)
+
             _create_hash_and_first_values(
-                meta, None, False, hfl_cache, rtol, atol
+                meta, aggregating_axes, False, hfl_cache, rtol, atol
             )
 
         else:
