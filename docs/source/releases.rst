@@ -16,6 +16,7 @@ Documentation for all versions of cf.
 **CF-1.11**
 -----------
 
+* `Version 3.16.1 <https://ncas-cms.github.io/cf-python-docs/3.16.1>`_ (2024-03-01)
 * `Version 3.16.0 <https://ncas-cms.github.io/cf-python-docs/3.16.0>`_ (2023-12-06)
 
 **CF-1.10**
@@ -169,6 +170,8 @@ e.g. ``3.13.1``.
 
     * support for new releases to the CF conventions (e.g. upgrading
       from ``CF-1.8`` to ``CF-1.9``);
+    * the introduction of significant new areas of functionality (such
+      as UGRID);
     * limited backwards-incompatible changes to the API, such as
        * changing the name of an existing function or method;
        * changing the behaviour of an existing function or method;
