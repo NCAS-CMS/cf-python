@@ -1,7 +1,7 @@
-version 3.17.0
+version 3.16.1
 --------------
 
-**2024-??-??**
+**2024-03-01**
 
 * Allow DSG tractories with identical `trajectory_id` values to be
   aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
