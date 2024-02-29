@@ -11978,13 +11978,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
              {{inplace: `bool`, optional}}
 
-         :Returns:
+        :Returns:
 
-             `Field` or `None`
-                 The padded field construct, or `None` if the operation
-                 was in-place.
+            `Field` or `None`
+                The padded field construct, or `None` if the operation
+                was in-place.
 
-        **Examples*
+        **Examples**
 
         >>> f = cf.example_field(6)
         >>> print(f)

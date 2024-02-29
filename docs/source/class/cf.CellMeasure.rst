@@ -193,6 +193,16 @@ Data
    ~cf.CellMeasure.swapaxes
    ~cf.CellMeasure.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.halo
+   ~cf.CellMeasure.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -228,7 +238,6 @@ Data
    :template: method.rst
 
    ~cf.CellMeasure.__setitem__
-   ~cf.CellMeasure.halo
    ~cf.CellMeasure.masked_invalid
    ~cf.CellMeasure.subspace
    ~cf.CellMeasure.where

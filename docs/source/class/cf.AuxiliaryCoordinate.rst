@@ -262,6 +262,7 @@ Data
    :template: method.rst
 
    ~cf.AuxiliaryCoordinate.halo
+   ~cf.AuxiliaryCoordinate.pad_missing
 
 .. rubric:: *Data array mask*
 

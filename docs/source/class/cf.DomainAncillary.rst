@@ -239,6 +239,16 @@ Data
    ~cf.DomainAncillary.swapaxes
    ~cf.DomainAncillary.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.halo
+   ~cf.DomainAncillary.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -274,7 +284,6 @@ Data
    :template: method.rst
 
    ~cf.DomainAncillary.__setitem__
-   ~cf.DomainAncillary.halo
    ~cf.DomainAncillary.masked_invalid
    ~cf.DomainAncillary.subspace
    ~cf.DomainAncillary.where

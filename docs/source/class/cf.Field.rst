@@ -196,6 +196,7 @@ Data
    :template: method.rst
 
    ~cf.Field.halo
+   ~cf.Field.pad_missing
 
 .. rubric:: *Data array mask*
 
