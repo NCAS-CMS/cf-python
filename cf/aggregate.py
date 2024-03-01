@@ -2990,7 +2990,6 @@ def aggregate(
             _create_hash_and_first_values(
                 meta, aggregating_axes, False, hfl_cache, rtol, atol
             )
-
         else:
             # Specific aggregation axes have been selected
             aggregating_axes = []
@@ -3501,7 +3500,8 @@ def _create_hash_and_first_values(
 
         meta: `list` of `_Meta`
 
-        axes: `None` or `list`
+        axes: `list`
+            The identities of the possible aggregating axes.
 
         donotchecknonaggregatingaxes: `bool`
 
@@ -3514,9 +3514,14 @@ def _create_hash_and_first_values(
     # identity.
     canonical_direction = {}
 
+    aggregating_axes = list(axes)
+
     for m in meta:
         field = m.field
         constructs = field.constructs.todict()
+
+        # Store the aggregating axis identities
+        m.aggregating_axes = aggregating_axes
 
         m_sort_keys = m.sort_keys
         m_sort_indices = m.sort_indices
@@ -4140,7 +4145,7 @@ def _group_fields(meta, axis, info=False):
             group is represented by a `list` of `_Meta` objects.
 
     """
-    axes = meta[0].axis_ids
+    axes = meta[0].aggregating_axes
 
     if axes:
         if axis in axes:
