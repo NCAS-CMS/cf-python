@@ -108,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge esmpy>=8.0.0
+   $ conda install -c conda-forge "esmpy>=8.0.0"
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.16.0``):
+   you want to install, e.g. ``3.16.1``):
 
    .. code-block:: console
 
@@ -203,8 +203,8 @@ Required
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.0.0 or up to,
-  but not including, 1.11.1.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.1.0 or up to,
+  but not including, 1.11.2.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
 
@@ -251,7 +251,7 @@ environments for which these features are not required.
 
   .. code-block:: console
 
-     $ conda install -c conda-forge esmpy>=8.0.0
+     $ conda install -c conda-forge "esmpy>=8.0.0"
 
   or may be installed from source.
 

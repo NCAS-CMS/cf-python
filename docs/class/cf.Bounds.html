@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Bounds">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Bounds</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/bounds.py#L9-L289"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Bounds</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/bounds.py#L9-L289"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.bounds.Bounds</span></code></p>
 <p>A cell bounds component of a coordinate or domain ancillary
 construct of the CF data model.</p>
@@ -506,6 +506,21 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric"><em>Expanding the data</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.halo.html#cf.Bounds.halo" title="cf.Bounds.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.pad_missing.html#cf.Bounds.pad_missing" title="cf.Bounds.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
+<td><p>Pad an axis with missing data.</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric"><em>Data array mask</em></p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -565,16 +580,13 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.__setitem__.html#cf.Bounds.__setitem__" title="cf.Bounds.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Called to implement assignment to x[indices]</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.halo.html#cf.Bounds.halo" title="cf.Bounds.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
-<td><p>Expand the data by adding a halo.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.masked_invalid.html#cf.Bounds.masked_invalid" title="cf.Bounds.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.masked_invalid.html#cf.Bounds.masked_invalid" title="cf.Bounds.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.subspace.html#cf.Bounds.subspace" title="cf.Bounds.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.subspace.html#cf.Bounds.subspace" title="cf.Bounds.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
 <td><p>Return a new variable whose data is subspaced.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.where.html#cf.Bounds.where" title="cf.Bounds.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.where.html#cf.Bounds.where" title="cf.Bounds.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
 <td><p>Set data array elements depending on a condition.</p></td>
 </tr>
 </tbody>
@@ -1395,7 +1407,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

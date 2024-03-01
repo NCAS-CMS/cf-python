@@ -165,6 +165,15 @@ Data
    ~cf.Count.swapaxes
    ~cf.Count.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::

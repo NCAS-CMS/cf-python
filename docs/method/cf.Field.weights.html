@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L3120-L3880"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">weights</code><span class="sig-paren">(</span><em class="sig-param">weights=True</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">components=False</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">data=False</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">cell_measures=True</em>, <em class="sig-param">coordinates=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/field.py#L3212-L4038"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of
 the data. For example when computing an area weight average.</p>
@@ -205,19 +205,29 @@ were actually created.</p>
 axes of the field by one or more of the
 following methods, in order of
 preference,</p>
+<p>If the <em>cell_measures</em> parameter is
+True:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>Volume cell measures</p></li>
+<li><p>Volume cell measures (see the note
+on the <em>measure</em> parameter)</p></li>
 <li><p>Area cell measures</p></li>
+</ol>
+</div></blockquote>
+<p>If the <em>coordinates</em> parameter is True:</p>
+<blockquote>
+<div><ol class="arabic simple" start="3">
 <li><p>Area calculated from X and Y
 dimension coordinate constructs
 with bounds</p></li>
 <li><p>Area calculated from 1-d auxiliary
-coordinate constructs for geometries
-or a UGRID mesh topology.</p></li>
-<li><p>Length calculated from 1-d auxiliary
-coordinate constructs for geometries
-or a UGRID mesh topology.</p></li>
+coordinate constructs for
+geometries or a UGRID mesh
+topology.</p></li>
+<li><p>Length calculated from 1-d
+auxiliary coordinate constructs for
+geometries or a UGRID mesh
+topology.</p></li>
 <li><p>Cell sizes of dimension coordinate
 constructs with bounds</p></li>
 <li><p>Equal weights</p></li>
@@ -282,8 +292,17 @@ form that is returned from a call to the
 components are created for axes of the
 field by the following methods, in
 order of preference,</p>
-<ol class="arabic simple">
+<p>If the <em>cell_measures</em> parameter is
+True:</p>
+<blockquote>
+<div><ol class="arabic simple">
 <li><p>Area cell measures.</p></li>
+</ol>
+</div></blockquote>
+<p>If the <em>coordinates</em> parameter is
+True:</p>
+<blockquote>
+<div><ol class="arabic simple" start="2">
 <li><p>X and Y dimension coordinate
 constructs with bounds.</p></li>
 <li><p>X and Y 1-d auxiliary coordinate
@@ -291,6 +310,7 @@ constructs for polygon cells
 defined by geometries or a UGRID
 mesh topology.</p></li>
 </ol>
+</div></blockquote>
 <p>Set the <em>methods</em> parameter to find
 out how the weights were actually
 created.</p>
@@ -298,7 +318,10 @@ created.</p>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'volume'</span></code></p></td>
 <td><p>Cell volume weights from the field
-construct’s volume cell measure construct.</p></td>
+construct’s volume cell measure
+construct (see the note on the
+<em>measure</em> parameter). Requires the
+<em>cell_measures</em> parameter to be True.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
 <td><p>Weights from the cell sizes of the
@@ -431,6 +454,23 @@ setting the <em>axes</em> is not required.</p>
 <p><span class="versionmodified added">New in version 3.3.0.</span></p>
 </div>
 </dd>
+<dt>cell_measures: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then area and volume cell
+measure constructs are considered for weights creation
+when <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, <code class="docutils literal notranslate"><span class="pre">'area'</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">'volume'</span></code>. If False then cell measure constructs
+are ignored for these <em>weights</em>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
+<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then coordinate constructs are
+considered for weights creation for <em>weights</em> of
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <code class="docutils literal notranslate"><span class="pre">'area'</span></code>. If False then coordinate
+constructs are ignored for these <em>weights</em>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
 </dl>
 <p>kwargs: deprecated at version 3.0.0.</p>
 </dd>
@@ -480,7 +520,7 @@ orthogonal weights in a dictionary.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
