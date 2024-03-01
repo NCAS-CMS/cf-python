@@ -190,8 +190,8 @@ version 3.14.1
 
 ----
 
-version 3.14.0
---------------
+version 3.14.0 (*first Dask release*)
+-------------------------------------
 
 **2023-01-31**
 
@@ -225,8 +225,8 @@ version 3.14.0
 
 ----
 
-version 3.13.1
---------------
+version 3.13.1 (*last LAMA release*)
+------------------------------------
 
 **2022-10-17**
 
@@ -826,7 +826,7 @@ version 3.0.1
 
 ----
 
-version 3.0.0 (*first Python 3 version*)
+version 3.0.0 (*first Python 3 release*)
 ----------------------------------------
 
 **2019-10-01**
@@ -843,7 +843,7 @@ version 3.0.0 (*first Python 3 version*)
   
 ----
 
-version 2.3.8 (*last Python 2 version*)
+version 2.3.8 (*last Python 2 release*)
 ---------------------------------------
 
 **2019-10-07**
@@ -1706,8 +1706,8 @@ version 0.9.6
 
 ----
 
-version 0.9.5
--------------
+version 0.9.5 (*first LAMA release*)
+------------------------------------
 
 **2012-10-01**
 
@@ -1725,7 +1725,7 @@ version 0.9.5
 
 ----
 
-version 0.9.5.dev
+version 0.9.5.dev 
 -----------------
 
 **2012-09-19**
