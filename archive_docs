@@ -1,0 +1,28 @@
+#!/bin/bash
+# --------------------------------------------------------------------
+# Create an archive copy of the documentation
+# --------------------------------------------------------------------
+set -x
+
+version=`python -c "import cf; print(cf.__version__)"`
+
+cd docs
+mkdir -p $version
+
+cp -ar \
+  objects.inv \
+  searchindex.js \
+  *.html \
+  attribute \
+  class \
+  method \
+  function \
+  recipes \
+  _downloads \
+  _images \
+  _sources \
+  _static \
+  _templates \
+  $version
+
+set +x
