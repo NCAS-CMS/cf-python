@@ -1,3 +1,7 @@
+* Decide the version name to set for the new release, by
+  heeding the Versioning Strategy (see
+  https://ncas-cms.github.io/cf-python/releases.html#versioning-strategy).
+
 * Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 
