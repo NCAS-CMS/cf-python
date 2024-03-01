@@ -3,7 +3,7 @@ version 3.16.1
 
 **2024-03-01**
 
-* Allow DSG tractories with identical `trajectory_id` values to be
+* Allow DSG trajectories with identical `trajectory_id` values to be
   aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
 * New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
   (https://github.com/NCAS-CMS/cf-python/issues/717)
@@ -22,7 +22,7 @@ version 3.16.1
 * Allow `cf.Data` to be initialised with `xarray.DataAarray`
   (https://github.com/NCAS-CMS/cf-python/issues/706)
 * Fix bug that caused `cf.Field.del_file_location` to fail when
-  updating its metdata constructs
+  updating its metadata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
 * Fix bug that caused incorrect data arrays in some cyclic subspaces
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
