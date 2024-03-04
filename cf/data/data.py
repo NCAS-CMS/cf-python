@@ -1407,7 +1407,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
                 "difficult to diagnose, as dask will have silently "
-                "trapped it and returned NotImplemented (see, for "
+                "trapped it and returned NotImplemented (seeprint , for "
                 "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
                 "way to go if the cause of the error is not obvious."
@@ -1476,7 +1476,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _del_active_storage(self):
         """Set the active storage reduction status to False.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `active_storage`, `_set_active_storage`
 
@@ -1561,7 +1561,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _set_active_storage(self, value):
         """Set the active storage reduction status.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `active_storage`, `_del_active_storage`
 
@@ -4027,17 +4027,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         data0 = data[0]
         units0 = data0.Units
-        print ('data0.a_s=', data0.active_storage)
-    
+
         if copy:
             data0 = data0.copy()
             copied = True
         else:
             copied = False
-           
+
         processed_data = []
         for index, data1 in enumerate(data):
-            print ('data1.a_s=', data1.active_storage)
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
                 if not copied:
@@ -4108,7 +4106,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             if not d.active_storage:
                 # Set the output active storage status to False when
                 # any input data instance has False status
-                print ('nuking active in concatenate')
                 active = _NONE
                 break
 
@@ -4774,7 +4771,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         the conditions described by `cf.data.collapse.Collapse` are
         met.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         **Examples**
 
@@ -4783,7 +4780,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         False
 
         """
-#        return True
         return (
             self._custom.get("active_storage", False)
             and not self.get_compression_type()

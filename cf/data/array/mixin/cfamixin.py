@@ -4,294 +4,133 @@ from itertools import accumulate, product
 
 import numpy as np
 
-from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
-from ..utils import chunk_locations, chunk_positions
-from .netcdf4array import NetCDF4Array
-
-# Store fragment array classes.
-_FragmentArray = {
-    "nc": NetCDFFragmentArray,
-    "um": UMFragmentArray,
-    "full": FullFragmentArray,
-}
+from ...utils import chunk_locations, chunk_positions
 
 
-class CFANetCDFArray(NetCDF4Array):
-    """A CFA aggregated array stored in a netCDF file.
+class CFAMixin:
+    """TODO
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: NEXTVERSION
 
     """
 
-    def __init__(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        mask=True,
-        units=False,
-        calendar=False,
-        instructions=None,
-        substitutions=None,
-        term=None,
-        storage_options=None,
-        source=None,
-        copy=True,
-        x=None,
-    ):
-        """**Initialisation**
+    def __new__(cls, *args, **kwargs):
+        """Store fragment array classes.
 
-        :Parameters:
-
-            filename: (sequence of) `str`, optional
-                The name of the CFA-netCDF file containing the
-                array. If a sequence then it must contain one element.
-
-            address: (sequence of) `str`, optional
-                The name of the CFA-netCDF aggregation variable for the
-                array. If a sequence then it must contain one element.
-
-            dtype: `numpy.dtype`
-                The data type of the aggregated data array. May be
-                `None` if the numpy data-type is not known (which can
-                be the case for netCDF string types, for example).
-
-            mask: `bool`
-                If True (the default) then mask by convention when
-                reading data from disk.
-
-                A netCDF array is masked depending on the values of any of
-                the netCDF variable attributes ``valid_min``,
-                ``valid_max``, ``valid_range``, ``_FillValue`` and
-                ``missing_value``.
-
-            units: `str` or `None`, optional
-                The units of the aggregated data. Set to `None` to
-                indicate that there are no units.
-
-            calendar: `str` or `None`, optional
-                The calendar of the aggregated data. Set to `None` to
-                indicate the CF default calendar, if applicable.
-
-            instructions: `str`, optional
-                The ``aggregated_data`` attribute value as found on
-                the CFA netCDF variable. If set then this will be used
-                to improve the performance of `__dask_tokenize__`.
-
-            substitutions: `dict`, optional
-                A dictionary whose key/value pairs define text
-                substitutions to be applied to the fragment file
-                names. Each key must be specified with the ``${...}``
-                syntax, for instance ``{'${base}': 'sub'}``.
-
-                .. versionadded:: 3.15.0
-
-            term: `str`, optional
-                The name of a non-standard aggregation instruction
-                term from which the array is to be created, instead of
-                creating the aggregated data in the standard
-                terms. If set then *address* must be the name of the
-                term's CFA-netCDF aggregation instruction variable,
-                which must be defined on the fragment dimensions and
-                no others. Each value of the aggregation instruction
-                variable will be broadcast across the shape of the
-                corresponding fragment.
-
-                *Parameter example:*
-                  ``address='cfa_tracking_id', term='tracking_id'``
-
-                .. versionadded:: 3.15.0
-
-            storage_options: `dict` or `None`, optional
-                Key/value pairs to be passed on to the creation of
-                `s3fs.S3FileSystem` file systems to control the
-                opening of fragment files in an S3 object
-                stores. Ignored for fragment files not in S3 object
-                stores, i.e. those whose names do not start with
-                ``s3:``.
-
-                If an ``'endpoint_url'`` key is not in
-                *storage_options* then one will be automatically
-                derived for accessing each S3 fragment file. For
-                example, for a fragment file name of
-                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
-                key with value ``'https://store'`` would be created.
-
-                *Parameter example:*
-                  For a fragment file name of
-                  ``'s3://store/data/file.nc'``, the following are
-                  equivalent: ``None``, ``{}`` and ``{'endpoint_url':
-                  'https://store'}``.
-
-                *Parameter example:*
-                  ``{'key: 'scaleway-api-key...', 'secret':
-                  'scaleway-secretkey...', 'endpoint_url':
-                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
-                  {'region_name': 'fr-par'}}``
-
-                .. versionadded:: NEXTVERSION
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
-        if source is not None:
-            super().__init__(source=source, copy=copy)
+        # Import fragment array classes. Do this here (as opposed to
+        # outside the class) to avoid a circular import.
+        from ...fragment import (
+            FullFragmentArray,
+            NetCDFFragmentArray,
+            UMFragmentArray,
+        )
 
-            try:
-                fragment_shape = source.get_fragment_shape()
-            except AttributeError:
-                fragment_shape = None
+        instance = super().__new__(cls)
+        instance._FragmentArray = {
+            "nc": NetCDFFragmentArray,
+            "um": UMFragmentArray,
+            "full": FullFragmentArray,
+        }
+        return instance
 
-            try:
-                instructions = source._get_component("instructions")
-            except AttributeError:
-                instructions = None
+    def _parse_cfa(self, x, term, substitutions):
+        """TODO"""
+        aggregated_data = {}
 
-            try:
-                aggregated_data = source.get_aggregated_data(copy=False)
-            except AttributeError:
-                aggregated_data = {}
+        location = x["location"]
+        ndim = location.shape[0]
+        compressed = np.ma.compressed
+        chunks = [compressed(i).tolist() for i in location]
+        shape = [sum(c) for c in chunks]
+        positions = chunk_positions(chunks)
+        locations = chunk_locations(chunks)
 
-            try:
-                substitutions = source.get_substitutions()
-            except AttributeError:
-                substitutions = None
-
-            try:
-                term = source.get_term()
-            except AttributeError:
-                term = None
-
-        elif filename is not None:
-            aggregated_data = {}
-
-            location = x["location"]
-            ndim = location.shape[0]
-            compressed = np.ma.compressed
-            chunks = [compressed(i).tolist() for i in location]
-            shape = [sum(c) for c in chunks]
-            positions = chunk_positions(chunks)
-            locations = chunk_locations(chunks)
-
-            if term is not None:
-                # --------------------------------------------------------
-                # This fragment contains a constant value, not file
-                # locations.
-                # --------------------------------------------------------
-                term = x[term]
-                fragment_shape = term.shape
-                aggregated_data = {
-                    frag_loc: {
-                        "location": loc,
-                        "fill_value": term[frag_loc].item(),
-                        "format": "full",
-                    }
-                    for frag_loc, loc in zip(positions, locations)
+        if term is not None:
+            # --------------------------------------------------------
+            # This fragment contains a constant value, not file
+            # locations.
+            # --------------------------------------------------------
+            term = x[term]
+            fragment_shape = term.shape
+            aggregated_data = {
+                frag_loc: {
+                    "location": loc,
+                    "fill_value": term[frag_loc].item(),
+                    "format": "full",
                 }
-            else:
-                a = x["address"]
-                f = x["file"]
-                file_fmt = x["format"]
-
-                extra_dimension = f.ndim > ndim
-                if extra_dimension:
-                    # There is an extra non-fragment dimension
-                    fragment_shape = f.shape[:-1]
-                else:
-                    fragment_shape = f.shape
-
-                if not a.ndim:
-                    a = (a.item(),)
-                    scalar_address = True
-                else:
-                    scalar_address = False
-
-                if not file_fmt.ndim:
-                    file_fmt = file_fmt.item()
-                    scalar_fmt = True
-                else:
-                    scalar_fmt = False
-
-                for frag_loc, location in zip(positions, locations):
-                    if extra_dimension:
-                        filename = compressed(f[frag_loc]).tolist()
-                        if scalar_address:
-                            address = a * len(filename)
-                        else:
-                            address = compressed(a[frag_loc].tolist())
-
-                        if scalar_fmt:
-                            fmt = file_fmt
-                        else:
-                            fmt = compressed(file_fmt[frag_loc]).tolist()
-                    else:
-                        filename = (f[frag_loc].item(),)
-                        if scalar_address:
-                            address = a
-                        else:
-                            address = (a[frag_loc].item(),)
-
-                        if scalar_fmt:
-                            fmt = file_fmt
-                        else:
-                            fmt = file_fmt[frag_loc].item()
-
-                    aggregated_data[frag_loc] = {
-                        "location": location,
-                        "filename": filename,
-                        "address": address,
-                        "format": fmt,
-                    }
-
-                # Apply string substitutions to the fragment filenames
-                if substitutions:
-                    for value in aggregated_data.values():
-                        filenames2 = []
-                        for filename in value["filename"]:
-                            for base, sub in substitutions.items():
-                                filename = filename.replace(base, sub)
-
-                            filenames2.append(filename)
-
-                        value["filename"] = filenames2
-
-            super().__init__(
-                filename=filename,
-                address=address,
-                shape=shape,
-                dtype=dtype,
-                mask=mask,
-                units=units,
-                calendar=calendar,
-                copy=copy,
-            )
+                for frag_loc, loc in zip(positions, locations)
+            }
         else:
-            super().__init__(
-                filename=filename,
-                address=address,
-                dtype=dtype,
-                mask=mask,
-                units=units,
-                calendar=calendar,
-                copy=copy,
-            )
+            a = x["address"]
+            f = x["file"]
+            file_fmt = x["format"]
 
-            fragment_shape = None
-            aggregated_data = None
-            instructions = None
-            term = None
+            extra_dimension = f.ndim > ndim
+            if extra_dimension:
+                # There is an extra non-fragment dimension
+                fragment_shape = f.shape[:-1]
+            else:
+                fragment_shape = f.shape
 
-        self._set_component("fragment_shape", fragment_shape, copy=False)
-        self._set_component("aggregated_data", aggregated_data, copy=False)
-        self._set_component("instructions", instructions, copy=False)
-        self._set_component("term", term, copy=False)
+            if not a.ndim:
+                a = (a.item(),)
+                scalar_address = True
+            else:
+                scalar_address = False
 
-        if substitutions is not None:
-            self._set_component(
-                "substitutions", substitutions.copy(), copy=False
-            )
+            if not file_fmt.ndim:
+                file_fmt = file_fmt.item()
+                scalar_fmt = True
+            else:
+                scalar_fmt = False
+
+            for frag_loc, location in zip(positions, locations):
+                if extra_dimension:
+                    filename = compressed(f[frag_loc]).tolist()
+                    if scalar_address:
+                        address = a * len(filename)
+                    else:
+                        address = compressed(a[frag_loc].tolist())
+
+                    if scalar_fmt:
+                        fmt = file_fmt
+                    else:
+                        fmt = compressed(file_fmt[frag_loc]).tolist()
+                else:
+                    filename = (f[frag_loc].item(),)
+                    if scalar_address:
+                        address = a
+                    else:
+                        address = (a[frag_loc].item(),)
+
+                    if scalar_fmt:
+                        fmt = file_fmt
+                    else:
+                        fmt = file_fmt[frag_loc].item()
+
+                aggregated_data[frag_loc] = {
+                    "location": location,
+                    "filename": filename,
+                    "address": address,
+                    "format": fmt,
+                }
+
+            # Apply string substitutions to the fragment filenames
+            if substitutions:
+                for value in aggregated_data.values():
+                    filenames2 = []
+                    for filename in value["filename"]:
+                        for base, sub in substitutions.items():
+                            filename = filename.replace(base, sub)
+
+                        filenames2.append(filename)
+
+                    value["filename"] = filenames2
+
+        return shape, fragment_shape, aggregated_data
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -746,11 +585,10 @@ class CFANetCDFArray(NetCDF4Array):
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
 
-        if self.get_mask():
-            fragment_arrays = _FragmentArray
-        else:
-            fragment_arrays = _FragmentArray.copy()
-            fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
+        fragment_arrays = self._FragmentArray
+        if not self.get_mask():
+            fragment_arrays = fragment_arrays.copy()
+            fragment_arrays["nc"] = partial(fragment_arrays["nc"], mask=False)
 
         storage_options = self.get_storage_options()
 

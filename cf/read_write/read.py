@@ -431,13 +431,14 @@ def read(
             .. versionadded:: 3.4.0
 
         unpack: `bool`, optional
-            If True (the default) then unpack by convention when
-            reading data from disk.
+            If True (the default) then unpack arrays by convention
+            when the data is read from disk.
 
-            A netCDF array is unpacked depending on the values of the
-            netCDF attributes ``add_offset`` and ``scale_factor``.
+            Unpacking is determined netCDF conventions for the
+            following attributes: ``add_offset``, ``scale_factor``,
+            and ``_Unsigned``.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -676,22 +677,22 @@ def read(
 
             .. versionadded:: 3.15.0
 
-        netCDF_backend: `str` or `None`, optional
-            Specify which library to use for opening input files. By
+        netCDF_backend: `None` or `str`, optional
+            Specify which library to use for opening netCDF files. By
             default, or if `None`, then `netCDF4` will used unless it
             fails to open a given file, in which case `h5netcdf` will
-            be used. Setting *library* to ``'netCDF4'`` or
-            ``'h5netcdf'`` will force the use of the `netCDF4` or
+            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
+            or ``'h5netcdf'`` will force the use of the `netCDF4` or
             `h5netcdf` libraries respectively.
 
             .. note:: The *netCDF_backend* parameter does not affect
                       the opening of netCDF fragment files that define
                       the data of aggregated variables. For these,
                       `netCDF4` is used for local files and those
-                      accessed via OPenDAP, and `h5netcdf` is used for
+                      accessed via OPeNDAP, and `h5netcdf` is used for
                       fragment files in S3 object stores.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
@@ -700,19 +701,22 @@ def read(
             object store, i.e. those whose names do not start with
             ``s3:``.
 
-            By default, or if `None`, then a value of ``{'anon':
-            True}`` is used.
+            By default, or if `None` or ``{}``, then no options are
+            passed.
 
-            If an ``'endpoint_url'`` key is not in *storage_options*
-            then one will be automatically derived for accessing each
-            S3 file. For example, for a file name of
-            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
-            with value ``'https://store'`` would be created.
+            If the ``'endpoint_url'`` key is not in *storage_options*
+            or is not in a dictionary defined by the
+            ``'client_kwargs`` key (which is always the case when
+            *storage_options* is `None`), then one will be
+            automatically inserted for accessing each S3 file. For
+            example, for a file name of ``'s3://store/data/file.nc'``,
+            an ``'endpoint_url'`` key with value ``'https://store'``
+            would be created.
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``None``, ``{'anon': True}``,
-              and ``{'anon': True, 'endpoint_url': 'https://store'}``.
+              following are equivalent: ``None``, ``{}``, and
+              ``{'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
               ``{'key: 'scaleway-api-key...', 'secret':
@@ -720,7 +724,12 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-            .. versionadded:: 3.17.0
+            *Parameter example:*
+              The following are equivalent: ``{'endpoint_url':
+              'https://store'}`` ``{'client_kwargs': {'endpoint_url':
+              'https://store'}}``
+
+            .. versionadded:: NEXTVERSION
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -1171,12 +1180,12 @@ def _read_a_file(
         storage_options: `dict` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
         netCDF_backend: `str` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
     :Returns:
 

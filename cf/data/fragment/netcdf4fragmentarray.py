@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
     """A netCDF fragment array accessed with `netCDF4`.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     """
 

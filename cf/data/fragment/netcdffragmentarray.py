@@ -206,10 +206,10 @@ class NetCDFFragmentArray(
             kwargs["address"] = address
 
             scheme = urlparse(filename).scheme
+            kwargs["storage_options"] = self.get_storage_options(
+                create_endpoint_url=False
+            )
             if scheme == "s3":
-                kwargs["storage_options"] = self.get_storage_options(
-                    endpoint_url=False
-                )
                 fragment = H5netcdfFragmentArray(**kwargs)
             else:
                 fragment = NetCDF4FragmentArray(**kwargs)

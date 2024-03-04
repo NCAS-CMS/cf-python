@@ -1707,6 +1707,12 @@ def create_esmpy_mesh(grid, mask=None):
     node_count = node_ids.size
     node_owners = np.zeros(node_count)
 
+    # Make sure that node IDs are >= 1, as needed by newer versions of
+    # esmpy
+    min_id = node_ids.min()
+    if min_id < 1:
+        node_ids += min_id + 1
+
     # Add nodes. This must be done before `add_elements`.
     esmpy_mesh.add_nodes(
         node_count=node_count,

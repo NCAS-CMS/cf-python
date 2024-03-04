@@ -25,7 +25,7 @@ def active_min(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `actify`, `active_storage`
 
@@ -60,7 +60,7 @@ def active_max(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `actify`, `active_storage`
 
@@ -95,7 +95,7 @@ def active_mean(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `actify`, `active_storage`
 
@@ -134,7 +134,7 @@ def active_sum(a, **kwargs):
     as the ``chunk`` parameter. Its returned value must be the same as
     the non-active chunk function that it is replacing.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `actify`, `active_storage`
 
@@ -185,7 +185,7 @@ def actify(a, method, axis=None):
               `!active_storage` attribute is registered via the
               *active_storage* parameter of `Collapse` methods.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `active_storage`, `cf.data.collapse.Collapse`
 
@@ -213,11 +213,6 @@ def actify(a, method, axis=None):
             `None`.
 
     """
-    if Active is None:
-        # The active storage import dependency is not met, so using
-        # active storage is not possible.
-        return a, None
-
     from numbers import Integral
 
     import dask.array as da
@@ -303,7 +298,7 @@ def active_storage(method):
     `Collapse` method is decorated, active storage operations are only
     carried out when the conditions are right.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `actify`, `cf.data.collapse.Collapse`
 
@@ -320,11 +315,12 @@ def active_storage(method):
         @wraps(collapse_method)
         def wrapper(self, *args, **kwargs):
             if (
-                kwargs.get("active_storage")
+                cf_active_storage()
+                and Active is not None
+                and kwargs.get("active_storage")
                 and method in active_chunk_functions
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
-                and cf_active_storage()
                 and active_storage_url()
             ):
                 # Attempt to actify the dask array and provide a new

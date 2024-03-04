@@ -269,13 +269,13 @@ def configuration(
             reductions or False to disable them). The default is to
             not change the current behaviour.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
         active_storage_url: `str` or `None` or `Constant`, optional
             The new value (either a new URL string or `None` to remove
             the URL). The default is to not change the value.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTVERSION
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
@@ -1184,7 +1184,7 @@ class bounds_combination_mode(ConstantAccess):
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `active_storage_url`, `configuration`
 
@@ -1222,7 +1222,7 @@ class active_storage(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: 3.17.0
+        .. versionaddedd:: NEXTVERSION
 
         :Parameters:
 
@@ -1244,7 +1244,7 @@ class active_storage(ConstantAccess):
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     .. seealso::  `active_storage`, `configuration`
 
@@ -1282,7 +1282,7 @@ class active_storage_url(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: 3.17.0
+        .. versionaddedd:: NEXTVERSION
 
         :Parameters:
 

@@ -692,7 +692,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["instructions"] = " ".join(sorted(instructions))
 
         # Use the kwargs to create a CFANetCDFArray instance
-        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        #        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        if g["original_netCDF4"]:
+            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
+        else:
+            # h5netcdf
+            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         return array, kwargs
 
@@ -740,6 +745,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the CFANetCDFArray instance.
+        kwargs.pop("shape", None)
+
         instructions = []
         aggregation_instructions = {}
         for t, term_ncvar in g["cfa_aggregated_data"][parent_ncvar].items():
@@ -755,7 +764,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["instructions"] = " ".join(sorted(instructions))
 
         # Use the kwargs to create a CFANetCDFArray instance
-        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        #        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        if g["original_netCDF4"]:
+            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
+        else:
+            # h5netcdf
+            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         return array, kwargs
 

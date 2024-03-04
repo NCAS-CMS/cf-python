@@ -2856,7 +2856,7 @@ def aggregate(
                 output_meta_append(meta)
 
             continue
-     
+
         # ------------------------------------------------------------
         # This field has a structural signature, so append it to the
         # list of fields with the same structural signature.
@@ -3007,7 +3007,7 @@ def aggregate(
         # Take a shallow copy in case we abandon and want to output
         # the original, unaggregated fields.
         meta0 = meta[:]
-     
+
         unaggregatable = False
 
         for axis in aggregating_axes:
@@ -3194,7 +3194,7 @@ def aggregate(
                             copy=copy,
                         )
                         field.set_data(data, set_axes=False, copy=False)
-                        
+
                     # Concatenate the metadata construct data
                     for construct_type, value in data_concatenation.items():
                         for (key, iaxis), constructs in value.items():
@@ -4762,7 +4762,7 @@ def _aggregate_2_fields(
             data_concatenation[construct_type].setdefault(
                 axis, [parent1.get_data()]
             ).append(parent0.get_data())
-           
+
     # Update the size of the aggregating axis in parent0
     domain_axis = constructs0[adim0]
     domain_axis += constructs1[adim1].get_size()

@@ -7,7 +7,7 @@ except ModuleNotFoundError:
 class ActiveStorageMixin:
     """Mixin class for enabling active storage reductions.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTVERSION
 
     """
 
@@ -29,7 +29,7 @@ class ActiveStorageMixin:
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         """
         method = self.get_active_method()
@@ -38,18 +38,18 @@ class ActiveStorageMixin:
             # numpy array.
             return super().__getitem__(indices)
 
-        import urllib
+        #        import urllib
+
         # Still here? Then do an active storage reduction. Returns a
         # dictionary of reduced values.
-
         # Hack for testing!
         filename = self.get_filename()
-        filename = urllib.parse.urlparse(filename).path[1:]
+        #        filename = urllib.parse.urlparse(filename).path[1:]
 
         active = Active(
             filename,
             self.get_address(),
-            storage_type ='s3',  # Hack for testing!
+            #            storage_type ='s3',  # Hack for testing!
             storage_options=self.get_storage_options(),
             active_storage_url=self.get_active_storage_url(),
         )
@@ -70,7 +70,10 @@ class ActiveStorageMixin:
         The new instance is a deep copy of the original, with the
         additional setting of the active storage method and axis.
 
-        .. versionadded:: 3.17.0
+        When the instance is indexed, the result of applying the
+        active storage method to the subspace will be returned.
+
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `set_active_axis`, `set_active_method`
 
@@ -98,7 +101,7 @@ class ActiveStorageMixin:
         """
         # Don't actify when the data are packed. Note: There may come
         # a time when activestorage.Active can cope with packed data,
-        # in which cas we can remove this test.
+        # in which case we can remove this test.
         attributes = self.get_attributes({})
         if "add_offset" in attributes or "scale_factor" in attributes:
             raise AttributeError(
@@ -107,6 +110,13 @@ class ActiveStorageMixin:
             )
 
         if Active is None:
+            # Note: We don't really expect to be here because if
+            #       activestorage.Active is not available then we
+            #       wouldn't even attempt to actify the instance
+            #       during a reduction (see
+            #       `cf.data.collapse.active_storage`). However, it's
+            #       worth checking in case `actify` is called by the
+            #       user.
             raise AttributeError(
                 "Can't actify {self.__class__.__name__} when "
                 "activestorage.Active is not available"
@@ -121,7 +131,7 @@ class ActiveStorageMixin:
     def get_active_axis(self):
         """Return the active storage reduction axes.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `get_active_method`, `get_active_storage_url`
 
@@ -137,7 +147,7 @@ class ActiveStorageMixin:
     def get_active_method(self):
         """Return the name of the active storage reduction method.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `get_active_axis`, `get_active_storage_url`
 
@@ -153,7 +163,7 @@ class ActiveStorageMixin:
     def get_active_storage_url(self):
         """Return the the active storage URL.
 
-        .. versionadded:: 3.17.0
+        .. versionadded:: NEXTVERSION
 
         .. seealso:: `get_active_axis`, `get_active_method`
 

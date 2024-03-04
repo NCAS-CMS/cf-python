@@ -29,7 +29,8 @@ from .data import Data
 from .data.array import (
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFANetCDFArray,
+    CFAH5netcdfArray,
+    CFANetCDF4Array,
     GatheredArray,
     H5netcdfArray,
     NetCDF4Array,
@@ -86,65 +87,39 @@ class CFImplementation(cfdm.CFDMImplementation):
             parent, construct, axes=axes, copy=copy, **kwargs
         )
 
-    def initialise_CFANetCDFArray(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        mask=True,
-        units=False,
-        calendar=False,
-        instructions=None,
-        substitutions=None,
-        term=None,
-        x=None,
-        **kwargs,
-    ):
-        """Return a `CFANetCDFArray` instance.
+    def initialise_CFANetCDF4Array(self, **kwargs):
+        """Return a `CFANetCDF4Array` instance.
 
         :Parameters:
 
-            filename: `str`
-
-            address: (sequence of) `str` or `int`
-
-            dytpe: `numpy.dtype`
-
-            mask: `bool`, optional
-
-            units: `str` or `None`, optional
-
-            calendar: `str` or `None`, optional
-
-            instructions: `str`, optional
-
-            substitutions: `dict`, optional
-
-            term: `str`, optional
-
-            x: `dict`, optional
-
             kwargs: optional
-                Ignored.
+                Initialisation parameters to pass to the new instance.
 
         :Returns:
 
-            `CFANetCDFArray`
+            `CFANetCDF4Array`
 
         """
-        cls = self.get_class("CFANetCDFArray")
-        return cls(
-            filename=filename,
-            address=address,
-            dtype=dtype,
-            mask=mask,
-            units=units,
-            calendar=calendar,
-            instructions=instructions,
-            substitutions=substitutions,
-            term=term,
-            x=x,
-        )
+        cls = self.get_class("CFANetCDF4Array")
+        return cls(**kwargs)
+
+    def initialise_CFAH5netcdfArray(self, **kwargs):
+        """Return a `CFAH5netcdfArray` instance.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `CFAH5netcdfArray`
+
+        """
+        cls = self.get_class("CFAH5netcdfArray")
+        return cls(**kwargs)
 
 
 _implementation = CFImplementation(
@@ -153,7 +128,8 @@ _implementation = CFImplementation(
     CellConnectivity=CellConnectivity,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
-    CFANetCDFArray=CFANetCDFArray,
+    CFAH5netcdfArray=CFAH5netcdfArray,
+    CFANetCDF4Array=CFANetCDF4Array,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,
@@ -211,7 +187,8 @@ def implementation():
      'CellConnectivityArray': cf.data.array.cellconnectivityarray.CellConnectivityArray,
      'CellMeasure': cf.cellmeasure.CellMeasure,
      'CellMethod': cf.cellmethod.CellMethod,
-     'CFANetCDFArray': cf.data.array.cfanetcdfarray.CFANetCDFArray,
+     'CFAH5netcdfArray': cf.data.array.cfah5netcdfarray.CFAH5netcdfArray,
+     'CFANetCDF4Array': cf.data.array.cfanetcdf4array.CFANetCDF4Array,
      'CoordinateReference': cf.coordinatereference.CoordinateReference,
      'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
      'Domain': cf.domain.Domain,
