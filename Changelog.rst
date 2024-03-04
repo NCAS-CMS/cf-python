@@ -1,3 +1,14 @@
+version NEXT
+------------
+
+**2024-??-??**
+
+* Fix misleading error message when it is not possible to create area
+  weights requested from `cf.Field.collapse`
+  (https://github.com/NCAS-CMS/cf-python/issues/731)
+
+----
+
 version 3.16.1
 --------------
 
@@ -28,6 +39,8 @@ version 3.16.1
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
   (https://github.com/NCAS-CMS/cf-python/issues/713)
 * Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
+
+----
 
 version 3.16.0
 --------------
