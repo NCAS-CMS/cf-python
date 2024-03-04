@@ -8,7 +8,7 @@ from ...utils import chunk_locations, chunk_positions
 
 
 class CFAMixin:
-    """TODO
+    """Mixin class for a CFA-netCDF array.
 
     .. versionadded:: NEXTVERSION
 
@@ -17,7 +17,7 @@ class CFAMixin:
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: (cfdm) 1.10.0.0
+        .. versionadded:: NEXTVERSION
 
         """
         # Import fragment array classes. Do this here (as opposed to
@@ -37,7 +37,36 @@ class CFAMixin:
         return instance
 
     def _parse_cfa(self, x, term, substitutions):
-        """TODO"""
+        """Parse the CFA aggregation instructions.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            x: `dict`
+
+            term: `str` or `None`
+                The name of a non-standard aggregation instruction
+                term from which the array is to be created, instead of
+                creating the aggregated data in the standard
+                terms. Each value of the aggregation instruction
+                variable will be broadcast across the shape of the
+                corresponding fragment.
+
+            substitutions: `dict` or `None`
+                A dictionary whose key/value pairs define text
+                substitutions to be applied to the fragment file
+                names. Each key must be specified with the ``${...}``
+                syntax, for instance ``{'${base}': 'sub'}``.
+
+        :Returns:
+
+            3-`tuple`
+                1. The shape of the aggregated data.
+                2. The shape of the array of fragments.
+                3. The parsed aggregation instructsions.
+
+        """
         aggregated_data = {}
 
         location = x["location"]
@@ -50,7 +79,7 @@ class CFAMixin:
 
         if term is not None:
             # --------------------------------------------------------
-            # This fragment contains a constant value, not file
+            # Each fragment contains a constant value, not file
             # locations.
             # --------------------------------------------------------
             term = x[term]
@@ -64,6 +93,9 @@ class CFAMixin:
                 for frag_loc, loc in zip(positions, locations)
             }
         else:
+            # --------------------------------------------------------
+            # Each fragment contains file locations
+            # --------------------------------------------------------
             a = x["address"]
             f = x["file"]
             file_fmt = x["format"]

@@ -81,11 +81,11 @@ class CFAH5netcdfArray(CFAMixin, H5netcdfArray):
             term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
-                creating the aggregated data in the standard
-                terms. If set then *address* must be the name of the
-                term's CFA-netCDF aggregation instruction variable,
-                which must be defined on the fragment dimensions and
-                no others. Each value of the aggregation instruction
+                creating the aggregated data in the standard terms. If
+                set then *address* must be the name of the term's
+                CFA-netCDF aggregation instruction variable, which
+                must be defined on the fragment dimensions and no
+                others. Each value of the aggregation instruction
                 variable will be broadcast across the shape of the
                 corresponding fragment.
 

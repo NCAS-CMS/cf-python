@@ -864,6 +864,13 @@ power costs of transfering the entire un-collapsed data to the local
 client. Whether or not this will occur is determined on a case-by-case
 basis, and will only be done if all of the following criteria are met:
 
+* ``cf.active_storage()`` is `True`;
+
+* ``cf.active_storage_url()`` returns the URL of an active storage
+  server;
+
+* it is possible to import the external `activestorage.Active` class.
+
 * the collapse method is one of ``'mean'``, ``'maximum'``,
   ``'minimum'``, or ``'sum'``;
 
@@ -871,27 +878,23 @@ basis, and will only be done if all of the following criteria are met:
 
 * the collapse is unweighted;
 
-* `cf.active_storage()` is `True`;
-
-* a URL of the active storage server has been set with
-  `cf.active_storage_url`;
-
 * the data values are in netCDF-4 files on disk (rather than in any
-  other file format, or in memory) and are not numerically packed;
+  other file format, or in memory);
+
+* the data are not compressed by convention;
 
 * the `~cf.Data.active_storage` attribute of the `cf.Data` object
   being collapsed is `True`, indicating that active storage operations
-  may be possible. In general, it will only be `True` for data that
-  are in files on disk, are not compressed by convention and have not
-  had any other operations applied;
-
-
-* it is possible to import the external `activestorage.Active` class.
+  are possible, provided all of the other conditions are also met. In
+  general, it will only be `True` for data that are in files on disk,
+  are not compressed by convention, and have not had any other
+  operations applied.
 
 The performance improvements from using active storage operations will
-increase the closer the active storage server is to the data
-storage. If the active storage server is sufficiently far away from
-the data then it may be faster to do a normal, non-active operation.
+increase the closer, in a network sense, the active storage server is
+to the data storage. If the active storage server is sufficiently far
+away from the data then it may be faster and require less energy to do
+a normal, non-active operation.
 
 ----
    

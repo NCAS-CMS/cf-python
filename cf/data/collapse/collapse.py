@@ -20,8 +20,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * `cf.active_storage()` is True;
 
-      * an active storage URL has been set with
-        `cf.active_storage_url`;
+      * ``cf.active_storage_url()`` returns the URL of an active
+        storage server;
 
       * it is possible to import the `activestorage.Active` class;
 
@@ -29,9 +29,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * the collapse is unweighted;
 
-      * the data is not compressed by convention (netCDF numeric
-        packing is not considered here to be a compression by
-        convention techinigue);
+      * the data are in netCDF-4 files on disk (rather than in
+        any other file format, or in memory);
+
+      * the data are not compressed by convention;
 
       * the `Collapse` method's *active_storage* parameter is True;
 
@@ -46,6 +47,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     in which case the Dask graph is modified to expect the per-chunk
     reductions to be carried out externally.
+
+    .. note:: The performance improvements from using active storage
+              operations will increase the closer, in a network sense,
+              the active storage server is to the data storage. If the
+              active storage server is sufficiently far away from the
+              data then it may be faster and require less energy to do
+              a normal, non-active operation.
 
     See `cf.data.collapse.active_storage` for details.
 
