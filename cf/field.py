@@ -3836,18 +3836,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         # Found area weights from X and Y dimension
                         # coordinates
                         area_weights = True
-                    else:
-                        Weights.polygon_area(
-                            self,
-                            None,
-                            comp,
-                            weights_axes,
-                            measure=measure,
-                            radius=radius,
-                            great_circle=great_circle,
-                            methods=methods,
-                            auto=False,
-                        )
+                    elif Weights.polygon_area(
+                        self,
+                        None,
+                        comp,
+                        weights_axes,
+                        measure=measure,
+                        radius=radius,
+                        great_circle=great_circle,
+                        methods=methods,
+                        auto=True,
+                    ):
                         # Found area weights from UGRID/geometry cells
                         area_weights = True
 
