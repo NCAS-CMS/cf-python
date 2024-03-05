@@ -86,7 +86,7 @@ class functionTest(unittest.TestCase):
             "chunksize": 8e9,
             "active_storage": True,
             "active_storage_url": None,
-            "netcdf_lock": True
+            "netcdf_lock": True,
         }
 
         # Test the setting of each lone item.

@@ -422,7 +422,7 @@ def configuration(
         bounds_combination_mode=bounds_combination_mode,
         active_storage=active_storage,
         active_storage_url=active_storage_url,
-        netcdf_lock=netcdf_lock
+        netcdf_lock=netcdf_lock,
     )
 
 

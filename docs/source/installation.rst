@@ -210,8 +210,8 @@ Required
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.1.0 or up to,
-  but not including, 1.11.2.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.2.0 or up to,
+  but not including, 1.11.3.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 

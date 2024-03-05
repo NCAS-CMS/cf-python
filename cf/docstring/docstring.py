@@ -595,9 +595,6 @@ _docstring_substitution_definitions = {
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
-    # init s3
-    "{{init s3: `dict` or `None`, optional}}": """s3: `dict` or `None`, optional
-                TODOACTIVE""",
     # pad_width
     "{{pad_width: sequence of `int`, optional}}": """pad_width: sequence of `int`, optional
                 Number of values to pad before and after the edges of
