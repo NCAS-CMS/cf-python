@@ -1345,7 +1345,7 @@ Regridding from and to spherical coordinate systems using the
 `~cf.Field.regrids` method is available for the 'X', 'Y' and (if
 requested) 'Z' axes simultaneously. All other axes are unchanged. The
 calculation of the regridding weights is based on areas and distances
-on the surface of the sphere, rather in :ref:`Euclidean space
+on the surface of the sphere, rather than in :ref:`Euclidean space
 <Cartesian-regridding>`.
 
 Spherical regridding can occur between source and destination grids
@@ -1514,7 +1514,7 @@ point will not participate in the regridding.
 Vertical regridding
 ^^^^^^^^^^^^^^^^^^^
 
-Vertical regridding may either be incorporated into spherical or
+Vertical regridding may be incorporated into either spherical or
 Cartesian regridding, but in both cases the vertical coordinates need
 to be explicitly identified, and whether or not to calculate the
 regridding weights according to the natual logarthm of the vertical

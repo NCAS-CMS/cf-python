@@ -152,13 +152,13 @@ class RegridOperator(mixin_Container, Container):
                 .. versionadded:: 3.17.0
 
             src_featureType: `str`, optional
-                The discrete sampling geometry (DSG) featureType the
-                source grid (e.g. ``'trajectory'``).
+                The discrete sampling geometry (DSG) featureType of
+                the source grid (e.g. ``'trajectory'``).
 
                 .. versionadded:: 3.17.0
 
             dst_featureType: `str`, optional
-                The DSG featureType the destination grid
+                The DSG featureType of the destination grid
                 (e.g. ``'trajectory'``).
 
                 .. versionadded:: 3.17.0
@@ -166,14 +166,14 @@ class RegridOperator(mixin_Container, Container):
             src_z: optional
                 The identity of the source grid vertical coordinates
                 used to calculate the weights. If `None` then no
-                source grid vertical axis is identified
+                source grid vertical axis is identified.
 
                 .. versionadded:: 3.17.0
 
             dst_z: optional
                 The identity of the destination grid vertical
                 coordinates used to calculate the weights. If `None`
-                then no destination grid vertical axis is identified,
+                then no destination grid vertical axis is identified.
 
                 .. versionadded:: 3.17.0
 
