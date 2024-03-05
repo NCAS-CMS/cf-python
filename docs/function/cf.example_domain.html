@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_domain<a class="headerlink" href="#cf-example-domain" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_domain">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an example domain construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -200,6 +200,10 @@ constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>A UGRID mesh topology of point cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p>Discrete sampling geometry (DSG) “trajectory”
+features.</p></td>
 </tr>
 </tbody>
 </table>
@@ -301,6 +305,38 @@ the domain construct is derived.</p>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
 </pre></div>
 </div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+<span class="go">Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian</span>
+<span class="go">Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east</span>
+<span class="go">                : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north</span>
+<span class="go">Topologies      : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]</span>
+<span class="go">Connectivities  : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<span class="go">Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian</span>
+<span class="go">Auxiliary coords: longitude(ncdim%nMesh2_edge(9)) = [-41.5, ..., -43.0] degrees_east</span>
+<span class="go">                : latitude(ncdim%nMesh2_edge(9)) = [34.5, ..., 32.0] degrees_north</span>
+<span class="go">Topologies      : cell:edge(ncdim%nMesh2_edge(9), 2) = [[1, ..., 5]]</span>
+<span class="go">Connectivities  : connectivity:node(ncdim%nMesh2_edge(9), 6) = [[0, ..., --]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="go">Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian</span>
+<span class="go">Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east</span>
+<span class="go">                : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north</span>
+<span class="go">Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<span class="go">Auxiliary coords: time(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2024-02-26 09:01:00, ..., 2024-02-26 09:04:00]] standard</span>
+<span class="go">                : altitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2577.0, ..., 2563.0]] m</span>
+<span class="go">                : air_pressure(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[751.0, ..., 780.0]] hPa</span>
+<span class="go">                : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north</span>
+<span class="go">                : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east</span>
+<span class="go">                : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -313,7 +349,7 @@ the domain construct is derived.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

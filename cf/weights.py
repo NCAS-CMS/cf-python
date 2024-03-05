@@ -138,12 +138,11 @@ class Weights(Container, cfdm.Container):
 
             if ycoord.Units.equivalent(radians):
                 ycoord = ycoord.clip(-90, 90, units=Units("degrees"))
-                ycoord.sin(inplace=True)
-
+                ysin = ycoord.sin()
                 if methods:
                     weights[(yaxis,)] = f"linear sine {ycoord.identity()}"
                 else:
-                    cells = ycoord.cellsize
+                    cells = ysin.cellsize
                     if measure:
                         cells = cells * radius
 
@@ -1522,6 +1521,16 @@ class Weights(Container, cfdm.Container):
 
         key, clm = m.popitem()
 
+        if not clm.has_data():
+            if auto:
+                return False
+
+            raise ValueError(
+                f"Can't find weights: Cell measure {m!r} has no data, "
+                "possibly because it is external. "
+                "Consider setting cell_measures=False"
+            )
+
         clm_axes0 = f.get_data_axes(key)
 
         clm_axes = tuple(
@@ -1643,6 +1652,9 @@ class Weights(Container, cfdm.Container):
         )
 
         for key, aux in auxiliary_coordinates_1d.items():
+            if str(aux.ctype) not in "XYZ":
+                continue
+
             aux_axis = f.get_data_axes(key)[0]
 
             ugrid = f.domain_topology(default=None, filter_by_axis=(aux_axis,))
@@ -1656,8 +1668,8 @@ class Weights(Container, cfdm.Container):
             ):
                 continue
 
-            # Still here? Then this auxiliary coordinate has either UGRID
-            # or geometry cells.
+            # Still here? Then this X, Y, or Z auxiliary coordinate is
+            # for either UGRID or geometry cells.
             if aux.X:
                 aux_X = aux.copy()
                 x_axis = aux_axis
@@ -1692,7 +1704,7 @@ class Weights(Container, cfdm.Container):
 
             raise ValueError(
                 "Can't create weights: X and Y cells span different domain "
-                "axes"
+                f"axes: {x_axis} != {y_axis}"
             )
 
         axis = x_axis

@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -137,8 +137,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.cell_area<a class="headerlink" href="#cf-field-cell-area" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_area">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">set=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L2337-L2422"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a field containing horizontal cell areas.</p>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">cell_measures=True</em>, <em class="sig-param">coordinates=True</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">return_cell_measure=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/field.py#L2340-L2514"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the horizontal cell areas.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.</span></p>
 </div>
@@ -171,22 +171,96 @@ circle segments.</p>
 <p><span class="versionmodified added">New in version 3.2.0.</span></p>
 </div>
 </dd>
+<dt>cell_measures: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then area cell measure
+constructs are considered for cell area
+creation. Otherwise they are ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
+<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then coordinate constructs are
+considered for cell area creation. Otherwise they are
+ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
+<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a dictionary describing the method
+used to create the cell areas instead of the default,
+a field construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
+<dt>return_cell_measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a cell measure construct instead
+of the default, a field construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+</div>
+</dd>
 </dl>
 <p>insert: deprecated at version 3.0.0</p>
 <p>force: deprecated at version 3.0.0</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>A field construct containing the horizontal cell
-areas.</p>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="../class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A field construct, or cell measure construct containing
+the horizontal cell areas if <em>return_cell_measure</em> is True,
+or a dictionary describing the method used to create the
+cell areas if <em>methods</em> is True.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+</pre></div>
+</div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mf">3389.5</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">&lt;CF Field: cell_area(latitude(5), longitude(8)) m2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12</span>
+<span class="go">  4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12]</span>
+<span class="go"> [1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13</span>
+<span class="go">  1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13]</span>
+<span class="go"> [3.18813213e+13 3.18813213e+13 3.18813213e+13 3.18813213e+13</span>
+<span class="go">  3.18813213e+13 3.18813213e+13 3.18813213e+13 3.18813213e+13]</span>
+<span class="go"> [1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13</span>
+<span class="go">  1.16693735e+13 1.16693735e+13 1.16693735e+13 1.16693735e+13]</span>
+<span class="go"> [4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12</span>
+<span class="go">  4.27128714e+12 4.27128714e+12 4.27128714e+12 4.27128714e+12]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{(1,): &#39;linear longitude&#39;, (0,): &#39;linear sine latitude&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mf">3389.5</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">return_cell_measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF CellMeasure: measure:area(5, 8) m2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">&#39;cellmeasure0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Cell measures   : measure:area(latitude(5), longitude(8)) = [[4271287143027.272, ..., 4271287143027.272]] m2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cell_area</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{(0, 1): &#39;area cell measure&#39;}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -201,7 +275,7 @@ areas.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

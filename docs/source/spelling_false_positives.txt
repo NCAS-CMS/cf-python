@@ -49,8 +49,10 @@ bool
 boolean
 booleans
 Booleans
+boreal
 broadcastable
 Caron
+Cartopy
 categorised
 cdl
 ceil
@@ -436,6 +438,7 @@ todense
 todict
 tokenize
 tolist
+topologies
 tosparse
 trac
 trajectoryProfile

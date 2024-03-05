@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.convolution_filter<a class="headerlink" href="#cf-data-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.convolution_filter">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/data/data.py#L2687-L2883"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/data/data.py#L2793-L2989"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data convolved along the given axis with the
 specified filter.</p>
 <p>The magnitude of the integral of the filter (i.e. the sum of the
@@ -146,7 +146,7 @@ values. For example, filter weights of <code class="docutils literal notranslate
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1 (see
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.12.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1 (see
 the examples for details).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.3.0.</span></p>
@@ -160,7 +160,7 @@ the examples for details).</p>
 with <code class="docutils literal notranslate"><span class="pre">weights=[0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code></p>
 </dd>
 </dl>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.11.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.12.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of
 window functions for creating weights for filtering (see
 the examples for details).</p>
 </dd>
@@ -284,7 +284,7 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

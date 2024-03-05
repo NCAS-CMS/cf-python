@@ -656,6 +656,13 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
 
+        # Test with cyclic subspace
+        f.cyclic("grid_longitude")
+        g = f[:, -3:-5:1]
+        self.assertEqual(g.shape, (10, 7))
+        self.assertTrue(np.allclose(f[:, -3:].array, g[:, :3].array))
+        self.assertTrue(f[:, :4].equals(g[:, 3:]))
+
     def test_Field__setitem__(self):
         f = self.f.copy().squeeze()
 
@@ -900,6 +907,13 @@ class FieldTest(unittest.TestCase):
         y = f.dimension_coordinate("Y")
         self.assertTrue(y.has_bounds())
 
+        ca = f.cell_area(return_cell_measure=True)
+        self.assertIsInstance(ca, cf.CellMeasure)
+        self.assertEqual(ca.get_measure(), "area")
+
+        m = f.cell_area(methods=True)
+        self.assertIsInstance(m, dict)
+
     def test_Field_radius(self):
         f = self.f.copy()
 
@@ -1128,6 +1142,10 @@ class FieldTest(unittest.TestCase):
 
         self.assertEqual(g.ndim, f.ndim + 1)
         self.assertEqual(g.get_data_axes()[1:], f.get_data_axes())
+
+        self.assertEqual(g.cell_measure().ndim, 2)
+        h = g.insert_dimension(None, constructs=True)
+        self.assertEqual(h.cell_measure().ndim, 3)
 
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
@@ -2650,6 +2668,23 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f.file_locations(), set((location,)))
         f.del_file_location("/invalid")
         self.assertEqual(f.file_locations(), set((location,)))
+
+    def test_Field_pad_missing(self):
+        """Test Field.pad_missing."""
+        f = cf.example_field(0)
+
+        g = f.pad_missing("X", to_size=10)
+        self.assertEqual(g.shape, (5, 10))
+        self.assertTrue(g[:, 8:].mask.all())
+
+        self.assertIsNone(f.pad_missing("X", pad_width=(1, 2), inplace=True))
+        self.assertEqual(f.shape, (5, 11))
+        self.assertTrue(f[:, 0].mask.all())
+        self.assertTrue(f[:, 9:].mask.all())
+
+        g = f.pad_missing("Y", pad_width=(0, 1))
+        self.assertEqual(g.shape, (6, 11))
+        self.assertTrue(g[5, :].mask.all())
 
 
 if __name__ == "__main__":

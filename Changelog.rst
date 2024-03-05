@@ -1,14 +1,14 @@
-version 3.17.0
---------------
+version NEXT
+------------
 
 **2024-??-??**
 
 * Allow access to netCDF-4 files in S3 object stores
   (https://github.com/NCAS-CMS/cf-python/issues/712)
 * New class `cf.H5netcdfArray`
-* Fix bug that caused `cf.Field.del_file_location` to fail when
-  updating its metdata constructs
-  (https://github.com/NCAS-CMS/cf-python/issues/707)
+* New class `cf.NetCDF4Array`
+* New class `cf.CFAH5netcdfArray`
+* New class `cf.CFANetCDF4Array`
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
@@ -16,6 +16,37 @@ version 3.17.0
 * Changed dependency: ``cfunits>=3.3.7``
 
 ----
+
+version 3.16.1
+--------------
+
+**2024-03-01**
+
+* Allow DSG trajectories with identical `trajectory_id` values to be
+  aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
+* New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
+  (https://github.com/NCAS-CMS/cf-python/issues/717)
+* Fix occasional bug when calculating UGRID cell areas when
+  non-spatial coordinates span the discrete axis
+  (https://github.com/NCAS-CMS/cf-python/issues/721)
+* New keyword parameter to `cf.Field.insert_dimension`:
+  ``constructs`` (https://github.com/NCAS-CMS/cf-python/issues/719)
+* Added the ``cell_measures`` and ``coordinates`` keyword arguments to
+  `cf.Field.weights`
+  (https://github.com/NCAS-CMS/cf-python/issues/709)
+* Added the ``cell_measures``, ``coordinates``,
+  ``return_cell_measure``, and ``methods`` keyword arguments to
+  `cf.Field.cell_area`
+  (https://github.com/NCAS-CMS/cf-python/issues/709)
+* Allow `cf.Data` to be initialised with `xarray.DataAarray`
+  (https://github.com/NCAS-CMS/cf-python/issues/706)
+* Fix bug that caused `cf.Field.del_file_location` to fail when
+  updating its metadata constructs
+  (https://github.com/NCAS-CMS/cf-python/issues/707)
+* Fix bug that caused incorrect data arrays in some cyclic subspaces
+  created by `cf.Field.subspace` and `cf.Field.__getitem__`
+  (https://github.com/NCAS-CMS/cf-python/issues/713)
+* Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
 
 version 3.16.0
 --------------
@@ -181,7 +212,11 @@ version 3.14.1
 
 ----
 
+<<<<<<< HEAD
 version 3.14.0 (*first Dask version*)
+=======
+version 3.14.0 (*first Dask release*)
+>>>>>>> cafeee513aa48788978d65a96d57212d25549a55
 -------------------------------------
 
 **2023-01-31**
@@ -216,7 +251,11 @@ version 3.14.0 (*first Dask version*)
 
 ----
 
+<<<<<<< HEAD
 version 3.13.1 (*last LAMA version*)
+=======
+version 3.13.1 (*last LAMA release*)
+>>>>>>> cafeee513aa48788978d65a96d57212d25549a55
 ------------------------------------
 
 **2022-10-17**
@@ -817,7 +856,7 @@ version 3.0.1
 
 ----
 
-version 3.0.0 (*first Python 3 version*)
+version 3.0.0 (*first Python 3 release*)
 ----------------------------------------
 
 **2019-10-01**
@@ -834,7 +873,7 @@ version 3.0.0 (*first Python 3 version*)
   
 ----
 
-version 2.3.8 (*last Python 2 version*)
+version 2.3.8 (*last Python 2 release*)
 ---------------------------------------
 
 **2019-10-07**
@@ -1697,8 +1736,8 @@ version 0.9.6
 
 ----
 
-version 0.9.5
--------------
+version 0.9.5 (*first LAMA release*)
+------------------------------------
 
 **2012-10-01**
 
@@ -1716,7 +1755,7 @@ version 0.9.5
 
 ----
 
-version 0.9.5.dev
+version 0.9.5.dev 
 -----------------
 
 **2012-09-19**

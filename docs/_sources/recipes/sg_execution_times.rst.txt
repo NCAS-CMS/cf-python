@@ -5,10 +5,10 @@
 
 Computation times
 =================
-**07:52.733** total execution time for **recipes** files:
+**14:33.977** total execution time for **recipes** files:
 
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_15_recipe.py` (``plot_15_recipe.py``) | 07:52.733 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_15_recipe.py` (``plot_15_recipe.py``) | 14:33.977 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_recipes_plot_01_recipe.py` (``plot_01_recipe.py``) | 00:00.000 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+

@@ -162,7 +162,7 @@ installed seprately to the ``cf`` package.
 
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
-range plotting possibilities with example code.
+of plotting possibilities with example code.
 
 Functionality
 =============
@@ -265,8 +265,8 @@ setup(
     version=version,
     description="A CF-compliant earth science data analysis library",
     author="David Hassell",
-    maintainer="David Hassell",
-    maintainer_email="david.hassell@ncas.ac.uk",
+    maintainer="David Hassell, Sadie Bartholomew",
+    maintainer_email="david.hassell@ncas.ac.uk, sadie.bartholomew@ncas.ac.uk",
     author_email="david.hassell@ncas.ac.uk",
     url="https://ncas-cms.github.io/cf-python",
     platforms=["Linux", "MacOS"],

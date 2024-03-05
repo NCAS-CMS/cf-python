@@ -54,6 +54,7 @@ _signature_properties = set(
         "add_offset",
         "calendar",
         "cell_methods",
+        "featureType",
         "_FillValue",
         "flag_masks",
         "flag_meanings",
@@ -210,6 +211,7 @@ class _Meta:
         (
             "Type",
             "Identity",
+            "featureType",
             "Units",
             "Cell_methods",
             "Data",
@@ -389,6 +391,10 @@ class _Meta:
         if field_identity:
             self.identity = f.get_property(field_identity, None)
 
+        # Set the DSG featureType
+        featureType = f.get_property("featureType", None)
+        self.featureType = featureType
+
         construct_axes = f.constructs.data_axes()
 
         # ------------------------------------------------------------
@@ -502,6 +508,7 @@ class _Meta:
                         "identity": dim_identity,
                         "key": dim_coord_key,
                         "units": units,
+                        "cf_role": None,
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": hasbounds,
                         "coordrefs": self.find_coordrefs(axis),
@@ -539,11 +546,18 @@ class _Meta:
                     aux_coord, aux_identity, relaxed_units=relaxed_units
                 )
 
+                # Set the cf_role for DSGs
+                if not featureType:
+                    cf_role = None
+                else:
+                    cf_role = aux_coord.get_property("cf_role", None)
+
                 info_aux.append(
                     {
                         "identity": aux_identity,
                         "key": key,
                         "units": units,
+                        "cf_role": cf_role,
                         "hasdata": aux_coord.has_data(),
                         "hasbounds": aux_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(key),
@@ -586,12 +600,14 @@ class _Meta:
 
                     return
 
+                identity = f"ncvar%{identity}"
                 size = domain_axis.get_size()
 
             axis_identities = {
                 "ids": "identity",
                 "keys": "key",
                 "units": "units",
+                "cf_role": "cf_role",
                 "hasdata": "hasdata",
                 "hasbounds": "hasbounds",
                 "coordrefs": "coordrefs",
@@ -1773,6 +1789,9 @@ class _Meta:
         Cell_methods = self.cell_methods
         Data = self.has_field_data
 
+        # DSG FeatureType
+        featureType = self.featureType
+
         # Properties
         Properties = self.properties
 
@@ -1812,6 +1831,7 @@ class _Meta:
                         ]
                     ),
                 ),
+                ("cf_role", axis[identity]["cf_role"]),
                 ("hasdata", axis[identity]["hasdata"]),
                 ("hasbounds", axis[identity]["hasbounds"]),
                 ("coordrefs", axis[identity]["coordrefs"]),
@@ -1918,6 +1938,7 @@ class _Meta:
         self.signature = self._structural_signature(
             Type=Type,
             Identity=Identity,
+            featureType=featureType,
             Units=Units,
             Cell_methods=Cell_methods,
             Data=Data,
@@ -2956,11 +2977,19 @@ def aggregate(
         # ------------------------------------------------------------
         if axes is None:
             # Aggregation will be over as many axes as possible
-            aggregating_axes = meta[0].axis_ids
-            _create_hash_and_first_values(
-                meta, None, False, hfl_cache, rtol, atol
-            )
+            m0 = meta[0]
+            aggregating_axes = m0.axis_ids[:]
 
+            # For DSG feature types, only consider aggregating the
+            # feature dimension(s).
+            if m0.featureType:
+                for axis in aggregating_axes[:]:
+                    if not dsg_feature_type_axis(m0, axis):
+                        aggregating_axes.remove(axis)
+
+            _create_hash_and_first_values(
+                meta, aggregating_axes, False, hfl_cache, rtol, atol
+            )
         else:
             # Specific aggregation axes have been selected
             aggregating_axes = []
@@ -3463,7 +3492,7 @@ def climatology_cells(
 
 
 def _create_hash_and_first_values(
-    meta, axes, donotchecknonaggregatingaxes, hfl_cache, rtol, atol
+    meta, aggregating_axes, donotchecknonaggregatingaxes, hfl_cache, rtol, atol
 ):
     """Updates each field's _Meta object.
 
@@ -3471,7 +3500,8 @@ def _create_hash_and_first_values(
 
         meta: `list` of `_Meta`
 
-        axes: `None` or `list`
+        axes: sequence
+            The identities of the possible aggregating axes.
 
         donotchecknonaggregatingaxes: `bool`
 
@@ -3487,6 +3517,9 @@ def _create_hash_and_first_values(
     for m in meta:
         field = m.field
         constructs = field.constructs.todict()
+
+        # Store the aggregating axis identities
+        m.aggregating_axes = aggregating_axes
 
         m_sort_keys = m.sort_keys
         m_sort_indices = m.sort_indices
@@ -3506,9 +3539,9 @@ def _create_hash_and_first_values(
         # --------------------------------------------------------
         for identity in m.axis_ids:
             if (
-                axes is not None
+                aggregating_axes is not None
                 and donotchecknonaggregatingaxes
-                and identity not in axes
+                and identity not in aggregating_axes
             ):
                 x = [None] * len(m.axis[identity]["keys"])
                 m_hash_values[identity] = x
@@ -3650,12 +3683,12 @@ def _create_hash_and_first_values(
 
                 coord = constructs[key]
 
-                axes = aux["axes"]
+                c_axes = aux["axes"]
                 canonical_axes = aux["canonical_axes"]
-                if axes != canonical_axes:
+                if c_axes != canonical_axes:
                     # Transpose the N-d auxiliary coordinate so that
                     # it has the canonical axis order
-                    iaxes = [axes.index(axis) for axis in canonical_axes]
+                    iaxes = [c_axes.index(axis) for axis in canonical_axes]
                     coord = coord.transpose(iaxes)
 
                 sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
@@ -3701,14 +3734,14 @@ def _create_hash_and_first_values(
         else:
             for canonical_units, msr in m.msr.items():
                 hash_values = []
-                for key, axes, canonical_axes in zip(
+                for key, c_axes, canonical_axes in zip(
                     msr["keys"], msr["axes"], msr["canonical_axes"]
                 ):
                     cell_measure = constructs[key]
-                    if axes != canonical_axes:
+                    if c_axes != canonical_axes:
                         # Transpose the cell measure so that it has
                         # the canonical axis order
-                        iaxes = [axes.index(axis) for axis in canonical_axes]
+                        iaxes = [c_axes.index(axis) for axis in canonical_axes]
                         cell_measure = cell_measure.transpose(iaxes)
 
                     sort_indices, needs_sorting = _sort_indices(
@@ -3815,12 +3848,12 @@ def _create_hash_and_first_values(
 
                 field_anc = constructs[key]
 
-                axes = anc["axes"]
+                c_axes = anc["axes"]
                 canonical_axes = anc["canonical_axes"]
-                if axes != canonical_axes:
+                if c_axes != canonical_axes:
                     # Transpose the field ancillary so that it has the
                     # canonical axis order
-                    iaxes = [axes.index(axis) for axis in canonical_axes]
+                    iaxes = [c_axes.index(axis) for axis in canonical_axes]
                     field_anc = field_anc.transpose(iaxes)
 
                 sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
@@ -3853,12 +3886,12 @@ def _create_hash_and_first_values(
 
                 domain_anc = constructs[key]
 
-                axes = anc["axes"]
+                c_axes = anc["axes"]
                 canonical_axes = anc["canonical_axes"]
-                if axes != canonical_axes:
+                if c_axes != canonical_axes:
                     # Transpose the domain ancillary so that it has
                     # the canonical axis order
-                    iaxes = [axes.index(axis) for axis in canonical_axes]
+                    iaxes = [c_axes.index(axis) for axis in canonical_axes]
                     domain_anc = domain_anc.transpose(iaxes)
 
                 sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
@@ -3920,7 +3953,22 @@ def _sort_indices(m, canonical_axes):
     """
     canonical_axes = [m.id_to_axis[identity] for identity in canonical_axes]
     sort_indices = tuple([m.sort_indices[axis] for axis in canonical_axes])
-    needs_sorting = sort_indices != (slice(None),) * len(sort_indices)
+
+    # Whether or not one or more of the axes needs sorting
+    needs_sorting = False
+    for sort_index in sort_indices:
+        # Note: sort_index can only be a slice object or a numpy array
+        #       (see `_create_hash_and_first_values`)
+        if isinstance(sort_index, slice):
+            if sort_index != slice(None):
+                # sort_index is a slice other than slice(None)
+                needs_sorting = True
+                break
+        elif sort_index.size > 1:
+            # sort_index is an array of 2 or more integers
+            needs_sorting = True
+            break
+
     return sort_indices, needs_sorting
 
 
@@ -4095,7 +4143,7 @@ def _group_fields(meta, axis, info=False):
             group is represented by a `list` of `_Meta` objects.
 
     """
-    axes = meta[0].axis_ids
+    axes = meta[0].aggregating_axes
 
     if axes:
         if axis in axes:
@@ -4131,6 +4179,15 @@ def _group_fields(meta, axis, info=False):
                 a_identity = identity
 
         hash0 = hash1
+
+        # If 'count' is 0 then all of the 1-d coordinates have the
+        # same values across fields. However, for a DSG featureType
+        # axis we can still aggregate it, because it's OK to aggregate
+        # featureTypes with the timeseries_id, profile_id, or
+        # trajectory_id.
+        if not count and dsg_feature_type_axis(m0, axis):
+            a_identity = axis
+            count = 1
 
         if count == 1:
             # --------------------------------------------------------
@@ -4233,10 +4290,22 @@ def _group_fields(meta, axis, info=False):
             # aggregate anything in this entire group.
             # --------------------------------------------------------
             if info:
-                meta[
-                    0
-                ].message = (
-                    "Some fields have identical sets of 1-d coordinates."
+                coord_ids = []
+                for k, v in m0.axis.items():
+                    coord_ids.extend([repr(i) for i in v["ids"]])
+
+                if len(coord_ids) > 1:
+                    coord_ids = (
+                        f"{', '.join(coord_ids[:-1])} and {coord_ids[-1]}"
+                    )
+                elif coord_ids:
+                    coord_ids = coord_ids[0]
+                else:
+                    coord_ids = ""
+
+                meta[0].message = (
+                    f"Some fields have identical sets of 1-d {coord_ids} "
+                    "coordinates."
                 )
 
             return ()
@@ -4824,6 +4893,19 @@ def _aggregate_2_fields(
 
 
 def f_identity(meta):
+    """Return the field identity for logging strings.
+
+    :Parameters:
+
+        meta: `_Meta`
+            The `_Meta` instance containing the field.
+
+    :Returns:
+
+        `str`
+            The identity.
+
+    """
     identity = meta.identity
     f_identity = meta.field.identity()
     if f_identity == identity:
@@ -4832,3 +4914,38 @@ def f_identity(meta):
         identity = f"{meta.identity!r} ({f_identity})"
 
     return identity
+
+
+def dsg_feature_type_axis(meta, axis):
+    """True if the given axis is a DSG featureType axis.
+
+    A DSG featureType axis has no dimension coordinates and at least
+    one 1-d auxiliary coordinate with a ``cf-role`` property.
+
+    :Parameters:
+
+        meta: `_Meta`
+            The `_Meta` instance
+
+        axis: `str`
+            One of the axes in ``meta.axis_ids``.
+
+    :Returns:
+
+        `bool`
+            `True` if the given axis is a DSG featureType axis.
+
+    """
+    if not meta.featureType:
+        # The field/domain is not a DSG
+        return False
+
+    coords = meta.axis[axis]
+    if coords["dim_coord_index"] is not None:
+        # The axis has dimension coordinates
+        return False
+
+    # Return True if one of the 1-d auxiliary coordinates has a
+    # cf_role property
+    cf_role = coords["cf_role"]
+    return cf_role.count(None) != len(cf_role)

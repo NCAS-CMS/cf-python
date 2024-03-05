@@ -31,7 +31,7 @@ import numpy as np
 import cf
 
 # %%
-# 2. Read and select land use data by index and see properties of all constructs:
+# 2. Read and select land use data by index and see properties of all construcs:
 f = cf.read("~/recipes/output.tif.nc")[0]
 f.dump()
 

@@ -1,5 +1,6 @@
 import cfdm
 
+from ...functions import netcdf_lock
 from ...mixin_container import Container
 from .locks import _lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
@@ -43,4 +44,7 @@ class NetCDF4Array(
         .. versionadded:: 3.14.0
 
         """
-        return _lock
+        if netcdf_lock():
+            return _lock
+
+        return False
