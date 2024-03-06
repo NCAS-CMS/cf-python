@@ -380,8 +380,8 @@ def regrid(
 
         if ln_z is None and src_z is not None:
             raise ValueError(
-                "When 'z', 'src_z', 'or 'dst_z' have been set, "
-                "'ln_z' can not be None."
+                "When 'z', 'src_z', or 'dst_z' have been set, "
+                "'ln_z' cannot be None."
             )
 
         ln_z = bool(ln_z)
@@ -837,7 +837,7 @@ def spherical_coords_to_domain(
         axis_sizes = [coords["lat"].size, coords["lon"].size]
         if coords["lon"].ndim != 1:
             raise ValueError(
-                "When 'dst' is a sequence  containing latitude and "
+                "When 'dst' is a sequence containing latitude and "
                 "longitude coordinate constructs, they must have the "
                 f"same shape. Got: {dst!r}"
             )
@@ -1427,7 +1427,6 @@ def spherical_grid(
     )
 
     set_grid_type(grid)
-    #    print(grid)
     return grid
 
 
@@ -1523,7 +1522,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
                 raise ValueError(
                     f"Can't do Cartesian regridding "
                     f"{'from' if name == 'source' else 'to'} "
-                    f"a {name} an unstructured mesh of "
+                    f"a {name} unstructured mesh of "
                     f"{mesh_location!r} cells"
                 )
 
@@ -1951,7 +1950,7 @@ def create_esmpy_grid(grid, mask=None):
             shape[:ndim] = c.shape
         else:
             raise ValueError(
-                f"Can't create an esmpy.Grid from coordinates with {c.dim} "
+                f"Can't create an esmpy.Grid from coordinates with {ndim} "
                 f"dimensions: {c!r}"
             )
 
@@ -2247,7 +2246,7 @@ def create_esmpy_mesh(grid, mask=None):
 def create_esmpy_locstream(grid, mask=None):
     """Create an `esmpy.LocStream`.
 
-    .. versionadded:: LOCVER
+    .. versionadded:: 3.17.0
 
     .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`
 
