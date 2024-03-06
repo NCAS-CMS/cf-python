@@ -15,6 +15,7 @@ class RegridOperatorTest(unittest.TestCase):
     def test_RegridOperator_attributes(self):
         self.assertEqual(self.r.coord_sys, "spherical")
         self.assertEqual(self.r.method, "linear")
+        self.assertEqual(self.r.dimensionality, 2)
         self.assertEqual(self.r.start_index, 1)
         self.assertTrue(self.r.src_cyclic)
         self.assertFalse(self.r.dst_cyclic)
@@ -30,7 +31,13 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertIsNone(self.r.row)
         self.assertIsNone(self.r.col)
         self.assertIsNone(self.r.weights_file)
-        self.assertEqual(self.r.src_mesh_location, "")
+        self.assertFalse(self.r.src_mesh_location)
+        self.assertFalse(self.r.dst_mesh_location)
+        self.assertFalse(self.r.src_featureType)
+        self.assertFalse(self.r.dst_featureType)
+        self.assertIsNone(self.r.src_z)
+        self.assertIsNone(self.r.dst_z)
+        self.assertFalse(self.r.ln_z)
 
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)

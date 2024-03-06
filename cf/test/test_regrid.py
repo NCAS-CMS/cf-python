@@ -551,7 +551,6 @@ class RegridTest(unittest.TestCase):
         """3-d Cartesian regridding with Field destination grid."""
         methods = list(all_methods)
         methods.remove("conservative_2nd")
-        methods.remove("patch")
 
         dst = self.dst.copy()
         src0 = self.src.copy()
@@ -643,7 +642,7 @@ class RegridTest(unittest.TestCase):
                 self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
         # These methods aren't meant to work for 3-d regridding
-        for method in ("conservative_2nd", "patch"):
+        for method in ("conservative_2nd",):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 

@@ -3,6 +3,12 @@ version NEXT
 
 **2024-??-??**
 
+* Added spherical regridding to discrete sampling geometry destination
+  grids (https://github.com/NCAS-CMS/cf-python/issues/716)
+* Added 3-d spherical regridding to `cf.Field.regrids`, and the option
+  to regrid the vertical axis in logarithmic coordinates to
+  `cf.Field.regrids` and `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/715)
 * Fix misleading error message when it is not possible to create area
   weights requested from `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cf-python/issues/731)

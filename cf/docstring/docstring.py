@@ -115,43 +115,45 @@ _docstring_substitution_definitions = {
                 * ``'bilinear'``: Deprecated alias for ``'linear'``.
 
                 * ``'conservative_1st'``: First order conservative
-                  interpolation. Preserves the area integral of the
-                  data across the interpolation from source to
-                  destination. It uses the proportion of the area of
-                  the overlapping source and destination cells to
-                  determine appropriate weights.
+                  interpolation. Preserves the integral of the source
+                  field across the regridding. Weight calculation is
+                  based on the ratio of source cell area overlapped
+                  with the corresponding destination cell area.
 
                 * ``'conservative'``: Alias for ``'conservative_1st'``
 
                 * ``'conservative_2nd'``: Second-order conservative
-                  interpolation. As with first order conservative
-                  interpolation, preserves the area integral of the
-                  field between source and destination using a
-                  weighted sum, with weights based on the
-                  proportionate area of intersection. In addition the
-                  second-order conservative method takes the source
-                  gradient into account, so it yields a smoother
-                  destination field that typically better matches the
-                  source data.
+                  interpolation. Preserves the integral of the source
+                  field across the regridding. Weight calculation is
+                  based on the ratio of source cell area overlapped
+                  with the corresponding destination cell area. The
+                  second-order conservative calculation also includes
+                  the gradient across the source cell, so in general
+                  it gives a smoother, more accurate representation of
+                  the source field. This is particularly true when
+                  going from a coarse to finer grid.
 
-                * ``'patch'`` Patch recovery interpolation. A second
-                  degree 2-d polynomial regridding method, which uses
-                  a least squares algorithm to calculate the
-                  polynomials. This method typically results in
-                  better approximations to values and derivatives when
+                * ``'patch'`` Patch recovery interpolation. Patch
+                  rendezvous method of taking the least squares fit of
+                  the surrounding surface patches. This is a higher
+                  order method that may produce interpolation weights
+                  that may be slightly less than 0 or slightly greater
+                  than 1. This method typically results in better
+                  approximations to values and derivatives when
                   compared to bilinear interpolation.
 
-                * ``'nearest_stod'``: Nearest neighbour interpolation
-                  for which each destination point is mapped to the
-                  closest source point. Useful for extrapolation of
-                  categorical data. Some destination cells may be
-                  unmapped.
+                * ``'nearest_stod'``: Nearest neighbour source to
+                  destination interpolation for which each destination
+                  point is mapped to the closest source point. A
+                  source point can be mapped to multiple destination
+                  points. Useful for regridding categorical data.
 
-                * ``'nearest_dtos'``: Nearest neighbour interpolation
-                  for which each source point is mapped to the
-                  destination point. Useful for extrapolation of
-                  categorical data. All destination cells will be
-                  mapped.
+                * ``'nearest_dtos'``: Nearest neighbour destination to
+                  source interpolation for which each source point is
+                  mapped to the closest destination point. A
+                  destination point can be mapped to multiple source
+                  points. Some destination points may not be
+                  mapped. Useful for regridding of categorical data.
 
                 * `None`: This is the default and can only be used
                   when *dst* is a `RegridOperator`.""",
@@ -493,7 +495,9 @@ _docstring_substitution_definitions = {
 
                 The computation of the weights can be much more costly
                 than the regridding itself, in which case reading
-                pre-calculated weights can improve performance.""",
+                pre-calculated weights can improve performance.
+
+                Ignored if *dst* is a `RegridOperator`.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to
@@ -587,6 +591,20 @@ _docstring_substitution_definitions = {
     "{{weights auto: `bool`, optional}}": """auto: `bool`, optional
                 If True then return `False` if weights can't be found,
                 rather than raising an exception.""",
+    # ln_z
+    "{{ln_z: `bool` or `None`, optional}}": """ln_z: `bool` or `None`, optional
+                If True when *z*, *src_z* or *dst_z* are also set,
+                calculate the vertical component of the regridding
+                weights using the natural logarithm of the vertical
+                coordinate values. This option should be used if the
+                quantity being regridded varies approximately linearly
+                with logarithm of the vertical coordinates. If False,
+                then the weights are calculated using unaltered
+                vertical values. If `None`, the default, then an
+                exception is raised if any of *z*, *src_z* or *dst_z*
+                have also been set.
+
+                Ignored if *dst* is a `RegridOperator`.""",
     # pad_width
     "{{pad_width: sequence of `int`, optional}}": """pad_width: sequence of `int`, optional
                 Number of values to pad before and after the edges of
@@ -603,30 +621,30 @@ _docstring_substitution_definitions = {
                 True, or a tuple of both if *item* is True.""",
     # regrid RegridOperator
     "{{regrid RegridOperator}}": """* `RegridOperator`: The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  with the *return_operator* parameter set to True.
+                operator that has been returned by a previous call
+                with the *return_operator* parameter set to True.
 
-                  Unlike the other options, for which the regrid
-                  weights need to be calculated, the regrid operator
-                  already contains the weights. Therefore, for cases
-                  where multiple fields with the same source grids
-                  need to be regridded to the same destination grid,
-                  using a regrid operator can give performance
-                  improvements by avoiding having to calculate the
-                  weights for each source field. Note that for the
-                  other types of *dst* parameter, the calculation of
-                  the regrid weights is not a lazy operation.
+                Unlike the other options, for which the regrid weights
+                need to be calculated, the regrid operator already
+                contains the weights. Therefore, for cases where
+                multiple fields with the same source grids need to be
+                regridded to the same destination grid, using a regrid
+                operator can give performance improvements by avoiding
+                having to calculate the weights for each source
+                field. Note that for the other types of *dst*
+                parameter, the calculation of the regrid weights is
+                not a lazy operation.
 
-                  .. note:: The source grid of the regrid operator is
-                            immediately checked for compatibility with
-                            the grid of the source field. By default
-                            only the computationally cheap tests are
-                            performed (checking that the coordinate
-                            system, cyclicity and grid shape are the
-                            same), with the grid coordinates not being
-                            checked. The coordinates check will be
-                            carried out, however, if the
-                            *check_coordinates* parameter is True.""",
+                .. note:: The source grid of the regrid operator is
+                          immediately checked for compatibility with
+                          the grid of the source field. By default
+                          only the computationally cheap tests are
+                          performed (checking that the coordinate
+                          system, cyclicity and grid shape are the
+                          same), with the grid coordinates not being
+                          checked. The coordinates check will be
+                          carried out, however, if the
+                          *check_coordinates* parameter is True.""",
     # Returns cfa_file_substitutions
     "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
                 whose key/value pairs are the file name parts to be

@@ -3840,7 +3840,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 The positions of the regrid axes in the data, given in
                 the relative order expected by the regrid
                 operator. For spherical regridding this order is [Y,
-                X].
+                X] or [Z, Y, X].
 
                 *Parameter example:*
                   ``[2, 3]``
@@ -3902,7 +3902,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                     new_axis.extend(range(n + 1, n + n_sizes))
                     n += n_sizes - 1
             else:
-                regridded_chunks.extend(c)
+                regridded_chunks.append(c)
 
             n += 1
 
@@ -3947,6 +3947,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             axis_order=non_regrid_axes + list(regrid_axes),
             min_weight=min_weight,
         )
+
+        # Performance note:
+        #
+        # The function 'regrid_func' is copied into every Dask
+        # task. If we included the large 'weights_dst_mask' in the
+        # 'partial' definition then it would also be copied to every
+        # task, which "will start to be a pain in a few parts of the
+        # pipeline" definition. Instead we can pass it in via a
+        # keyword argument to 'map_blocks'.
+        # github.com/pangeo-data/pangeo/issues/334#issuecomment-403787663
 
         dx = dx.map_blocks(
             regrid_func,
