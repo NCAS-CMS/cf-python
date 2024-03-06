@@ -371,9 +371,7 @@ def regrid(
             else:
                 raise ValueError("Can't set both 'z' and 'src_z'")
 
-        elif (src_z is None and dst_z is not None) or (
-            src_z is not None and dst_z is None
-        ):
+        elif (src_z is None) != (dst_z is None):
             raise ValueError(
                 "Must set both 'src_z' and 'dst_z', or neither of them"
             )
