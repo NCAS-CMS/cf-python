@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/field.py#L199-L14480"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/field.py#L200-L14766"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -578,6 +578,9 @@ parameters are not deep copied.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.halo.html#cf.Field.halo" title="cf.Field.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the field construct by adding a halo to its data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.pad_missing.html#cf.Field.pad_missing" title="cf.Field.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
+<td><p>Pad an axis with missing data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1048,8 +1051,14 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.add_file_location.html#cf.Field.add_file_location" title="cf.Field.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.file_locations.html#cf.Field.file_locations" title="cf.Field.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
+<td><p>The locations of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.add_file_location.html#cf.Field.add_file_location" title="cf.Field.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
 <td><p>Add a new file location in-place.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.del_file_location.html#cf.Field.del_file_location" title="cf.Field.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
+<td><p>Remove a file location in-place.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.cfa_clear_file_substitutions.html#cf.Field.cfa_clear_file_substitutions" title="cf.Field.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
 <td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
@@ -1062,12 +1071,6 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.cfa_update_file_substitutions.html#cf.Field.cfa_update_file_substitutions" title="cf.Field.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
 <td><p>Set CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.del_file_location.html#cf.Field.del_file_location" title="cf.Field.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
-<td><p>Remove a file location in-place.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.file_locations.html#cf.Field.file_locations" title="cf.Field.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
-<td><p>The locations of files containing parts of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1330,7 +1333,7 @@ parameters are not deep copied.</p>
 <td><p>Perform moving window calculations along an axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a></p></td>
-<td><p>Return a field containing horizontal cell areas.</p></td>
+<td><p>Return the horizontal cell areas.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.max.html#cf.Field.max" title="cf.Field.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
@@ -2177,7 +2180,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

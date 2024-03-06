@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_field<a class="headerlink" href="#cf-example-field" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_field">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_field</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_implementation=&lt;CFImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/examplefield.py#L8-L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_field" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_field</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_implementation=&lt;CFImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/examplefield.py#L8-L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an example field construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.0</p>
@@ -202,6 +202,10 @@ constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>A UGRID mesh topology of point cells.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p>Discrete sampling geometry (DSG) “trajectory”
+features.</p></td>
 </tr>
 </tbody>
 </table>
@@ -365,6 +369,29 @@ returned field constructs.</p>
 <span class="go">Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]</span>
 </pre></div>
 </div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="go">Field: air_pressure (ncvar%pa)</span>
+<span class="go">------------------------------</span>
+<span class="go">Data            : air_pressure(time(2), ncdim%nMesh2_node(7)) hPa</span>
+<span class="go">Cell methods    : time(2): point (interval: 3600 s)</span>
+<span class="go">Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian</span>
+<span class="go">Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east</span>
+<span class="go">                : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north</span>
+<span class="go">Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">11</span><span class="p">))</span>
+<span class="go">Field: mole_fraction_of_ozone_in_air (ncvar%O3)</span>
+<span class="go">-----------------------------------------------</span>
+<span class="go">Data            : mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb</span>
+<span class="go">Auxiliary coords: time(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2024-02-26 09:01:00, ..., 2024-02-26 09:04:00]] standard</span>
+<span class="go">                : altitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2577.0, ..., 2563.0]] m</span>
+<span class="go">                : air_pressure(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[751.0, ..., 780.0]] hPa</span>
+<span class="go">                : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north</span>
+<span class="go">                : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east</span>
+<span class="go">                : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -377,7 +404,7 @@ returned field constructs.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

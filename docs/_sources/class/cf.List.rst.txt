@@ -165,6 +165,16 @@ Data
    ~cf.List.swapaxes
    ~cf.List.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.List.halo
+   ~cf.List.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -200,7 +210,6 @@ Data
    :template: method.rst
 
    ~cf.List.__setitem__
-   ~cf.List.halo
    ~cf.List.masked_invalid
    ~cf.List.subspace
    ~cf.List.where

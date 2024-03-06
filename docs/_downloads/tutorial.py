@@ -347,8 +347,6 @@ lon.dump()
 lon.get_geometry()
 print(lon.bounds.data.array)
 print(lon.get_interior_ring().data.array)
-f = cf.example_field(8)
-print(f)
 a = t.constructs.get('domainancillary0')
 print(a.array)
 bounds = a.bounds

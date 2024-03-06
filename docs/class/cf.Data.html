@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">mask_value=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/data/data.py#L105-L13176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">mask_value=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/data/data.py#L105-L13282"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.mixin.deprecations.DataClassDeprecationsMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.cfanetcdf.CFANetCDF</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -198,10 +198,13 @@ interface.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>array: optional</dt><dd><p>The array of values. May be any scalar or array-like
-object, including another <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<dt>array: optional</dt><dd><p>The array of values. May be a scalar or array-like
+object, including another <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, anything
+with a <code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code> method, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Array</span></code> subclass, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, scalar.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=[34.6]</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=34.6</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=[[1,</span> <span class="pre">2],</span> <span class="pre">[3,</span> <span class="pre">4]]</span></code></p>
 </dd>
@@ -428,7 +431,7 @@ performance.</p></li>
 <td><p>True if the data is a 0-d scalar array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.sparse_array.html#cf.Data.sparse_array" title="cf.Data.sparse_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse_array</span></code></a></p></td>
-<td><p>Return an independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.11.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p></td>
+<td><p>Return an independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.12.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -711,6 +714,9 @@ performance.</p></li>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.halo.html#cf.Data.halo" title="cf.Data.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.pad_missing.html#cf.Data.pad_missing" title="cf.Data.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
+<td><p>Pad an axis with missing data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1540,23 +1546,41 @@ performance.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.file_locations.html#cf.Data.file_locations" title="cf.Data.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
+<td><p>The locations of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.del_file_location.html#cf.Data.del_file_location" title="cf.Data.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
+<td><p>Remove a file location in-place.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.add_file_location.html#cf.Data.add_file_location" title="cf.Data.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
 <td><p>Add a new file location in-place.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_clear_file_substitutions.html#cf.Data.cfa_clear_file_substitutions" title="cf.Data.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
 <td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_aggregated_data.html#cf.Data.cfa_del_aggregated_data" title="cf.Data.cfa_del_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_aggregated_data</span></code></a></p></td>
-<td><p>Remove the CFA-netCDF aggregation instruction terms.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_file_substitution.html#cf.Data.cfa_del_file_substitution" title="cf.Data.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
-<td><p>Remove a CFA-netCDF file name substitution.</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_file_substitutions.html#cf.Data.cfa_file_substitutions" title="cf.Data.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
 <td><p>Return the CFA-netCDF file name substitutions.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions" title="cf.Data.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
+<td><p>Set CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_file_substitution.html#cf.Data.cfa_del_file_substitution" title="cf.Data.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
+<td><p>Remove a CFA-netCDF file name substitution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_file_substitutions.html#cf.Data.cfa_has_file_substitutions" title="cf.Data.cfa_has_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_file_substitutions</span></code></a></p></td>
+<td><p>Whether any CFA-netCDF file name substitutions have been set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_aggregated_data.html#cf.Data.cfa_del_aggregated_data" title="cf.Data.cfa_del_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_aggregated_data</span></code></a></p></td>
+<td><p>Remove the CFA-netCDF aggregation instruction terms.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_aggregated_data.html#cf.Data.cfa_get_aggregated_data" title="cf.Data.cfa_get_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_aggregated_data</span></code></a></p></td>
 <td><p>Return the CFA-netCDF aggregation instruction terms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_aggregated_data.html#cf.Data.cfa_has_aggregated_data" title="cf.Data.cfa_has_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_aggregated_data</span></code></a></p></td>
+<td><p>Whether any CFA-netCDF aggregation instruction terms have been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_aggregated_data.html#cf.Data.cfa_set_aggregated_data" title="cf.Data.cfa_set_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_aggregated_data</span></code></a></p></td>
+<td><p>Set the CFA-netCDF aggregation instruction terms.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_term.html#cf.Data.cfa_get_term" title="cf.Data.cfa_get_term"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_term</span></code></a></p></td>
 <td><p>The CFA aggregation instruction term status.</p></td>
@@ -1564,29 +1588,11 @@ performance.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_write.html#cf.Data.cfa_get_write" title="cf.Data.cfa_get_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_write</span></code></a></p></td>
 <td><p>The CFA write status of the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_aggregated_data.html#cf.Data.cfa_has_aggregated_data" title="cf.Data.cfa_has_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_aggregated_data</span></code></a></p></td>
-<td><p>Whether any CFA-netCDF aggregation instruction terms have been set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_file_substitutions.html#cf.Data.cfa_has_file_substitutions" title="cf.Data.cfa_has_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_file_substitutions</span></code></a></p></td>
-<td><p>Whether any CFA-netCDF file name substitutions have been set.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_aggregated_data.html#cf.Data.cfa_set_aggregated_data" title="cf.Data.cfa_set_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_aggregated_data</span></code></a></p></td>
-<td><p>Set the CFA-netCDF aggregation instruction terms.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_term.html#cf.Data.cfa_set_term" title="cf.Data.cfa_set_term"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_term</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_term.html#cf.Data.cfa_set_term" title="cf.Data.cfa_set_term"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_term</span></code></a></p></td>
 <td><p>Set the CFA aggregation instruction term status.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_write.html#cf.Data.cfa_set_write" title="cf.Data.cfa_set_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_write</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_write.html#cf.Data.cfa_set_write" title="cf.Data.cfa_set_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_write</span></code></a></p></td>
 <td><p>Set the CFA write status of the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions" title="cf.Data.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
-<td><p>Set CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.del_file_location.html#cf.Data.del_file_location" title="cf.Data.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
-<td><p>Remove a file location in-place.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.file_locations.html#cf.Data.file_locations" title="cf.Data.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
-<td><p>The locations of files containing parts of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1987,7 +1993,7 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

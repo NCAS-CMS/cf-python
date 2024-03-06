@@ -1,5 +1,5 @@
-version 3.17.0
---------------
+version NEXT
+------------
 
 **2024-??-??**
 
@@ -10,6 +10,18 @@ version 3.17.0
   `cf.Field.regrids` and `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/715)
 * Allow DSG tractories with identical `trajectory_id` values to be
+* Fix misleading error message when it is not possible to create area
+  weights requested from `cf.Field.collapse`
+  (https://github.com/NCAS-CMS/cf-python/issues/731)
+
+----
+
+version 3.16.1
+--------------
+
+**2024-03-01**
+
+* Allow DSG trajectories with identical `trajectory_id` values to be
   aggregated (https://github.com/NCAS-CMS/cf-python/issues/723)
 * New methods: `cf.Field.pad_missing` and `cf.Data.pad_missing`
   (https://github.com/NCAS-CMS/cf-python/issues/717)
@@ -28,11 +40,14 @@ version 3.17.0
 * Allow `cf.Data` to be initialised with `xarray.DataAarray`
   (https://github.com/NCAS-CMS/cf-python/issues/706)
 * Fix bug that caused `cf.Field.del_file_location` to fail when
-  updating its metdata constructs
+  updating its metadata constructs
   (https://github.com/NCAS-CMS/cf-python/issues/707)
 * Fix bug that caused incorrect data arrays in some cyclic subspaces
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
   (https://github.com/NCAS-CMS/cf-python/issues/713)
+* Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
+
+----
 
 version 3.16.0
 --------------
@@ -196,8 +211,8 @@ version 3.14.1
 
 ----
 
-version 3.14.0
---------------
+version 3.14.0 (*first Dask release*)
+-------------------------------------
 
 **2023-01-31**
 
@@ -231,8 +246,8 @@ version 3.14.0
 
 ----
 
-version 3.13.1
---------------
+version 3.13.1 (*last LAMA release*)
+------------------------------------
 
 **2022-10-17**
 
@@ -832,7 +847,7 @@ version 3.0.1
 
 ----
 
-version 3.0.0 (*first Python 3 version*)
+version 3.0.0 (*first Python 3 release*)
 ----------------------------------------
 
 **2019-10-01**
@@ -849,7 +864,7 @@ version 3.0.0 (*first Python 3 version*)
   
 ----
 
-version 2.3.8 (*last Python 2 version*)
+version 2.3.8 (*last Python 2 release*)
 ---------------------------------------
 
 **2019-10-07**
@@ -1712,8 +1727,8 @@ version 0.9.6
 
 ----
 
-version 0.9.5
--------------
+version 0.9.5 (*first LAMA release*)
+------------------------------------
 
 **2012-10-01**
 
@@ -1731,7 +1746,7 @@ version 0.9.5
 
 ----
 
-version 0.9.5.dev
+version 0.9.5.dev 
 -----------------
 
 **2012-09-19**

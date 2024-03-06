@@ -326,6 +326,16 @@ class WeightsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             w = f.weights("area", cell_measures=False, coordinates=False)
 
+    def test_weights_exceptions(self):
+        f = cf.example_field(0)
+        f.coordinate("X").del_bounds()
+        f.coordinate("Y").del_bounds()
+
+        with self.assertRaisesRegex(
+            ValueError, "Can't create weights: Unable to find cell areas"
+        ):
+            f.weights("area")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

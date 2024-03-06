@@ -170,6 +170,16 @@ Data
    ~cf.Bounds.swapaxes
    ~cf.Bounds.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Bounds.halo
+   ~cf.Bounds.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -205,7 +215,6 @@ Data
    :template: method.rst
 
    ~cf.Bounds.__setitem__
-   ~cf.Bounds.halo
    ~cf.Bounds.masked_invalid
    ~cf.Bounds.subspace
    ~cf.Bounds.where

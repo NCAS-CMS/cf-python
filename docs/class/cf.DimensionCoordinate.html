@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DimensionCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.0/cf/dimensioncoordinate.py#L16-L1177"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/dimensioncoordinate.py#L16-L1177"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate
@@ -702,6 +702,9 @@ parameters are not deep copied.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.halo.html#cf.DimensionCoordinate.halo" title="cf.DimensionCoordinate.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.pad_missing.html#cf.DimensionCoordinate.pad_missing" title="cf.DimensionCoordinate.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
+<td><p>Pad an axis with missing data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1548,40 +1551,40 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.attributes.html#cf.DimensionCoordinate.attributes" title="cf.DimensionCoordinate.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.attributes.html#cf.DimensionCoordinate.attributes" title="cf.DimensionCoordinate.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Data.html#cf.DimensionCoordinate.Data" title="cf.DimensionCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.dtvarray.html#cf.DimensionCoordinate.dtvarray" title="cf.DimensionCoordinate.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.dtvarray.html#cf.DimensionCoordinate.dtvarray" title="cf.DimensionCoordinate.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.hasbounds.html#cf.DimensionCoordinate.hasbounds" title="cf.DimensionCoordinate.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.hasbounds.html#cf.DimensionCoordinate.hasbounds" title="cf.DimensionCoordinate.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.hasdata.html#cf.DimensionCoordinate.hasdata" title="cf.DimensionCoordinate.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.hasdata.html#cf.DimensionCoordinate.hasdata" title="cf.DimensionCoordinate.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.isauxiliary.html#cf.DimensionCoordinate.isauxiliary" title="cf.DimensionCoordinate.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isauxiliary.html#cf.DimensionCoordinate.isauxiliary" title="cf.DimensionCoordinate.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.isdimension.html#cf.DimensionCoordinate.isdimension" title="cf.DimensionCoordinate.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isdimension.html#cf.DimensionCoordinate.isdimension" title="cf.DimensionCoordinate.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.isdomainancillary.html#cf.DimensionCoordinate.isdomainancillary" title="cf.DimensionCoordinate.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isdomainancillary.html#cf.DimensionCoordinate.isdomainancillary" title="cf.DimensionCoordinate.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.isfieldancillary.html#cf.DimensionCoordinate.isfieldancillary" title="cf.DimensionCoordinate.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isfieldancillary.html#cf.DimensionCoordinate.isfieldancillary" title="cf.DimensionCoordinate.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.ismeasure.html#cf.DimensionCoordinate.ismeasure" title="cf.DimensionCoordinate.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.ismeasure.html#cf.DimensionCoordinate.ismeasure" title="cf.DimensionCoordinate.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.role.html#cf.DimensionCoordinate.role" title="cf.DimensionCoordinate.role"><code class="xref py py-obj docutils literal notranslate"><span class="pre">role</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.unsafe_array.html#cf.DimensionCoordinate.unsafe_array" title="cf.DimensionCoordinate.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DimensionCoordinate.unsafe_array.html#cf.DimensionCoordinate.unsafe_array" title="cf.DimensionCoordinate.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
@@ -1597,7 +1600,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

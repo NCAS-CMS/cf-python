@@ -169,6 +169,16 @@ Data
    ~cf.FieldAncillary.swapaxes
    ~cf.FieldAncillary.transpose
    
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.halo
+   ~cf.FieldAncillary.pad_missing
+
 .. rubric:: *Data array mask*
 
 .. autosummary::
@@ -204,7 +214,6 @@ Data
    :template: method.rst
 
    ~cf.FieldAncillary.__setitem__
-   ~cf.FieldAncillary.halo
    ~cf.FieldAncillary.masked_invalid
    ~cf.FieldAncillary.subspace
    ~cf.FieldAncillary.where
