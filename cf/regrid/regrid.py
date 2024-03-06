@@ -1547,21 +1547,6 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             featureType = None
             mesh_location = None
             axis1 = None
-    #    elif featureType:
-    #        if tuple(set(axis_keys)) == (axis1,):
-    #            # There is a unique regridding axis, and it's the DSG
-    #            # axis.
-    #            axis_keys = axis_keys[0:1]
-    #            axis_sizes = axis_sizes[0:1]
-    #        elif axis1 in axis_keys:
-    #            raise ValueError(
-    #                "Can't do Cartesian regridding for a combination of "
-    #                f"DSG and non-DSG axes: {axis_keys}"
-    #            )
-    #        else:
-    #            # None of the regridding axes have are DSG axes
-    #            featureType = None
-    #            axis1 = None
 
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
@@ -2304,7 +2289,6 @@ def create_esmpy_locstream(grid, mask=None):
 
     esmpy_locstream["ESMF:Mask"] = mask
 
-    #    print(esmpy_locstream)
     return esmpy_locstream
 
 
