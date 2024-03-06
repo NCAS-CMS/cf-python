@@ -1517,8 +1517,8 @@ Vertical regridding
 Vertical regridding may be incorporated into either spherical or
 Cartesian regridding, but in both cases the vertical coordinates need
 to be explicitly identified, and whether or not to calculate the
-regridding weights according to the natual logarthm of the vertical
-coordinate values.
+regridding weights according to the natural logarithm of the vertical
+coordinate values stated.
 
 .. code-block:: python
    :caption: *Regrid a field construct from one set of pressure levels
