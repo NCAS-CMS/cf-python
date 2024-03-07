@@ -94,7 +94,7 @@ def dt(
             * A `str` specifying an ISO 8601-like date-time string (in
               which non-Gregorian calendar dates are allowed).
 
-            * `datetime.datetime or `cftime.datetime`. A new date-time
+            * `datetime.datetime` or `cftime.datetime`. A new date-time
               object is returned for the given date-time.
 
 
