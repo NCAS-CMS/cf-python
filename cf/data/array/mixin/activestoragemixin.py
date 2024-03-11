@@ -41,6 +41,21 @@ class ActiveStorageMixin:
         # Still here? Then do an active storage reduction. Returns a
         # dictionary of reduced values.
         filename = self.get_filename()
+        filename = "/".join(filename.split("/")[3:])
+
+        if True:
+            print(
+                "active = Active(\n  ",
+                filename,
+                ",\n  ",
+                self.get_address(),
+                ",\n  ",
+                "storage_options=",
+                self.get_storage_options(),
+                ",\n  active_storage_url=",
+                self.get_active_storage_url(),
+                ",\n  storage_type=s3\n)",  # Temporary requirement!
+            )
 
         active = Active(
             filename,
@@ -54,9 +69,12 @@ class ActiveStorageMixin:
 
         # Provide a file lock
         try:
-            active.lock = self._lock
+            lock = self._lock
         except AttributeError:
             pass
+        else:
+            if lock:
+                active.lock = lock
 
         return active[indices]
 

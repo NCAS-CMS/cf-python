@@ -208,8 +208,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # one dask chunk
             if data.npartitions == 1:
                 data._cfa_set_write(True)
+
             if (
                 not compression_index
+                and self.read_vars.get("cache_metadata")
                 and self.implementation.get_construct_type(construct)
                 != "field"
             ):
@@ -503,6 +505,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `None`
 
         """
+
         if data.data.get_compression_type():
             # Don't get cached elements from arrays compressed by
             # convention, as they'll likely be wrong.

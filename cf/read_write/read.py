@@ -65,6 +65,7 @@ def read(
     cfa=None,
     netCDF_backend=None,
     storage_options=None,
+    cache_metadata=True,
 ):
     """Read field or domain constructs from files.
 
@@ -726,6 +727,16 @@ def read(
 
            .. versionadded:: NEXTVERSION
 
+        cache_metadata: `bool`, optional
+            If True, the default, then data for metadata constructs
+            will have their first and last array elements retrieved
+            from the file and cached in memory for fast future
+            access. In addition, the second and penultimate array
+            elements will be cached from 2-d coordinate bounds data
+            that has two bounds per cell.
+
+            .. versionadded:: NEXTVERSION
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -885,6 +896,8 @@ def read(
 
     cfa_options["substitutions"] = substitutions
 
+    cache_metadata = bool(cache_metadata)
+
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -1020,6 +1033,7 @@ def read(
                 cfa_options=cfa_options,
                 netCDF_backend=netCDF_backend,
                 storage_options=storage_options,
+                cache_metadata=cache_metadata,
             )
 
             # --------------------------------------------------------
@@ -1137,6 +1151,7 @@ def _read_a_file(
     cfa_options=None,
     netCDF_backend=None,
     storage_options=None,
+    cache_metadata=True,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1182,6 +1197,11 @@ def _read_a_file(
 
             .. versionadded:: NEXTVERSION
 
+        cache_metadata: `bool`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
     :Returns:
 
         `FieldList` or `DomainList`
@@ -1216,6 +1236,7 @@ def _read_a_file(
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
         "cfa_options": cfa_options,
+        "cache_metadata": cache_metadata,
     }
 
     # ----------------------------------------------------------------

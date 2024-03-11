@@ -7194,13 +7194,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create a new dimension coordinate for this axis
+                # Create new dimension coordinate bounds
                 if dim.has_bounds():
-                    bounds_data = [dim.bounds.datum(0), dim.bounds.datum(-1)]
+                    b = dim.bounds.data
                 else:
-                    bounds_data = [dim.datum(0), dim.datum(-1)]
+                    b = dim.data
 
-                units = dim.Units
+                # Note: Accessing first_element and last_element is
+                #       likely to be fast for dat one disk, assuming
+                #       that these values were cached during the read.
+                bounds_data = Data(
+                    [[b.first_element(), b.last_element()]],
+                    dtype=b.dtype,
+                    units=b.Units,
+                )
+                bounds = self._Bounds(data=bounds_data)
 
                 if coordinate == "min":
                     coordinate = "minimum"
@@ -7216,20 +7224,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     )
 
                 if coordinate == "mid_range":
-                    data = Data(
-                        [(bounds_data[0] + bounds_data[1]) * 0.5], units=units
-                    )
+                    data = bounds_data.mean(axes=1, weights=None, squeeze=True)
                 elif coordinate == "minimum":
-                    data = dim.data.min()
+                    data = dim.data.min(squeeze=False)
                 elif coordinate == "maximum":
-                    data = dim.data.max()
+                    data = dim.data.max(squeeze=False)
                 else:
                     raise ValueError(
                         "Can't collapse: Bad parameter value: "
                         f"coordinate={coordinate!r}"
                     )
-
-                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
