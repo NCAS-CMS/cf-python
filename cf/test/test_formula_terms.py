@@ -888,6 +888,7 @@ class FormulaTermsTest(unittest.TestCase):
         for standard_name in cf.formula_terms.FormulaTerms.standard_names:
             if standard_name == "atmosphere_hybrid_height_coordinate":
                 continue
+
             f, a, csn = _formula_terms(standard_name)
 
             g = f.compute_vertical_coordinates(verbose=None)

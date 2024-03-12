@@ -43,6 +43,13 @@ class RegridOperator(mixin_Container, Container):
         dst=None,
         weights_file=None,
         src_mesh_location=None,
+        dst_mesh_location=None,
+        src_featureType=None,
+        dst_featureType=None,
+        dimensionality=None,
+        src_z=None,
+        dst_z=None,
+        ln_z=False,
     ):
         """**Initialisation**
 
@@ -108,6 +115,11 @@ class RegridOperator(mixin_Container, Container):
                 or 1-based indexing. By default 0-based indexing is
                 used.
 
+                If *row* and *col* are to be read from a weights file
+                and their netCDF variables have ``start_index``
+                attributes, then these will be used in preference to
+                *start_index*.
+
             parameters: Deprecated at version 3.14.0
                 Use keyword parameters instead.
 
@@ -129,10 +141,55 @@ class RegridOperator(mixin_Container, Container):
 
             src_mesh_location: `str`, optional
                 The UGRID mesh element of the source grid
-                (e.g. ``'face'``). An empty string should be used for
-                a non-UGRID source grid.
+                (e.g. ``'face'``).
 
                 .. versionadded:: 3.16.0
+
+            dst_mesh_location: `str`, optional
+                The UGRID mesh element of the destination grid
+                (e.g. ``'face'``).
+
+                .. versionadded:: 3.17.0
+
+            src_featureType: `str`, optional
+                The discrete sampling geometry (DSG) featureType of
+                the source grid (e.g. ``'trajectory'``).
+
+                .. versionadded:: 3.17.0
+
+            dst_featureType: `str`, optional
+                The DSG featureType of the destination grid
+                (e.g. ``'trajectory'``).
+
+                .. versionadded:: 3.17.0
+
+            src_z: optional
+                The identity of the source grid vertical coordinates
+                used to calculate the weights. If `None` then no
+                source grid vertical axis is identified.
+
+                .. versionadded:: 3.17.0
+
+            dst_z: optional
+                The identity of the destination grid vertical
+                coordinates used to calculate the weights. If `None`
+                then no destination grid vertical axis is identified.
+
+                .. versionadded:: 3.17.0
+
+            ln_z: `bool`, optional
+                Whether or not the weights were calculated with the
+                natural logarithm of vertical coordinates.
+
+                .. versionadded:: 3.17.0
+
+            dimensionality: `int`, optional
+                The number of physical regridding dimensions. This may
+                differ from the corresponding number of storage
+                dimensions in the source or destination grids, if
+                either has an unstructured mesh or a DSG featureType.
+
+                .. versionadded:: 3.17.0
 
         """
         super().__init__()
@@ -160,6 +217,13 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dst", dst, copy=False)
         self._set_component("weights_file", weights_file, copy=False)
         self._set_component("src_mesh_location", src_mesh_location, copy=False)
+        self._set_component("dst_mesh_location", dst_mesh_location, copy=False)
+        self._set_component("src_featureType", src_featureType, copy=False)
+        self._set_component("dst_featureType", dst_featureType, copy=False)
+        self._set_component("dimensionality", dimensionality, copy=False)
+        self._set_component("src_z", src_z, copy=False)
+        self._set_component("dst_z", dst_z, copy=False)
+        self._set_component("ln_z", bool(ln_z), copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -185,6 +249,15 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("coord_sys")
+
+    @property
+    def dimensionality(self):
+        """The number of physical regridding dimensions.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dimensionality")
 
     @property
     def dst(self):
@@ -215,6 +288,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("dst_cyclic")
 
     @property
+    def dst_featureType(self):
+        """The DSG featureType of the destination grid.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dst_featureType")
+
+    @property
     def dst_mask(self):
         """A destination grid mask to be applied to the weights matrix.
 
@@ -232,6 +314,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("dst_mask")
 
     @property
+    def dst_mesh_location(self):
+        """The UGRID mesh element of the destination grid.
+
+        .. versionadded:: 3.16.0
+
+        """
+        return self._get_component("dst_mesh_location")
+
+    @property
     def dst_shape(self):
         """The shape of the destination grid.
 
@@ -239,6 +330,24 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("dst_shape")
+
+    @property
+    def dst_z(self):
+        """The identity of the destination grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("dst_z")
+
+    @property
+    def ln_z(self):
+        """Whether or not vertical weights are based on ln(z).
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("ln_z")
 
     @property
     def method(self):
@@ -308,6 +417,15 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("src_cyclic")
 
     @property
+    def src_featureType(self):
+        """The DSG featureType of the source grid.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("src_featureType")
+
+    @property
     def src_mask(self):
         """The source grid mask that was applied during the weights
         creation.
@@ -343,8 +461,21 @@ class RegridOperator(mixin_Container, Container):
         return self._get_component("src_shape")
 
     @property
+    def src_z(self):
+        """The identity of the source grid vertical coordinates.
+
+        .. versionadded:: 3.17.0
+
+        """
+        return self._get_component("src_z")
+
+    @property
     def start_index(self):
         """The start index of the row and column indices.
+
+        If `row` and `col` are to be read from a weights file and
+        their netCDF variables have ``start_index`` attributes, then
+        these will be used in preference to `start_index`.
 
         .. versionadded:: 3.14.0
 
@@ -412,6 +543,12 @@ class RegridOperator(mixin_Container, Container):
             dst=self.dst.copy(),
             weights_file=self.weights_file,
             src_mesh_location=self.src_mesh_location,
+            dst_mesh_location=self.dst_mesh_location,
+            src_featureType=self.src_featureType,
+            dst_featureType=self.dst_featureType,
+            src_z=self.src_z,
+            dst_z=self.dst_z,
+            ln_z=self.ln_z,
         )
 
     @_display_or_return
@@ -441,6 +578,7 @@ class RegridOperator(mixin_Container, Container):
         for attr in (
             "coord_sys",
             "method",
+            "dimensionality",
             "src_shape",
             "dst_shape",
             "src_cyclic",
@@ -453,6 +591,12 @@ class RegridOperator(mixin_Container, Container):
             "src_axes",
             "dst_axes",
             "src_mesh_location",
+            "dst_mesh_location",
+            "src_featureType",
+            "dst_featureType",
+            "src_z",
+            "dst_z",
+            "ln_z",
             "dst",
             "weights",
             "row",
@@ -552,7 +696,10 @@ class RegridOperator(mixin_Container, Container):
         any further modification of the weights to account for missing
         values in the source grid will always involve row-slicing.
 
-        .. versionadded:: 3.14.0
+        If the weights are already in a sparse array format then no
+        action is taken.
+
+        .. versionadded:: 3.13.0
 
         :Returns:
 
@@ -570,6 +717,10 @@ class RegridOperator(mixin_Container, Container):
 
         from scipy.sparse import csr_array
 
+        start_index = self.start_index
+        col_start_index = None
+        row_start_index = None
+
         if weights is None:
             weights_file = self.weights_file
             if weights_file is not None:
@@ -583,6 +734,17 @@ class RegridOperator(mixin_Container, Container):
                 weights = nc.variables["S"][...]
                 row = nc.variables["row"][...]
                 col = nc.variables["col"][...]
+
+                try:
+                    col_start_index = nc.variables["col"].start_index
+                except AttributeError:
+                    col_start_index = 1
+
+                try:
+                    row_start_index = nc.variables["row"].start_index
+                except AttributeError:
+                    row_start_index = 1
+
                 nc.close()
                 _lock.release()
             else:
@@ -592,11 +754,16 @@ class RegridOperator(mixin_Container, Container):
                     "be set"
                 )
 
-        # Convert to sprase array format
-        start_index = self.start_index
-        if start_index:
-            row = row - start_index
+        # Convert to sparse array format
+        if col_start_index:
+            col = col - col_start_index
+        elif start_index:
             col = col - start_index
+
+        if row_start_index:
+            row = row - row_start_index
+        elif start_index:
+            row = row - start_index
 
         src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
@@ -624,9 +791,12 @@ class RegridOperator(mixin_Container, Container):
         else:
             dst_mask = np.zeros((dst_size,), dtype=bool)
 
-        # Note: It is much more efficient to access 'weights.indptr'
-        #       and 'weights.data' directly, rather than iterating
-        #       over rows of 'weights' and using 'weights.getrow'.
+        # Performance note:
+        #
+        # It is much more efficient to access 'weights.indptr' and
+        # 'weights.data' directly, rather than iterating over rows of
+        # 'weights' and using 'weights.getrow'.
+
         indptr = weights.indptr.tolist()
         data = weights.data
         for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):

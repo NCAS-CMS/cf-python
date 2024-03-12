@@ -9,6 +9,15 @@ version NEXT
 * New class `cf.NetCDF4Array`
 * New class `cf.CFAH5netcdfArray`
 * New class `cf.CFANetCDF4Array`
+* Added spherical regridding to discrete sampling geometry destination
+  grids (https://github.com/NCAS-CMS/cf-python/issues/716)
+* Added 3-d spherical regridding to `cf.Field.regrids`, and the option
+  to regrid the vertical axis in logarithmic coordinates to
+  `cf.Field.regrids` and `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/715)
+* Fix misleading error message when it is not possible to create area
+  weights requested from `cf.Field.collapse`
+  (https://github.com/NCAS-CMS/cf-python/issues/731)
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
@@ -47,6 +56,8 @@ version 3.16.1
   created by `cf.Field.subspace` and `cf.Field.__getitem__`
   (https://github.com/NCAS-CMS/cf-python/issues/713)
 * Changed dependency: ``1.11.1.0<=cfdm<1.11.2.0``
+
+----
 
 version 3.16.0
 --------------
