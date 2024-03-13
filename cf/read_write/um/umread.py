@@ -1583,9 +1583,36 @@ class UMField:
     def create_cell_methods(self):
         """Create the cell methods.
 
+        **UMDP F3**
+
+        LBPROC Processing code. This indicates what processing has
+        been done to the basic ﬁeld. It should be 0 if no processing
+        has been done, otherwise add together the relevant numbers
+        from the list below:
+
+        1 Difference from another experiment.
+        2 Difference from zonal (or other spatial) mean.
+        4 Difference from time mean.
+        8 X-derivative (d/dx)
+        16 Y-derivative (d/dy)
+        32 Time derivative (d/dt)
+        64 Zonal mean ﬁeld
+        128 Time mean ﬁeld
+        256 Product of two ﬁelds
+        512 Square root of a ﬁeld
+        1024 Difference between ﬁelds at levels BLEV and BRLEV
+        2048 Mean over layer between levels BLEV and BRLEV
+        4096 Minimum value of ﬁeld during time period
+        8192 Maximum value of ﬁeld during time period
+        16384 Magnitude of a vector, not speciﬁcally wind speed
+        32768 Log10 of a ﬁeld
+        65536 Variance of a ﬁeld
+        131072 Mean over an ensemble of parallel runs
+
         :Returns:
 
-            `list`
+            `list` of `str`
+               The cell methods.
 
         """
         cell_methods = []
@@ -1593,6 +1620,14 @@ class UMField:
         LBPROC = self.lbproc
         LBTIM_IB = self.lbtim_ib
         tmean_proc = 0
+
+        # ------------------------------------------------------------
+        # Ensemble mean cell method
+        # ------------------------------------------------------------
+        if 131072 <= LBPROC < 262144:
+            cell_methods.append("realization: mean")
+            LBPROC -= 131072
+
         if LBTIM_IB in (2, 3) and LBPROC in (128, 192, 2176, 4224, 8320):
             tmean_proc = 128
             LBPROC -= 128

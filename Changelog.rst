@@ -12,6 +12,9 @@ version NEXT
 * Fix misleading error message when it is not possible to create area
   weights requested from `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cf-python/issues/731)
+* Fix bug in `cf.read` when reading UM files that caused LBPROC value
+  131072 (Mean over an ensemble of parallel runs) to be ignored
+  (https://github.com/NCAS-CMS/cf-python/issues/737)
 
 ----
 
