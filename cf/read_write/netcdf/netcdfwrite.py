@@ -430,10 +430,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             `None`
 
-        """
-        import time # TODO
-        print (f"\n{ncvar}") # TODO
-        
+        """        
         g = self.write_vars
 
         ndim = data.ndim
@@ -484,7 +481,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregated_data_attr = []
 
         # Location
-        start = time.time() # TODO
         term = "location"
         data = cfa[term]
         self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
@@ -494,11 +490,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             location_ncdimensions,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
-        print (f"{term:<10}: {time.time() - start:.3}")
         
         # File
         term = "file"
-        start = time.time() # TODO
         if substitutions:
             # Create the "substitutions" netCDF attribute
             subs = []
@@ -518,11 +512,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             attributes=attributes,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
-        print (f"{term:<10}: {time.time() - start:.3}")
 
         # Address
         term = "address"
-        start = time.time() # TODO
 
         # Attempt to reduce addresses to a common scalar value
         u = cfa[term].unique().compressed().persist()
@@ -540,11 +532,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             dimensions,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
-        print (f"{term:<10}: {time.time() - start:.3}")
 
         # Format
         term = "format"
-        start = time.time() # TODO
 
         # Attempt to reduce addresses to a common scalar value
         u = cfa[term].unique().compressed().persist()
@@ -563,7 +553,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
-        print (f"{term:<10}: {time.time() - start:.3}")
         # ------------------------------------------------------------
         # Look for non-standard CFA terms stored as field ancillaries
         # on a field and write them to the CFA-netCDF file
@@ -905,6 +894,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         from pathlib import PurePath
         from urllib.parse import urlparse
         import time # TODO
+        print (f"\n{cfvar!r}") # TODO
         start = time.time() # TODO
         
         g = self.write_vars
