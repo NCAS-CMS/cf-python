@@ -174,7 +174,77 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
-        self._set_component("index", None, copy=False)
+    def _get_array(self):
+        """Return a subspace of the array.
+
+        Returns a subspace of the array as an independent numpy array.
+
+        """        
+        f, header_offset = self.open()
+        rec = self._get_rec(f, header_offset)
+
+        int_hdr = rec.int_hdr
+        real_hdr = rec.real_hdr
+        array = rec.get_data().reshape(self.shape)
+
+        self.close(f)
+        del f, rec
+
+        array = get_subspace(array, self.index)
+
+        # Set the units, if they haven't been set already.
+        self._set_units(int_hdr)
+
+        LBUSER2 = int_hdr.item(38)
+        if LBUSER2 == 3:
+            # Return the numpy array now if it is a boolean array
+            self._set_component("dtype", np.dtype(bool), copy=False)
+            return array.astype(bool)
+
+        integer_array = LBUSER2 == 2
+
+        # ------------------------------------------------------------
+        # Convert to a masked array
+        # ------------------------------------------------------------
+        # Set the fill_value from BMDI
+        fill_value = real_hdr.item(17)
+        if fill_value != -1.0e30:
+            # -1.0e30 is the flag for no missing data
+            if integer_array:
+                # The fill_value must be of the same type as the data
+                # values
+                fill_value = int(fill_value)
+
+            # Mask any missing values
+            mask = array == fill_value
+            if mask.any():
+                array = np.ma.masked_where(mask, array, copy=False)
+
+        # ------------------------------------------------------------
+        # Unpack the array using the scale_factor and add_offset, if
+        # either is available
+        # ------------------------------------------------------------
+        # Treat BMKS as a scale_factor if it is neither 0 nor 1
+        scale_factor = real_hdr.item(18)
+        if scale_factor != 1.0 and scale_factor != 0.0:
+            if integer_array:
+                scale_factor = int(scale_factor)
+
+            array *= scale_factor
+
+        # Treat BDATUM as an add_offset if it is not 0
+        add_offset = real_hdr.item(4)
+        if add_offset != 0.0:
+            if integer_array:
+                add_offset = int(add_offset)
+
+            array += add_offset
+
+        # Set the data type
+        self._set_component("dtype", array.dtype, copy=False)
+
+        # Return the numpy array
+        return array
 
     def __getitem__(self, indices):
         """Return a subspace of the array.

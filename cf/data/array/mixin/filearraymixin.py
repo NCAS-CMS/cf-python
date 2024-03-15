@@ -17,6 +17,8 @@ class FileArrayMixin:
     def __array__(self, *dtype):
         """Convert the ``{{class}}` into a `numpy` array.
 
+        TODO stored indices
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
@@ -29,23 +31,13 @@ class FileArrayMixin:
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples**
-
-        TODO
-        >>> d = {{package}}.{{class}}([1, 2, 3])
-        >>> a = numpy.array(d)
-        >>> print(type(a))
-        <class 'numpy.ndarray'>
-        >>> a[0] = -99
-        >>> d
-        <{{repr}}{{class}}(3): [1, 2, 3]>
-        >>> b = numpy.array(d, float)
-        >>> print(b)
-        [1. 2. 3.]
-
         """
-        return np.asanyarray(self._getitem())
-        
+        array = np.asanyarray(self._get_array())
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
@@ -135,7 +127,7 @@ class FileArrayMixin:
         self._set_component('index', tuple(new_index), copy=False)
         self._set_component('shape', tuple(new_shape), copy=False)
         
-    def _getitem(self)
+    def _get_array(self)
         """Returns a subspace of the array as a numpy array.
 
         x.__getitem__(indices) <==> x[indices]
@@ -156,51 +148,9 @@ class FileArrayMixin:
         .. versionadded:: NEXTVERSION
 
         """
-        
-        index = parse_indices(self.shape, self.index, cyclic=False, keepdims=True)
-        
-    
-        
-        netcdf, address = self.open()
-        dataset = netcdf
-
-        groups, address = self.get_groups(address)
-        if groups:
-            # Traverse the group structure, if there is one (CF>=1.8).
-            netcdf = self._group(netcdf, groups)
-
-        if isinstance(address, str):
-            # Get the variable by netCDF name
-            variable = netcdf.variables[address]
-        else:
-            # Get the variable by netCDF integer ID
-            for variable in netcdf.variables.values():
-                if variable._varid == address:
-                    break
-
-        # Get the data, applying masking and scaling as required.
-        array = netcdf_indexer(
-            variable,
-            mask=self.get_mask(),
-            unpack=self.get_unpack(),
-            always_mask=False,
+        return NotImplementedError(
+            f"Must implement {self.__class__.__name__}._get_array"
         )
-        array = array[self.index]
-
-        # Set the units, if they haven't been set already.
-        self._set_attributes(variable)
-
-        # Set the units, if they haven't been set already.
-        self._set_units(variable)
-
-        self.close(dataset)
-        del netcdf, dataset
-
-        if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1, 1d
-            array = array.squeeze()
-
-        return array
 
     @property
     def _dask_meta(self):
@@ -238,11 +188,12 @@ class FileArrayMixin:
         .. versionadded:: NEXTVERSION
 
         """
-        i = self._get_component('index', None)
-        if i is None:
-            i = parse_indices(self.shape, (Ellipsis,), keepdims=False)
+        ind = self._get_component('index', None)
+        if ind is None:
+            ind = parse_indices(self.shape, (Ellipsis,), keepdims=False, bool_ti_int=True)
+            self._set_component('index', ind, copy=False)
 
-        return i
+        return ind
 
     def del_file_location(self, location):
         """Remove reference to files in the given location.

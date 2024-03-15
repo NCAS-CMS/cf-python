@@ -17,8 +17,8 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
         .. versionadded:: 3.15.0
 
         """
-        return super().__dask_tokenize__() + (self.get_mask(),)
-
+        return super().__dask_tokenize__() + (self.get_mask(),)    
+    
     @property
     def _lock(self):
         """Set the lock for use in `dask.array.from_array`.
@@ -33,3 +33,7 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
 
         """
         return _lock
+
+    def _get_array(self):
+        """TODO"""
+        return super(cfdm.NetCDFArray).__getitem__(self.index)
