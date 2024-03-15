@@ -9,6 +9,9 @@ version NEXT
   to regrid the vertical axis in logarithmic coordinates to
   `cf.Field.regrids` and `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/715)
+* Reduce output CFA netCDF file size by setting the HDF5 chunksizes of
+  CFA variables to be no larger than required
+  (https://github.com/NCAS-CMS/cf-python/issues/739)
 * Fix misleading error message when it is not possible to create area
   weights requested from `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cf-python/issues/731)
