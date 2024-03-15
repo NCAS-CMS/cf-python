@@ -13,6 +13,38 @@ class FileArrayMixin:
 
     """
 
+    def __array__(self, *dtype):
+        """Convert the ``{{class}}` into a `numpy` array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        **Examples**
+
+        TODO
+        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> a = numpy.array(d)
+        >>> print(type(a))
+        <class 'numpy.ndarray'>
+        >>> a[0] = -99
+        >>> d
+        <{{repr}}{{class}}(3): [1, 2, 3]>
+        >>> b = numpy.array(d, float)
+        >>> print(b)
+        [1. 2. 3.]
+
+        """
+        return np.asanyarray(self._getitem())
+        
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
@@ -25,6 +57,68 @@ class FileArrayMixin:
             self.get_filenames(),
             self.get_addresses(),
         )
+
+    def _getitem(self)
+        """Returns a subspace of the array as a numpy array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        The indices that define the subspace must be either `Ellipsis` or
+        a sequence that contains an index for each dimension. In the
+        latter case, each dimension's index must either be a `slice`
+        object or a sequence of two or more integers.
+
+        Indexing is similar to numpy indexing. The only difference to
+        numpy indexing (given the restrictions on the type of indices
+        allowed) is:
+
+          * When two or more dimension's indices are sequences of integers
+            then these indices work independently along each dimension
+            (similar to the way vector subscripts work in Fortran).
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        """
+        netcdf, address = self.open()
+        dataset = netcdf
+
+        groups, address = self.get_groups(address)
+        if groups:
+            # Traverse the group structure, if there is one (CF>=1.8).
+            netcdf = self._group(netcdf, groups)
+
+        if isinstance(address, str):
+            # Get the variable by netCDF name
+            variable = netcdf.variables[address]
+        else:
+            # Get the variable by netCDF integer ID
+            for variable in netcdf.variables.values():
+                if variable._varid == address:
+                    break
+
+        # Get the data, applying masking and scaling as required.
+        array = netcdf_indexer(
+            variable,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
+            always_mask=False,
+        )
+        array = array[self.index]
+
+        # Set the units, if they haven't been set already.
+        self._set_attributes(variable)
+
+        # Set the units, if they haven't been set already.
+        self._set_units(variable)
+
+        self.close(dataset)
+        del netcdf, dataset
+
+        if not self.ndim:
+            # Hmm netCDF4 has a thing for making scalar size 1, 1d
+            array = array.squeeze()
+
+        return array
 
     @property
     def _dask_meta(self):
