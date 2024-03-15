@@ -1885,7 +1885,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     return shape
 
 
-def parse_indices(shape, indices, cyclic=False, keepdims=True):
+def parse_indices(shape, indices, cyclic=False, keepdims=True, bool_as_int=False):
     """Parse indices for array access and assignment.
 
     :Parameters:
@@ -2041,6 +2041,12 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
             if callable(to_dask_array):
                 # Replace index with its Dask array
                 index = to_dask_array()
+
+        elif bool_as_int:
+            index = np.asanyarray(index)
+            if index.dtype == bool:
+                index = np.arange(size)[index]               
+                
 
         parsed_indices[i] = index
 

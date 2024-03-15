@@ -174,6 +174,8 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
+        self._set_component("index", None, copy=False)
+
     def __getitem__(self, indices):
         """Return a subspace of the array.
 

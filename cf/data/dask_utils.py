@@ -113,7 +113,7 @@ def cf_contains(a, value):
 
     :Parameters:
 
-        a: `numpy.ndarray`
+        a: array_like
             The array.
 
         value: array_like
@@ -127,7 +127,8 @@ def cf_contains(a, value):
             value.
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
+    value = asanyarray(value)
     return np.array(value in a).reshape((1,) * a.ndim)
 
 
@@ -161,7 +162,12 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
+
+    # Cast to float to ensure that NaNs can be stored
+    if a.dtype != float:
+        a = a.astype(float, copy=False)
+
     
     masked = np.ma.is_masked(a)
     if masked:
@@ -200,7 +206,7 @@ def cf_harden_mask(a):
             The array with hardened mask.
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
     if np.ma.isMA(a):
         try:
             a.harden_mask()
@@ -226,7 +232,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
 
     :Parameters:
 
-        a: `numpy.ndarray`
+        a: array_like
             Input array.
 
         q: `numpy.ndarray`
@@ -271,8 +277,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    a = hhh(a)
-    q = hhh(q)
+    a = asanyarray(a)
     
     if np.ma.isMA(a) and not np.ma.is_masked(a):
         # Masked array with no masked elements
@@ -367,7 +372,7 @@ def cf_soften_mask(a):
             The array with softened mask.
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
 
     if np.ma.isMA(a):
         try:
@@ -424,13 +429,13 @@ def cf_where(array, condition, x, y, hardmask):
             elsewhere.
 
     """
-    a = hhh(a)
-    condition = hhh(condition)
+    a = asanyarray(a)
+    condition = asanyarray(condition)
     if x is not None:
-        x = hhh(x)
+        x = asanyarray(x)
     
     if y is not None:
-        y = hhh(y)
+        y = asanyarray(y)
     
     
     mask = None
@@ -528,7 +533,7 @@ def cf_YMDhms(a, attr):
     array([1, 2])
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
     return _array_getattr(a, attr=attr)
 
 
@@ -561,7 +566,7 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
 
@@ -616,7 +621,7 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
     return dt2rt(a, units_out=units, units_in=None)
 
 
@@ -657,17 +662,17 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
-    a = hhh(a)
+    a = asanyarray(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
 
 
 def cf_filled(a, fill_value=None):
-    a = hhh(a)
+    a = asanyarray(a)
     return np.ma.filled(a, fill_value= fill_value)
 
-def hhh(self, a):
+def asanyarray(self, a):
     if issparse(a):
         return a
 

@@ -1,3 +1,4 @@
+from math import ceil
 from os import sep
 from os.path import basename, dirname, join
 
@@ -58,6 +59,82 @@ class FileArrayMixin:
             self.get_addresses(),
         )
 
+    def __getitem__(self, index)
+        """TODO Returns a subspace of the array as a numpy array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        The indices that define the subspace must be either `Ellipsis` or
+        a sequence that contains an index for each dimension. In the
+        latter case, each dimension's index must either be a `slice`
+        object or a sequence of two or more integers.
+
+        Indexing is similar to numpy indexing. The only difference to
+        numpy indexing (given the restrictions on the type of indices
+        allowed) is:
+
+          * When two or more dimension's indices are sequences of integers
+            then these indices work independently along each dimension
+            (similar to the way vector subscripts work in Fortran).
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        shape0 = self.shape
+        index = parse_indices(shape0, index, keepdims=False, bool_as_int=True)
+        
+        index0 = self._get_component('index', None)
+        if index0 is None:
+            self._set_component('index', index, copy=False)
+            return
+                
+        new_index = []
+        for ind0, ind, size0 in zip(index0, index, shape0):            
+            if index == slice(None):
+                new_index.append(ind0)
+                new_shape.apepend(size0)
+                continue
+            
+            if isinstance(ind0, slice):
+                if isinstance(ind, slice):
+                    # 'ind0' is slice, 'ind' is slice
+                    start, stop, step = ind0.indices(size0)
+                    size1, mod = divmod(stop - start - 1, step)
+                    start1, stop1, step1 = ind.indices(size1 + 1)
+                    size2, mod = divmod(stop1 - start1, step1)
+
+                    if mod != 0:
+                        size2 += 1
+
+                    start += start1 * step
+                    step *= step1
+                    stop = start + (size2 - 1) * step
+
+                    if step > 0:
+                        stop += 1
+                    else:
+                        stop -= 1
+                        
+                    if stop < 0:
+                        stop = None
+                        
+                    new = slice(start, stop, step)
+                    new_size = ceil((stop - start)/step)
+                else:
+                    # 'ind0' is slice, 'ind' is numpy array of int
+                    new = np.arange(*ind0.indices(size0))[ind]
+                    new_size = new.size
+            else:
+                # 'ind0' is numpy array of int
+                new = ind0[ind]
+                new_size = new.size
+                    
+            new_index.append(new)
+            new_shape.apepend(new_size)
+
+        self._set_component('index', tuple(new_index), copy=False)
+        self._set_component('shape', tuple(new_shape), copy=False)
+        
     def _getitem(self)
         """Returns a subspace of the array as a numpy array.
 
@@ -76,9 +153,14 @@ class FileArrayMixin:
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: NEXTVERSION
 
         """
+        
+        index = parse_indices(self.shape, self.index, cyclic=False, keepdims=True)
+        
+    
+        
         netcdf, address = self.open()
         dataset = netcdf
 
@@ -148,6 +230,19 @@ class FileArrayMixin:
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
+
+    @property
+    def index(self):
+        """TODO
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        i = self._get_component('index', None)
+        if i is None:
+            i = parse_indices(self.shape, (Ellipsis,), keepdims=False)
+
+        return i
 
     def del_file_location(self, location):
         """Remove reference to files in the given location.

@@ -529,7 +529,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if ca is None or not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed dask array")
 
-        return ca.to_dask_array(numpify=False)
+        return ca.to_dask_array(numpify=False) # TODO
 
     def __contains__(self, value):
         """Membership test operator ``in``
@@ -622,9 +622,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 # are incompatible
                 return False
 
-            value = value.to_dask_array(numpify=True)
+            value = value.to_dask_array(numpify=False)
 
-        dx = self.to_dask_array(numpify=True)
+        dx = self.to_dask_array(numpify=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -1114,10 +1114,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
-        dx = self.to_dask_array(apply_mask_hardness=True, numpify=True)
+        dx = self.to_dask_array(apply_mask_hardness=True)
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
+        self._custom['numpified'] = True
 
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
@@ -1362,7 +1363,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-    def _set_dask(self, array, copy=False, clear=_ALL):
+    def _set_dask(self, dx, copy=False, clear=_ALL, computable=None):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
@@ -1372,7 +1373,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Parameters:
 
-            array: `dask.array.Array`
+            dx: `dask.array.Array`
                 The array to be inserted.
 
             copy: `bool`, optional
@@ -1390,7 +1391,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             `None`
 
         """
-        if array is NotImplemented:
+        if dx is NotImplemented:
             logger.warning(
                 "WARNING: NotImplemented has been set in the place of a "
                 "dask array."
@@ -1410,9 +1411,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         if copy:
-            array = array.copy()
+            dx = dx.copy()
 
-        self._custom["dask"] = array
+        custom = self._custom
+        custom["dask"] = dx
+        if computable:
+            custom["computable"] = True
+            
         self._clear_after_dask_update(clear)
 
     def _del_dask(self, default=ValueError(), clear=_ALL):
@@ -1700,6 +1705,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = self.to_dask_array(numpify=True)
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         # Convert to "difference" units
         #
@@ -1996,6 +2002,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = d.to_dask_array(numpify=True)
         dx = da.digitize(dx, bins, right=upper)
         d._set_dask(dx)
+        d._custom['numpified'] = True
         d.override_units(_units_None, inplace=True)
 
         # More elegant to handle 'delete_bins' in cf- rather than Dask- space
@@ -2282,6 +2289,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.ma.masked_where(mask, dx)
 
         d._set_dask(dx)
+        d._custom['numpified'] = True
+        
         return d
 
     @_inplace_enabled(default=False)
@@ -2471,7 +2480,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         else:
             axes = tuple(sorted(d._parse_axes(axes)))
 
-        dx = d.to_dask_array(numpify=True)
+        dx = d.to_dask_array(numpify=False)
         dtype = dx.dtype
         shape = dx.shape
 
@@ -2546,7 +2555,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             d._axes = (new_axis_identifier(axes),) + axes
 
         d._update_deterministic(not is_dask_collection(q))
-
+        d._custom['numpified'] = True
+        
         return d
 
     @_inplace_enabled(default=False)
@@ -2591,6 +2601,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = self.to_dask_array(numpify=True)
         dx = dx.persist()
         d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
+        d._custom['numpified'] = True
 
         return d
 
@@ -2630,6 +2641,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array(numpify=True)
         d._set_dask(da.ceil(dx))
+        d._custom['numpified'] = True
         return d
 
     def cfa_get_term(self):
@@ -2779,8 +2791,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                [0., 0., 0.]])
 
         """
-        dx = self.to_dask_array(numpify=False).copy()
-        dx = dx.map_blocks(hhh, dtype=dx.dtype)
+        dx = self.to_dask_array(numpify=True)
         a = dx.compute()
 
         if np.ma.isMA(a):
@@ -2967,12 +2978,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         depth += abs(origin)
 
-        dx = d.to_dask_array(numpify=True)
+        dx = d.to_dask_array(numpify=False)
 
-        # Cast to float to ensure that NaNs can be stored (as required
-        # by cf_convolve1d)
-        if dx.dtype != float:
-            dx = dx.astype(float, copy=False)
+#        # Cast to float to ensure that NaNs can be stored (as required
+#        # by cf_convolve1d)
+#        if dx.dtype != float:
+#            dx = dx.astype(float, copy=False)#
 
         # Convolve each chunk
         convolve1d = partial(
@@ -2988,6 +2999,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         )
 
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         return d
 
@@ -3082,6 +3094,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = d.to_dask_array(numpify=True)
         dx = dx.cumsum(axis=axis, method=method)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         return d
 
@@ -3212,6 +3225,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             dx = d.to_dask_array(numpify=False)
             dx = dx.map_blocks(cf_rt2dt, units=units, dtype=object)
             d._set_dask(dx)
+            d._custom['numpified'] = True
 
         return d
 
@@ -3267,6 +3281,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             dx = d.to_dask_array(numpify=False)
             dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
             d._set_dask(dx)
+            d._custom['numpified'] = True
 
         return d
 
@@ -3793,6 +3808,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 self._axes = axes
 
             self._update_deterministic(other)
+            self._custom['numpified'] = True
             return self
 
         else:  # not, so concerns a new Data object copied from self, data0
@@ -3802,6 +3818,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 data0._axes = axes
 
             data0._update_deterministic(other)
+            data0._custom['numpified'] = True
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3973,6 +3990,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         d = self.copy()
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         # Don't know (yet) if 'operator' has a deterministic name
         d._update_deterministic(False)
@@ -4845,13 +4863,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         func = partial(cf_units, from_units=old_units, to_units=value)
 
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(numpify=False)
         dx = dx.map_blocks(func, dtype=dtype)
 
         # Setting equivalent units doesn't affect the CFA write
         # status. Nor does it invalidate any cached values, but only
         # because we'll adjust those, too.
         self._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+        self._custom['numpified'] = True
 
         # Adjust cached values for the new units
         cache = self._get_cached_elements()
@@ -6402,7 +6421,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 )
                 d.Units = units0
 
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(numpify=False)
 
         # Convert to the correct date-time objects
         dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
@@ -6411,6 +6430,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
 
         d._set_dask(dx)
+        d._custom['numpified'] = True
         d.override_units(units, inplace=True)
 
         return d
@@ -8857,9 +8877,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         [1 -- 3]
 
         """
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(numpify=False)
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
+        self._custom['numpified'] = True
         self.hardmask = True
 
     def has_calendar(self):
@@ -8977,9 +8998,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         [  1 999   3]
 
         """
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(numpify=False)
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
+        self._custom['numpified'] = True
         self.hardmask = False
 
     def file_locations(self):
@@ -9064,9 +9086,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                         f"data type {d.dtype.str!r}"
                     )
 
-        dx = d.to_dask_array()        
+        dx = d.to_dask_array(numpify=False)        
         dx = dx.map_blocks(cf_filled, fill_value=fill_value, dtype=d.dtype)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         return d
 
@@ -9693,7 +9716,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._Units = Units(d.Units._units, calendar)
         return d
 
-    def to_dask_array(self, apply_mask_hardness=False, numpify=False):
+    def to_dask_array(self, apply_mask_hardness=False, numpify=True):
         """Convert the data to a `dask` array.
 
         .. warning:: By default, the mask hardness of the returned
@@ -9748,8 +9771,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 self.harden_mask()
             else:
                 self.soften_mask()
-        elif numpify:
-             return dx.map_blocks(hhh, dtype=dx.dtype)
+        elif numpify and not self._custom.get('numpified'):
+             return dx.map_blocks(asanyarray, dtype=dx.dtype)
 
         return self._custom["dask"]
 
@@ -9925,9 +9948,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(numpify=True)
         dx = da.ma.masked_invalid(dx)
         d._set_dask(dx)
+        d._custom['numpified'] = True
         return d
 
     def del_calendar(self, default=ValueError()):
@@ -10022,9 +10046,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             updated = True
 
         if updated:
-            dx = self.to_dask_array()
+            dx = self.to_dask_array(numpify=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE)
+            self._custom['numpified'] = True
 
         return location
 
@@ -11190,7 +11215,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
-        dx = d.to_dask_array(apply_mask_hardness=True)
+        dx = d.to_dask_array(apply_mask_hardness=True, numpify=False)
 
         units = d.Units
 
@@ -11205,7 +11230,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         condition = type(self).asdata(condition)
         condition = where_broadcastable(d, condition, "condition")
-
+        condition = condition.to_dask_array(numpify=False)
+        
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy
         # where.
@@ -11249,9 +11275,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Apply the where operation
         dx = da.core.elemwise(
-            cf_where, dx, da.asanyarray(condition), x, y, d.hardmask
+            cf_where, dx, condition, x, y, d.hardmask
         )
-        d._set_dask(dx)
+        d._set_dask(dx, computable=True)
 
         # Don't know (yet) if 'x' and 'y' have a deterministic names
         d._update_deterministic(False)
@@ -11781,7 +11807,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
            0), (slice(0, 1, 1),))}
 
         """
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(numpify=False) # TODO
 
         if optimize_graph:
             return collections_to_dsk((dx,), optimize_graph=True)
@@ -11902,7 +11928,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         d._set_dask(dx)
-
+        d._custom['numpified'] = True
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -11940,6 +11966,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array(numpify=True)
         d._set_dask(da.trunc(dx))
+        d._custom['numpified'] = True
         return d
 
     @classmethod
@@ -12261,6 +12288,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             dx = da.ma.masked_array(dx, mask=dx_mask)
 
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         if units is not None:
             d.override_units(units, inplace=True)
@@ -12427,6 +12455,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = d.to_dask_array(numpify=True)
         dx = da.roll(dx, shift, axis=axis)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         return d
 
@@ -13091,6 +13120,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = d.to_dask_array(numpify=True)
         dx = da.square(dx, dtype=dtype)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         units = d.Units
         if units:
@@ -13160,6 +13190,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = d.to_dask_array(numpify=True)
         dx = da.sqrt(dx, dtype=dtype)
         d._set_dask(dx)
+        d._custom['numpified'] = True
 
         units = d.Units
         if units:
