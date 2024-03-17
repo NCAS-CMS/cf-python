@@ -36,47 +36,7 @@ class NetCDFArray(IndexMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDF
 
     def _get_array(self):
         """TODO"""
-        print ('cf.NetCDFArray._get_array', self.index)
-#        return super(cfdm.NetCDFArray, self).__getitem__(self.index)
-#        return super(cfdm.NetCDFArray, self).__getitem__(self.index)
-
-        netcdf, address = self.open()
-        dataset = netcdf
-
-        groups, address = self.get_groups(address)
-        if groups:
-            # Traverse the group structure, if there is one (CF>=1.8).
-            netcdf = self._group(netcdf, groups)
-
-        if isinstance(address, str):
-            # Get the variable by netCDF name
-            variable = netcdf.variables[address]
-        else:
-            # Get the variable by netCDF integer ID
-            for variable in netcdf.variables.values():
-                if variable._varid == address:
-                    break
-
-        # Get the data, applying masking and scaling as required.
-#        array = cfdm.netcdf_indexer(
-#            variable,
-#            mask=self.get_mask(),
-#            unpack=self.get_unpack(),
-#            always_mask=False,
-#        )
-        array = variable[self.index]
-
-        # Set the units, if they haven't been set already.
-#        self._set_attributes(variable)
-
-        # Set the units, if they haven't been set already.
-        self._set_units(variable)
-
-        self.close(dataset)
-        del netcdf, dataset
-
-        if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1, 1d
-            array = array.squeeze()
-
-        return array
+        # Note: Using Container in super because that comes
+        #       immediately before cfdm.NetCDFArray in the method
+        #       resolution order.
+        return super(Container, self).__getitem__(self.index)

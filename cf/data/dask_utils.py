@@ -721,7 +721,6 @@ def cf_asanyarray(a):
 
     """
     if getattr(a, "_dask_asanyarray", False):
-        print ('cf_asanyarray', repr(a))
         return np.asanyarray(a)
 
     return a

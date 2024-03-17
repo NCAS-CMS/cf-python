@@ -3,7 +3,7 @@ from math import ceil
 import numpy as np
 from dask.base import is_dask_collection
 
-from ....functions import parse_indices
+from ....functions import parse_indices, indices_shape
 
 
 class IndexMixin:
@@ -63,25 +63,35 @@ class IndexMixin:
                 TODO
 
         """
-        new = self.copy()
-
-        shape0 = self.shape
+        shape = self.shape
         index0 = self.index
-        index = parse_indices(shape0, index, keepdims=False)
+        original_shape = self.original_shape
 
+        index = parse_indices(shape, index, keepdims=True)
+        
+        new = self.copy()
         new_indices = []
         new_shape = []
-        for ind0, ind, size in zip(index0, index, shape0):
-            if ind == slice(None):
+        
+        for ind0, ind, size, original_size in zip(
+                index0, index, shape, original_shape
+        ):
+            if isinstance(ind, slice) and ind == slice(None):
                 new_indices.append(ind0)
                 new_shape.append(size)
                 continue
 
             if is_dask_collection(ind):
-                # I think that this will never occur when __getitem__
-                # is being called from within a Dask graph. Otherwise
-                # we'll need to run the `compute` inside a `with
-                # dask.config.set({"scheduler": "synchronous"}):`
+                # Note: This will never occur when __getitem__ is
+                #       being called from within a Dask graph, because
+                #       any lazy indices will have already been
+                #       computed as part of the whole graph execution
+                #       - i.e. we don't have to worry about a
+                #       compute-withn-a-compute situation. (If this
+                #       were not the case then we could get round it
+                #       by wrapping the compute inside a `with
+                #       dask.config.set({"scheduler":
+                #       "synchronous"}):` claus.)
                 ind = ind.compute()
 
             if isinstance(ind0, slice):
@@ -108,26 +118,26 @@ class IndexMixin:
                         stop = None
 
                     new_index = slice(start, stop, step)
-                    new_size = ceil((stop - start) / step)
                 else:
-                    # 'ind0' is slice, 'ind' is (array of) int/bool
-                    new_index = np.arange(*ind0.indices(size0))[ind]
-                    new_size = new.size
+                    # 'ind0' is slice, 'ind' is array of int/bool
+                    new_index = np.arange(*ind0.indices(original_size))[ind]
             else:
-                # 'ind0' is (array of) int
+                # 'ind0' is array of int
                 new_index = np.asanyarray(ind0)[ind]
-                new_size = new.size
 
             new_indices.append(new_index)
-            new_shape.append(new_size)
 
-        new._set_component("index", tuple(new_indices), copy=False)
+        new_shape = indices_shape(new_indices, original_shape, keepdims=False)
         new._set_component("shape", tuple(new_shape), copy=False)
-
-        print (index0, index, new_indices)
- 
+        
+        new._custom["index"] =  tuple(new_indices)
         return new
 
+    def __repr__(self):
+        """TODO"""
+        out = super().__repr__()
+        return f"{out[:-1]}{self.original_shape}>"
+    
     @property
     def _dask_asanyarray(self):
         """TODO
@@ -167,9 +177,24 @@ class IndexMixin:
         .. versionadded:: NEXTVERSION
 
         """
-        ind = self._get_component("index", None)
+        ind = self._custom.get("index")
         if ind is None:
             ind = (slice(None),) * self.ndim
-            self._set_component("index", ind, copy=False)
+            self._custom["index"]= ind       
 
         return ind
+
+    @property
+    def original_shape(self):
+        """TODO
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        shape = self._custom.get('original_shape')
+        if shape is None:
+            shape =  self.shape
+            self._custom["original_shape"] = shape
+            
+        return shape
+            

@@ -1399,6 +1399,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             asanyarray: `bool` or `None`, optional
                 TODO
 
+                If True then call `np.asanyarray` on chunks to convert
+                them to numpy arrays.  If False then chunks are passed
+                through unchanged.  If None (default) then we use True
+                if the ``__array_function__`` method is undefined.
+
+
                 .. versionadded:: NEXTRELEASE
 
         :Returns:
@@ -1541,7 +1547,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         within its ``custom`` dictionary.
 
         .. warning:: Never change ``_custom['cached_elements']``
-                  in-place.
+                     in-place.
 
         .. versionadded:: 3.14.0
 
@@ -5290,6 +5296,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         elif not isinstance(array, np.ndarray):
             array = np.asanyarray(array)
 
+        # Set cached elements
+        items = [0, -1]
+        if array.size >= 3:
+            items.append(1)
+        
+        if array.ndim == 2 and array.shape[-1] == 2:
+            items.append(-2)
+        
+        self._set_cached_elements({i: array.item(i) for i in items})
+            
         return array
 
     @property
