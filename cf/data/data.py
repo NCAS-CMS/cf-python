@@ -1397,13 +1397,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 `_clear_after_dask_update` for details.
 
             asanyarray: `bool` or `None`, optional
-                TODO
-
-                If True then call `np.asanyarray` on chunks to convert
-                them to numpy arrays.  If False then chunks are passed
-                through unchanged.  If None (default) then we use True
-                if the ``__array_function__`` method is undefined.
-
+                If True then at compute time add a final operation to
+                the Dask graph that converts chunks to `numpy`
+                arrays. If False, the default, then do not do this. If
+                `None` then do not change the current behaviour, which
+                is defined by the `_asanyarray` attribute.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -5290,23 +5288,26 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         2000-12-01 00:00:00
 
         """
-        array = self.compute().copy()
-        if issparse(array):
-            array = array.toarray()
-        elif not isinstance(array, np.ndarray):
-            array = np.asanyarray(array)
+        a = self.compute().copy()
+        if issparse(a):
+            a = a.toarray()
+        elif not isinstance(a, np.ndarray):
+            a = np.asanyarray(a)
+
+        if not a.size:
+            return a
 
         # Set cached elements
         items = [0, -1]
-        if array.size >= 3:
+        if a.size >= 3:
             items.append(1)
-        
-        if array.ndim == 2 and array.shape[-1] == 2:
+
+        if a.ndim == 2 and a.shape[-1] == 2:
             items.append(-2)
-        
-        self._set_cached_elements({i: array.item(i) for i in items})
-            
-        return array
+
+        self._set_cached_elements({i: a.item(i) for i in items})
+
+        return a
 
     @property
     def datetime_array(self):
@@ -6576,7 +6577,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         out = set()
-        for a in self.todict().values():
+        for a in self.todict(asanyarray=False).values():
             try:
                 out.update(a.get_filenames())
             except AttributeError:
@@ -6709,7 +6710,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         location = abspath(location).rstrip(sep)
 
         updated = False
-        dsk = self.todict()
+        dsk = self.todict(asanyarray=False)
         for key, a in dsk.items():
             try:
                 dsk[key] = a.add_file_location(location)
@@ -9038,7 +9039,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         out = set()
 
-        for key, a in self.todict().items():
+        for key, a in self.todict(asanyarray=False).items():
             try:
                 out.update(a.file_locations())
             except AttributeError:
@@ -9750,7 +9751,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 array to be that given by the `hardmask` attribute.
 
             asanyarray: `bool` or `None`, optional
-                TODO
+                If True then add a final operation to the Dask graph
+                that converts chunks to `numpy` arrays. If False then
+                do not do this. If `None`, the default, then add the
+                final operation only if the `_asanyarray` attribute is
+                `True`.
+
+                .. note:: Such a final operation is included in the
+                          returned Dask array, but is not included in
+                          the Dask array stored in the `Data` object.
 
                 .. versionadded:: NEXTVERSION
 
@@ -10052,7 +10061,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         location = abspath(location).rstrip(sep)
 
         updated = False
-        dsk = self.todict()
+        dsk = self.todict(asanyarray=False)
         for key, a in dsk.items():
             try:
                 dsk[key] = a.del_file_location(location)
@@ -11789,7 +11798,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     def todict(
-        self, optimize_graph=True, apply_mask_hardness=False, asanyarray=False
+        self, optimize_graph=True, apply_mask_hardness=False, asanyarray=None
     ):
         """Return a dictionary of the dask graph key/value pairs.
 
@@ -11812,7 +11821,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 .. versionadded:: NEXTVERSION
 
             asanyarray: `bool` or `None`, optional
-                TODO
+                If True then add a final operation to the Dask graph
+                that converts chunks to `numpy` arrays. If False then
+                do not do this. If `None`, the default, then add the
+                final operation only if the `_asanyarray` attribute is
+                `True`.
 
                 .. versionadded:: NEXTVERSION
 

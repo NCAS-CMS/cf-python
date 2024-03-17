@@ -8,7 +8,9 @@ from .mixin import ArrayMixin, FileArrayMixin, IndexMixin
 _lock = SerializableLock()
 
 
-class NetCDFArray(IndexMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
+class NetCDFArray(
+    IndexMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray
+):
     """An array stored in a netCDF file."""
 
     def __dask_tokenize__(self):
@@ -35,8 +37,23 @@ class NetCDFArray(IndexMixin, FileArrayMixin, ArrayMixin, Container, cfdm.NetCDF
         return _lock
 
     def _get_array(self):
-        """TODO"""
-        # Note: Using Container in super because that comes
-        #       immediately before cfdm.NetCDFArray in the method
-        #       resolution order.
+        """Returns a subspace of the dataset variable.
+
+        The subspace is defined by the indices stored in the `index`
+        attribute.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
+        """
+        # Note: It's cfdm.NetCDFArray.__getitem__ that we want to
+        #       call, but we use 'Container' in super because that
+        #       comes immediately before cfdm.NetCDFArray in the
+        #       method resolution order.
         return super(Container, self).__getitem__(self.index)

@@ -1056,7 +1056,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         """
         out = set()
-        for a in data.todict().values():
+        for a in data.todict(asanyarray=False).values():
             try:
                 out.update(
                     ((a.get_filenames(), a.get_addresses(), a.get_formats()),)
