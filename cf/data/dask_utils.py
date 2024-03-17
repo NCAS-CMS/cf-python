@@ -10,7 +10,6 @@ import dask.array as da
 import numpy as np
 from dask.core import flatten
 from scipy.ndimage import convolve1d
-from scipy.sparse import issparse
 
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..functions import atol as cf_atol
@@ -127,8 +126,8 @@ def cf_contains(a, value):
             value.
 
     """
-    a = asanyarray(a)
-    value = asanyarray(value)
+    a = cf_asanyarray(a)
+    value = cf_asanyarray(value)
     return np.array(value in a).reshape((1,) * a.ndim)
 
 
@@ -162,13 +161,12 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
 
     # Cast to float to ensure that NaNs can be stored
     if a.dtype != float:
         a = a.astype(float, copy=False)
 
-    
     masked = np.ma.is_masked(a)
     if masked:
         # convolve1d does not deal with masked arrays, so uses NaNs
@@ -206,7 +204,7 @@ def cf_harden_mask(a):
             The array with hardened mask.
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
     if np.ma.isMA(a):
         try:
             a.harden_mask()
@@ -277,8 +275,8 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    a = asanyarray(a)
-    
+    a = cf_asanyarray(a)
+
     if np.ma.isMA(a) and not np.ma.is_masked(a):
         # Masked array with no masked elements
         a = a.data
@@ -372,7 +370,7 @@ def cf_soften_mask(a):
             The array with softened mask.
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
 
     if np.ma.isMA(a):
         try:
@@ -429,15 +427,14 @@ def cf_where(array, condition, x, y, hardmask):
             elsewhere.
 
     """
-    a = asanyarray(a)
-    condition = asanyarray(condition)
+    array = cf_asanyarray(array)
+    condition = cf_asanyarray(condition)
     if x is not None:
-        x = asanyarray(x)
-    
+        x = cf_asanyarray(x)
+
     if y is not None:
-        y = asanyarray(y)
-    
-    
+        y = cf_asanyarray(y)
+
     mask = None
 
     if np.ma.isMA(array):
@@ -533,7 +530,7 @@ def cf_YMDhms(a, attr):
     array([1, 2])
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
     return _array_getattr(a, attr=attr)
 
 
@@ -566,7 +563,7 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
 
@@ -621,7 +618,7 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
     return dt2rt(a, units_out=units, units_in=None)
 
 
@@ -662,18 +659,69 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
-    a = asanyarray(a)
+    a = cf_asanyarray(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
 
 
 def cf_filled(a, fill_value=None):
-    a = asanyarray(a)
-    return np.ma.filled(a, fill_value= fill_value)
+    """TODOConvert array values to have different equivalent units.
 
-def asanyarray(self, a):
-    if issparse(a):
-        return a
+    .. versionadded:: NEXTVERSION
 
-    return np.asanyarray(a)
+    :Parameters:
+
+        a: array_like
+            The array.
+
+        fill_value:
+            TODO
+
+    :Returns:
+
+        `numpy.ndarray`
+            TODO An array containing values in the new units. In order to
+            represent the new units, the returned data type may be
+            different from that of the input array. For instance, if
+            *a* has an integer data type, *from_units* are kilometres,
+            and *to_units* are ``'miles'`` then the returned array
+            will have a float data type.
+
+    **Examples**
+
+    TODO
+    >>> import numpy as np
+    >>> a = np.array([1, 2])
+    >>> print(cf.data.dask_utils.cf_units(a, cf.Units('km'), cf.Units('m')))
+    [1000. 2000.]
+
+    """
+    a = cf_asanyarray(a)
+    return np.ma.filled(a, fill_value=fill_value)
+
+
+def cf_asanyarray(a):
+    """TODO
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: array_like
+            The array.
+
+    :Returns:
+
+        TODO
+
+    **Examples**
+
+    TODO
+
+    """
+    if getattr(a, "_dask_asanyarray", False):
+        print ('cf_asanyarray', repr(a))
+        return np.asanyarray(a)
+
+    return a

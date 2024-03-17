@@ -1,10 +1,9 @@
 from math import ceil
-from os import sep
-from os.path import basename, dirname, join
 
 import numpy as np
+from dask.base import is_dask_collection
 
-from ....functions import _DEPRECATION_ERROR_ATTRIBUTE, abspath
+from ....functions import parse_indices
 
 
 class IndexMixin:
@@ -32,13 +31,13 @@ class IndexMixin:
                 An independent numpy array of the data.
 
         """
-        array = np.asanyarray(self._get_array())
-        if not dtype:
-            return array
-        else:
+        array = self._get_array()
+        if dtype:
             return array.astype(dtype[0], copy=False)
 
-    def __getitem__(self, index)
+        return array
+
+    def __getitem__(self, index):
         """TODO Returns a subspace of the array as a numpy array.
 
         x.__getitem__(indices) <==> x[indices]
@@ -58,66 +57,88 @@ class IndexMixin:
 
         .. versionadded:: NEXTVERSION
 
+        :Returns:
+
+            `{{class}}`
+                TODO
+
         """
+        new = self.copy()
+
         shape0 = self.shape
-        index = parse_indices(shape0, index, keepdims=False, bool_as_int=True)
-        
-        index0 = self._get_component('index', None)
-        if index0 is None:
-            self._set_component('index', index, copy=False)
-            return
-                
-        new_index = []
-        for ind0, ind, size0 in zip(index0, index, shape0):            
-            if index == slice(None):
-                new_index.append(ind0)
-                new_shape.apepend(size0)
+        index0 = self.index
+        index = parse_indices(shape0, index, keepdims=False)
+
+        new_indices = []
+        new_shape = []
+        for ind0, ind, size in zip(index0, index, shape0):
+            if ind == slice(None):
+                new_indices.append(ind0)
+                new_shape.append(size)
                 continue
-            
+
+            if is_dask_collection(ind):
+                # I think that this will never occur when __getitem__
+                # is being called from within a Dask graph. Otherwise
+                # we'll need to run the `compute` inside a `with
+                # dask.config.set({"scheduler": "synchronous"}):`
+                ind = ind.compute()
+
             if isinstance(ind0, slice):
                 if isinstance(ind, slice):
                     # 'ind0' is slice, 'ind' is slice
-                    start, stop, step = ind0.indices(size0)
-                    size1, mod = divmod(stop - start - 1, step)
-                    start1, stop1, step1 = ind.indices(size1 + 1)
-                    size2, mod = divmod(stop1 - start1, step1)
+                    start, stop, step = ind0.indices(size)
+                    size0, _ = divmod(stop - start - 1, step)
+                    start1, stop1, step1 = ind.indices(size0 + 1)
+                    size1, mod1 = divmod(stop1 - start1, step1)
 
-                    if mod != 0:
-                        size2 += 1
+                    if mod1 != 0:
+                        size1 += 1
 
                     start += start1 * step
                     step *= step1
-                    stop = start + (size2 - 1) * step
+                    stop = start + (size1 - 1) * step
 
                     if step > 0:
                         stop += 1
                     else:
                         stop -= 1
-                        
+
                     if stop < 0:
                         stop = None
-                        
-                    new = slice(start, stop, step)
-                    new_size = ceil((stop - start)/step)
+
+                    new_index = slice(start, stop, step)
+                    new_size = ceil((stop - start) / step)
                 else:
-                    # 'ind0' is slice, 'ind' is numpy array of int
-                    new = np.arange(*ind0.indices(size0))[ind]
+                    # 'ind0' is slice, 'ind' is (array of) int/bool
+                    new_index = np.arange(*ind0.indices(size0))[ind]
                     new_size = new.size
             else:
-                # 'ind0' is numpy array of int
-                new = ind0[ind]
+                # 'ind0' is (array of) int
+                new_index = np.asanyarray(ind0)[ind]
                 new_size = new.size
-                    
-            new_index.append(new)
-            new_shape.apepend(new_size)
 
-        self._set_component('index', tuple(new_index), copy=False)
-        self._set_component('shape', tuple(new_shape), copy=False)
-        
-    def _get_array(self)
-        """Returns a subspace of the array as a numpy array.
+            new_indices.append(new_index)
+            new_shape.append(new_size)
 
-        x.__getitem__(indices) <==> x[indices]
+        new._set_component("index", tuple(new_indices), copy=False)
+        new._set_component("shape", tuple(new_shape), copy=False)
+
+        print (index0, index, new_indices)
+ 
+        return new
+
+    @property
+    def _dask_asanyarray(self):
+        """TODO
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        return True
+
+    def _get_array(self):
+        """TODO Returns a subspace of the array as a numpy array.
 
         The indices that define the subspace must be either `Ellipsis` or
         a sequence that contains an index for each dimension. In the
@@ -138,3 +159,17 @@ class IndexMixin:
         return NotImplementedError(
             f"Must implement {self.__class__.__name__}._get_array"
         )
+
+    @property
+    def index(self):
+        """TODO
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        ind = self._get_component("index", None)
+        if ind is None:
+            ind = (slice(None),) * self.ndim
+            self._set_component("index", ind, copy=False)
+
+        return ind
