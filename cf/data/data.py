@@ -478,7 +478,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Set whether or not to call np.asanyarray on chunks to
         # convert them to numpy arrays.
-        self._custom["asanyarray"] = getattr(array, "_dask_asanyarray", False)
+        self._custom["asanyarray"] = getattr(array, "__asanyarray__", False)
 
         dx = to_dask(array, chunks, **kwargs)
 
@@ -502,7 +502,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(dx, clear=_NONE)
+        self._set_dask(dx, clear=_NONE, asanyarray=None)
 
         # Override the data type
         if dtype is not None:
@@ -1400,8 +1400,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 If True then at compute time add a final operation to
                 the Dask graph that converts chunks to `numpy`
                 arrays. If False, the default, then do not do this. If
-                `None` then do not change the current behaviour, which
-                is defined by the `_asanyarray` attribute.
+                `None` then do not change the current behaviour.
 
                 .. versionadded:: NEXTRELEASE
 

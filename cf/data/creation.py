@@ -67,7 +67,11 @@ def to_dask(array, chunks, **from_array_options):
         try:
             return array.to_dask_array(chunks=chunks)
         except TypeError:
-            return array.to_dask_array()
+            try:
+                return array.to_dask_array(asanyarray=False)
+            except TypeError:
+                return array.to_dask_array()
+            
 
     if type(array).__module__.split(".")[0] == "xarray":
         data = getattr(array, "data", None)

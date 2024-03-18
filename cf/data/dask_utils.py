@@ -666,7 +666,7 @@ def cf_units(a, from_units, to_units):
 
 
 def cf_filled(a, fill_value=None):
-    """TODOConvert array values to have different equivalent units.
+    """Replace masked elements with a fill value.
 
     .. versionadded:: NEXTVERSION
 
@@ -675,26 +675,22 @@ def cf_filled(a, fill_value=None):
         a: array_like
             The array.
 
-        fill_value:
-            TODO
+        fill_value: scalar
+            The fill value.
 
     :Returns:
 
         `numpy.ndarray`
-            TODO An array containing values in the new units. In order to
-            represent the new units, the returned data type may be
-            different from that of the input array. For instance, if
-            *a* has an integer data type, *from_units* are kilometres,
-            and *to_units* are ``'miles'`` then the returned array
-            will have a float data type.
+            The filled array.
 
     **Examples**
 
-    TODO
-    >>> import numpy as np
-    >>> a = np.array([1, 2])
-    >>> print(cf.data.dask_utils.cf_units(a, cf.Units('km'), cf.Units('m')))
-    [1000. 2000.]
+    >>> a = np.array([[1, 2, 3]])
+    >>> print(cf.data.dask_utils.cf_filled(a, -999))
+    [[1 2 3]]
+    >>> a = np.ma.array([[1, 2, 3]], mask=[[True, False, False]])
+    >>> print(cf.data.dask_utils.cf_filled(a, -999))
+    [[-999    2    3]]
 
     """
     a = cf_asanyarray(a)
@@ -702,7 +698,10 @@ def cf_filled(a, fill_value=None):
 
 
 def cf_asanyarray(a):
-    """TODO
+    """Convert to a `numpy` array.
+
+    Only do this is the input *a* has an `__asanyarray__` attribute
+    with value True.
 
     .. versionadded:: NEXTVERSION
 
@@ -713,14 +712,10 @@ def cf_asanyarray(a):
 
     :Returns:
 
-        TODO
-
-    **Examples**
-
-    TODO
+            The converted array, or the input array unchanged.
 
     """
-    if getattr(a, "_dask_asanyarray", False):
+    if getattr(a, "__asanyarray__", False):
         return np.asanyarray(a)
 
     return a
