@@ -121,7 +121,7 @@ def cf_contains(a, value):
     :Returns:
 
         `numpy.ndarray`
-            A size 1 Boolean array, with the same number of dimensions
+            A size 1 Boolean array with the same number of dimensions
             as *a*, that indicates whether or not *a* contains the
             value.
 
@@ -663,6 +663,29 @@ def cf_units(a, from_units, to_units):
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
+
+
+def cf_is_masked(a):
+    """Determine whether an array has masked values.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: array_like
+            The array.
+
+    :Returns:
+
+        `numpy.ndarray`
+            A size 1 Boolean array with the same number of dimensions
+            as *a*, for which `True` indicates that there are masked
+            values.
+
+    """
+    a = cf_asanyarray(a)
+    out = np.ma.is_masked(a)
+    return np.array(out).reshape((1,) * a.ndim)
 
 
 def cf_filled(a, fill_value=None):

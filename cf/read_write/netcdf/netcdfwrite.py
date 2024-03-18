@@ -4,6 +4,7 @@ import cfdm
 import dask.array as da
 import numpy as np
 
+from ...data.dask_utils import cf_asanyarray
 from .netcdfread import NetCDFRead
 
 
@@ -784,7 +785,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # dimensions, with one value per fragment. If a chunk has
             # more than one unique value then the fragment's value is
             # missing data.
-            dx = data.to_dask_array()
+            #
+            # '_cfa_unique' has its own call to 'cf_asanyarray', so
+            # we can set 'asanyarray=False'.
+            dx = data.to_dask_array(asanyarray=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
@@ -840,6 +844,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
+        a = cf_asanyarray(a)
+
         out_shape = (1,) * a.ndim
         a = np.unique(a)
         if np.ma.isMA(a):
@@ -990,7 +996,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Create the location array
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
-        if max(data.to_dask_array().chunksize) > np.iinfo(dtype).max:
+        if (
+            max(data.to_dask_array(asanyarray=False).chunksize)
+            > np.iinfo(dtype).max
+        ):
             dtype = np.dtype(np.int64)
 
         ndim = data.ndim

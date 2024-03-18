@@ -175,7 +175,7 @@ class UMArray(
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
-    def _get_array(self):
+    def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
         The subspace is defined by the indices stored in the `index`
@@ -185,12 +185,23 @@ class UMArray(
 
         .. seealso:: `__array__`, `index`
 
+        :Parameters:
+
+            index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.
+
         :Returns:
 
             `numpy.ndarray`
                 The subspace.
 
         """
+        # Note: No need to lock the UM file - concurrent reads are OK.
+
+        if index is None:
+            index = self.index
+
         f, header_offset = self.open()
         rec = self._get_rec(f, header_offset)
 
@@ -201,7 +212,7 @@ class UMArray(
         self.close(f)
         del f, rec
 
-        array = get_subspace(array, self.index)
+        array = get_subspace(array, index)
 
         # Set the units, if they haven't been set already.
         self._set_units(int_hdr)

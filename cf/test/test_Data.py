@@ -1479,6 +1479,18 @@ class DataTest(unittest.TestCase):
         f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
+        # Chained subspaces reading from disk
+        f = cf.read(self.filename)[0]
+        d = f.data
+        a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
+        b = d.array[:1, [1, 3, 4], :][:, [True, False, True], ::-2]
+        self.assertTrue((a == b).all())
+
+        d.__keepdims_indexing__ = False
+        a = d[0, [1, 3, 4], :][[True, False, True], ::-2].array
+        b = d.array[0, [1, 3, 4], :][[True, False, True], ::-2]
+        self.assertTrue((a == b).all())
+
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
         for hardmask in (False, True):
@@ -3279,6 +3291,14 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
+        # Test rechunking after a __getitem__
+        e = d[:2].rechunk((2, 5))
+        self.assertTrue(e.equals(d[:2]))
+
+        d = cf.Data.ones((4, 5), chunks=(4, 5))
+        e = d[:2].rechunk((1, 3))
+        self.assertTrue(e.equals(d[:2]))
+
     def test_Data_reshape(self):
         """Test the `reshape` Data method."""
         a = np.arange(12).reshape(3, 4)
@@ -4504,11 +4524,11 @@ class DataTest(unittest.TestCase):
         """Test `Data.cull`"""
         d = cf.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 4)
 
         # Check that there are fewer keys after culling
         d.cull_graph()
-        self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
 
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""
@@ -4755,6 +4775,13 @@ class DataTest(unittest.TestCase):
         # Axis out of bounds
         with self.assertRaises(ValueError):
             d.pad_missing(99, to_size=99)
+
+    def test_Data_is_masked(self):
+        """Test Data.is_masked."""
+        d = cf.Data(np.arange(6).reshape(2, 3))
+        d[0, 0] = cf.masked
+        self.assertTrue(d[0].is_masked)
+        self.assertFalse(d[1].is_masked)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ class NetCDFArray(
         """
         return _lock
 
-    def _get_array(self):
+    def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
         The subspace is defined by the indices stored in the `index`
@@ -46,14 +46,30 @@ class NetCDFArray(
 
         .. seealso:: `__array__`, `index`
 
+        :Parameters:
+
+            index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.
+
         :Returns:
 
             `numpy.ndarray`
                 The subspace.
 
         """
-        # Note: It's cfdm.NetCDFArray.__getitem__ that we want to
-        #       call, but we use 'Container' in super because that
+        if index is None:
+            index = self.index
+
+        # Note: We need to use the lock because the netCDF file is
+        #       going to be read.
+        self._lock.acquire()
+
+        # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
+        #       here, but we use 'Container' in super because that
         #       comes immediately before cfdm.NetCDFArray in the
         #       method resolution order.
-        return super(Container, self).__getitem__(self.index)
+        array = super(Container, self).__getitem__(index)
+
+        self._lock.release()
+        return array
