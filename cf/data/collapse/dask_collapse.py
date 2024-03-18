@@ -14,6 +14,7 @@ from dask.array.reductions import divide, numel
 from dask.core import flatten
 from dask.utils import deepmap
 
+from ..dask_utils import cf_asanyarray
 from .collapse_utils import double_precision_dtype
 
 
@@ -125,7 +126,9 @@ def sum_weights_chunk(
             N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
-    elif check_weights:
+
+    weights = cf_asanyarray(weights)
+    if check_weights:
         w_min = weights.min()
         if w_min <= 0:
             raise ValueError(
@@ -263,8 +266,13 @@ def cf_mean_chunk(
             * weighted: True if weights have been set.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
+
+    if weights is not None:
+        weights = cf_asanyarray(weights)
 
     # N, sum
     d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
@@ -383,6 +391,8 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * max: The maximum of `x``.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -534,6 +544,8 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * min: The minimum of ``x``.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -638,6 +650,8 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * max: The maximum of ``x`.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -747,6 +761,8 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
             * sum: The weighted sum of ``x**2``.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -822,6 +838,8 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
             * N: The sample size.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -947,10 +965,13 @@ def cf_sum_chunk(
             * sum: The weighted sum of ``x``
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
     if weights is not None:
+        weights = cf_asanyarray(weights)
         if check_weights:
             w_min = weights.min()
             if w_min <= 0:
@@ -1070,6 +1091,8 @@ def cf_sum_of_weights_chunk(
                    ``weights**2`` if *square* is True.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -1106,6 +1129,8 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * unique: The unique values.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -1190,10 +1215,14 @@ def cf_var_chunk(
             * ddof: The delta degrees of freedom.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
     weighted = weights is not None
+    if weighted:
+        weights = cf_asanyarray(weights)
 
     # N, V1, sum
     d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)

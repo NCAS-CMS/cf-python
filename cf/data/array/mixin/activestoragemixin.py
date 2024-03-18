@@ -11,72 +11,63 @@ class ActiveStorageMixin:
 
     """
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the array as a numpy array.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        The indices that define the subspace must be either `Ellipsis` or
-        a sequence that contains an index for each dimension. In the
-        latter case, each dimension's index must either be a `slice`
-        object or a sequence of two or more integers.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: NEXTVERSION
-
-        """
-        method = self.get_active_method()
-        if Active is None or method is None:
-            # The instance has not been actified so do a normal read,
-            # returning an un-reduced numpy array.
-            return super().__getitem__(indices)
-
-        # Still here? Then do an active storage reduction. Returns a
-        # dictionary of reduced values.
-        filename = self.get_filename()
-        filename = "/".join(filename.split("/")[3:])
-
-        if True:
-            print(
-                "active = Active(\n  ",
-                filename,
-                ",\n  ",
-                self.get_address(),
-                ",\n  ",
-                "storage_options=",
-                self.get_storage_options(),
-                ",\n  active_storage_url=",
-                self.get_active_storage_url(),
-                ",\n  storage_type=s3\n)",  # Temporary requirement!
-            )
-
-        active = Active(
-            filename,
-            self.get_address(),
-            storage_options=self.get_storage_options(),
-            active_storage_url=self.get_active_storage_url(),
-            storage_type="s3",  # Temporary requirement!
-        )
-        active.method = method
-        active.components = True
-
-        # Provide a file lock
-        try:
-            lock = self._lock
-        except AttributeError:
-            pass
-        else:
-            if lock:
-                active.lock = lock
-
-        return active[indices]
+    # def _get_array(self, index=None):
+    #    """Returns a subspace of the data.
+    #
+    #   .. versionadded:: NEXTVERSION
+    #
+    #   .. seealso:: `__array__`, `index`
+    #
+    #   :Parameters:
+    #
+    #       index: `tuple` or `None`, optional
+    #          Provide the indices that define the subspace. If `None`
+    #          then the `index` attribute is used.
+    #
+    #   :Returns:
+    #
+    #       `numpy.ndarray`
+    #
+    #    """
+    #    method = self.get_active_method()
+    #    if Active is None or method is None:
+    #        # The instance has not been actified so do a normal read,
+    #        # returning an un-reduced numpy array.
+    #        return super()._get_array(index)
+    #
+    #    # Still here? Then do an active storage reduction. Returns a
+    #    # dictionary of reduced values.
+    #    filename = self.get_filename()
+    #    filename = "/".join(filename.split("/")[3:])
+    #
+    #    kwargs ={
+    #        'uri': filename,
+    #        'ncvar':  self.get_address(),
+    #        "storage_options":             self.get_storage_options(),
+    #        "active_storage_url":  self.get_active_storage_url(),
+    #        "storage_type": "s3",  # Temporary requirement!
+    #    }
+    #
+    #    if True:
+    #        print(f"Active(**{kwargs})")
+    #
+    #    active = Active(**kwargs)
+    #    active.method = method
+    #    active.components = True
+    #
+    #    # Provide a file lock
+    #    try:
+    #        lock = self._lock
+    #    except AttributeError:
+    #        pass
+    #    else:
+    #        if lock:
+    #            active.lock = lock
+    #
+    #    if index is None:
+    #        index = self.index
+    #
+    #    return active[index]
 
     def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
@@ -129,8 +120,8 @@ class ActiveStorageMixin:
             #       wouldn't even attempt to actify the instance
             #       during a reduction (see
             #       `cf.data.collapse.active_storage`). However, it's
-            #       worth checking in case `actify` is called by the
-            #       user.
+            #       worth checking in case `actify` is called from
+            #       elsewhere.
             raise AttributeError(
                 "Can't actify {self.__class__.__name__} when "
                 "activestorage.Active is not available"

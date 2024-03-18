@@ -24,7 +24,7 @@ def to_dask(array, chunks, **from_array_options):
             value accepted by the *chunks* parameter of the
             `dask.array.from_array` function is allowed.
 
-            Ignored if *array* is a `dask` array, which already
+            Might be ignored if *array* is a `dask` array that already
             defines its own chunks.
 
             Might get automatically modified if *array* is a
@@ -32,10 +32,6 @@ def to_dask(array, chunks, **from_array_options):
 
         from_array_options: `dict`, optional
             Keyword arguments to be passed to `dask.array.from_array`.
-
-            If *from_array_options* has no ``'lock'`` key then the
-            `lock` keyword is set to the `_lock` attribute of *array*
-            or, if there is no such attribute, `False`.
 
             If *from_array_options* has no ``'meta'`` key then the
             `meta` keyword is set to the `_dask_meta` attribute of
@@ -67,7 +63,10 @@ def to_dask(array, chunks, **from_array_options):
         try:
             return array.to_dask_array(chunks=chunks)
         except TypeError:
-            return array.to_dask_array()
+            try:
+                return array.to_dask_array(asanyarray=False)
+            except TypeError:
+                return array.to_dask_array()
 
     if type(array).__module__.split(".")[0] == "xarray":
         data = getattr(array, "data", None)
@@ -82,7 +81,6 @@ def to_dask(array, chunks, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    kwargs.setdefault("lock", getattr(array, "_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:

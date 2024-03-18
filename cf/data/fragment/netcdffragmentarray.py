@@ -82,7 +82,7 @@ class NetCDFFragmentArray(
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{init source: optional}}
 

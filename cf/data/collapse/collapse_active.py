@@ -12,6 +12,48 @@ from ...functions import active_storage_url
 logger = logging.getLogger(__name__)
 
 
+def active_collapse(a, method):
+    """Collapse data in a file with `Active`.
+
+    .. versionadded:: NEXTVERSION
+
+    TODOACTIVE
+
+    """
+    filename = a.get_filename()
+    filename = "/".join(filename.split("/")[3:])
+
+    active_kwargs = {
+        "uri": filename,
+        "ncvar": a.get_address(),
+        "storage_options": a.get_storage_options(),
+        "active_storage_url": a.get_active_storage_url(),
+        "storage_type": "s3",  # Temporary requirement!
+    }
+
+    if True:
+        print(f"Active(**{active_kwargs})")
+
+    active = Active(**active_kwargs)
+
+    if a.get_active_method() != method:
+        raise ValueError("TODOACTIVE")
+
+    active.method = method
+    active.components = True
+
+    # Provide a file lock
+    try:
+        lock = a._lock
+    except AttributeError:
+        pass
+    else:
+        if lock:
+            active.lock = lock
+
+    return active[a.index]
+
+
 # --------------------------------------------------------------------
 # Define the active functions
 # --------------------------------------------------------------------
@@ -47,6 +89,7 @@ def active_min(a, **kwargs):
             * min: The minimum.
 
     """
+    a = active_collapse(a, "min")
     return {"N": a["n"], "min": a["min"]}
 
 
@@ -82,6 +125,7 @@ def active_max(a, **kwargs):
             * max: The maximum.
 
     """
+    a = active_collapse(a, "max")
     return {"N": a["n"], "max": a["max"]}
 
 
@@ -121,6 +165,7 @@ def active_mean(a, **kwargs):
                         False.
 
     """
+    a = active_collapse(a, "mean")
     return {"N": a["n"], "V1": a["n"], "sum": a["sum"], "weighted": False}
 
 
@@ -156,6 +201,7 @@ def active_sum(a, **kwargs):
             * sum: The un-weighted sum.
 
     """
+    a = active_collapse(a, "sum")
     return {"N": a["n"], "sum": a["sum"]}
 
 
@@ -267,8 +313,8 @@ def actify(a, method, axis=None):
         try:
             dsk[key] = value.actify(method, axis, active_storage_url=url)
         except AttributeError:
-            # This data definition doesn't have an 'actify' method,
-            # and so doesn't support active storage reductions.
+            # This data definition doesn't support active storage
+            # reductions
             ok_to_actify = False
             break
 
