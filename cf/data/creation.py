@@ -34,8 +34,8 @@ def to_dask(array, chunks, **from_array_options):
             Keyword arguments to be passed to `dask.array.from_array`.
 
             If *from_array_options* has no ``'meta'`` key then the
-            `meta` keyword is set to the `_dask_meta` attribute of
-            *array* or, if there is no such attribute, `None`.
+            `meta` keyword is set to the `_meta` attribute of *array*
+            or, if there is no such attribute, `None`.
 
     :Returns:
 
@@ -81,7 +81,7 @@ def to_dask(array, chunks, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
+    kwargs.setdefault("meta", getattr(array, "_meta", None))
 
     try:
         return da.from_array(array, chunks=chunks, **kwargs)

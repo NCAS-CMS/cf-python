@@ -27,8 +27,8 @@ class FileArrayMixin:
         )
 
     @property
-    def _dask_meta(self):
-        """The metadata for the containing dask array.
+    def _meta(self):
+        """The metadata for the containing Dask array.
 
         This is the kind of array that will result from slicing the
         file array.

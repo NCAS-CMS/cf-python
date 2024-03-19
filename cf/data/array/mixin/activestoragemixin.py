@@ -69,7 +69,25 @@ class ActiveStorageMixin:
     #
     #    return active[index]
 
-    def actify(self, method, axis=None, active_storage_url=None):
+    @property
+    def actified(self):
+        """Whether active storage operations are possible.
+
+        .. versionadded:: NEXTVERSION
+        
+        .. seealso:: `actify`, `get_active_storage_url`
+        
+        :Returns:
+
+            `bool`
+                `True` if active stoage operations are possible,
+                otherwise `False`.
+
+        """
+        return self.get_active_storage_url() is not None
+        
+    def actify(self, active_storage_url):
+#    def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -80,7 +98,7 @@ class ActiveStorageMixin:
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `get_active_axis`, `get_active_method`
+        .. seealso:: `actified`, `get_active_storage_url`
 
         :Parameters:
 
@@ -95,7 +113,8 @@ class ActiveStorageMixin:
                 `None`, flattened input is used.
 
             active_storage_url: `str` or `None`, optional
-                The URL of the active storage server.
+                The URL of the active storage server. If `None` then
+                `actified` will be `False`
 
         :Returns:
 
@@ -128,48 +147,48 @@ class ActiveStorageMixin:
             )
 
         a = self.copy()
-        a._custom["active_method"] = method
-        a._custom["active_axis"] = axis
+#        a._custom["active_method"] = method
+#        a._custom["active_axis"] = axis
         a._custom["active_storage_url"] = active_storage_url
         return a
 
-    def get_active_axis(self):
-        """Return the active storage reduction axes.
-
-        Active storage reduction axes are set with `actify`.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `actify`, `get_active_method`,
-                     `get_active_storage_url`
-
-        :Returns:
-
-            `None` or (sequence of) `int`
-                The active storage reduction axes, or `None` if there
-                is no active storage reduction.
-
-        """
-        return self._custom.get("active_axis")
-
-    def get_active_method(self):
-        """Return the name of the active storage reduction method.
-
-        An active storage reduction method is set with `actify`.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `actify`, `get_active_axis`,
-                     `get_active_storage_url`
-
-        :Returns:
-
-            `str` or `None`
-                The name of the active storage reduction method, or
-                `None` if there is no active storage reduction.
-
-        """
-        return self._custom.get("active_method")
+#    def get_active_axis(self):
+#        """Return the active storage reduction axes.
+#
+#        Active storage reduction axes are set with `actify`.
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        .. seealso:: `actify`, `get_active_method`,
+#                     `get_active_storage_url`
+#
+#        :Returns:
+#
+#            `None` or (sequence of) `int`
+#                The active storage reduction axes, or `None` if there
+#                is no active storage reduction.
+#
+#        """
+#        return self._custom.get("active_axis")
+#
+#    def get_active_method(self):
+#        """Return the name of the active storage reduction method.
+#
+#        An active storage reduction method is set with `actify`.
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        .. seealso:: `actify`, `get_active_axis`,
+#                     `get_active_storage_url`
+#
+#        :Returns:
+#
+#            `str` or `None`
+#                The name of the active storage reduction method, or
+#                `None` if there is no active storage reduction.
+#
+#        """
+#        return self._custom.get("active_method")
 
     def get_active_storage_url(self):
         """Return the active storage reduction URL.
@@ -178,7 +197,7 @@ class ActiveStorageMixin:
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `actify`, `get_active_axis`, `get_active_method`
+        .. seealso:: `actified`, `actify`
 
         :Returns:
 

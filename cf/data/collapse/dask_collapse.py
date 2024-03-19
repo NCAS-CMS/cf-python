@@ -16,6 +16,7 @@ from dask.utils import deepmap
 
 from ..dask_utils import cf_asanyarray
 from .collapse_utils import double_precision_dtype
+from .collapse_active import active_reduction
 
 
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
@@ -239,8 +240,11 @@ def cf_mean_chunk(
 ):
     """Chunk calculations for the mean.
 
-     This function is passed to `dask.array.reduction` as its *chunk*
-     parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    If ``x.actified`` exists and is `True` then the calculations are
+    done in active storage.
 
     .. versionadded:: 3.14.0
 
@@ -266,11 +270,17 @@ def cf_mean_chunk(
             * weighted: True if weights have been set.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
 
+    #    if getattr(x, 'actified', False):
+    try:
+        print (repr(x))
+        return active_reduction(x, "mean", weights=weights, **kwargs)
+    except ValueError:
+        pass
+        
+    x = cf_asanyarray(x)
     if weights is not None:
         weights = cf_asanyarray(weights)
 
@@ -376,6 +386,9 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    If ``x.actified`` exists and is `True` then the calculations are
+    done in active storage.
+
     .. versionadded:: 3.14.0
 
     :Parameters:
@@ -391,11 +404,13 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * max: The maximum of `x``.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
-
+    
+    if getattr(x, 'actified', False):
+        return active_reduction(x, "max", **kwargs)
+        
+    x = cf_asanyarray(x)
     return {
         "max": chunk.max(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -529,6 +544,9 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    If ``x.actified`` exists and is `True` then the calculations are
+    done in active storage.
+
     .. versionadded:: 3.14.0
 
     :Parameters:
@@ -544,11 +562,13 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * min: The minimum of ``x``.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
-
+    
+    if getattr(x, 'actified', False):
+        return active_reduction(x, "min", **kwargs)
+        
+    x = cf_asanyarray(x)
     return {
         "min": chunk.min(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -943,6 +963,9 @@ def cf_sum_chunk(
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    If ``x.actified`` exists and is `True` then the calculations are
+    done in active storage.
+
     .. versionadded:: 3.14.0
 
     :Parameters:
@@ -965,11 +988,13 @@ def cf_sum_chunk(
             * sum: The weighted sum of ``x``
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
 
+    if getattr(x, 'actified', False):
+        return active_reduction(x, "sum", weights=weights, **kwargs)
+        
+    x = cf_asanyarray(x)
     if weights is not None:
         weights = cf_asanyarray(weights)
         if check_weights:
