@@ -391,7 +391,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                         array, copy=copy, clear=_NONE, asanyarray=None
                     )
             else:
-                self._del_dask(None)
+                self._del_dask(None, clear=_NONE)
 
             # Set the mask hardness
             self.hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
@@ -957,7 +957,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Set the subspaced dask array. Set 'asanyarray=True' to
         # honour truely lazy subspacing.
         # ------------------------------------------------------------
-        new._set_dask(dx, asanyarray=True)
+        new._set_dask(dx, clear=_ALL ^ _ACTIVE, asanyarray=True)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -3293,7 +3293,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
+        d._set_dask(
+            dx, clear=_ALL ^ _ARRAY ^ _CACHE ^ _ACTIVE, asanyarray=True
+        )
 
         return d
 
@@ -4258,7 +4260,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             copied = not copy  # to avoid making two copies in a given case
 
         # Get data as dask arrays and apply concatenation operation
-        dxs = [d.to_dask_array() for d in processed_data]
+        dxs = [d.to_dask_array(asanyarray=False) for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the CFA write status
@@ -4295,8 +4297,18 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 active = _NONE
                 break
 
+        # Set the __asanyarray__ status
+        asanyarray = processed_data[0].__asanyarray__
+        for d in processed_data[1:]:
+            if d.__asanyarray__ != asanyarray:
+                # If and only if any two input Data objects have
+                # different __asanyarray__ values, then set
+                # asanyarray=True on the concatenation.
+                asanyarray = True
+                break
+
         # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ cfa ^ active)
+        data0._set_dask(dx, clear=_ALL ^ cfa ^ active, asanyarray=asanyarray)
 
         # Set appropriate cached elements
         cached_elements = {}

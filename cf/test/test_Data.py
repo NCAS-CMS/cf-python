@@ -4546,9 +4546,14 @@ class DataTest(unittest.TestCase):
             d.persist(inplace=True)
             self.assertFalse(d.active_storage)
 
+            # Rechunk should preserve active_storage
             d._set_active_storage(True)
             d.rechunk(1, inplace=True)
-            self.assertFalse(d.active_storage)
+            self.assertTrue(d.active_storage)
+
+            # __getitem__ should preserve active_storage
+            d._set_active_storage(True)
+            self.assertTrue(d[0, 3:].active_storage)
 
             # Test with data on disk
             n = cf.NetCDF4Array(
