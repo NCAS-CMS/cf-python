@@ -74,9 +74,9 @@ class ActiveStorageMixin:
         """Whether active storage operations are possible.
 
         .. versionadded:: NEXTVERSION
-        
+
         .. seealso:: `actify`, `get_active_storage_url`
-        
+
         :Returns:
 
             `bool`
@@ -85,9 +85,9 @@ class ActiveStorageMixin:
 
         """
         return self.get_active_storage_url() is not None
-        
+
     def actify(self, active_storage_url):
-#    def actify(self, method, axis=None, active_storage_url=None):
+        #    def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
@@ -147,48 +147,48 @@ class ActiveStorageMixin:
             )
 
         a = self.copy()
-#        a._custom["active_method"] = method
-#        a._custom["active_axis"] = axis
+        #        a._custom["active_method"] = method
+        #        a._custom["active_axis"] = axis
         a._custom["active_storage_url"] = active_storage_url
         return a
 
-#    def get_active_axis(self):
-#        """Return the active storage reduction axes.
-#
-#        Active storage reduction axes are set with `actify`.
-#
-#        .. versionadded:: NEXTVERSION
-#
-#        .. seealso:: `actify`, `get_active_method`,
-#                     `get_active_storage_url`
-#
-#        :Returns:
-#
-#            `None` or (sequence of) `int`
-#                The active storage reduction axes, or `None` if there
-#                is no active storage reduction.
-#
-#        """
-#        return self._custom.get("active_axis")
-#
-#    def get_active_method(self):
-#        """Return the name of the active storage reduction method.
-#
-#        An active storage reduction method is set with `actify`.
-#
-#        .. versionadded:: NEXTVERSION
-#
-#        .. seealso:: `actify`, `get_active_axis`,
-#                     `get_active_storage_url`
-#
-#        :Returns:
-#
-#            `str` or `None`
-#                The name of the active storage reduction method, or
-#                `None` if there is no active storage reduction.
-#
-#        """
-#        return self._custom.get("active_method")
+    #    def get_active_axis(self):
+    #        """Return the active storage reduction axes.
+    #
+    #        Active storage reduction axes are set with `actify`.
+    #
+    #        .. versionadded:: NEXTVERSION
+    #
+    #        .. seealso:: `actify`, `get_active_method`,
+    #                     `get_active_storage_url`
+    #
+    #        :Returns:
+    #
+    #            `None` or (sequence of) `int`
+    #                The active storage reduction axes, or `None` if there
+    #                is no active storage reduction.
+    #
+    #        """
+    #        return self._custom.get("active_axis")
+    #
+    #    def get_active_method(self):
+    #        """Return the name of the active storage reduction method.
+    #
+    #        An active storage reduction method is set with `actify`.
+    #
+    #        .. versionadded:: NEXTVERSION
+    #
+    #        .. seealso:: `actify`, `get_active_axis`,
+    #                     `get_active_storage_url`
+    #
+    #        :Returns:
+    #
+    #            `str` or `None`
+    #                The name of the active storage reduction method, or
+    #                `None` if there is no active storage reduction.
+    #
+    #        """
+    #        return self._custom.get("active_method")
 
     def get_active_storage_url(self):
         """Return the active storage reduction URL.

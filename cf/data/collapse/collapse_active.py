@@ -48,15 +48,15 @@ def active_reduction(x, method, axis=None, **kwargs):
             The reduced data in component form.
 
     """
-    if not getattr(x, 'actified', False):
+    if not getattr(x, "actified", False):
         raise ValueError(
             "Can't do active reductions when on non-actified data"
         )
-        
+
     weighted = kwargs.get("weights") is not None
     if weighted:
         raise ValueError(f"Can't do weighted {method!r} active reductions")
-    
+
     filename = x.get_filename()
     filename = "/".join(filename.split("/")[3:])
 
@@ -88,23 +88,23 @@ def active_reduction(x, method, axis=None, **kwargs):
     d = active[x.index]
 
     # Reformat the output dictionary
-    if method == 'max':        
+    if method == "max":
         d = {"N": d["n"], "max": d["max"]}
     elif method == "mean":
         d = {"N": d["n"], "sum": d["sum"], "V1": d["n"], "weighted": weighted}
-    elif method == 'min':        
+    elif method == "min":
         d = {"N": d["n"], "min": d["min"]}
-    elif method == 'sum':        
+    elif method == "sum":
         d = {"N": d["n"], "sum": d["sum"]}
 
-    print ('DONE!')
+    print("DONE!")
     return d
 
 
 # --------------------------------------------------------------------
 # Define the active functions
 # --------------------------------------------------------------------
-#def active_min(x, dtype=None, computing_meta=False, **kwargs):
+# def active_min(x, dtype=None, computing_meta=False, **kwargs):
 #    """Chunk function for minimum values computed by active storage.
 #
 #    Converts active storage reduction components to the components
@@ -138,7 +138,7 @@ def active_reduction(x, method, axis=None, **kwargs):
 #    return {"N": x["n"], "min": x["min"]}
 #
 #
-#def active_max(a, **kwargs):
+# def active_max(a, **kwargs):
 #    """Chunk function for maximum values computed by active storage.
 #
 #    Converts active storage reduction components to the components
@@ -177,7 +177,7 @@ def active_reduction(x, method, axis=None, **kwargs):
 #    return {"N": a["n"], "max": a["max"]}
 #
 #
-#def active_mean(a, **kwargs):
+# def active_mean(a, **kwargs):
 #    """Chunk function for mean values computed by active storage.
 #
 #    Converts active storage reduction components to the components
@@ -220,7 +220,7 @@ def active_reduction(x, method, axis=None, **kwargs):
 #    return {"N": a["n"], "V1": a["n"], "sum": a["sum"], "weighted": False}
 #
 #
-#def active_sum(a, **kwargs):
+# def active_sum(a, **kwargs):
 #    """Chunk function for sum values computed by active storage.
 #
 #    Converts active storage reduction components to the components
@@ -263,12 +263,12 @@ def active_reduction(x, method, axis=None, **kwargs):
 # Create a map of reduction methods to their corresponding active
 # functions
 # --------------------------------------------------------------------
-#active_chunk_functions = {
+# active_chunk_functions = {
 #    "min": True, #active_min,
 #    "max": active_max,
 #    "mean": active_mean,
 #    "sum": active_sum,
-#}
+# }
 
 
 def actify(a, method, axis=None):
@@ -333,8 +333,9 @@ def actify(a, method, axis=None):
         axis = tuple(range(ndim))
     else:
         from numbers import Integral
+
         from dask.array.utils import validate_axis
-        
+
         if isinstance(axis, Integral):
             axis = (axis,)
 
@@ -433,7 +434,7 @@ def active_storage(method):
                 else:
                     dask_array = kwargs.pop("a")
 
-#                dask_array, chunk_function = actify(
+                #                dask_array, chunk_function = actify(
                 dask_array = actify(
                     dask_array,
                     method=method,
@@ -442,7 +443,7 @@ def active_storage(method):
                 args = list(args)
                 args[0] = dask_array
 
-                #if chunk_function is not None:
+                # if chunk_function is not None:
                 #    # The dask array has been actified, so update the
                 #    # chunk function.
                 #    kwargs["chunk_function"] = chunk_function

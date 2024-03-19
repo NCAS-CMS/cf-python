@@ -15,8 +15,8 @@ from dask.core import flatten
 from dask.utils import deepmap
 
 from ..dask_utils import cf_asanyarray
-from .collapse_utils import double_precision_dtype
 from .collapse_active import active_reduction
+from .collapse_utils import double_precision_dtype
 
 
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
@@ -275,11 +275,10 @@ def cf_mean_chunk(
 
     #    if getattr(x, 'actified', False):
     try:
-        print (repr(x))
         return active_reduction(x, "mean", weights=weights, **kwargs)
     except ValueError:
         pass
-        
+
     x = cf_asanyarray(x)
     if weights is not None:
         weights = cf_asanyarray(weights)
@@ -406,10 +405,10 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
-    
-    if getattr(x, 'actified', False):
+
+    if getattr(x, "actified", False):
         return active_reduction(x, "max", **kwargs)
-        
+
     x = cf_asanyarray(x)
     return {
         "max": chunk.max(x, **kwargs),
@@ -564,10 +563,10 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
-    
-    if getattr(x, 'actified', False):
+
+    if getattr(x, "actified", False):
         return active_reduction(x, "min", **kwargs)
-        
+
     x = cf_asanyarray(x)
     return {
         "min": chunk.min(x, **kwargs),
@@ -991,9 +990,9 @@ def cf_sum_chunk(
     if computing_meta:
         return x
 
-    if getattr(x, 'actified', False):
+    if getattr(x, "actified", False):
         return active_reduction(x, "sum", weights=weights, **kwargs)
-        
+
     x = cf_asanyarray(x)
     if weights is not None:
         weights = cf_asanyarray(weights)
