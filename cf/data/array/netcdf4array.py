@@ -1,8 +1,7 @@
 import cfdm
 
-# from ...functions import netcdf_lock
 from ...mixin_container import Container
-from .locks import _lock
+from .locks import netcdf_lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin, IndexMixin
 
 
@@ -45,10 +44,7 @@ class NetCDF4Array(
         .. versionadded:: 3.14.0
 
         """
-        #        if netcdf_lock():
-        return _lock
-
-    #       return False
+        return netcdf_lock
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
@@ -75,8 +71,8 @@ class NetCDF4Array(
         if index is None:
             index = self.index
 
-        # Note: We need to use the lock because the netCDF file is
-        #       going to be read.
+        # Note: We need to lock because the netCDF file is about to be
+        #       accessed.
         self._lock.acquire()
 
         # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
