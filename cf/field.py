@@ -7193,22 +7193,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create new dimension coordinate bounds
+                # Create new dimension coordinate bounds (lazily)
                 if dim.has_bounds():
                     b = dim.bounds.data
                 else:
                     b = dim.data
 
-                # Note: Accessing first_element and last_element is
-                #       likely to be fast for dat one disk, assuming
-                #       that these values were cached during the read.
-                bounds_data = Data(
-                    [[b.first_element(), b.last_element()]],
-                    dtype=b.dtype,
-                    units=b.Units,
-                )
+                try:
+                    # Set the new bounds from cached values
+                    bounds_data = Data(
+                        [
+                            [
+                                self._custom["cached_elements"][0],
+                                self._custom["cached_elements"][-1],
+                            ]
+                        ],
+                        dtype=b.dtype,
+                        units=b.Units,
+                    )
+                except KeyError:
+                    # Set the new bounds lazily
+                    ndim = b.ndim
+                    bounds_data = Data.concatenate(
+                        [
+                            b[(slice(0, 1, 1),) * ndim],
+                            b[(slice(-1, None, 1),) * ndim],
+                        ],
+                        axis=-1,
+                        copy=False,
+                    )
+                    if ndim == 1:
+                        bounds_data.insert_dimension(0, inplace=True)
+
                 bounds = self._Bounds(data=bounds_data)
 
+                # Create a new dimension coordinate value
                 if coordinate == "min":
                     coordinate = "minimum"
                     print(

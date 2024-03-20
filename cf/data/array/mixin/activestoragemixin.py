@@ -11,64 +11,6 @@ class ActiveStorageMixin:
 
     """
 
-    # def _get_array(self, index=None):
-    #    """Returns a subspace of the data.
-    #
-    #   .. versionadded:: NEXTVERSION
-    #
-    #   .. seealso:: `__array__`, `index`
-    #
-    #   :Parameters:
-    #
-    #       index: `tuple` or `None`, optional
-    #          Provide the indices that define the subspace. If `None`
-    #          then the `index` attribute is used.
-    #
-    #   :Returns:
-    #
-    #       `numpy.ndarray`
-    #
-    #    """
-    #    method = self.get_active_method()
-    #    if Active is None or method is None:
-    #        # The instance has not been actified so do a normal read,
-    #        # returning an un-reduced numpy array.
-    #        return super()._get_array(index)
-    #
-    #    # Still here? Then do an active storage reduction. Returns a
-    #    # dictionary of reduced values.
-    #    filename = self.get_filename()
-    #    filename = "/".join(filename.split("/")[3:])
-    #
-    #    kwargs ={
-    #        'uri': filename,
-    #        'ncvar':  self.get_address(),
-    #        "storage_options":             self.get_storage_options(),
-    #        "active_storage_url":  self.get_active_storage_url(),
-    #        "storage_type": "s3",  # Temporary requirement!
-    #    }
-    #
-    #    if True:
-    #        print(f"Active(**{kwargs})")
-    #
-    #    active = Active(**kwargs)
-    #    active.method = method
-    #    active.components = True
-    #
-    #    # Provide a file lock
-    #    try:
-    #        lock = self._lock
-    #    except AttributeError:
-    #        pass
-    #    else:
-    #        if lock:
-    #            active.lock = lock
-    #
-    #    if index is None:
-    #        index = self.index
-    #
-    #    return active[index]
-
     @property
     def actified(self):
         """Whether active storage operations are possible.
@@ -87,30 +29,16 @@ class ActiveStorageMixin:
         return self.get_active_storage_url() is not None
 
     def actify(self, active_storage_url):
-        #    def actify(self, method, axis=None, active_storage_url=None):
         """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, with the
-        additional setting of the active storage method and axis.
-
-        When the instance is indexed, the result of applying the
-        active storage method to the subspace will be returned.
+        additional setting of the active storage URL.
 
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `actified`, `get_active_storage_url`
 
         :Parameters:
-
-            method: `str`
-                The name of the reduction method.
-
-                *Parameter example:*
-                  ``'min'``
-
-            axis: `None` or (sequence of) `int`, optional
-                Axis or axes along which to operate. By default, or if
-                `None`, flattened input is used.
 
             active_storage_url: `str` or `None`, optional
                 The URL of the active storage server. If `None` then
@@ -147,48 +75,8 @@ class ActiveStorageMixin:
             )
 
         a = self.copy()
-        #        a._custom["active_method"] = method
-        #        a._custom["active_axis"] = axis
         a._custom["active_storage_url"] = active_storage_url
         return a
-
-    #    def get_active_axis(self):
-    #        """Return the active storage reduction axes.
-    #
-    #        Active storage reduction axes are set with `actify`.
-    #
-    #        .. versionadded:: NEXTVERSION
-    #
-    #        .. seealso:: `actify`, `get_active_method`,
-    #                     `get_active_storage_url`
-    #
-    #        :Returns:
-    #
-    #            `None` or (sequence of) `int`
-    #                The active storage reduction axes, or `None` if there
-    #                is no active storage reduction.
-    #
-    #        """
-    #        return self._custom.get("active_axis")
-    #
-    #    def get_active_method(self):
-    #        """Return the name of the active storage reduction method.
-    #
-    #        An active storage reduction method is set with `actify`.
-    #
-    #        .. versionadded:: NEXTVERSION
-    #
-    #        .. seealso:: `actify`, `get_active_axis`,
-    #                     `get_active_storage_url`
-    #
-    #        :Returns:
-    #
-    #            `str` or `None`
-    #                The name of the active storage reduction method, or
-    #                `None` if there is no active storage reduction.
-    #
-    #        """
-    #        return self._custom.get("active_method")
 
     def get_active_storage_url(self):
         """Return the active storage reduction URL.

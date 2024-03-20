@@ -908,7 +908,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
             dx = new.to_dask_array(asanyarray=False)
         else:
-            new = self.copy(array=False)
+            new = self.copy()
             dx = self.to_dask_array(asanyarray=False)
 
         # ------------------------------------------------------------

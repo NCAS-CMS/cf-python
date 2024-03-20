@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 active_reduction_methods = ("max", "mean", "min", "sum")
 
 
-def active_reduction(x, method, axis=None, **kwargs):
-    """Collapse data in a file with `Active`.
+def active_chunk(method, x, **kwargs):
+    """Collapse a data in a chunk with active storage.
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `actify`, `cf.data.collapse.Collapse`
+    .. seealso:: `actify`, `active_storage2`, `cf.data.collapse.Collapse`
 
     :Parameters:
 
@@ -48,6 +48,9 @@ def active_reduction(x, method, axis=None, **kwargs):
             The reduced data in component form.
 
     """
+    if kwargs.get("computing_meta"):
+        return x
+
     if not getattr(x, "actified", False):
         raise ValueError(
             "Can't do active reductions when on non-actified data"
@@ -97,178 +100,8 @@ def active_reduction(x, method, axis=None, **kwargs):
     elif method == "sum":
         d = {"N": d["n"], "sum": d["sum"]}
 
-    print("DONE!")
+    print("ACTIVE CHUNK DONE!")
     return d
-
-
-# --------------------------------------------------------------------
-# Define the active functions
-# --------------------------------------------------------------------
-# def active_min(x, dtype=None, computing_meta=False, **kwargs):
-#    """Chunk function for minimum values computed by active storage.
-#
-#    Converts active storage reduction components to the components
-#    expected by the reduction combine and aggregate functions.
-#
-#    This function is intended to be passed to `dask.array.reduction`
-#    as the ``chunk`` parameter. Its returned value must be the same as
-#    the non-active chunk function that it is replacing.
-#
-#    .. versionadded:: NEXTVERSION
-#
-#    .. seealso:: `actify`, `active_storage`
-#
-#    :Parameters:
-#
-#        See `dask.array.reductions` for details of the parameters.
-#
-#    :Returns:
-#
-#        `dict`
-#            Dictionary with the keys:
-#
-#            * N: The sample size.
-#            * min: The minimum ``x``.
-#
-#    """
-#    if computing_meta:
-#        return x
-#
-#    x = active_reduction(x, "min", **kwargs)
-#    return {"N": x["n"], "min": x["min"]}
-#
-#
-# def active_max(a, **kwargs):
-#    """Chunk function for maximum values computed by active storage.
-#
-#    Converts active storage reduction components to the components
-#    expected by the reduction combine and aggregate functions.
-#
-#    This function is intended to be passed to `dask.array.reduction`
-#    as the ``chunk`` parameter. Its returned value must be the same as
-#    the non-active chunk function that it is replacing.
-#
-#    .. versionadded:: NEXTVERSION
-#
-#    .. seealso:: `actify`, `active_storage`
-#
-#    :Parameters:
-#
-#        a: `dict`
-#            The components output from the active storage
-#            reduction. For instance:
-#
-#            >>> print(a)
-#            {'max': array([[[2930.4856]]], dtype=float32), 'n': 1015808}
-#
-#    :Returns:
-#
-#        `dict`
-#            Dictionary with the keys:
-#
-#            * N: The sample size.
-#            * max: The maximum.
-#
-#    """
-#    if computing_meta:
-#        return x
-#
-#    x = active_reduction(x, "max", **kwargs)
-#    return {"N": a["n"], "max": a["max"]}
-#
-#
-# def active_mean(a, **kwargs):
-#    """Chunk function for mean values computed by active storage.
-#
-#    Converts active storage reduction components to the components
-#    expected by the reduction combine and aggregate functions.
-#
-#    This function is intended to be passed to `dask.array.reduction`
-#    as the ``chunk`` parameter. Its returned value must be the same as
-#    the non-active chunk function that it is replacing.
-#
-#    .. versionadded:: NEXTVERSION
-#
-#    .. seealso:: `actify`, `active_storage`
-#
-#    :Parameters:
-#
-#        a: `dict`
-#            The components output from the active storage
-#            reduction. For instance:
-#
-#            >>> print(a)
-#            {'sum': array([[[1.5131907e+09]]], dtype=float32), 'n': 1015808}
-#
-#    :Returns:
-#
-#        `dict`
-#            Dictionary with the keys:
-#
-#            * N: The sample size.
-#            * V1: The sum of ``weights``. Always equal to ``N``
-#                  because weights have not been set.
-#            * sum: The un-weighted sum.
-#            * weighted: True if weights have been set. Always
-#                        False.
-#
-#    """
-#    if computing_meta:
-#        return x
-#
-#    x = active_reduction(x, "mean", **kwargs)
-#    return {"N": a["n"], "V1": a["n"], "sum": a["sum"], "weighted": False}
-#
-#
-# def active_sum(a, **kwargs):
-#    """Chunk function for sum values computed by active storage.
-#
-#    Converts active storage reduction components to the components
-#    expected by the reduction combine and aggregate functions.
-#
-#    This function is intended to be passed to `dask.array.reduction`
-#    as the ``chunk`` parameter. Its returned value must be the same as
-#    the non-active chunk function that it is replacing.
-#
-#    .. versionadded:: NEXTVERSION
-#
-#    .. seealso:: `actify`, `active_storage`
-#
-#    :Parameters:
-#
-#        a: `dict`
-#            The components output from the active storage
-#            reduction. For instance:
-#
-#            >>> print(a)
-#            {'sum': array([[[1.5131907e+09]]], dtype=float32), 'n': 1015808}
-#
-#    :Returns:
-#
-#        `dict`
-#            Dictionary with the keys:
-#
-#            * N: The sample size.
-#            * sum: The un-weighted sum.
-#
-#    """
-#    if computing_meta:
-#        return x
-#
-#    x = active_reduction(x, "sum", **kwargs)
-#    return {"N": a["n"], "sum": a["sum"]}
-
-
-# --------------------------------------------------------------------
-# Create a map of reduction methods to their corresponding active
-# functions
-# --------------------------------------------------------------------
-# active_chunk_functions = {
-#    "min": True, #active_min,
-#    "max": active_max,
-#    "mean": active_mean,
-#    "sum": active_sum,
-# }
 
 
 def actify(a, method, axis=None):
@@ -352,6 +185,9 @@ def actify(a, method, axis=None):
     # The elements are traversed in reverse order so that the data
     # defintions come out first, allowing for the potential of a
     # faster short circuit when using active storage is not possible.
+    #
+    # Performance: The optimisation is essential, but can be slow for
+    #              complicated graphs.
     url = str(active_storage_url())
     ok_to_actify = True
     dsk = collections_to_dsk((a,), optimize_graph=True)
@@ -395,12 +231,14 @@ def actify(a, method, axis=None):
     return da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
 
 
+# --------------------------------------------------------------------
+# Decoators
+# --------------------------------------------------------------------
 def active_storage(method):
-    """A decorator that enables active storage reductions.
+    """Decorator for active storage reductions on `Collapse` methods.
 
-    This decorator is intended for `Collapse` methods. When a
-    `Collapse` method is decorated, active storage operations are only
-    carried out when the conditions are right.
+    When a `Collapse` method is decorated, active storage operations
+    are carried out if the conditions are right.
 
     .. versionadded:: NEXTVERSION
 
@@ -409,9 +247,9 @@ def active_storage(method):
     :Parameters:
 
         method: `str`
-            The name of the reduction method. If it is not one of the
-            keys of the `active_chunk_functions` dictionary then
-            active storage reductions will not occur.
+            The name of the reduction method. If it is one of the
+            `active_chunk_methods` then active storage reductions
+            *might* occur.
 
     """
 
@@ -419,37 +257,71 @@ def active_storage(method):
         @wraps(collapse_method)
         def wrapper(self, *args, **kwargs):
             if (
-                cf_active_storage()
-                and Active is not None
-                and kwargs.get("active_storage")
+                Active is not None
                 and method in active_reduction_methods
+                and kwargs.get("active_storage")
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
+                and cf_active_storage()
                 and active_storage_url()
             ):
-                # Attempt to actify the dask array and provide a new
-                # chunk function
+                # Attempt to actify the dask array
+                args = list(args)
                 if args:
-                    dask_array = args[0]
+                    dask_array = args.pop(0)
                 else:
                     dask_array = kwargs.pop("a")
 
-                #                dask_array, chunk_function = actify(
                 dask_array = actify(
                     dask_array,
                     method=method,
                     axis=kwargs.get("axis"),
                 )
-                args = list(args)
-                args[0] = dask_array
+                args.insert(0, dask_array)
 
-                # if chunk_function is not None:
-                #    # The dask array has been actified, so update the
-                #    # chunk function.
-                #    kwargs["chunk_function"] = chunk_function
-
-            # Create the collapse
+            # Run the collapse method
             return collapse_method(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def active_storage_chunk(method):
+    """Decorator for active storage reductions on chunks.
+
+    Intended for the ``cf_*_chunk`` methods in
+    cf.data.collapse.dask_collapse`.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        method: `str`
+            The name of the reduction method. If it is one of the
+            `active_chunk_methods` then active storage reductions
+            *might* occur.
+
+    """
+
+    def decorator(chunk):
+        @wraps(chunk)
+        def wrapper(*args, **kwargs):
+            if (
+                Active is not None
+                and method in active_reduction_methods
+                and cf_active_storage()
+                and active_storage_url()
+            ):
+                try:
+                    # Try doing an active storage reduction
+                    return active_chunk(method, *args, **kwargs)
+                except ValueError:
+                    pass
+
+            # Still here? Then we couldn't do an active storage
+            # reduction, so we'll do a local one.
+            return chunk(*args, **kwargs)
 
         return wrapper
 

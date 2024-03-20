@@ -966,18 +966,18 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import (
             cf_sum_agg,
             cf_sum_combine,
-            cf_sum_of_weights_chunk,
+            cf_sum_of_weights2_chunk,
         )
 
         if chunk_function is None:
             # Default function for chunk calculations
-            chunk_function = cf_sum_of_weights_chunk
+            chunk_function = cf_sum_of_weights2_chunk
 
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
-            partial(chunk_function, square=True),
+            chunk_function,
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
