@@ -129,6 +129,15 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(len(n.get_filenames()), 2)
         self.assertTrue((n[...] == f.array).all())
 
+    def test_NetCDF4Array_shape(self):
+        shape = (12, 96, 73)
+        a = cf.NetCDF4Array("/home/file2", "tas", shape=shape)
+        self.assertEqual(a.shape, shape)
+        self.assertEqual(a.original_shape, shape)
+        a = a[::2]
+        self.assertEqual(a.shape, (shape[0] // 2,) + shape[1:])
+        self.assertEqual(a.original_shape, shape)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

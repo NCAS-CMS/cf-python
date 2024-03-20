@@ -173,7 +173,6 @@ def configuration(
     bounds_combination_mode=None,
     active_storage=None,
     active_storage_url=None,
-    netcdf_lock=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -194,7 +193,6 @@ def configuration(
     * `bounds_combination_mode`
     * `active_storage`
     * `active_storage_url`
-    * `netcdf_lock`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -214,7 +212,7 @@ def configuration(
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `regrid_logging`,
                  `relaxed_identities`, `bounds_combination_mode`,
-                 `active_storage`, `active_storage_url`, `netcdf_lock`
+                 `active_storage`, `active_storage_url`
 
     :Parameters:
 
@@ -279,14 +277,6 @@ def configuration(
 
             .. versionadded:: NEXTVERSION
 
-        netcdf_lock: `bool` or `Constant`, optional
-            The new value. If True then all netCDF file access
-            coordinates around the same lock, thereby preventing
-            concurrent reads. If False the concurrent reads are
-            allowed. The default is to not change the current value.
-
-            .. versionadded:: NEXTVERSION
-
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -318,8 +308,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -335,8 +324,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -347,8 +335,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
 
     Use as a context manager:
 
@@ -362,8 +349,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
     >>> with cf.configuration(atol=9, rtol=10):
     ...     print(cf.configuration())
     ...
@@ -376,8 +362,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -388,8 +373,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None,
-     'netcdf_lock': True}
+     'active_storage_url': None}
 
     """
     if of_fraction is not None:
@@ -422,7 +406,6 @@ def configuration(
         bounds_combination_mode=bounds_combination_mode,
         active_storage=active_storage,
         active_storage_url=active_storage_url,
-        netcdf_lock=netcdf_lock,
     )
 
 
@@ -474,7 +457,6 @@ def _configuration(_Configuration, **kwargs):
         "bounds_combination_mode": bounds_combination_mode,
         "active_storage": active_storage,
         "active_storage_url": active_storage_url,
-        "netcdf_lock": netcdf_lock,
     }
 
     old_values = {}
@@ -1320,67 +1302,6 @@ class active_storage_url(ConstantAccess):
             return arg
 
         return str(arg)
-
-
-class netcdf_lock(ConstantAccess):
-    """Whether or not allow concurrent netCDF read access.
-
-    .. versionadded:: NEXTVERSION
-
-    :Parameters:
-
-        arg: `bool` or `Constant`, optional
-            Provide a value that will apply to all subsequent
-            operations.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    **Examples**
-
-    >>> print(cf.netcdf_lock())
-    True
-    >>> with cf.netcdf_lock(False):
-    ...     print(cf.netcdf_lock())
-    ...
-    False
-    >>> print(cf.netcdf_lock())
-    True
-    >>> print(cf.netcdf_lock(False))
-    True
-    >>> cf.netcdf_lock()
-    False
-
-    """
-
-    _name = "netcdf_lock"
-
-    def _parse(cls, arg):
-        """Parse a new constant value.
-
-        .. versionaddedd:: NEXTVERSION
-
-        :Parameters:
-
-            cls:
-                This class.
-
-            arg:
-                The given new constant value.
-
-        :Returns:
-
-                A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
-
-        """
-        if arg is None:
-            return arg
-
-        return bool(arg)
 
 
 def CF():

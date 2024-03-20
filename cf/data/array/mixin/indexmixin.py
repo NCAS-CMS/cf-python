@@ -7,7 +7,28 @@ from ....functions import indices_shape, parse_indices
 
 
 class IndexMixin:
-    """Mixin class for lazy subspacing of a data array.
+    """Mixin class for lazy indexing of a data array.
+
+    A data for a subspace it retrieved by casting the `{{class}}` as a
+    `numpy` array:
+
+    >>> a = cf.{{class}}(....)
+    >>> a.shape
+    (6, 5)
+    >>> print(np.asanyarray(a)
+    [[ 0  1  2  3  4])
+     [ 5  6  7  8  9]
+     [10 11 12 13 14]
+     [15 16 17 18 19]
+     [20 21 22 23 24]
+     [25 26 27 28 29]]
+    >>> a = a[::2, [1, 3, 4]]
+    >>> a = a[[False, True, True], 1:]
+    >>> a.shape
+    (2, 2)
+    >>> print(np.asanyarray(a))
+    [[13 14]
+     [23 24]]
 
     .. versionadded:: NEXTVERSION
 
@@ -53,15 +74,6 @@ class IndexMixin:
         only the elements defined by subspace ``[[8], [10, 16], [12,
         1]]`` will be retrieved from the data when `__array__` is
         called.
-
-        Indexing is similar to `numpy` indexing. The only difference
-        to `numpy` indexing (given the restrictions on the type of
-        indices allowed) is:
-
-          * When two or more dimension's indices are sequences of
-            integers then these indices work independently along each
-            dimension (similar to the way vector subscripts work in
-            Fortran).
 
         .. versionadded:: NEXTVERSION
 
@@ -164,8 +176,10 @@ class IndexMixin:
         x.__repr__() <==> repr(x)
 
         """
-        out = super().__repr__()
-        return f"{out[:-1]}{self.original_shape}>"
+        return (
+            f"<CF {self.__class__.__name__}{self.shape}: "
+            f"{self}{self.original_shape}>"
+        )
 
     @property
     def __asanyarray__(self):
@@ -181,7 +195,7 @@ class IndexMixin:
         return True
 
     def _get_array(self, index=None):
-        """Returns a subspace of the data.
+        """Returns a subspace of the data as a `numpy` array.
 
         .. versionadded:: NEXTVERSION
 
@@ -190,8 +204,8 @@ class IndexMixin:
         :Parameters:
 
             index: `tuple` or `None`, optional
-               Provide the indices that define the subspace. If `None`
-               then the `index` attribute is used.
+                Provide the indices that define the subspace. If
+                `None` then the `index` attribute is used.
 
         :Returns:
 
@@ -252,8 +266,10 @@ class IndexMixin:
         .. seealso:: `index`, `shape`
 
         """
-        shape = self._custom.get("original_shape")
-        if shape is None:
-            self._custom["original_shape"] = self.shape
+        out = self._custom.get("original_shape")
+        if out is None:
+            # If shape is None then no subspace has been defined
+            out = self.shape
+            self._custom["original_shape"] = out
 
-        return shape
+        return out

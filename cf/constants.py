@@ -65,7 +65,6 @@ CONSTANTS = {
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
     "active_storage": False,
     "active_storage_url": None,
-    "netcdf_lock": True,
 }
 
 masked = np.ma.masked

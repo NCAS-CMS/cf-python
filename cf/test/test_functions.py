@@ -54,7 +54,7 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 10)  # update expected len if add new key(s)
 
         # Types expected:
         self.assertIsInstance(org["atol"], float)
@@ -86,7 +86,6 @@ class functionTest(unittest.TestCase):
             "chunksize": 8e9,
             "active_storage": True,
             "active_storage_url": None,
-            "netcdf_lock": True,
         }
 
         # Test the setting of each lone item.

@@ -678,20 +678,24 @@ def read(
 
             .. versionadded:: 3.15.0
 
-        netCDF_backend: `None` or `str`, optional
+        engine: `None` or `str`, optional
+
             Specify which library to use for opening netCDF files. By
             default, or if `None`, then `netCDF4` will used unless it
-            fails to open a given file, in which case `h5netcdf` will
-            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
-            or ``'h5netcdf'`` will force the use of the `netCDF4` or
-            `h5netcdf` libraries respectively.
+            fails to open a given netCDF file, in which case
+            `h5netcdf` will be used instead. Setting *engine* to
+            ``'netCDF4'`` or ``'h5netcdf'`` will force the use of the
+            `netCDF4` or `h5netcdf` libraries respectively.
+
+            .. note:: Using `h5netcdf` may restrictshas limited https://docs.h5py.org/en/stable/high/dataset.html#reading-writing-data
 
             .. note:: The *netCDF_backend* parameter does not affect
                       the opening of netCDF fragment files that define
                       the data of aggregated variables. For these,
-                      `netCDF4` is used for local files and those
-                      accessed via OPeNDAP, and `h5netcdf` is used for
-                      fragment files in S3 object stores.
+                      `netCDF4` is always used for local files and
+                      those accessed via OPeNDAP, and `h5netcdf` is
+                      always used for fragment files in S3 object
+                      stores.
 
             .. versionadded:: NEXTVERSION
 
