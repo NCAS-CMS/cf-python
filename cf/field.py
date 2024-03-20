@@ -7149,14 +7149,37 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create a new dimension coordinate for this axis
+                # Create new dimension coordinate bounds
                 if dim.has_bounds():
-                    bounds_data = [dim.bounds.datum(0), dim.bounds.datum(-1)]
+                    b = dim.bounds.data
                 else:
-                    bounds_data = [dim.datum(0), dim.datum(-1)]
+                    b = dim.data
 
-                units = dim.Units
+                cached_elements = b._get_cached_elements()
+                try:
+                    # Try to set the new bounds from cached values
+                    bounds_data = Data(
+                        [[cached_elements[0], cached_elements[-1]]],
+                        dtype=b.dtype,
+                        units=b.Units,
+                    )
+                except KeyError:
+                    # Otherwise create the new bounds lazily
+                    ndim = b.ndim
+                    bounds_data = Data.concatenate(
+                        [
+                            b[(slice(0, 1, 1),) * ndim],
+                            b[(slice(-1, None, 1),) * ndim],
+                        ],
+                        axis=-1,
+                        copy=False,
+                    )
+                    if ndim == 1:
+                        bounds_data.insert_dimension(0, inplace=True)
 
+                bounds = self._Bounds(data=bounds_data)
+
+                # Create a new dimension coordinate value
                 if coordinate == "min":
                     coordinate = "minimum"
                     print(
@@ -7171,20 +7194,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     )
 
                 if coordinate == "mid_range":
-                    data = Data(
-                        [(bounds_data[0] + bounds_data[1]) * 0.5], units=units
-                    )
+                    data = bounds_data.mean(axes=1, weights=None, squeeze=True)
                 elif coordinate == "minimum":
-                    data = dim.data.min()
+                    data = dim.data.min(squeeze=False)
                 elif coordinate == "maximum":
-                    data = dim.data.max()
+                    data = dim.data.max(squeeze=False)
                 else:
                     raise ValueError(
                         "Can't collapse: Bad parameter value: "
                         f"coordinate={coordinate!r}"
                     )
-
-                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
