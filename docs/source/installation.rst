@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.16.1``):
+   you want to install, e.g. ``3.17.0``):
 
    .. code-block:: console
 
@@ -201,12 +201,19 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
 
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
+  newer.
+
+* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+
+* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.2.0 or newer.
+
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.1.0 or up to,
-  but not including, 1.11.2.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.2.0 or up to,
+  but not including, 1.11.3.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
@@ -259,6 +266,11 @@ environments for which these features are not required.
             containing a given value
 
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
+  or newer.
+
+.. rubric:: Active storage collapses
+
+* `activestorage <https://pypi.org/project/activestorage>`_, version 1.0.0
   or newer.
 
 ----

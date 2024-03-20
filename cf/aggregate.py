@@ -3207,7 +3207,7 @@ def aggregate(
                     #
                     #   0.0012 , 0.019 , 0.55 , 2.1
                     #
-                    # compared with current method timings of
+                    # compared with new timings of
                     #
                     #   0.00035, 0.0012, 0.013, 0.064
                     # ------------------------------------------------
@@ -4817,7 +4817,7 @@ def _aggregate_2_fields(
 
         # Ensure that the axis orders are the same in both fields
         transpose_axes1 = [dim0_name_map[axis0] for axis0 in data_axes0]
-        if transpose_axes1 != data_axes1:
+        if transpose_axes1 != list(data_axes1):
             parent1.transpose(transpose_axes1, inplace=True)
 
         construct_type = parent0.construct_type

@@ -97,22 +97,22 @@ def write(
     construct.
 
 
-    **NetCDF hierarchical groups**
+    **NetCDF-4 hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
-    variables within netCDF4 datasets with well defined rules for
+    variables within netCDF-4 datasets with well defined rules for
     resolving references to out-of-group netCDF variables and
     dimensions. The group structure defined by a field construct's
     netCDF interface will, by default, be recreated in the output
     dataset. See the *group* parameter for details.
 
 
-    **NetCDF4 HDF chunk sizes**
+    **NetCDF-4 HDF chunk sizes**
 
     HDF5 chunksizes may be set on contruct's data. See the
-    `~cf.Data.nc_hdf5_chunksizes`,
-    `~cf.Data.nc_clear_hdf5_chunksizes` and
-    `~cf.Data.nc_set_hdf5_chunksizes` methods of a `Data` instance.
+    `~cf.Data.nc_hdf5_chunksizes`, `~cf.Data.nc_clear_hdf5_chunksizes`
+    and `~cf.Data.nc_set_hdf5_chunksizes` methods of a `Data`
+    instance.
 
     .. seealso:: `cf.read`
 
@@ -120,7 +120,6 @@ def write(
 
         fields: (arbitrarily nested sequence of) `Field` or `FieldList`
             The field constructs to write to the file.
-
 
         filename: `str`
             The output netCDF file name. Various type of expansion are
@@ -548,7 +547,7 @@ def write(
             variables. By default only auxiliary and scalar coordinate
             variables are included.
 
-            .. versionadded:: (cfdm) 3.7.0
+            .. versionadded:: 3.7.0
 
         omit_data: (sequence of) `str`, optional
             Do not write the data of the named construct types.

@@ -58,21 +58,26 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
     cfa=None,
+    netCDF_backend=None,
+    storage_options=None,
+    cache_metadata=True,
 ):
     """Read field or domain constructs from files.
 
-    The following file formats are supported: CF-netCDF, CFA-netCDF,
-    CDL, PP and UM fields datasets.
+    The following file formats are supported: netCDF, CFA-netCDF, CDL,
+    UM fields file, and PP.
 
     Input datasets are mapped to constructs in memory which are
     returned as elements of a `FieldList` or if the *domain* parameter
     is True, a `DomainList`.
 
-    NetCDF files may be on disk or on an OPeNDAP server.
+    NetCDF files may be on disk, on an OPeNDAP server, or in an S3
+    object store.
 
     Any amount of files of any combination of file types may be read.
 
@@ -408,14 +413,13 @@ def read(
             parameter.
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
+            If True (the default) then mask by convention the data of
+            field and metadata constructs.
 
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.
 
             The masking by convention of a PP or UM array depends on
             the value of BMDI in the lookup header. A value other than
@@ -426,6 +430,16 @@ def read(
             for details.
 
             .. versionadded:: 3.4.0
+
+        unpack: `bool`, optional
+            If True (the default) then unpack arrays by convention
+            when the data is read from disk.
+
+            Unpacking is determined netCDF conventions for the
+            following attributes: ``add_offset``, ``scale_factor``,
+            and ``_Unsigned``.
+
+            .. versionadded:: NEXTVERSION
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -664,6 +678,65 @@ def read(
 
             .. versionadded:: 3.15.0
 
+        netCDF_backend: `None` or `str`, optional
+            Specify which library to use for opening netCDF files. By
+            default, or if `None`, then `netCDF4` will used unless it
+            fails to open a given file, in which case `h5netcdf` will
+            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
+            or ``'h5netcdf'`` will force the use of the `netCDF4` or
+            `h5netcdf` libraries respectively.
+
+            .. note:: The *netCDF_backend* parameter does not affect
+                      the opening of netCDF fragment files that define
+                      the data of aggregated variables. For these,
+                      `netCDF4` is used for local files and those
+                      accessed via OPeNDAP, and `h5netcdf` is used for
+                      fragment files in S3 object stores.
+
+            .. versionadded:: NEXTVERSION
+
+        storage_options: `dict` or `None`, optional
+           Key/value pairs to be passed on to the creation of
+           `s3fs.S3FileSystem` file systems to control the opening of
+           files in S3 object stores. Ignored for files not in an S3
+           object store, i.e. those whose names do not start with
+           ``s3:``.
+
+           By default, or if `None`, then *storage_options* is taken
+           as ``{}``.
+
+           If the ``'endpoint_url'`` key is not in *storage_options*
+           or is not in a dictionary defined by the ``'client_kwargs``
+           key (which is always the case when *storage_options* is
+           `None`), then one will be automatically inserted for
+           accessing an S3 file. For example, for a file name of
+           ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+           with value ``'https://store'`` would be created.
+
+           *Parameter example:*
+             For a file name of ``'s3://store/data/file.nc'``, the
+             following are equivalent: ``None``, ``{}``, and
+             ``{'endpoint_url': 'https://store'}``,
+             ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
+
+           *Parameter example:*
+             ``{'key: 'scaleway-api-key...', 'secret':
+             'scaleway-secretkey...', 'endpoint_url':
+             'https://s3.fr-par.scw.cloud', 'client_kwargs':
+             {'region_name': 'fr-par'}}``
+
+           .. versionadded:: NEXTVERSION
+
+        cache_metadata: `bool`, optional
+            If True, the default, then data for metadata constructs
+            will have their first and last array elements retrieved
+            from the file and cached in memory for fast future
+            access. In addition, the second and penultimate array
+            elements will be cached from 2-d coordinate bounds data
+            that has two bounds per cell.
+
+            .. versionadded:: NEXTVERSION
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -823,6 +896,8 @@ def read(
 
     cfa_options["substitutions"] = substitutions
 
+    cache_metadata = bool(cache_metadata)
+
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -885,8 +960,8 @@ def read(
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
         scheme = urlparse(file_glob).scheme
-        if scheme in ("https", "http"):
-            # Do not glob a URL
+        if scheme in ("https", "http", "s3"):
+            # Do not glob a remote URL
             files2 = (file_glob,)
         else:
             # Glob files on disk
@@ -951,10 +1026,14 @@ def read(
                 height_at_top_of_model=height_at_top_of_model,
                 chunks=chunks,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
+                netCDF_backend=netCDF_backend,
+                storage_options=storage_options,
+                cache_metadata=cache_metadata,
             )
 
             # --------------------------------------------------------
@@ -1064,11 +1143,15 @@ def _read_a_file(
     extra=None,
     height_at_top_of_model=None,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     select=None,
     domain=False,
     cfa_options=None,
+    netCDF_backend=None,
+    storage_options=None,
+    cache_metadata=True,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1104,6 +1187,21 @@ def _read_a_file(
 
             .. versionadded:: 3.15.0
 
+        storage_options: `dict` or `None`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
+        netCDF_backend: `str` or `None`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
+        cache_metadata: `bool`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
     :Returns:
 
         `FieldList` or `DomainList`
@@ -1138,6 +1236,7 @@ def _read_a_file(
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
         "cfa_options": cfa_options,
+        "cache_metadata": cache_metadata,
     }
 
     # ----------------------------------------------------------------
@@ -1175,8 +1274,11 @@ def _read_a_file(
                 warnings=warnings,
                 extra_read_vars=extra_read_vars,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 domain=domain,
+                storage_options=storage_options,
+                netCDF_backend=netCDF_backend,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

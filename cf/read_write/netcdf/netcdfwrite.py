@@ -4,6 +4,7 @@ import cfdm
 import dask.array as da
 import numpy as np
 
+from ...data.dask_utils import cf_asanyarray
 from .netcdfread import NetCDFRead
 
 
@@ -103,8 +104,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                         raise ValueError(
                             f"Can't write {cfvar!r} as a CFA-netCDF "
-                            "aggregation variable. Consider setting "
-                            "cfa={'strict': False}"
+                            "aggregation variable. If the variable was read "
+                            "from disk then setting chunks=None as an "
+                            "argument to cf.read will likely solve the "
+                            "problem. "
+                            "Alternatively, you could consider setting "
+                            "cfa={'strict': False} as an argument to "
+                            "cf.write, but note the this will create a copy "
+                            "of the data for this variable in the output "
+                            "dataset."
                         )
 
                     return cfa_get_write
@@ -464,7 +472,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         ):
             f_ncdim = f"f_{ncdim}"
             if f_ncdim not in g["dimensions"]:
-                # Create a new fragement dimension
+                # Create a new fragment dimension
                 self._write_dimension(f_ncdim, None, size=size)
 
             fragment_ncdimensions.append(f_ncdim)
@@ -566,55 +574,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 "aggregated_dimensions": " ".join(ncdimensions),
                 "aggregated_data": " ".join(sorted(aggregated_data_attr)),
             },
-        )
-
-    def _convert_to_builtin_type(self, x):
-        """Convert a non-JSON-encodable object to a JSON-encodable
-        built-in type.
-
-        Possible conversions are:
-
-        ==============  =============  ======================================
-        Input object    Output object  numpy data types covered
-        ==============  =============  ======================================
-        numpy.bool_     bool           bool
-        numpy.integer   int            int, int8, int16, int32, int64, uint8,
-                                       uint16, uint32, uint64
-        numpy.floating  float          float, float16, float32, float64
-        ==============  =============  ======================================
-
-        .. versionadded:: 3.0.0
-
-        :Parameters:
-
-            x:
-
-        :Returns:
-
-            'int' or `float` or `bool`
-
-        **Examples:**
-
-        >>> type(_convert_to_builtin_type(numpy.bool_(True)))
-        bool
-        >>> type(_convert_to_builtin_type(numpy.array([1.0])[0]))
-        double
-        >>> type(_convert_to_builtin_type(numpy.array([2])[0]))
-        int
-
-        """
-        if isinstance(x, np.bool_):
-            return bool(x)
-
-        if isinstance(x, np.integer):
-            return int(x)
-
-        if isinstance(x, np.floating):
-            return float(x)
-
-        raise TypeError(
-            f"{type(x)!r} object can't be converted to a JSON serializable "
-            f"type: {x!r}"
         )
 
     def _check_valid(self, array, cfvar=None, attributes=None):
@@ -784,7 +743,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # dimensions, with one value per fragment. If a chunk has
             # more than one unique value then the fragment's value is
             # missing data.
-            dx = data.to_dask_array()
+            #
+            # '_cfa_unique' has its own call to 'cf_asanyarray', so
+            # we can set 'asanyarray=False'.
+            dx = data.to_dask_array(asanyarray=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
@@ -840,6 +802,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
+        a = cf_asanyarray(a)
+
         out_shape = (1,) * a.ndim
         a = np.unique(a)
         if np.ma.isMA(a):
@@ -908,16 +872,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 if file_details:
                     raise ValueError(
                         "Can't write CFA-netCDF aggregation variable from "
-                        f"{cfvar!r} when the "
-                        f"dask storage chunk defined by indices {indices} "
-                        "spans two or more files"
+                        f"{cfvar!r}: Dask storage chunk defined by indices "
+                        f"{indices} spans two or more fragment files"
                     )
 
                 raise ValueError(
                     "Can't write CFA-netCDF aggregation variable from "
-                    f"{cfvar!r} when the "
-                    f"dask storage chunk defined by indices {indices} spans "
-                    "zero files"
+                    f"{cfvar!r}: Dask storage chunk defined by indices "
+                    f"{indices} spans zero files"
                 )
 
             filenames, addresses, formats = file_details.pop()
@@ -990,7 +952,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Create the location array
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
-        if max(data.to_dask_array().chunksize) > np.iinfo(dtype).max:
+        if (
+            max(data.to_dask_array(asanyarray=False).chunksize)
+            > np.iinfo(dtype).max
+        ):
             dtype = np.dtype(np.int64)
 
         ndim = data.ndim
@@ -1056,7 +1021,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         """
         out = set()
-        for a in data.todict().values():
+        for a in data.todict(asanyarray=False).values():
             try:
                 out.update(
                     ((a.get_filenames(), a.get_addresses(), a.get_formats()),)

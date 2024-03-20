@@ -14,6 +14,8 @@ from dask.array.reductions import divide, numel
 from dask.core import flatten
 from dask.utils import deepmap
 
+from ..dask_utils import cf_asanyarray
+from .collapse_active import active_storage_chunk
 from .collapse_utils import double_precision_dtype
 
 
@@ -125,7 +127,9 @@ def sum_weights_chunk(
             N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
-    elif check_weights:
+
+    weights = cf_asanyarray(weights)
+    if check_weights:
         w_min = weights.min()
         if w_min <= 0:
             raise ValueError(
@@ -226,6 +230,7 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # mean
 # --------------------------------------------------------------------
+@active_storage_chunk("mean")
 def cf_mean_chunk(
     x,
     weights=None,
@@ -236,8 +241,8 @@ def cf_mean_chunk(
 ):
     """Chunk calculations for the mean.
 
-     This function is passed to `dask.array.reduction` as its *chunk*
-     parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: 3.14.0
 
@@ -266,11 +271,15 @@ def cf_mean_chunk(
     if computing_meta:
         return x
 
+    x = cf_asanyarray(x)
+    if weights is not None:
+        weights = cf_asanyarray(weights)
+
     # N, sum
-    d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
+    d = cf_sum_chunk(x, weights=weights, dtype=dtype, **kwargs)
 
     d["V1"] = sum_weights_chunk(
-        x, weights, N=d["N"], check_weights=False, **kwargs
+        x, weights=weights, N=d["N"], check_weights=False, **kwargs
     )
     d["weighted"] = weights is not None
 
@@ -362,6 +371,7 @@ def cf_mean_agg(
 # --------------------------------------------------------------------
 # maximum
 # --------------------------------------------------------------------
+@active_storage_chunk("max")
 def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the maximum.
 
@@ -380,12 +390,13 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
             Dictionary with the keys:
 
             * N: The sample size.
-            * max: The maximum of `x``.
+            * max: The maximum of `x`.
 
     """
     if computing_meta:
         return x
 
+    x = cf_asanyarray(x)
     return {
         "max": chunk.max(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -513,6 +524,7 @@ def cf_mid_range_agg(
 # --------------------------------------------------------------------
 # minimum
 # --------------------------------------------------------------------
+@active_storage_chunk("min")
 def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the minimum.
 
@@ -537,6 +549,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
+    x = cf_asanyarray(x)
     return {
         "min": chunk.min(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -616,6 +629,7 @@ def cf_min_agg(
 # --------------------------------------------------------------------
 # range
 # --------------------------------------------------------------------
+@active_storage_chunk("range")
 def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the range.
 
@@ -635,9 +649,11 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
 
             * N: The sample size.
             * min: The minimum of ``x``.
-            * max: The maximum of ``x`.
+            * max: The maximum of ``x``.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -726,6 +742,7 @@ def cf_range_agg(
 # --------------------------------------------------------------------
 # root mean square
 # --------------------------------------------------------------------
+@active_storage_chunk("rms")
 def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the root mean square (RMS).
 
@@ -747,6 +764,8 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
             * sum: The weighted sum of ``x**2``.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -802,6 +821,7 @@ def cf_rms_agg(
 # --------------------------------------------------------------------
 # sample size
 # --------------------------------------------------------------------
+@active_storage_chunk("sample_size")
 def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     """Chunk calculations for the sample size.
 
@@ -822,6 +842,8 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
             * N: The sample size.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -912,6 +934,7 @@ def cf_sample_size_agg(
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
+@active_storage_chunk("sum")
 def cf_sum_chunk(
     x,
     weights=None,
@@ -950,7 +973,9 @@ def cf_sum_chunk(
     if computing_meta:
         return x
 
+    x = cf_asanyarray(x)
     if weights is not None:
+        weights = cf_asanyarray(weights)
         if check_weights:
             w_min = weights.min()
             if w_min <= 0:
@@ -1043,8 +1068,9 @@ def cf_sum_agg(
 # --------------------------------------------------------------------
 # sum of weights
 # --------------------------------------------------------------------
+@active_storage_chunk("sum_of_weights")
 def cf_sum_of_weights_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, square=False, **kwargs
+    x, weights=None, dtype="f8", computing_meta=False, **kwargs
 ):
     """Chunk calculations for the sum of the weights.
 
@@ -1052,10 +1078,6 @@ def cf_sum_of_weights_chunk(
     parameter.
 
     :Parameters:
-
-        square: `bool`, optional
-            If True then calculate the sum of the squares of the
-            weights.
 
         See `dask.array.reductions` for details of the other
         parameters.
@@ -1066,10 +1088,10 @@ def cf_sum_of_weights_chunk(
             Dictionary with the keys:
 
             * N: The sample size.
-            * sum: The sum of ``weights``, or the sum of
-                   ``weights**2`` if *square* is True.
+            * sum: The sum of ``weights``.
 
     """
+    x = cf_asanyarray(x)
     if computing_meta:
         return x
 
@@ -1077,7 +1099,49 @@ def cf_sum_of_weights_chunk(
     d = cf_sample_size_chunk(x, **kwargs)
 
     d["sum"] = sum_weights_chunk(
-        x, weights=weights, square=square, N=d["N"], **kwargs
+        x, weights=weights, square=False, N=d["N"], **kwargs
+    )
+
+    return d
+
+
+# --------------------------------------------------------------------
+# sum of squares of weights
+# --------------------------------------------------------------------
+@active_storage_chunk("sum_of_weights2")
+def cf_sum_of_weights2_chunk(
+    x, weights=None, dtype="f8", computing_meta=False, **kwargs
+):
+    """Chunk calculations for the sum of the squares of the weights.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: NEXTRELEASE
+
+    :Parameters:
+
+        See `dask.array.reductions` for details of the other
+        parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+            * sum: The sum of the squares of ``weights``.
+
+    """
+    x = cf_asanyarray(x)
+    if computing_meta:
+        return x
+
+    # N
+    d = cf_sample_size_chunk(x, **kwargs)
+
+    d["sum"] = sum_weights_chunk(
+        x, weights=weights, square=True, N=d["N"], **kwargs
     )
 
     return d
@@ -1086,6 +1150,7 @@ def cf_sum_of_weights_chunk(
 # --------------------------------------------------------------------
 # unique
 # --------------------------------------------------------------------
+@active_storage_chunk("unique")
 def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the unique values.
 
@@ -1106,6 +1171,8 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * unique: The unique values.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
@@ -1147,6 +1214,7 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # variance
 # --------------------------------------------------------------------
+@active_storage_chunk("var")
 def cf_var_chunk(
     x, weights=None, dtype="f8", computing_meta=False, ddof=None, **kwargs
 ):
@@ -1190,13 +1258,17 @@ def cf_var_chunk(
             * ddof: The delta degrees of freedom.
 
     """
+    x = cf_asanyarray(x)
+
     if computing_meta:
         return x
 
     weighted = weights is not None
+    if weighted:
+        weights = cf_asanyarray(weights)
 
     # N, V1, sum
-    d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
+    d = cf_mean_chunk(x, weights=weights, dtype=dtype, **kwargs)
 
     wsum = d["sum"]
     V1 = d["V1"]
@@ -1214,7 +1286,7 @@ def cf_var_chunk(
 
     if weighted and ddof == 1:
         d["V2"] = sum_weights_chunk(
-            x, weights, square=True, check_weights=False, **kwargs
+            x, weights=weights, square=True, check_weights=False, **kwargs
         )
     else:
         d["V2"] = None

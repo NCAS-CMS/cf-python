@@ -5270,18 +5270,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Collapse weights**
 
-        The calculations of means, standard deviations and variances are,
-        by default, **not weighted**. For weights to be incorporated in
-        the collapse, the axes to be weighted must be identified with the
-        *weights* keyword.
+        .. warning:: By default, the collapse calculations are **not**
+                     weighted.
+
+                     For weights to be incorporated in the collapse,
+                     the *weights* keyword must be set.
 
         Weights are either derived from the field construct's metadata
-        (such as cell sizes), or may be provided explicitly in the form of
-        other field constructs containing data of weights values. In
-        either case, the weights actually used are those derived by the
-        `weights` method of the field construct with the same weights
-        keyword value. Collapsed axes that are not identified by the
-        *weights* keyword are unweighted during the collapse operation.
+        (such as cell sizes), or may be provided explicitly in the
+        form of other field constructs containing data of weights
+        values. In either case, the weights actually used are those
+        derived by the `weights` method of the field construct with
+        the same *weights* keyword value. Collapsed axes that are not
+        identified by the *weights* keyword are unweighted during the
+        collapse operation.
 
         *Example:*
           Create a weighted time average:
@@ -5470,6 +5472,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           >>> b = a.collapse('T: standard_deviation within years',
           ...                within_years=cf.seasons(), weights=True)
 
+
+        **Active storage collapses**
+
+        When the data being collapsed are stored remotely, the
+        collapse calculations may be carried out on a server that is
+        close (in a network distance sense) to the data, thereby
+        removing the time and power costs of transfering the entire
+        un-collapsed data to the local client. Whether or not this
+        will occur is determined on a case-by-case basis, and will
+        only be done if all of the following criteria are met:
+
+        * the collapse method is one of ``'mean'``, ``'maximum'``,
+          ``'minimum'``, or ``'sum'``;
+
+        * the collapse is over all axes;
+
+        * the collapse is unweighted;
+
+        * `cf.active_storage()` is `True`;
+
+        * a URL of the active storage server has been set with
+          `cf.active_storage_url`;
+
+        * the data values are in netCDF-4 files on disk (rather than
+          in any other file format, or in memory) and are not
+          numerically packed;
+
+        * the `!active_storage` attribute of the `cf.Data` object
+          being collapsed is `True`, indicating that active storage
+          operations may be possible. In general, it will only be
+          `True` for data that are in files on disk, are not
+          compressed by convention and have not had any other
+          operations applied;
+
+        * it is possible to import the external `activestorage.Active`
+          class.
+
+        The performance improvements from using active storage
+        operations will increase the closer the active storage server
+        is to the data storage. If the active storage server is
+        sufficiently far away from the data then it may be faster to
+        do a normal, non-active operation.
 
         .. versionadded:: 1.0
 
@@ -6934,7 +6978,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             data_axes = f.get_data_axes()
             iaxes = [
                 data_axes.index(axis)
-                for axis in collapse_axes
+                for axis in collapse_axes_all_sizes
                 if axis in data_axes
             ]
 
@@ -7149,14 +7193,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create a new dimension coordinate for this axis
+                # Create new dimension coordinate bounds (lazily)
                 if dim.has_bounds():
-                    bounds_data = [dim.bounds.datum(0), dim.bounds.datum(-1)]
+                    b = dim.bounds.data
                 else:
-                    bounds_data = [dim.datum(0), dim.datum(-1)]
+                    b = dim.data
 
-                units = dim.Units
+                try:
+                    # Set the new bounds from cached values
+                    bounds_data = Data(
+                        [
+                            [
+                                self._custom["cached_elements"][0],
+                                self._custom["cached_elements"][-1],
+                            ]
+                        ],
+                        dtype=b.dtype,
+                        units=b.Units,
+                    )
+                except KeyError:
+                    # Set the new bounds lazily
+                    ndim = b.ndim
+                    bounds_data = Data.concatenate(
+                        [
+                            b[(slice(0, 1, 1),) * ndim],
+                            b[(slice(-1, None, 1),) * ndim],
+                        ],
+                        axis=-1,
+                        copy=False,
+                    )
+                    if ndim == 1:
+                        bounds_data.insert_dimension(0, inplace=True)
 
+                bounds = self._Bounds(data=bounds_data)
+
+                # Create a new dimension coordinate value
                 if coordinate == "min":
                     coordinate = "minimum"
                     print(
@@ -7171,20 +7242,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     )
 
                 if coordinate == "mid_range":
-                    data = Data(
-                        [(bounds_data[0] + bounds_data[1]) * 0.5], units=units
-                    )
+                    data = bounds_data.mean(axes=1, weights=None, squeeze=True)
                 elif coordinate == "minimum":
-                    data = dim.data.min()
+                    data = dim.data.min(squeeze=False)
                 elif coordinate == "maximum":
-                    data = dim.data.max()
+                    data = dim.data.max(squeeze=False)
                 else:
                     raise ValueError(
                         "Can't collapse: Bad parameter value: "
                         f"coordinate={coordinate!r}"
                     )
-
-                bounds = self._Bounds(data=Data([bounds_data], units=units))
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)

@@ -1,11 +1,28 @@
-from ..array.netcdfarray import NetCDFArray
+from urllib.parse import urlparse
+
+import cfdm
+
+from ..array.abstract import Array
+from ..array.mixin import FileArrayMixin
+from .h5netcdffragmentarray import H5netcdfFragmentArray
 from .mixin import FragmentArrayMixin
+from .netcdf4fragmentarray import NetCDF4FragmentArray
 
 
-class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
-    """A CFA fragment array stored in a netCDF file.
+class NetCDFFragmentArray(
+    FragmentArrayMixin,
+    cfdm.data.mixin.NetCDFFileMixin,
+    FileArrayMixin,
+    cfdm.data.mixin.FileArrayMixin,
+    Array,
+):
+    """A netCDF fragment array.
 
-    .. versionadded:: 3.14.0
+    Access will either with `netCDF4` (for local and OPenDAP files) or
+    `h5netcdf` (for S3 files).
+
+    .. versionadded:: 3.15.0
+
 
     """
 
@@ -19,6 +36,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         aggregated_calendar=False,
         units=False,
         calendar=None,
+        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -62,24 +80,51 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
+            {{init storage_options: `dict` or `None`, optional}}
+
+                .. versionadded:: NEXTRELEASE
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
         """
         super().__init__(
-            filename=filename,
-            address=address,
-            dtype=dtype,
-            shape=shape,
-            mask=True,
-            units=units,
-            calendar=calendar,
             source=source,
             copy=copy,
         )
 
         if source is not None:
+            try:
+                shape = source._get_component("shape", None)
+            except AttributeError:
+                shape = None
+
+            try:
+                filename = source._get_component("filename", None)
+            except AttributeError:
+                filename = None
+
+            try:
+                address = source._get_component("address", None)
+            except AttributeError:
+                address = None
+
+            try:
+                dtype = source._get_component("dtype", None)
+            except AttributeError:
+                dtype = None
+
+            try:
+                units = source._get_component("units", False)
+            except AttributeError:
+                units = False
+
+            try:
+                calendar = source._get_component("calendar", False)
+            except AttributeError:
+                calendar = False
+
             try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
@@ -94,7 +139,90 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             except AttributeError:
                 aggregated_calendar = False
 
+            try:
+                storage_options = source._get_component(
+                    "storage_options", None
+                )
+            except AttributeError:
+                storage_options = None
+
+        if filename is not None:
+            if isinstance(filename, str):
+                filename = (filename,)
+            else:
+                filename = tuple(filename)
+
+            self._set_component("filename", filename, copy=False)
+
+        if address is not None:
+            if isinstance(address, int):
+                address = (address,)
+            else:
+                address = tuple(address)
+
+            self._set_component("address", address, copy=False)
+
+        if storage_options is not None:
+            self._set_component("storage_options", storage_options, copy=False)
+
+        self._set_component("shape", shape, copy=False)
+        self._set_component("dtype", dtype, copy=False)
+        self._set_component("units", units, copy=False)
+        self._set_component("calendar", calendar, copy=False)
+        self._set_component("mask", True, copy=False)
+
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
+
+        # By default, close the file after data array access
+        self._set_component("close", True, copy=False)
+
+    def __getitem__(self, indices):
+        """Returns a subspace of the fragment as a numpy array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        .. versionadded:: 3.15.0
+
+        """
+
+        kwargs = {
+            "dtype": self.dtype,
+            "shape": self.shape,
+            "aggregated_units": self.get_aggregated_units(None),
+            "aggregated_calendar": self.get_aggregated_calendar(None),
+            "units": self.get_units(None),
+            "calendar": self.get_units(None),
+            "copy": False,
+        }
+
+        # Loop round the files, returning as soon as we find one that
+        # is accessible.
+        filenames = self.get_filenames()
+        for filename, address in zip(filenames, self.get_addresses()):
+            kwargs["filename"] = filename
+            kwargs["address"] = address
+
+            scheme = urlparse(filename).scheme
+            kwargs["storage_options"] = self.get_storage_options(
+                create_endpoint_url=False
+            )
+            if scheme == "s3":
+                fragment = H5netcdfFragmentArray(**kwargs)
+            else:
+                fragment = NetCDF4FragmentArray(**kwargs)
+
+            try:
+                return fragment[indices]
+            except FileNotFoundError:
+                pass
+            except RuntimeError as error:
+                raise RuntimeError(f"{error}: {filename}")
+
+        # Still here?
+        if len(filenames) == 1:
+            raise FileNotFoundError(f"No such fragment file: {filenames[0]}")
+
+        raise FileNotFoundError(f"No such fragment files: {filenames}")

@@ -727,7 +727,7 @@ class RegridOperator(mixin_Container, Container):
                 # Read the weights from the weights file
                 from netCDF4 import Dataset
 
-                from ..data.array.netcdfarray import _lock
+                from ..data.array.locks import _lock
 
                 _lock.acquire()
                 nc = Dataset(weights_file, "r")

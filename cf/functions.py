@@ -6,7 +6,6 @@ import os
 import platform
 import re
 import sys
-import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
@@ -19,7 +18,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import cfdm
 import netCDF4
@@ -172,6 +171,9 @@ def configuration(
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
+    active_storage=None,
+    active_storage_url=None,
+    netcdf_lock=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -190,6 +192,9 @@ def configuration(
     * `regrid_logging`
     * `relaxed_identities`
     * `bounds_combination_mode`
+    * `active_storage`
+    * `active_storage_url`
+    * `netcdf_lock`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -208,7 +213,8 @@ def configuration(
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`, `bounds_combination_mode`
+                 `relaxed_identities`, `bounds_combination_mode`,
+                 `active_storage`, `active_storage_url`, `netcdf_lock`
 
     :Parameters:
 
@@ -260,6 +266,27 @@ def configuration(
             construct identity. The default is to not change the
             current value.
 
+        active_storage: `bool` or `Constant`, optional
+            The new value (either True to enable active storage
+            reductions or False to disable them). The default is to
+            not change the current behaviour.
+
+            .. versionadded:: NEXTVERSION
+
+        active_storage_url: `str` or `None` or `Constant`, optional
+            The new value (either a new URL string or `None` to remove
+            the URL). The default is to not change the value.
+
+            .. versionadded:: NEXTVERSION
+
+        netcdf_lock: `bool` or `Constant`, optional
+            The new value. If True then all netCDF file access
+            coordinates around the same lock, thereby preventing
+            concurrent reads. If False the concurrent reads are
+            allowed. The default is to not change the current value.
+
+            .. versionadded:: NEXTVERSION
+
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -289,7 +316,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 82873466.88000001}
+     'chunksize': 82873466.88000001,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -303,7 +333,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -312,7 +345,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
 
     Use as a context manager:
 
@@ -324,7 +360,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
     >>> with cf.configuration(atol=9, rtol=10):
     ...     print(cf.configuration())
     ...
@@ -335,7 +374,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -344,7 +386,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'netcdf_lock': True}
 
     """
     if of_fraction is not None:
@@ -375,6 +420,9 @@ def configuration(
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
+        active_storage=active_storage,
+        active_storage_url=active_storage_url,
+        netcdf_lock=netcdf_lock,
     )
 
 
@@ -424,6 +472,9 @@ def _configuration(_Configuration, **kwargs):
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
+        "active_storage": active_storage,
+        "active_storage_url": active_storage_url,
+        "netcdf_lock": netcdf_lock,
     }
 
     old_values = {}
@@ -553,11 +604,17 @@ class regrid_logging(ConstantAccess):
 
     **Examples**
 
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
     False
-    >>> cf.regrid_logging(True)
+    >>> print(cf.regrid_logging(True))
     False
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
+    True
+    >>> with cf.regrid_logging(False):
+    ...     print(cf.regrid_logging())
+    ...
+    False
+    >>> print(cf.regrid_logging())
     True
 
     """
@@ -682,13 +739,19 @@ class relaxed_identities(ConstantAccess):
     >>> org = cf.relaxed_identities()
     >>> org
     False
-    >>> cf.relaxed_identities(True)
+    >>> print(cf.relaxed_identities(True))
     False
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
     True
-    >>> cf.relaxed_identities(org)
+    >>> print(cf.relaxed_identities(org))
     True
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
+    False
+    >>> with cf.relaxed_identities(True):
+    ...     print(cf.relaxed_identities())
+    ...
+    True
+    >>> print(cf.relaxed_identities())
     False
 
     """
@@ -805,18 +868,24 @@ class tempdir(ConstantAccess):
 
     :Returns:
 
-        `str`
-            The directory prior to the change, or the current
-            directory if no new value was specified.
+        `Constant`
+            The directory name prior to the change, or the name of the
+            current directory if no new value was specified.
 
     **Examples**
 
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
     '/tmp'
     >>> old = cf.tempdir('/home/me/tmp')
-    >>> cf.tempdir(old)
+    >>> print(cf.tempdir(old))
     '/home/me/tmp'
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
+    '/tmp'
+    >>> with cf.tempdir('~/NEW_TMP'):
+    ...     print(cf.tempdir())
+    ...
+    /home/me/NEW_TMP
+    >>> print(cf.tempdir())
     '/tmp'
 
     """
@@ -1084,11 +1153,6 @@ class bounds_combination_mode(ConstantAccess):
     OR
     >>> print(cf.bounds_combination_mode())
     AND
-
-    Use as a context manager:
-
-    >>> print(cf.bounds_combination_mode())
-    AND
     >>> with cf.bounds_combination_mode('XOR'):
     ...     print(cf.bounds_combination_mode())
     ...
@@ -1133,6 +1197,190 @@ class bounds_combination_mode(ConstantAccess):
             )
 
         return arg
+
+
+class active_storage(ConstantAccess):
+    """Whether or not to attempt active storage reductions.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `active_storage_url`, `configuration`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> cf.active_storage()
+    False
+    >>> with cf.active_storage(True):
+    ...     print(cf.active_storage())
+    ...
+    True
+    >>> cf.active_storage()
+    False
+    >>> cf.active_storage(True)
+    False
+    >>> cf.active_storage()
+    True
+
+    """
+
+    _name = "active_storage"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return bool(arg)
+
+
+class active_storage_url(ConstantAccess):
+    """The URL location of the active storage reducer.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso::  `active_storage`, `configuration`
+
+    :Parameters:
+
+        arg: `str` or `None` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cf.active_storage_url())
+    None
+    >>> with cf.active_storage_url('http://active/storage/location'):
+    ...     print(cf.active_storage_url())
+    ...
+    'http://active/storage/location'
+    >>> print(cf.active_storage_url())
+    None
+    >>> print(cf.active_storage_url('http://other/location'))
+    None
+    >>> cf.active_storage_url()
+    'http://other/location'
+
+    """
+
+    _name = "active_storage_url"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        if arg is None:
+            return arg
+
+        return str(arg)
+
+
+class netcdf_lock(ConstantAccess):
+    """Whether or not allow concurrent netCDF read access.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cf.netcdf_lock())
+    True
+    >>> with cf.netcdf_lock(False):
+    ...     print(cf.netcdf_lock())
+    ...
+    False
+    >>> print(cf.netcdf_lock())
+    True
+    >>> print(cf.netcdf_lock(False))
+    True
+    >>> cf.netcdf_lock()
+    False
+
+    """
+
+    _name = "netcdf_lock"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        if arg is None:
+            return arg
+
+        return bool(arg)
 
 
 def CF():
@@ -2553,7 +2801,7 @@ def relpath(filename, start=None):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename
 
@@ -2591,7 +2839,7 @@ def dirname(filename):
     'http://data/archive'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename.rpartition("/")[0]
 
@@ -2630,9 +2878,9 @@ def pathjoin(path1, path2):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(path1)
+    u = urlparse(path1)
     if u.scheme != "":
-        return urllib.parse.urljoin(path1, path2)
+        return urljoin(path1, path2)
 
     return _os_path_join(path1, path2)
 
@@ -3079,6 +3327,9 @@ def environment(display=True, paths=True):
         "dask": _get_module_info("dask"),
         # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "s3fs": _get_module_info("s3fs"),
         "psutil": _get_module_info("psutil"),
         "packaging": _get_module_info("packaging"),
         "numpy": _get_module_info("numpy"),

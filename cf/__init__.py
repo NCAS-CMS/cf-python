@@ -13,9 +13,16 @@ can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 
+* read field constructs and domain constructs from netCDF, CDL, PP and
+  UM datasets with a choice of netCDF backends,
+
+* read files from OPeNDAP servers and S3 object stores,
+
 * create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
+
+* read, write, and manipulate UGRID mesh topologies,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -74,8 +81,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.11"
-__date__ = "2023-03-01"
-__version__ = "3.16.1"
+__date__ = "2024-??-??"
+__version__ = "3.17.0"
 
 _requires = (
     "numpy",
@@ -191,7 +198,7 @@ if Version(numpy.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.6"
+_minimum_vn = "3.3.7"
 if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
@@ -199,8 +206,8 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.11.1.0"
-_maximum_vn = "1.11.2.0"
+_minimum_vn = "1.11.2.0"
+_maximum_vn = "1.11.3.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
@@ -274,15 +281,19 @@ from .data import Data
 from .data.array import (
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFANetCDFArray,
+    CFAH5netcdfArray,
+    CFANetCDF4Array,
     FullArray,
     GatheredArray,
+    H5netcdfArray,
     NetCDFArray,
+    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    UMArray,
 )
 
 from .data.fragment import (

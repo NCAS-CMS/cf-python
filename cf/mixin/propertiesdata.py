@@ -4692,12 +4692,48 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    def to_dask_array(self):
+    def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
         """Convert the data to a `dask` array.
+
+        .. warning:: By default, the mask hardness of the returned
+                     dask array might not be the same as that
+                     specified by the `hardmask` attribute.
+
+                     This could cause problems if a subsequent
+                     operation on the returned dask array involves the
+                     un-masking of masked values (such as by indexed
+                     assignment).
+
+                     To guarantee that the mask hardness of the
+                     returned dask array is correct, set the
+                     *apply_mask_hardness* parameter to True.
 
         .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.to_dask_array`
+
+        :Parameters:
+
+            apply_mask_hardness: `bool`, optional
+                If True then force the mask hardness of the returned
+                array to be that given by the `hardmask` attribute.
+
+                .. versionadded:: NEXTVERSION
+
+            asanyarray: `bool` or `None`, optional
+                If True then add a final operation to the Dask graph
+                that converts chunks to `numpy` arrays, but only if a
+                chunk's data object has an `__asanyarray__` attribute
+                that is `True`. If False then do not do this. If
+                `None`, the default, then the final operation is added
+                if the `Data` object's `__asanyarray__` attribute is
+                `True`.
+
+                .. note:: Such a final operation is included in the
+                          returned Dask array, but is not included in
+                          the Dask array stored in the `Data` object.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -4717,7 +4753,9 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't get dask array when there is no data")
 
-        return data.to_dask_array()
+        return data.to_dask_array(
+            apply_mask_hardness=apply_mask_hardness, asanyarray=asanyarray
+        )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

@@ -56,7 +56,7 @@ class CellMethod(cfdm.CellMethod):
     def __new__(cls, *args, **kwargs):
         """This must be overridden in subclasses.
 
-        .. versionadded:: (cfdm) 3.7.0
+        .. versionadded:: 3.7.0
 
         """
         instance = super().__new__(cls)

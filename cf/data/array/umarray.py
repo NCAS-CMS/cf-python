@@ -6,14 +6,15 @@ from ...functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     get_subspace,
     load_stash2standard_name,
-    parse_indices,
 )
 from ...umread_lib.umfile import File
 from .abstract import Array
-from .mixin import FileArrayMixin
+from .mixin import FileArrayMixin, IndexMixin
 
 
-class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
+class UMArray(
+    IndexMixin, FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array
+):
     """A sub-array stored in a PP or UM fields file."""
 
     def __init__(
@@ -174,27 +175,44 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
-    def __getitem__(self, indices):
-        """Return a subspace of the array.
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
 
-        x.__getitem__(indices) <==> x[indices]
+        The subspace is defined by the indices stored in the `index`
+        attribute.
 
-        Returns a subspace of the array as an independent numpy array.
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
 
         """
+        # Note: No need to lock the UM file - concurrent reads are OK.
+
+        if index is None:
+            index = self.index
+
         f, header_offset = self.open()
         rec = self._get_rec(f, header_offset)
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
-        array = rec.get_data().reshape(self.shape)
+        array = rec.get_data().reshape(self.original_shape)
 
         self.close(f)
         del f, rec
 
-        if indices is not Ellipsis:
-            indices = parse_indices(array.shape, indices)
-            array = get_subspace(array, indices)
+        array = get_subspace(array, index)
 
         # Set the units, if they haven't been set already.
         self._set_units(int_hdr)
