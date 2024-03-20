@@ -687,7 +687,13 @@ def read(
             ``'netCDF4'`` or ``'h5netcdf'`` will force the use of the
             `netCDF4` or `h5netcdf` libraries respectively.
 
-            .. note:: Using `h5netcdf` may restrictshas limited https://docs.h5py.org/en/stable/high/dataset.html#reading-writing-data
+            .. note:: `h5netcdf` restricts the types of indices that
+                      define subspaces of its data. See the `h5py`
+                      documentaiton at https://docs.h5py.org for
+                      details. However, such indices on a returned
+                      `Field` may be possible if they are followed by
+                      further subspaces that imply acceptable indices
+                      to the data in the file.
 
             .. note:: The *netCDF_backend* parameter does not affect
                       the opening of netCDF fragment files that define

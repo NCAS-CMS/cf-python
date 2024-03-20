@@ -7199,15 +7199,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 else:
                     b = dim.data
 
+                cached_elements = b._get_cached_elements()
                 try:
-                    # Set the new bounds from cached values
+                    # Try to set the new bounds from cached values
                     bounds_data = Data(
-                        [
-                            [
-                                self._custom["cached_elements"][0],
-                                self._custom["cached_elements"][-1],
-                            ]
-                        ],
+                        [[cached_elements[0], cached_elements[-1]]],
                         dtype=b.dtype,
                         units=b.Units,
                     )

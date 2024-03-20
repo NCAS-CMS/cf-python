@@ -90,7 +90,7 @@ class IndexMixin:
         index0 = self.index
         original_shape = self.original_shape
 
-        index = parse_indices(shape0, index, keepdims=False)
+        index1 = parse_indices(shape0, index, keepdims=False)
 
         new = self.copy()
         new_indices = []
@@ -98,25 +98,27 @@ class IndexMixin:
 
         i = 0
         for ind0, original_size in zip(index0, original_shape):
+            # If a previous call to __getitem__ resulted in a
+            # dimension being subspaced to and size 1 *and* removed
+            # (i.e. 'ind0' is integer-valued) then 'index1' will have
+            # fewer elements than 'index0'
             if isinstance(ind0, Integral):
-                # This dimension has been previously removed by the
-                # integer index 'ind0'
                 new_indices.append(ind0)
                 continue
 
-            # 'index' might have fewer elements than 'index0'
-            ind1 = index[i]
+            ind1 = index1[i]
             size0 = shape0[i]
             i += 1
 
+            # If this dimension is not subspaced by the new index then
+            # we don't need to update the old index.
             if isinstance(ind1, slice) and ind1 == slice(None):
-                # This dimension is not subspaced
                 new_indices.append(ind0)
                 continue
 
-            # Still here? Then we have to work out the the subspace of
-            # the full array implied by applying both 'ind0' and
-            # 'ind1'.
+            # Still here? Then we have to work out the subspace of the
+            #             full array implied by applying both 'ind0'
+            #             and 'ind1'.
             if is_dask_collection(ind1):
                 # Note: This will never occur when __getitem__ is
                 #       being called from within a Dask graph, because
@@ -124,7 +126,7 @@ class IndexMixin:
                 #       computed as part of the whole graph execution;
                 #       i.e. we don't have to worry about a
                 #       compute-within-a-compute situation. (If this
-                #       were not the case then we could get round it
+                #       were not the case then we would get round it
                 #       by wrapping the compute inside a `with
                 #       dask.config.set({"scheduler":
                 #       "synchronous"}):` clause.)
@@ -159,12 +161,24 @@ class IndexMixin:
                     # ind1: int, or array of int/bool
                     new_index = np.arange(*ind0.indices(original_size))[ind1]
             else:
-                # ind0: array of int
+                # ind0: array of int (if we made it here, then it
+                #                     can't be anything else)
                 new_index = np.asanyarray(ind0)[ind1]
 
             new_indices.append(new_index)
 
+        # Find the shape implied by the new indices
         new_shape = indices_shape(new_indices, original_shape, keepdims=False)
+
+        # Decreasing slices are not universally accepted (e.g. `h5py`
+        # doesn't like them), but at least we can convert a size 1
+        # decreasing slice to an increasing one.
+        for i, (size, ind) in enumerate(zip(new_shape, new_indices[:])):
+            if size == 1 and isinstance(ind, slice):
+                start, _, step = ind.indices(size)
+                if step and step < 0:
+                    new_indices[i] = slice(start, start + 1)
+
         new._set_component("shape", tuple(new_shape), copy=False)
         new._custom["index"] = tuple(new_indices)
 
