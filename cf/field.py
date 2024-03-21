@@ -7193,7 +7193,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create new dimension coordinate bounds (lazily)
+                # Create new dimension coordinate bounds
                 if dim.has_bounds():
                     b = dim.bounds.data
                 else:
@@ -7208,7 +7208,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         units=b.Units,
                     )
                 except KeyError:
-                    # Set the new bounds lazily
+                    # Otherwise create the new bounds lazily
                     ndim = b.ndim
                     bounds_data = Data.concatenate(
                         [
