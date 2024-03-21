@@ -430,10 +430,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             `None`
 
-        """        
+        """
         g = self.write_vars
 
         ndim = data.ndim
+
         cfa = self._cfa_aggregation_instructions(data, cfvar)
 
         # ------------------------------------------------------------
@@ -485,12 +486,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         data = cfa[term]
         self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            data ,#cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             location_ncdimensions,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
-        
+
         # File
         term = "file"
         if substitutions:
@@ -506,7 +507,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         data = cfa[term]
         self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            data, #cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             fragment_ncdimensions,
             attributes=attributes,
@@ -527,7 +528,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         data = cfa[term]
         self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            data, #         cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -547,7 +548,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         data = cfa[term]
         self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            data, #cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -819,7 +820,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             data = type(data)(dx)
             self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
             term_ncvar = self._cfa_write_term_variable(
-                data=data, #type(data)(dx),
+                data=data,
                 ncvar=aggregated_data.get(term, f"cfa_{term}"),
                 ncdimensions=fragment_ncdimensions,
             )
@@ -893,10 +894,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         from os.path import abspath, join, relpath
         from pathlib import PurePath
         from urllib.parse import urlparse
-        import time # TODO
-        print (f"\n{cfvar!r}") # TODO
-        start = time.time() # TODO
-        
+
         g = self.write_vars
 
         # Define the CFA file susbstitutions, giving precedence over
@@ -911,15 +909,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Size of the trailing dimension
         n_trailing = 0
 
-        start1 = time.time() # TODO
         aggregation_file = []
         aggregation_address = []
         aggregation_format = []
-        nnn = 0
         for indices in data.chunk_indices():
-            nnn += 1
             file_details = self._cfa_get_file_details(data[indices])
-       
             if len(file_details) != 1:
                 if file_details:
                     raise ValueError(
@@ -964,9 +958,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             aggregation_file.append(tuple(filenames2))
             aggregation_address.append(addresses)
             aggregation_format.append(formats)
-        print ('len(data.chunk_indices()) =',nnn)
-        print (f"loop 1: {time.time() - start1:.3}")
-       
+
         # Pad each value of the aggregation instruction arrays so that
         # it has 'n_trailing' elements
         a_shape = data.numblocks
@@ -1023,7 +1015,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Return Data objects
         # ------------------------------------------------------------
         data = type(data)
-        print (f"_cfa_aggregation_instructions: {time.time() - start:.3}")
         return {
             "location": data(aggregation_location),
             "file": data(aggregation_file),
@@ -1074,13 +1065,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         {(('/home/file.pp',), (34556,), ('um',))}
 
         """
-        out = set()
+        out = []
+        out_append = out.append
         for a in data.todict().values():
             try:
-                out.update(
-                    ((a.get_filenames(), a.get_addresses(), a.get_formats()),)
+                out_append(
+                    (a.get_filenames(), a.get_addresses(), a.get_formats())
                 )
             except AttributeError:
                 pass
 
-        return out
+        return set(out)
