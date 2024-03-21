@@ -914,6 +914,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_format = []
         for indices in data.chunk_indices():
             file_details = self._cfa_get_file_details(data[indices])
+
             if len(file_details) != 1:
                 if file_details:
                     raise ValueError(
@@ -972,6 +973,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ):
                 n = n_trailing - len(filenames)
                 if n:
+                    # This chunk has fewer fragment files than some
+                    # others, so some padding is required.
                     pad = ("",) * n
                     aggregation_file[i] = filenames + pad
                     aggregation_format[i] = formats + pad
