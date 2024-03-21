@@ -1,6 +1,7 @@
 from numbers import Integral
 
 import numpy as np
+from dask.array.slicing import normalize_index
 from dask.base import is_dask_collection
 
 from ....functions import indices_shape, parse_indices
@@ -9,8 +10,10 @@ from ....functions import indices_shape, parse_indices
 class IndexMixin:
     """Mixin class for lazy indexing of a data array.
 
-    A data for a subspace it retrieved by casting the object as a
-    `numpy` array:
+    A data for a subspace is retrieved by casting the object as a
+    `numpy` array. See `__getitem__` for more details.
+
+    **Examples**
 
     >>> a = cf.{{class}}(....)
     >>> a.shape
@@ -58,42 +61,39 @@ class IndexMixin:
         return array
 
     def __getitem__(self, index):
-        """Returns a subspace of the array as a new `{{class}}`.
+        """Returns a subspace of the data as a new `{{class}}`.
 
-                x.__getitem__(indices) <==> x[indices]
+        x.__getitem__(indices) <==> x[indices]
 
-                Subspaces created by indexing are lazy and are not applied
-                until the {{class}} object is converted to a `numpy` array
-                (via `__array__`), by which time all lazily-defined subspaces
-                will have been converted to a single index which defines only
-                the actual elements that need to be retrieved from the
-                original data.
-        [::2, [1, 3, 4]]
-            >>> a = a[[False, True, True], 1
+        Subspaces created by indexing are lazy and are not applied
+        until the {{class}} object is converted to a `numpy` array
+        (via `__array__`), by which time all lazily-defined subspaces
+        will have been converted to a single combined index which
+        defines only the actual elements that need to be retrieved
+        from the original data.
 
+        The combined index is intended to be treated orthogonally,
+        meaning that the index for each dimension is to be applied
+        independently, regardless of how that index was defined. For
+        instance, the indices ``[[0, 1], [1, 3], 0]`` and ``[:2, 1::2,
+        0]`` will give identical results.
 
-                For example, if the original data has shape ``(12, 145, 192)``
-                and consecutive subspaces of ``[::2, [1, 3, 4]]`` and
-                ``[[False, True, True], 1:]`` are applied, then only the
-                elements defined by subspace ``[[8], [10, 16], [12, 1]]`` will
-                be retrieved from the data when `__array__` is called.
+        For example, if the original data has shape ``(12, 145, 192)``
+        and consecutive subspaces of ``[::2, [1, 3, 4], 96:]`` and
+        ``[[0, 5], [True, False, True], 0]`` are applied, then only
+        the elements defined by the combined index``[[0, 10], [1, 4],
+        96]`` will be retrieved from the data when `__array__` is
+        called.
 
-                For example, if the original data has shape ``(6, 5)`` and
-                consecutive subspaces of ``[8:9, 10:20:3, [15, 1, 4, 12]]``
-                and ``[[0], [True, False, True], ::-2]`` are applied, then
-                only the elements defined by subspace ``[[8], [10, 16], [12,
-                1]]`` will be retrieved from the data when `__array__` is
-                called.
+        .. versionadded:: NEXTVERSION
 
-                .. versionadded:: NEXTVERSION
+        .. seealso:: `index`, `original_shape`, `__array__`,
+                     `__getitem__`
 
-                .. seealso:: `index`, `original_shape`, `__array__`,
-                             `__getitem__`
+        :Returns:
 
-                :Returns:
-
-                    `{{class}}`
-                        The subspaced array.
+            `{{class}}`
+                The subspaced data.
 
         """
         shape0 = self.shape
@@ -177,20 +177,11 @@ class IndexMixin:
 
             new_indices.append(new_index)
 
-        # Find the shape implied by the new indices
-        new_shape = indices_shape(new_indices, original_shape, keepdims=False)
-
-        # Decreasing slices are not universally accepted (e.g. `h5py`
-        # doesn't like them), but at least we can convert a size 1
-        # decreasing slice to an increasing one.
-        for i, (size, ind) in enumerate(zip(new_shape, new_indices[:])):
-            if size == 1 and isinstance(ind, slice):
-                start, _, step = ind.indices(size)
-                if step and step < 0:
-                    new_indices[i] = slice(start, start + 1)
-
-        new._set_component("shape", tuple(new_shape), copy=False)
         new._custom["index"] = tuple(new_indices)
+
+        # Find the shape defined by the new indices
+        new_shape = indices_shape(new_indices, original_shape, keepdims=False)
+        new._set_component("shape", tuple(new_shape), copy=False)
 
         return new
 
@@ -251,22 +242,33 @@ class IndexMixin:
 
         .. seealso:: `shape`, `original_shape`
 
+        :Parameters:
+
+            conform: `bool`, optional
+                If True, the default, then 1) convert a decreasing
+                size 1 slice to an increasing one, and 2) where
+                possible, a convert sequence of integers to a
+                slice. If False then these transformations are not
+                done.
+
+        :Returns:
+
+            `tuple`
+
         **Examples**
 
-        >>> x.index
-        (slice(None), slice(None), slice(None))
         >>> x.shape
         (12, 145, 192)
-        >>> x = x[8:9, 10:20:3, [15, 1,  4, 12]]
-        >>> x.index
-        (slice(8, 9), slice(10, 20, 3), [15, 1,  4, 12])
-        >>> x.shape
-        (1, 3, 4)
+        >>> x.index()
+        (slice(None), slice(None), slice(None))
+        >>> x = x[8:7:-1, 10:19:3, [15, 1,  4, 12]]
         >>> x = x[[0], [True, False, True], ::-2]
-        >>> x.index
-        ([8], [10, 16], [12, 1])
         >>> x.shape
         (1, 2, 2)
+        >>> x.index()
+        (slice(8, 9, None), slice(10, 17, 6), slice(12, -1, -11))
+        >>> x.index(conform=False)
+        (array([8]), array([10, 16]), array([12,  1]))
 
         """
         ind = self._custom.get("index")
@@ -279,9 +281,13 @@ class IndexMixin:
         if not conform:
             return ind
 
-        # Still here? Then conform the indices.
+        # Still here? Then conform the indices by:
+        #
+        # 1) Converting decreasing size 1 slices to increasing ones.
+        # 2) Where possible, converting sequences of integers to
+        #    slices.
         ind = list(ind)
-        for n, (i, size) in enumerate(zip(ind[:], self.shape)):
+        for n, (i, size) in enumerate(zip(ind[:], self.original_shape)):
             if isinstance(i, slice):
                 if size == 1:
                     start, _, step = i.indices(size)
@@ -292,9 +298,9 @@ class IndexMixin:
                         # decreasing slice into an increasing one.
                         ind[n] = slice(start, start + 1)
             elif np.iterable(i):
+                i = normalize_index((i,), (size,))[0]
                 if i.size == 1:
-                    # Convert a sequence of one integer into an
-                    # increasing slice
+                    # Convert a sequence of one integer into a slice
                     start = i.item()
                     ind[n] = slice(start, start + 1)
                 else:

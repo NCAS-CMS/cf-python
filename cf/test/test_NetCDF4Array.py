@@ -130,13 +130,38 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertTrue((n[...] == f.array).all())
 
     def test_NetCDF4Array_shape(self):
-        shape = (12, 96, 73)
+        shape = (12, 73, 96)
         a = cf.NetCDF4Array("/home/file2", "tas", shape=shape)
         self.assertEqual(a.shape, shape)
         self.assertEqual(a.original_shape, shape)
         a = a[::2]
         self.assertEqual(a.shape, (shape[0] // 2,) + shape[1:])
         self.assertEqual(a.original_shape, shape)
+
+    def test_NetCDF4Array_index(self):
+        shape = (12, 73, 96)
+        a = cf.NetCDF4Array("/home/file2", "tas", shape=shape)
+        self.assertEqual(
+            a.index(),
+            (
+                slice(
+                    None,
+                ),
+            )
+            * len(shape),
+        )
+        a = a[8:7:-1, 10:19:3, [15, 1, 4, 12]]
+        a = a[[0], [True, False, True], ::-2]
+        self.assertEqual(a.shape, (1, 2, 2))
+        self.assertEqual(
+            a.index(),
+            (slice(8, 9, None), slice(10, 17, 6), slice(12, -1, -11)),
+        )
+
+        index = a.index(conform=False)
+        self.assertTrue((index[0] == [8]).all())
+        self.assertTrue((index[1] == [10, 16]).all())
+        self.assertTrue((index[2] == [12, 1]).all())
 
 
 if __name__ == "__main__":
