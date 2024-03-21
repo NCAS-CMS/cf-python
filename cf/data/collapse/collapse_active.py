@@ -88,7 +88,7 @@ def active_chunk(method, x, **kwargs):
     # Create the output dictionary
     active.method = method
     active.components = True
-    d = active[x.index]
+    d = active[x.index()]
 
     # Reformat the output dictionary
     if method == "max":

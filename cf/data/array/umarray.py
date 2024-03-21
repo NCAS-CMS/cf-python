@@ -200,7 +200,7 @@ class UMArray(
         # Note: No need to lock the UM file - concurrent reads are OK.
 
         if index is None:
-            index = self.index
+            index = self.index()
 
         f, header_offset = self.open()
         rec = self._get_rec(f, header_offset)

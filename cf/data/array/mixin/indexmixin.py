@@ -9,7 +9,7 @@ from ....functions import indices_shape, parse_indices
 class IndexMixin:
     """Mixin class for lazy indexing of a data array.
 
-    A data for a subspace it retrieved by casting the `{{class}}` as a
+    A data for a subspace it retrieved by casting the object as a
     `numpy` array:
 
     >>> a = cf.{{class}}(....)
@@ -22,13 +22,13 @@ class IndexMixin:
      [15 16 17 18 19]
      [20 21 22 23 24]
      [25 26 27 28 29]]
-    >>> a = a[::2, [1, 3, 4]]
-    >>> a = a[[False, True, True], 1:]
+    >>> a = a[::2, [1, 2, 4]]
+    >>> a = a[[True, False, True], :]
     >>> a.shape
-    (2, 2)
+    (2, 3)
     >>> print(np.asanyarray(a))
-    [[13 14]
-     [23 24]]
+    [[ 1,  2,  4],
+     [21, 22, 24]]
 
     .. versionadded:: NEXTVERSION
 
@@ -37,7 +37,7 @@ class IndexMixin:
     def __array__(self, *dtype):
         """Convert the ``{{class}}` into a `numpy` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -60,34 +60,44 @@ class IndexMixin:
     def __getitem__(self, index):
         """Returns a subspace of the array as a new `{{class}}`.
 
-        x.__getitem__(indices) <==> x[indices]
+                x.__getitem__(indices) <==> x[indices]
 
-        The new `{{class}}` may be converted to a `numpy` array with
-        its `__array__` method.
+                Subspaces created by indexing are lazy and are not applied
+                until the {{class}} object is converted to a `numpy` array
+                (via `__array__`), by which time all lazily-defined subspaces
+                will have been converted to a single index which defines only
+                the actual elements that need to be retrieved from the
+                original data.
+        [::2, [1, 3, 4]]
+            >>> a = a[[False, True, True], 1
 
-        Consecutive subspaces are lazy, with only the final data
-        elements retrieved from the data when `__array__` is called.
 
-        For example, if the original data has shape ``(12, 145, 192)``
-        and consecutive subspaces of ``[8:9, 10:20:3, [15, 1, 4, 12]``
-        and ``[[0], [True, False, True], ::-2]`` are applied, then
-        only the elements defined by subspace ``[[8], [10, 16], [12,
-        1]]`` will be retrieved from the data when `__array__` is
-        called.
+                For example, if the original data has shape ``(12, 145, 192)``
+                and consecutive subspaces of ``[::2, [1, 3, 4]]`` and
+                ``[[False, True, True], 1:]`` are applied, then only the
+                elements defined by subspace ``[[8], [10, 16], [12, 1]]`` will
+                be retrieved from the data when `__array__` is called.
 
-        .. versionadded:: NEXTVERSION
+                For example, if the original data has shape ``(6, 5)`` and
+                consecutive subspaces of ``[8:9, 10:20:3, [15, 1, 4, 12]]``
+                and ``[[0], [True, False, True], ::-2]`` are applied, then
+                only the elements defined by subspace ``[[8], [10, 16], [12,
+                1]]`` will be retrieved from the data when `__array__` is
+                called.
 
-        .. seealso:: `index`, `original_shape`, `__array__`,
-                     `__getitem__`
+                .. versionadded:: NEXTVERSION
 
-        :Returns:
+                .. seealso:: `index`, `original_shape`, `__array__`,
+                             `__getitem__`
 
-            `{{class}}`
-                The subspaced array.
+                :Returns:
+
+                    `{{class}}`
+                        The subspaced array.
 
         """
         shape0 = self.shape
-        index0 = self.index
+        index0 = self.index(conform=False)
         original_shape = self.original_shape
 
         index1 = parse_indices(shape0, index, keepdims=False)
@@ -231,8 +241,7 @@ class IndexMixin:
             f"Must implement {self.__class__.__name__}._get_array"
         )
 
-    @property
-    def index(self):
+    def index(self, conform=True):
         """The index to be applied when converting to a `numpy` array.
 
         The `shape` is defined by the `index` applied to the
@@ -265,8 +274,45 @@ class IndexMixin:
             ind = (slice(None),) * self.ndim
             self._custom["index"] = ind
             self._custom["original_shape"] = self.shape
+            return ind
 
-        return ind
+        if not conform:
+            return ind
+
+        # Still here? Then conform the indices.
+        ind = list(ind)
+        for n, (i, size) in enumerate(zip(ind[:], self.shape)):
+            if isinstance(i, slice):
+                if size == 1:
+                    start, _, step = i.indices(size)
+                    if step and step < 0:
+                        # Decreasing slices are not universally
+                        # accepted (e.g. `h5py` doesn't like them),
+                        # but at least we can convert a size 1
+                        # decreasing slice into an increasing one.
+                        ind[n] = slice(start, start + 1)
+            elif np.iterable(i):
+                if i.size == 1:
+                    # Convert a sequence of one integer into an
+                    # increasing slice
+                    start = i.item()
+                    ind[n] = slice(start, start + 1)
+                else:
+                    # Convert a sequence of two or more integers into
+                    # a slice, if possible.
+                    step = np.unique(np.diff(i))
+                    if step.size == 1:
+                        start, stop = i[[0, -1]]
+                        if stop >= start:
+                            stop += 1
+                        elif stop:
+                            stop = -1
+                        else:
+                            stop = None
+
+                        ind[n] = slice(start, stop, step.item())
+
+        return tuple(ind)
 
     @property
     def original_shape(self):

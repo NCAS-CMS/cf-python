@@ -37,7 +37,7 @@ class FragmentArrayMixin:
 
         """
         if index is None:
-            index = self.index
+            index = self.index()
 
         try:
             array = super()._get_array(index)

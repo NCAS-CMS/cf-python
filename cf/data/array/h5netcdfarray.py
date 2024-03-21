@@ -17,7 +17,7 @@ class H5netcdfArray(
 
     **Active storage reductions**
 
-    Active storage reduction may be enabled with the `actify`
+    An active storage reductionx may be enabled with the `actify`
     method. See `cf.data.collapse.Collapse` for details.
 
     .. versionadded:: NEXTVERSION
@@ -71,7 +71,7 @@ class H5netcdfArray(
 
         """
         if index is None:
-            index = self.index
+            index = self.index()
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.

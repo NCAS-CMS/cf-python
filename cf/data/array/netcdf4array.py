@@ -17,7 +17,7 @@ class NetCDF4Array(
 
     **Active storage reductions**
 
-    Active storage reduction may be enabled with the `actify`
+    An active storage reduction may be enabled with the `actify`
     method. See `cf.data.collapse.Collapse` for details.
 
     """
@@ -69,7 +69,7 @@ class NetCDF4Array(
 
         """
         if index is None:
-            index = self.index
+            index = self.index()
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.
