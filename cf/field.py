@@ -441,6 +441,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for axis, size in zip(data_axes, new_data.shape):
             domain_axes[axis].set_size(size)
 
+        # Record which axes were cyclic before the subspace
+        org_cyclic = [data_axes.index(axis) for axis in new.cyclic()]
+
+        # Se the subspaced data
+        new.set_data(new_data, axes=data_axes, copy=False)
+
+        # Update axis cylcicity. Note that this can only entail
+        # setting an originally cyclic axis to be non-cyclic. Doing
+        # this now it enables us to disable the (possibly very slow)
+        # automatic check for cyclicity on the 'set_construct' calls
+        # below.
+        if org_cyclic:
+            new_cyclic = new_data.cyclic()
+            for i in org_cyclic:
+                if i not in new_cyclic:
+                    new.cyclic(i, iscyclic=False)
+
         # ------------------------------------------------------------
         # Subspace constructs with data
         # ------------------------------------------------------------
@@ -507,6 +524,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         key=key,
                         axes=construct_axes,
                         copy=False,
+                        autocyclic={"no-op": True},
                     )
 
         new.set_data(new_data, axes=data_axes, copy=False)
