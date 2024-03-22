@@ -1,5 +1,3 @@
-from urllib.parse import urlparse
-
 import cfdm
 
 from ..array.abstract import Array
