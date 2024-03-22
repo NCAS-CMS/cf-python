@@ -63,32 +63,49 @@ def active_chunk(method, x, **kwargs):
     filename = x.get_filename()
     filename = "/".join(filename.split("/")[3:])
 
+    max_threads = 100
+    
     active_kwargs = {
         "uri": filename,
         "ncvar": x.get_address(),
         "storage_options": x.get_storage_options(),
         "active_storage_url": x.get_active_storage_url(),
         "storage_type": "s3",  # Temporary requirement!
+        "max_threads": max_threads,
     }
 
-    if True:
+    if False:
         print(f"Active(**{active_kwargs})")
 
     active = Active(**active_kwargs)
 
-    # Provide a file lock
-    try:
-        lock = x._lock
-    except AttributeError:
-        pass
-    else:
-        if lock:
-            active.lock = lock
+#   # Provide a file lock
+#   try:
+#       lock = x._lock
+#   except AttributeError:
+#       pass
+#   else:
+#       if lock:
+#           active.lock = lock
 
     # Create the output dictionary
     active.method = method
     active.components = True
-    d = active[x.index()]
+
+    import time, datetime
+    lock = False #True #False      
+    if lock:    
+        x._lock.acquire()
+        start = time.time()
+        print ("START  LOCKED", x.index(), datetime.datetime.now())
+        d = active[x.index()]
+        print ("FINISH LOCKED", x.index(), datetime.datetime.now(), time.time()-start, f"maxT={max_threads}")     
+        x._lock.release()
+    else:
+        start = time.time()
+        print ("START  unlocked", x.index(), datetime.datetime.now())
+        d = active[x.index()]
+        print ("FINISH unlocked", x.index(), datetime.datetime.now(), time.time()-start, f"maxT={max_threads}")
 
     # Reformat the output dictionary
     if method == "max":
@@ -100,7 +117,6 @@ def active_chunk(method, x, **kwargs):
     elif method == "sum":
         d = {"N": d["n"], "sum": d["sum"]}
 
-    print("ACTIVE CHUNK DONE!")
     return d
 
 

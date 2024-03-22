@@ -204,22 +204,16 @@ class NetCDFFragmentArray(
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename
             kwargs["address"] = address
-
-            scheme = urlparse(filename).scheme
             kwargs["storage_options"] = self.get_storage_options(
                 create_endpoint_url=False
             )
-            if scheme == "s3":
-                fragment = H5netcdfFragmentArray(**kwargs)
-            else:
-                fragment = NetCDF4FragmentArray(**kwargs)
 
             try:
-                return fragment[indices]
+                return NetCDF4FragmentArray(**kwargs)[indices]
             except FileNotFoundError:
                 pass
-            except RuntimeError as error:
-                raise RuntimeError(f"{error}: {filename}")
+            except Exception:
+                return H5netcdfFragmentArray(**kwargs)[indices]
 
         # Still here?
         if len(filenames) == 1:
