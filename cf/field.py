@@ -519,7 +519,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 # Replace existing construct with its subspace
                 if needs_slicing:
-                    print ('setting ',repr(construct))
                     new.set_construct(
                         construct[tuple(dice)],
                         key=key,
