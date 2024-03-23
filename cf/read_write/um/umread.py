@@ -3472,6 +3472,7 @@ class UMRead(cfdm.read_write.IORead):
         fmt=None,
         word_size=None,
         byte_ordering=None,
+            parse=True
     ):
         """Open a UM fields file or PP file.
 
@@ -3493,7 +3494,7 @@ class UMRead(cfdm.read_write.IORead):
                 byte_ordering=byte_ordering,
                 word_size=word_size,
                 fmt=fmt,
-                parse=True
+                parse=parse
             )
         except Exception as error:
             try:
@@ -3528,7 +3529,7 @@ class UMRead(cfdm.read_write.IORead):
 
         """
         try:
-            self.file_open(filename)
+            self.file_open(filename, parse=False)
         except Exception as error:
             self.file_close()
             return False
@@ -3550,7 +3551,7 @@ class UMRead(cfdm.read_write.IORead):
 
         self._um_file = None
 
-    def file_open(self, filename):
+    def file_open(self, filename, parse=True):
         """Open the file for reading.
 
         :Paramters:
@@ -3568,6 +3569,7 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering=g.get("byte_ordering"),
             word_size=g.get("word_size"),
             fmt=g.get("fmt"),
+            parse=parse
         )
 
 
