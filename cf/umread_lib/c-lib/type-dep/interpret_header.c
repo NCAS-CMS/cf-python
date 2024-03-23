@@ -139,3 +139,4 @@ REAL get_var_real_fill_value(const REAL *real_hdr)
 {
   return real_hdr[INDEX_BMDI];
 }
+

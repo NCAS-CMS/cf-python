@@ -8,7 +8,7 @@ from ...functions import (
     load_stash2standard_name,
     parse_indices,
 )
-from ...umread_lib.umfile import File
+from ...umread_lib.umfile import File, Rec
 from .abstract import Array
 from .mixin import FileArrayMixin
 
@@ -272,14 +272,12 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
                 The record container.
 
         """
-        # TODOCFA: This method doesn't require data_offset and disk_length,
-        # so plays nicely with CFA. Is it fast enough that we can
-        # use this method always?
+        return Rec.from_file_and_offsets(f, header_offset)
         for v in f.vars:
             for r in v.recs:
                 if r.hdr_offset == header_offset:
+                    print (r.__dict__)
                     return r
-
     def _set_units(self, int_hdr):
         """The units and calendar properties.
 
@@ -683,4 +681,5 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
             byte_ordering=self.get_byte_ordering(),
             word_size=self.get_word_size(),
             fmt=self.get_fmt(),
+            parse=False,
         )
