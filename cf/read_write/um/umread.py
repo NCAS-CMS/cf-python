@@ -3484,7 +3484,7 @@ class UMRead(cfdm.read_write.IORead):
             parse: `bool`, optional
                 If True, the default, then parse the contents. If
                 False then the contents are not parsed, which can be
-                considerable faster in cases when the contents are not
+                considerably faster in cases when the contents are not
                 required.
 
                 .. versionadded:: NEXTVERSION
@@ -3538,7 +3538,7 @@ class UMRead(cfdm.read_write.IORead):
         """
         try:
             # Note: No need to completely parse the file to ascertain
-            #       if it's PP of FF.
+            #       if it's PP or FF.
             self.file_open(filename, parse=False)
         except Exception:
             self.file_close()
@@ -3572,7 +3572,7 @@ class UMRead(cfdm.read_write.IORead):
             parse: `bool`, optional
                 If True, the default, then parse the contents. If
                 False then the contents are not parsed, which can be
-                considerable faster in cases when the contents are not
+                considerably faster in cases when the contents are not
                 required.
 
                 .. versionadded:: NEXTVERSION

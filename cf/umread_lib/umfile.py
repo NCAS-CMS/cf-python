@@ -293,8 +293,8 @@ class Rec:
         """Instantiate a `Rec` object from the `File` object and the
         header and data offsets.
 
-        The lookup header are read in immediately, and the returned
-        record object is ready for calling `get_data`.
+        The lookup header is read from disk immediately, and the
+        returned record object is ready for calling `get_data`.
 
         :Parameters:
 
@@ -313,7 +313,7 @@ class Rec:
             disk_length: `int`
                 The length in bytes of the data in the file. If
                 `None`, the default, then the disk length will be
-                calculated from the integer.
+                calculated from the integer header.
 
         :Returns:
 
