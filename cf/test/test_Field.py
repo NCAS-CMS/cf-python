@@ -663,6 +663,14 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(np.allclose(f[:, -3:].array, g[:, :3].array))
         self.assertTrue(f[:, :4].equals(g[:, 3:]))
 
+        # Test setting of axis cyclicity
+        f.cyclic("grid_longitude", iscyclic=True)
+        self.assertEqual(f.data.cyclic(), {1})
+        g = f[0, :]
+        self.assertEqual(g.data.cyclic(), {1})
+        g = f[:, 0]
+        self.assertEqual(g.data.cyclic(), set())
+
     def test_Field__setitem__(self):
         f = self.f.copy().squeeze()
 
