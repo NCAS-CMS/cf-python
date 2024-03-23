@@ -3529,7 +3529,7 @@ class UMRead(cfdm.read_write.IORead):
         """
         try:
             self.file_open(filename)
-        except Exception:
+        except Exception as error:
             self.file_close()
             return False
         else:
@@ -3568,7 +3568,6 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering=g.get("byte_ordering"),
             word_size=g.get("word_size"),
             fmt=g.get("fmt"),
-            parse=True,
         )
 
 

@@ -10,6 +10,10 @@ from .extraData import ExtraDataUnpacker
 class UMFileException(Exception):
     pass
 
+# Integer header pointers
+LBLREC = 14
+LBPACK = 20
+LBEGIN = 28
 
 class File:
     """A class for a UM file that gives a view of the file including
@@ -322,7 +326,7 @@ class Rec:
 
         if data_offset is None:
             # Calculate the data offset from the integer header
-            if PP:
+            if file.fmt == "PP":
                 # We only support 64-word headers, so the data starts
                 # 66 words after the header_offset, i.e. 64 words of the
                 # header, plus 2 block control words.
