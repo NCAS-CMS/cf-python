@@ -289,12 +289,9 @@ class Rec:
         if file:
             self.file = file
 
-    # import cf; pp  = cf.umread_lib.umfile.File('/home/david/test2.pp', fmt='PP', byte_ordering= 'little_endian' , word_size=4, parse=False)
-    # cf.umread_lib.umfile.Rec.from_file_and_offsets(pp, 4,  268, 46640)
-
     @classmethod
     def from_file_and_offsets(
-        cls, file, hdr_offset, data_offset=None, disk_length=None
+        cls, file, header_offset, data_offset=None, disk_length=None
     ):
         """Instantiate a `Rec` object from the `File` object and the
         header and data offsets.
@@ -308,7 +305,7 @@ class Rec:
                 A view of a file including sets of PP records combined
                 into variables.
 
-            hdr_offset: `int`
+            header_offset: `int`
                 The file start address of the header, in bytes.
 
             data_offset: `int`, optional
@@ -329,41 +326,31 @@ class Rec:
         c = file._c_interface
         word_size = file.word_size
         int_hdr, real_hdr = c.read_header(
-            file.fd, hdr_offset, file.byte_ordering, word_size
+            file.fd, header_offset, file.byte_ordering, word_size
         )
         PP =  file.fmt == "PP"
-        print (c.lib.arse)
+        
         if data_offset is None:
             # Calculate the data offset from the integer header
             if PP:
                 # We only support 64-word headers, so the data starts
-                # 66 words after the header, i.e. 64 words of the
-                # header plus two block control words.
-                data_offset = hdr_offset + 66 * word_size
+                # 66 words after the header_offset, i.e. 64 words of the
+                # header, plus 2 block control words.
+                data_offset = header_offset + 66 * word_size
             else:
                 # Fields file
                 data_offset = int_hdr[LBEGIN] * word_size
 
         if disk_length is None:
             # Calculate the disk length from the integer header
-            lbpack = int_hdr[LBPACK]
-            lbnrec = int_hdr[LBNREC]
-            lblrec = int_hdr[LBLREC]
-            
-            if not lbpack:
-                disk_length = (lblrec - int_hdr[LBEXT]) * word_size
-            elif lbpack != 0 and lblrec * word_size:
-                disk_length = lblrec * word_size
-            elif lbpack % 10 == 2:
-                lbnpt = int_hdr[LBNPT]
-                lbrow = int_hdr[LBROW]
-                if lbnpt > 0 and lbrow > 0:
-                    disk_length = lbnpt * lbrow  * 4
-                else:
-                    disk_length = (lblrec - int_hdr[LBEXT]) * 4
-        
+            if int_hdr[LBPACK] % 10 == 2:
+                # Cray 32-bit packing
+                disk_length = int_hdr[LBLREC] * 4
+            else:
+                disk_length = int_hdr[LBLREC] * word_size
+          
         return cls(
-            int_hdr, real_hdr, hdr_offset, data_offset, disk_length, file=file
+            int_hdr, real_hdr, header_offset, data_offset, disk_length, file=file
         )
 
     def read_extra_data(self):

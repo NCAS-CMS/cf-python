@@ -273,11 +273,19 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
 
         """
         return Rec.from_file_and_offsets(f, header_offset)
-        for v in f.vars:
-            for r in v.recs:
-                if r.hdr_offset == header_offset:
-                    print (r.__dict__)
-                    return r
+
+        # ------------------------------------------------------------
+        # Leave the following commented code here for debugging
+        # purposes. If you replace the above line with this commented
+        # code, then you must aslo set 'parse=True' in the `open`
+        # method.
+        # ------------------------------------------------------------
+        
+        # for v in f.vars:
+        #     for r in v.recs:
+        #         if r.hdr_offset == header_offset:
+        #             return r
+                
     def _set_units(self, int_hdr):
         """The units and calendar properties.
 
