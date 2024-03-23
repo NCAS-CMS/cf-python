@@ -10,10 +10,12 @@ from .extraData import ExtraDataUnpacker
 class UMFileException(Exception):
     pass
 
-# Integer header pointers
-LBLREC = 14
-LBPACK = 20
-LBEGIN = 28
+
+# Lookup header pointers
+LBLREC = 14  # Length of data record (including any extra data)
+LBPACK = 20  # Packing method indicator
+LBEGIN = 28  # Disk address/Start Record
+
 
 class File:
     """A class for a UM file that gives a view of the file including
@@ -286,13 +288,13 @@ class Rec:
 
     @classmethod
     def from_file_and_offsets(
-        cls, file, header_offset, data_offset=None, disk_length=None
+        cls, file, hdr_offset, data_offset=None, disk_length=None
     ):
         """Instantiate a `Rec` object from the `File` object and the
         header and data offsets.
 
-        The headers are read in, and also the record object is ready for
-        calling `get_data`.
+        The lookup header are read in immediately, and the returned
+        record object is ready for calling `get_data`.
 
         :Parameters:
 
@@ -300,7 +302,7 @@ class Rec:
                 A view of a file including sets of PP records combined
                 into variables.
 
-            header_offset: `int`
+            hdr_offset: `int`
                 The file start address of the header, in bytes.
 
             data_offset: `int`, optional
@@ -311,7 +313,7 @@ class Rec:
             disk_length: `int`
                 The length in bytes of the data in the file. If
                 `None`, the default, then the disk length will be
-                calculated from the integer header.
+                calculated from the integer.
 
         :Returns:
 
@@ -321,32 +323,33 @@ class Rec:
         c = file._c_interface
         word_size = file.word_size
         int_hdr, real_hdr = c.read_header(
-            file.fd, header_offset, file.byte_ordering, word_size
+            file.fd, hdr_offset, file.byte_ordering, word_size
         )
 
         if data_offset is None:
             # Calculate the data offset from the integer header
             if file.fmt == "PP":
                 # We only support 64-word headers, so the data starts
-                # 66 words after the header_offset, i.e. 64 words of the
-                # header, plus 2 block control words.
-                data_offset = header_offset + 66 * word_size
+                # 66 words after the header_offset, i.e. after 64
+                # words of the header, plus 2 block control words.
+                data_offset = hdr_offset + 66 * word_size
             else:
                 # Fields file
                 data_offset = int_hdr[LBEGIN] * word_size
 
         if disk_length is None:
             # Calculate the disk length from the integer header
+            disk_length = int_hdr[LBLREC]
             if int_hdr[LBPACK] % 10 == 2:
                 # Cray 32-bit packing
-                disk_length = int_hdr[LBLREC] * 4
+                disk_length = disk_length * 4
             else:
-                disk_length = int_hdr[LBLREC] * word_size
+                disk_length = disk_length * word_size
 
         return cls(
             int_hdr,
             real_hdr,
-            header_offset,
+            hdr_offset,
             data_offset,
             disk_length,
             file=file,
@@ -360,8 +363,8 @@ class Rec:
             `numpy.ndarray`
 
         """
-        c = self.file._c_interface
         file = self.file
+        c = file._c_interface
 
         (
             extra_data_offset,
@@ -424,9 +427,10 @@ class Rec:
             `numpy.ndarray`
 
         """
-        c = self.file._c_interface
         file = self.file
-        data_type, nwords = c.get_type_and_num_words(self.int_hdr)
+        c = file._c_interface
+        int_hdr = self.int_hdr
+        data_type, nwords = c.get_type_and_num_words(int_hdr)
 
         return c.read_record_data(
             file.fd,
@@ -434,7 +438,7 @@ class Rec:
             self.disk_length,
             file.byte_ordering,
             file.word_size,
-            self.int_hdr,
+            int_hdr,
             self.real_hdr,
             data_type,
             nwords,

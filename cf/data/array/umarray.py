@@ -276,9 +276,12 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
 
         # ------------------------------------------------------------
         # Leave the following commented code here for debugging
-        # purposes. If you replace the above line with this commented
-        # code, then you must aslo set 'parse=True' in the `open`
-        # method.
+        # purposes. Replacing the above line with this code moves the
+        # calculation of the data offset and disk length from pure
+        # Python to the C library, at the expense of completely
+        # parsing the file. Note: If you do replace the above line
+        # with the commented code, then you *must* also set
+        # 'parse=True' in the `open` method.
         # ------------------------------------------------------------
 
         # for v in f.vars:
@@ -672,16 +675,18 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         return self._get_component("word_size", None)
 
     def open(self):
-        """Returns an open dataset containing the data array.
+        """Returns an open dataset and the address of the data.
 
         :Returns:
 
-            `umfile_lib.File`, `int`
+            `umfile_lib.umfile.File`, `int`
+                The open file object, and the start address in bytes
+                of the lookup header.
 
         **Examples**
 
         >>> f.open()
-        (<cf.umread_lib.umfile.File object at 0x7fdc25056380>, 44567)
+        (<cf.umread_lib.umfile.File object at 0x7fdc25056380>, 4)
 
         """
         return super().open(

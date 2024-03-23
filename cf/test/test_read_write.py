@@ -551,7 +551,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_netCDF4_compress_shuffle(self):
         f = cf.read(self.filename)[0]
-        # TODO: reinstate "CFA4" at version > 3.14
+        # TODODASK: reinstate "CFA4" at version > 3.14
         for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):  # , "CFA4"):
             cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
             g = cf.read(tmpfile)[0]
@@ -920,6 +920,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
+    @unittest.skipUnless(False, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION")
     def test_read_url(self):
         """Test reading urls."""
         for scheme in ("http", "https"):
