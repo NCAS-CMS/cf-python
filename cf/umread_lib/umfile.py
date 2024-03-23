@@ -11,15 +11,6 @@ class UMFileException(Exception):
     pass
 
 
-LBLREC = 14
-LBROW = 17
-LBNPT = 18
-LBEXT = 19
-LBPACK = 20
-LBEGIN = 28
-LBNREC = 29
-
-
 class File:
     """A class for a UM file that gives a view of the file including
     sets of PP records combined into variables."""
@@ -328,8 +319,7 @@ class Rec:
         int_hdr, real_hdr = c.read_header(
             file.fd, header_offset, file.byte_ordering, word_size
         )
-        PP =  file.fmt == "PP"
-        
+
         if data_offset is None:
             # Calculate the data offset from the integer header
             if PP:
@@ -348,9 +338,14 @@ class Rec:
                 disk_length = int_hdr[LBLREC] * 4
             else:
                 disk_length = int_hdr[LBLREC] * word_size
-          
+
         return cls(
-            int_hdr, real_hdr, header_offset, data_offset, disk_length, file=file
+            int_hdr,
+            real_hdr,
+            header_offset,
+            data_offset,
+            disk_length,
+            file=file,
         )
 
     def read_extra_data(self):

@@ -18,7 +18,6 @@ int get_type_and_num_words(int word_size,
     default:
       return -1;
     }
-  
 }
 
 int get_extra_data_offset_and_length(int word_size, 
@@ -163,11 +162,4 @@ int read_record_data(int fd,
     }
   /* invalid word size falls through to error return */
   ERRBLKI;
-}
-
-
-/* Get the word address of the current file position. */
-int file_pos(int fd)
-{
-  return lseek(fd, 0, SEEK_CUR);
 }

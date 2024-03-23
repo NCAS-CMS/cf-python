@@ -12,12 +12,6 @@ int get_var_gridcode(const INTEGER *int_hdr);
 int get_var_packing(const INTEGER *int_hdr);
 REAL get_var_real_fill_value(const REAL *int_hdr);
 
-/* int my_get_extra_data_length(const INTEGER *int_hdr);
-int my_get_num_data_words(const INTEGER *int_hdr);
-int my_get_ff_disk_length(const INTEGER *int_hdr); */
-
-
-
 /* read.c */
 
 size_t read_words(int fd, 

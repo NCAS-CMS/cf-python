@@ -377,7 +377,6 @@ class CInterface:
         header_offset = c_rec.header_offset
         data_offset = c_rec.data_offset
         disk_length = c_rec.disk_length
-
         return umfile.Rec(
             int_hdr, real_hdr, header_offset, data_offset, disk_length
         )

@@ -480,7 +480,6 @@ class UMField:
 
     def __init__(
         self,
-            f,
         var,
         fmt,
         byte_ordering,
@@ -497,8 +496,6 @@ class UMField:
         """**Initialisation**
 
         :Parameters:
-
-            f: `umfile.File`
 
             var: `umfile.Var`
 
@@ -556,7 +553,6 @@ class UMField:
 
         self.verbose = verbose
 
-        self.f = f
         self.fmt = fmt
         self.height_at_top_of_model = height_at_top_of_model
         self.byte_ordering = byte_ordering
@@ -2469,10 +2465,8 @@ class UMField:
             `numpy.dtype`
 
         """
-        int_hdr = rec.int_hdr
-        
         # Find the data type
-        if int_hdr.item(lbuser2) == 3:
+        if rec.int_hdr.item(lbuser2) == 3:
             # Boolean
             return np.dtype(bool)
 
@@ -3451,7 +3445,6 @@ class UMRead(cfdm.read_write.IORead):
 
         um = [
             UMField(
-                f,
                 var,
                 f.fmt,
                 f.byte_ordering,
@@ -3500,6 +3493,7 @@ class UMRead(cfdm.read_write.IORead):
                 byte_ordering=byte_ordering,
                 word_size=word_size,
                 fmt=fmt,
+                parse=True
             )
         except Exception as error:
             try:
@@ -3574,7 +3568,7 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering=g.get("byte_ordering"),
             word_size=g.get("word_size"),
             fmt=g.get("fmt"),
-            parse=True
+            parse=True,
         )
 
 
