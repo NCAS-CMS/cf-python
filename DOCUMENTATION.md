@@ -1,12 +1,14 @@
 * The generation of recipes using Sphinx-Gallery requires:
 
   ```txt
-  sphinx-gallery==0.11.0
-  sphinx-copybutton==0.5.1
-  sphinx-toggleprompt==0.2.0
-  sphinxcontrib-spelling==4.3.0
-  sphinxcontrib.serializinghtml==1.1.5
-  sphinx==2.4.5
+  pip install sphinx-gallery==0.11.0
+  pip install sphinx-copybutton==0.5.1
+  pip install sphinx-toggleprompt==0.2.0
+  pip install sphinxcontrib-spelling==4.3.0
+  pip install sphinxcontrib.serializinghtml==1.1.5
+  pip install sphinxcontrib.htmlhelp==1.0.3
+  pip install sphinx==2.4.5
+  ```
 
 * The `.py` files to generate recipes are stored in `docs/source/recipes/`.
   
