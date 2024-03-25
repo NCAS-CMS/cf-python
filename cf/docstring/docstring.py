@@ -621,30 +621,33 @@ _docstring_substitution_definitions = {
                 True, or a tuple of both if *item* is True.""",
     # regrid RegridOperator
     "{{regrid RegridOperator}}": """* `RegridOperator`: The grid is defined by a regrid
-                operator that has been returned by a previous call
-                with the *return_operator* parameter set to True.
+                  operator that has been returned by a previous call
+                  with the *return_operator* parameter set to True.
 
-                Unlike the other options, for which the regrid weights
-                need to be calculated, the regrid operator already
-                contains the weights. Therefore, for cases where
-                multiple fields with the same source grids need to be
-                regridded to the same destination grid, using a regrid
-                operator can give performance improvements by avoiding
-                having to calculate the weights for each source
-                field. Note that for the other types of *dst*
-                parameter, the calculation of the regrid weights is
-                not a lazy operation.
+                  Unlike the other options, for which the regrid
+                  weights need to be calculated, the regrid operator
+                  already contains the weights. Therefore, for cases
+                  where multiple fields with the same source grids
+                  need to be regridded to the same destination grid,
+                  using a regrid operator can give performance
+                  improvements by avoiding having to calculate the
+                  weights for each source field. Note that for the
+                  other types of *dst* parameter, the calculation of
+                  the regrid weights is not a lazy operation.
 
-                .. note:: The source grid of the regrid operator is
-                          immediately checked for compatibility with
-                          the grid of the source field. By default
-                          only the computationally cheap tests are
-                          performed (checking that the coordinate
-                          system, cyclicity and grid shape are the
-                          same), with the grid coordinates not being
-                          checked. The coordinates check will be
-                          carried out, however, if the
-                          *check_coordinates* parameter is True.""",
+                   .. note:: When *dst* is a `RegridOperator`, the
+                            source grid of the regrid operator is
+                            immediately checked for compatibility with
+                            the grid of the source field. By default
+                            only the computationally cheap tests are
+                            performed (checking that the coordinate
+                            system, cyclicity, grid shape, regridding
+                            dimesionality, mesh location, and feature
+                            type are the same), with the grid
+                            coordinates not being checked. The
+                            coordinates check will be carried out,
+                            however, if the *check_coordinates*
+                            parameter is True.""",
     # Returns cfa_file_substitutions
     "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
                 whose key/value pairs are the file name parts to be
