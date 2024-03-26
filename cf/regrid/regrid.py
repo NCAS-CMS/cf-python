@@ -290,7 +290,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         dst_z: optional
             The identity of the destination grid vertical coordinates
@@ -301,7 +301,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         z: optional
             The *z* parameter is a convenience that may be used to
@@ -311,7 +311,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
@@ -320,7 +320,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
     :Returns:
 
@@ -773,7 +773,7 @@ def spherical_coords_to_domain(
             ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
             returned by this function.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         domain_class: `Domain` class
             The domain class used to create the new `Domain` instance.
@@ -962,7 +962,7 @@ def Cartesian_coords_to_domain(dst, dst_z=None, domain_class=None):
             ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
             returned by this function.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         domain_class: `Domain` class
             The domain class used to create the new `Domain` instance.
@@ -1026,7 +1026,7 @@ def get_grid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
     """
     if coord_sys == "spherical":
@@ -1106,13 +1106,13 @@ def spherical_grid(
             3-d and is defined by the unique construct returned by
             ``f.coordinate(src_z)``
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
             natural logarithm of vertical coordinates.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
     :Returns:
 
@@ -1453,13 +1453,13 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             If not `None` then *src_z* specifies the identity of a
             vertical coordinate construct of the source grid.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
             natural logarithm of vertical coordinates.
 
-            .. versionadded:: 3.17.0
+            .. versionadded:: NEXTRELEASE
 
     :Returns:
 
@@ -2229,7 +2229,7 @@ def create_esmpy_mesh(grid, mask=None):
 def create_esmpy_locstream(grid, mask=None):
     """Create an `esmpy.LocStream`.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTRELEASE
 
     .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`
 
@@ -3037,7 +3037,7 @@ def get_mesh(f):
 def get_dsg(f):
     """Get domain discrete sampling geometry information.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTRELEASE
 
     :Parameters:
 
@@ -3103,7 +3103,7 @@ def has_coordinate_arrays(grid):
 def set_grid_type(grid):
     """Set the ``type`` attribute of a `Grid` instance in-place.
 
-    .. versionadded:: 3.17.0
+    .. versionadded:: NEXTRELEASE
 
     :Parameters:
 
