@@ -107,9 +107,10 @@ of its array manipulation and can:
   including those with geometry cells and UGRID mesh topologies,
 * perform histogram, percentile and binning operations on field
   constructs,
-* regrid field constructs with (multi-)linear, nearest neighbour,
-  first- and second-order conservative and higher order patch recovery
-  methods, to and from structured and unstructured grids,
+* regrid structured grid, mesh and DSG field constructs with
+  (multi-)linear, nearest neighbour, first- and second-order
+  conservative and higher order patch recovery methods, including 3-d
+  regridding,
 * apply convolution filters to field constructs,
 * create running means from field constructs,
 * apply differential operators to field constructs,

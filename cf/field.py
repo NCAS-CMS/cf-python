@@ -444,20 +444,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Record which axes were cyclic before the subspace
         org_cyclic = [data_axes.index(axis) for axis in new.cyclic()]
 
-        # Se the subspaced data
+        # Set the subspaced data
         new.set_data(new_data, axes=data_axes, copy=False)
 
         # Update axis cylcicity. Note that this can only entail
         # setting an originally cyclic axis to be non-cyclic. Doing
-        # this now it enables us to disable the (possibly very slow)
+        # this now enables us to disable the (possibly very slow)
         # automatic check for cyclicity on the 'set_construct' calls
         # below.
         if org_cyclic:
             new_cyclic = new_data.cyclic()
-            for i in org_cyclic:
-                if i not in new_cyclic:
-                    new.cyclic(i, iscyclic=False)
-                    
+            [
+                new.cyclic(i, iscyclic=False)
+                for i in org_cyclic
+                if i not in new_cyclic
+            ]
+
         # ------------------------------------------------------------
         # Subspace constructs with data
         # ------------------------------------------------------------
@@ -7209,7 +7211,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if dim is None:
                     continue
 
-                # Create new dimension coordinate bounds (lazily)
+                # Create new dimension coordinate bounds
                 if dim.has_bounds():
                     b = dim.bounds.data
                 else:
@@ -7224,7 +7226,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         units=b.Units,
                     )
                 except KeyError:
-                    # Set the new bounds lazily
+                    # Otherwise create the new bounds lazily
                     ndim = b.ndim
                     bounds_data = Data.concatenate(
                         [
@@ -13761,7 +13763,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             dst_z: optional
                 If `None`, the default, then the regridding is 2-d in
@@ -13775,7 +13777,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -13789,11 +13791,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{verbose: `int` or `str` or `None`, optional}}
 
@@ -14060,7 +14062,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             dst_z: optional
                 If not `None` then *dst_z* specifies the identity of a
@@ -14070,7 +14072,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -14082,11 +14084,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{inplace: `bool`, optional}}
 

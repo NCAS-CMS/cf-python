@@ -15,6 +15,15 @@ version NEXT
   to regrid the vertical axis in logarithmic coordinates to
   `cf.Field.regrids` and `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/715)
+* Improve the performance of reading and accessing the data of PP and
+  UM fields files (https://github.com/NCAS-CMS/cf-python/issues/746)
+* Improve `cf.Field.collapse` performance by lazily computing reduced
+  axis coordinates (https://github.com/NCAS-CMS/cf-python/issues/741)
+* Improve `cf.Field.__getitem__` performance by not re-calculating
+  axis cyclicity (https://github.com/NCAS-CMS/cf-python/issues/744)
+* Reduce output CFA netCDF file size by setting the HDF5 chunksizes of
+  CFA variables to be no larger than required
+  (https://github.com/NCAS-CMS/cf-python/issues/739)
 * Fix misleading error message when it is not possible to create area
   weights requested from `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cf-python/issues/731)

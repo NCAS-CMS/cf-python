@@ -2469,9 +2469,9 @@ class UMField:
         if rec.int_hdr.item(lbuser2) == 3:
             # Boolean
             return np.dtype(bool)
-        else:
-            # Int or float
-            return rec.get_type_and_num_words()[0]
+
+        # Int or float
+        return rec.get_type_and_num_words()[0]
 
     def printfdr(self, display=False):
         """Print out the contents of PP field headers.
@@ -3439,7 +3439,7 @@ class UMRead(cfdm.read_write.IORead):
         else:
             byte_ordering = None
 
-        f = self.file_open(filename)
+        f = self.file_open(filename, parse=True)
 
         info = is_log_level_info(logger)
 
@@ -3472,6 +3472,7 @@ class UMRead(cfdm.read_write.IORead):
         fmt=None,
         word_size=None,
         byte_ordering=None,
+        parse=True,
     ):
         """Open a UM fields file or PP file.
 
@@ -3480,10 +3481,18 @@ class UMRead(cfdm.read_write.IORead):
             filename: `str`
                 The file to be opened.
 
+            parse: `bool`, optional
+                If True, the default, then parse the contents. If
+                False then the contents are not parsed, which can be
+                considerably faster in cases when the contents are not
+                required.
+
+                .. versionadded:: NEXTVERSION
+
         :Returns:
 
-            `umread.umfile.File`
-                The opened file with an open file descriptor.
+            `umread_lib.umfile.File`
+                The open PP or FF file object.
 
         """
         self.file_close()
@@ -3493,6 +3502,7 @@ class UMRead(cfdm.read_write.IORead):
                 byte_ordering=byte_ordering,
                 word_size=word_size,
                 fmt=fmt,
+                parse=parse,
             )
         except Exception as error:
             try:
@@ -3527,7 +3537,9 @@ class UMRead(cfdm.read_write.IORead):
 
         """
         try:
-            self.file_open(filename)
+            # Note: No need to completely parse the file to ascertain
+            #       if it's PP or FF.
+            self.file_open(filename, parse=False)
         except Exception:
             self.file_close()
             return False
@@ -3549,7 +3561,7 @@ class UMRead(cfdm.read_write.IORead):
 
         self._um_file = None
 
-    def file_open(self, filename):
+    def file_open(self, filename, parse=True):
         """Open the file for reading.
 
         :Paramters:
@@ -3557,7 +3569,18 @@ class UMRead(cfdm.read_write.IORead):
             filename: `str`
                 The file to be read.
 
+            parse: `bool`, optional
+                If True, the default, then parse the contents. If
+                False then the contents are not parsed, which can be
+                considerably faster in cases when the contents are not
+                required.
+
+                .. versionadded:: NEXTVERSION
+
         :Returns:
+
+            `umread_lib.umfile.File`
+                The open PP or FF file object.
 
         """
         g = getattr(self, "read_vars", {})
@@ -3567,6 +3590,7 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering=g.get("byte_ordering"),
             word_size=g.get("word_size"),
             fmt=g.get("fmt"),
+            parse=parse,
         )
 
 
