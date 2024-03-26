@@ -63,7 +63,7 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
-    netCDF_backend=None,
+    netcdf_engine=None,
     storage_options=None,
     cache_metadata=True,
 ):
@@ -678,30 +678,27 @@ def read(
 
             .. versionadded:: 3.15.0
 
-        engine: `None` or `str`, optional
+        netcdf_engine: `None` or `str`, optional
+            Specify which library to use for opening and reading
+            netCDF files. By default, or if `None`, then the first one
+            of `netCDF4` and `h5netcdf` to successfully open the file
+            netCDF file is used. Setting *netcdf_engine* to one of
+            ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
+            that library.
 
-            Specify which library to use for opening netCDF files. By
-            default, or if `None`, then `netCDF4` will used unless it
-            fails to open a given netCDF file, in which case
-            `h5netcdf` will be used instead. Setting *engine* to
-            ``'netCDF4'`` or ``'h5netcdf'`` will force the use of the
-            `netCDF4` or `h5netcdf` libraries respectively.
+            .. note:: The *netcdf_engine* parameter does not affect
+                      the opening of netCDF fragment files that define
+                      the data of aggregated variables. For these, the
+                      first one of `netCDF4` and `h5netcdf` to
+                      successfully open the file netCDF file is always
+                      be used.
 
             .. note:: `h5netcdf` restricts the types of indices that
-                      define subspaces of its data. See the `h5py`
-                      documentaiton at https://docs.h5py.org for
-                      details. However, such indices on a returned
-                      `Field` may be possible if they are followed by
-                      further subspaces that imply acceptable indices
-                      to the data in the file.
-
-            .. note:: The *netCDF_backend* parameter does not affect
-                      the opening of netCDF fragment files that define
-                      the data of aggregated variables. For these,
-                      `netCDF4` is always used for local files and
-                      those accessed via OPeNDAP, and `h5netcdf` is
-                      always used for fragment files in S3 object
-                      stores.
+                      define subspaces of its data. See
+                      https://docs.h5py.org for details. However, such
+                      indices on a returned `Field` are possible if
+                      they are followed by further subspaces that
+                      imply acceptable indices.
 
             .. versionadded:: NEXTVERSION
 
@@ -1041,7 +1038,7 @@ def read(
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
-                netCDF_backend=netCDF_backend,
+                netcdf_engine=netcdf_engine,
                 storage_options=storage_options,
                 cache_metadata=cache_metadata,
             )
@@ -1159,7 +1156,7 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
-    netCDF_backend=None,
+    netcdf_engine=None,
     storage_options=None,
     cache_metadata=True,
 ):
@@ -1202,7 +1199,7 @@ def _read_a_file(
 
             .. versionadded:: NEXTVERSION
 
-        netCDF_backend: `str` or `None`, optional
+        netcdf_engine: `str` or `None`, optional
             See `cf.read` for details.
 
             .. versionadded:: NEXTVERSION
@@ -1288,7 +1285,7 @@ def _read_a_file(
                 warn_valid=warn_valid,
                 domain=domain,
                 storage_options=storage_options,
-                netCDF_backend=netCDF_backend,
+                netcdf_engine=netcdf_engine,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

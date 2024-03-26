@@ -491,8 +491,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         # Location
         term = "location"
+        data = cfa[term]
+        self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             location_ncdimensions,
         )
@@ -510,8 +512,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         else:
             attributes = None
 
+        data = cfa[term]
+        self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             fragment_ncdimensions,
             attributes=attributes,
@@ -529,8 +533,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         else:
             dimensions = fragment_ncdimensions
 
+        data = cfa[term]
+        self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -547,8 +553,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         else:
             dimensions = fragment_ncdimensions
 
+        data = cfa[term]
+        self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
         term_ncvar = self._cfa_write_term_variable(
-            cfa[term],
+            data,
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -771,8 +779,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             terms.append(term)
 
             # Create the new CFA term variable
+            data = type(data)(dx)
+            self.implementation.nc_set_hdf5_chunksizes(data, data.shape)
             term_ncvar = self._cfa_write_term_variable(
-                data=type(data)(dx),
+                data=data,
                 ncvar=aggregated_data.get(term, f"cfa_{term}"),
                 ncdimensions=fragment_ncdimensions,
             )
@@ -868,6 +878,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_format = []
         for indices in data.chunk_indices():
             file_details = self._cfa_get_file_details(data[indices])
+
             if len(file_details) != 1:
                 if file_details:
                     raise ValueError(
@@ -924,6 +935,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ):
                 n = n_trailing - len(filenames)
                 if n:
+                    # This chunk has fewer fragment files than some
+                    # others, so some padding is required.
                     pad = ("",) * n
                     aggregation_file[i] = filenames + pad
                     aggregation_format[i] = formats + pad
@@ -1020,13 +1033,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         {(('/home/file.pp',), (34556,), ('um',))}
 
         """
-        out = set()
-        for a in data.todict(asanyarray=False).values():
+        out = []
+        out_append = out.append
+        for a in data.todict().values():
             try:
-                out.update(
-                    ((a.get_filenames(), a.get_addresses(), a.get_formats()),)
+                out_append(
+                    (a.get_filenames(), a.get_addresses(), a.get_formats())
                 )
             except AttributeError:
                 pass
 
-        return out
+        return set(out)

@@ -30,11 +30,16 @@ cf.RegridOperator
 
    ~cf.RegridOperator.col
    ~cf.RegridOperator.coord_sys
+   ~cf.RegridOperator.dimensionality
    ~cf.RegridOperator.dst
    ~cf.RegridOperator.dst_axes
    ~cf.RegridOperator.dst_cyclic
+   ~cf.RegridOperator.dst_featureType
    ~cf.RegridOperator.dst_mask
+   ~cf.RegridOperator.dst_mesh_location
    ~cf.RegridOperator.dst_shape
+   ~cf.RegridOperator.dst_z
+   ~cf.RegridOperator.ln_z
    ~cf.RegridOperator.method
    ~cf.RegridOperator.name
    ~cf.RegridOperator.row
@@ -42,9 +47,11 @@ cf.RegridOperator
    ~cf.RegridOperator.src_bounds
    ~cf.RegridOperator.src_coords
    ~cf.RegridOperator.src_cyclic
+   ~cf.RegridOperator.src_featureType
    ~cf.RegridOperator.src_mask
    ~cf.RegridOperator.src_shape
    ~cf.RegridOperator.src_mesh_location
+   ~cf.RegridOperator.src_z
    ~cf.RegridOperator.start_index
    ~cf.RegridOperator.weights
    ~cf.RegridOperator.weights_file

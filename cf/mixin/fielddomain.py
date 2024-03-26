@@ -1109,10 +1109,15 @@ class FieldDomain:
 
         :Returns:
 
-           `bool`
+           `bool` or `None`
+               `True` if the dimension is cyclic, `False` if it isn't,
+               or `None` if no checks were done.
 
         """
         noop = config.get("no-op")
+        if noop:
+            # Don't do anything
+            return
 
         if "cyclic" in config:
             if not config["cyclic"]:
