@@ -17,6 +17,9 @@
 * Make sure that `Changelog.rst` is up to date (version, date and
   changes).
 
+* Search for occurences of `NEXTRELEASE` and replace them with the
+  release version (i.e. the value of the now correct `cf.__version__`)
+
 * Deprecated methods and keyword arguments: Check the code for
   deprecated methods and keyword arguments that can be completely
   removed, i.e. those with a ``removed_at`` version that is at or
