@@ -505,21 +505,34 @@ class QueryTest(unittest.TestCase):
         d1 = cf.wi(2, 4, open_lower=True)
         d2 = cf.wi(2, 4, open_upper=True)
         d3 = cf.wi(2, 4, open_lower=True, open_upper=True)
-        all_d = [d, d0, d1, d2, d3]
 
         e = d | c       # interval: [2, 4] | [6, 8]
         e1 = c | d1     # interval: [2, 4] | (6, 8]
         e2 = c1 | d2    # interval: (2, 4] | [6, 8)
         e3 = c3 | d3    # interval: (2, 4) | (6, 8)
         e4 = d | c2     # interval: [6, 8] | [2, 4)
+        ex = [e, e1, e2, e3, e4]
 
         for cx in all_c:
             self.assertTrue(cx.evaluate(3))
             self.assertFalse(cx.evaluate(5))
 
-        self.assertTrue(e.evaluate(3))
-        self.assertTrue(e.evaluate(7))
-        self.assertFalse(e.evaluate(5))
+        # Test the 2 open_* keywords for direct (non-compound) queries
+        self.assertEqual(c.evaluate(2), c0.evaluate(2))
+        self.assertTrue(c0.evaluate(2))
+        self.assertFalse(c1.evaluate(2))
+        self.assertTrue(c2.evaluate(2))
+        self.assertFalse(c3.evaluate(2))
+        self.assertEqual(c.evaluate(4), c0.evaluate(4))
+        self.assertTrue(c0.evaluate(4))
+        self.assertTrue(c1.evaluate(4))
+        self.assertFalse(c2.evaluate(4))
+        self.assertFalse(c3.evaluate(4))
+
+        for ex in all_e:
+            self.assertTrue(e.evaluate(3))
+            self.assertTrue(e.evaluate(7))
+            self.assertFalse(e.evaluate(5))
 
         self.assertEqual(3, c)
         self.assertNotEqual(5, c)
