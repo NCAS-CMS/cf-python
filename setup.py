@@ -77,7 +77,7 @@ class build_umread(build):
             print("Running:", " ".join(cmd), "\n")
 
             try:
-                # if compile returns 0, clean will also be run 
+                # if compile returns 0, clean will also be run
                 rc = subprocess.call(cmd) or subprocess.call(cmd_clean)
             except Exception as error:
                 print(error)
@@ -98,8 +98,7 @@ class build_umread(build):
                 print(
                     "         In particular, netCDF file processing is "
                     "unaffected."
-                )       
-            
+                )
             print("-" * 80)
             print("\n", "*" * 80)
             print()
