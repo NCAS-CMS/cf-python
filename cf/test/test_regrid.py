@@ -157,6 +157,10 @@ class RegridTest(unittest.TestCase):
     dst = dst_src[0]
     src = dst_src[1]
 
+    filename_xyz = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
+    )
+
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_2d_field(self):
         """2-d regridding with Field destination grid."""
@@ -734,6 +738,17 @@ class RegridTest(unittest.TestCase):
         for method in ("conservative_2nd", "patch"):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regridc_1d_coordinates_z(self):
+        """1-d Z Cartesian regridding with coordinates destination grid."""
+        src = cf.read(self.filename_xyz)[0]
+        dst = cf.DimensionCoordinate(
+            data=cf.Data([800, 705, 632, 510, 320.0], "hPa")
+        )
+        d = src.regridc([dst], method="linear", axes="Z", z="Z", ln_z=True)
+        z = d.dimension_coordinate("Z")
+        self.assertTrue(z.data.equals(dst.data))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_chunks(self):
