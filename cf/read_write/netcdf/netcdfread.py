@@ -974,7 +974,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             variable = g["variables"][term_ncvar]
             array = cfdm.netcdf_indexer(
-                variable, mask=True, unpack=True, always_mask=False
+                variable, mask=True, unpack=True, always_masked_array=False
             )
             aggregation_instructions[term_ncvar] = array[...]
 
