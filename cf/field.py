@@ -441,6 +441,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for axis, size in zip(data_axes, new_data.shape):
             domain_axes[axis].set_size(size)
 
+        # Record which axes were cyclic before the subspace
+        org_cyclic = [data_axes.index(axis) for axis in new.cyclic()]
+
+        # Set the subspaced data
+        new.set_data(new_data, axes=data_axes, copy=False)
+
+        # Update axis cylcicity. Note that this can only entail
+        # setting an originally cyclic axis to be non-cyclic. Doing
+        # this now enables us to disable the (possibly very slow)
+        # automatic check for cyclicity on the 'set_construct' calls
+        # below.
+        if org_cyclic:
+            new_cyclic = new_data.cyclic()
+            [
+                new.cyclic(i, iscyclic=False)
+                for i in org_cyclic
+                if i not in new_cyclic
+            ]
+
         # ------------------------------------------------------------
         # Subspace constructs with data
         # ------------------------------------------------------------
@@ -507,6 +526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         key=key,
                         axes=construct_axes,
                         copy=False,
+                        autocyclic={"no-op": True},
                     )
 
         new.set_data(new_data, axes=data_axes, copy=False)
@@ -13701,7 +13721,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             dst_z: optional
                 If `None`, the default, then the regridding is 2-d in
@@ -13715,7 +13735,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -13729,11 +13749,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{verbose: `int` or `str` or `None`, optional}}
 
@@ -14000,7 +14020,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             dst_z: optional
                 If not `None` then *dst_z* specifies the identity of a
@@ -14010,7 +14030,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -14022,11 +14042,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: 3.17.0
+                .. versionadded:: NEXTRELEASE
 
             {{inplace: `bool`, optional}}
 

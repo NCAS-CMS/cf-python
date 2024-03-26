@@ -112,9 +112,8 @@ class ppTest(unittest.TestCase):
 
         f = cf.read(self.ppfile)[0]
 
-        # TODO: reinstate "CFA4" at version>3.14
-        for fmt in ("NETCDF4",):  # "CFA4"):
-            cf.write(f, tmpfile, fmt=fmt)
+        for cfa in (False, True):
+            cf.write(f, tmpfile, cfa=cfa)
             g = cf.read(tmpfile)[0]
 
             self.assertTrue((f.array == array).all())
