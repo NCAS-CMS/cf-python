@@ -9,6 +9,8 @@ version NEXT
   to regrid the vertical axis in logarithmic coordinates to
   `cf.Field.regrids` and `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/715)
+* Improve the performance of reading and accessing the data of PP and
+  UM fields files (https://github.com/NCAS-CMS/cf-python/issues/746)
 * Improve `cf.Field.collapse` performance by lazily computing reduced
   axis coordinates (https://github.com/NCAS-CMS/cf-python/issues/741)
 * Improve `cf.Field.__getitem__` performance by not re-calculating

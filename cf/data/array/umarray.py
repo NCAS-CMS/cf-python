@@ -8,7 +8,7 @@ from ...functions import (
     load_stash2standard_name,
     parse_indices,
 )
-from ...umread_lib.umfile import File
+from ...umread_lib.umfile import File, Rec
 from .abstract import Array
 from .mixin import FileArrayMixin
 
@@ -272,13 +272,22 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
                 The record container.
 
         """
-        # TODOCFA: This method doesn't require data_offset and disk_length,
-        # so plays nicely with CFA. Is it fast enough that we can
-        # use this method always?
-        for v in f.vars:
-            for r in v.recs:
-                if r.hdr_offset == header_offset:
-                    return r
+        return Rec.from_file_and_offsets(f, header_offset)
+
+        # ------------------------------------------------------------
+        # Leave the following commented code here for debugging
+        # purposes. Replacing the above line with this code moves the
+        # calculation of the data offset and disk length from pure
+        # Python to the C library, at the expense of completely
+        # parsing the file. Note: If you do replace the above line
+        # with the commented code, then you *must* also set
+        # 'parse=True' in the `open` method.
+        # ------------------------------------------------------------
+
+        # for v in f.vars:
+        #     for r in v.recs:
+        #         if r.hdr_offset == header_offset:
+        #             return r
 
     def _set_units(self, int_hdr):
         """The units and calendar properties.
@@ -666,16 +675,18 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         return self._get_component("word_size", None)
 
     def open(self):
-        """Returns an open dataset containing the data array.
+        """Returns an open dataset and the address of the data.
 
         :Returns:
 
-            `umfile_lib.File`, `int`
+            `umfile_lib.umfile.File`, `int`
+                The open file object, and the start address in bytes
+                of the lookup header.
 
         **Examples**
 
         >>> f.open()
-        (<cf.umread_lib.umfile.File object at 0x7fdc25056380>, 44567)
+        (<cf.umread_lib.umfile.File object at 0x7fdc25056380>, 4)
 
         """
         return super().open(
@@ -683,4 +694,5 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
             byte_ordering=self.get_byte_ordering(),
             word_size=self.get_word_size(),
             fmt=self.get_fmt(),
+            parse=False,
         )
