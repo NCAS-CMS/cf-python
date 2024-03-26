@@ -920,7 +920,9 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
-    @unittest.skipUnless(False, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION")
+    @unittest.skipUnless(
+        False, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
+    )
     def test_read_url(self):
         """Test reading urls."""
         for scheme in ("http", "https"):
