@@ -494,12 +494,28 @@ class QueryTest(unittest.TestCase):
             self.assertNotEqual(cf.set([3, 8, 11]), x)
 
         c = cf.wi(2, 4)
+        c0 = cf.wi(2, 4, open_lower=False)  # equivalent to c, to check default
+        c1 = cf.wi(2, 4, open_lower=True)
+        c2 = cf.wi(2, 4, open_upper=True)
+        c3 = cf.wi(2, 4, open_lower=True, open_upper=True)
+        all_c = [c, c0, c1, c2, c3]
+
         d = cf.wi(6, 8)
+        d0 = cf.wi(2, 4, open_lower=False)  # equivalent to d, to check default
+        d1 = cf.wi(2, 4, open_lower=True)
+        d2 = cf.wi(2, 4, open_upper=True)
+        d3 = cf.wi(2, 4, open_lower=True, open_upper=True)
+        all_d = [d, d0, d1, d2, d3]
 
-        e = d | c
+        e = d | c       # interval: [2, 4] | [6, 8]
+        e1 = c | d1     # interval: [2, 4] | (6, 8]
+        e2 = c1 | d2    # interval: (2, 4] | [6, 8)
+        e3 = c3 | d3    # interval: (2, 4) | (6, 8)
+        e4 = d | c2     # interval: [6, 8] | [2, 4)
 
-        self.assertTrue(c.evaluate(3))
-        self.assertFalse(c.evaluate(5))
+        for cx in all_c:
+            self.assertTrue(cx.evaluate(3))
+            self.assertFalse(cx.evaluate(5))
 
         self.assertTrue(e.evaluate(3))
         self.assertTrue(e.evaluate(7))
