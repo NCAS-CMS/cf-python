@@ -507,17 +507,16 @@ class QueryTest(unittest.TestCase):
         d3 = cf.wi(2, 4, open_lower=True, open_upper=True)
 
         e = d | c       # interval: [2, 4] | [6, 8]
-        e1 = c | d1     # interval: [2, 4] | (6, 8]
+        e1 = c0 | d1     # interval: [2, 4] | (6, 8]
         e2 = c1 | d2    # interval: (2, 4] | [6, 8)
-        e3 = c3 | d3    # interval: (2, 4) | (6, 8)
-        e4 = d | c2     # interval: [6, 8] | [2, 4)
-        ex = [e, e1, e2, e3, e4]
+        e3 = d3 | c3    # interval: (6, 8) | (2, 4)
+        ex = [e, e1, e2, e3]
 
         for cx in all_c:
             self.assertTrue(cx.evaluate(3))
             self.assertFalse(cx.evaluate(5))
 
-        # Test the 2 open_* keywords for direct (non-compound) queries
+        # Test the two open_* keywords for direct (non-compound) queries
         self.assertEqual(c.evaluate(2), c0.evaluate(2))
         self.assertTrue(c0.evaluate(2))
         self.assertFalse(c1.evaluate(2))
@@ -533,6 +532,27 @@ class QueryTest(unittest.TestCase):
             self.assertTrue(e.evaluate(3))
             self.assertTrue(e.evaluate(7))
             self.assertFalse(e.evaluate(5))
+
+        # Test the two open_* keywords for compound queries.
+        # Must be careful to capture correct openness/closure of any inner
+        # bounds introduced through compound queries, e.g. for 'e' there
+        # are internal endpoints at 4 and 6 to behave like in 'c' and 'd'.
+        self.assertTrue(e.evaluate(2))
+        self.assertTrue(e1.evaluate(2))
+        self.assertFalse(e2.evaluate(2))
+        self.assertFalse(e3.evaluate(2))
+        self.assertTrue(e.evaluate(4))
+        self.assertTrue(e1.evaluate(4))
+        self.assertTrue(e2.evaluate(4))
+        self.assertFalse(e3.evaluate(4))
+        self.assertTrue(e.evaluate(6))
+        self.assertFalse(e1.evaluate(6))
+        self.assertTrue(e2.evaluate(6))
+        self.assertFalse(e3.evaluate(6))
+        self.assertTrue(e.evaluate(8))
+        self.assertTrue(e1.evaluate(8))
+        self.assertFalse(e2.evaluate(8))
+        self.assertFalse(e3.evaluate(8))
 
         self.assertEqual(3, c)
         self.assertNotEqual(5, c)
