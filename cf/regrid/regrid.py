@@ -988,14 +988,14 @@ def Cartesian_coords_to_domain(dst, dst_z=None, domain_class=None):
 
     if dst_z is not None:
         # Check that there are vertical coordinates, and replace
-        # 'dst_z' with its construct identifier.
+        # 'dst_z' with the identifier of its domain axis construct.
         z_key = d.coordinate(dst_z, key=True, default=None)
         if z_key is None:
             raise ValueError(
                 f"Could not find destination {dst_z!r} vertical coordinates"
             )
 
-        dst_z = z_key
+        dst_z = d.get_data_axes(z_key)[0]
 
     return d, axis_keys, dst_z
 
@@ -2112,7 +2112,6 @@ def create_esmpy_grid(grid, mask=None):
             #       masked/unmasked elements.
             grid_mask[...] = np.invert(mask).astype("int32")
 
-    #    print(esmpy_grid)
     return esmpy_grid
 
 

@@ -454,8 +454,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # below.
         if org_cyclic:
             new_cyclic = new_data.cyclic()
-            [new.cyclic(i, iscyclic=False) for i in org_cyclic if i not in new_cyclic]
-                    
+            [
+                new.cyclic(i, iscyclic=False)
+                for i in org_cyclic
+                if i not in new_cyclic
+            ]
 
         # ------------------------------------------------------------
         # Subspace constructs with data
