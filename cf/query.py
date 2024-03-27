@@ -207,6 +207,7 @@ class Query:
         exact=True,
         rtol=None,
         atol=None,
+        **kwargs,
     ):
         """**Initialisation**
 
@@ -288,6 +289,14 @@ class Query:
 
             self._rtol = rtol
             self._atol = atol
+
+        self._open_bounds = (False, False)
+        if kwargs:
+            if "open_bounds" in kwargs:
+                self._open_bounds = kwargs["open_bounds"]
+            else:
+                raise ValueError(
+                    f"Unrecognised kwargs to Query object: {kwargs}")
 
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
@@ -905,7 +914,16 @@ class Query:
             if _wi is not None:
                 return _wi(value)
 
-            return (x >= value[0]) & (x <= value[1])
+            open_lower, open_upper = self._open_bounds
+            if open_lower:
+                lower_bound = (x > value[0])
+            else:
+                lower_bound = (x >= value[0])
+            if open_upper:
+                upper_bound = (x < value[1])
+            else:
+                upper_bound = (x <= value[1])
+            return lower_bound & upper_bound
 
         if operator == "eq":
             try:
@@ -1701,7 +1719,10 @@ def wi(
     False
 
     """
-    return Query("wi", [value0, value1], units=units, attr=attr)
+    return Query(
+        "wi", [value0, value1], units=units, attr=attr,
+        open_bounds=(open_lower, open_upper),
+    )
 
 
 def wo(value0, value1, units=None, attr=None):
