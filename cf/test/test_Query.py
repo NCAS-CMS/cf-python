@@ -510,7 +510,7 @@ class QueryTest(unittest.TestCase):
         e1 = c0 | d1     # interval: [2, 4] | (6, 8]
         e2 = c1 | d2    # interval: (2, 4] | [6, 8)
         e3 = d3 | c3    # interval: (6, 8) | (2, 4)
-        ex = [e, e1, e2, e3]
+        all_e = [e, e1, e2, e3]
 
         for cx in all_c:
             self.assertTrue(cx.evaluate(3))
