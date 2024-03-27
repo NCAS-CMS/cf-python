@@ -207,6 +207,7 @@ class Query:
         exact=True,
         rtol=None,
         atol=None,
+        **kwargs,
     ):
         """**Initialisation**
 
@@ -288,6 +289,14 @@ class Query:
 
             self._rtol = rtol
             self._atol = atol
+
+        self._open_bounds = (False, False)
+        if kwargs:
+            if "open_bounds" in kwargs:
+                self._open_bounds = kwargs["open_bounds"]
+            else:
+                raise ValueError(
+                    f"Unrecognised kwargs to Query object: {kwargs}")
 
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
@@ -905,7 +914,16 @@ class Query:
             if _wi is not None:
                 return _wi(value)
 
-            return (x >= value[0]) & (x <= value[1])
+            open_lower, open_upper = self._open_bounds
+            if open_lower:
+                lower_bound = (x > value[0])
+            else:
+                lower_bound = (x >= value[0])
+            if open_upper:
+                upper_bound = (x < value[1])
+            else:
+                upper_bound = (x <= value[1])
+            return lower_bound & upper_bound
 
         if operator == "eq":
             try:
@@ -1629,8 +1647,16 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
     )
 
 
-def wi(value0, value1, units=None, attr=None):
+def wi(
+        value0, value1, open_lower=False, open_upper=False,
+        units=None, attr=None
+):
     """A `Query` object for a "within a range" condition.
+
+    The condition is a closed interval by default, inclusive of
+    both the endpoints, but can be made open or half-open to exclude
+    the endpoints on either end with use of the `open_lower` and
+    `open_upper` parameters.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wo`, `cf.isclose`
@@ -1642,6 +1668,18 @@ def wi(value0, value1, units=None, attr=None):
 
         value1:
              The upper bound of the range.
+
+        open_lower: `bool`, optional
+             If True, open the interval at the lower
+             bound so that value0 is excluded from the
+             range. By default the interval is closed
+             so that value0 is included.
+
+        open_upper: `bool`, optional
+             If True, open the interval at the upper
+             bound so that value1 is excluded from the
+             range. By default the interval is closed
+             so that value1 is included.
 
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
@@ -1671,9 +1709,20 @@ def wi(value0, value1, units=None, attr=None):
     True
     >>> q.evaluate(4)
     False
+    >>> q.evaluate(5)
+    True
+    >>> q.evaluate(5, open_lower=True)
+    False
+    >>> q.evaluate(7)
+    True
+    >>> q.evaluate(7, open_upper=True)
+    False
 
     """
-    return Query("wi", [value0, value1], units=units, attr=attr)
+    return Query(
+        "wi", [value0, value1], units=units, attr=attr,
+        open_bounds=(open_lower, open_upper),
+    )
 
 
 def wo(value0, value1, units=None, attr=None):
