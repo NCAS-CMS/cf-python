@@ -1,3 +1,5 @@
+import numpy as np
+
 from ....units import Units
 
 
@@ -15,6 +17,22 @@ class ArrayMixin:
 
         """
         return NotImplemented
+
+    @property
+    def _meta(self):
+        """Normalize the array to an appropriate Dask meta object.
+
+        The Dask meta can be thought of as a suggestion to Dask. Dask
+        uses this meta to generate the task graph until it can infer
+        the actual metadata from the values. It does not force the
+        output to have the structure or dtype of the specified meta.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `dask.utils.meta_from_array`
+
+        """
+        return np.array((), dtype=self.dtype)
 
     @property
     def Units(self):

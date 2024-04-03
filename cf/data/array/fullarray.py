@@ -1,5 +1,6 @@
 import numpy as np
 
+from ...functions import indices_shape, parse_indices
 from .abstract import Array
 from .mixin import IndexMixin
 
@@ -130,7 +131,7 @@ class FullArray(IndexMixin, Array):
         return f"Filled with {fill_value!r}"
 
     def _get_array(self, index=None):
-        """Returns a subspace of the dataset variable.
+        """Returns the full array.
 
         .. versionadded:: NEXTVERSION
 
@@ -149,19 +150,34 @@ class FullArray(IndexMixin, Array):
 
         """
         if index is None:
-            index = self.index()
+            shape = self.shape
+        else:
+            original_shape = self.original_shape
+            index = parse_indices(original_shape, index, keepdims=False)
+            shape = indices_shape(index, original_shape, keepdims=False)
 
         fill_value = self.get_full_value()
         if fill_value is np.ma.masked:
-            array = np.ma.masked_all(self.shape, dtype=self.dtype)
+            array = np.ma.masked_all(shape, dtype=self.dtype)
         elif fill_value is not None:
-            array = np.full(
-                self.shape, fill_value=fill_value, dtype=self.dtype
-            )
+            array = np.full(shape, fill_value=fill_value, dtype=self.dtype)
         else:
-            array = np.empty(self.shape, dtype=self.dtype)
+            array = np.empty(shape, dtype=self.dtype)
 
         return array
+
+    @property
+    def array(self):
+        """Return an independent numpy array containing the data.
+
+        .. versionadded:: NEXTRELEASE
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+        """
+        return np.asanyarray(self)
 
     @property
     def dtype(self):
