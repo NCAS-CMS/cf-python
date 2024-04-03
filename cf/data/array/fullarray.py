@@ -1,11 +1,12 @@
 import numpy as np
 
 from .abstract import Array
+from .mixin import IndexMixin
 
 _FULLARRAY_HANDLED_FUNCTIONS = {}
 
 
-class FullArray(Array):
+class FullArray(IndexMixin, Array):
     """A array filled with a given value.
 
     The array may be empty or all missing values.
@@ -90,27 +91,7 @@ class FullArray(Array):
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
-    def __array__(self, *dtype):
-        """The numpy array interface.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            dtype: optional
-                Typecode or data-type to which the array is cast.
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        """
-        array = self[...]
-        if not dtype:
-            return array
-        else:
-            return array.astype(dtype[0], copy=False)
+        self._set_units()
 
     def __array_function__(self, func, types, args, kwargs):
         """The `numpy` `__array_function__` protocol.
@@ -127,54 +108,6 @@ class FullArray(Array):
             return NotImplemented
 
         return _FULLARRAY_HANDLED_FUNCTIONS[func](*args, **kwargs)
-
-    def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
-
-        Returns a numpy array.
-
-        """
-        # If 'apply_indices' is False then we can make a filled numpy
-        # array that already has the correct shape. Otherwise we need
-        # to make one with shape 'self.shape' and then apply the
-        # indices to that.
-        apply_indices = False
-
-        if indices is Ellipsis:
-            array_shape = self.shape
-        else:
-            array_shape = []
-            for i, size in zip(indices, self.shape):
-                if not isinstance(i, slice):
-                    continue
-
-                start, stop, step = i.indices(size)
-                a, b = divmod(stop - start, step)
-                if b:
-                    a += 1
-
-                array_shape.append(a)
-
-            if len(array_shape) != self.ndim:
-                apply_indices = True
-                array_shape = self.shape
-
-        fill_value = self.get_full_value()
-        if fill_value is np.ma.masked:
-            array = np.ma.masked_all(array_shape, dtype=self.dtype)
-        elif fill_value is not None:
-            array = np.full(
-                array_shape, fill_value=fill_value, dtype=self.dtype
-            )
-        else:
-            array = np.empty(array_shape, dtype=self.dtype)
-
-        if apply_indices:
-            array = self.get_subspace(array, indices)
-
-        self._set_units()
-
-        return array
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -195,6 +128,40 @@ class FullArray(Array):
             return "Uninitialised"
 
         return f"Filled with {fill_value!r}"
+
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
+        """
+        if index is None:
+            index = self.index()
+
+        fill_value = self.get_full_value()
+        if fill_value is np.ma.masked:
+            array = np.ma.masked_all(self.shape, dtype=self.dtype)
+        elif fill_value is not None:
+            array = np.full(
+                self.shape, fill_value=fill_value, dtype=self.dtype
+            )
+        else:
+            array = np.empty(self.shape, dtype=self.dtype)
+
+        return array
 
     @property
     def dtype(self):

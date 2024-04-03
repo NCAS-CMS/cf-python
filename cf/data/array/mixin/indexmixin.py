@@ -127,10 +127,10 @@ class IndexMixin:
                 continue
 
             # Still here? Then we have to work out the subspace of the
-            #             full array implied by applying both 'ind0'
-            #             and 'ind1'.
+            #             full array implied by applying 'ind0'
+            #             followed by 'ind1'.
             if is_dask_collection(ind1):
-                # Note: This will never occur when __getitem__ is
+                # Note: This will never occur when this __getitem__ is
                 #       being called from within a Dask graph, because
                 #       any lazy indices will have already been
                 #       computed as part of the whole graph execution;
@@ -139,7 +139,7 @@ class IndexMixin:
                 #       were not the case then we would get round it
                 #       by wrapping the compute inside a `with
                 #       dask.config.set({"scheduler":
-                #       "synchronous"}):` clause.)
+                #       "synchronous"}):`.)
                 ind1 = ind1.compute()
 
             if isinstance(ind0, slice):
@@ -172,7 +172,13 @@ class IndexMixin:
                     new_index = np.arange(*ind0.indices(original_size))[ind1]
             else:
                 # ind0: array of int (if we made it here, then it
-                #                     can't be anything else)
+                #                     can't be anything else, because
+                #                     we've dealt with ind0 being an
+                #                     int, and a previous ind1 that
+                #                     was an array of bool will have
+                #                     resulted in this ind0 being an
+                #                     array of int)
+                # ind1: anything
                 new_index = np.asanyarray(ind0)[ind1]
 
             new_indices.append(new_index)
@@ -284,6 +290,7 @@ class IndexMixin:
         # Still here? Then conform the indices by:
         #
         # 1) Converting decreasing size 1 slices to increasing ones.
+        #
         # 2) Where possible, converting sequences of integers to
         #    slices.
         ind = list(ind)
@@ -294,8 +301,7 @@ class IndexMixin:
                     if step and step < 0:
                         # Decreasing slices are not universally
                         # accepted (e.g. `h5py` doesn't like them),
-                        # but at least we can convert a size 1
-                        # decreasing slice into an increasing one.
+                        # but we can convert them to increasing ones.
                         ind[n] = slice(start, start + 1)
             elif np.iterable(i):
                 i = normalize_index((i,), (size,))[0]
@@ -322,10 +328,10 @@ class IndexMixin:
 
     @property
     def original_shape(self):
-        """The original shape of the data.
+        """The original shape of the data, before any subspacing.
 
-        The `shape` is defined by the `index` applied to the
-        `original_shape`.
+        The `shape` is defined by the result of subspacing the data in
+        its original shape with the indices defined by `index`.
 
         .. versionadded:: NEXTVERSION
 
@@ -334,7 +340,7 @@ class IndexMixin:
         """
         out = self._custom.get("original_shape")
         if out is None:
-            # If shape is None then no subspace has been defined
+            # If None then no subspace has been defined
             out = self.shape
             self._custom["original_shape"] = out
 

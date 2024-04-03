@@ -51,9 +51,6 @@ class H5netcdfArray(
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        The subspace is defined by the indices stored in the `index`
-        attribute.
-
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `__array__`, `index`
