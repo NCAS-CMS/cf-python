@@ -24,6 +24,9 @@ version NEXT
 * Fix bug in `cf.read` when reading UM files that caused LBPROC value
   131072 (Mean over an ensemble of parallel runs) to be ignored
   (https://github.com/NCAS-CMS/cf-python/issues/737)
+* Fix bug in `cf.aggregate` that sometimes put a null transpose
+  operation into the Dask grpah when one was not needed
+  (https://github.com/NCAS-CMS/cf-python/issues/754)
 
 ----
 
