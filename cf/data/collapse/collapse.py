@@ -25,6 +25,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * it is possible to import the `activestorage.Active` class;
 
+      * the method is one of those specified by
+        `cf.data.collapse.active_reduction_methods`;
+
       * the collapse is over all axes;
 
       * the collapse is unweighted;
@@ -38,12 +41,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * the `Collapse` method's *chunk_function* parameter is `None`;
 
-      * the method has a corresponding active chunk function defined
-        in the `cf.data.collapse.active_chunk_functions` dictionary;
-
-      * inspection of the graph of the `dask` array with
-        `cf.data.collapse.actify` confirms that making use of active
-        storage is possible;
+      * the `active_storage` attribute of the `Data` object being
+        collapsed is `True`, indicating that active storage operations
+        are possible, provided all of the other conditions are also
+        met. In general, it will only be `True` for data that are in
+        files on disk, are not compressed by convention, and have not
+        been previously operated on, apart from by subspacing
+        operations.
 
     in which case the Dask graph is modified to expect the per-chunk
     reductions to be carried out externally.
@@ -128,7 +132,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -196,7 +200,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -255,7 +259,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -327,7 +331,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -385,7 +389,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -457,7 +461,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -525,7 +529,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -581,7 +585,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -656,7 +660,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -725,7 +729,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -800,7 +804,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -875,7 +879,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -951,7 +955,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -1004,7 +1008,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
             {{active_storage: `bool`, optional}}
 
@@ -1085,7 +1089,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
+
+                A callable function must accept a *ddof* keyword
+                parameter that sets the delta degrees of freedom. See
+                `cf.data.collapse.dask_collapse.cf_var_chunk` for
+                details.
 
             {{active_storage: `bool`, optional}}
 

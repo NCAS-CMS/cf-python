@@ -887,8 +887,8 @@ basis, and will only be done if all of the following criteria are met:
   being collapsed is `True`, indicating that active storage operations
   are possible, provided all of the other conditions are also met. In
   general, it will only be `True` for data that are in files on disk,
-  are not compressed by convention, and have not had any other
-  operations applied.
+  are not compressed by convention, and have not been previously
+  operated on, apart from by subspacing operations.
 
 The performance improvements from using active storage operations will
 increase the closer, in a network sense, the active storage server is

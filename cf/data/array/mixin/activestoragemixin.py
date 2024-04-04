@@ -58,17 +58,10 @@ class ActiveStorageMixin:
         if "add_offset" in attributes or "scale_factor" in attributes:
             raise AttributeError(
                 "Can't actify {self.__class__.__name__} when "
-                "the data has been numerically packed"
+                "the data have been numerically packed"
             )
 
         if Active is None:
-            # Note: We don't really expect to be here because if
-            #       activestorage.Active is not available then we
-            #       wouldn't even attempt to actify the instance
-            #       during a reduction (see
-            #       `cf.data.collapse.active_storage`). However, it's
-            #       worth checking in case `actify` is called from
-            #       elsewhere.
             raise AttributeError(
                 "Can't actify {self.__class__.__name__} when "
                 "activestorage.Active is not available"
@@ -90,8 +83,13 @@ class ActiveStorageMixin:
         :Returns:
 
             `str` or `None`
-                The active storage URL, or `None` if there is no
-                active storage reduction.
+                The active storage URL, or `None` if no active storage
+                reduction is possible.
+
+        **Examples**
+
+        >>> a.get_active_storage()
+        'https://183.175.143.286:8080'
 
         """
         return self._custom.get("active_storage_url")

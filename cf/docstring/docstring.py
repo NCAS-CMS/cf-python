@@ -320,15 +320,20 @@ _docstring_substitution_definitions = {
     "{{active_storage: `bool`, optional}}": """{{active_storage: `bool`, optional}}
                 If True then attempt to perform the collapse using
                 active storage reductions. However, if other necessary
-                conditions are not met (see `cf.data.collapse.actify`
-                for details) then the operation will be executed
-                without active storage.""",
+                conditions are not met (see `Collapse` for details)
+                then the reduction will be carried out locally, as
+                usual. When an active storage reduction on a chunk
+                fails at compute time, the reduction for that chunk is
+                carried out locally.
+
+                If False, the default, then the reduction will be
+                carried out locally.""",
     # Collapse chunk_function
-    "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
+    "{{chunk_function: callable or `None`, optional}}": """{{chunk_function: callable or `None`, optional}}
                 Provides the ``chunk`` parameter to
-                `dask.array.reduction`. If unset then an appropriate
-                default function from `cf.data.collapse.dask_collapse`
-                will be used.""",
+                `dask.array.reduction`. If `None`, the default, then
+                an appropriate default function from
+                `cf.data.collapse.dask_collapse` will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By

@@ -1,7 +1,8 @@
 """Reduction functions intended to be passed to be dask.
 
-Most of these functions are expected to be set as *chunk*, *combine* and
-*aggregate* parameters of `dask.array.reduction`
+Most of these functions are expected to be passed to
+`dask.array.reduction` as its *chunk*, *combine* and *aggregate*
+parameters.
 
 """
 from functools import reduce
@@ -128,7 +129,6 @@ def sum_weights_chunk(
 
         return N
 
-    weights = cf_asanyarray(weights)
     if check_weights:
         w_min = weights.min()
         if w_min <= 0:
@@ -243,6 +243,11 @@ def cf_mean_chunk(
 
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
+
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
+    for details.
 
     .. versionadded:: 3.14.0
 
@@ -390,13 +395,14 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
             Dictionary with the keys:
 
             * N: The sample size.
-            * max: The maximum of `x`.
+            * max: The maximum of ``x``.
 
     """
     if computing_meta:
         return x
 
     x = cf_asanyarray(x)
+
     return {
         "max": chunk.max(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -550,6 +556,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
         return x
 
     x = cf_asanyarray(x)
+
     return {
         "min": chunk.min(x, **kwargs),
         "N": cf_sample_size_chunk(x, **kwargs)["N"],
@@ -652,10 +659,10 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * max: The maximum of ``x``.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
 
     # N, max
     d = cf_max_chunk(x, **kwargs)
@@ -749,6 +756,11 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
+    for details.
+
     .. versionadded:: 3.14.0
 
     :Parameters:
@@ -764,10 +776,10 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
             * sum: The weighted sum of ``x**2``.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
 
     return cf_mean_chunk(
         np.multiply(x, x, dtype=dtype), weights=weights, dtype=dtype, **kwargs
@@ -842,10 +854,10 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
             * N: The sample size.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
 
     if np.ma.isMA(x):
         N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
@@ -974,6 +986,7 @@ def cf_sum_chunk(
         return x
 
     x = cf_asanyarray(x)
+
     if weights is not None:
         weights = cf_asanyarray(weights)
         if check_weights:
@@ -1091,9 +1104,12 @@ def cf_sum_of_weights_chunk(
             * sum: The sum of ``weights``.
 
     """
-    x = cf_asanyarray(x)
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
+    if weights is not None:
+        weights = cf_asanyarray(weights)
 
     # N
     d = cf_sample_size_chunk(x, **kwargs)
@@ -1133,9 +1149,12 @@ def cf_sum_of_weights2_chunk(
             * sum: The sum of the squares of ``weights``.
 
     """
-    x = cf_asanyarray(x)
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
+    if weights is not None:
+        weights = cf_asanyarray(weights)
 
     # N
     d = cf_sample_size_chunk(x, **kwargs)
@@ -1171,10 +1190,10 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
             * unique: The unique values.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
 
     return {"unique": np.unique(x)}
 
@@ -1223,8 +1242,26 @@ def cf_var_chunk(
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    For non-overlapping data sets, X_{i}, making up the aggregate data
+    set X=\bigcup _{i}X_{i}, the unweighted variance \sigma ^{2} is
+
+    \mu &={\frac {1}{\sum _{i}{N_{X_{i}}}}}\left(\sum
+    _{i}{N_{X_{i}}\mu _{X_{i}}}\right)
+
+    \sigma ^{2}&={\sqrt {{\frac {1}{\sum
+    _{i}{N_{X_{i}}-ddof}}}\left(\sum _{i}{\left[(N_{X_{i}}-1)\sigma
+    _{X_{i}}^{2}+N_{X_{i}}\mu _{X_{i}}^{2}\right]}-\left[\sum
+    _{i}{N_{X_{i}}}\right]\mu _{X}^{2}\right)}}
+
+    where X_{i}\cap X_{j}=\varnothing , \forall i<j.
+
     See
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
+    for details.
+
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
     for details.
 
     .. versionadded:: 3.14.0
@@ -1248,7 +1285,7 @@ def cf_var_chunk(
             * N: The sample size.
             * V1: The sum of ``weights`` (equal to ``N`` if weights
                   are not set).
-            * V2: The sum of ``weights**2``, or `None` of not
+            * V2: The sum of ``weights**2``, or `None` if not
                   required.
             * sum: The weighted sum of ``x``.
             * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
@@ -1258,10 +1295,10 @@ def cf_var_chunk(
             * ddof: The delta degrees of freedom.
 
     """
-    x = cf_asanyarray(x)
-
     if computing_meta:
         return x
+
+    x = cf_asanyarray(x)
 
     weighted = weights is not None
     if weighted:
@@ -1356,13 +1393,6 @@ def cf_var_agg(
 
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
-
-    .. note:: Weights are interpreted as reliability weights, as
-              opposed to frequency weights.
-
-    See
-    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
-    for details.
 
     .. versionadded:: 3.14.0
 

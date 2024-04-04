@@ -12,28 +12,32 @@ from ...functions import active_storage_url
 logger = logging.getLogger(__name__)
 
 # --------------------------------------------------------------------
-# Specify which reductions are possible with active storage
+# Specify which reduction methods are possible with active storage
 # --------------------------------------------------------------------
 active_reduction_methods = ("max", "mean", "min", "sum")
 
 
+class ActiveStorageError(Exception):
+    pass
+
+
 def active_chunk(method, x, **kwargs):
-    """Collapse a data in a chunk with active storage.
+    """Collapse data in a chunk with active storage.
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `actify`, `active_storage2`, `cf.data.collapse.Collapse`
+    .. seealso:: `actify`, `active_storage`, `cf.data.collapse.Collapse`
 
     :Parameters:
 
-        a: `dask.array.Array`
-            The array to be collapsed.
+        a: array_like
+            The data to be collapsed.
 
         method: `str`
             The name of the reduction method. If the method does not
             have a corresponding active function in the
-            `active_chunk_functions` dictionary then active
-            compuations are not carried out.
+            `active_chunk_functions` dictionary then active storage
+            computations are not carried out.
 
         axis: (sequence of) `int`, optional
             Axis or axes along which to operate. By default,
@@ -47,14 +51,15 @@ def active_chunk(method, x, **kwargs):
         `dict`
             The reduced data in component form.
 
+    **Examples**
+
+    >>> d = active_chunk('sum', x)
+    >>> d
+    {'N': 7008, 'sum': 7006221.66903949}
+
     """
     if kwargs.get("computing_meta"):
         return x
-
-    if not getattr(x, "actified", False):
-        raise ValueError(
-            "Can't do active reductions when on non-actified data"
-        )
 
     weighted = kwargs.get("weights") is not None
     if weighted:
@@ -78,71 +83,72 @@ def active_chunk(method, x, **kwargs):
         print(f"Active(**{active_kwargs})")
 
     active = Active(**active_kwargs)
-
-    #   # Provide a file lock
-    #   try:
-    #       lock = x._lock
-    #   except AttributeError:
-    #       pass
-    #   else:
-    #       if lock:
-    #           active.lock = lock
-
-    # Create the output dictionary
     active.method = method
     active.components = True
 
     import datetime
     import time
 
-    lock = False  # True #False
-    if lock:
-        x._lock.acquire()
-        start = time.time()
-        print("START  LOCKED", x.index(), datetime.datetime.now())
-        d = active[x.index()]
-        print(
-            "FINISH LOCKED",
-            x.index(),
-            datetime.datetime.now(),
-            time.time() - start,
-            f"maxT={max_threads}",
-        )
-        x._lock.release()
-    else:
-        start = time.time()
-        print("START  unlocked", x.index(), datetime.datetime.now())
-        d = active[x.index()]
-        print(
-            "FINISH unlocked",
-            x.index(),
-            datetime.datetime.now(),
-            time.time() - start,
-            f"maxT={max_threads}",
-        )
+    try:
+        lock = False  # True #False
+        if lock:
+            x._lock.acquire()
+            start = time.time()
+            print("START  LOCKED", x.index(), datetime.datetime.now())
+            d = active[x.index()]
+            print(
+                "FINISH LOCKED",
+                x.index(),
+                datetime.datetime.now(),
+                time.time() - start,
+                f"maxT={max_threads}",
+            )
+            x._lock.release()
+        else:
+            start = time.time()
+            print("START  unlocked", x.index(), datetime.datetime.now())
+            d = active[x.index()]
+            print(
+                "FINISH unlocked",
+                x.index(),
+                datetime.datetime.now(),
+                time.time() - start,
+                f"maxT={max_threads}",
+            )
+    except Exception as error:
+        raise ActiveStorageError(error)
 
-    # Reformat the output dictionary
+    # Reformat the components dictionary to match the output of the
+    # corresponding local chunk function
     if method == "max":
+        # Local chunk function `cf_max_chunk`
         d = {"N": d["n"], "max": d["max"]}
     elif method == "mean":
-        d = {"N": d["n"], "sum": d["sum"], "V1": d["n"], "weighted": weighted}
+        # Local chunk function `cf_mean_chunk`
+        d = {"N": d["n"], "sum": d["sum"], "V1": d["n"], "weighted": False}
     elif method == "min":
+        # Local chunk function `cf_min_chunk`
         d = {"N": d["n"], "min": d["min"]}
     elif method == "sum":
+        # Local chunk function `cf_sum_chunk`
         d = {"N": d["n"], "sum": d["sum"]}
+    else:
+        raise ActiveStorageError(
+            f"Don't know how to reformat {method!r} components"
+        )
 
     return d
 
 
 def actify(a, method, axis=None):
-    """Modify a dask array to use active storage reductions.
+    """Modify a Dask array to use active storage reductions.
 
-    The dask graph is inspected to ensure that active storage
-    reductions are possible, and if not then the dask array is
+    The Dask graph is inspected to ensure that active storage
+    reductions are possible, and if not then the Dask array is
     returned unchanged.
 
     .. note:: It is assumed that the `!active_storage` attribute of
-              the `Data` object that provided the dask array *a* is
+              the `Data` object that provided the Dask array *a* is
               `True`. If this is not the case then an error at compute
               time is likely. The value of the `Data` object's
               `!active_storage` attribute is registered via the
@@ -160,8 +166,8 @@ def actify(a, method, axis=None):
         method: `str`
             The name of the reduction method. If the method does not
             have a corresponding active function in the
-            `active_chunk_functions` dictionary then active
-            compuations are not carried out.
+            `active_chunk_functions` dictionary then active storage
+            computations are not carried out.
 
         axis: (sequence of) `int`, optional
             Axis or axes along which to operate. By default,
@@ -171,7 +177,7 @@ def actify(a, method, axis=None):
 
         (`dask.array.Array`, function) or (`dask.array.Array`, `None`)
             If active storage operations are possible then return the
-            modified dask array and the new chunk reduction
+            modified Dask array and the new chunk reduction
             function. Otherwise return the unaltered input array and
             `None`.
 
@@ -188,6 +194,11 @@ def actify(a, method, axis=None):
     if method not in active_reduction_methods:
         # The method cannot be calculated with active storage, so
         # return the input data unchanged.
+        return a
+
+    url = active_storage_url().value
+    if url is None:
+        # TODOACTIVE
         return a
 
     # Parse axis
@@ -208,24 +219,24 @@ def actify(a, method, axis=None):
             # the axes, so return the input data unchanged.
             return a
 
-    # Loop round the nodes of the dask graph looking for data
+    # Loop round the nodes of the Dask graph looking for data
     # definitions that point to files and which support active storage
-    # operations, and modify the dask graph when we find them.
+    # operations, and then modify the Dask graph when we find them.
     #
     # The elements are traversed in reverse order so that the data
-    # defintions come out first, allowing for the potential of a
-    # faster short circuit when using active storage is not possible.
+    # definitions will tend to come out first, allowing for the
+    # potential of a faster short circuit when using active storage is
+    # not possible.
     #
-    # Performance: The optimisation is essential, but can be slow for
-    #              complicated graphs.
-    url = str(active_storage_url())
+    # Performance: The optimising the graph can be slow for
+    #              complicated graphs, but is nonetheless essential.
     ok_to_actify = True
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
         try:
             filename = value.get_filename()
         except AttributeError:
-            # This dask chunk is not a data definition
+            # This Dask chunk is not a data definition
             continue
 
         if not filename:
@@ -235,7 +246,7 @@ def actify(a, method, axis=None):
             break
 
         # Still here? Then this chunk is a data definition that points
-        # to files, so try to insert an actified copy into the dask
+        # to files, so try to insert an actified copy into the Dask
         # graph.
         try:
             dsk[key] = value.actify(url)
@@ -246,23 +257,22 @@ def actify(a, method, axis=None):
             break
 
     if not ok_to_actify:
-        # It turns out that the dask graph is not suitable for active
+        # It turns out that the Dask graph is not suitable for active
         # storage reductions, so return the input data unchanged.
         return a
 
-    # Still here? Then all data definitions in the dask graph support
-    # active storage reductions => redefine the dask array from the
-    # actified dask graph, and set the active storage reduction chunk
-    # function.
+    # Still here? Then the Dask graph supports active storage
+    #             reductions => redefine the Dask array from the
+    #             actified Dask graph.
     logger.warning(
-        "At compute time, data will be collapsed with "
-        f"active storage at URL {url}"
+        "At compute time, the collapse will be attempted with active "
+        f"storage at URL {url}"
     )
     return da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
 
 
 # --------------------------------------------------------------------
-# Decoators
+# Decorators
 # --------------------------------------------------------------------
 def active_storage(method):
     """Decorator for active storage reductions on `Collapse` methods.
@@ -288,26 +298,22 @@ def active_storage(method):
         def wrapper(self, *args, **kwargs):
             if (
                 Active is not None
-                and method in active_reduction_methods
                 and kwargs.get("active_storage")
+                and cf_active_storage()
+                #                and active_storage_url()
+                and method in active_reduction_methods
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
-                and cf_active_storage()
-                and active_storage_url()
             ):
-                # Attempt to actify the dask array
+                # Attempt to actify the Dask array
                 args = list(args)
                 if args:
-                    dask_array = args.pop(0)
+                    dx = args.pop(0)
                 else:
-                    dask_array = kwargs.pop("a")
+                    dx = kwargs.pop("a")
 
-                dask_array = actify(
-                    dask_array,
-                    method=method,
-                    axis=kwargs.get("axis"),
-                )
-                args.insert(0, dask_array)
+                dx = actify(dx, method=method, axis=kwargs.get("axis"))
+                args.insert(0, dx)
 
             # Run the collapse method
             return collapse_method(self, *args, **kwargs)
@@ -334,24 +340,25 @@ def active_storage_chunk(method):
 
     """
 
-    def decorator(chunk):
-        @wraps(chunk)
+    def decorator(chunk_function):
+        @wraps(chunk_function)
         def wrapper(*args, **kwargs):
-            if (
-                Active is not None
-                and method in active_reduction_methods
-                and cf_active_storage()
-                and active_storage_url()
-            ):
-                try:
-                    # Try doing an active storage reduction
-                    return active_chunk(method, *args, **kwargs)
-                except ValueError:
-                    pass
+            if args:
+                x = args[0]
+            else:
+                x = kwargs["x"]
 
-            # Still here? Then we couldn't do an active storage
-            # reduction, so we'll do a local one.
-            return chunk(*args, **kwargs)
+            if getattr(x, "actified", False):
+                try:
+                    # Try doing an active storage reduction on
+                    # actified chunk data
+                    return active_chunk(method, *args, **kwargs)
+                except ActiveStorageError as error:
+                    # The active storage reduction failed
+                    logger.warning(f"{error}. Reverting to local reduction.")
+
+            # Still here? Then do a local reduction.
+            return chunk_function(*args, **kwargs)
 
         return wrapper
 

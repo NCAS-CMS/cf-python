@@ -35,10 +35,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class ActiveStorageTest(unittest.TestCase):
-    @unittest.skipUnless(Active is not None, "Requires activestorage package.")
+    @unittest.skipUnless(Active is not None, "Requires activestorage.Active")
     def test_active_storage(self):
-        print("WARNING: Skipping active storage test!")
-        return
+        #        print("WARNING: Skipping active storage test!")
+        #        return
         # No masked values
         f = cf.example_field(0)
         cf.write(f, tmpfile)
@@ -49,15 +49,20 @@ class ActiveStorageTest(unittest.TestCase):
 
         cf.active_storage(False)
         self.assertFalse(cf.active_storage())
-        array = f.collapse("mean", weights=False).array
+        f.collapse("mean", weights=False)
+        print("=========")
+        local_array = f.collapse("mean", weights=False).array
 
+        print("=========")
         with cf.configuration(active_storage=True, active_storage_url="dummy"):
             self.assertTrue(cf.active_storage())
             self.assertEqual(cf.active_storage_url(), "dummy")
             self.assertTrue(f.data.active_storage)
             active_array = f.collapse("mean", weights=False).array
+            print(active_array)
+            print(local_array)
 
-        self.assertEqual(array, active_array)
+        self.assertEqual(active_array, local_array)
 
         # TODOACTIVE: Test with masked values (not yet working in
         #             activestorage.Active)
