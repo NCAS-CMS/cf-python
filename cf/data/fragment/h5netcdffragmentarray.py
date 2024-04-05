@@ -17,8 +17,6 @@ class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        #        units=False,
-        #        calendar=None,
         attributes=None,
         storage_options=None,
         source=None,
@@ -49,22 +47,11 @@ class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            units: `str` or `None`, optional
-                The units of the fragment data. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
-
             {{attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set from the file during the first
-                `__getitem__` call.
+                attributes will be set from the netCDF variable during
+                the first `__getitem__` call.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -85,8 +72,6 @@ class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
             dtype=dtype,
             shape=shape,
             mask=True,
-            #            units=units,
-            #            calendar=calendar,
             attributes=attributes,
             storage_options=storage_options,
             source=source,

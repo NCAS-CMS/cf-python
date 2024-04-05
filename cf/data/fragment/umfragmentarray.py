@@ -17,8 +17,6 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        #        units=False,
-        #        calendar=False,
         attributes=None,
         source=None,
         copy=True,
@@ -46,22 +44,13 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            units: `str` or `None`, optional
-                The units of the fragment data. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
-
             {{init attributes: `dict` or `None`, optional}}
 
-                If *attributes* is `None`, the default, then the
-                attributes will be set from the file during the first
-                `__getitem__` call.
+                During the first `__getitem__` call, any of the
+                ``_FillValue``, ``add_offset``, ``scale_factor``,
+                ``units``, and ``calendar`` attributes which haven't
+                already been set will be inferred from the lookup
+                header and cached for future use.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -87,8 +76,6 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             address=address,
             dtype=dtype,
             shape=shape,
-            #            units=units,
-            #            calendar=calendar,
             attributes=attributes,
             source=source,
             copy=False,
