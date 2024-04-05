@@ -21,8 +21,6 @@ class FullArray(IndexMixin, Array):
         fill_value=None,
         dtype=None,
         shape=None,
-        #        units=False,
-        #        calendar=False,
         attributes=None,
         source=None,
         copy=True,
@@ -41,26 +39,21 @@ class FullArray(IndexMixin, Array):
             shape: `tuple`
                 The array dimension sizes.
 
-            units: `str` or `None`, optional
-                The units of the netCDF variable. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set to `None` during the first
-                `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the netCDF variable. By default, or if
-                set to `None`, then the CF default calendar is
-                assumed, if applicable. If unset then the calendar
-                will be set to `None` during the first `__getitem__`
-                call.
-
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 .. versionadded:: NEXTRELEASE
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(source=source, copy=copy)
@@ -86,24 +79,10 @@ class FullArray(IndexMixin, Array):
             except AttributeError:
                 attributes = None
 
-        #            try:
-        #                units = source._get_component("units", False)
-        #            except AttributeError:
-        #                units = False
-        #
-        #            try:
-        #                calendar = source._get_component("calendar", None)
-        #            except AttributeError:
-        #                calendar = None
-
         self._set_component("full_value", fill_value, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
-        #        self._set_component("units", units, copy=False)
-        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("attributes", attributes, copy=False)
-
-    #        self._set_units()
 
     def __array_function__(self, func, types, args, kwargs):
         """The `numpy` `__array_function__` protocol.

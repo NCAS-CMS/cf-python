@@ -57,7 +57,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 unset then the calendar will be set during the first
                 `__getitem__` call.
 
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
                 attributes will be set from the file during the first
@@ -72,6 +72,14 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(

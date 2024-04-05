@@ -1,12 +1,7 @@
 import cfdm
-import numpy as np
 
 from ...constants import _stash2standard_name
-from ...functions import (
-    _DEPRECATION_ERROR_ATTRIBUTE,
-    get_subspace,
-    load_stash2standard_name,
-)
+from ...functions import _DEPRECATION_ERROR_ATTRIBUTE, load_stash2standard_name
 from ...umread_lib.umfile import File, Rec
 from .abstract import Array
 from .mixin import FileArrayMixin, IndexMixin
@@ -26,8 +21,6 @@ class UMArray(
         fmt=None,
         word_size=None,
         byte_ordering=None,
-        #        units=False,
-        #        calendar=False,
         attributes=None,
         source=None,
         copy=True,
@@ -63,22 +56,13 @@ class UMArray(
             byte_ordering: `str`, optional
                 ``'little_endian'`` or ``'big_endian'``
 
-            units: `str` or `None`, optional
-                The units of the fragment data. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
-
             {{attributes: `dict` or `None`, optional}}
 
-                If *attributes* is `None`, the default, then
-                attributes will be set from the file during the first
-                `__getitem__` call.
+                During the first `__getitem__` call, any of the
+                ``_FillValue``, ``add_offset``, ``scale_factor``,
+                ``units``, and ``calendar`` attributes which haven't
+                already been set will be inferred from the lookup
+                header and cached for future use.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -93,7 +77,7 @@ class UMArray(
                 Deprecated at version 3.14.0.
 
             header_offset: `int`
-                Deprecated at version 3.15.0. use the *address*
+                Deprecated at version 3.15.0. Use the *address*
                 parameter instead.
 
             data_offset: `int`, optional
@@ -101,6 +85,14 @@ class UMArray(
 
             disk_length: `int`, optional
                 Deprecated at version 3.15.0.
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(source=source, copy=copy)
@@ -146,16 +138,6 @@ class UMArray(
             except AttributeError:
                 attributes = None
 
-            # try:
-            #    units = source._get_component("units", False)
-            # except AttributeError:
-            #    units = False
-            #
-            # try:
-            #    calendar = source._get_component("calendar", False)
-            # except AttributeError:
-            #    calendar = False
-
         if filename is not None:
             if isinstance(filename, str):
                 filename = (filename,)
@@ -174,8 +156,6 @@ class UMArray(
 
         self._set_component("shape", shape, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        #        self._set_component("units", units, copy=False)
-        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("attributes", attributes, copy=False)
 
         if fmt is not None:
@@ -224,60 +204,26 @@ class UMArray(
         self.close(f)
         del f, rec
 
-        array = get_subspace(array, index)
-
+        # Set the netCDF attributes for the data
         attributes = self.get_attributes({})
-
-        # Set the units, if they haven't been set already.
         self._set_units(int_hdr, attributes)
-
-        LBUSER2 = int_hdr.item(38)
-        if LBUSER2 == 3:
-            # Return the numpy array now if it is a boolean array
-            self._set_component("dtype", np.dtype(bool), copy=False)
-            return array.astype(bool)
-
-        #        integer_array = LBUSER2 == 2
-
-        # ------------------------------------------------------------
-        # Convert to a masked array
-        # ------------------------------------------------------------
-        # Set the fill_value from BMDI
         self._set_FillValue(int_hdr, real_hdr, attributes)
-        _FillValue = attributes.get("_FillValue")
-        if _FillValue is not None:
-            # Mask any missing values
-            mask = array == _FillValue
-            if mask.any():
-                array = np.ma.masked_where(mask, array, copy=False)
-
-        #        fill_value = real_hdr.item(17)
-        #        if fill_value != -1.0e30:
-        #            # -1.0e30 is the flag for no missing data
-        #            if integer_array:
-        #                # The fill_value must be of the same type as the data
-        #                # values
-        #                fill_value = int(fill_value)
-        #
-        #            # Mask any missing values
-        #            mask = array == fill_value
-        #            if mask.any():
-        #                array = np.ma.masked_where(mask, array, copy=False)
-
-        # ------------------------------------------------------------
-        # Unpack the array using the scale_factor and add_offset, if
-        # either is available
-        # ------------------------------------------------------------
         self._set_unpack(int_hdr, real_hdr, attributes)
-        scale_factor = attributes.get("scale_factor")
-        if scale_factor is not None:
-            array *= scale_factor
-
-        add_offset = attributes.get("add_offset")
-        if add_offset is not None:
-            array += add_offset
-
         self._set_component("attributes", attributes, copy=False)
+
+        # Get the data subspace, applying any masking and unpacking
+        array = cfdm.netcdf_indexer(
+            array,
+            mask=True,
+            unpack=True,
+            always_masked_array=False,
+            attributes=attributes,
+        )
+        array = array[index]
+
+        if int_hdr.item(38) == 3:
+            # Convert the data to a boolean array
+            array = array.astype(bool)
 
         # Set the data type
         self._set_component("dtype", array.dtype, copy=False)
@@ -325,7 +271,28 @@ class UMArray(
         #             return r
 
     def _set_FillValue(self, int_hdr, real_hdr, attributes):
-        """TODO"""
+        """Set the ``_FillValue`` attribute.
+
+        .. versionadded:: NEXTRELEASE
+
+        :Parameters:
+
+            int_hdr: `numpy.ndarray`
+                The integer header of the data.
+
+            real_header: `numpy.ndarray`
+                The real header of the data.
+
+            attributes: `dict`
+                The dictionary in which to store the new
+                attributes. If a new attribute exists then
+                *attributes* is updated in-place.
+
+        :Returns:
+
+            `None
+
+        """
         if "FillValue" in attributes:
             return
 
@@ -339,8 +306,89 @@ class UMArray(
 
             attributes["_FillValue"] = _FillValue
 
+    def _set_units(self, int_hdr, attributes):
+        """Set the ``units`` attribute.
+
+        .. versionadded:: 3.14.0
+
+        .. versionadded:: NEXTRELEASE
+
+        :Parameters:
+
+            int_hdr: `numpy.ndarray`
+                The integer header of the data.
+
+            real_header: `numpy.ndarray`
+                The real header of the data.
+
+            attributes: `dict`
+                The dictionary in which to store the new
+                attributes. If a new attribute exists then
+                *attributes* is updated in-place.
+
+        :Returns:
+
+            `None`
+
+        """
+        if "units" in attributes:
+            return
+
+        units = None
+        if not _stash2standard_name:
+            load_stash2standard_name()
+
+        submodel = int_hdr.item(44)
+        stash = int_hdr.item(41)
+        records = _stash2standard_name.get((submodel, stash))
+        if records:
+            LBSRCE = int_hdr.item(37)
+            version, source = divmod(LBSRCE, 10000)
+            if version <= 0:
+                version = 405.0
+
+            for (
+                long_name,
+                units0,
+                valid_from,
+                valid_to,
+                standard_name,
+                cf_info,
+                condition,
+            ) in records:
+                if not self._test_version(
+                    valid_from, valid_to, version
+                ) or not self._test_condition(condition, int_hdr):
+                    continue
+
+                units = units0
+                break
+
+        attributes["units"] = units
+
     def _set_unpack(self, int_hdr, real_hdr, attributes):
-        """TODO"""
+        """Set the ``add_offset`` and ``scale_factor`` attributes.
+
+        .. versionadded:: NEXTRELEASE
+
+        :Parameters:
+
+            int_hdr: `numpy.ndarray`
+                The integer header of the data.
+
+            real_header: `numpy.ndarray`
+                The real header of the data.
+
+            attributes: `dict`
+                The dictionary in which to store the new
+                attributes. If any new attributes exist then
+                *attributes* is updated in-place.
+
+        :Returns:
+
+            `None
+
+        """
         if "scale_factor" not in attributes:
             # Treat BMKS as a scale_factor if it is neither 0 nor 1
             scale_factor = real_hdr.item(18)
@@ -360,102 +408,6 @@ class UMArray(
                     add_offset = int(add_offset)
 
                 attributes["add_offset"] = add_offset
-
-    def _set_units(self, int_hdr, attributes):
-        """The units and calendar properties.
-
-        These are set from inpection of the integer header, but only
-        if they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
-
-        .. versionadded:: 3.14.0
-
-        :Parameters:
-
-            int_hdr: `numpy.ndarray`
-                The integer header of the data.
-
-        :Returns:
-
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
-
-        """
-        if "units" not in attributes:
-            units = None
-            if not _stash2standard_name:
-                load_stash2standard_name()
-
-            submodel = int_hdr[44]
-            stash = int_hdr[41]
-            records = _stash2standard_name.get((submodel, stash))
-            if records:
-                LBSRCE = int_hdr[37]
-                version, source = divmod(LBSRCE, 10000)
-                if version <= 0:
-                    version = 405.0
-
-                for (
-                    long_name,
-                    units0,
-                    valid_from,
-                    valid_to,
-                    standard_name,
-                    cf_info,
-                    condition,
-                ) in records:
-                    if not self._test_version(
-                        valid_from, valid_to, version
-                    ) or not self._test_condition(condition, int_hdr):
-                        continue
-
-                    units = units0
-                    break
-
-            attributes["units"] = units
-
-        # units = self._get_component("units", False)
-        # if units is False:
-        #    units = None
-        #
-        #    if not _stash2standard_name:
-        #        load_stash2standard_name()
-        #
-        #    submodel = int_hdr[44]
-        #    stash = int_hdr[41]
-        #    records = _stash2standard_name.get((submodel, stash))
-        #    if records:
-        #        LBSRCE = int_hdr[37]
-        #        version, source = divmod(LBSRCE, 10000)
-        #        if version <= 0:
-        #            version = 405.0
-        #
-        #        for (
-        #            long_name,
-        #            units0,
-        #            valid_from,
-        #            valid_to,
-        #            standard_name,
-        #            cf_info,
-        #            condition,
-        #        ) in records:
-        #            if not self._test_version(
-        #                valid_from, valid_to, version
-        #            ) or not self._test_condition(condition, int_hdr):
-        #                continue
-        #
-        #            units = units0
-        #            break
-        #
-        #    self._set_component("units", units, copy=False)
-        #
-        # calendar = self._get_component("calendar", False)
-        # if calendar is False:
-        #    calendar = None
-        #    self._set_component("calendar", calendar, copy=False)
-        #
-        # return units, calendar
 
     def _test_condition(self, condition, int_hdr):
         """Return `True` if a field satisfies a condition for a STASH
@@ -486,14 +438,14 @@ class UMArray(
             return True
 
         if condition == "true_latitude_longitude":
-            LBCODE = int_hdr[15]
+            LBCODE = int_hdr.item(15)
             # LBCODE 1: Unrotated regular lat/long grid
             # LBCODE 2 = Regular lat/lon grid boxes (grid points are
             #            box centres)
             if LBCODE in (1, 2):
                 return True
         elif condition == "rotated_latitude_longitude":
-            LBCODE = int_hdr[15]
+            LBCODE = int_hdr.item(15)
             # LBCODE 101: Rotated regular lat/long grid
             # LBCODE 102: Rotated regular lat/lon grid boxes (grid
             #             points are box centres)
@@ -791,7 +743,7 @@ class UMArray(
         **Examples**
 
         >>> f.open()
-        (<cf.umread_lib.umfile.File object at 0x7fdc25056380>, 4)
+        (<cf.umread_lib.umfile.File object at 0x7fdc25056340>, 4)
 
         """
         return super().open(

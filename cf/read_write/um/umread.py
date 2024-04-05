@@ -1957,8 +1957,6 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        #        units = getattr(um_Units, "units", None)
-        #        calendar = getattr(um_Units, "calendar", None)
         attributes = {
             "units": getattr(um_Units, "units", None),
             "calendar": getattr(um_Units, "calendar", None),
@@ -2003,8 +2001,6 @@ class UMField:
                 fmt=fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
-                #                units=units,
-                #                calendar=calendar,
                 attributes=attributes,
             )
 
@@ -2058,8 +2054,6 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        #                        units=units,
-                        #                        calendar=calendar,
                         attributes=attributes,
                     )
 
@@ -2110,8 +2104,6 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        #                        units=units,
-                        #                        calendar=calendar,
                         attributes=attributes,
                     )
 

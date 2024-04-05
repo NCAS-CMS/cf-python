@@ -32,8 +32,6 @@ class NetCDFFragmentArray(
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        #        units=False,
-        #        calendar=None,
         attributes=None,
         storage_options=None,
         source=None,
@@ -64,22 +62,11 @@ class NetCDFFragmentArray(
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            units: `str` or `None`, optional
-                The units of the fragment data. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
-
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set from the file during the first
-                `__getitem__` call.
+                netCDF attributes will be set from the netCDF variable
+                during the first `__getitem__` call.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -94,6 +81,14 @@ class NetCDFFragmentArray(
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(
