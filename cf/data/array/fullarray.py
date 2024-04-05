@@ -21,8 +21,9 @@ class FullArray(IndexMixin, Array):
         fill_value=None,
         dtype=None,
         shape=None,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #        calendar=False,
+        attributes=None,
         source=None,
         copy=True,
     ):
@@ -53,6 +54,10 @@ class FullArray(IndexMixin, Array):
                 will be set to `None` during the first `__getitem__`
                 call.
 
+            {{attributes: `dict` or `None`, optional}}
+
+                .. versionadded:: NEXTRELEASE
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -77,22 +82,28 @@ class FullArray(IndexMixin, Array):
                 shape = None
 
             try:
-                units = source._get_component("units", False)
+                attributes = source._get_component("attributes", False)
             except AttributeError:
-                units = False
+                attributes = None
 
-            try:
-                calendar = source._get_component("calendar", None)
-            except AttributeError:
-                calendar = None
+        #            try:
+        #                units = source._get_component("units", False)
+        #            except AttributeError:
+        #                units = False
+        #
+        #            try:
+        #                calendar = source._get_component("calendar", None)
+        #            except AttributeError:
+        #                calendar = None
 
         self._set_component("full_value", fill_value, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
-        self._set_component("units", units, copy=False)
-        self._set_component("calendar", calendar, copy=False)
+        #        self._set_component("units", units, copy=False)
+        #        self._set_component("calendar", calendar, copy=False)
+        self._set_component("attributes", attributes, copy=False)
 
-        self._set_units()
+    #        self._set_units()
 
     def __array_function__(self, func, types, args, kwargs):
         """The `numpy` `__array_function__` protocol.

@@ -17,8 +17,9 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #        calendar=False,
+        attributes=None,
         source=None,
         copy=True,
     ):
@@ -56,6 +57,14 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 unset then the calendar will be set during the first
                 `__getitem__` call.
 
+            {{attributes: `dict` or `None`, optional}}
+
+                If *attributes* is `None`, the default, then the
+                attributes will be set from the file during the first
+                `__getitem__` call.
+
+                .. versionadded:: NEXTRELEASE
+
             {{aggregated_units: `str` or `None`, optional}}
 
             {{aggregated_calendar: `str` or `None`, optional}}
@@ -70,8 +79,9 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             address=address,
             dtype=dtype,
             shape=shape,
-            units=units,
-            calendar=calendar,
+            #            units=units,
+            #            calendar=calendar,
+            attributes=attributes,
             source=source,
             copy=False,
         )

@@ -43,8 +43,8 @@ class CFAMixin:
         dtype=None,
         mask=True,
         unpack=True,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #        calendar=False,
         instructions=None,
         substitutions=None,
         term=None,
@@ -190,8 +190,9 @@ class CFAMixin:
                 shape=shape,
                 dtype=dtype,
                 mask=mask,
-                units=units,
-                calendar=calendar,
+                #                units=units,
+                #                calendar=calendar,
+                attributes=attributes,
                 copy=copy,
             )
         else:
@@ -200,8 +201,9 @@ class CFAMixin:
                 address=address,
                 dtype=dtype,
                 mask=mask,
-                units=units,
-                calendar=calendar,
+                #                units=units,
+                #                calendar=calendar,
+                attributes=attributes,
                 copy=copy,
             )
 
@@ -794,7 +796,7 @@ class CFAMixin:
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 
         dtype = self.dtype
-        units = self.get_units()
+        units = self.get_units(None)
         calendar = self.get_calendar(None)
         aggregated_data = self.get_aggregated_data(copy=False)
 

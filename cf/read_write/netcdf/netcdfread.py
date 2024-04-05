@@ -253,11 +253,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
+        attributes = kwargs["attributes"]
         data = self._create_Data(
             cfa_array,
             ncvar,
-            units=kwargs["units"],
-            calendar=kwargs["calendar"],
+            units=attributes.get("units"),  # units=kwargs["units"],
+            calendar=attributes.get(
+                "calendar"
+            ),  # calendar=kwargs["calendar"],
         )
 
         # Note: We don't cache elements from CFA variables, because

@@ -41,4 +41,4 @@ class ArrayMixin:
         .. versionadded:: 3.14.0
 
         """
-        return Units(self.get_units(), self.get_calendar(None))
+        return Units(self.get_units(None), self.get_calendar(None))

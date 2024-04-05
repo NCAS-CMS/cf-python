@@ -1957,8 +1957,12 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        units = getattr(um_Units, "units", None)
-        calendar = getattr(um_Units, "calendar", None)
+        #        units = getattr(um_Units, "units", None)
+        #        calendar = getattr(um_Units, "calendar", None)
+        attributes = {
+            "units": getattr(um_Units, "units", None),
+            "calendar": getattr(um_Units, "calendar", None),
+        }
 
         data_type_in_file = self.data_type_in_file
 
@@ -1999,8 +2003,9 @@ class UMField:
                 fmt=fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
-                units=units,
-                calendar=calendar,
+                #                units=units,
+                #                calendar=calendar,
+                attributes=attributes,
             )
 
             key = f"{klass_name}-{tokenize(subarray)}"
@@ -2053,8 +2058,9 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        units=units,
-                        calendar=calendar,
+                        #                        units=units,
+                        #                        calendar=calendar,
+                        attributes=attributes,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"
@@ -2104,8 +2110,9 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        units=units,
-                        calendar=calendar,
+                        #                        units=units,
+                        #                        calendar=calendar,
+                        attributes=attributes,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"

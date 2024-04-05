@@ -32,8 +32,9 @@ class NetCDFFragmentArray(
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        units=False,
-        calendar=None,
+        #        units=False,
+        #        calendar=None,
+        attributes=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -73,6 +74,14 @@ class NetCDFFragmentArray(
                 indicate the CF default calendar, if applicable. If
                 unset then the calendar will be set during the first
                 `__getitem__` call.
+
+            {{attributes: `dict` or `None`, optional}}
+
+                If *attributes* is `None`, the default, then the
+                attributes will be set from the file during the first
+                `__getitem__` call.
+
+                .. versionadded:: NEXTRELEASE
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -114,14 +123,19 @@ class NetCDFFragmentArray(
                 dtype = None
 
             try:
-                units = source._get_component("units", False)
+                attributes = source._get_component("attributes", None)
             except AttributeError:
-                units = False
+                attributes = None
 
-            try:
-                calendar = source._get_component("calendar", False)
-            except AttributeError:
-                calendar = False
+            #            try:
+            #                units = source._get_component("units", False)
+            #            except AttributeError:
+            #                units = False
+            #
+            #            try:
+            #                calendar = source._get_component("calendar", False)
+            #            except AttributeError:
+            #                calendar = False
 
             try:
                 aggregated_units = source._get_component(
@@ -165,8 +179,9 @@ class NetCDFFragmentArray(
 
         self._set_component("shape", shape, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("units", units, copy=False)
-        self._set_component("calendar", calendar, copy=False)
+        #        self._set_component("units", units, copy=False)
+        #        self._set_component("calendar", calendar, copy=False)
+        self._set_component("attributes", attributes, copy=False)
         self._set_component("mask", True, copy=False)
 
         self._set_component("aggregated_units", aggregated_units, copy=False)
@@ -191,8 +206,9 @@ class NetCDFFragmentArray(
             "shape": self.shape,
             "aggregated_units": self.get_aggregated_units(None),
             "aggregated_calendar": self.get_aggregated_calendar(None),
-            "units": self.get_units(None),
-            "calendar": self.get_units(None),
+            #            "units": self.get_units(None),
+            #            "calendar": self.get_units(None),
+            "attributes": self.get_attributes(None),
             "copy": False,
         }
 

@@ -16,8 +16,9 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #       calendar=False,
+        attributes=None,
         source=None,
         copy=True,
     ):
@@ -53,6 +54,10 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
                 unset then the calendar will be set to `None` during
                 the first `__getitem__` call.
 
+            {{attributes: `dict` or `None`, optional}}
+
+                .. versionadded:: NEXTRELEASE
+
             {{aggregated_units: `str` or `None`, optional}}
 
             {{aggregated_calendar: `str` or `None`, optional}}
@@ -66,8 +71,9 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
             fill_value=fill_value,
             dtype=dtype,
             shape=shape,
-            units=units,
-            calendar=calendar,
+            #            units=units,
+            #            calendar=calendar,
+            attributes=attributes,
             source=source,
             copy=False,
         )

@@ -26,8 +26,9 @@ class UMArray(
         fmt=None,
         word_size=None,
         byte_ordering=None,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #        calendar=False,
+        attributes=None,
         source=None,
         copy=True,
     ):
@@ -72,6 +73,14 @@ class UMArray(
                 indicate the CF default calendar, if applicable. If
                 unset then the calendar will be set during the first
                 `__getitem__` call.
+
+            {{attributes: `dict` or `None`, optional}}
+
+                If *attributes* is `None`, the default, then
+                attributes will be set from the file during the first
+                `__getitem__` call.
+
+                .. versionadded:: NEXTRELEASE
 
             {{init source: optional}}
 
@@ -133,14 +142,19 @@ class UMArray(
                 byte_ordering = None
 
             try:
-                units = source._get_component("units", False)
+                attributes = source._get_component("attributes", None)
             except AttributeError:
-                units = False
+                attributes = None
 
-            try:
-                calendar = source._get_component("calendar", False)
-            except AttributeError:
-                calendar = False
+            # try:
+            #    units = source._get_component("units", False)
+            # except AttributeError:
+            #    units = False
+            #
+            # try:
+            #    calendar = source._get_component("calendar", False)
+            # except AttributeError:
+            #    calendar = False
 
         if filename is not None:
             if isinstance(filename, str):
@@ -160,8 +174,9 @@ class UMArray(
 
         self._set_component("shape", shape, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("units", units, copy=False)
-        self._set_component("calendar", calendar, copy=False)
+        #        self._set_component("units", units, copy=False)
+        #        self._set_component("calendar", calendar, copy=False)
+        self._set_component("attributes", attributes, copy=False)
 
         if fmt is not None:
             self._set_component("fmt", fmt, copy=False)
@@ -211,8 +226,10 @@ class UMArray(
 
         array = get_subspace(array, index)
 
+        attributes = self.get_attributes({})
+
         # Set the units, if they haven't been set already.
-        self._set_units(int_hdr)
+        self._set_units(int_hdr, attributes)
 
         LBUSER2 = int_hdr.item(38)
         if LBUSER2 == 3:
@@ -220,44 +237,47 @@ class UMArray(
             self._set_component("dtype", np.dtype(bool), copy=False)
             return array.astype(bool)
 
-        integer_array = LBUSER2 == 2
+        #        integer_array = LBUSER2 == 2
 
         # ------------------------------------------------------------
         # Convert to a masked array
         # ------------------------------------------------------------
         # Set the fill_value from BMDI
-        fill_value = real_hdr.item(17)
-        if fill_value != -1.0e30:
-            # -1.0e30 is the flag for no missing data
-            if integer_array:
-                # The fill_value must be of the same type as the data
-                # values
-                fill_value = int(fill_value)
-
+        self._set_FillValue(int_hdr, real_hdr, attributes)
+        _FillValue = attributes.get("_FillValue")
+        if _FillValue is not None:
             # Mask any missing values
-            mask = array == fill_value
+            mask = array == _FillValue
             if mask.any():
                 array = np.ma.masked_where(mask, array, copy=False)
+
+        #        fill_value = real_hdr.item(17)
+        #        if fill_value != -1.0e30:
+        #            # -1.0e30 is the flag for no missing data
+        #            if integer_array:
+        #                # The fill_value must be of the same type as the data
+        #                # values
+        #                fill_value = int(fill_value)
+        #
+        #            # Mask any missing values
+        #            mask = array == fill_value
+        #            if mask.any():
+        #                array = np.ma.masked_where(mask, array, copy=False)
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
         # either is available
         # ------------------------------------------------------------
-        # Treat BMKS as a scale_factor if it is neither 0 nor 1
-        scale_factor = real_hdr.item(18)
-        if scale_factor != 1.0 and scale_factor != 0.0:
-            if integer_array:
-                scale_factor = int(scale_factor)
-
+        self._set_unpack(int_hdr, real_hdr, attributes)
+        scale_factor = attributes.get("scale_factor")
+        if scale_factor is not None:
             array *= scale_factor
 
-        # Treat BDATUM as an add_offset if it is not 0
-        add_offset = real_hdr.item(4)
-        if add_offset != 0.0:
-            if integer_array:
-                add_offset = int(add_offset)
-
+        add_offset = attributes.get("add_offset")
+        if add_offset is not None:
             array += add_offset
+
+        self._set_component("attributes", attributes, copy=False)
 
         # Set the data type
         self._set_component("dtype", array.dtype, copy=False)
@@ -304,7 +324,44 @@ class UMArray(
         #         if r.hdr_offset == header_offset:
         #             return r
 
-    def _set_units(self, int_hdr):
+    def _set_FillValue(self, int_hdr, real_hdr, attributes):
+        """TODO"""
+        if "FillValue" in attributes:
+            return
+
+        # Set the fill_value from BMDI
+        _FillValue = real_hdr.item(17)
+        if _FillValue != -1.0e30:
+            # -1.0e30 is the flag for no missing data
+            if int_hdr.item(38) == 2:
+                # Must have an integer _FillValue for integer data
+                _FillValue = int(_FillValue)
+
+            attributes["_FillValue"] = _FillValue
+
+    def _set_unpack(self, int_hdr, real_hdr, attributes):
+        """TODO"""
+        if "scale_factor" not in attributes:
+            # Treat BMKS as a scale_factor if it is neither 0 nor 1
+            scale_factor = real_hdr.item(18)
+            if scale_factor != 1.0 and scale_factor != 0.0:
+                if int_hdr.item(38) == 2:
+                    # Must have an integer scale_factor for integer data
+                    scale_factor = int(scale_factor)
+
+                attributes["scale_factor"] = scale_factor
+
+        if "add_offset" not in attributes:
+            # Treat BDATUM as an add_offset if it is not 0
+            add_offset = real_hdr.item(4)
+            if add_offset != 0.0:
+                if int_hdr.item(38) == 2:
+                    # Must have an integer add_offset for integer data
+                    add_offset = int(add_offset)
+
+                attributes["add_offset"] = add_offset
+
+    def _set_units(self, int_hdr, attributes):
         """The units and calendar properties.
 
         These are set from inpection of the integer header, but only
@@ -325,10 +382,8 @@ class UMArray(
                 `None`.
 
         """
-        units = self._get_component("units", False)
-        if units is False:
+        if "units" not in attributes:
             units = None
-
             if not _stash2standard_name:
                 load_stash2standard_name()
 
@@ -358,14 +413,49 @@ class UMArray(
                     units = units0
                     break
 
-            self._set_component("units", units, copy=False)
+            attributes["units"] = units
 
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
-            calendar = None
-            self._set_component("calendar", calendar, copy=False)
-
-        return units, calendar
+        # units = self._get_component("units", False)
+        # if units is False:
+        #    units = None
+        #
+        #    if not _stash2standard_name:
+        #        load_stash2standard_name()
+        #
+        #    submodel = int_hdr[44]
+        #    stash = int_hdr[41]
+        #    records = _stash2standard_name.get((submodel, stash))
+        #    if records:
+        #        LBSRCE = int_hdr[37]
+        #        version, source = divmod(LBSRCE, 10000)
+        #        if version <= 0:
+        #            version = 405.0
+        #
+        #        for (
+        #            long_name,
+        #            units0,
+        #            valid_from,
+        #            valid_to,
+        #            standard_name,
+        #            cf_info,
+        #            condition,
+        #        ) in records:
+        #            if not self._test_version(
+        #                valid_from, valid_to, version
+        #            ) or not self._test_condition(condition, int_hdr):
+        #                continue
+        #
+        #            units = units0
+        #            break
+        #
+        #    self._set_component("units", units, copy=False)
+        #
+        # calendar = self._get_component("calendar", False)
+        # if calendar is False:
+        #    calendar = None
+        #    self._set_component("calendar", calendar, copy=False)
+        #
+        # return units, calendar
 
     def _test_condition(self, condition, int_hdr):
         """Return `True` if a field satisfies a condition for a STASH
