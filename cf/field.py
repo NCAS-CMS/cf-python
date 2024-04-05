@@ -442,7 +442,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             domain_axes[axis].set_size(size)
 
         # Record which axes were cyclic before the subspace
-        org_cyclic = [data_axes.index(axis) for axis in new.cyclic()]
+        org_cyclic = [
+            data_axes.index(axis) for axis in new.cyclic() if axis in data_axes
+        ]
 
         # Set the subspaced data
         new.set_data(new_data, axes=data_axes, copy=False)
