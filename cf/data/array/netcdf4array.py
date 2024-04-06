@@ -22,6 +22,8 @@ class NetCDF4Array(
 
     """
 
+    # REVIEW: h5
+
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
@@ -65,6 +67,8 @@ class NetCDF4Array(
                 The subspace.
 
         """
+        # REVIEW: getitem
+
         if index is None:
             index = self.index()
 

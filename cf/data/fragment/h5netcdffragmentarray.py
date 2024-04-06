@@ -47,13 +47,11 @@ class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
-
-                .. versionadded:: NEXTRELEASE
 
             {{aggregated_units: `str` or `None`, optional}}
 

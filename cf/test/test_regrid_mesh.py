@@ -161,8 +161,6 @@ class RegridMeshTest(unittest.TestCase):
                         use_dst_mask=use_dst_mask,
                     )
 
-                    print("\ny=", y)
-                    #                    print ('a=', a)
                     self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
                     if isinstance(a, np.ma.MaskedArray):

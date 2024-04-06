@@ -139,6 +139,8 @@ class FullArray(IndexMixin, Array):
                 The subspace.
 
         """
+        # REVIEW: getitem
+
         if index is None:
             shape = self.shape
         else:
@@ -167,6 +169,8 @@ class FullArray(IndexMixin, Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
         """
+        # REVIEW: getitem
+
         return np.asanyarray(self)
 
     @property

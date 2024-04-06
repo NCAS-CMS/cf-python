@@ -56,7 +56,7 @@ class UMArray(
             byte_ordering: `str`, optional
                 ``'little_endian'`` or ``'big_endian'``
 
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 During the first `__getitem__` call, any of the
                 ``_FillValue``, ``add_offset``, ``scale_factor``,
@@ -95,6 +95,8 @@ class UMArray(
                 *attributes* parameter instead.
 
         """
+        # REVIEW: h5, getitem
+
         super().__init__(source=source, copy=copy)
 
         if source is not None:
@@ -189,6 +191,8 @@ class UMArray(
                 The subspace.
 
         """
+        # REVIEW: getitem
+
         # Note: No need to lock the UM file - concurrent reads are OK.
 
         if index is None:
@@ -293,6 +297,8 @@ class UMArray(
             `None
 
         """
+        # REVIEW: getitem
+
         if "FillValue" in attributes:
             return
 
@@ -331,6 +337,8 @@ class UMArray(
             `None`
 
         """
+        # REVIEW: getitem
+
         if "units" in attributes:
             return
 
@@ -389,6 +397,8 @@ class UMArray(
             `None
 
         """
+        # REVIEW: getitem
+
         if "scale_factor" not in attributes:
             # Treat BMKS as a scale_factor if it is neither 0 nor 1
             scale_factor = real_hdr.item(18)

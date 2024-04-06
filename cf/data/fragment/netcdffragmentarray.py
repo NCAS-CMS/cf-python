@@ -16,11 +16,10 @@ class NetCDFFragmentArray(
 ):
     """A netCDF fragment array.
 
-    Access will either with `netCDF4` (for local and OPenDAP files) or
-    `h5netcdf` (for S3 files).
+    Access will be with either `netCDF4` (for local and OPenDAP files)
+    or `h5netcdf` (for S3 files).
 
     .. versionadded:: 3.15.0
-
 
     """
 
@@ -122,16 +121,6 @@ class NetCDFFragmentArray(
             except AttributeError:
                 attributes = None
 
-            #            try:
-            #                units = source._get_component("units", False)
-            #            except AttributeError:
-            #                units = False
-            #
-            #            try:
-            #                calendar = source._get_component("calendar", False)
-            #            except AttributeError:
-            #                calendar = False
-
             try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
@@ -174,8 +163,6 @@ class NetCDFFragmentArray(
 
         self._set_component("shape", shape, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        #        self._set_component("units", units, copy=False)
-        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("attributes", attributes, copy=False)
         self._set_component("mask", True, copy=False)
 
@@ -201,8 +188,6 @@ class NetCDFFragmentArray(
             "shape": self.shape,
             "aggregated_units": self.get_aggregated_units(None),
             "aggregated_calendar": self.get_aggregated_calendar(None),
-            #            "units": self.get_units(None),
-            #            "calendar": self.get_units(None),
             "attributes": self.get_attributes(None),
             "copy": False,
         }

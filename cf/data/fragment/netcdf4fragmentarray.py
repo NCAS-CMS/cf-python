@@ -17,8 +17,6 @@ class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        #        units=False,
-        #        calendar=None,
         attributes=None,
         storage_options=None,
         source=None,
@@ -60,13 +58,11 @@ class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
                 unset then the calendar will be set during the first
                 `__getitem__` call.
 
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set from the file during the first
-                `__getitem__` call.
-
-                .. versionadded:: NEXTRELEASE
+                attributes will be set from the netCDF variable during
+                the first `__getitem__` call.
 
             {{aggregated_units: `str` or `None`, optional}}
 
