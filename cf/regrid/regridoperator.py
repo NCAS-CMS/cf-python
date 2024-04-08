@@ -727,6 +727,7 @@ class RegridOperator(mixin_Container, Container):
                 # Read the weights from the weights file
                 from netCDF4 import Dataset
 
+                # REVIEW: h5: new name and location of file lock
                 from ..data.array.locks import netcdf_lock
 
                 netcdf_lock.acquire()

@@ -33,7 +33,6 @@ UM = UMRead(_implementation)
 
 logger = logging.getLogger(__name__)
 
-
 @_manage_log_level_via_verbosity
 def read(
     files,
@@ -58,14 +57,18 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
+    # REVIEW: h5: new unpack parameter to control auto-unpacking (previously always True)
     unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
     cfa=None,
+    # REVIEW: h5: new netcdf_engine parameter to control how to read files
     netcdf_engine=None,
+    # REVIEW: h5: new storage_options parameter to control access to S3
     storage_options=None,
-    cache_metadata=True,
+    # REVIEW: h5: cache_metadata parameter to control whethe or not to get to caache selected data elements
+    cache_metadata=True, 
 ):
     """Read field or domain constructs from files.
 
@@ -432,12 +435,12 @@ def read(
             .. versionadded:: 3.4.0
 
         unpack: `bool`, optional
-            If True (the default) then unpack arrays by convention
+            If True, the default, then unpack arrays by convention
             when the data is read from disk.
 
-            Unpacking is determined netCDF conventions for the
-            following attributes: ``add_offset``, ``scale_factor``,
-            and ``_Unsigned``.
+            Unpacking is determined by netCDF conventions for the
+            following variable attributes: ``add_offset``,
+            ``scale_factor``, and ``_Unsigned``.
 
             .. versionadded:: NEXTVERSION
 
@@ -690,57 +693,62 @@ def read(
                       the opening of netCDF fragment files that define
                       the data of aggregated variables. For these, the
                       first one of `netCDF4` and `h5netcdf` to
-                      successfully open the file netCDF file is always
-                      be used.
-
-            .. note:: `h5netcdf` restricts the types of indices that
-                      define subspaces of its data. See
-                      https://docs.h5py.org for details. However, such
-                      indices on a returned `Field` are possible if
-                      they are followed by further subspaces that
-                      imply acceptable indices.
+                      successfully open the file is used.
 
             .. versionadded:: NEXTVERSION
 
         storage_options: `dict` or `None`, optional
-           Key/value pairs to be passed on to the creation of
-           `s3fs.S3FileSystem` file systems to control the opening of
-           files in S3 object stores. Ignored for files not in an S3
-           object store, i.e. those whose names do not start with
-           ``s3:``.
+            Pass parameters to the backend file system driver, such as
+            username, password, server, port, etc. How the storage
+            options are interpreted depends on the location of the
+            file:
 
-           By default, or if `None`, then *storage_options* is taken
-           as ``{}``.
+            **Local File System**
 
-           If the ``'endpoint_url'`` key is not in *storage_options*
-           or is not in a dictionary defined by the ``'client_kwargs``
-           key (which is always the case when *storage_options* is
-           `None`), then one will be automatically inserted for
-           accessing an S3 file. For example, for a file name of
-           ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
-           with value ``'https://store'`` would be created.
+            Storage options are ignored for local files.
 
-           *Parameter example:*
-             For a file name of ``'s3://store/data/file.nc'``, the
-             following are equivalent: ``None``, ``{}``, and
-             ``{'endpoint_url': 'https://store'}``,
-             ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
+            **HTTP(S)**
 
-           *Parameter example:*
-             ``{'key: 'scaleway-api-key...', 'secret':
-             'scaleway-secretkey...', 'endpoint_url':
-             'https://s3.fr-par.scw.cloud', 'client_kwargs':
-             {'region_name': 'fr-par'}}``
+            Storage options are ignored for files available across the
+            network via OPeNDAP.
+
+            **S3-compatible services**
+
+            The backend used is `s3fs`, and the storage options are
+            used to initialise an `s3fs.S3FileSystem` file system
+            object. By default, or if `None`, then *storage_options*
+            is taken as ``{}``.
+
+            If the ``'endpoint_url'`` key is not in *storage_options*,
+            nor in a dictionary defined by the ``'client_kwargs'`` key
+            (both of which are the case when *storage_options* is
+            `None`), then one will be automatically inserted for
+            accessing an S3 file. For example, for a file name of
+            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+            with value ``'https://store'`` would be created. To
+            disable this, set ``'endpoint_url'`` to `None`.
+
+            *Parameter example:*
+              For a file name of ``'s3://store/data/file.nc'``, the
+              following are equivalent: ``None``, ``{}``,
+              ``{'endpoint_url': 'https://store'}``, and
+              ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
+
+            *Parameter example:*
+              ``{'key: 'scaleway-api-key...', 'secret':
+              'scaleway-secretkey...', 'endpoint_url':
+              'https://s3.fr-par.scw.cloud', 'client_kwargs':
+              {'region_name': 'fr-par'}}``
 
            .. versionadded:: NEXTVERSION
 
         cache_metadata: `bool`, optional
-            If True, the default, then data for metadata constructs
-            will have their first and last array elements retrieved
-            from the file and cached in memory for fast future
-            access. In addition, the second and penultimate array
-            elements will be cached from 2-d coordinate bounds data
-            that has two bounds per cell.
+            If True, the default, then cache the first and last array
+            elements of metadata constructs for fast future access. In
+            addition, the second and penultimate array elements will
+            be cached from coordinate bounds when there are two bounds
+            per cell. For remote data, setting *cache_metadata* to
+            False may speed up the parsing of the file.
 
             .. versionadded:: NEXTVERSION
 
@@ -1178,6 +1186,9 @@ def _read_a_file(
             See `cf.read` for details.
 
         mask: `bool`, optional
+            See `cf.read` for details.
+
+        unpack: `bool`, optional
             See `cf.read` for details.
 
         verbose: `int` or `str` or `None`, optional

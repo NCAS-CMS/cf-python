@@ -1957,6 +1957,7 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
+        # REVIEW: h5: replace units/calendar API with attributes
         attributes = {
             "units": getattr(um_Units, "units", None),
             "calendar": getattr(um_Units, "calendar", None),
