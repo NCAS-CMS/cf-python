@@ -7,6 +7,7 @@ from dask.base import is_dask_collection
 from ....functions import indices_shape, parse_indices
 
 
+# REVIEW: getitem
 class IndexMixin:
     """Mixin class for lazy indexing of a data array.
 
@@ -38,7 +39,7 @@ class IndexMixin:
     """
 
     def __array__(self, *dtype):
-        """Convert the ``{{class}}` into a `numpy` array.
+        """Convert the `{{class}}` into a `numpy` array.
 
         .. versionadded:: NEXTVERSION
 
@@ -66,17 +67,17 @@ class IndexMixin:
         x.__getitem__(indices) <==> x[indices]
 
         Subspaces created by indexing are lazy and are not applied
-        until the {{class}} object is converted to a `numpy` array
-        (via `__array__`), by which time all lazily-defined subspaces
-        will have been converted to a single combined index which
-        defines only the actual elements that need to be retrieved
-        from the original data.
+        until the `{{class}}` object is converted to a `numpy` array,
+        by which time all lazily-defined subspaces will have been
+        converted to a single combined index which defines only the
+        actual elements that need to be retrieved from the original
+        data.
 
-        The combined index is intended to be treated orthogonally,
-        meaning that the index for each dimension is to be applied
-        independently, regardless of how that index was defined. For
-        instance, the indices ``[[0, 1], [1, 3], 0]`` and ``[:2, 1::2,
-        0]`` will give identical results.
+        The combined index is orthogonal, meaning that the index for
+        each dimension is to be applied independently, regardless of
+        how that index was defined. For instance, the indices ``[[0,
+        1], [1, 3], 0]`` and ``[:2, 1::2, 0]`` will give identical
+        results.
 
         For example, if the original data has shape ``(12, 145, 192)``
         and consecutive subspaces of ``[::2, [1, 3, 4], 96:]`` and
@@ -108,11 +109,13 @@ class IndexMixin:
 
         i = 0
         for ind0, original_size in zip(index0, original_shape):
-            # If a previous call to __getitem__ resulted in a
-            # dimension being subspaced to and size 1 *and* removed
-            # (i.e. 'ind0' is integer-valued) then 'index1' will have
-            # fewer elements than 'index0'
             if isinstance(ind0, Integral):
+                # The previous call to __getitem__ resulted in a
+                # dimension being removed (i.e. 'ind0' is
+                # integer-valued). Therefore 'index1' must have have
+                # fewer elements than 'index0', so we need to "carry
+                # forward" the integer-valued index so that it is
+                # available at evaluation time.
                 new_indices.append(ind0)
                 continue
 
@@ -126,9 +129,9 @@ class IndexMixin:
                 new_indices.append(ind0)
                 continue
 
-            # Still here? Then we have to work out the subspace of the
-            #             full array implied by applying 'ind0'
-            #             followed by 'ind1'.
+            # Still here? Then we have to work out the index of the
+            #             full array that is equivalent to applying
+            #             'ind0' followed by 'ind1'.
             if is_dask_collection(ind1):
                 # Note: This will never occur when this __getitem__ is
                 #       being called from within a Dask graph, because
@@ -136,7 +139,7 @@ class IndexMixin:
                 #       computed as part of the whole graph execution;
                 #       i.e. we don't have to worry about a
                 #       compute-within-a-compute situation. (If this
-                #       were not the case then we would get round it
+                #       were not the case then we could get round it
                 #       by wrapping the compute inside a `with
                 #       dask.config.set({"scheduler":
                 #       "synchronous"}):`.)
@@ -171,13 +174,16 @@ class IndexMixin:
                     # ind1: int, or array of int/bool
                     new_index = np.arange(*ind0.indices(original_size))[ind1]
             else:
-                # ind0: array of int (if we made it here, then it
-                #                     can't be anything else, because
-                #                     we've dealt with ind0 being an
-                #                     int, and a previous ind1 that
-                #                     was an array of bool will have
-                #                     resulted in this ind0 being an
-                #                     array of int)
+                # ind0: array of int. If we made it here then it can't
+                #                     be anything else. This is
+                #                     because we've dealt with ind0
+                #                     being a slice or an int, the
+                #                     very first ind0 is always
+                #                     slice(None), and a previous ind1
+                #                     that was an array of bool will
+                #                     have resulted in this ind0 being
+                #                     an array of int.
+                #
                 # ind1: anything
                 new_index = np.asanyarray(ind0)[ind1]
 
@@ -185,7 +191,7 @@ class IndexMixin:
 
         new._custom["index"] = tuple(new_indices)
 
-        # Find the shape defined by the new indices
+        # Find the shape defined by the new index
         new_shape = indices_shape(new_indices, original_shape, keepdims=False)
         new._set_component("shape", tuple(new_shape), copy=False)
 
@@ -251,11 +257,19 @@ class IndexMixin:
         :Parameters:
 
             conform: `bool`, optional
-                If True, the default, then 1) convert a decreasing
-                size 1 slice to an increasing one, and 2) where
-                possible, a convert sequence of integers to a
-                slice. If False then these transformations are not
-                done.
+                If True, the default, then
+
+                * Convert a decreasing size 1 slice to an increasing
+                  one.
+
+                * Convert, where possible, a sequence of integers to a
+                  slice.
+
+                These transformations are to allow subspacing on data
+                objects that have restricted indexing functionality,
+                such as `h5py.Variable` objects.
+
+                If False then these transformations are not done.
 
         :Returns:
 
@@ -279,6 +293,8 @@ class IndexMixin:
         """
         ind = self._custom.get("index")
         if ind is None:
+            # No indices have been applied yet, so define indices that
+            # are equivalent to Ellipsis, and set the original shape.
             ind = (slice(None),) * self.ndim
             self._custom["index"] = ind
             self._custom["original_shape"] = self.shape
@@ -291,7 +307,7 @@ class IndexMixin:
         #
         # 1) Converting decreasing size 1 slices to increasing ones.
         #
-        # 2) Where possible, converting sequences of integers to
+        # 2) Converting, where possible, sequences of integers to
         #    slices.
         ind = list(ind)
         for n, (i, size) in enumerate(zip(ind[:], self.original_shape)):
@@ -310,8 +326,8 @@ class IndexMixin:
                     start = i.item()
                     ind[n] = slice(start, start + 1)
                 else:
-                    # Convert a sequence of two or more integers into
-                    # a slice, if possible.
+                    # Convert a sequence of two or more evenly spaced
+                    # integers into a slice.
                     step = np.unique(np.diff(i))
                     if step.size == 1:
                         start, stop = i[[0, -1]]
@@ -331,7 +347,7 @@ class IndexMixin:
         """The original shape of the data, before any subspacing.
 
         The `shape` is defined by the result of subspacing the data in
-        its original shape with the indices defined by `index`.
+        its original shape with the indices given by `index`.
 
         .. versionadded:: NEXTVERSION
 

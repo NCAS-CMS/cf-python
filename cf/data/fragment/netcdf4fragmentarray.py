@@ -2,6 +2,7 @@ from ..array.netcdf4array import NetCDF4Array
 from .mixin import FragmentArrayMixin
 
 
+# REVIEW: h5
 class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
     """A netCDF fragment array accessed with `netCDF4`.
 
@@ -81,8 +82,6 @@ class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
             dtype=dtype,
             shape=shape,
             mask=True,
-            #            units=units,
-            #            calendar=calendar,
             attributes=attributes,
             storage_options=storage_options,
             source=source,

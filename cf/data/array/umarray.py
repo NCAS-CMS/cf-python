@@ -7,6 +7,7 @@ from .abstract import Array
 from .mixin import FileArrayMixin, IndexMixin
 
 
+# REVIEW: h5: Replace "units/calendar" API with "attributes"
 class UMArray(
     IndexMixin, FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array
 ):
@@ -95,8 +96,6 @@ class UMArray(
                 *attributes* parameter instead.
 
         """
-        # REVIEW: h5, getitem
-
         super().__init__(source=source, copy=copy)
 
         if source is not None:
@@ -172,6 +171,7 @@ class UMArray(
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
+    # REVIEW: getitem
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -191,8 +191,6 @@ class UMArray(
                 The subspace.
 
         """
-        # REVIEW: getitem
-
         # Note: No need to lock the UM file - concurrent reads are OK.
 
         if index is None:
@@ -221,7 +219,9 @@ class UMArray(
             mask=True,
             unpack=True,
             always_masked_array=False,
+            orthogonal_indexing=True,
             attributes=attributes,
+            copy=False,
         )
         array = array[index]
 
@@ -312,6 +312,7 @@ class UMArray(
 
             attributes["_FillValue"] = _FillValue
 
+    # REVIEW: getitem
     def _set_units(self, int_hdr, attributes):
         """Set the ``units`` attribute.
 
@@ -337,8 +338,6 @@ class UMArray(
             `None`
 
         """
-        # REVIEW: getitem
-
         if "units" in attributes:
             return
 
@@ -374,6 +373,8 @@ class UMArray(
 
         attributes["units"] = units
 
+    # REVIEW: h5
+    # REVIEW: getitem
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.
 
@@ -397,8 +398,6 @@ class UMArray(
             `None
 
         """
-        # REVIEW: getitem
-
         if "scale_factor" not in attributes:
             # Treat BMKS as a scale_factor if it is neither 0 nor 1
             scale_factor = real_hdr.item(18)

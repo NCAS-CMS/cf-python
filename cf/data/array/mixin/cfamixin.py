@@ -36,6 +36,7 @@ class CFAMixin:
         }
         return instance
 
+    # REVIEW: h5: Replace "units/calendar" API with "attributes"
     def __init__(
         self,
         filename=None,
@@ -43,8 +44,6 @@ class CFAMixin:
         dtype=None,
         mask=True,
         unpack=True,
-        #        units=False,
-        #        calendar=False,
         instructions=None,
         substitutions=None,
         term=None,
@@ -82,14 +81,6 @@ class CFAMixin:
             {{init unpack: `bool`, optional}}
 
                 .. versionadded:: NEXTVERSION
-
-            units: `str` or `None`, optional
-                The units of the aggregated data. Set to `None` to
-                indicate that there are no units.
-
-            calendar: `str` or `None`, optional
-                The calendar of the aggregated data. Set to `None` to
-                indicate the CF default calendar, if applicable.
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value as found on
@@ -147,9 +138,25 @@ class CFAMixin:
 
                 .. versionadded:: NEXTVERSION
 
+            {{init attributes: `dict` or `None`, optional}}
+
+                If *attributes* is `None`, the default, then the
+                attributes will be set from the netCDF variable during
+                the first `__getitem__` call.
+
+                .. versionaddedd:: NEXTVERSION
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         if source is not None:
@@ -190,8 +197,6 @@ class CFAMixin:
                 shape=shape,
                 dtype=dtype,
                 mask=mask,
-                #                units=units,
-                #                calendar=calendar,
                 attributes=attributes,
                 copy=copy,
             )
@@ -201,8 +206,6 @@ class CFAMixin:
                 address=address,
                 dtype=dtype,
                 mask=mask,
-                #                units=units,
-                #                calendar=calendar,
                 attributes=attributes,
                 copy=copy,
             )
@@ -222,6 +225,7 @@ class CFAMixin:
                 "substitutions", substitutions.copy(), copy=False
             )
 
+    # REVIEW: h5
     def _parse_cfa(self, x, term, substitutions):
         """Parse the CFA aggregation instructions.
 
@@ -462,6 +466,7 @@ class CFAMixin:
         """
         return self._get_component("fragment_shape")
 
+    # REVIEW: h5
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing S3 fragment files.
 

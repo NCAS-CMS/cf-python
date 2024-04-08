@@ -9,6 +9,7 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
 
     """
 
+    # REVIEW: h5: Replace "units/calendar" API with "attributes"
     def __init__(
         self,
         fill_value=None,

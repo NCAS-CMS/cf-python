@@ -862,6 +862,7 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
+        # REVIEW: active: pass the active storage status onto the collapse functions
         "active_storage": d.active_storage,
     }
 
@@ -872,6 +873,7 @@ def collapse(
     if ddof is not None:
         kwargs["ddof"] = ddof
 
+    # REVIEW: getitem
     # The applicable chunk function will have its own call to
     # 'cf_asanyarray', so we can set 'asanyarray=False'. Also, setting
     # asanyarray=False will ensure that any active storage operations
@@ -991,6 +993,7 @@ def parse_weights(d, weights, axis=None):
     axes = d._axes
     Data = type(d)
     for key, value in weights.items():
+        # REVIEW: active
         value = Data.asdata(value)
 
         # Make sure axes are in ascending order

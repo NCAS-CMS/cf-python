@@ -1479,6 +1479,7 @@ class DataTest(unittest.TestCase):
         f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
+        # REVIEW: getitem
         # Chained subspaces reading from disk
         f = cf.read(self.filename)[0]
         d = f.data
@@ -3291,6 +3292,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
+        # REVIEW: getitem
         # Test rechunking after a __getitem__
         e = d[:2].rechunk((2, 5))
         self.assertTrue(e.equals(d[:2]))
@@ -4520,6 +4522,7 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._get_cached_elements())
 
+    # REVIEW: active
     def test_Data_active_storage(self):
         """Test `Data.active_storage`."""
         with cf.active_storage(True):
@@ -4567,15 +4570,18 @@ class DataTest(unittest.TestCase):
             d = cf.Data(n, to_memory=True)
             self.assertFalse(d.active_storage)
 
+    # REVIEW: getitem
     def test_Data_cull_graph(self):
         """Test `Data.cull`"""
+        # Note: The number of layers in the culled graphs include a
+        #       `cf_asanyarray` layer
         d = cf.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(len(dict(d.to_dask_array().dask)), 4)
+        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 3)
 
         # Check that there are fewer keys after culling
         d.cull_graph()
-        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 2)
 
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""
@@ -4823,6 +4829,7 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.pad_missing(99, to_size=99)
 
+    # REVIEW: getitem
     def test_Data_is_masked(self):
         """Test Data.is_masked."""
         d = cf.Data(np.arange(6).reshape(2, 3))

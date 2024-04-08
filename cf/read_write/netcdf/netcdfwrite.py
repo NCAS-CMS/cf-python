@@ -106,15 +106,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                             f"Can't write {cfvar!r} as a CFA-netCDF "
                             "aggregation variable. Possible reasons for this "
                             "include 1) there is more than one Dask chunk "
-                            "per fragment file, and 2) data values have been "
-                            "changed relative to those in the fragment files. "
-                            "\n\n"
-                            "In case 1), setting chunks=None as an "
-                            "argument to cf.read may solve the problem. "
-                            "You could consider setting cfa={'strict': False} "
-                            "as an argument to cf.write, but note the this "
-                            "will create a copy of the data for this "
-                            "variable in the output dataset."
+                            "per fragment, and 2) data values have been "
+                            "changed relative to those in the fragments."
                         )
 
                     return cfa_get_write
@@ -586,8 +579,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             },
         )
 
-    # REVIEW: h5: Function _convert_to_builtin_type was a CFA-0.4 thing
-        
+    # REVIEW: h5: Deleted function _convert_to_builtin_type was a CFA-0.4 thing
+
     def _check_valid(self, array, cfvar=None, attributes=None):
         """Checks for array values outside of the valid range.
 
@@ -713,6 +706,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return ncvar
 
+    # REVIEW: getitem:
     def _cfa_write_non_standard_terms(
         self, field, fragment_ncdimensions, aggregated_data
     ):
@@ -756,8 +750,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
-            # REVIEW: getitem: asanyarray parameter
-            #
             # '_cfa_unique' has its own call to 'cf_asanyarray', so
             # we can set 'asanyarray=False'.
             dx = data.to_dask_array(asanyarray=False)
@@ -797,6 +789,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return aggregated_data_attr
 
+    # REVIEW: getitem
     @classmethod
     def _cfa_unique(cls, a):
         """Return the unique value of an array.
@@ -818,7 +811,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
-        # REVIEW: getitem: make sure that 'a' is usable data
         a = cf_asanyarray(a)
 
         out_shape = (1,) * a.ndim
@@ -832,6 +824,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
+    # REVIEW: getitem
     def _cfa_aggregation_instructions(self, data, cfvar):
         """Convert data to standardised CFA aggregation instruction terms.
 
@@ -889,17 +882,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             if len(file_details) != 1:
                 if file_details:
                     raise ValueError(
-                        "Can't write CFA-netCDF aggregation variable from "
-                        f"{cfvar!r}: Dask chunk defined by indices "
-                        f"{indices} spans two or more fragment files."
-                        "A possible fix for this is to set chunks=None as an "
-                        "argument to cf.read"
+                        f"Can't write {cfvar!r} as a CFA-netCDF "
+                        "aggregation variable: Dask chunk defined by index "
+                        f"{indices} spans two or more fragments."
+                        "A possible fix for this is to set chunks=None as "
+                        "an argument of a prior call to cf.read"
                     )
 
                 raise ValueError(
-                    "Can't write CFA-netCDF aggregation variable from "
-                    f"{cfvar!r}: Dask chunk defined by indices "
-                    f"{indices} spans zero files"
+                    f"Can't write {cfvar!r} as a CFA-netCDF "
+                    "aggregation variable: Dask chunk defined by index "
+                    f"{indices} spans zero fragments."
                 )
 
             filenames, addresses, formats = file_details.pop()

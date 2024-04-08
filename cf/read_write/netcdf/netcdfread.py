@@ -209,6 +209,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if data.npartitions == 1:
                 data._cfa_set_write(True)
 
+            # REVIEW: h5
             if (
                 not compression_index
                 and self.read_vars.get("cache_metadata")
@@ -253,16 +254,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
+        # REVIEW: h5: Replace "units/calendar" API with "attributes"
         attributes = kwargs["attributes"]
         data = self._create_Data(
             cfa_array,
             ncvar,
-            units=attributes.get("units"),  # units=kwargs["units"],
-            calendar=attributes.get(
-                "calendar"
-            ),  # calendar=kwargs["calendar"],
+            units=attributes.get("units"),
+            calendar=attributes.get("calendar"),
         )
 
+        # REVIEW: h5
         # Note: We don't cache elements from CFA variables, because
         #       the data are in fragment files which have not been
         #       opened and may not not even be openable (such as could
@@ -623,6 +624,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Store the elements in the data object
         data._set_cached_elements(elements)
 
+    # REVIEW: h5
     def _create_cfanetcdfarray(
         self,
         ncvar,
@@ -707,6 +709,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return array, kwargs
 
+    # REVIEW: h5
     def _create_cfanetcdfarray_term(
         self,
         parent_ncvar,
@@ -769,8 +772,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["x"] = aggregation_instructions
         kwargs["instructions"] = " ".join(sorted(instructions))
 
-        # Use the kwargs to create a CFANetCDFArray instance
-        #        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
         if g["original_netCDF4"]:
             array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
         else:
@@ -934,6 +935,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return out
 
+    # REVIEW: h5
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CFA-netCDF ``aggregated_data`` attribute.
 
@@ -977,7 +979,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             variable = g["variables"][term_ncvar]
             array = cfdm.netcdf_indexer(
-                variable, mask=True, unpack=True, always_masked_array=False
+                variable,
+                mask=True,
+                unpack=True,
+                always_masked_array=False,
+                orthogonal_indexing=False,
+                copy=False,
             )
             aggregation_instructions[term_ncvar] = array[...]
 

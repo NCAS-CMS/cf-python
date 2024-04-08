@@ -1,3 +1,4 @@
+# REVIEW: h5
 class NetCDFArray:
     """A netCDF array accessed with `netCDF4`.
 

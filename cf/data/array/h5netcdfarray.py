@@ -5,6 +5,7 @@ from .locks import netcdf_lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin, IndexMixin
 
 
+# REVIEW: h5
 class H5netcdfArray(
     ActiveStorageMixin,
     IndexMixin,
@@ -23,8 +24,6 @@ class H5netcdfArray(
     .. versionadded:: NEXTVERSION
 
     """
-
-    # REVIEW: h5
 
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
@@ -50,6 +49,7 @@ class H5netcdfArray(
         """
         return netcdf_lock
 
+    # REVIEW: getitem
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -69,8 +69,6 @@ class H5netcdfArray(
                 The subspace.
 
         """
-        # REVIEW: getitem
-
         if index is None:
             index = self.index()
 

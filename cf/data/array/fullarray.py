@@ -16,6 +16,7 @@ class FullArray(IndexMixin, Array):
 
     """
 
+    # REVIEW: h5: Replace "units/calendar" API with "attributes"
     def __init__(
         self,
         fill_value=None,
@@ -120,6 +121,7 @@ class FullArray(IndexMixin, Array):
 
         return f"Filled with {fill_value!r}"
 
+    # REVIEW: getitem
     def _get_array(self, index=None):
         """Returns the full array.
 
@@ -158,6 +160,7 @@ class FullArray(IndexMixin, Array):
 
         return array
 
+    # REVIEW: getitem
     @property
     def array(self):
         """Return an independent numpy array containing the data.
@@ -169,8 +172,6 @@ class FullArray(IndexMixin, Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
         """
-        # REVIEW: getitem
-
         return np.asanyarray(self)
 
     @property

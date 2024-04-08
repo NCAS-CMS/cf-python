@@ -79,6 +79,7 @@ class read_writeTest(unittest.TestCase):
 
         self.assertTrue((a == g[0].array).all())
 
+    # REVIEW: h5
     def test_read_mask(self):
         f = self.f0.copy()
 
@@ -560,6 +561,7 @@ class read_writeTest(unittest.TestCase):
                 f"Bad read/write with lossless compression: {fmt}",
             )
 
+    # REVIEW: h5
     def test_write_datatype(self):
         f = cf.read(self.filename)[0]
         self.assertEqual(f.dtype, np.dtype(float))
@@ -925,8 +927,6 @@ class read_writeTest(unittest.TestCase):
     )
     def test_read_url(self):
         """Test reading urls."""
-        print("SKIPPING URL TEST")
-        return
         for scheme in ("http", "https"):
             remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
             # Check that cf can access it

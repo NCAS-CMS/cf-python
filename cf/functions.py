@@ -162,6 +162,7 @@ else:
         return float(virtual_memory().available)
 
 
+# REVIEW: active
 def configuration(
     atol=None,
     rtol=None,
@@ -409,6 +410,7 @@ def configuration(
     )
 
 
+# REVIEW: active
 def _configuration(_Configuration, **kwargs):
     """Internal helper function to provide the logic for
     `cf.configuration`.
@@ -566,6 +568,7 @@ class log_level(ConstantAccess, cfdm.log_level):
     _reset_log_emergence_level = _reset_log_emergence_level
 
 
+# REVIEW: active
 class regrid_logging(ConstantAccess):
     """Whether or not to enable `esmpy` regridding logging.
 
@@ -697,6 +700,7 @@ class collapse_parallel_mode(ConstantAccess):
         )  # pragma: no cover
 
 
+# REVIEW: active
 class relaxed_identities(ConstantAccess):
     """Use 'relaxed' mode when getting a construct identity.
 
@@ -830,6 +834,7 @@ class chunksize(ConstantAccess):
         return parse_bytes(arg)
 
 
+# REVIEW: active
 class tempdir(ConstantAccess):
     """The directory for internally generated temporary files.
 
@@ -1181,6 +1186,7 @@ class bounds_combination_mode(ConstantAccess):
         return arg
 
 
+# REVIEW: active
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
@@ -1241,6 +1247,7 @@ class active_storage(ConstantAccess):
         return bool(arg)
 
 
+# REVIEW: active
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
@@ -2219,61 +2226,6 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     return parsed_indices, roll
 
 
-def get_subspace(array, indices):
-    """Return a subspace defined by the given indices of an array.
-
-    Subset the input numpy array with the given indices. Indexing is
-    similar to that of a numpy array. The differences to numpy array
-    indexing are:
-
-    1. An integer index i takes the i-th element but does not reduce
-       the rank of the output array by one.
-
-    2. When more than one dimension's slice is a 1-d boolean array or
-       1-d sequence of integers then these indices work independently
-       along each dimension (similar to the way vector subscripts work
-       in Fortran).
-
-    Indices must contain an index for each dimension of the input array.
-
-    :Parameters:
-
-        array: `numpy.ndarray`
-
-        indices: `list`
-
-    """
-    gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-    len_gg = len(gg)
-
-    if len_gg < 2:
-        # ------------------------------------------------------------
-        # At most one axis has a list-of-integers index so we can do a
-        # normal numpy subspace
-        # ------------------------------------------------------------
-        return array[tuple(indices)]
-
-    else:
-        # ------------------------------------------------------------
-        # At least two axes have list-of-integers indices so we can't
-        # do a normal numpy subspace
-        # ------------------------------------------------------------
-        if np.ma.isMA(array):
-            take = np.ma.take
-        else:
-            take = np.take
-
-        indices = indices[:]
-        for axis in gg:
-            array = take(array, indices[axis], axis=axis)
-            indices[axis] = slice(None)
-
-        if len_gg < len(indices):
-            array = array[tuple(indices)]
-
-        return array
-
-
 _equals = cfdm.Data()._equals
 
 
@@ -2644,6 +2596,7 @@ def flat(x):
             yield a
 
 
+# REVIEW: h5
 def abspath(filename):
     """Return a normalized absolute version of a file name.
 
@@ -2688,6 +2641,7 @@ def abspath(filename):
     return filename
 
 
+# REVIEW: h5
 def relpath(filename, start=None):
     """Return a relative filepath to a file.
 
@@ -2732,6 +2686,7 @@ def relpath(filename, start=None):
     return _os_path_relpath(filename)
 
 
+# REVIEW: h5
 def dirname(filename):
     """Return the directory name of a file.
 
@@ -2767,6 +2722,7 @@ def dirname(filename):
     return _os_path_dirname(filename)
 
 
+# REVIEW: h5
 def pathjoin(path1, path2):
     """Join two file path components intelligently.
 
@@ -3167,6 +3123,7 @@ def _get_module_info(module, alternative_name=False, try_except=False):
     )
 
 
+# REVIEW: h5
 def environment(display=True, paths=True):
     """Return the names and versions of the cf package and its
     dependencies.

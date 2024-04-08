@@ -12,6 +12,7 @@ class FragmentArrayMixin:
 
     """
 
+    # REVIEW: getitem
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -128,6 +129,7 @@ class FragmentArrayMixin:
 
         return array
 
+    # REVIEW: getitem
     def _size_1_axis(self, indices):
         """Find the position of a unique size 1 index.
 

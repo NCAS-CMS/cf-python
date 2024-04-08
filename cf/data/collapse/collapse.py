@@ -9,6 +9,7 @@ from .collapse_active import active_storage
 from .collapse_utils import check_input_dtype, double_precision_dtype
 
 
+# REVIEW: active
 class Collapse(metaclass=DocstringRewriteMeta):
     """Container for functions that collapse dask arrays.
 

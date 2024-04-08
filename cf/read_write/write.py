@@ -14,6 +14,7 @@ netcdf = NetCDFWrite(implementation())
 
 # REVIEW: h5: docstring improvements
 
+
 @_manage_log_level_via_verbosity
 def write(
     fields,

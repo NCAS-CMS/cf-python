@@ -33,6 +33,7 @@ UM = UMRead(_implementation)
 
 logger = logging.getLogger(__name__)
 
+
 @_manage_log_level_via_verbosity
 def read(
     files,
@@ -68,7 +69,7 @@ def read(
     # REVIEW: h5: new storage_options parameter to control access to S3
     storage_options=None,
     # REVIEW: h5: cache_metadata parameter to control whethe or not to get to caache selected data elements
-    cache_metadata=True, 
+    cache_metadata=True,
 ):
     """Read field or domain constructs from files.
 

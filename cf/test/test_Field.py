@@ -1158,6 +1158,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
+    # REVIEW: getitem
     def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 

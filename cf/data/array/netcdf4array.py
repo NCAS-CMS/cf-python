@@ -5,6 +5,7 @@ from .locks import netcdf_lock
 from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin, IndexMixin
 
 
+# REVIEW: h5
 class NetCDF4Array(
     ActiveStorageMixin,
     IndexMixin,
@@ -21,8 +22,6 @@ class NetCDF4Array(
     method. See `cf.data.collapse.Collapse` for details.
 
     """
-
-    # REVIEW: h5
 
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
@@ -48,6 +47,7 @@ class NetCDF4Array(
         """
         return netcdf_lock
 
+    # REVIEW: getitem
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -67,8 +67,6 @@ class NetCDF4Array(
                 The subspace.
 
         """
-        # REVIEW: getitem
-
         if index is None:
             index = self.index()
 

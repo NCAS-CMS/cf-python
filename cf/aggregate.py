@@ -3207,7 +3207,7 @@ def aggregate(
                     #
                     #   0.0012 , 0.019 , 0.55 , 2.1
                     #
-                    # compared with new timings of
+                    # compared with current method timings of
                     #
                     #   0.00035, 0.0012, 0.013, 0.064
                     # ------------------------------------------------

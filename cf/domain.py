@@ -695,6 +695,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return default
 
+    # REVIEW: h5
     def identities(self):
         """Return all possible identities.
 
