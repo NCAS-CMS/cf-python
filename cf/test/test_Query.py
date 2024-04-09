@@ -501,13 +501,13 @@ class QueryTest(unittest.TestCase):
         all_c = [c, c0, c1, c2, c3]
 
         d = cf.wi(6, 8)
-        d0 = cf.wi(2, 4, open_lower=False)  # equivalent to d, to check default
-        d1 = cf.wi(2, 4, open_lower=True)
-        d2 = cf.wi(2, 4, open_upper=True)
-        d3 = cf.wi(2, 4, open_lower=True, open_upper=True)
+        d0 = cf.wi(6, 8, open_lower=False)  # equivalent to d, to check default
+        d1 = cf.wi(6, 8, open_lower=True)
+        d2 = cf.wi(6, 8, open_upper=True)
+        d3 = cf.wi(6, 8, open_lower=True, open_upper=True)
 
         e = d | c       # interval: [2, 4] | [6, 8]
-        e1 = c0 | d1     # interval: [2, 4] | (6, 8]
+        e1 = c0 | d1    # interval: [2, 4] | (6, 8]
         e2 = c1 | d2    # interval: (2, 4] | [6, 8)
         e3 = d3 | c3    # interval: (6, 8) | (2, 4)
         all_e = [e, e1, e2, e3]
