@@ -857,9 +857,21 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                         : time(1) = [2019-01-01 00:00:00]
 
         """
-        if len(mode) > 1:
+        n_mode = len(mode)
+        if not n_mode:
+            halo = 0
+        elif n_mode == 1:
+            try:
+                halo = int(mode[0])
+            except ValueError:
+                halo = 0
+            else:
+                mode = ()
+        elif n_mode == 2:
+            halo = mode[1]
+        else:
             raise ValueError(
-                "Can't provide more than one positional argument. "
+                "Can't provide more than two positional argument. "
                 f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
@@ -872,7 +884,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        domain_indices = self._indices(mode, None, False, kwargs)
+        domain_indices = self._indices(mode, halo, None, False, kwargs)
 
         return domain_indices["indices"]
 

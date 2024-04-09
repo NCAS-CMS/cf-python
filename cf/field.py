@@ -9026,9 +9026,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 removed_at="4.0.0",
             )  # pragma: no cover
 
-        if len(mode) > 1:
+        n_mode = len(mode)
+        if not n_mode:
+            halo = 0
+        elif n_mode == 1:
+            try:
+                halo = int(mode[0])
+            except ValueError:
+                halo = 0
+            else:
+                mode = ()
+        elif n_mode == 2:
+            halo = mode[1]
+        else:
             raise ValueError(
-                "Can't provide more than one positional argument. "
+                "Can't provide more than two positional arguments. "
                 f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
@@ -9039,13 +9051,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         elif "full" in mode:
             mode = "full"
         else:
-            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
+            raise ValueError(
+                f"Invalid value for 'mode' positional argument: {mode[0]!r}"
+            )
 
         data_axes = self.get_data_axes()
 
         # Get the indices for every domain axis in the domain,
         # including any ancillary masks
-        domain_indices = self._indices(mode, data_axes, True, kwargs)
+        domain_indices = self._indices(mode, halo, data_axes, True, kwargs)
 
         # Initialise the output indices with any ancillary masks.
         # Ensure that each ancillary mask is broadcastable to the
@@ -9097,92 +9111,92 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Set the field construct data.
 
-        .. versionadded:: 3.0.0
+                .. versionadded:: 3.0.0
 
-        .. seealso:: `data`, `del_data`, `get_data`, `has_data`,
-                     `set_construct`
+                .. seealso:: `data`, `del_data`, `get_data`, `has_data`,
+                             `set_construct`
 
-        :Parameters:
+                :Parameters:
 
-            data: `Data`
-                The data to be inserted.
+                    data: `Data`
+                        The data to be inserted.
 
-                {{data_like}}
+                        {{data_like}}
 
-            axes: (sequence of) `str` or `int`, optional
-                Set the domain axes constructs that are spanned by the
-                data. If unset, and the *set_axes* parameter is True, then
-                an attempt will be made to assign existing domain axis
-                constructs to the data.
+                    axes: (sequence of) `str` or `int`, optional
+                        Set the domain axes constructs that are spanned by the
+                        data. If unset, and the *set_axes* parameter is True, then
+                        an attempt will be made to assign existing domain axis
+                        constructs to the data.
 
-                The contents of the *axes* parameter is mapped to domain
-                axis constructs by translating each element into a domain
-                axis construct key via the `domain_axis` method.
+                        The contents of the *axes* parameter is mapped to domain
+                        axis constructs by translating each element into a domain
+                        axis construct key via the `domain_axis` method.
 
-                *Parameter example:*
-                  ``axes='domainaxis1'``
+                        *Parameter example:*
+                          ``axes='domainaxis1'``
 
-                *Parameter example:*
-                  ``axes='X'``
+                        *Parameter example:*
+                          ``axes='X'``
 
-                *Parameter example:*
-                  ``axes=['latitude']``
+                        *Parameter example:*
+                          ``axes=['latitude']``
 
-                *Parameter example:*
-                  ``axes=['X', 'longitude']``
+                        *Parameter example:*
+                          ``axes=['X', 'longitude']``
 
-                *Parameter example:*
-                  ``axes=[1, 0]``
+                        *Parameter example:*
+                          ``axes=[1, 0]``
 
-            set_axes: `bool`, optional
-                If False then do not set the domain axes constructs that
-                are spanned by the data, even if the *axes* parameter has
-                been set. By default the axes are set either according to
-                the *axes* parameter, or if any domain axis constructs
-                exist then an attempt will be made to assign existing
-                domain axis constructs to the data.
+                    set_axes: `bool`, optional
+                        If False then do not set the domain axes constructs that
+                        are spanned by the data, even if the *axes* parameter has
+                        been set. By default the axes are set either according to
+                        the *axes* parameter, or if any domain axis constructs
+                        exist then an attempt will be made to assign existing
+                        domain axis constructs to the data.
 
-                If the *axes* parameter is `None` and no domain axis
-                constructs exist then no attempt is made to assign domain
-                axes constructs to the data, regardless of the value of
-                *set_axes*.
+                        If the *axes* parameter is `None` and no domain axis
+                        constructs exist then no attempt is made to assign domain
+                        axes constructs to the data, regardless of the value of
+        s                *set_axes*.
 
-            copy: `bool`, optional
-                If True then set a copy of the data. By default the data
-                are copied.
+                    copy: `bool`, optional
+                        If True then set a copy of the data. By default the data
+                        are copied.
 
-            {{inplace: `bool`, optional (default True)}}
+                    {{inplace: `bool`, optional (default True)}}
 
-                .. versionadded:: 3.7.0
+                        .. versionadded:: 3.7.0
 
-        :Returns:
+                :Returns:
 
-            `None` or `Field`
-                If the operation was in-place then `None` is returned,
-                otherwise return a new `Field` instance containing the new
-                data.
+                    `None` or `Field`
+                        If the operation was in-place then `None` is returned,
+                        otherwise return a new `Field` instance containing the new
+                        data.
 
-        **Examples**
+                **Examples**
 
-        >>> f = cf.Field()
-        >>> f.set_data([1, 2, 3])
-        >>> f.has_data()
-        True
-        >>> f.get_data()
-        <CF Data(3): [1, 2, 3]>
-        >>> f.data
-        <CF Data(3): [1, 2, 3]>
-        >>> f.del_data()
-        <CF Data(3): [1, 2, 3]>
-        >>> g = f.set_data([4, 5, 6], inplace=False)
-        >>> g.data
-        <CF Data(3): [4, 5, 6]>
-        >>> f.has_data()
-        False
-        >>> print(f.get_data(None))
-        None
-        >>> print(f.del_data(None))
-        None
+                >>> f = cf.Field()
+                >>> f.set_data([1, 2, 3])
+                >>> f.has_data()
+                True
+                >>> f.get_data()
+                <CF Data(3): [1, 2, 3]>
+                >>> f.data
+                <CF Data(3): [1, 2, 3]>
+                >>> f.del_data()
+                <CF Data(3): [1, 2, 3]>
+                >>> g = f.set_data([4, 5, 6], inplace=False)
+                >>> g.data
+                <CF Data(3): [4, 5, 6]>
+                >>> f.has_data()
+                False
+                >>> print(f.get_data(None))
+                None
+                >>> print(f.del_data(None))
+                None
 
         """
         data = self._Data(data, copy=False)

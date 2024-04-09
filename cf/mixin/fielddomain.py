@@ -4,6 +4,7 @@ from numbers import Integral
 import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
+from dask.array.slicing import normalize_index
 
 from ..data import Data
 from ..decorators import (
@@ -198,7 +199,7 @@ class FieldDomain:
 
         return True
 
-    def _indices(self, mode, data_axes, ancillary_mask, kwargs):
+    def _indices(self, mode, halo, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
 
@@ -215,6 +216,13 @@ class FieldDomain:
             mode: `str`
                 The mode of operation. See the *mode* parameter of
                 `indices` for details.
+
+            halo: `int`
+                The size of the halo to be added to the subspace, for
+                each axis specified by *kwargs*. The creation of
+                ancillary masks is automatically disabled when a
+                non-zero halo is provided, even when *ancillary_mask*
+                is True.
 
             data_axes: sequence of `str`, or `None`
                 The domain axis identifiers of the data axes, or
@@ -250,9 +258,29 @@ class FieldDomain:
         debug = is_log_level_debug(logger)
 
         compress = mode == "compress"
-        halo_p1 = mode == "halo+1"
-        envelope = mode == "envelope" or halo_p1
+        envelope = mode == "envelope"
         full = mode == "full"
+
+        if halo:
+            try:
+                halo = int(halo)
+            except ValueError:
+                raise ValueError(
+                    "'halo' positional argument must be convertible to an"
+                    f"integer. Got {halo!r}"
+                )
+
+            if halo <0 :
+                raise ValueError(
+                    "'halo' positional argument must be a non-negative "
+                    f"integer. Got {halo!r}"
+                )
+
+            # Ancillary masks are automatically disabled when a
+            # non-zero halo is provided
+            ancillary_mask = False
+#            if full:
+#                raise ValueError("Can't halo full TODO")
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -319,7 +347,7 @@ class FieldDomain:
             )
 
         mask = {}
-        cyclic = {}
+        cyclic_index = {}
 
         for canonical_axes, axes_key_construct_value_id in parsed.items():
             axes, keys, constructs, points, identities = tuple(
@@ -447,6 +475,7 @@ class FieldDomain:
                         )
 
                     index = slice(start, stop, 1)
+                    cyclic_index[axis] = index
 
                     if full:
                         d = self._Data(da.arange(size))
@@ -454,8 +483,6 @@ class FieldDomain:
                         ind = (d[index].array,)
                         index = slice(None)
 
-                    cyclic[axis] = True
-                        
                 elif item is not None:
                     # 1-d CASE 3: All other 1-d cases
                     if debug:
@@ -640,11 +667,9 @@ class FieldDomain:
 
                     if indices[axis] == slice(None):
                         if compress:
-                            # Create a compressed index for this axis      
+                            # Create a compressed index for this axis
                             size = stop - start + 1
                             index = sorted(set(ind[i]))
-                            if compress_p1:
-                                
                         elif envelope:
                             # Create an envelope index for this axis
                             stop += 1
@@ -668,76 +693,106 @@ class FieldDomain:
                     ind[i] -= start
 
                 create_mask = (
-                    not halo_p1
-                    and ancillary_mask
+                    ancillary_mask
                     and data_axes
                     and ind.shape[1] < masked_subspace_size
                 )
             else:
                 create_mask = False
 
-            if compress_p1:
-                for axis, i in indices.items():
-                    if i == slice(None):
-                        continue
-
+            # --------------------------------------------------------
+            # TODO
+            # --------------------------------------------------------
+            if halo:
+                # Note: For non-zero halos, 'ancillary_mask' is always
+                #       False, and therefore 'create_mask' is also
+                #       always False. This means that we don't need t
+                #       worry about 'ind' becoming inconsistent with
+                #       'indices', because the former is only
+                #       subsequently used if create_mask is True.
+                for axis in item_axes:
                     size = domain_axes[axis].get_size()
-                    if isinstance(i, slice):
-                        if cyclic.get(axis):
-                            pass
+
+                    index = cyclic_index.get(axis)
+                    if index is not None:
+                        # Cyclic index, that is a slice with step 1 or -1.
+                        start = index.start
+                        stop = index.stop
+                        step = index.step
+
+                        if start < 0:
+                            # Increasing cyclic slice
+                            start = max(start - halo, stop - size)
+                            stop = min(stop + halo, size  + start)
                         else:
-                            i = normalize_index(i, (size,))[0]
-                            step = i.step
+                            # Decreasing cyclic slice
+                            start = max(start + halo, size + stop)
+                            stop = min(stop - halo, size - start)
+
+                        index = slice(start, stop, step)
+                    else:
+                        # Non-cyclic index, that is either a slice or
+                        # a list/1-d array of int/bool.
+                        index = normalize_index(indices[axis], (size,))[0]
+                        if isinstance(index, slice):
+                            index = np.arange(size)[index]
+
+                        index = index.tolist()
+
+                        # 'index' is now a list of positive integers
+                        mn = min(index)
+                        mx = max(index)
+                        if first <= last:
+                            index[:0] = range(max(0, first - halo), first)
+                            index.extend(range(last + 1, max(last + 1 + halo, size-1))
+                        else:
+                            index[:0] = range(min(first + halo, size-1), first, -1)
+                            index.extend(range(last - 1, min(0, last - 1 - halo), -1))
+
+                        if first <= last:
+                            left = range(max(0, first - halo), first)
+                            right = range(last + 1, max(last + 1 + halo, size-1))
+                        else:
+                            left = range(min(first + halo, size-1), first, -1)
+                            right = range(last - 1, min(0, last - 1 - halo), -1))
+
+                        index[:0] = left
+                        index.extend(right)
+                              first = index[0]
+                        last = index[-1]
+                        if first <= last:
+                            index[:0] = range(max(0, first - halo), first)
+                            index.extend(range(last + 1, max(last + 1 + halo, size-1))
+                        else:
+                            index[:0] = range(min(first + halo, size-1), first, -1)
+                            index.extend(range(last - 1, min(0, last - 1 - halo), -1))
+
+                        if first <= last:
+                            left = range(max(0, first - halo), first)
+                            right = range(last + 1, max(last + 1 + halo, size-1))
+                        else:
+                            left = range(min(first + halo, size-1), first, -1)
+                            right = range(last - 1, min(0, last - 1 - halo), -1))
+
+                        index[:0] = left
+                        index.extend(right)
                             
-                            i = np.arange(size)[i].tolist()
-                            if step > 0:
-                                stop = i[-1]
-                                if stop <= size - n:
-                                    i.append(stop + 1)
+#                        if not (
+#                            0 <= index[0] < size and 0 <= index[-1] < size
+#                        ):
+#                            raise IndexError(
+#                                f"Halo of size {halo} exceeds at least one "
+#                                "array edge"
+#                            )
 
-                                start = i[0]
-                                if start > 0:
-                                    i.insert(0, start -1)
-                            else:
-                                
-                            
-                            i = normalize_index(i, (size,))[0].tolist()
-                            start, stop, step = i.indices(size)
-                            if step > 0:
-                                if start >= step:
-                                    start -= step
+                    indices[axis] = index
 
-                                if stop + step <= size:
-                                    stop += step
-                            else:
-                                # step < 0
-                                if start - step < size:
-                                    start -= step
-
-                                if stop >=  -step :
-                                    stop += step
-                                else:
-                                    stop = None
-                                    
-                        i = slice(start, stop , step)
-                    elif np.iterable(i):
-                        i = normalize_index(i, (size,))[0].tolist()
-                        mx = i.max() 
-                        if mx < size:
-                            i.append(mx + 1)
-                        
-                        mn = i.min()
-                        if mn > 0:
-                            i.insert(0, mn -1 )
-                        
-                    indices[axis] = i
-                                
             # Create an ancillary mask for these axes
             if debug:
                 logger.debug(
                     f"  create_mask  = {create_mask}"
                 )  # pragma: no cover
-                
+
             if create_mask:
                 mask[canonical_axes] = _create_ancillary_mask_component(
                     mask_component_shape, ind, compress
