@@ -250,7 +250,8 @@ class FieldDomain:
         debug = is_log_level_debug(logger)
 
         compress = mode == "compress"
-        envelope = mode == "envelope"
+        halo_p1 = mode == "halo+1"
+        envelope = mode == "envelope" or halo_p1
         full = mode == "full"
 
         domain_axes = self.domain_axes(todict=True)
@@ -318,6 +319,7 @@ class FieldDomain:
             )
 
         mask = {}
+        cyclic = {}
 
         for canonical_axes, axes_key_construct_value_id in parsed.items():
             axes, keys, constructs, points, identities = tuple(
@@ -452,6 +454,8 @@ class FieldDomain:
                         ind = (d[index].array,)
                         index = slice(None)
 
+                    cyclic[axis] = True
+                        
                 elif item is not None:
                     # 1-d CASE 3: All other 1-d cases
                     if debug:
@@ -529,7 +533,7 @@ class FieldDomain:
                     item_match &= m
 
                 item_match = item_match.compute()
-                if np.ma.isMA:
+                if np.ma.isMA(item_match):
                     ind = np.ma.where(item_match)
                 else:
                     ind = np.where(item_match)
@@ -559,7 +563,7 @@ class FieldDomain:
                 # already selected for which the given value is in
                 # fact outside of the cell. This could happen if the
                 # cells are not rectangular (e.g. for curvilinear
-                # latitudes and longitudes array).
+                # latitudes and longitudes arrays).
                 if n_items == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
@@ -636,9 +640,11 @@ class FieldDomain:
 
                     if indices[axis] == slice(None):
                         if compress:
-                            # Create a compressed index for this axis
+                            # Create a compressed index for this axis      
                             size = stop - start + 1
                             index = sorted(set(ind[i]))
+                            if compress_p1:
+                                
                         elif envelope:
                             # Create an envelope index for this axis
                             stop += 1
@@ -652,7 +658,7 @@ class FieldDomain:
                             index = slice(None)
                         else:
                             raise ValueError(
-                                "Must have mode full, envelope or compress"
+                                "Must have mode full, envelope, or compress"
                             )  # pragma: no cover
 
                         indices[axis] = index
@@ -662,19 +668,76 @@ class FieldDomain:
                     ind[i] -= start
 
                 create_mask = (
-                    ancillary_mask
+                    not halo_p1
+                    and ancillary_mask
                     and data_axes
                     and ind.shape[1] < masked_subspace_size
                 )
             else:
                 create_mask = False
 
+            if compress_p1:
+                for axis, i in indices.items():
+                    if i == slice(None):
+                        continue
+
+                    size = domain_axes[axis].get_size()
+                    if isinstance(i, slice):
+                        if cyclic.get(axis):
+                            pass
+                        else:
+                            i = normalize_index(i, (size,))[0]
+                            step = i.step
+                            
+                            i = np.arange(size)[i].tolist()
+                            if step > 0:
+                                stop = i[-1]
+                                if stop <= size - n:
+                                    i.append(stop + 1)
+
+                                start = i[0]
+                                if start > 0:
+                                    i.insert(0, start -1)
+                            else:
+                                
+                            
+                            i = normalize_index(i, (size,))[0].tolist()
+                            start, stop, step = i.indices(size)
+                            if step > 0:
+                                if start >= step:
+                                    start -= step
+
+                                if stop + step <= size:
+                                    stop += step
+                            else:
+                                # step < 0
+                                if start - step < size:
+                                    start -= step
+
+                                if stop >=  -step :
+                                    stop += step
+                                else:
+                                    stop = None
+                                    
+                        i = slice(start, stop , step)
+                    elif np.iterable(i):
+                        i = normalize_index(i, (size,))[0].tolist()
+                        mx = i.max() 
+                        if mx < size:
+                            i.append(mx + 1)
+                        
+                        mn = i.min()
+                        if mn > 0:
+                            i.insert(0, mn -1 )
+                        
+                    indices[axis] = i
+                                
             # Create an ancillary mask for these axes
             if debug:
                 logger.debug(
                     f"  create_mask  = {create_mask}"
                 )  # pragma: no cover
-
+                
             if create_mask:
                 mask[canonical_axes] = _create_ancillary_mask_component(
                     mask_component_shape, ind, compress

@@ -8877,8 +8877,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 returned subspace. Note that if a
                                 multi-dimensional metadata construct
                                 is being used to define the indices
-                                then some missing data may still be
-                                inserted at unselected locations.
+                                then some missing data may still need
+                                to be inserted at unselected
+                                locations.
 
                 ``'envelope'``  The returned subspace is the smallest
                                 that contains all of the selected
