@@ -24,6 +24,8 @@ version NEXT
 * Fix bug in `cf.read` when reading UM files that caused LBPROC value
   131072 (Mean over an ensemble of parallel runs) to be ignored
   (https://github.com/NCAS-CMS/cf-python/issues/737)
+* New keyword parameters to `cf.wi`: ``open_lower`` and ``open_upper``
+  (https://github.com/NCAS-CMS/cf-python/issues/740)
 
 ----
 
