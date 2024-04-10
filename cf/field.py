@@ -8862,12 +8862,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Halos**
 
-        A halo on either "side" of an axis will be automatically
-        reduced if including the complete halo would extend the
-        subspace beyond the axis's extent.
+        {{indices halos}}
 
         If a non-zero halo has been defined then no ancillary masks
         will be created.
+
+        .. versionadded:: 1.0
 
         .. seealso:: `subspace`, `where`, `__getitem__`,
                      `__setitem__`, `cf.Domain.indices`
@@ -8875,13 +8875,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             mode: optional
-                Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, ``halo``, or
-                ``mode, halo``, or with no positional arguments at
-                all.
-
                 {{indices mode options}}
+
+                {{indices valid modes Field}}
 
             kwargs: *optional*
                 A keyword name is an identity of a metadata construct,
@@ -13299,22 +13295,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `indices`, `squeeze`, `where`, `__getitem__`
 
+        **Halos**
+
+        {{index halos}}
+
+        .. note:: If a non-zero halo has been defined then no
+                  ancillary masks will be created.
+
+        .. versionadded:: 1.0
+
+        .. seealso:: `indices`, `where`, `__getitem__`,
+                     `__setitem__`, `cf.Domain.subspace`
+
         :Parameters:
 
             mode: optional
-                Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, ``halo``, or
-                ``mode, halo``, or with no positional arguments at
-                all.
-
-                In addition, an extra postional argument of ``'test'``
-                is allowed. If provided, then the subspace is not
-                returned , rather `True` or `False` is returned
-                depending on whether or not it is possible for the
-                subspace to be created.
-
                 {{indices mode options}}
+
+                {{indices valid modes Field}}
+                    
+                In addition, an extra postional argument of ``'test'``
+                is allowed. When provided the subspace is not
+                returned, instead `True` or `False` is returned
+                depending on whether or not it is possible for the
+                requested subspace to be created.
 
             keyword parameters: *optional*
                 A keyword name is an identity of a metadata construct, and

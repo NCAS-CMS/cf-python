@@ -778,6 +778,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           may still need to be inserted into the field construct's
           data.
 
+        **Halos**
+
+        {{indices halos}}
+
         .. versionadded:: 3.11.0
 
         .. seealso:: `subspace`, `where`, `__getitem__`,
@@ -786,57 +790,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Parameters:
 
             mode: optional
-                Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, ``halo``, or
-                ``mode, halo``, or with no positional arguments at
-                all.
+                {{indices mode options}}
 
-                A mode of operation is given as a `str`, and a halo as
-                a non-negative `int` (or any object that can be
-                converted to one):
-
-                ==============  ======================================
-                *mode*          Description
-                ==============  ======================================
-                ````            If no positional arguments are
-                                provided then assume the
-                                ``'compress'`` basic mode of operation
-                                with no halo added to the subspaced
-                                axes. Note that this is equivalent to
-                                ``'compress', 0``.
-
-                ``mode``        Define the basic mode of operation
-                                with no halo added to the subspaced
-                                axes. One of:
-
-                                * ``'compress'``: Unselected locations
-                                  are removed to create the returned
-                                  subspace. Note that if a
-                                  multi-dimensional metadata construct
-                                  is being used to define the indices
-                                  then some unrequested locations may
-                                  also be selected.
-
-                                * ``'envelope'``: The subspace is the
-                                  smallest subspace that contains all
-                                  of the selected locations.
-
-                                Note that ``mode`` is equivalent to
-                                ``mode, 0``.
-
-                ``mode, halo``  Define a basic mode of operation (one
-                                of ``'compress'``, ``'envelope'``, or
-                                ``'full'``) and define a halo to be
-                                added to the subspaced axes. Note that
-                                ``mode, 0`` is equivalent to ``mode``.
-
-                ``halo``        Assume the ``'compress'`` basic mode
-                                of operation and define a halo to be
-                                added to the subspaced axes.  Note
-                                that ``halo`` is equivalent to
-                                ``'compress', halo``.
-                ==============  ======================================
+                {{indices valid modes Domain}}
 
             kwargs: *optional*
                 A keyword name is an identity of a metadata construct,
@@ -904,7 +860,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             halo = mode[1]
         else:
             raise ValueError(
-                "Can't provide more than two positional argument. "
+                "Can't provide more than two positional arguments. "
                 f"Got: {', '.join(repr(x) for x in mode)}"
             )
 
@@ -1203,62 +1159,14 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         .. versionadded:: 3.11.0
 
-        .. seealso:: `indices`
+        .. seealso:: `indices`, `cf.Field.subspace`
 
         :Parameters:
 
             mode: optional
-                Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, ``halo``, or
-                ``mode, halo``, or with no positional arguments at
-                all.
+                {{indices mode options}}
 
-                A mode of operation is given as a `str`, and a halo as
-                a non-negative `int` (or any object that can be
-                converted to one):
-
-                ==============  ======================================
-                *mode*          Description
-                ==============  ======================================
-                ````            If no positional arguments are
-                                provided then assume the
-                                ``'compress'`` basic mode of operation
-                                with no halo added to the subspaced
-                                axes. Note that this is equivalent to
-                                ``'compress', 0``.
-
-                ``mode``        Define the basic mode of operation
-                                with no halo added to the subspaced
-                                axes. One of:
-
-                                * ``'compress'``: Unselected locations
-                                  are removed to create the returned
-                                  subspace. Note that if a
-                                  multi-dimensional metadata construct
-                                  is being used to define the indices
-                                  then some unrequested locations may
-                                  also be selected.
-
-                                * ``'envelope'``: The subspace is the
-                                  smallest subspace that contains all
-                                  of the selected locations.
-
-                                Note that ``mode`` is equivalent to
-                                ``mode, 0``.
-
-                ``mode, halo``  Define a basic mode of operation (one
-                                of ``'compress'``, ``'envelope'``, or
-                                ``'full'``) and define a halo to be
-                                added to the subspaced axes. Note that
-                                ``mode, 0`` is equivalent to ``mode``.
-
-                ``halo``        Assume the ``'compress'`` basic mode
-                                of operation and define a halo to be
-                                added to the subspaced axes.  Note
-                                that ``halo`` is equivalent to
-                                ``'compress', halo``.
-                ==============  ======================================
+                {{indices valid modes Domain}}
 
             kwargs: *optional*
                 A keyword name is an identity of a metadata construct, and
