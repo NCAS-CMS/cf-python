@@ -5,6 +5,7 @@ import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 from dask.array.slicing import normalize_index
+from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -13,7 +14,11 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+    normalize_cyclic_slice,
+)
 from ..query import Query
 from ..units import Units
 
@@ -270,7 +275,7 @@ class FieldDomain:
                     f"integer. Got {halo!r}"
                 )
 
-            if halo <0 :
+            if halo < 0:
                 raise ValueError(
                     "'halo' positional argument must be a non-negative "
                     f"integer. Got {halo!r}"
@@ -279,8 +284,6 @@ class FieldDomain:
             # Ancillary masks are automatically disabled when a
             # non-zero halo is provided
             ancillary_mask = False
-#            if full:
-#                raise ValueError("Can't halo full TODO")
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -474,6 +477,7 @@ class FieldDomain:
                             f"No indices found from: {identity}={value!r}"
                         )
 
+                    print(start, stop)
                     index = slice(start, stop, 1)
                     cyclic_index[axis] = index
 
@@ -710,80 +714,75 @@ class FieldDomain:
                 #       worry about 'ind' becoming inconsistent with
                 #       'indices', because the former is only
                 #       subsequently used if create_mask is True.
+                print("item_axes=", item_axes)
+                print(indices)
                 for axis in item_axes:
+                    index = indices[axis]
                     size = domain_axes[axis].get_size()
 
-                    index = cyclic_index.get(axis)
-                    if index is not None:
-                        # Cyclic index, that is a slice with step 1 or -1.
+                    try:
+                        index = normalize_cyclic_slice(index, size)
+                    except IndexError:
+                        # Non-cyclic index that is either a slice or a
+                        # list/1-d array of int/bool.
+                        index = normalize_index((index,), (size,))[0]
+                        if isinstance(index, slice):
+                            step = index.step
+                            increasing = step is None or step > 0
+                            index = np.arange(size)[index]
+                        else:
+                            if is_dask_collection(index):
+                                # Convert dask to numpy, and bool to int.
+                                index = np.asanyarray(index)
+                                index = normalize_index((index,), (size,))[0]
+
+                            increasing = index[0] <= index[-1]
+
+                        # Convert 'index' to a list of integers (which
+                        # will all be non-negative)
+                        index = index.tolist()
+
+                        # Extend the list at each end
+                        mn = min(index)
+                        mx = max(index)
+                        if increasing:
+                            # Put smaller indices in the left hand
+                            # halo, and larger ones in the right hand
+                            # halo
+                            left = range(max(*(0, mn - halo)), mn)
+                            right = range(mx + 1, min(*(mx + 1 + halo, size)))
+                        else:
+                            # Put larger indices in the left hand
+                            # halo, and smaller ones in the right hand
+                            # halo
+                            left = range(min(*(size - 1, mx + halo)), mx, -1)
+                            right = range(
+                                mn - 1, max(*(mn - 1 - halo, -1)), -1
+                            )
+
+                        index[:0] = left
+                        index.extend(right)
+                    else:
+                        # Cyclic slice index
                         start = index.start
                         stop = index.stop
                         step = index.step
+                        if abs(step) > 1:
+                            raise ValueError(
+                                "Can only add halos to cyclic slices with "
+                                f"step 1 or -1. Got {index!r}"
+                            )
 
-                        if start < 0:
+                        if step > 0:
                             # Increasing cyclic slice
                             start = max(start - halo, stop - size)
-                            stop = min(stop + halo, size  + start)
+                            stop = min(stop + halo, size + start)
                         else:
                             # Decreasing cyclic slice
-                            start = max(start + halo, size + stop)
-                            stop = min(stop - halo, size - start)
+                            start = min(start + halo, size + stop)
+                            stop = max(stop - halo, start - size)
 
                         index = slice(start, stop, step)
-                    else:
-                        # Non-cyclic index, that is either a slice or
-                        # a list/1-d array of int/bool.
-                        index = normalize_index(indices[axis], (size,))[0]
-                        if isinstance(index, slice):
-                            index = np.arange(size)[index]
-
-                        index = index.tolist()
-
-                        # 'index' is now a list of positive integers
-                        mn = min(index)
-                        mx = max(index)
-                        if first <= last:
-                            index[:0] = range(max(0, first - halo), first)
-                            index.extend(range(last + 1, max(last + 1 + halo, size-1))
-                        else:
-                            index[:0] = range(min(first + halo, size-1), first, -1)
-                            index.extend(range(last - 1, min(0, last - 1 - halo), -1))
-
-                        if first <= last:
-                            left = range(max(0, first - halo), first)
-                            right = range(last + 1, max(last + 1 + halo, size-1))
-                        else:
-                            left = range(min(first + halo, size-1), first, -1)
-                            right = range(last - 1, min(0, last - 1 - halo), -1))
-
-                        index[:0] = left
-                        index.extend(right)
-                              first = index[0]
-                        last = index[-1]
-                        if first <= last:
-                            index[:0] = range(max(0, first - halo), first)
-                            index.extend(range(last + 1, max(last + 1 + halo, size-1))
-                        else:
-                            index[:0] = range(min(first + halo, size-1), first, -1)
-                            index.extend(range(last - 1, min(0, last - 1 - halo), -1))
-
-                        if first <= last:
-                            left = range(max(0, first - halo), first)
-                            right = range(last + 1, max(last + 1 + halo, size-1))
-                        else:
-                            left = range(min(first + halo, size-1), first, -1)
-                            right = range(last - 1, min(0, last - 1 - halo), -1))
-
-                        index[:0] = left
-                        index.extend(right)
-                            
-#                        if not (
-#                            0 <= index[0] < size and 0 <= index[-1] < size
-#                        ):
-#                            raise IndexError(
-#                                f"Halo of size {halo} exceeds at least one "
-#                                "array edge"
-#                            )
 
                     indices[axis] = index
 
