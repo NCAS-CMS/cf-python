@@ -8860,38 +8860,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         actually created, these masks are all automatically applied to
         the result.
 
+        **Halos**
+
+        A halo on either "side" of an axis will be automatically
+        reduced if including the complete halo would extend the
+        subspace beyond the axis's extent.
+
+        If a non-zero halo has been defined then no ancillary masks
+        will be created.
+
         .. seealso:: `subspace`, `where`, `__getitem__`,
                      `__setitem__`, `cf.Domain.indices`
 
         :Parameters:
 
-            mode: `str`, *optional*
-                There are three modes of operation, each of which
-                provides indices for a different type of subspace:
+            mode: optional
+                Specify the mode of operation (``mode``) and a halo to
+                be added to the subspaced axes (``halo``) with
+                positional arguments in format ``mode``, ``halo``, or
+                ``mode, halo``, or with no positional arguments at
+                all.
 
-                ==============  ======================================
-                *mode*          Description
-                ==============  ======================================
-                ``'compress'``  This is the default mode. Unselected
-                                locations are removed to create the
-                                returned subspace. Note that if a
-                                multi-dimensional metadata construct
-                                is being used to define the indices
-                                then some missing data may still need
-                                to be inserted at unselected
-                                locations.
-
-                ``'envelope'``  The returned subspace is the smallest
-                                that contains all of the selected
-                                indices. Missing data is inserted at
-                                unselected locations within the
-                                envelope.
-
-                ``'full'``      The returned subspace has the same
-                                domain as the original field
-                                construct. Missing data is inserted at
-                                unselected locations.
-                ==============  ======================================
+                {{indices mode options}}
 
             kwargs: *optional*
                 A keyword name is an identity of a metadata construct,
@@ -13307,42 +13297,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           ``3:-2:-1``) is assumed to "wrap" around, rather then producing
           a null result.
 
-
         .. seealso:: `indices`, `squeeze`, `where`, `__getitem__`
 
         :Parameters:
 
-            positional arguments: *optional*
-                There are three modes of operation, each of which provides
-                a different type of subspace:
+            mode: optional
+                Specify the mode of operation (``mode``) and a halo to
+                be added to the subspaced axes (``halo``) with
+                positional arguments in format ``mode``, ``halo``, or
+                ``mode, halo``, or with no positional arguments at
+                all.
 
-                ==============  ==========================================
-                *argument*      Description
-                ==============  ==========================================
-                ``'compress'``  This is the default mode. Unselected
-                                locations are removed to create the
-                                returned subspace. Note that if a
-                                multi-dimensional metadata construct is
-                                being used to define the indices then some
-                                missing data may still be inserted at
-                                unselected locations.
+                In addition, an extra postional argument of ``'test'``
+                is allowed. If provided, then the subspace is not
+                returned , rather `True` or `False` is returned
+                depending on whether or not it is possible for the
+                subspace to be created.
 
-                ``'envelope'``  The returned subspace is the smallest that
-                                contains all of the selected
-                                indices. Missing data is inserted at
-                                unselected locations within the envelope.
-
-                ``'full'``      The returned subspace has the same domain
-                                as the original field construct. Missing
-                                data is inserted at unselected locations.
-
-                ``'test'``      May be used on its own or in addition to
-                                one of the other positional arguments. Do
-                                not create a subspace, but return `True`
-                                or `False` depending on whether or not it
-                                is possible to create specified the
-                                subspace.
-                ==============  ==========================================
+                {{indices mode options}}
 
             keyword parameters: *optional*
                 A keyword name is an identity of a metadata construct, and

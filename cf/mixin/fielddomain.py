@@ -223,11 +223,8 @@ class FieldDomain:
                 `indices` for details.
 
             halo: `int`
-                The size of the halo to be added to the subspace, for
-                each axis specified by *kwargs*. The creation of
-                ancillary masks is automatically disabled when a
-                non-zero halo is provided, even when *ancillary_mask*
-                is True.
+                The halo to be added to the subpsaced axes. See the
+                *mode* parameter of `indices` for details.
 
             data_axes: sequence of `str`, or `None`
                 The domain axis identifiers of the data axes, or
@@ -266,24 +263,20 @@ class FieldDomain:
         envelope = mode == "envelope"
         full = mode == "full"
 
+        # Parse halo
         if halo:
             try:
                 halo = int(halo)
             except ValueError:
-                raise ValueError(
-                    "'halo' positional argument must be convertible to an"
-                    f"integer. Got {halo!r}"
-                )
+                ok = False
+            else:
+                ok = halo >= 0
 
-            if halo < 0:
+            if not ok:
                 raise ValueError(
-                    "'halo' positional argument must be a non-negative "
-                    f"integer. Got {halo!r}"
+                    "halo positional argument must be convertible to a "
+                    f"non-negative integer. Got {halo!r}"
                 )
-
-            # Ancillary masks are automatically disabled when a
-            # non-zero halo is provided
-            ancillary_mask = False
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -350,7 +343,6 @@ class FieldDomain:
             )
 
         mask = {}
-        cyclic_index = {}
 
         for canonical_axes, axes_key_construct_value_id in parsed.items():
             axes, keys, constructs, points, identities = tuple(
@@ -477,9 +469,7 @@ class FieldDomain:
                             f"No indices found from: {identity}={value!r}"
                         )
 
-                    print(start, stop)
                     index = slice(start, stop, 1)
-                    cyclic_index[axis] = index
 
                     if full:
                         d = self._Data(da.arange(size))
@@ -708,14 +698,6 @@ class FieldDomain:
             # TODO
             # --------------------------------------------------------
             if halo:
-                # Note: For non-zero halos, 'ancillary_mask' is always
-                #       False, and therefore 'create_mask' is also
-                #       always False. This means that we don't need t
-                #       worry about 'ind' becoming inconsistent with
-                #       'indices', because the former is only
-                #       subsequently used if create_mask is True.
-                print("item_axes=", item_axes)
-                print(indices)
                 for axis in item_axes:
                     index = indices[axis]
                     size = domain_axes[axis].get_size()
@@ -725,6 +707,16 @@ class FieldDomain:
                     except IndexError:
                         # Non-cyclic index that is either a slice or a
                         # list/1-d array of int/bool.
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(1, 3)                       -> [0, 1, 2, 3]
+                        #   slice(1, 4, 2)                    -> [0, 1, 3, 4]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   [1, 2]                            -> [0, 1, 2, 3]
+                        #   [1, 3]                            -> [0, 1, 3, 4]
+                        #   [2, 1]                            -> [3, 2, 1, 0]
+                        #   [3, 1]                            -> [4, 3, 1, 0]
+                        #   [False, True, False, True, False] -> [0, 1, 3, 4]
                         index = normalize_index((index,), (size,))[0]
                         if isinstance(index, slice):
                             step = index.step
@@ -738,23 +730,23 @@ class FieldDomain:
 
                             increasing = index[0] <= index[-1]
 
-                        # Convert 'index' to a list of integers (which
-                        # will all be non-negative)
+                        # Convert 'index' to a list (which will
+                        # exclusively contain non-negative integers)
                         index = index.tolist()
 
                         # Extend the list at each end
                         mn = min(index)
                         mx = max(index)
                         if increasing:
-                            # Put smaller indices in the left hand
-                            # halo, and larger ones in the right hand
-                            # halo
+                            # "Increasing" sequence: Put smaller
+                            # indices in the left hand halo, and
+                            # larger ones in the right hand halo
                             left = range(max(*(0, mn - halo)), mn)
                             right = range(mx + 1, min(*(mx + 1 + halo, size)))
                         else:
-                            # Put larger indices in the left hand
-                            # halo, and smaller ones in the right hand
-                            # halo
+                            # "Decreasing" sequence: Put larger
+                            # indices in the left hand halo, and
+                            # smaller ones in the right hand halo
                             left = range(min(*(size - 1, mx + halo)), mx, -1)
                             right = range(
                                 mn - 1, max(*(mn - 1 - halo, -1)), -1
@@ -764,13 +756,17 @@ class FieldDomain:
                         index.extend(right)
                     else:
                         # Cyclic slice index
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(-1, 2)     -> slice(-2, 3)
+                        #   slice(1, -2, -1) -> slice(2, -3, -1)
                         start = index.start
                         stop = index.stop
                         step = index.step
                         if abs(step) > 1:
                             raise ValueError(
-                                "Can only add halos to cyclic slices with "
-                                f"step 1 or -1. Got {index!r}"
+                                "A cyclic slice can only have halos if it "
+                                f"has step 1 or -1. Got {index!r}"
                             )
 
                         if step > 0:
@@ -793,9 +789,15 @@ class FieldDomain:
                 )  # pragma: no cover
 
             if create_mask:
-                mask[canonical_axes] = _create_ancillary_mask_component(
-                    mask_component_shape, ind, compress
-                )
+                if halo:
+                    logger.warn(
+                        "Not applying ancillary masks to a subspace with "
+                        "non-zero halos"
+                    )
+                else:
+                    mask[canonical_axes] = _create_ancillary_mask_component(
+                        mask_component_shape, ind, compress
+                    )
 
         indices = {"indices": indices, "mask": mask}
 

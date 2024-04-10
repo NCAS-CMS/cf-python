@@ -613,6 +613,76 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # indices mode options
+    "{{indices mode options}}": """TODO
+                Specify the mode of operation (``mode``) and a halo to
+                be added to the subspaced axes (``halo``) with
+                positional arguments in format ``mode``, ``halo``, or
+                ``mode, halo``, or with no positional arguments at
+                all.
+
+                A mode is given as a `str`, and a halo as a
+                non-negative `int` (or any object that can be
+                converted to one).
+
+                ==============  ======================================
+                *mode*          Description
+                ==============  ======================================
+                ````            If no positional arguments are
+                                provided then assume the
+                                ``'compress'`` basic mode of operation
+                                with no halo added to the subspaced
+                                axes. Note that this is equivalent to
+                                ``'compress', 0``.
+
+                ``mode``        Define the basic mode of operation
+                                with no halo added to the subspaced
+                                axes. One of:
+
+                                * ``'compress'``: Unselected locations
+                                  are removed to create the returned
+                                  subspace. Note that if a
+                                  multi-dimensional metadata construct
+                                  is being used to define the indices
+                                  then some missing data may still
+                                  need to be inserted at unselected
+                                  locations.
+
+                                * ``'envelope'``: The returned
+                                  subspace is the smallest subsapce
+                                  that contains all of the selected
+                                  indices. Missing data is inserted at
+                                  unselected locations within the
+                                  envelope.
+
+                                * ``'full'`` The returned subspace has
+                                  the same domain as the original
+                                  field construct. Missing data is
+                                  inserted at unselected locations.
+
+                                * ``'test'``: May be used on its own
+                                  or in addition to one of the other
+                                  positional arguments. Do not create
+                                  a subspace, but return `True` or
+                                  `False` depending on whether or not
+                                  it is possible to create specified
+                                  the subspace.
+
+                                Note that ``mode`` is equivalent to
+                                ``mode, 0``.
+
+                ``mode, halo``  Define a basic mode of operation (one
+                                of ``'compress'``, ``'envelope'``, or
+                                ``'full'``) and define a halo to be
+                                added to the subspaced axes. Note that
+                                ``mode, 0`` is equivalent to ``mode``.
+
+                ``halo``        Assume the ``'compress'`` basic mode
+                                of operation and define a halo to be
+                                added to the subspaced axes.  Note
+                                that ``halo`` is equivalent to
+                                ``'compress', halo``.
+                ==============  ======================================""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -663,4 +733,58 @@ _docstring_substitution_definitions = {
                 The removed CFA-netCDF file name substitution. If the
                 substitution was not defined then an empty dictionary
                 is returned.""",
+    # indices mode options
+    "{{indices mode options}}": """
+                A mode of operation is given as a `str`, and a halo as
+                a non-negative `int` (or any object that can be
+                converted to one):
+
+                ==============  ======================================
+                *mode*          Description
+                ==============  ======================================
+                ````            If no positional arguments are
+                                provided then assume the
+                                ``'compress'`` basic mode of operation
+                                with no halo added to the subspaced
+                                axes. Note that this is equivalent to
+                                ``'compress', 0``.
+
+                ``mode``        Define the basic mode of operation
+                                with no halo added to the subspaced
+                                axes. One of:
+
+                                * ``'compress'``: Unselected locations
+                                  are removed to create the subspace.
+                                  Note that if a multi-dimensional
+                                  metadata construct is being used to
+                                  define the indices then some missing
+                                  data may still need to be inserted
+                                  at unselected locations.
+
+                                * ``'envelope'``: The subspace is the
+                                  smallest subspace that contains all
+                                  of the selected locations. Missing
+                                  data is inserted at unselected
+                                  locations within the envelope.
+
+                                * ``'full'`` The subspace has the same
+                                  domain as the original
+                                  construct. Missing data is inserted
+                                  at unselected locations.
+
+                                Note that ``mode`` is equivalent to
+                                ``mode, 0``.
+
+                ``mode, halo``  Define a basic mode of operation (one
+                                of ``'compress'``, ``'envelope'``, or
+                                ``'full'``) and define a halo to be
+                                added to the subspaced axes. Note that
+                                ``mode, 0`` is equivalent to ``mode``.
+
+                ``halo``        Assume the ``'compress'`` basic mode
+                                of operation and define a halo to be
+                                added to the subspaced axes.  Note
+                                that ``halo`` is equivalent to
+                                ``'compress', halo``.
+                ==============  ======================================""",
 }
