@@ -92,7 +92,7 @@ _docstring_substitution_definitions = {
 
         The number of extra elements will be automatically reduced if
         including full amount defined by the halo would extend the
-        subspace beyond the axis's extent.""",
+        subspace beyond the axis limits.""",
     # indices halos
     "{{subspace halos}}": """
         If a halo is defined via a positional argument, then each
@@ -104,7 +104,7 @@ _docstring_substitution_definitions = {
 
         The number of extra elements will be automatically reduced if
         including full amount defined by the halo would extend the
-        subspace beyond the axis's extent.""",
+        subspace beyond the axis limits.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -657,23 +657,19 @@ _docstring_substitution_definitions = {
                                 provided then assume the
                                 ``'compress'`` mode of operation with
                                 no halo added to the subspaced
-                                axes. Note that this is equivalent to
-                                either of ``'compress', 0`` and ``0``.
+                                axes.
 
                 ``mode``        Define the mode of operation with no
-                                halo added to the subspaced axes. Note
-                                that ``mode`` is equivalent to ``mode,
-                                0``.
+                                halo added to the subspaced axes.
 
                 ``mode, halo``  Define a mode of operation, as well as
                                 a halo to be added to the subspaced
-                                axes. Note that ``mode, 0`` is
-                                equivalent to ``mode``.
+                                axes.
 
                 ``halo``        Assume the ``'compress'`` mode of
                                 operation and define a halo to be
-                                added to the subspaced axes.  Note
-                                that ``halo`` is equivalent to
+                                added to the subspaced axes. Note that
+                                ``halo`` is equivalent to
                                 ``'compress', halo``.
                 ==============  ======================================""",
     # ----------------------------------------------------------------
@@ -731,34 +727,40 @@ _docstring_substitution_definitions = {
                 Valid modes are:
 
                 * ``'compress'`` This the default.
+
                      Unselected locations are removed to create the
-                     subspace. Missing data may be inserted at
-                     unselected locations, but only where it is
-                     required to ensure a hyperrectangular result, and
-                     not if a non-zero halo has been defined.
+                     subspace. If the result is not hperrecctangular
+                     then the minimum amount of unselected locations
+                     required to make it so will also be specially
+                     selected. Missing data is inserted at the
+                     specially selected locations, unless a halo has
+                     been defined (of any size, including 0).
 
                 * ``'envelope'``
-                     The subspace is the smallest subspace that
-                     contains all of the selected locations. Missing
-                     data is inserted at unselected locations within
-                     the envelope, unless a non-zero halo has been
-                     defined.
+                     The subspace is the smallest hperrecctangular
+                     subspace that contains all of the selected
+                     locations. Missing data is inserted at unselected
+                     locations within the envelope, unless a halo has
+                     been defined (of any size, including 0).
 
                 * ``'full'``
                      The subspace has the same domain as the original
                      construct. Missing data is inserted at unselected
-                     locations, unless a non-zero halo has been
-                     defined.""",
+                     locations, unless a halo has been defined (of any
+                     size, including 0).""",
     # indices valid modes Domain
     "{{indices valid modes Domain}}": """
                 Valid modes are:
 
                 * ``'compress'`` This the default.
                      Unselected locations are removed to create the
-                     subspace, unless they are required to ensure a
-                     hyperrectangular result.
+                     subspace. If the result is not hperrecctangular
+                     then the minimum amount of unselected locations
+                     required to make it so will also be specially
+                     selected.
 
                 * ``'envelope'``
-                     The subspace is the smallest subspace that
-                     contains all of the selected locations.""",
+                     The subspace is the smallest hperrecctangular
+                     subspace that contains all of the selected
+                     locations.""",
 }

@@ -1646,6 +1646,17 @@ class FieldTest(unittest.TestCase):
             (x == [120, 80, 40, 0, -40, -80, -120, -160, -200]).all()
         )
 
+        # Halos: ancillary masking
+        index = cf.wi(90, 100)
+        indices = f.indices(longitude=index)
+        g = f[indices]
+        self.assertTrue(np.ma.is_masked(g.array))
+
+        for halo in (0, 1):
+            indices = f.indices(halo, longitude=index)
+            g = f[indices]
+            self.assertFalse(np.ma.is_masked(g.array))
+
         # Subspace has size 0 axis resulting from dask array index
         indices = f.indices(grid_latitude=cf.contains(-23.2))
         with self.assertRaises(IndexError):

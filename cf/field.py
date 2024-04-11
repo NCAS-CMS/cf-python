@@ -8864,8 +8864,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         {{indices halos}}
 
-        If a non-zero halo has been defined then no ancillary masks
-        will be created.
+        If a halo has been defined (of any size, including 0), then no
+        ancillary masks will be created.
 
         .. versionadded:: 1.0
 
@@ -9066,92 +9066,92 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Set the field construct data.
 
-                .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-                .. seealso:: `data`, `del_data`, `get_data`, `has_data`,
-                             `set_construct`
+        .. seealso:: `data`, `del_data`, `get_data`, `has_data`,
+                     `set_construct`
 
-                :Parameters:
+        :Parameters:
 
-                    data: `Data`
-                        The data to be inserted.
+            data: `Data`
+                The data to be inserted.
 
-                        {{data_like}}
+                {{data_like}}
 
-                    axes: (sequence of) `str` or `int`, optional
-                        Set the domain axes constructs that are spanned by the
-                        data. If unset, and the *set_axes* parameter is True, then
-                        an attempt will be made to assign existing domain axis
-                        constructs to the data.
+            axes: (sequence of) `str` or `int`, optional
+                Set the domain axes constructs that are spanned by the
+                data. If unset, and the *set_axes* parameter is True, then
+                an attempt will be made to assign existing domain axis
+                constructs to the data.
 
-                        The contents of the *axes* parameter is mapped to domain
-                        axis constructs by translating each element into a domain
-                        axis construct key via the `domain_axis` method.
+                The contents of the *axes* parameter is mapped to domain
+                axis constructs by translating each element into a domain
+                axis construct key via the `domain_axis` method.
 
-                        *Parameter example:*
-                          ``axes='domainaxis1'``
+                *Parameter example:*
+                  ``axes='domainaxis1'``
 
-                        *Parameter example:*
-                          ``axes='X'``
+                *Parameter example:*
+                  ``axes='X'``
 
-                        *Parameter example:*
-                          ``axes=['latitude']``
+                *Parameter example:*
+                  ``axes=['latitude']``
 
-                        *Parameter example:*
-                          ``axes=['X', 'longitude']``
+                *Parameter example:*
+                  ``axes=['X', 'longitude']``
 
-                        *Parameter example:*
-                          ``axes=[1, 0]``
+                *Parameter example:*
+                  ``axes=[1, 0]``
 
-                    set_axes: `bool`, optional
-                        If False then do not set the domain axes constructs that
-                        are spanned by the data, even if the *axes* parameter has
-                        been set. By default the axes are set either according to
-                        the *axes* parameter, or if any domain axis constructs
-                        exist then an attempt will be made to assign existing
-                        domain axis constructs to the data.
+            set_axes: `bool`, optional
+                If False then do not set the domain axes constructs that
+                are spanned by the data, even if the *axes* parameter has
+                been set. By default the axes are set either according to
+                the *axes* parameter, or if any domain axis constructs
+                exist then an attempt will be made to assign existing
+                domain axis constructs to the data.
 
-                        If the *axes* parameter is `None` and no domain axis
-                        constructs exist then no attempt is made to assign domain
-                        axes constructs to the data, regardless of the value of
-        s                *set_axes*.
+                If the *axes* parameter is `None` and no domain axis
+                constructs exist then no attempt is made to assign domain
+                axes constructs to the data, regardless of the value of
+                *set_axes*.
 
-                    copy: `bool`, optional
-                        If True then set a copy of the data. By default the data
-                        are copied.
+            copy: `bool`, optional
+                If True then set a copy of the data. By default the data
+                are copied.
 
-                    {{inplace: `bool`, optional (default True)}}
+            {{inplace: `bool`, optional (default True)}}
 
-                        .. versionadded:: 3.7.0
+                .. versionadded:: 3.7.0
 
-                :Returns:
+        :Returns:
 
-                    `None` or `Field`
-                        If the operation was in-place then `None` is returned,
-                        otherwise return a new `Field` instance containing the new
-                        data.
+            `None` or `Field`
+                If the operation was in-place then `None` is returned,
+                otherwise return a new `Field` instance containing the new
+                data.
 
-                **Examples**
+        **Examples**
 
-                >>> f = cf.Field()
-                >>> f.set_data([1, 2, 3])
-                >>> f.has_data()
-                True
-                >>> f.get_data()
-                <CF Data(3): [1, 2, 3]>
-                >>> f.data
-                <CF Data(3): [1, 2, 3]>
-                >>> f.del_data()
-                <CF Data(3): [1, 2, 3]>
-                >>> g = f.set_data([4, 5, 6], inplace=False)
-                >>> g.data
-                <CF Data(3): [4, 5, 6]>
-                >>> f.has_data()
-                False
-                >>> print(f.get_data(None))
-                None
-                >>> print(f.del_data(None))
-                None
+        >>> f = cf.Field()
+        >>> f.set_data([1, 2, 3])
+        >>> f.has_data()
+        True
+        >>> f.get_data()
+        <CF Data(3): [1, 2, 3]>
+        >>> f.data
+        <CF Data(3): [1, 2, 3]>
+        >>> f.del_data()
+        <CF Data(3): [1, 2, 3]>
+        >>> g = f.set_data([4, 5, 6], inplace=False)
+        >>> g.data
+        <CF Data(3): [4, 5, 6]>
+        >>> f.has_data()
+        False
+        >>> print(f.get_data(None))
+        None
+        >>> print(f.del_data(None))
+        None
 
         """
         data = self._Data(data, copy=False)
@@ -13267,9 +13267,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Halos**
 
         {{subspace halos}}
-
-        .. note:: If a non-zero halo has been defined then no
-                  ancillary masks will be created.
 
         .. versionadded:: 1.0
 
