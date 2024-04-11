@@ -93,6 +93,18 @@ _docstring_substitution_definitions = {
         The number of extra elements will be automatically reduced if
         including full amount defined by the halo would extend the
         subspace beyond the axis's extent.""",
+    # indices halos
+    "{{subspace halos}}": """
+        If a halo is defined via a positional argument, then each
+        subspaced axis will be extended to include that many extra
+        elements at each "side" of the axis. For instance,
+        ``f.subspace(X=slice(10, 20))`` will give identical results to
+        each of ``f.subspace(0, X=slice(10, 20))``, ``f.subspace(1,
+        X=slice(11, 19))``, ``f.subspace(2, X=slice(12, 18))``, etc.
+
+        The number of extra elements will be automatically reduced if
+        including full amount defined by the halo would extend the
+        subspace beyond the axis's extent.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -626,6 +638,44 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # indices mode options
+    "{{mode: optional}}": """mode: optional
+                Specify the mode of operation (``mode``) and a halo to
+                be added to the subspaced axes (``halo``) with
+                positional arguments in format ``mode``, or ``halo``,
+                or ``mode, halo``, or with no positional arguments at
+                all.
+
+                A mode of operation is given as a `str`, and a halo as
+                a non-negative `int` (or any object that can be
+                converted to one):
+
+                ==============  ======================================
+                *mode*          Description
+                ==============  ======================================
+                ````            If no positional arguments are
+                                provided then assume the
+                                ``'compress'`` mode of operation with
+                                no halo added to the subspaced
+                                axes. Note that this is equivalent to
+                                either of ``'compress', 0`` and ``0``.
+
+                ``mode``        Define the mode of operation with no
+                                halo added to the subspaced axes. Note
+                                that ``mode`` is equivalent to ``mode,
+                                0``.
+
+                ``mode, halo``  Define a mode of operation, as well as
+                                a halo to be added to the subspaced
+                                axes. Note that ``mode, 0`` is
+                                equivalent to ``mode``.
+
+                ``halo``        Assume the ``'compress'`` mode of
+                                operation and define a halo to be
+                                added to the subspaced axes.  Note
+                                that ``halo`` is equivalent to
+                                ``'compress', halo``.
+                ==============  ======================================""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -676,43 +726,6 @@ _docstring_substitution_definitions = {
                 The removed CFA-netCDF file name substitution. If the
                 substitution was not defined then an empty dictionary
                 is returned.""",
-    # indices mode options
-    "{{indices mode options}}": """Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, ``halo``, or
-                ``mode, halo``, or with no positional arguments at
-                all.
-
-                A mode of operation is given as a `str`, and a halo as
-                a non-negative `int` (or any object that can be
-                converted to one):
-
-                ==============  ======================================
-                *mode*          Description
-                ==============  ======================================
-                ````            If no positional arguments are
-                                provided then assume the
-                                ``'compress'`` basic mode of operation
-                                with no halo added to the subspaced
-                                axes. Note that this is equivalent to
-                                either of ``'compress', 0`` and ``0``.
-
-                ``mode``        Define the basic mode of operation
-                                with no halo added to the subspaced
-                                axes. Note that ``mode`` is equivalent
-                                to ``mode, 0``.
-
-                ``mode, halo``  Define a basic mode of operation, as
-                                well as a halo to be added to the
-                                subspaced axes. Note that ``mode, 0``
-                                is equivalent to ``mode``.
-
-                ``halo``        Assume the default basic mode of
-                                operation and define a halo to be
-                                added to the subspaced axes.  Note
-                                that ``halo`` is equivalent to
-                                ``'compress', halo``.
-                ==============  ======================================""",
     # indices valid modes Field
     "{{indices valid modes Field}}": """
                 Valid modes are:
@@ -747,9 +760,5 @@ _docstring_substitution_definitions = {
 
                 * ``'envelope'``
                      The subspace is the smallest subspace that
-                     contains all of the selected locations.
-
-                * ``'full'``
-                     The subspace has the same domain as the original
-                     construct.""",
+                     contains all of the selected locations.""",
 }

@@ -8874,8 +8874,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            mode: optional
-                {{indices mode options}}
+            {{mode: optional}}
 
                 {{indices valid modes Field}}
 
@@ -9012,40 +9011,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 removed_at="4.0.0",
             )  # pragma: no cover
 
-        n_mode = len(mode)
-        if not n_mode:
-            halo = 0
-        elif n_mode == 1:
-            try:
-                halo = int(mode[0])
-            except ValueError:
-                halo = 0
-            else:
-                mode = ()
-        elif n_mode == 2:
-            halo = mode[1]
-        else:
-            raise ValueError(
-                "Can't provide more than two positional arguments. "
-                f"Got: {', '.join(repr(x) for x in mode)}"
-            )
-
-        if not mode or "compress" in mode:
-            mode = "compress"
-        elif "envelope" in mode:
-            mode = "envelope"
-        elif "full" in mode:
-            mode = "full"
-        else:
-            raise ValueError(
-                f"Invalid value for 'mode' positional argument: {mode[0]!r}"
-            )
-
-        data_axes = self.get_data_axes()
-
         # Get the indices for every domain axis in the domain,
         # including any ancillary masks
-        domain_indices = self._indices(mode, halo, data_axes, True, kwargs)
+        data_axes = self.get_data_axes()
+        domain_indices = self._indices(mode, data_axes, True, kwargs)
 
         # Initialise the output indices with any ancillary masks.
         # Ensure that each ancillary mask is broadcastable to the
@@ -13297,7 +13266,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Halos**
 
-        {{index halos}}
+        {{subspace halos}}
 
         .. note:: If a non-zero halo has been defined then no
                   ancillary masks will be created.
@@ -13309,11 +13278,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            mode: optional
-                {{indices mode options}}
+            {{mode: optional}}
 
                 {{indices valid modes Field}}
-                    
+
                 In addition, an extra postional argument of ``'test'``
                 is allowed. When provided the subspace is not
                 returned, instead `True` or `False` is returned

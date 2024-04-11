@@ -743,7 +743,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """Create indices that define a subspace of the domain
         construct.
 
-        The indices returned by this method be used to create the
+        The indices returned by this method may be used to create the
         subspace by passing them to the `subspace` method of the
         original domain construct.
 
@@ -789,9 +789,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         :Parameters:
 
-            mode: optional
-                {{indices mode options}}
-
+            {{mode: optional}}
                 {{indices valid modes Domain}}
 
             kwargs: *optional*
@@ -846,34 +844,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                         : time(1) = [2019-01-01 00:00:00]
 
         """
-        n_mode = len(mode)
-        if not n_mode:
-            halo = 0
-        elif n_mode == 1:
-            try:
-                halo = int(mode[0])
-            except ValueError:
-                halo = 0
-            else:
-                mode = ()
-        elif n_mode == 2:
-            halo = mode[1]
-        else:
-            raise ValueError(
-                "Can't provide more than two positional arguments. "
-                f"Got: {', '.join(repr(x) for x in mode)}"
-            )
-
-        if not mode or "compress" in mode:
-            mode = "compress"
-        elif "envelope" in mode:
-            mode = "envelope"
-        else:
-            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
-
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        domain_indices = self._indices(mode, halo, None, False, kwargs)
+        domain_indices = self._indices(mode, None, False, kwargs)
 
         return domain_indices["indices"]
 
@@ -1121,19 +1094,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return d
 
     def subspace(self, *mode, **kwargs):
-        """Create indices that define a subspace of the domain
-        construct.
+        """Create a subspace of the field construct.
 
-        The indices returned by this method be used to create the subspace
-        by passing them to the `subspace` method of the original domain
-        construct.
+        Creation of a new domain construct which spans a subspace of
+        the domain of an existing domain construct is achieved by
+        identifying indices based on the metadata constructs
+        (subspacing by metadata). The new domain construct is created
+        with the same properties as the original domain construct.
 
-        The subspace is defined by identifying indices based on the
-        metadata constructs.
+        **Subspacing by metadata**
 
-        Metadata constructs are selected conditions are specified on their
-        data. Indices for subspacing are then automatically inferred from
-        where the conditions are met.
+        Subspacing by metadata selects metadata constructs and
+        specifies conditions on their data. Indices for subspacing are
+        then automatically inferred from where the conditions are met.
 
         Metadata constructs and the conditions on their data are defined
         by keyword parameters.
@@ -1142,6 +1115,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
+
+        * Subspace criteria may be provided for size 1 domain axes that
+          are not spanned by the field construct's data.
 
         * Explicit indices may also be assigned to a domain axis
           identified by a metadata construct, with either a Python `slice`
@@ -1157,14 +1133,17 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
 
+        **Halos**
+
+        {{subspace halos}}
+
         .. versionadded:: 3.11.0
 
         .. seealso:: `indices`, `cf.Field.subspace`
 
         :Parameters:
 
-            mode: optional
-                {{indices mode options}}
+            {{mode: optional}}
 
                 {{indices valid modes Domain}}
 
