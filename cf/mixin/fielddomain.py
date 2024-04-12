@@ -499,7 +499,9 @@ class FieldDomain:
                             # Index is a cyclic slice
                             ind = (
                                 np.arange(size)[
-                                    np.arange(index.start, index.stop)
+                                    np.arange(
+                                        index.start, index.stop, index.step
+                                    )
                                 ],
                             )
 
@@ -742,6 +744,10 @@ class FieldDomain:
             # Add a halo to the subspaced axes
             # --------------------------------------------------------
             if halo:
+                # Note: We're about to make 'indices' inconsistent
+                #       with 'ind', but that's OK because we're not
+                #       going to use 'ind' again since 'create_mask'
+                #       is False.
                 for axis in item_axes:
                     index = indices[axis]
                     size = domain_axes[axis].get_size()

@@ -8862,7 +8862,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Halos**
 
-        {{indices halos}}
+        {{subspace halos}}
+
+        For instance, ``f.indices(X=slice(10, 20))`` will give
+        identical results to each of ``f.indices(0, X=slice(10,
+        20))``, ``f.indices(1, X=slice(11, 19))``, ``f.indices(2,
+        X=slice(12, 18))``, etc.
 
         If a halo has been defined (of any size, including 0), then no
         ancillary masks will be created.
@@ -8876,9 +8881,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{mode: optional}}
 
-                {{indices valid modes Field}}
+                {{subspace valid modes Field}}
 
-            kwargs: *optional*
+            kwargs: optional
                 A keyword name is an identity of a metadata construct,
                 and the keyword value provides a condition for
                 inferring indices that apply to the dimension (or
@@ -9011,9 +9016,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 removed_at="4.0.0",
             )  # pragma: no cover
 
+        data_axes = self.get_data_axes()
+
         # Get the indices for every domain axis in the domain,
         # including any ancillary masks
-        data_axes = self.get_data_axes()
         domain_indices = self._indices(mode, data_axes, True, kwargs)
 
         # Initialise the output indices with any ancillary masks.
@@ -13268,6 +13274,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         {{subspace halos}}
 
+        For instance, ``f.subspace(X=slice(10, 20))`` will give
+        identical results to each of ``f.subspace(0, X=slice(10,
+        20))``, ``f.subspace(1, X=slice(11, 19))``, ``f.subspace(2,
+        X=slice(12, 18))``, etc.
+
         .. versionadded:: 1.0
 
         .. seealso:: `indices`, `where`, `__getitem__`,
@@ -13277,15 +13288,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{mode: optional}}
 
-                {{indices valid modes Field}}
+                {{subspace valid modes Field}}
 
                 In addition, an extra postional argument of ``'test'``
-                is allowed. When provided the subspace is not
+                is allowed. When provided, the subspace is not
                 returned, instead `True` or `False` is returned
                 depending on whether or not it is possible for the
                 requested subspace to be created.
 
-            keyword parameters: *optional*
+            keyword parameters: optional
                 A keyword name is an identity of a metadata construct, and
                 the keyword value provides a condition for inferring
                 indices that apply to the dimension (or dimensions)

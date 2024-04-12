@@ -1969,9 +1969,10 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
             try:
                 index = normalize_cyclic_slice(index, size)
             except IndexError:
+                # Non-cyclic slice
                 pass
             else:
-                # Got a cyclic slice
+                # Cyclic slice
                 start = index.start
                 stop = index.stop
                 step = index.step

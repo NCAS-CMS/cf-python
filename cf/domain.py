@@ -780,7 +780,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Halos**
 
-        {{indices halos}}
+        {{subspace halos}}
 
         .. versionadded:: 3.11.0
 
@@ -790,9 +790,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Parameters:
 
             {{mode: optional}}
-                {{indices valid modes Domain}}
 
-            kwargs: *optional*
+                {{subspace valid modes Domain}}
+
+            kwargs: optional
                 A keyword name is an identity of a metadata construct,
                 and the keyword value provides a condition for
                 inferring indices that apply to the dimension (or
@@ -1145,9 +1146,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             {{mode: optional}}
 
-                {{indices valid modes Domain}}
+                {{subspace valid modes Domain}}
 
-            kwargs: *optional*
+            kwargs: optional
                 A keyword name is an identity of a metadata construct, and
                 the keyword value provides a condition for inferring
                 indices that apply to the dimension (or dimensions)
