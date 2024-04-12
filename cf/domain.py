@@ -743,7 +743,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """Create indices that define a subspace of the domain
         construct.
 
-        The indices returned by this method may be used to create the
+        The indices returned by this method be used to create the
         subspace by passing them to the `subspace` method of the
         original domain construct.
 
@@ -778,10 +778,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           may still need to be inserted into the field construct's
           data.
 
-        **Halos**
-
-        {{subspace halos}}
-
         .. versionadded:: 3.11.0
 
         .. seealso:: `subspace`, `where`, `__getitem__`,
@@ -789,11 +785,27 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         :Parameters:
 
-            {{mode: optional}}
+            mode: `str`, *optional*
+                There are two modes of operation, each of which provides
+                indices for a different type of subspace:
 
-                {{subspace valid modes Domain}}
+                ==============  ======================================
+                *mode*          Description
+                ==============  ======================================
+                ``'compress'``  This is the default mode. Unselected
+                                locations are removed to create the
+                                returned subspace. Note that if a
+                                multi-dimensional metadata construct
+                                is being used to define the indices
+                                then some missing data may still be
+                                inserted at unselected locations.
 
-            kwargs: optional
+                ``'envelope'``  The returned subspace is the smallest
+                                that contains all of the selected
+                                indices.
+                ==============  ======================================
+
+            kwargs: *optional*
                 A keyword name is an identity of a metadata construct,
                 and the keyword value provides a condition for
                 inferring indices that apply to the dimension (or
@@ -845,6 +857,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                         : time(1) = [2019-01-01 00:00:00]
 
         """
+        if len(mode) > 1:
+            raise ValueError(
+                "Can't provide more than one positional argument. "
+                f"Got: {', '.join(repr(x) for x in mode)}"
+            )
+
+        if not mode or "compress" in mode:
+            mode = "compress"
+        elif "envelope" in mode:
+            mode = "envelope"
+        else:
+            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
+
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
         domain_indices = self._indices(mode, None, False, kwargs)
@@ -1095,19 +1120,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return d
 
     def subspace(self, *mode, **kwargs):
-        """Create a subspace of the field construct.
+        """Create indices that define a subspace of the domain
+        construct.
 
-        Creation of a new domain construct which spans a subspace of
-        the domain of an existing domain construct is achieved by
-        identifying indices based on the metadata constructs
-        (subspacing by metadata). The new domain construct is created
-        with the same properties as the original domain construct.
+        The indices returned by this method be used to create the subspace
+        by passing them to the `subspace` method of the original domain
+        construct.
 
-        **Subspacing by metadata**
+        The subspace is defined by identifying indices based on the
+        metadata constructs.
 
-        Subspacing by metadata selects metadata constructs and
-        specifies conditions on their data. Indices for subspacing are
-        then automatically inferred from where the conditions are met.
+        Metadata constructs are selected conditions are specified on their
+        data. Indices for subspacing are then automatically inferred from
+        where the conditions are met.
 
         Metadata constructs and the conditions on their data are defined
         by keyword parameters.
@@ -1116,9 +1141,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
-
-        * Subspace criteria may be provided for size 1 domain axes that
-          are not spanned by the field construct's data.
 
         * Explicit indices may also be assigned to a domain axis
           identified by a metadata construct, with either a Python `slice`
@@ -1134,21 +1156,41 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
 
-        **Halos**
-
-        {{subspace halos}}
-
         .. versionadded:: 3.11.0
 
-        .. seealso:: `indices`, `cf.Field.subspace`
+        .. seealso:: `indices`
 
         :Parameters:
 
-            {{mode: optional}}
+            mode: `str`, *optional*
+                There are two modes of operation, each of which provides
+                indices for a different type of subspace:
 
-                {{subspace valid modes Domain}}
+                ==============  ==========================================
+                *mode*          Description
+                ==============  ==========================================
+                ``'compress'``  Return indices that identify only the
+                                requested locations.
 
-            kwargs: optional
+                                This is the default mode.
+
+                                Note that if a multi-dimensional metadata
+                                construct is being used to define the
+                                indices then some unrequested locations
+                                may also be selected.
+
+                ``'envelope'``  The returned subspace is the smallest that
+                                contains all of the requested locations.
+
+                ``'test'``      May be used on its own or in addition to
+                                one of the other positional arguments. Do
+                                not create a subspace, but return `True`
+                                or `False` depending on whether or not it
+                                is possible to create the specified
+                                subspace.
+                ==============  ==========================================
+
+            kwargs: *optional*
                 A keyword name is an identity of a metadata construct, and
                 the keyword value provides a condition for inferring
                 indices that apply to the dimension (or dimensions)

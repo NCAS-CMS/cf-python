@@ -213,11 +213,11 @@ Subspacing
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   ~cf.Domain.indices
    ~cf.Domain.subspace
+   ~cf.Domain.indices
 
 NetCDF
 ------

@@ -169,8 +169,7 @@ Data
    ~cf.Field.ndim
    ~cf.Field.shape
    ~cf.Field.size
-   ~cf.Field.to_dask_array
-    ~cf.Field.varray
+   ~cf.Field.varray
 
 .. rubric:: *Rearranging elements*
 
@@ -527,18 +526,13 @@ Subspacing
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Field.__getitem__
-   ~cf.Field.indices
-
-.. autosummary::
-   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Field.to_dask_array
+   ~cf.Field.__getitem__
    ~cf.Field.subspace
+   ~cf.Field.indices
 
 Mathematical operations
 -----------------------
