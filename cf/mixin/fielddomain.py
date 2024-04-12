@@ -1,9 +1,10 @@
 import logging
 from numbers import Integral
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
+from dask.array.slicing import normalize_index
+from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -12,7 +13,11 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+    normalize_cyclic_slice,
+)
 from ..query import Query
 from ..units import Units
 
@@ -212,9 +217,9 @@ class FieldDomain:
 
         :Parameters:
 
-            mode: `str`
-                The mode of operation. See the *mode* parameter of
-                `indices` for details.
+            mode: `tuple`
+                The mode of operation and the halo size . See the
+                *mode* parameter of `indices` for details.
 
             data_axes: sequence of `str`, or `None`
                 The domain axis identifiers of the data axes, or
@@ -249,9 +254,46 @@ class FieldDomain:
         """
         debug = is_log_level_debug(logger)
 
-        compress = mode == "compress"
+        # Parse mode
+        n_mode = len(mode)
+        if not n_mode:
+            mode = None
+            halo = None
+        elif n_mode == 1:
+            try:
+                halo = int(mode[0])
+            except ValueError:
+                mode = mode[0]
+                halo = None
+            else:
+                mode = None
+        elif n_mode == 2:
+            mode, halo = mode
+        else:
+            raise ValueError(
+                "Can't provide more than two positional arguments. "
+                f"Got: {', '.join(repr(x) for x in mode)}"
+            )
+
+        compress = mode is None or mode == "compress"
         envelope = mode == "envelope"
         full = mode == "full"
+        if not (compress or envelope or full):
+            raise ValueError(f"Invalid mode of operation: {mode!r}")
+
+        if halo is not None:
+            try:
+                halo = int(halo)
+            except ValueError:
+                ok = False
+            else:
+                ok = halo >= 0
+
+            if not ok:
+                raise ValueError(
+                    "halo positional argument must be convertible to a "
+                    f"non-negative integer. Got {halo!r}"
+                )
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -373,18 +415,18 @@ class FieldDomain:
                     #             [7,4,2], slice(0,4,2),
                     #             numpy.array([2,4,7]),
                     #             [True,False,True]
-                    index = value
                     if debug:
                         logger.debug("  1-d CASE 1:")  # pragma: no cover
 
                     index = value
 
                     if envelope or full:
+                        # Set ind
                         size = domain_axes[axis].get_size()
-                        # TODODASK: consider using dask.arange here
-                        d = np.arange(size)  # self._Data(range(size))
-                        ind = (d[value],)  # .array,)
-                        index = slice(None)
+                        d = np.arange(size)
+                        ind = (d[value],)
+                        # Placeholder which will be overwritten later
+                        index = None
 
                 elif (
                     item is not None
@@ -447,10 +489,24 @@ class FieldDomain:
                     index = slice(start, stop, 1)
 
                     if full:
-                        d = self._Data(da.arange(size))
-                        d.cyclic(0)
-                        ind = (d[index].array,)
-                        index = slice(None)
+                        # Set ind
+                        try:
+                            index = normalize_cyclic_slice(index, size)
+                        except IndexError:
+                            # Index is not a cyclic slice
+                            ind = (np.arange(size)[index],)
+                        else:
+                            # Index is a cyclic slice
+                            ind = (
+                                np.arange(size)[
+                                    np.arange(
+                                        index.start, index.stop, index.step
+                                    )
+                                ],
+                            )
+
+                        # Placeholder which will be overwritten later
+                        index = None
 
                 elif item is not None:
                     # 1-d CASE 3: All other 1-d cases
@@ -458,16 +514,18 @@ class FieldDomain:
                         logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     index = item == value
-                    index = index.data.to_dask_array()
+                    index = index.to_dask_array()
 
                     if envelope or full:
+                        # Set ind
                         index = np.asanyarray(index)
                         if np.ma.isMA(index):
                             ind = np.ma.where(index)
                         else:
                             ind = np.where(index)
 
-                        index = slice(None)
+                        # Placeholder which will be overwritten later
+                        index = None
 
                 else:
                     raise ValueError(
@@ -523,16 +581,21 @@ class FieldDomain:
                 ]
 
                 # Find loctions that are True in all of the
-                # construct's matches
+                # constructs' matches
                 item_match = item_matches.pop()
                 for m in item_matches:
                     item_match &= m
 
-                item_match = item_match.compute()
-                if np.ma.isMA:
+                # Set ind
+                item_match = np.asanyarray(item_match)
+                if np.ma.isMA(item_match):
                     ind = np.ma.where(item_match)
                 else:
                     ind = np.where(item_match)
+
+                # Placeholders which will be overwritten later
+                for axis in canonical_axes:
+                    indices[axis] = None
 
                 if debug:
                     logger.debug(
@@ -553,13 +616,13 @@ class FieldDomain:
                     if item.has_bounds()
                 ]
 
-                # If there are exactly two 2-d contructs constructs,
-                # both with cell bounds and both with 'cf.contains'
-                # values, then do an extra check to remove any cells
-                # already selected for which the given value is in
-                # fact outside of the cell. This could happen if the
-                # cells are not rectangular (e.g. for curvilinear
-                # latitudes and longitudes array).
+                # If there are exactly two 2-d constructs, both with
+                # cell bounds and both with 'cf.contains' values, then
+                # do an extra check to remove any cells already
+                # selected for which the given value is in fact
+                # outside of the cell. This could happen if the cells
+                # are not rectilinear (e.g. for curvilinear latitudes
+                # and longitudes arrays).
                 if n_items == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
@@ -626,7 +689,8 @@ class FieldDomain:
             if ind is not None:
                 mask_component_shape = []
                 masked_subspace_size = 1
-                ind = np.array(ind)
+                # TODONUMPY2: https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+                ind = np.array(ind, copy=False)
 
                 for i, (axis, start, stop) in enumerate(
                     zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
@@ -634,28 +698,35 @@ class FieldDomain:
                     if data_axes and axis not in data_axes:
                         continue
 
-                    if indices[axis] == slice(None):
-                        if compress:
-                            # Create a compressed index for this axis
-                            size = stop - start + 1
-                            index = sorted(set(ind[i]))
-                        elif envelope:
-                            # Create an envelope index for this axis
-                            stop += 1
-                            size = stop - start
-                            index = slice(start, stop)
-                        elif full:
-                            # Create a full index for this axis
-                            start = 0
-                            stop = domain_axes[axis].get_size()
-                            size = stop - start
-                            index = slice(None)
-                        else:
-                            raise ValueError(
-                                "Must have mode full, envelope or compress"
-                            )  # pragma: no cover
+                    if compress:
+                        # Create a compressed index for this axis
+                        size = stop - start + 1
+                        index = sorted(set(ind[i]))
+                    elif envelope:
+                        # Create an envelope index for this axis
+                        stop += 1
+                        size = stop - start
+                        index = slice(start, stop)
+                    elif full:
+                        # Create a full index for this axis
+                        start = 0
+                        stop = domain_axes[axis].get_size()
+                        size = stop - start
+                        index = slice(None)
+                    else:
+                        raise ValueError(
+                            "Must have mode full, envelope, or compress"
+                        )  # pragma: no cover
 
-                        indices[axis] = index
+                    # Overwrite the placeholder value of None
+                    if indices[axis] is not None:
+                        raise ValueError(
+                            "This error means that there is a bug: The "
+                            "'indices' dictionary should contain None for "
+                            "each axis with an 'ind'."
+                        )
+
+                    indices[axis] = index
 
                     mask_component_shape.append(size)
                     masked_subspace_size *= size
@@ -663,11 +734,114 @@ class FieldDomain:
 
                 create_mask = (
                     ancillary_mask
+                    and halo is None
                     and data_axes
                     and ind.shape[1] < masked_subspace_size
                 )
             else:
                 create_mask = False
+
+            # --------------------------------------------------------
+            # Add a halo to the subspaced axes
+            # --------------------------------------------------------
+            if halo:
+                # Note: We're about to make 'indices' inconsistent
+                #       with 'ind', but that's OK because we're not
+                #       going to use 'ind' again since 'create_mask'
+                #       is False.
+                for axis in item_axes:
+                    index = indices[axis]
+                    size = domain_axes[axis].get_size()
+
+                    try:
+                        # Is index a cyclic slice?
+                        index = normalize_cyclic_slice(index, size)
+                    except IndexError:
+                        # Non-cyclic index
+                        #
+                        # Either a slice or a list/1-d array of
+                        # int/bool.
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(1, 3)                       -> [0, 1, 2, 3]
+                        #   slice(1, 4, 2)                    -> [0, 1, 3, 4]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   [1, 2]                            -> [0, 1, 2, 3]
+                        #   [1, 3]                            -> [0, 1, 3, 4]
+                        #   [2, 1]                            -> [3, 2, 1, 0]
+                        #   [3, 1]                            -> [4, 3, 1, 0]
+                        #   [False, True, False, True, False] -> [0, 1, 3, 4]
+                        index = normalize_index((index,), (size,))[0]
+                        if isinstance(index, slice):
+                            step = index.step
+                            increasing = step is None or step > 0
+                            index = np.arange(size)[index]
+                        else:
+                            if is_dask_collection(index):
+                                # Convert dask to numpy, and bool to int.
+                                index = np.asanyarray(index)
+                                index = normalize_index((index,), (size,))[0]
+
+                            increasing = index[0] <= index[-1]
+
+                        # Convert 'index' to a list (which will
+                        # exclusively contain non-negative integers)
+                        index = index.tolist()
+
+                        # Extend the list at each end
+                        mn = min(index)
+                        mx = max(index)
+                        if increasing:
+                            # "Increasing" sequence: Put smaller
+                            # indices in the left hand halo, and
+                            # larger ones in the right hand halo
+                            left = range(max(*(0, mn - halo)), mn)
+                            right = range(mx + 1, min(*(mx + 1 + halo, size)))
+                        else:
+                            # "Decreasing" sequence: Put larger
+                            # indices in the left hand halo, and
+                            # smaller ones in the right hand halo
+                            left = range(min(*(size - 1, mx + halo)), mx, -1)
+                            right = range(
+                                mn - 1, max(*(mn - 1 - halo, -1)), -1
+                            )
+
+                        index[:0] = left
+                        index.extend(right)
+                    else:
+                        # Cyclic slice index
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(-1, 2)     -> slice(-2, 3)
+                        #   slice(1, -2, -1) -> slice(2, -3, -1)
+                        start = index.start
+                        stop = index.stop
+                        step = index.step
+                        if step not in (1, -1):
+                            # This restriction is due to the fact that
+                            # the extended index is a slice (rather
+                            # than a list of integers), and so we
+                            # can't represent the uneven spacing that
+                            # would be required if abs(step) != 1.
+                            # Note that cyclic slices created by this
+                            # method will always have a step of 1.
+                            raise ValueError(
+                                "A cyclic slice index can only have halos if "
+                                f"it has step 1 or -1. Got {index!r}"
+                            )
+
+                        if step > 0:
+                            # Increasing cyclic slice
+                            start = max(start - halo, stop - size)
+                            stop = min(stop + halo, size + start)
+                        else:
+                            # Decreasing cyclic slice
+                            start = min(start + halo, size + stop)
+                            stop = max(stop - halo, start - size)
+
+                        index = slice(start, stop, step)
+
+                    indices[axis] = index
 
             # Create an ancillary mask for these axes
             if debug:
