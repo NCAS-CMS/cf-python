@@ -1967,7 +1967,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
         if cyclic and isinstance(index, slice):
             # Check for a cyclic slice
             try:
-                index = normalize_cyclic_slice(index, size)
+                index = normalize_slice(index, size, cyclic=True)
             except IndexError:
                 # Non-cyclic slice
                 pass
@@ -2030,12 +2030,11 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     return parsed_indices, roll
 
 
-def normalize_cyclic_slice(index, size):
-    """Normalise a cyclic slice.
+def normalize_slice(index, size, cyclic=False):
+    """Normalise a slice.
 
-    If the *index* is found to be a cyclic slice then a normalised
-    copy if it is returned. If a non-cyclic slice *index* is found
-    then an `IndexError` is raised.
+    If *index* is not a slice, or *cyclic* is True and *index* is not
+    a cylcic slice, then an `IndexError` is raised.
 
     .. versionadded:: NEXTRELEASE
 
@@ -2047,32 +2046,48 @@ def normalize_cyclic_slice(index, size):
         size: `int`
             The size of the axis to which the *index* applies.
 
+        cyclic: `bool`
+            If True then normalise a cyclic slice, and raise an
+            exception if the *index* is a not a cyclic slice.
+
     :Returns:
 
         `slice`
-            The normalised cyclic slice.
+            The normalised slice.
 
     **Examples**
 
-    >>> cf.normalize_cyclic_slice(slice(-2, 3), 8)
+    >>> cf.normalize_slice(slice(1, 4), 8)
+    slice(1, 4, 1)
+    >>> cf.normalize_slice(slice(None), 8)
+    slice(0, 8, 1)
+    >>> cf.normalize_slice(slice(6, None, -1), 8)
+    slice(6, None, -1)
+    >>> cf.normalize_slice(slice(-2, 4), 8)
+    slice(6, 4, 1)
+
+    >>> cf.normalize_slice([1, 2], 8)
+    IndexError: [1, 2] is not a slice
+
+    >>> cf.normalize_slice(slice(-2, 3), 8, cyclic=True)
     slice(-2, 3, 1)
-    >>> cf.normalize_cyclic_slice(slice(6, 3), 8)
+    >>> cf.normalize_slice(slice(6, 3), 8, cyclic=True)
     slice(-2, 3, 1)
 
-    >>> cf.normalize_cyclic_slice(slice(2, -3, -1), 8)
+    >>> cf.normalize_slice(slice(2, -3, -1), 8, cyclic=True)
     slice(2, -3, -1)
-    >>> cf.normalize_cyclic_slice(slice(2, 5, -1), 8)
+    >>> cf.normalize_slice(slice(2, 5, -1), 8, cyclic=True)
     slice(2, -3, -1)
 
-    >>> cf.normalize_cyclic_slice(slice(1, 6), 8)
+    >>> cf.normalize_slice(slice(1, 6), 8, cyclic=True)
     IndexError: slice(1, 6, None) is not a cyclic slice
-    >>> cf.normalize_cyclic_slice([1, 2, 3, 4], 8)
+    >>> cf.normalize_slice([1, 2, 3, 4], 8, cyclic=True)
     IndexError: [1, 2, 3, 4] is not a cyclic slice
 
     """
     if not isinstance(index, slice):
         step = 0
-    else:
+    elif cyclic:
         start = index.start
         stop = index.stop
         step = index.step
@@ -2108,13 +2123,23 @@ def normalize_cyclic_slice(index, size):
                 # 3:6:-1 => 3:-4:-1
                 # 3:9:-1 => 3:-1:-1
                 stop -= size
+    else:
+        start, stop, step = index.indices(size)
+        if step < 0 and stop < 0:
+            stop = None
+
+        # Return the normalized non-cyclic slice
+        return slice(start, stop, step)
 
     if not (
         (step > 0 and start < 0 and stop > 0)
         or (step < 0 and start > 0 and stop < 0)
     ):
-        raise IndexError(f"{index!r} is not a cyclic slice")
+        raise IndexError(
+            f"{index!r} is not a {'cyclic ' if cyclic else ''}slice"
+        )
 
+    # Return the normalized cyclic slice
     return slice(start, stop, step)
 
 

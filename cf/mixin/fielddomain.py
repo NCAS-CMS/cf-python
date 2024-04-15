@@ -16,7 +16,7 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     bounds_combination_mode,
-    normalize_cyclic_slice,
+    normalize_slice,
 )
 from ..query import Query
 from ..units import Units
@@ -254,7 +254,7 @@ class FieldDomain:
         """
         debug = is_log_level_debug(logger)
 
-        # Parse mode
+        # Parse mode and halo
         n_mode = len(mode)
         if not n_mode:
             mode = None
@@ -423,8 +423,7 @@ class FieldDomain:
                     if envelope or full:
                         # Set ind
                         size = domain_axes[axis].get_size()
-                        d = np.arange(size)
-                        ind = (d[value],)
+                        ind = (np.arange(size)[value],)
                         # Placeholder which will be overwritten later
                         index = None
 
@@ -491,7 +490,7 @@ class FieldDomain:
                     if full:
                         # Set ind
                         try:
-                            index = normalize_cyclic_slice(index, size)
+                            index = normalize_slice(index, size, cyclic=True)
                         except IndexError:
                             # Index is not a cyclic slice
                             ind = (np.arange(size)[index],)
@@ -747,73 +746,43 @@ class FieldDomain:
             if halo:
                 # Note: We're about to make 'indices' inconsistent
                 #       with 'ind', but that's OK because we're not
-                #       going to use 'ind' again since 'create_mask'
-                #       is False.
+                #       going to use 'ind' again as 'create_mask' is
+                #       False.
                 for axis in item_axes:
                     index = indices[axis]
                     size = domain_axes[axis].get_size()
 
                     try:
                         # Is index a cyclic slice?
-                        index = normalize_cyclic_slice(index, size)
+                        index = normalize_slice(index, size, cyclic=True)
                     except IndexError:
-                        # Non-cyclic index
-                        #
-                        # Either a slice or a list/1-d array of
-                        # int/bool.
-                        #
-                        # E.g. for halo=1 and size=5:
-                        #   slice(1, 3)                       -> [0, 1, 2, 3]
-                        #   slice(1, 4, 2)                    -> [0, 1, 3, 4]
-                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
-                        #   [1, 2]                            -> [0, 1, 2, 3]
-                        #   [1, 3]                            -> [0, 1, 3, 4]
-                        #   [2, 1]                            -> [3, 2, 1, 0]
-                        #   [3, 1]                            -> [4, 3, 1, 0]
-                        #   [False, True, False, True, False] -> [0, 1, 3, 4]
-                        index = normalize_index((index,), (size,))[0]
-                        if isinstance(index, slice):
-                            step = index.step
-                            increasing = step is None or step > 0
-                            index = np.arange(size)[index]
+                        try:
+                            index = normalize_slice(index, size)
+                        except IndexError:
+                            # Index is not a slice
+                            cyclic = False
                         else:
-                            if is_dask_collection(index):
-                                # Convert dask to numpy, and bool to int.
-                                index = np.asanyarray(index)
-                                index = normalize_index((index,), (size,))[0]
-
-                            increasing = index[0] <= index[-1]
-
-                        # Convert 'index' to a list (which will
-                        # exclusively contain non-negative integers)
-                        index = index.tolist()
-
-                        # Extend the list at each end
-                        mn = min(index)
-                        mx = max(index)
-                        if increasing:
-                            # "Increasing" sequence: Put smaller
-                            # indices in the left hand halo, and
-                            # larger ones in the right hand halo
-                            left = range(max(*(0, mn - halo)), mn)
-                            right = range(mx + 1, min(*(mx + 1 + halo, size)))
-                        else:
-                            # "Decreasing" sequence: Put larger
-                            # indices in the left hand halo, and
-                            # smaller ones in the right hand halo
-                            left = range(min(*(size - 1, mx + halo)), mx, -1)
-                            right = range(
-                                mn - 1, max(*(mn - 1 - halo, -1)), -1
+                            # Index is a non-cyclic slice, but if the
+                            # axis is cyclic then it could become a
+                            # cyclic slice once the halo is added.
+                            cyclic = self.iscyclic(axis)
+                    else:
+                        # Index is a cyclic slice
+                        cyclic = self.iscyclic(axis)
+                        if not cyclic:
+                            raise IndexError(
+                                "Can't take a cyclic slice of a non-cyclic "
+                                "axis"
                             )
 
-                        index[:0] = left
-                        index.extend(right)
-                    else:
-                        # Cyclic slice index
+                    if cyclic:
+                        # Cyclic slice, or potentially cyclic slice.
                         #
                         # E.g. for halo=1 and size=5:
-                        #   slice(-1, 2)     -> slice(-2, 3)
-                        #   slice(1, -2, -1) -> slice(2, -3, -1)
+                        #   slice(0, 2)        -> slice(-1, 3)
+                        #   slice(-1, 2)       -> slice(-2, 3)
+                        #   slice(1, None, -1) -> slice(2, -2, -1)
+                        #   slice(1, -2, -1)   -> slice(2, -3, -1)
                         start = index.start
                         stop = index.stop
                         step = index.step
@@ -825,10 +794,13 @@ class FieldDomain:
                             # would be required if abs(step) != 1.
                             # Note that cyclic slices created by this
                             # method will always have a step of 1.
-                            raise ValueError(
+                            raise IndexError(
                                 "A cyclic slice index can only have halos if "
                                 f"it has step 1 or -1. Got {index!r}"
                             )
+
+                        if step < 0 and stop is None:
+                            stop = -1
 
                         if step > 0:
                             # Increasing cyclic slice
@@ -840,7 +812,88 @@ class FieldDomain:
                             stop = max(stop - halo, start - size)
 
                         index = slice(start, stop, step)
+                    else:
+                        # A list/1-d array of int/bool, or a
+                        # non-cyclic slice that can't beconme cyclic.
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(1, 3)                       -> [0, 1, 2, 3]
+                        #   slice(1, 4, 2)                    -> [0, 1, 3, 4]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   [1, 2]                            -> [0, 1, 2, 3]
+                        #   [1, 3]                            -> [0, 1, 3, 4]
+                        #   [2, 1]                            -> [3, 2, 1, 0]
+                        #   [3, 1]                            -> [4, 3, 1, 0]
+                        #   [1, 3, 2]                         -> [0, 1, 3, 2, 1]
+                        #   [False, True, False, True, False] -> [0, 1, 3, 4]
+                        if isinstance(index, slice):
+                            index = np.arange(size)[index]
+                        else:
+                            if is_dask_collection(index):
+                                index = np.asanyarray(index)
 
+                            index = normalize_index((index,), (size,))[0]
+
+                        # Find the left-most and right-most elements
+                        # ('iL' and iR') of the sequence of positive
+                        # integers, and whether the sequence is
+                        # increasing or decreasing at each end
+                        # ('increasing_L' and 'increasing_R')
+                        #
+                        # For instance:
+                        #
+                        # ------------ -- -- ------------ ------------
+                        # index        iL iR increasing_L increasing_R
+                        # ------------ -- -- ------------ ------------
+                        # [1, 2, 3, 4]  1  4 True         True
+                        # [4, 3, 2, 1]  4  1 False        False
+                        # [2, 1, 3, 4]  2  4 False        True
+                        # [1, 2, 4, 3]  1  3 True         False
+                        # [2, 2, 3, 4]  2  4 True         True
+                        # [2, 2, 4, 3]  2  3 True         False
+                        # [3, 3, 4, 4]  3  4 True         True
+                        # [4, 4, 3, 3]  4  3 False        False
+                        # [10]         10 10 True         True
+                        # ------------ -- -- ------------ ------------
+                        n_index = index.size
+                        if n_index == 1:
+                            iL = index[0]
+                            iR = iL
+                            increasing_L = True
+                            increasing_R = True
+                        elif n_index > 1:
+                            iL = index[0]
+                            iR = index[-1]
+                            increasing_L = iL <= index[np.argmax(index != iL)]
+                            increasing_R = (
+                                iR >= index[-1 - np.argmax(index[::-1] != iR)]
+                            )
+                        else:
+                            raise IndexError(
+                                "Can't add a halo to a zero-sized index: "
+                                f"{index}"
+                            )
+
+                        # Extend the list at each end, but not
+                        # exceeding the axis limits.
+                        if increasing_L:
+                            left = range(max(*(0, iL - halo)), iL)
+                        else:
+                            left = range(min(*(size - 1, iL + halo)), iL, -1)
+
+                        if increasing_R:
+                            right = range(iR + 1, min(*(iR + 1 + halo, size)))
+                        else:
+                            right = range(
+                                iR - 1, max(*(iR - 1 - halo, -1)), -1
+                            )
+
+                        index = index.tolist()
+                        index[:0] = left
+                        index.extend(right)
+
+                    # Reset the returned index
                     indices[axis] = index
 
             # Create an ancillary mask for these axes

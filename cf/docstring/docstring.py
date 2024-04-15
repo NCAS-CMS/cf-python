@@ -639,8 +639,7 @@ _docstring_substitution_definitions = {
                 ````            If no positional arguments are
                                 provided then assume the
                                 ``'compress'`` mode of operation with
-                                no halo added to the subspaced
-                                axes.
+                                no halo added to the subspaced axes.
 
                 ``mode``        Define the mode of operation with no
                                 halo added to the subspaced axes.
@@ -651,9 +650,7 @@ _docstring_substitution_definitions = {
 
                 ``halo``        Assume the ``'compress'`` mode of
                                 operation and define a halo to be
-                                added to the subspaced axes. Note that
-                                ``halo`` is equivalent to
-                                ``'compress', halo``.
+                                added to the subspaced axes.
                 ==============  ======================================""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)

@@ -1117,9 +1117,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
-        * Subspace criteria may be provided for size 1 domain axes that
-          are not spanned by the field construct's data.
-
         * Explicit indices may also be assigned to a domain axis
           identified by a metadata construct, with either a Python `slice`
           object, or a sequence of integers or booleans.

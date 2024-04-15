@@ -1561,9 +1561,49 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(g.construct("aux_x").array, 160)
                 self.assertEqual(g.construct("aux_y").array, 3)
 
-        # Halos
-        x0 = f.dimension_coordinate("X").array
-        for index in (cf.wi(70, 200), slice(2, 6), [2, 3, 4, 5]):
+        # Halos: monotonic increasing sequence
+        index = [2, 3, 4, 5]
+        indices = f.indices(0, grid_longitude=index)
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 4))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [80, 120, 160, 200]).all())
+
+        indices = f.indices(1, grid_longitude=index)
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 6))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [40, 80, 120, 160, 200, 240]).all())
+
+        indices = f.indices(999, grid_longitude=index)
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == f.dimension_coordinate("X").array).all())
+
+        # Halos: non-monotonic sequence
+        index = [2, 3, 4, 1]
+        indices = f.indices(0, grid_longitude=index)
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 4))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [80, 120, 160, 40]).all())
+
+        indices = f.indices(1, grid_longitude=index)
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 6))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [40, 80, 120, 160, 40, 0]).all())
+
+        for halo in (2, 999):
+            indices = f.indices(halo, grid_longitude=index)
+            g = f[indices]
+            self.assertEqual(g.shape, (1, 10, 7))
+            x = g.dimension_coordinate("X").array
+            self.assertTrue((x == [0, 40, 80, 120, 160, 40, 0]).all())
+
+        # Halos: cyclic slice increasing
+        for index in (cf.wi(70, 200), slice(2, 6)):
             indices = f.indices(0, grid_longitude=index)
             g = f[indices]
             self.assertEqual(g.shape, (1, 10, 4))
@@ -1580,27 +1620,9 @@ class FieldTest(unittest.TestCase):
             g = f[indices]
             self.assertEqual(g.shape, (1, 10, 9))
             x = g.dimension_coordinate("X").array
-            self.assertTrue((x == x0).all())
-
-        # Halos: non-monotonic sequence
-        index = [2, 3, 4, 1]
-        indices = f.indices(0, grid_longitude=index)
-        g = f[indices]
-        self.assertEqual(g.shape, (1, 10, 4))
-        x = g.dimension_coordinate("X").array
-        self.assertTrue((x == [80, 120, 160, 40]).all())
-
-        indices = f.indices(1, grid_longitude=index)
-        g = f[indices]
-        self.assertEqual(g.shape, (1, 10, 6))
-        x = g.dimension_coordinate("X").array
-        self.assertTrue((x == [200, 80, 120, 160, 40, 0]).all())
-
-        indices = f.indices(2, grid_longitude=index)
-        g = f[indices]
-        self.assertEqual(g.shape, (1, 10, 7))
-        x = g.dimension_coordinate("X").array
-        self.assertTrue((x == [240, 200, 80, 120, 160, 40, 0]).all())
+            self.assertTrue(
+                (x == [-120, -80, -40, 0, 40, 80, 120, 160, 200]).all()
+            )
 
         # Halos: cyclic slice increasing
         index = cf.wi(-170, 40)
