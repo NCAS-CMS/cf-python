@@ -916,13 +916,15 @@ class Query:
 
             open_lower, open_upper = self._open_bounds
             if open_lower:
-                lower_bound = (x > value[0])
+                lower_bound = x > value[0]
             else:
-                lower_bound = (x >= value[0])
+                lower_bound = x >= value[0]
+
             if open_upper:
-                upper_bound = (x < value[1])
+                upper_bound = x < value[1]
             else:
-                upper_bound = (x <= value[1])
+                upper_bound = x <= value[1]
+
             return lower_bound & upper_bound
 
         if operator == "eq":
