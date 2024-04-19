@@ -1,7 +1,7 @@
-version NEXT
-------------
+version 3.16.2
+--------------
 
-**2024-??-??**
+**2024-04-??**
 
 * Added spherical regridding to discrete sampling geometry destination
   grids (https://github.com/NCAS-CMS/cf-python/issues/716)
