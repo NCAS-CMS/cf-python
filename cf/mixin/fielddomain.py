@@ -513,7 +513,15 @@ class FieldDomain:
                         logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     index = item == value
-                    index = index.to_dask_array()
+
+                    # Performance: Convert the 1-d 'index' to a numpy
+                    #              array of bool.
+                    #
+                    # This is beacuse Dask can be *very* slow at
+                    # instantiation time when the 'index' is a Dask
+                    # array, in which case contents of 'index' are
+                    # unknown.
+                    index = np.asanyarray(index)
 
                     if envelope or full:
                         # Set ind
@@ -525,7 +533,10 @@ class FieldDomain:
 
                         # Placeholder which will be overwritten later
                         index = None
-
+                    else:
+                        # Convert bool to int, to save memory.
+                        size = domain_axes[axis].get_size()
+                        index = normalize_index(index, (size,))[0]
                 else:
                     raise ValueError(
                         "Must specify a domain axis construct or a "
@@ -833,7 +844,7 @@ class FieldDomain:
                             if is_dask_collection(index):
                                 index = np.asanyarray(index)
 
-                            index = normalize_index((index,), (size,))[0]
+                            index = normalize_index(index, (size,))[0]
 
                         # Find the left-most and right-most elements
                         # ('iL' and iR') of the sequence of positive

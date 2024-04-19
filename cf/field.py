@@ -9052,7 +9052,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # spanned by the data
         if len(axis_indices) > len(data_axes):
             for axis, index in axis_indices.items():
-                if axis in data_axes or index == slice(None):
+                if axis in data_axes or (
+                    isinstance(index, slice) and index == slice(None)
+                ):
                     continue
 
                 import dask.array as da
