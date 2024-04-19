@@ -1,7 +1,7 @@
-version NEXT
-------------
+version 3.16.2
+--------------
 
-**2024-??-??**
+**2024-04-??**
 
 * Added spherical regridding to discrete sampling geometry destination
   grids (https://github.com/NCAS-CMS/cf-python/issues/716)
@@ -26,6 +26,9 @@ version NEXT
   (https://github.com/NCAS-CMS/cf-python/issues/737)
 * New keyword parameters to `cf.wi`: ``open_lower`` and ``open_upper``
   (https://github.com/NCAS-CMS/cf-python/issues/740)
+* Fix bug in `cf.aggregate` that sometimes put a null transpose
+  operation into the Dask graph when one was not needed
+  (https://github.com/NCAS-CMS/cf-python/issues/754)
 
 ----
 

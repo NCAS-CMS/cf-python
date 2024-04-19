@@ -13569,7 +13569,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         any other latitude-longitude grid, including other UGRID
         meshes and DSG feature types.
 
-        **DSG feature types*
+        **DSG feature types**
 
         Data on any latitude-longitude grid (including tripolar and
         UGRID meshes) may be regridded to any DSG feature type.
@@ -13721,7 +13721,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             dst_z: optional
                 If `None`, the default, then the regridding is 2-d in
@@ -13735,7 +13735,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -13749,11 +13749,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{verbose: `int` or `str` or `None`, optional}}
 
@@ -14020,7 +14020,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             dst_z: optional
                 If not `None` then *dst_z* specifies the identity of a
@@ -14030,7 +14030,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -14042,11 +14042,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{inplace: `bool`, optional}}
 

@@ -290,7 +290,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         dst_z: optional
             The identity of the destination grid vertical coordinates
@@ -301,7 +301,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         z: optional
             The *z* parameter is a convenience that may be used to
@@ -311,7 +311,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
@@ -320,7 +320,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
     :Returns:
 
@@ -773,7 +773,7 @@ def spherical_coords_to_domain(
             ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
             returned by this function.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         domain_class: `Domain` class
             The domain class used to create the new `Domain` instance.
@@ -962,7 +962,7 @@ def Cartesian_coords_to_domain(dst, dst_z=None, domain_class=None):
             ``d.coordinate(dst_z)``, where ``d`` is the `Domain`
             returned by this function.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         domain_class: `Domain` class
             The domain class used to create the new `Domain` instance.
@@ -988,14 +988,14 @@ def Cartesian_coords_to_domain(dst, dst_z=None, domain_class=None):
 
     if dst_z is not None:
         # Check that there are vertical coordinates, and replace
-        # 'dst_z' with its construct identifier.
+        # 'dst_z' with the identifier of its domain axis construct.
         z_key = d.coordinate(dst_z, key=True, default=None)
         if z_key is None:
             raise ValueError(
                 f"Could not find destination {dst_z!r} vertical coordinates"
             )
 
-        dst_z = z_key
+        dst_z = d.get_data_axes(z_key)[0]
 
     return d, axis_keys, dst_z
 
@@ -1026,7 +1026,7 @@ def get_grid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
     """
     if coord_sys == "spherical":
@@ -1106,13 +1106,13 @@ def spherical_grid(
             3-d and is defined by the unique construct returned by
             ``f.coordinate(src_z)``
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
             natural logarithm of vertical coordinates.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
     :Returns:
 
@@ -1453,13 +1453,13 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             If not `None` then *src_z* specifies the identity of a
             vertical coordinate construct of the source grid.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
         ln_z: `bool` or `None`, optional
             Whether or not the weights are to be calculated with the
             natural logarithm of vertical coordinates.
 
-            .. versionadded:: NEXTRELEASE
+            .. versionadded:: 3.16.2
 
     :Returns:
 
@@ -2112,7 +2112,6 @@ def create_esmpy_grid(grid, mask=None):
             #       masked/unmasked elements.
             grid_mask[...] = np.invert(mask).astype("int32")
 
-    #    print(esmpy_grid)
     return esmpy_grid
 
 
@@ -2229,7 +2228,7 @@ def create_esmpy_mesh(grid, mask=None):
 def create_esmpy_locstream(grid, mask=None):
     """Create an `esmpy.LocStream`.
 
-    .. versionadded:: NEXTRELEASE
+    .. versionadded:: 3.16.2
 
     .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`
 
@@ -3037,7 +3036,7 @@ def get_mesh(f):
 def get_dsg(f):
     """Get domain discrete sampling geometry information.
 
-    .. versionadded:: NEXTRELEASE
+    .. versionadded:: 3.16.2
 
     :Parameters:
 
@@ -3103,7 +3102,7 @@ def has_coordinate_arrays(grid):
 def set_grid_type(grid):
     """Set the ``type`` attribute of a `Grid` instance in-place.
 
-    .. versionadded:: NEXTRELEASE
+    .. versionadded:: 3.16.2
 
     :Parameters:
 
