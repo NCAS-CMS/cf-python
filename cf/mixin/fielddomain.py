@@ -2408,6 +2408,107 @@ class FieldDomain:
         # Return the construct key
         return out
 
+    def del_construct(self, *identity, default=ValueError(), **filter_kwargs):
+        """Remove a metadata construct.
+
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the field nor metadata
+        constructs, nor be referenced by any cell method
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
+
+        .. versionadded:: 3.16.2
+
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
+
+        :Parameters:
+
+            identity:
+                Select the unique construct that has the identity,
+                defined by its `!identities` method, that matches the
+                given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            default: optional
+                Return the value of the *default* parameter if the
+                data axes have not been set.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+        :Returns:
+
+                The removed metadata construct.
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.del_construct('time')
+        <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >
+        >>> f.del_construct('time')
+        Traceback (most recent call last):
+            ...
+        ValueError: Can't find unique construct to remove
+        >>> f.del_construct('time', default='No time')
+        'No time'
+        >>> f.del_construct('dimensioncoordinate1')
+        <{{repr}}DimensionCoordinate: longitude(8) degrees_east>
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), ncdim%lon(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+
+        """
+        # Need to re-define to overload this method since cfdm doesn't
+        # have the concept of cyclic axes, so have to update the
+        # register of cyclic axes when we delete a construct in cf.
+
+        # Get the relevant key first because it will be lost upon deletion.
+        key = self.construct_key(*identity, default=None, **filter_kwargs)
+        # Copy since should never change value of _cyclic attribute in-place
+        cyclic_axes = self._cyclic.copy()
+
+        deld_construct = super().del_construct(
+            *identity, default=default, **filter_kwargs)
+
+        # If the construct deleted was a cyclic axes, remove it from the set
+        # of stored cyclic axes, to update that appropriately. Do this
+        # afterwards because the deletion might not be successful and don't
+        # want to update the cyclic() set unless we know the deletion occurred.
+        if key in cyclic_axes:
+            # The below is to test that the construct was successfully deleted
+            if isinstance(default, Exception) or (
+                    not isinstance(default, Exception)
+                    and deld_construct != default
+            ):
+                cyclic_axes.remove(key)
+                self._cyclic = cyclic_axes
+                logger.info(
+                "Deleted a construct that corresponds to a cyclic axis "
+                    f"({key}), so it was removed from the cyclic() axes set."
+                )
+
     def set_coordinate_reference(
         self, coordinate_reference, key=None, parent=None, strict=True
     ):
