@@ -2572,6 +2572,30 @@ class FieldTest(unittest.TestCase):
         cm2 = f.cell_method("method:maximum")
         self.assertEqual(cm2.get_axes(), ("T",))
 
+    def test_Field_del_construct(self):
+        """Test the `del_construct` Field method."""
+        # Test a field without cyclic axes. These are equivalent tests to those
+        # in the cfdm test suite, to check the behaviour is the same in cf.
+        f = self.f1.copy()
+        print(f.cyclic())
+
+        self.assertIsInstance(
+            f.del_construct("auxiliarycoordinate1"), cf.AuxiliaryCoordinate
+        )
+
+        with self.assertRaises(ValueError):
+            f.del_construct("auxiliarycoordinate1")
+
+        self.assertIsNone(
+            f.del_construct("auxiliarycoordinate1", default=None)
+        )
+
+        self.assertIsInstance(
+            f.del_construct("measure:area"), cf.CellMeasure
+        )
+
+        # TODO test cyclic nature
+
     def test_Field_persist(self):
         """Test the `persist` Field method."""
         f = cf.example_field(0)
