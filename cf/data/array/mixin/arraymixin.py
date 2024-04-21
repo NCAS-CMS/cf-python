@@ -18,7 +18,7 @@ class ArrayMixin:
         """
         return NotImplemented
 
-    # REVIEW: active
+    # REVIEW: active: `_meta`: Moved to here from `FileArrayMixin`
     @property
     def _meta(self):
         """Normalize the array to an appropriate Dask meta object.

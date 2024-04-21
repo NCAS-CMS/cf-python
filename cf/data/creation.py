@@ -59,7 +59,7 @@ def to_dask(array, chunks, **from_array_options):
     if is_dask_collection(array):
         return array
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `to_dask`: set 'asanyarray'
     if hasattr(array, "to_dask_array"):
         try:
             return array.to_dask_array(chunks=chunks)
@@ -82,10 +82,8 @@ def to_dask(array, chunks, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    # REVIEW: active:
-    # REVIEW: getitem: The file lock has been push onto an `Array`
-    #                  object (in its `_get_array` method), rather
-    #                  than being set on the Dask array itself.
+    # REVIEW: active: `to_dask`:
+    # REVIEW: getitem:  `to_dask`: The file lock is now on the `Array` object (in its `_get_array` method), rather than being set on the Dask array itself.
     kwargs.setdefault("meta", getattr(array, "_meta", None))
 
     try:

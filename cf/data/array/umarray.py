@@ -7,7 +7,7 @@ from .abstract import Array
 from .mixin import FileArrayMixin, IndexMixin
 
 
-# REVIEW: h5: Replace "units/calendar" API with "attributes"
+# REVIEW: h5: `UMArray`: Replace units/calendar API with 'attributes'
 class UMArray(
     IndexMixin, FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array
 ):
@@ -171,7 +171,7 @@ class UMArray(
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -297,7 +297,7 @@ class UMArray(
             `None
 
         """
-        # REVIEW: getitem
+        # REVIEW: getitem: `_set_FillValue`
 
         if "FillValue" in attributes:
             return

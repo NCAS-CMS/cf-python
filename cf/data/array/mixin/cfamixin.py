@@ -36,7 +36,7 @@ class CFAMixin:
         }
         return instance
 
-    # REVIEW: h5: Replace "units/calendar" API with "attributes"
+    # REVIEW: h5: `__init__`: Replace units/calendar API with 'attributes'
     def __init__(
         self,
         filename=None,
@@ -225,7 +225,7 @@ class CFAMixin:
                 "substitutions", substitutions.copy(), copy=False
             )
 
-    # REVIEW: h5
+    # REVIEW: h5: `_parse_cfa`: Refactoring of code that used to be in `__init__`
     def _parse_cfa(self, x, term, substitutions):
         """Parse the CFA aggregation instructions.
 
@@ -466,7 +466,7 @@ class CFAMixin:
         """
         return self._get_component("fragment_shape")
 
-    # REVIEW: h5
+    # REVIEW: h5: `get_storage_options`
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing S3 fragment files.
 

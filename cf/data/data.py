@@ -44,7 +44,7 @@ from ..units import Units
 from .collapse import Collapse
 from .creation import generate_axis_identifiers, to_dask
 
-# REVIEW: getitem: import cf_asanyarray, cf_filled, cf_is_masked
+# REVIEW: getitem: `data.py`: import cf_asanyarray, cf_filled, cf_is_masked
 from .dask_utils import (
     _da_ma_allclose,
     cf_asanyarray,
@@ -103,7 +103,7 @@ _NONE = 0  # =   0b0000
 _ARRAY = 1  # =  0b0001
 _CACHE = 2  # =  0b0010
 _CFA = 4  # =    0b0100
-# REVIEW: active: Set the active storage status bit mask
+# REVIEW: active: `data.py`: Set the active storage status bit mask
 _ACTIVE = 8  # = 0b1000
 _ALL = 15  # =   0b1111
 
@@ -377,7 +377,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 source=source, _use_array=_use_array and array is not None
             )
             if _use_array:
-                # REVIEW: getitem: set new asanyarray keyword in to_dask_array
+                # REVIEW: getitem: `__init__`: set 'asanyarray'
                 try:
                     array = source.to_dask_array(asanyarray=False)
                 except (AttributeError, TypeError):
@@ -462,7 +462,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             except AttributeError:
                 pass
 
-        # REVIEW: active: set the active storage status to True only for Array subclasses
+        # REVIEW: active: `__init__`: set the active storage status to True for Array subclasses
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
             # compressed input arrays this will contain extra
@@ -484,7 +484,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         is_dask = is_dask_collection(array)
         custom["deterministic"] = not is_dask
 
-        # REVIEW: getitem: Set whether or not to call `np.asanyarray` on chunks to convert them to numpy arrays.
+        # REVIEW: getitem: `__init__`: Set whether or not to call `np.asanyarray` on chunks to convert them to numpy arrays.
         # Set whether or not to call `np.asanyarray` on chunks to
         # convert them to numpy arrays.
         if is_dask:
@@ -518,7 +518,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Reset the units
             self._Units = units
 
-        # REVIEW: getitem: set new asanyarray keyword in _set_dask
+        # REVIEW: getitem: `__init__`: set 'asanyarray'
         # Store the dask array
         self._set_dask(dx, clear=_NONE, asanyarray=None)
 
@@ -794,7 +794,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         TypeError: len() of unsized object
 
         """
-        # REVIEW: getitem: set new asanyarray keyword in to_dask_array
+        # REVIEW: getitem: `__len__`: set 'asanyarray'
+        # The dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         if math.isnan(dx.size):
             logger.debug("Computing data len: Performance may be degraded")
@@ -901,7 +903,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # ------------------------------------------------------------
         # Roll axes with cyclic slices
         # ------------------------------------------------------------
-        # REVIEW: getitem: TODO
+        # REVIEW: getitem: `__getitem__`: set 'asanyarray'
         if roll:
             # For example, if slice(-2, 3) has been requested on a
             # cyclic axis, then we roll that axis by two points and
@@ -961,8 +963,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "Non-orthogonal indexing has not yet been implemented"
             )
 
-        # REVIEW: active
-        # REVIEW: getitem
+        # REVIEW: active `__getitem__`
+        # REVIEW: getitem: `__getitem__`
         # ------------------------------------------------------------
         # Set the subspaced dask array
         #
@@ -1187,6 +1189,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return
 
+    # REVIEW: getitem: `__asanyarray__`: new property `__asanyarray__`
     @property
     def __asanyarray__(self):
         """Whether the chunks need conversion to a `numpy` array.
@@ -1203,7 +1206,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 `False` then do not do this.
 
         """
-        # REVIEW: getitem: New __asanyarray__ property.
         return self._custom.get("__asanyarray__", True)
 
     @property
@@ -1422,12 +1424,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-        # REVIEW: active: update the active storage status
+        # REVIEW: active: `_clear_after_dask_update`: update active storage status
         if clear & _ACTIVE:
             # Set active storage to False
             self._del_active_storage()
 
-    # REVIEW: getitem: Include new asanyarray keyword to _set_dask
+    # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
     def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
         """Set the dask array.
 
@@ -1491,7 +1493,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         custom = self._custom
         custom["dask"] = dx
-        # REVIEW: getitem: Set __asanyarray__ from within _set_dask.
+        # REVIEW: getitem: `_set_dask`: set '__asanyarray__'
         if asanyarray is not None:
             custom["__asanyarray__"] = bool(asanyarray)
 
@@ -1551,7 +1553,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._clear_after_dask_update(clear)
         return out
 
-    # REVIEW: active: Set the active storage status to False
+    # REVIEW: active: `_del_active_storage`: new method `_del_active_storage`
     def _del_active_storage(self):
         """Set the active storage reduction status to False.
 
@@ -1637,7 +1639,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
-    # REVIEW: active: set the active storage status
+    # REVIEW: active: `_set_active_storage`: new method `_set_active_storage`
     def _set_active_storage(self, value):
         """Set the active storage reduction status.
 
@@ -2621,7 +2623,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         else:
             axes = tuple(sorted(d._parse_axes(axes)))
 
-        # REVIEW: getitem: 'cf_percentile' has its own call to 'cf_asanyarray', so we can set 'asanyarray=False'.
+        # REVIEW: getitem: `percentile`: set 'asanyarray'
         # 'cf_percentile' has its own call to 'cf_asanyarray', so we
         # can set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
@@ -3122,7 +3124,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # TODO: check that this is OK
         dx = d.to_dask_array()
 
-        # REVIEW: getitem: rectify comment
+        # REVIEW: getitem: `percentile`: rectify comment
         # Cast to float to ensure that NaNs can be stored (so
         # map_overlap can correctly assign the halos)
         if dx.dtype != float:
@@ -3310,9 +3312,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # REVIEW: getitem: set asanyarray keyword for rechunk
-        # REVIEW: active: Do not change active storage status after a rechunk
-
+        # REVIEW: getitem: `rechunk`: set 'asanyarray'
         # Dask rechunking is essentially a wrapper for __getitem__
         # calls on the chunks, which means that we can use the same
         # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
@@ -3320,6 +3320,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
+        # REVIEW: active: `rechunk`: Do not change active storage status after a rechunk
         d._set_dask(
             dx, clear=_ALL ^ _ARRAY ^ _CACHE ^ _ACTIVE, asanyarray=True
         )
@@ -3372,8 +3373,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 f"Can't convert {units!r} values to date-time objects"
             )
 
-        # REVIEW: getitem: set asanyarray keyword for _asdatetime
         if not d._isdatetime():
+            # REVIEW: getitem: `_asdatetime`: set 'asanyarray'
             # 'cf_rt2dt' has its own call to 'cf_asanyarray', so we
             # can set 'asanyarray=False'.
             dx = d.to_dask_array(asanyarray=False)
@@ -3430,8 +3431,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 f"Can't convert {units!r} values to numeric reference times"
             )
 
-        # REVIEW: getitem: set asanyarray keyword for _asreftime
         if d._isdatetime():
+            # REVIEW: getitem: `_asreftime`: set 'asanyarray'
             # 'cf_dt2rt' has its own call to 'cf_asanyarray', so we
             # can set 'asanyarray=False'.
             dx = d.to_dask_array(asanyarray=False)
@@ -4044,7 +4045,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 f"the shape of the regrid operator: {operator.src_shape}"
             )
 
-        # REVIEW: getitem: set asanyarray keyword for _regrid
+        # REVIEW: getitem: `_regrid`: set 'asanyarray'
         # 'regrid' has its own calls to 'cf_asanyarray', so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -4998,7 +4999,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    # REVIEW: active: return the active storage status
+    # REVIEW: active: `active_storage`: new property `active_storage`
     @property
     def active_storage(self):
         """Whether or not active storage reductions are possible.
@@ -5075,7 +5076,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         cf_func = partial(cf_units, from_units=old_units, to_units=value)
 
-        
         # REVIEW: getitem: `Units`: set 'asanyarray'
         # 'cf_units' has its own call to 'cf_asanyarray', so we can
         # set 'asanyarray=False'.
@@ -5148,7 +5148,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `dtype`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.    
+        # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         return dx.dtype
 
@@ -5310,7 +5310,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `nbytes`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.     
+        # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         if math.isnan(dx.size):
             logger.debug("Computing data nbytes: Performance may be degraded")
@@ -5347,7 +5347,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `ndim`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.  
+        # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         return dx.ndim
 
@@ -5372,7 +5372,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `npartitions`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.  
+        # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).npartitions
 
     @property
@@ -5396,7 +5396,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `numblocks` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.  
+        # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).numblocks
 
     @property
@@ -5471,7 +5471,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         # REVIEW: getitem: `size` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.  
+        # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         size = dx.size
         if math.isnan(size):
@@ -6748,7 +6748,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             raise ValueError()
 
         units = self._Units
-        
+
         # REVIEW: getitem: `get_deterministic_name`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
@@ -6818,7 +6818,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         out = set()
-        
+
         # REVIEW: getitem: `get_filenames`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
@@ -8400,7 +8400,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # in the result.
         d.soften_mask()
 
-        # REVIEW: getitem: `unique`: set 'asanyarray'   
+        # REVIEW: getitem: `unique`: set 'asanyarray'
         # The applicable chunk function will have its own call to
         # 'cf_asanyarray', so we can set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
@@ -10304,7 +10304,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self.override_calendar(None, inplace=True)
         return calendar
 
-    # REVIEW: getitem
     def del_file_location(self, location):
         """Remove a file location in-place.
 
@@ -10338,7 +10337,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # REVIEW: getitem: `del_file_location`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'. 
+        # 'asanyarray=False'.
         dsk = self.todict(asanyarray=False)
         for key, a in dsk.items():
             try:
@@ -11775,7 +11774,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    # REVIEW: getitem
     def cull_graph(self):
         """Remove unnecessary tasks from the dask graph in-place.
 
@@ -11813,6 +11811,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
+        # REVIEW: getitem: `cull_graph`: set 'asanyarray'
         dx = self.to_dask_array(asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
@@ -12084,7 +12083,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `todict`: new keywords 'apply_mask_hardness', 'asanyarray'
     def todict(
         self, optimize_graph=True, apply_mask_hardness=False, asanyarray=None
     ):

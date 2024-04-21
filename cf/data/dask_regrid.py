@@ -1,7 +1,7 @@
 """Regridding functions used within a dask graph."""
 import numpy as np
 
-# REVIEW: getitem
+# REVIEW: getitem: `regrid.py`
 from .dask_utils import cf_asanyarray
 
 
@@ -176,7 +176,7 @@ def regrid(
     """
     weights, dst_mask = weights_dst_mask
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `regrid`: convert a to a usable array
     a = cf_asanyarray(a)
     if dst_mask is not None:
         dst_mask = cf_asanyarray(dst_mask)

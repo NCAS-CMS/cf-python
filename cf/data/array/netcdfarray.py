@@ -1,4 +1,4 @@
-# REVIEW: h5
+# REVIEW: h5: `NetCDFArray`: Replaced by `NetCDF4Array`
 class NetCDFArray:
     """A netCDF array accessed with `netCDF4`.
 
