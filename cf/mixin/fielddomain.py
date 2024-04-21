@@ -2509,6 +2509,8 @@ class FieldDomain:
                     f"({key}), so it was removed from the cyclic() axes set."
                 )
 
+        return deld_construct
+
     def set_coordinate_reference(
         self, coordinate_reference, key=None, parent=None, strict=True
     ):
