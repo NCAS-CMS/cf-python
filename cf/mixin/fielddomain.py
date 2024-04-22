@@ -2490,7 +2490,8 @@ class FieldDomain:
         cyclic_axes = self._cyclic.copy()
 
         deld_construct = super().del_construct(
-            *identity, default=default, **filter_kwargs)
+            *identity, default=default, **filter_kwargs
+        )
 
         # If the construct deleted was a cyclic axes, remove it from the set
         # of stored cyclic axes, to update that appropriately. Do this
@@ -2499,13 +2500,13 @@ class FieldDomain:
         if key in cyclic_axes:
             # The below is to test that the construct was successfully deleted
             if isinstance(default, Exception) or (
-                    not isinstance(default, Exception)
-                    and deld_construct != default
+                not isinstance(default, Exception)
+                and deld_construct != default
             ):
                 cyclic_axes.remove(key)
                 self._cyclic = cyclic_axes
                 logger.info(
-                "Deleted a construct that corresponds to a cyclic axis "
+                    "Deleted a construct that corresponds to a cyclic axis "
                     f"({key}), so it was removed from the cyclic() axes set."
                 )
 

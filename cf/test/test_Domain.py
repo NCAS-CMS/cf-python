@@ -410,9 +410,7 @@ class DomainTest(unittest.TestCase):
             d.del_construct("auxiliarycoordinate1", default=None)
         )
 
-        self.assertIsInstance(
-            d.del_construct("measure:area"), cf.CellMeasure
-        )
+        self.assertIsInstance(d.del_construct("measure:area"), cf.CellMeasure)
 
         # NOTE: this test will fail presently because of a bug which means
         # that Field.domain doesn't inherit the cyclic() axes of the
@@ -427,10 +425,9 @@ class DomainTest(unittest.TestCase):
             e.del_construct("dimensioncoordinate2"), cf.DimensionCoordinate
         )
         self.assertEqual(e.cyclic(), set(("domainaxis2",)))
-        self.assertIsInstance(
-            e.del_construct("domainaxis2"), cf.DomainAxis
-        )
+        self.assertIsInstance(e.del_construct("domainaxis2"), cf.DomainAxis)
         self.assertEqual(e.cyclic(), set())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

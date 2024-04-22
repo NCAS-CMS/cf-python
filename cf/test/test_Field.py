@@ -2589,9 +2589,7 @@ class FieldTest(unittest.TestCase):
             f.del_construct("auxiliarycoordinate1", default=None)
         )
 
-        self.assertIsInstance(
-            f.del_construct("measure:area"), cf.CellMeasure
-        )
+        self.assertIsInstance(f.del_construct("measure:area"), cf.CellMeasure)
 
         # Test a field with cyclic axes, to ensure the cyclic() set is
         # updated accordingly if a cyclic axes is the one removed.
@@ -2602,9 +2600,7 @@ class FieldTest(unittest.TestCase):
             g.del_construct("dimensioncoordinate2"), cf.DimensionCoordinate
         )
         self.assertEqual(g.cyclic(), set(("domainaxis2",)))
-        self.assertIsInstance(
-            g.del_construct("domainaxis2"), cf.DomainAxis
-        )
+        self.assertIsInstance(g.del_construct("domainaxis2"), cf.DomainAxis)
         self.assertEqual(g.cyclic(), set())
 
     def test_Field_persist(self):
