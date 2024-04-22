@@ -6,12 +6,6 @@ version NEXT
 * Allow a halo to be added by `cf.Field.indices` and
   `cf.Field.subspace`
   (https://github.com/NCAS-CMS/cf-python/issues/759)
-
-version NEXT
-------------
-
-**2024-??-??**
-
 * Added spherical regridding to discrete sampling geometry destination
   grids (https://github.com/NCAS-CMS/cf-python/issues/716)
 * Added 3-d spherical regridding to `cf.Field.regrids`, and the option
