@@ -414,6 +414,10 @@ class DomainTest(unittest.TestCase):
             d.del_construct("measure:area"), cf.CellMeasure
         )
 
+        # NOTE: this test will fail presently because of a bug which means
+        # that Field.domain doesn't inherit the cyclic() axes of the
+        # corresponding Field (see Issue #762) which will be fixed shortly.
+        #
         # Test a domain with cyclic axes, to ensure the cyclic() set is
         # updated accordingly if a cyclic axes is the one removed.
         e = cf.example_field(2).domain  # this has a cyclic axes 'domainaxis2'
