@@ -636,7 +636,7 @@ _docstring_substitution_definitions = {
                 ==============  ======================================
                 *mode*          Description
                 ==============  ======================================
-                ````            If no positional arguments are
+                Not provided            If no positional arguments are
                                 provided then assume the
                                 ``'compress'`` mode of operation with
                                 no halo added to the subspaced axes.
