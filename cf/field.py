@@ -13292,7 +13292,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 {{subspace valid modes Field}}
 
-                In addition, an extra postional argument of ``'test'``
+                In addition, an extra positional argument of ``'test'``
                 is allowed. When provided, the subspace is not
                 returned, instead `True` or `False` is returned
                 depending on whether or not it is possible for the
