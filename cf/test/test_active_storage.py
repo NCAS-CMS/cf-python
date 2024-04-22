@@ -1,3 +1,4 @@
+# REVIEW: h5: `test_active_storage.py`: new test module
 import atexit
 import datetime
 import faulthandler
@@ -34,7 +35,6 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-# REVIEW: active
 class ActiveStorageTest(unittest.TestCase):
     @unittest.skipUnless(Active is not None, "Requires activestorage.Active")
     def test_active_storage(self):

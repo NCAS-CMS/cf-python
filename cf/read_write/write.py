@@ -12,9 +12,8 @@ from .netcdf import NetCDFWrite
 
 netcdf = NetCDFWrite(implementation())
 
-# REVIEW: h5: docstring improvements
 
-
+# REVIEW: h5: `write`: docstring improvements
 @_manage_log_level_via_verbosity
 def write(
     fields,

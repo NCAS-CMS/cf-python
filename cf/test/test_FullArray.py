@@ -1,3 +1,4 @@
+# REVIEW: getitem: `test_FullArray`: new test module
 import datetime
 import faulthandler
 import unittest
@@ -9,7 +10,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cf
 
 
-# REVIEW: getitem
 class FullArrayTest(unittest.TestCase):
     def test_FullValue_inspection(self):
         full = 9

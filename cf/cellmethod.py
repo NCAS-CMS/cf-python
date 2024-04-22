@@ -53,7 +53,6 @@ class CellMethod(cfdm.CellMethod):
 
     """
 
-    # REVIEW: h5
     def __new__(cls, *args, **kwargs):
         """This must be overridden in subclasses.
 

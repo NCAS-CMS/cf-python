@@ -43,7 +43,7 @@ class functionTest(unittest.TestCase):
         self.assertEqual(cf.tempdir(), cf.TEMPDIR())
         self.assertEqual(cf.chunksize(), cf.CHUNKSIZE())
 
-    # REVIEW: active
+    # REVIEW: active: `test_configuration`: test `cf.active_storage`, cf.active_storage_url`
     def test_configuration(self):
         # This test assumes 'total_memory' remains constant throughout
         # the test run, which should be true generally in any

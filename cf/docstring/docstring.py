@@ -626,6 +626,27 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # REVIEW: getitem: `_docstring_substitution_definitions`: 'asanyarray'
+    # asanyarray
+    "{{asanyarray: `bool` or `None`, optional}": """asanyarray: `bool` or `None`, optional
+                If True then add a final operation (not in-place) to
+                the graph of the returned Dask array that converts a
+                chunk's array object to a `numpy` array if the array
+                object has an `__asanyarray__` attribute that is
+                `True`, or else does nothing. If False then do not add
+                this operation. If `None`, the default, then the final
+                operation is added only if the `Data` object's
+                `__asanyarray__` attribute is `True`.
+
+                By default or if *asanyarray* is True, the returned
+                Dask array will always provide the expected result
+                when computed, although if *asanyarray* is True then
+                the Dask graph may have an extra null operation layer
+                that is not requred. Setting *asanyarray* to False
+                should only be done in the case that the returned Dask
+                Array will get further operations which are guaranteed
+                to negate the need for the extra layer in the Dask
+                graph.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

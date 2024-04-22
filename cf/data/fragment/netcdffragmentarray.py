@@ -23,7 +23,7 @@ class NetCDFFragmentArray(
 
     """
 
-    # REVIEW: h5: Replace "units/calendar" API with "attributes"
+    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         filename=None,
@@ -175,7 +175,7 @@ class NetCDFFragmentArray(
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: h5
+    # REVIEW: h5: `__getitem__`: new factory method to choose backend
     def __getitem__(self, indices):
         """Returns a subspace of the fragment as a numpy array.
 

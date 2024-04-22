@@ -963,13 +963,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "Non-orthogonal indexing has not yet been implemented"
             )
 
-        # REVIEW: active `__getitem__`
-        # REVIEW: getitem: `__getitem__`
+        # REVIEW: active `__getitem__`: subspacing does not affect active storage status
+        # REVIEW: getitem: `__getitem__`: set 'asanyarray=True' because subspaced chunks might not be in memory
         # ------------------------------------------------------------
         # Set the subspaced dask array
         #
         # * A subpspaced chunk might not result in an array in memory,
-        #   so we need to set asanyarray=True
+        #   so we set asanyarray=True to ensure that, if required,
+        #   they are converted at compute time.
         #
         # * Subspacing the data does not affect the active storage
         #   status
@@ -1199,11 +1200,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         :Returns:
 
             `bool`
-                If True then at compute time add a final operation to
-                the Dask graph that converts chunks to `numpy` arrays,
-                but only if a chunk's array object has an
-                `__asanyarray__` attribute that is also `True`. If
-                `False` then do not do this.
+                If True then at compute time add a final operation
+                (not in-place) to the Dask graph that converts a
+                chunk's array object to a `numpy` array if the array
+                object has an `__asanyarray__` attribute that is
+                `True`, or else does nothing. If False then do not add
+                this operation.
 
         """
         return self._custom.get("__asanyarray__", True)
@@ -1454,13 +1456,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 `_clear_after_dask_update` for details.
 
             asanyarray: `bool` or `None`, optional
-                If True then at compute time add a final operation to
-                the Dask graph (not in-place) that converts chunks to
-                `numpy` arrays, but only for those chunks whose array
-                objects have an `__asanyarray__` attribute that is
-                also `True`. If False, the default, then do not do
-                this. If `None` then do not change the current
-                behaviour.
+                If `None` then do nothing. Otherwise set
+                `__asanyarray__` to the Boolean value of *asanyarray*.
 
                 .. versionadded:: NEXTRELEASE
 
@@ -10015,20 +10012,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 If True then force the mask hardness of the returned
                 array to be that given by the `hardmask` attribute.
 
-            asanyarray: `bool` or `None`, optional
-                If True then add a final operation to the returned
-                Dask graph that converts chunks to `numpy` arrays, but
-                only if a chunk's array object has an `__asanyarray__`
-                attribute that is also `True`. If False then do not do
-                this. If `None`, the default, then the final operation
-                is added if the `Data` object's `__asanyarray__`
-                attribute is `True`. I.e. by default `to_dask_array`
-                always returns a computable Dask graph, although it
-                may have a extra final layer that is not needed.
-
-                .. note:: Such a final operation is included in the
-                          returned Dask array, but is not included in
-                          the Dask array stored in the `Data` object.
+            {{asanyarray: `bool` or `None`, optional}}
 
                 .. versionadded:: NEXTVERSION
 

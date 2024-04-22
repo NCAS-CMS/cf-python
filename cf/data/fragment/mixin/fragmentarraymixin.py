@@ -12,7 +12,7 @@ class FragmentArrayMixin:
 
     """
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -129,7 +129,6 @@ class FragmentArrayMixin:
 
         return array
 
-    # REVIEW: getitem
     def _size_1_axis(self, indices):
         """Find the position of a unique size 1 index.
 
@@ -167,6 +166,7 @@ class FragmentArrayMixin:
         None
 
         """
+        # REVIEW: getitem: `_size_1_axis`: refactor to use `original_shape`
         original_shape = self.original_shape
         if original_shape.count(1):
             return original_shape.index(1)

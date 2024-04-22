@@ -862,7 +862,7 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
-        # REVIEW: active: `collapse` :pass the active storage status onto the collapse functions
+        # REVIEW: active: `collapse`: pass the active storage status onto the collapse functions
         "active_storage": d.active_storage,
     }
 
@@ -991,9 +991,9 @@ def parse_weights(d, weights, axis=None):
     w = []
     shape = d.shape
     axes = d._axes
+    # REVIEW: active: `parse_weights`: minor refactor
     Data = type(d)
     for key, value in weights.items():
-        # REVIEW: active: `parse_weights`
         value = Data.asdata(value)
 
         # Make sure axes are in ascending order

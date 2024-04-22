@@ -7,12 +7,12 @@ from .abstract import Array
 from .mixin import FileArrayMixin, IndexMixin
 
 
-# REVIEW: h5: `UMArray`: Replace units/calendar API with 'attributes'
 class UMArray(
     IndexMixin, FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array
 ):
     """A sub-array stored in a PP or UM fields file."""
 
+    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         filename=None,
@@ -206,6 +206,7 @@ class UMArray(
         self.close(f)
         del f, rec
 
+        # REVIEW: h5: `_get_array`: refactor for use of `netcdf_indexer`
         # Set the netCDF attributes for the data
         attributes = self.get_attributes({})
         self._set_units(int_hdr, attributes)
@@ -312,7 +313,6 @@ class UMArray(
 
             attributes["_FillValue"] = _FillValue
 
-    # REVIEW: getitem
     def _set_units(self, int_hdr, attributes):
         """Set the ``units`` attribute.
 
@@ -371,10 +371,11 @@ class UMArray(
                 units = units0
                 break
 
+        # REVIEW: getitem: `_set_units`: record units in attributes
         attributes["units"] = units
 
-    # REVIEW: h5
-    # REVIEW: getitem
+    # REVIEW: h5: `_set_unpack`: record unpack in attributes
+    # REVIEW: getitem: `_set_unpack`: record unpack in attributes
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.
 

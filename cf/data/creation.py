@@ -82,7 +82,7 @@ def to_dask(array, chunks, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    # REVIEW: active: `to_dask`:
+    # REVIEW: active: `to_dask`: '_dask_meta' renamed to '_meta' for consistency with Dask
     # REVIEW: getitem:  `to_dask`: The file lock is now on the `Array` object (in its `_get_array` method), rather than being set on the Dask array itself.
     kwargs.setdefault("meta", getattr(array, "_meta", None))
 

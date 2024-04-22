@@ -36,7 +36,7 @@ class CFAMixin:
         }
         return instance
 
-    # REVIEW: h5: `__init__`: Replace units/calendar API with 'attributes'
+    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         filename=None,
@@ -466,7 +466,7 @@ class CFAMixin:
         """
         return self._get_component("fragment_shape")
 
-    # REVIEW: h5: `get_storage_options`
+    # REVIEW: h5: `get_storage_options`: new method to get file access options
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing S3 fragment files.
 

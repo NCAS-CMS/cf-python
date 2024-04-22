@@ -731,6 +731,7 @@ def cf_filled(a, fill_value=None):
     return np.ma.filled(a, fill_value=fill_value)
 
 
+# REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
 def cf_asanyarray(a):
     """Convert to a `numpy` array.
 
@@ -746,7 +747,8 @@ def cf_asanyarray(a):
 
     :Returns:
 
-            The converted array, or the input array unchanged.
+            The array converted to a `numpy` array, or the input array
+            unchanged if ``a.__asanyarray__`` False.
 
     """
     # REVIEW: getitem: `cf_asanyarray`: convert a to a usable array

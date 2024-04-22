@@ -1,4 +1,4 @@
-# REVIEW: active
+# REVIEW: active: `collapse_active.py`: new module for active storage functionality
 import logging
 from functools import wraps
 
@@ -221,8 +221,8 @@ def actify(a, method, axis=None):
             return a
 
     # Loop round the nodes of the Dask graph looking for data
-    # definitions that point to files and which support active storage
-    # operations, and then modify the Dask graph when we find them.
+    # definitions that i) point to files, and ii) which support active
+    # storage operations; and modify the Dask graph when we find them.
     #
     # The elements are traversed in reverse order so that the data
     # definitions will tend to come out first, allowing for the
@@ -230,7 +230,8 @@ def actify(a, method, axis=None):
     # not possible.
     #
     # Performance: The optimising the graph can be slow for
-    #              complicated graphs, but is nonetheless essential.
+    #              complicated graphs, but nonetheless is essential to
+    #              ensure that unused nodes are not considered.
     ok_to_actify = True
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):

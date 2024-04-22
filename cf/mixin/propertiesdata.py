@@ -4692,7 +4692,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    # REVIEW: getitem
+    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
     def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
         """Convert the data to a `dask` array.
 
@@ -4721,18 +4721,7 @@ class PropertiesData(Properties):
 
                 .. versionadded:: NEXTVERSION
 
-            asanyarray: `bool` or `None`, optional
-                If True then add a final operation to the Dask graph
-                that converts chunks to `numpy` arrays, but only if a
-                chunk's array object has an `__asanyarray__` attribute
-                that is `True`. If False then do not do this. If
-                `None`, the default, then the final operation is added
-                if the `Data` object's `__asanyarray__` attribute is
-                `True`.
-
-                .. note:: Such a final operation is included in the
-                          returned Dask array, but is not included in
-                          the Dask array stored in the `Data` object.
+            {{asanyarray: `bool` or `None`, optional}}
 
                 .. versionadded:: NEXTVERSION
 

@@ -58,18 +58,18 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
-    # REVIEW: h5: new unpack parameter to control auto-unpacking (previously always True)
+    # REVIEW: h5: `read`: new 'unpack' parameter to control auto-unpacking (previously always True)
     unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
     cfa=None,
-    # REVIEW: h5: new netcdf_engine parameter to control how to read files
+    # REVIEW: h5: `read`: new 'netcdf_engine' parameter to control how to read files
     netcdf_engine=None,
-    # REVIEW: h5: new storage_options parameter to control access to S3
+    # REVIEW: h5: `read`: new 'storage_options' parameter to control access to S3
     storage_options=None,
-    # REVIEW: h5: cache_metadata parameter to control whethe or not to get to caache selected data elements
-    cache_metadata=True,
+    # REVIEW: h5: `read`: 'cache' parameter to control whether or not to get to cache selected data elements
+    cache=True,
 ):
     """Read field or domain constructs from files.
 
@@ -743,13 +743,14 @@ def read(
 
            .. versionadded:: NEXTVERSION
 
-        cache_metadata: `bool`, optional
+        cache: `bool`, optional
             If True, the default, then cache the first and last array
-            elements of metadata constructs for fast future access. In
-            addition, the second and penultimate array elements will
-            be cached from coordinate bounds when there are two bounds
-            per cell. For remote data, setting *cache_metadata* to
-            False may speed up the parsing of the file.
+            elements of metadata constructs (not field constructs) for
+            fast future access. In addition, the second and
+            penultimate array elements will be cached from coordinate
+            bounds when there are two bounds per cell. For remote
+            data, setting *cache* to False may speed up the parsing of
+            the file.
 
             .. versionadded:: NEXTVERSION
 
@@ -912,7 +913,7 @@ def read(
 
     cfa_options["substitutions"] = substitutions
 
-    cache_metadata = bool(cache_metadata)
+    cache = bool(cache)
 
     # Initialise the output list of fields/domains
     if domain:
@@ -1049,7 +1050,7 @@ def read(
                 cfa_options=cfa_options,
                 netcdf_engine=netcdf_engine,
                 storage_options=storage_options,
-                cache_metadata=cache_metadata,
+                cache=cache,
             )
 
             # --------------------------------------------------------
@@ -1167,7 +1168,7 @@ def _read_a_file(
     cfa_options=None,
     netcdf_engine=None,
     storage_options=None,
-    cache_metadata=True,
+    cache=True,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1216,7 +1217,7 @@ def _read_a_file(
 
             .. versionadded:: NEXTVERSION
 
-        cache_metadata: `bool`, optional
+        cache: `bool`, optional
             See `cf.read` for details.
 
             .. versionadded:: NEXTVERSION
@@ -1255,7 +1256,7 @@ def _read_a_file(
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
         "cfa_options": cfa_options,
-        "cache_metadata": cache_metadata,
+        "cache": cache,
     }
 
     # ----------------------------------------------------------------

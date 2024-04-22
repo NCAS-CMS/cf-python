@@ -162,7 +162,7 @@ else:
         return float(virtual_memory().available)
 
 
-# REVIEW: active
+# REVIEW: active: `configuration`: new keywords 'active_storage', 'active_storage_url'
 def configuration(
     atol=None,
     rtol=None,
@@ -410,7 +410,7 @@ def configuration(
     )
 
 
-# REVIEW: active
+# REVIEW: active: `_configuration`: new keywords 'active_storage', 'active_storage_url'
 def _configuration(_Configuration, **kwargs):
     """Internal helper function to provide the logic for
     `cf.configuration`.
@@ -568,7 +568,7 @@ class log_level(ConstantAccess, cfdm.log_level):
     _reset_log_emergence_level = _reset_log_emergence_level
 
 
-# REVIEW: active
+# REVIEW: active: `regrid_logging`: new examples
 class regrid_logging(ConstantAccess):
     """Whether or not to enable `esmpy` regridding logging.
 
@@ -700,7 +700,7 @@ class collapse_parallel_mode(ConstantAccess):
         )  # pragma: no cover
 
 
-# REVIEW: active
+# REVIEW: active: `relaxed_identities`: new examples
 class relaxed_identities(ConstantAccess):
     """Use 'relaxed' mode when getting a construct identity.
 
@@ -834,7 +834,7 @@ class chunksize(ConstantAccess):
         return parse_bytes(arg)
 
 
-# REVIEW: active
+# REVIEW: active: `tempdir`: new examples
 class tempdir(ConstantAccess):
     """The directory for internally generated temporary files.
 
@@ -1186,7 +1186,7 @@ class bounds_combination_mode(ConstantAccess):
         return arg
 
 
-# REVIEW: active
+# REVIEW: active: `active_storage`: new function
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
@@ -1247,7 +1247,7 @@ class active_storage(ConstantAccess):
         return bool(arg)
 
 
-# REVIEW: active
+# REVIEW: active: `active_storage_url`: new function
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
@@ -2226,6 +2226,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     return parsed_indices, roll
 
 
+# REVIEW: getitem: `get_subspace`: remove deprecated function
 _equals = cfdm.Data()._equals
 
 
@@ -2596,7 +2597,6 @@ def flat(x):
             yield a
 
 
-# REVIEW: h5
 def abspath(filename):
     """Return a normalized absolute version of a file name.
 
@@ -2641,7 +2641,6 @@ def abspath(filename):
     return filename
 
 
-# REVIEW: h5
 def relpath(filename, start=None):
     """Return a relative filepath to a file.
 
@@ -2676,6 +2675,7 @@ def relpath(filename, start=None):
     'http://data/archive/file.nc'
 
     """
+    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(filename)
     if u.scheme != "":
         return filename
@@ -2686,7 +2686,6 @@ def relpath(filename, start=None):
     return _os_path_relpath(filename)
 
 
-# REVIEW: h5
 def dirname(filename):
     """Return the directory name of a file.
 
@@ -2715,6 +2714,7 @@ def dirname(filename):
     'http://data/archive'
 
     """
+    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(filename)
     if u.scheme != "":
         return filename.rpartition("/")[0]
@@ -2722,7 +2722,6 @@ def dirname(filename):
     return _os_path_dirname(filename)
 
 
-# REVIEW: h5
 def pathjoin(path1, path2):
     """Join two file path components intelligently.
 
@@ -2755,6 +2754,7 @@ def pathjoin(path1, path2):
     'http://data/archive/file.nc'
 
     """
+    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(path1)
     if u.scheme != "":
         return urljoin(path1, path2)
@@ -3123,7 +3123,7 @@ def _get_module_info(module, alternative_name=False, try_except=False):
     )
 
 
-# REVIEW: h5
+# REVIEW: h5: `environment`: new dependencies
 def environment(display=True, paths=True):
     """Return the names and versions of the cf package and its
     dependencies.

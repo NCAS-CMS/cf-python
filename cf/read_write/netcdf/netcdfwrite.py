@@ -706,7 +706,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return ncvar
 
-    # REVIEW: getitem:
     def _cfa_write_non_standard_terms(
         self, field, fragment_ncdimensions, aggregated_data
     ):
@@ -750,6 +749,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
+            # REVIEW: getitem: `_cfa_write_non_standard_terms`: set 'asanyarray'
             # '_cfa_unique' has its own call to 'cf_asanyarray', so
             # we can set 'asanyarray=False'.
             dx = data.to_dask_array(asanyarray=False)
@@ -789,7 +789,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return aggregated_data_attr
 
-    # REVIEW: getitem
     @classmethod
     def _cfa_unique(cls, a):
         """Return the unique value of an array.
@@ -811,6 +810,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
+        # REVIEW: getitem: `_cfa_unique`: convert a to a usable array
         a = cf_asanyarray(a)
 
         out_shape = (1,) * a.ndim
@@ -824,7 +824,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    # REVIEW: getitem
     def _cfa_aggregation_instructions(self, data, cfvar):
         """Convert data to standardised CFA aggregation instruction terms.
 
@@ -967,6 +966,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Create the location array
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
+        # REVIEW: getitem: `_cfa_aggregation_instructions`: set 'asanyarray'
         if (
             max(data.to_dask_array(asanyarray=False).chunksize)
             > np.iinfo(dtype).max

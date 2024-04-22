@@ -2022,7 +2022,6 @@ class FieldDomain:
 
         return out
 
-    # REVIEW: h5
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
 

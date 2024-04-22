@@ -5113,7 +5113,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
-    # REVIEW: active
+    # REVIEW: active: active storage docstring
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def collapse(
@@ -5495,12 +5495,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Active storage collapses**
 
         When the data being collapsed are stored remotely, the
-        collapse calculations may be carried out on a server that is
-        close (in a network distance sense) to the data, thereby
-        removing the time and power costs of transfering the entire
-        un-collapsed data to the local client. Whether or not this
-        will occur is determined on a case-by-case basis, and will
-        only be done if all of the following criteria are met:
+        collapse calculations may be carried out on a server (ideally
+        one that is close in a network distance sense) to the data,
+        thereby removing the time and energy costs of transfering the
+        entire un-collapsed data to the local client. Whether or not
+        this will occur is determined on a case-by-case basis, and
+        will only be done if all of the following criteria are met:
 
         * the collapse method is one of ``'mean'``, ``'maximum'``,
           ``'minimum'``, or ``'sum'``;
@@ -5509,7 +5509,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         * the collapse is unweighted;
 
-        * `cf.active_storage()` is `True`;
+        * ``cf.active_storage()`` is `True`;
 
         * a URL of the active storage server has been set with
           `cf.active_storage_url`;
@@ -5518,12 +5518,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           in any other file format, or in memory) and are not
           numerically packed;
 
-        * the `!active_storage` attribute of the `cf.Data` object
-          being collapsed is `True`, indicating that active storage
-          operations may be possible. In general, it will only be
-          `True` for data that are in files on disk, are not
-          compressed by convention and have not had any other
-          operations applied;
+        * the `!active_storage` attribute of the field's `Data` object
+          is `True`, indicating that active storage operations may be
+          possible. In general, it will only be `True` for data that
+          are in files on disk, are not compressed by convention and
+          have not had any other operations applied, apart from
+          subspacing;
 
         * it is possible to import the external `activestorage.Active`
           class.
@@ -6994,6 +6994,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
+            # REVIEW: active: `collapse`: include size 1 axes in collapse
             # Note: It is important that size 1 axes are also passed
             #       on to the Data collapse, because active storage
             #       collapses get confused if they're not there.
