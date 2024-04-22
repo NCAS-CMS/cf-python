@@ -218,7 +218,7 @@ class FieldDomain:
         :Parameters:
 
             mode: `tuple`
-                The mode of operation and the halo size . See the
+                The mode of operation and the halo size. See the
                 *mode* parameter of `indices` for details.
 
             data_axes: sequence of `str`, or `None`
@@ -825,7 +825,7 @@ class FieldDomain:
                         index = slice(start, stop, step)
                     else:
                         # A list/1-d array of int/bool, or a
-                        # non-cyclic slice that can't beconme cyclic.
+                        # non-cyclic slice that can't become cyclic.
                         #
                         # E.g. for halo=1 and size=5:
                         #   slice(1, 3)                       -> [0, 1, 2, 3]
