@@ -2577,7 +2577,6 @@ class FieldTest(unittest.TestCase):
         # Test a field without cyclic axes. These are equivalent tests to those
         # in the cfdm test suite, to check the behaviour is the same in cf.
         f = self.f1.copy()
-        print(f.cyclic())
 
         self.assertIsInstance(
             f.del_construct("auxiliarycoordinate1"), cf.AuxiliaryCoordinate

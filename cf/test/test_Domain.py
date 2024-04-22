@@ -393,8 +393,8 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_del_construct(self):
         """Test the `del_construct` Domain method."""
-        # Test a field without cyclic axes. These are equivalent tests to those
-        # in the cfdm test suite, to check the behaviour is the same in cf.
+        # Test a domain without cyclic axes. These are equivalent tests to
+        # those in the cfdm test suite, to check behaviour is the same in cf.
         d = self.d.copy()
 
         self.assertIsInstance(
@@ -414,7 +414,7 @@ class DomainTest(unittest.TestCase):
             d.del_construct("measure:area"), cf.CellMeasure
         )
 
-        # Test a field with cyclic axes, to ensure the cyclic() set is
+        # Test a domain with cyclic axes, to ensure the cyclic() set is
         # updated accordingly if a cyclic axes is the one removed.
         e = cf.example_field(2).domain  # this has a cyclic axes 'domainaxis2'
         # To delete a cyclic axes, must first delete this dimension coordinate
