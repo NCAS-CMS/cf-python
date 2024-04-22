@@ -729,7 +729,7 @@ _docstring_substitution_definitions = {
     # subspace valid modes Domain
     "{{subspace valid modes Domain}}": """Valid modes are:
 
-                * ``'compress'`` This the default.
+                * ``'compress'`` This is the default.
                      Unselected locations are removed to create the
                      subspace. If the result is not hyperrectangular
                      then the minimum amount of unselected locations
