@@ -68,6 +68,9 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(u.equals(u.copy(), verbose=2))
         self.assertFalse(u.equals(t, verbose=0))
 
+        self.assertTrue(q.equals(q.copy()))
+        self.assertTrue(
+            q.equals(cf.wi(2, 5, open_lower=False, open_upper=False)))
         self.assertFalse(q.equals(v))
         self.assertFalse(q.equals(w))
         self.assertFalse(q.equals(x))
