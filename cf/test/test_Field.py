@@ -2749,6 +2749,14 @@ class FieldTest(unittest.TestCase):
         h = f.subspace(grid_longitude=np.float64(20))
         self.assertTrue(g.equals(h))
 
+        # Test API with 0/1/2 arguments
+        kwargs = {"grid_latitude": [1]}
+        i = f.subspace(**kwargs)
+        j = f.subspace(0, **kwargs)
+        k = f.subspace("compress", 0, **kwargs)
+        self.assertEqual(i, j)
+        self.assertEqual(i, k)
+
     def test_Field_auxiliary_to_dimension_to_auxiliary(self):
         f = cf.example_field(0)
         nd = len(f.dimension_coordinates())
