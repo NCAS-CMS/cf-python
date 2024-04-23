@@ -635,7 +635,7 @@ _docstring_substitution_definitions = {
                 ==============  ======================================
                 *mode*          Description
                 ==============  ======================================
-                Not provided     If no positional arguments are
+                Not provided    If no positional arguments are
                                 provided then assume the
                                 ``'compress'`` mode of operation with
                                 no halo added to the subspaced axes.
@@ -724,7 +724,14 @@ _docstring_substitution_definitions = {
                      The subspace has the same domain as the original
                      construct. Missing data is inserted at unselected
                      locations, unless a halo has been defined (of any
-                     size, including 0).""",
+                     size, including 0).
+
+                .. note:: Setting a halo size of `0` differs from not
+                          not defining a halo at all. The shape of the
+                          returned field will always be the same, but
+                          in the former case missing data will not be
+                          inserted at unselected locations (if any)
+                          within the output domain.""",
     # subspace valid modes Domain
     "{{subspace valid modes Domain}}": """Valid modes are:
 
