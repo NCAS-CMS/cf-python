@@ -705,6 +705,8 @@ class QueryTest(unittest.TestCase):
             cf.wo(2, 5, attr="day") | cf.set(cf.Data([1, 2], "km")),
             cf.eq(8) | cf.lt(9) & cf.ge(10),
             cf.isclose(1, "days", rtol=10, atol=99),
+            cf.wi(-5, 5, "days", open_lower=True),
+            cf.wi(-5, 5, "days", open_lower=True, open_upper=True),
         ):
             self.assertEqual(tokenize(q), tokenize(q.copy()))
 
@@ -714,6 +716,24 @@ class QueryTest(unittest.TestCase):
         )
         self.assertNotEqual(
             tokenize(cf.isclose(9)), tokenize(cf.isclose(9, rtol=10))
+        )
+        self.assertNotEqual(
+            tokenize(
+                cf.wi(-5, 5, "days", open_lower=True),
+                cf.wi(-5, 5, "days")
+            )
+        )
+        self.assertNotEqual(
+            tokenize(
+                cf.wi(-5, 5, "days", open_upper=True),
+                cf.wi(-5, 5, "days")
+            )
+        )
+        self.assertNotEqual(
+            tokenize(
+                cf.wi(-5, 5, "days", open_lower=True, open_upper=True),
+                cf.wi(-5, 5, "days", open_upper=True)
+            )
         )
 
     def test_Query_Units(self):
