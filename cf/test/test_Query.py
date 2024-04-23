@@ -41,14 +41,14 @@ class QueryTest(unittest.TestCase):
         x = cf.wi(2, 5, open_lower=True, open_upper=True)
 
         repr(q)
-        ###repr(s)
+        repr(s)
         repr(t)
-        ###repr(u)
+        repr(u)
         str(q)
-        ###str(s)
+        str(s)
         str(t)
-        ### str(u)
-        ###u.dump(display=False)
+        str(u)
+        u.dump(display=False)
 
         # For "wi", check repr. provides correct notation for open/closed-ness
         # of the interval captured.

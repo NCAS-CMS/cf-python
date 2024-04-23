@@ -207,7 +207,8 @@ class Query:
         exact=True,
         rtol=None,
         atol=None,
-        **kwargs,
+        open_lower=False,
+        open_upper=False,
     ):
         """**Initialisation**
 
@@ -250,6 +251,18 @@ class Query:
 
                 .. versionadded:: 3.15.2
 
+            open_lower: number, optional
+                Only applicable to the ``'wi'`` operator.
+                TODO
+
+                .. versionadded:: NEXTVERSION
+
+            open_upper: number, optional
+                Only applicable to the ``'wi'`` operator.
+                TODO
+
+                .. versionadded:: NEXTVERSION
+
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
 
@@ -290,13 +303,15 @@ class Query:
             self._rtol = rtol
             self._atol = atol
 
-        self._open_bounds = (False, False)
-        if kwargs:
-            if "open_bounds" in kwargs:
-                self._open_bounds = kwargs["open_bounds"]
-            else:
+        if open_lower or open_upper:
+            if operator != "wi":
                 raise ValueError(
-                    f"Unrecognised kwargs to Query object: {kwargs}")
+                    "Can only set the 'open_lower' and 'open_upper' "
+                    "parameters for the 'wi' operator"
+                )
+
+            self._open_lower = open_lower
+            self._open_upper = open_upper
 
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
@@ -468,12 +483,10 @@ class Query:
         # for a closed interval, the default. For a (half-)open interval need
         # square bracket(s) -> parenthesis(/es), so unpack to adjust the repr.
         repr_value = str(self._value)
-        if True in self._open_bounds:  # that is, at least one side is open
-            open_lower, open_upper = self._open_bounds
-            if open_lower:
-                repr_value = "(" + repr_value[1:]
-            if open_upper:
-                repr_value = repr_value[:-1] + ")"
+        if self.open_lower:
+            repr_value = "(" + repr_value[1:]
+        if self.open_upper:
+            repr_value = repr_value[:-1] + ")"
 
         if not compound:
             out = f"{attr}({operator} {repr_value}"
@@ -618,6 +631,20 @@ class Query:
                 return units0
 
         raise AttributeError(f"{self!r} has indeterminate units")
+
+    @property
+    def open_lower(self):
+        """TODO
+
+        """
+        return getattr(self, "_open_lower", False)
+
+    @property
+    def open_upper(self):
+        """TODO
+
+        """
+        return getattr(self, "_open_upper", False)
 
     @property
     def rtol(self):
@@ -928,13 +955,12 @@ class Query:
             if _wi is not None:
                 return _wi(value)
 
-            open_lower, open_upper = self._open_bounds
-            if open_lower:
+            if self.open_lower:
                 lower_bound = x > value[0]
             else:
                 lower_bound = x >= value[0]
 
-            if open_upper:
+            if self.open_upper:
                 upper_bound = x < value[1]
             else:
                 upper_bound = x <= value[1]
@@ -1753,7 +1779,7 @@ def wi(
     """
     return Query(
         "wi", [value0, value1], units=units, attr=attr,
-        open_bounds=(open_lower, open_upper),
+        open_lower=open_lower, open_upper=open_upper,
     )
 
 
