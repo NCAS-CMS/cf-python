@@ -13270,8 +13270,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           ``3:-2:-1``) is assumed to "wrap" around, rather then producing
           a null result.
 
-        .. seealso:: `indices`, `squeeze`, `where`, `__getitem__`
-
         **Halos**
 
         {{subspace halos}}
