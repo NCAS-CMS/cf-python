@@ -4,6 +4,7 @@ from numbers import Integral
 import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
+from dask.array.slicing import normalize_index
 
 from ..data import Data
 from ..decorators import (
@@ -458,9 +459,18 @@ class FieldDomain:
                         logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     index = item == value
-                    index = index.data.to_dask_array()
+
+                    # Performance: Convert the 1-d 'index' to a numpy
+                    #              array of bool.
+                    #
+                    # This is beacuse Dask can be *very* slow at
+                    # instantiation time when the 'index' is a Dask
+                    # array, in which case contents of 'index' are
+                    # unknown.
+                    index = np.asanyarray(index)
 
                     if envelope or full:
+                        # Set ind
                         index = np.asanyarray(index)
                         if np.ma.isMA(index):
                             ind = np.ma.where(index)
@@ -468,6 +478,10 @@ class FieldDomain:
                             ind = np.where(index)
 
                         index = slice(None)
+                    else:
+                        # Convert bool to int, to save memory.
+                        size = domain_axes[axis].get_size()
+                        index = normalize_index(index, (size,))[0]
 
                 else:
                     raise ValueError(
