@@ -482,8 +482,8 @@ class Query:
         # For "wi" queries only, open intervals are supported. For "wi" _value
         # is a list of two values, with representation from string list form
         # of '[a, b]' which corresponds to the standard mathematical notation
-        # for a closed interval, the default. For a (half-)open interval need
-        # square bracket(s) -> parenthesis(/es), so unpack to adjust the repr.
+        # for a closed interval, the default. But an open endpoint is indicated
+        # by a parenthesis, so adjust repr. to convert square bracket(s).
         repr_value = str(self._value)
         if self.open_lower:
             repr_value = "(" + repr_value[1:]
@@ -1694,8 +1694,8 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
 
 
 def wi(
-        value0, value1, open_lower=False, open_upper=False,
-        units=None, attr=None
+        value0, value1, units=None, attr=None, open_lower=False,
+        open_upper=False,
 ):
     """A `Query` object for a "within a range" condition.
 
