@@ -8809,7 +8809,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             inplace=inplace,
         )
 
-    def indices(self, *mode, **kwargs):
+    def indices(self, *config, **kwargs):
         """Create indices that define a subspace of the field construct.
 
         The subspace is defined by identifying indices based on the
@@ -8879,7 +8879,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            {{mode: optional}}
+            {{config: optional}}
 
                 {{subspace valid modes Field}}
 
@@ -9006,7 +9006,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [-- -- -- -- -- -- 270.6 273.0 270.6]]]
 
         """
-        if "exact" in mode:
+        if "exact" in config:
             _DEPRECATION_ERROR_ARG(
                 self,
                 "indices",
@@ -9020,7 +9020,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the indices for every domain axis in the domain,
         # including any ancillary masks
-        domain_indices = self._indices(mode, data_axes, True, kwargs)
+        domain_indices = self._indices(config, data_axes, True, kwargs)
 
         # Initialise the output indices with any ancillary masks.
         # Ensure that each ancillary mask is broadcastable to the
@@ -13286,7 +13286,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            {{mode: optional}}
+            {{config: optional}}
 
                 {{subspace valid modes Field}}
 

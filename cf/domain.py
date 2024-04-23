@@ -739,7 +739,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return out
 
-    def indices(self, *mode, **kwargs):
+    def indices(self, *config, **kwargs):
         """Create indices that define a subspace of the domain
         construct.
 
@@ -789,7 +789,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         :Parameters:
 
-            {{mode: optional}}
+            {{config: optional}}
 
                 {{subspace valid modes Domain}}
 
@@ -847,7 +847,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        domain_indices = self._indices(mode, None, False, kwargs)
+        domain_indices = self._indices(config, None, False, kwargs)
 
         return domain_indices["indices"]
 
@@ -1094,7 +1094,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return d
 
-    def subspace(self, *mode, **kwargs):
+    def subspace(self, *config, **kwargs):
         """Create a subspace of the field construct.
 
         Creation of a new domain construct which spans a subspace of
@@ -1141,7 +1141,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         :Parameters:
 
-            {{mode: optional}}
+            {{config: optional}}
 
                 {{subspace valid modes Domain}}
 
@@ -1186,19 +1186,19 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         """
         test = False
-        if "test" in mode:
-            mode = list(mode)
-            mode.remove("test")
+        if "test" in config:
+            config = list(config)
+            config.remove("test")
             test = True
 
-        if not mode and not kwargs:
+        if not config and not kwargs:
             if test:
                 return True
 
             return self.copy()
 
         try:
-            indices = self.indices(*mode, **kwargs)
+            indices = self.indices(*config, **kwargs)
         except ValueError as error:
             if test:
                 return False

@@ -620,13 +620,13 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
-    # subspace mode options
-    "{{mode: optional}}": """mode: optional
-                Specify the mode of operation (``mode``) and a halo to
-                be added to the subspaced axes (``halo``) with
-                positional arguments in format ``mode``, or ``halo``,
-                or ``mode, halo``, or with no positional arguments at
-                all.
+    # subspace config options
+    "{{config: optional}}": """config: optional
+                Configure the subspace by specifying the mode of
+                operation (``mode``) and any halo to be added to the
+                subspaced axes (``halo``), with positional arguments
+                in the format ``mode``, or ``halo``, or ``mode,
+                halo``, or with no positional arguments at all.
 
                 A mode of operation is given as a `str`, and a halo as
                 a non-negative `int` (or any object that can be

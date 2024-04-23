@@ -89,11 +89,12 @@ class SubspaceField(mixin.Subspace):
 
     :Parameters:
 
-        mode: optional
-            Specify the mode of operation (``mode``) and a halo to be
-            added to the subspaced axes (``halo``) with positional
-            arguments in format ``mode``, or ``halo``, or ``mode,
-            halo``, or with no positional arguments at all.
+        config: optional
+            Configure the subspace by specifying the mode of operation
+            (``mode``) and any halo to be added to the subspaced axes
+            (``halo``), with positional arguments in the format
+            ``mode``, or ``halo``, or ``mode, halo``, or with no
+            positional arguments at all.
 
             A mode of operation is given as a `str`, and a halo as a
             non-negative `int` (or any object that can be converted to
@@ -201,7 +202,7 @@ class SubspaceField(mixin.Subspace):
 
     __slots__ = []
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *config, **kwargs):
         """Create a subspace of a field construct.
 
         Creation of a new field construct which spans a subspace of the
@@ -324,19 +325,19 @@ class SubspaceField(mixin.Subspace):
         field = self.variable
 
         test = False
-        if "test" in args:
-            args = list(args)
-            args.remove("test")
+        if "test" in config:
+            config = list(config)
+            config.remove("test")
             test = True
 
-        if not args and not kwargs:
+        if not config and not kwargs:
             if test:
                 return True
 
             return field.copy()
 
         try:
-            indices = field.indices(*args, **kwargs)
+            indices = field.indices(*config, **kwargs)
             out = field[indices]
         except (ValueError, IndexError) as error:
             if test:

@@ -203,7 +203,7 @@ class FieldDomain:
 
         return True
 
-    def _indices(self, mode, data_axes, ancillary_mask, kwargs):
+    def _indices(self, config, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
 
@@ -217,9 +217,9 @@ class FieldDomain:
 
         :Parameters:
 
-            mode: `tuple`
+            config: `tuple`
                 The mode of operation and the halo size. See the
-                *mode* parameter of `indices` for details.
+                *config* parameter of `indices` for details.
 
             data_axes: sequence of `str`, or `None`
                 The domain axis identifiers of the data axes, or
@@ -255,24 +255,24 @@ class FieldDomain:
         debug = is_log_level_debug(logger)
 
         # Parse mode and halo
-        n_mode = len(mode)
-        if not n_mode:
+        n_config = len(config)
+        if not n_config:
             mode = None
             halo = None
-        elif n_mode == 1:
+        elif n_config == 1:
             try:
-                halo = int(mode[0])
+                halo = int(config[0])
             except ValueError:
-                mode = mode[0]
+                mode = config[0]
                 halo = None
             else:
                 mode = None
-        elif n_mode == 2:
-            mode, halo = mode
+        elif n_config == 2:
+            mode, halo = config
         else:
             raise ValueError(
                 "Can't provide more than two positional arguments. "
-                f"Got: {', '.join(repr(x) for x in mode)}"
+                f"Got: {', '.join(repr(x) for x in config)}"
             )
 
         compress = mode is None or mode == "compress"
