@@ -461,8 +461,23 @@ class Query:
         attr = ".".join(self._attr)
         operator = self._operator
         compound = self._compound
+
+        # For "wi" queries only, open intervals are supported. For "wi" _value
+        # is a list of two values, with representation from string list form
+        # of '[a, b]' which corresponds to the standard mathematical notation
+        # for a closed interval, the default. For a (half-)open interval need
+        # square bracket(s) -> parenthesis(/es), so unpack to adjust the repr.
+        repr_value = str(self._value)
+        if True in self._open_bounds:  # that is, at least one side is open
+            open_lower, open_upper = self._open_bounds
+            if open_lower:
+                repr_value = "(" + repr_value[1:]
+            if open_upper:
+                repr_value = repr_value[:-1] + ")"
+
         if not compound:
-            out = f"{attr}({operator} {self._value!s}"
+            print(self._value, type(self._value))
+            out = f"{attr}({operator} {repr_value}"
             rtol = self.rtol
             if rtol is not None:
                 out += f" rtol={rtol}"
