@@ -251,15 +251,21 @@ class Query:
 
                 .. versionadded:: 3.15.2
 
-            open_lower: number, optional
+            open_lower: `bool`, optional
                 Only applicable to the ``'wi'`` operator.
-                TODO
+                If True, open the interval at the lower
+                bound so that value0 is excluded from the
+                range. By default the interval is closed
+                so that value0 is included.
 
                 .. versionadded:: NEXTVERSION
 
-            open_upper: number, optional
+            open_upper: `bool`, optional
                 Only applicable to the ``'wi'`` operator.
-                TODO
+                If True, open the interval at the upper
+                bound so that value1 is excluded from the
+                range. By default the interval is closed
+                so that value1 is included.
 
                 .. versionadded:: NEXTVERSION
 
@@ -636,14 +642,22 @@ class Query:
 
     @property
     def open_lower(self):
-        """TODO
+        """True if the interval is open at the (excludes the) lower bound.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `open_upper`
 
         """
         return getattr(self, "_open_lower", False)
 
     @property
     def open_upper(self):
-        """TODO
+        """True if the interval is open at the (excludes the) upper bound.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `open_lower`
 
         """
         return getattr(self, "_open_upper", False)
@@ -1760,21 +1774,23 @@ def wi(
     >>> q.evaluate(7)
     True
 
+    The interval can be made open on either side or both. Note that,
+    as per mathematical interval notation, square brackets indicate
+    closed endpoints and parentheses open endpoints in the representation:
+
     >>> q = cf.wi(5, 7, open_upper=True)
     >>> q
-    TODO SLB
+    <CF Query: (wi [5, 7))>
     >>> q.evaluate(7)
     False
     >>> q = cf.wi(5, 7, open_lower=True)
     >>> q
-    TODO SLB
+    <CF Query: (wi (5, 7])>
     >>> q.evaluate(5)
     False
     >>> q = cf.wi(5, 7, open_lower=True, open_upper=True)
     >>> q
-    TODO SLB
-    >>> q.evaluate(6)
-    True
+    <CF Query: (wi (5, 7))>
     >>> q.evaluate(5)
     False
     >>> q.evaluate(7)
