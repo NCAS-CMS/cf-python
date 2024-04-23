@@ -68,6 +68,12 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(u.equals(u.copy(), verbose=2))
         self.assertFalse(u.equals(t, verbose=0))
 
+        self.assertFalse(q.equals(v))
+        self.assertFalse(q.equals(w))
+        self.assertFalse(q.equals(x))
+        self.assertFalse(v.equals(w))
+        self.assertFalse(v.equals(x))
+
         copy.deepcopy(u)
 
         c = self.f.dimension_coordinate("X")
