@@ -855,6 +855,8 @@ class Query:
             "_operator",
             "_rtol",
             "_atol",
+            "_open_lower",
+            "_open_upper",
         ):
             x = getattr(self, attr, None)
             y = getattr(other, attr, None)
