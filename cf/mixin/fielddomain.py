@@ -2505,10 +2505,6 @@ class FieldDomain:
             ):
                 cyclic_axes.remove(key)
                 self._cyclic = cyclic_axes
-                logger.info(
-                    "Deleted a construct that corresponds to a cyclic axis "
-                    f"({key}), so it was removed from the cyclic() axes set."
-                )
 
         return deld_construct
 
