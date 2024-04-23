@@ -2572,6 +2572,37 @@ class FieldTest(unittest.TestCase):
         cm2 = f.cell_method("method:maximum")
         self.assertEqual(cm2.get_axes(), ("T",))
 
+    def test_Field_del_construct(self):
+        """Test the `del_construct` Field method."""
+        # Test a field without cyclic axes. These are equivalent tests to those
+        # in the cfdm test suite, to check the behaviour is the same in cf.
+        f = self.f1.copy()
+
+        self.assertIsInstance(
+            f.del_construct("auxiliarycoordinate1"), cf.AuxiliaryCoordinate
+        )
+
+        with self.assertRaises(ValueError):
+            f.del_construct("auxiliarycoordinate1")
+
+        self.assertIsNone(
+            f.del_construct("auxiliarycoordinate1", default=None)
+        )
+
+        self.assertIsInstance(f.del_construct("measure:area"), cf.CellMeasure)
+
+        # Test a field with cyclic axes, to ensure the cyclic() set is
+        # updated accordingly if a cyclic axes is the one removed.
+        g = cf.example_field(2)  # this has a cyclic axes 'domainaxis2'
+        # To delete a cyclic axes, must first delete this dimension coordinate
+        # because 'domainaxis2' spans it.
+        self.assertIsInstance(
+            g.del_construct("dimensioncoordinate2"), cf.DimensionCoordinate
+        )
+        self.assertEqual(g.cyclic(), set(("domainaxis2",)))
+        self.assertIsInstance(g.del_construct("domainaxis2"), cf.DomainAxis)
+        self.assertEqual(g.cyclic(), set())
+
     def test_Field_persist(self):
         """Test the `persist` Field method."""
         f = cf.example_field(0)

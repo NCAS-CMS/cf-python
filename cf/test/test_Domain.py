@@ -391,6 +391,43 @@ class DomainTest(unittest.TestCase):
             np.allclose(latitude_specific.array - y_points_specific, 0)
         )
 
+    def test_Domain_del_construct(self):
+        """Test the `del_construct` Domain method."""
+        # Test a domain without cyclic axes. These are equivalent tests to
+        # those in the cfdm test suite, to check behaviour is the same in cf.
+        d = self.d.copy()
+
+        self.assertIsInstance(
+            d.del_construct("dimensioncoordinate1"), cf.DimensionCoordinate
+        )
+        self.assertIsInstance(
+            d.del_construct("auxiliarycoordinate1"), cf.AuxiliaryCoordinate
+        )
+        with self.assertRaises(ValueError):
+            d.del_construct("auxiliarycoordinate1")
+
+        self.assertIsNone(
+            d.del_construct("auxiliarycoordinate1", default=None)
+        )
+
+        self.assertIsInstance(d.del_construct("measure:area"), cf.CellMeasure)
+
+        # NOTE: this test will fail presently because of a bug which means
+        # that Field.domain doesn't inherit the cyclic() axes of the
+        # corresponding Field (see Issue #762) which will be fixed shortly.
+        #
+        # Test a domain with cyclic axes, to ensure the cyclic() set is
+        # updated accordingly if a cyclic axes is the one removed.
+        e = cf.example_field(2).domain  # this has a cyclic axes 'domainaxis2'
+        # To delete a cyclic axes, must first delete this dimension coordinate
+        # because 'domainaxis2' spans it.
+        self.assertIsInstance(
+            e.del_construct("dimensioncoordinate2"), cf.DimensionCoordinate
+        )
+        self.assertEqual(e.cyclic(), set(("domainaxis2",)))
+        self.assertIsInstance(e.del_construct("domainaxis2"), cf.DomainAxis)
+        self.assertEqual(e.cyclic(), set())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

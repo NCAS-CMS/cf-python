@@ -33,6 +33,9 @@ version 3.16.2
 * Fix bug in `cf.aggregate` that didn't correctly handle the
   "actual_range" CF attribute
   (https://github.com/NCAS-CMS/cf-python/issues/764)
+* Fix bug whereby `Field.cyclic` is not updated after a
+  `Field.del_construct` operation
+  (https://github.com/NCAS-CMS/cf-python/issues/758)
 
 ----
 
