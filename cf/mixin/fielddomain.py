@@ -2484,10 +2484,9 @@ class FieldDomain:
         # have the concept of cyclic axes, so have to update the
         # register of cyclic axes when we delete a construct in cf.
 
-        # Get the relevant key first because it will be lost upon deletion.
+        # Get the relevant key first because it will be lost upon deletion
         key = self.construct_key(*identity, default=None, **filter_kwargs)
-        # Copy since should never change value of _cyclic attribute in-place
-        cyclic_axes = self._cyclic.copy()
+        cyclic_axes = self._cyclic
 
         deld_construct = super().del_construct(
             *identity, default=None, **filter_kwargs
@@ -2495,21 +2494,20 @@ class FieldDomain:
         if deld_construct is None:
             if default is None:
                 return
-                
-            return self._default(default, "Can't find unique construct to remove")
+
+            return self._default(
+                default, "Can't find unique construct to remove"
+            )
 
         # If the construct deleted was a cyclic axes, remove it from the set
-        # of stored cyclic axes, to update that appropriately. Do this
-        # afterwards because the deletion might not be successful and don't
-        # want to update the cyclic() set unless we know the deletion occurred.
+        # of stored cyclic axes, to sync that. This is safe now, since given
+        # the block above we can be sure the deletion was successful.
         if key in cyclic_axes:
-            # The below is to test that the construct was successfully deleted
-            if isinstance(default, Exception) or (
-                not isinstance(default, Exception)
-                and deld_construct != default
-            ):
-                cyclic_axes.remove(key)
-                self._cyclic = cyclic_axes
+            # Never change value of _cyclic attribute in-place. Only copy now
+            # when the copy is known to be required.
+            cyclic_axes = cyclic_axes.copy()
+            cyclic_axes.remove(key)
+            self._cyclic = cyclic_axes
 
         return deld_construct
 
