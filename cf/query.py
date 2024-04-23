@@ -711,7 +711,7 @@ class Query:
 
     def addattr(self, attr):
         """Return a `Query` object with a new left hand side operand
-        attribute to be used during evaluation. TODO.
+        attribute to be used during evaluation.
 
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
@@ -1708,8 +1708,12 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
 
 
 def wi(
-        value0, value1, units=None, attr=None, open_lower=False,
-        open_upper=False,
+    value0,
+    value1,
+    units=None,
+    attr=None,
+    open_lower=False,
+    open_upper=False,
 ):
     """A `Query` object for a "within a range" condition.
 
@@ -1798,8 +1802,12 @@ def wi(
 
     """
     return Query(
-        "wi", [value0, value1], units=units, attr=attr,
-        open_lower=open_lower, open_upper=open_upper,
+        "wi",
+        [value0, value1],
+        units=units,
+        attr=attr,
+        open_lower=open_lower,
+        open_upper=open_upper,
     )
 
 
@@ -2592,10 +2600,6 @@ def seasons(n=4, start=12):
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-
-    TODO
-
-    .. seealso:: `cf.mam`, `cf.jja`, `cf.son`, `cf.djf`
 
     :Parameters:
 

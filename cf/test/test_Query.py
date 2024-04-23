@@ -70,7 +70,8 @@ class QueryTest(unittest.TestCase):
 
         self.assertTrue(q.equals(q.copy()))
         self.assertTrue(
-            q.equals(cf.wi(2, 5, open_lower=False, open_upper=False)))
+            q.equals(cf.wi(2, 5, open_lower=False, open_upper=False))
+        )
         self.assertFalse(q.equals(v))
         self.assertFalse(q.equals(w))
         self.assertFalse(q.equals(x))
@@ -525,10 +526,10 @@ class QueryTest(unittest.TestCase):
         d2 = cf.wi(6, 8, open_upper=True)
         d3 = cf.wi(6, 8, open_lower=True, open_upper=True)
 
-        e = d | c       # interval: [2, 4] | [6, 8]
-        e1 = c0 | d1    # interval: [2, 4] | (6, 8]
-        e2 = c1 | d2    # interval: (2, 4] | [6, 8)
-        e3 = d3 | c3    # interval: (6, 8) | (2, 4)
+        e = d | c  # interval: [2, 4] | [6, 8]
+        e1 = c0 | d1  # interval: [2, 4] | (6, 8]
+        e2 = c1 | d2  # interval: (2, 4] | [6, 8)
+        e3 = d3 | c3  # interval: (6, 8) | (2, 4)
         all_e = [e, e1, e2, e3]
 
         for cx in all_c:
@@ -728,35 +729,32 @@ class QueryTest(unittest.TestCase):
         )
 
         self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True)), tokenize(cf.wi(-5, 5))
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_upper=True)), tokenize(cf.wi(-5, 5))
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_upper=True)),
             tokenize(cf.wi(-5, 5, open_lower=True)),
-            tokenize(cf.wi(-5, 5))
         )
         self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
+            tokenize(cf.wi(-5, 5)),
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
+            tokenize(cf.wi(-5, 5, open_lower=True)),
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
             tokenize(cf.wi(-5, 5, open_upper=True)),
-            tokenize(cf.wi(-5, 5))
-        )
-        self.assertNotEqual(
-            tokenize(cf.wi(-5, 5, open_upper=True)),
-            tokenize(cf.wi(-5, 5, open_lower=True))
-        )
-        self.assertNotEqual(
-            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
-            tokenize(cf.wi(-5, 5))
-        )
-        self.assertNotEqual(
-            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
-            tokenize(cf.wi(-5, 5, open_lower=True))
-        )
-        self.assertNotEqual(
-            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
-            tokenize(cf.wi(-5, 5, open_upper=True))
         )
         # Check defaults
         self.assertEqual(
             tokenize(cf.wi(-5, 5, open_lower=False, open_upper=False)),
-            tokenize(cf.wi(-5, 5))
+            tokenize(cf.wi(-5, 5)),
         )
-
 
     def test_Query_Units(self):
         self.assertEqual(cf.eq(9).Units, cf.Units())
