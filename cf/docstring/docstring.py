@@ -81,9 +81,9 @@ _docstring_substitution_definitions = {
         `cf.regrid_logging`. If it is enabled then logging takes place
         after every call. By default logging is disabled.""",
     # subspace halos
-    "{{subspace halos}}": """
-        If a halo is defined via a positional argument, then each
-        subspaced axis will be extended to include that many extra
+    "{{subspace halos}}": """If a halo is defined via
+        a positional argument, then each subspaced axis
+        will be extended to include that many extra
         elements at each "side" of the axis. The number of extra
         elements will be automatically reduced if including the full
         amount defined by the halo would extend the subspace beyond
