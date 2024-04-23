@@ -759,6 +759,7 @@ class FieldDomain:
                 #       with 'ind', but that's OK because we're not
                 #       going to use 'ind' again as 'create_mask' is
                 #       False.
+                reduced_halo = False
                 for axis in item_axes:
                     index = indices[axis]
                     size = domain_axes[axis].get_size()
@@ -815,12 +816,27 @@ class FieldDomain:
 
                         if step > 0:
                             # Increasing cyclic slice
-                            start = max(start - halo, stop - size)
-                            stop = min(stop + halo, size + start)
+                            start = start - halo
+                            if start < stop - size:
+                                start = stop - size
+                                reduced_halo = True
+
+                            stop = stop + halo
+                            if stop > size + start:
+                                stop = size + start
+                                reduced_halo = True
+
                         else:
                             # Decreasing cyclic slice
-                            start = min(start + halo, size + stop)
-                            stop = max(stop - halo, start - size)
+                            start = start + halo
+                            if start > size + stop:
+                                start = size + stop
+                                reduced_halo = True
+
+                            stop = stop - halo
+                            if stop < start - size:
+                                stop = start - size
+                                reduced_halo = True
 
                         index = slice(start, stop, step)
                     else:
@@ -889,16 +905,34 @@ class FieldDomain:
                         # Extend the list at each end, but not
                         # exceeding the axis limits.
                         if increasing_L:
-                            left = range(max(*(0, iL - halo)), iL)
+                            start = iL - halo
+                            if start < 0:
+                                start = 0
+                                reduced_halo = True
+
+                            left = range(start, iL)
                         else:
-                            left = range(min(*(size - 1, iL + halo)), iL, -1)
+                            start = iL + halo
+                            if start > size - 1:
+                                start = size - 1
+                                reduced_halo = True
+
+                            left = range(start, iL, -1)
 
                         if increasing_R:
-                            right = range(iR + 1, min(*(iR + 1 + halo, size)))
+                            stop = iR + 1 + halo
+                            if stop > size:
+                                stop = size
+                                reduced_halo = True
+
+                            right = range(iR + 1, stop)
                         else:
-                            right = range(
-                                iR - 1, max(*(iR - 1 - halo, -1)), -1
-                            )
+                            stop = iR - 1 - halo
+                            if stop < -1:
+                                stop = -1
+                                reduced_halo = True
+
+                            right = range(iR - 1, stop, -1)
 
                         index = index.tolist()
                         index[:0] = left
@@ -906,6 +940,11 @@ class FieldDomain:
 
                     # Reset the returned index
                     indices[axis] = index
+
+                if reduced_halo:
+                    logger.warning(
+                        "Halo reduced to keep subspace within axis limits"
+                    )
 
             # Create an ancillary mask for these axes
             if debug:
