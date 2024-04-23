@@ -27,6 +27,9 @@ version 3.16.2
 * Fix bug in `cf.aggregate` that sometimes put a null transpose
   operation into the Dask graph when one was not needed
   (https://github.com/NCAS-CMS/cf-python/issues/754)
+* Fix bug whereby `Field.cyclic` is not updated after a
+  `Field.del_construct` operation
+  (https://github.com/NCAS-CMS/cf-python/issues/758)
 
 ----
 
