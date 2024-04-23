@@ -27,6 +27,12 @@ version 3.16.2
 * Fix bug in `cf.aggregate` that sometimes put a null transpose
   operation into the Dask graph when one was not needed
   (https://github.com/NCAS-CMS/cf-python/issues/754)
+* Fix bug in `cf.aggregate` that caused a failure when properties are
+  `numpy` arrays with two or more elements
+  (https://github.com/NCAS-CMS/cf-python/issues/764)
+* Fix bug in `cf.aggregate` that didn't correctly handle the
+  "actual_range" CF attribute
+  (https://github.com/NCAS-CMS/cf-python/issues/764)
 
 ----
 
