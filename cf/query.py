@@ -476,7 +476,6 @@ class Query:
                 repr_value = repr_value[:-1] + ")"
 
         if not compound:
-            print(self._value, type(self._value))
             out = f"{attr}({operator} {repr_value}"
             rtol = self.rtol
             if rtol is not None:
