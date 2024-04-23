@@ -1713,11 +1713,27 @@ def wi(
     False
     >>> q.evaluate(5)
     True
-    >>> q.evaluate(5, open_lower=True)
-    False
     >>> q.evaluate(7)
     True
-    >>> q.evaluate(7, open_upper=True)
+
+    >>> q = cf.wi(5, 7, open_upper=True)
+    >>> q
+    TODO SLB
+    >>> q.evaluate(7)
+    False
+    >>> q = cf.wi(5, 7, open_lower=True)
+    >>> q
+    TODO SLB
+    >>> q.evaluate(5)
+    False
+    >>> q = cf.wi(5, 7, open_lower=True, open_upper=True)
+    >>> q
+    TODO SLB
+    >>> q.evaluate(6)
+    True
+    >>> q.evaluate(5)
+    False
+    >>> q.evaluate(7)
     False
 
     """
