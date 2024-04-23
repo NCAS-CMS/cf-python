@@ -1679,6 +1679,14 @@ class FieldTest(unittest.TestCase):
             g = f[indices]
             self.assertFalse(np.ma.is_masked(g.array))
 
+        # Test API with 0/1/2 arguments
+        kwargs = {"grid_latitude": [1]}
+        i = f.indices(**kwargs)
+        j = f.indices(0, **kwargs)
+        k = f.indices("compress", 0, **kwargs)
+        self.assertEqual(i, j)
+        self.assertEqual(i, k)
+
         # Subspace has size 0 axis resulting from dask array index
         indices = f.indices(grid_latitude=cf.contains(-23.2))
         with self.assertRaises(IndexError):
