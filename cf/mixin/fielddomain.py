@@ -2490,8 +2490,13 @@ class FieldDomain:
         cyclic_axes = self._cyclic.copy()
 
         deld_construct = super().del_construct(
-            *identity, default=default, **filter_kwargs
+            *identity, default=None, **filter_kwargs
         )
+        if deld_construct is None:
+            if default is None:
+                return
+                
+            return self._default(default, "Can't find unique construct to remove")
 
         # If the construct deleted was a cyclic axes, remove it from the set
         # of stored cyclic axes, to update that appropriately. Do this
