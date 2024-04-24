@@ -181,9 +181,7 @@ class UMArray(
 
         :Parameters:
 
-            index: `tuple` or `None`, optional
-               Provide the indices that define the subspace. If `None`
-               then the `index` attribute is used.
+            {{index: `tuple` or `None`, optional}}
 
         :Returns:
 
@@ -206,7 +204,6 @@ class UMArray(
         self.close(f)
         del f, rec
 
-        # REVIEW: h5: `_get_array`: refactor for use of `netcdf_indexer`
         # Set the netCDF attributes for the data
         attributes = self.get_attributes({})
         self._set_units(int_hdr, attributes)
@@ -275,6 +272,7 @@ class UMArray(
         #         if r.hdr_offset == header_offset:
         #             return r
 
+    # REVIEW: getitem: `_set_FillValue`: record _FillValue in attributes
     def _set_FillValue(self, int_hdr, real_hdr, attributes):
         """Set the ``_FillValue`` attribute.
 
@@ -298,8 +296,6 @@ class UMArray(
             `None
 
         """
-        # REVIEW: getitem: `_set_FillValue`
-
         if "FillValue" in attributes:
             return
 
@@ -374,7 +370,6 @@ class UMArray(
         # REVIEW: getitem: `_set_units`: record units in attributes
         attributes["units"] = units
 
-    # REVIEW: h5: `_set_unpack`: record unpack in attributes
     # REVIEW: getitem: `_set_unpack`: record unpack in attributes
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.

@@ -22,11 +22,11 @@ class FragmentArrayMixin:
 
         :Parameters:
 
-            index: `tuple` or `None`, optional
-               Provide the indices that define the subspace. It is
-               assumed that there is a distinct index for each
-               fragment dimension. If `None` then the `index`
-               attribute is used.
+            {{index: `tuple` or `None`, optional}}
+
+               It is important that there is a distinct value for each
+               fragment dimension, which is guaranteed when the
+               default of the `index` attribute is being used.
 
         :Returns:
 
@@ -60,7 +60,7 @@ class FragmentArrayMixin:
                 # how many missing dimensions the fragment has, nor
                 # their positions => Get the full fragment array and
                 # then reshape it to the shape of the dask compute
-                # chunk.
+                # chunk; and then apply the index.
                 array = super()._get_array(Ellipsis)
                 if array.size > prod(self.original_shape):
                     raise ValueError(

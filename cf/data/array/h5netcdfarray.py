@@ -49,7 +49,8 @@ class H5netcdfArray(
         """
         return netcdf_lock
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
+    # REVIEW: h5: `_get_array`: Ignore this for h5 review
+    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array.
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -59,9 +60,7 @@ class H5netcdfArray(
 
         :Parameters:
 
-            index: `tuple` or `None`, optional
-               Provide the indices that define the subspace. If `None`
-               then the `index` attribute is used.
+            {{index: `tuple` or `None`, optional}}
 
         :Returns:
 

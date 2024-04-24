@@ -64,8 +64,8 @@ def read(
     chunks="auto",
     domain=False,
     cfa=None,
-    # REVIEW: h5: `read`: new 'netcdf_engine' parameter to control how to read files
-    netcdf_engine=None,
+    # REVIEW: h5: `read`: new 'netcdf_backend' parameter to control how to read files
+    netcdf_backend=None,
     # REVIEW: h5: `read`: new 'storage_options' parameter to control access to S3
     storage_options=None,
     # REVIEW: h5: `read`: 'cache' parameter to control whether or not to get to cache selected data elements
@@ -670,31 +670,32 @@ def read(
               A dictionary whose key/value pairs define text
               substitutions to be applied to the fragment file
               names. Each key may be specified with or without the
-              ``${...}`` syntax. For instance, the following are
-              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
-              The substitutions are used in conjunction with, and take
-              precedence over, any that are stored in the CFA-netCDF
-              file by the ``substitutions`` attribute of the ``file``
-              CFA aggregation instruction variable.
+              ``${*}`` syntax (where `*` represents any amount of any
+              characters). For instance, ``{'substitution':
+              'replacement'}`` and ``{'${substitution}' are equivalent
+              'replacement'}``. The substitutions are used in
+              conjunction with, and take precedence over, any that are
+              stored in the CFA-netCDF file by the ``substitutions``
+              attribute of the ``file`` fragement array variable.
 
               *Example:*
-                ``{'base': 'file:///data/'}``
+                ``{'replacement': 'file:///data/'}``
 
             .. versionadded:: 3.15.0
 
-        netcdf_engine: `None` or `str`, optional
-            Specify which library to use for opening and reading
-            netCDF files. By default, or if `None`, then the first one
-            of `netCDF4` and `h5netcdf` to successfully open the file
-            netCDF file is used. Setting *netcdf_engine* to one of
-            ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
-            that library.
+        netcdf_backend: `None` or `str`, optional
+            Specify which library to use for reading netCDF files. By
+            default, or if `None`, then the first one of `netCDF4` and
+            `h5netcdf` to successfully open the file netCDF file is
+            used. Setting *netcdf_backend* to one of ``'netCDF4'`` and
+            ``'h5netcdf'`` will force the use of that library.
 
-            .. note:: The *netcdf_engine* parameter does not affect
+            .. note:: The *netcdf_backend* parameter does not affect
                       the opening of netCDF fragment files that define
-                      the data of aggregated variables. For these, the
-                      first one of `netCDF4` and `h5netcdf` to
-                      successfully open the file is used.
+                      the data of aggregation variables. For these, it
+                      is always the case that the first one of
+                      `netCDF4` and `h5netcdf` to successfully open
+                      the file is used.
 
             .. versionadded:: NEXTVERSION
 
@@ -1048,7 +1049,7 @@ def read(
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
-                netcdf_engine=netcdf_engine,
+                netcdf_backend=netcdf_backend,
                 storage_options=storage_options,
                 cache=cache,
             )
@@ -1166,7 +1167,7 @@ def _read_a_file(
     select=None,
     domain=False,
     cfa_options=None,
-    netcdf_engine=None,
+    netcdf_backend=None,
     storage_options=None,
     cache=True,
 ):
@@ -1212,7 +1213,7 @@ def _read_a_file(
 
             .. versionadded:: NEXTVERSION
 
-        netcdf_engine: `str` or `None`, optional
+        netcdf_backend: `str` or `None`, optional
             See `cf.read` for details.
 
             .. versionadded:: NEXTVERSION
@@ -1298,7 +1299,7 @@ def _read_a_file(
                 warn_valid=warn_valid,
                 domain=domain,
                 storage_options=storage_options,
-                netcdf_engine=netcdf_engine,
+                netcdf_engine=netcdf_backend,
             )
         except MaskError:
             # Some data required for field interpretation is missing,
