@@ -345,6 +345,7 @@ class Query:
         operator = self._operator
         if operator == "isclose":
             value += (self.rtol, self.atol)
+
         if operator == "wi":
             value += (self.open_lower, self.open_upper)
 
