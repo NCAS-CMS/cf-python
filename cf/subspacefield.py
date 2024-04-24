@@ -2,7 +2,7 @@ from . import mixin
 
 
 class SubspaceField(mixin.Subspace):
-    """Create a subspace of a field construct.
+    """Create a subspace of the field construct.
 
     Creation of a new field construct which spans a subspace of the
     domain of an existing field construct is achieved either by
@@ -70,37 +70,94 @@ class SubspaceField(mixin.Subspace):
       ``3:-2:-1``) is assumed to "wrap" around, rather then producing
       a null result.
 
-    .. seealso:: `cf.Field.indices`, `cf.Field.squeeze`,
-                 `cf.Field.where`
+    **Halos**
+
+    If a halo is defined via a positional argument, then each
+    subspaced axis will be extended to include that many extra
+    elements at each "side" of the axis. The number of extra elements
+    will be automatically reduced if including the full amount defined
+    by the halo would extend the subspace beyond the axis limits.
+
+    For instance, ``f.subspace(X=slice(10, 20))`` will give identical
+    results to each of ``f.subspace(0, X=slice(10, 20))``,
+    ``f.subspace(1, X=slice(11, 19))``, ``f.subspace(2, X=slice(12,
+    18))``, etc.
+
+    .. seealso:: `cf.Field.indices`, `cf.Field.where`,
+                 `cf.Field.__getitem__`, `cf.Field.__setitem__`,
+                 `cf.Domain.subspace`
 
     :Parameters:
 
-        positional arguments: *optional*
-            There are three modes of operation, each of which provides
-            a different type of subspace:
+        config: optional
+            Configure the subspace by specifying the mode of operation
+            (``mode``) and any halo to be added to the subspaced axes
+            (``halo``), with positional arguments in the format
+            ``mode``, or ``halo``, or ``mode, halo``, or with no
+            positional arguments at all.
 
-            ==============  ==========================================
-            *argument*      Description
-            ==============  ==========================================
-            ``'compress'``  This is the default mode. Unselected
-                            locations are removed to create the
-                            returned subspace. Note that if a
-                            multi-dimensional metadata construct is
-                            being used to define the indices then some
-                            missing data may still be inserted at
-                            unselected locations.
+            A mode of operation is given as a `str`, and a halo as a
+            non-negative `int` (or any object that can be converted to
+            one):
 
-            ``'envelope'``  The returned subspace is the smallest that
-                            contains all of the selected
-                            indices. Missing data is inserted at
-                            unselected locations within the envelope.
+            ==============  ======================================
+            *mode*          Description
+            ==============  ======================================
+            Not provided     If no positional arguments are
+                            provided then assume the
+                            ``'compress'`` mode of operation with
+                            no halo added to the subspaced axes.
 
-            ``'full'``      The returned subspace has the same domain
-                            as the original field construct. Missing
-                            data is inserted at unselected locations.
-            ==============  ==========================================
+            ``mode``        Define the mode of operation with no
+                            halo added to the subspaced axes.
 
-        keyword parameters: *optional*
+            ``mode, halo``  Define a mode of operation, as well as
+                            a halo to be added to the subspaced
+                            axes.
+
+            ``halo``        Assume the ``'compress'`` mode of
+                            operation and define a halo to be
+                            added to the subspaced axes.
+            ==============  ======================================
+
+            Valid modes are:
+
+            * ``'compress'`` This is the default.
+                 Unselected locations are removed to create the
+                 subspace. If the result is not hyperrectangular then
+                 the minimum amount of unselected locations required
+                 to make it so will also be specially
+                 selected. Missing data is inserted at the specially
+                 selected locations, unless a halo has been defined
+                 (of any size, including 0).
+
+            * ``'envelope'``
+                 The subspace is the smallest hyperrectangular
+                 subspace that contains all of the selected
+                 locations. Missing data is inserted at unselected
+                 locations within the envelope, unless a halo has been
+                 defined (of any size, including 0).
+
+            * ``'full'``
+                 The subspace has the same domain as the original
+                 construct. Missing data is inserted at unselected
+                 locations, unless a halo has been defined (of any
+                 size, including 0).
+
+            .. note:: Setting a halo size of `0` differs from not not
+                      defining a halo at all. The shape of the
+                      returned field will always be the same, but in
+                      the former case missing data will not be
+                      inserted at unselected locations (if any) within
+                      the output domain.
+
+            In addition, an extra positional argument of ``'test'`` is
+            allowed. When provided, the subspace is not returned,
+            instead `True` or `False` is returned depending on whether
+            or not it is possible for the requested subspace to be
+            created.
+
+        keyword parameters: optional
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
             indices that apply to the dimension (or dimensions)
@@ -110,9 +167,12 @@ class SubspaceField(mixin.Subspace):
 
     :Returns:
 
-        `Field`
+        `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field.
+            the original field. If the ``'test'`` positional argument
+            has been set then return `True` or `False` depending on
+            whether or not it is possible to create specified
+            subspace.
 
     **Examples**
 
@@ -149,7 +209,7 @@ class SubspaceField(mixin.Subspace):
 
     __slots__ = []
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *config, **kwargs):
         """Create a subspace of a field construct.
 
         Creation of a new field construct which spans a subspace of the
@@ -189,6 +249,10 @@ class SubspaceField(mixin.Subspace):
           the positional arguments), but because the indices may not be
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
+
+        **Halos**
+
+        {{subspace halos}}
 
         .. seealso:: `cf.Field.indices`, `cf.Field.squeeze`,
                      `cf.Field.where`
@@ -268,19 +332,19 @@ class SubspaceField(mixin.Subspace):
         field = self.variable
 
         test = False
-        if "test" in args:
-            args = list(args)
-            args.remove("test")
+        if "test" in config:
+            config = list(config)
+            config.remove("test")
             test = True
 
-        if not args and not kwargs:
+        if not config and not kwargs:
             if test:
                 return True
 
             return field.copy()
 
         try:
-            indices = field.indices(*args, **kwargs)
+            indices = field.indices(*config, **kwargs)
             out = field[indices]
         except (ValueError, IndexError) as error:
             if test:

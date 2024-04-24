@@ -80,6 +80,13 @@ _docstring_substitution_definitions = {
         Whether `esmpy` logging is enabled or not is determined by
         `cf.regrid_logging`. If it is enabled then logging takes place
         after every call. By default logging is disabled.""",
+    # subspace halos
+    "{{subspace halos}}": """If a halo is defined via a positional argument, then each
+        subspaced axis will be extended to include that many extra
+        elements at each "side" of the axis. The number of extra
+        elements will be automatically reduced if including the full
+        amount defined by the halo would extend the subspace beyond
+        the axis limits.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -613,6 +620,37 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # subspace config options
+    "{{config: optional}}": """config: optional
+                Configure the subspace by specifying the mode of
+                operation (``mode``) and any halo to be added to the
+                subspaced axes (``halo``), with positional arguments
+                in the format ``mode``, or ``halo``, or ``mode,
+                halo``, or with no positional arguments at all.
+
+                A mode of operation is given as a `str`, and a halo as
+                a non-negative `int` (or any object that can be
+                converted to one):
+
+                ==============  ======================================
+                *mode*          Description
+                ==============  ======================================
+                Not provided    If no positional arguments are
+                                provided then assume the
+                                ``'compress'`` mode of operation with
+                                no halo added to the subspaced axes.
+
+                ``mode``        Define the mode of operation with no
+                                halo added to the subspaced axes.
+
+                ``mode, halo``  Define a mode of operation, as well as
+                                a halo to be added to the subspaced
+                                axes.
+
+                ``halo``        Assume the ``'compress'`` mode of
+                                operation and define a halo to be
+                                added to the subspaced axes.
+                ==============  ======================================""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -663,4 +701,49 @@ _docstring_substitution_definitions = {
                 The removed CFA-netCDF file name substitution. If the
                 substitution was not defined then an empty dictionary
                 is returned.""",
+    # subspace valid modes Field
+    "{{subspace valid modes Field}}": """Valid modes are:
+
+                * ``'compress'`` This is the default.
+                     Unselected locations are removed to create the
+                     subspace. If the result is not hyperrectangular
+                     then the minimum amount of unselected locations
+                     required to make it so will also be specially
+                     selected. Missing data is inserted at the
+                     specially selected locations, unless a halo has
+                     been defined (of any size, including 0).
+
+                * ``'envelope'``
+                     The subspace is the smallest hyperrectangular
+                     subspace that contains all of the selected
+                     locations. Missing data is inserted at unselected
+                     locations within the envelope, unless a halo has
+                     been defined (of any size, including 0).
+
+                * ``'full'``
+                     The subspace has the same domain as the original
+                     construct. Missing data is inserted at unselected
+                     locations, unless a halo has been defined (of any
+                     size, including 0).
+
+                .. note:: Setting a halo size of `0` differs from not
+                          not defining a halo at all. The shape of the
+                          returned field will always be the same, but
+                          in the former case missing data will not be
+                          inserted at unselected locations (if any)
+                          within the output domain.""",
+    # subspace valid modes Domain
+    "{{subspace valid modes Domain}}": """Valid modes are:
+
+                * ``'compress'`` This is the default.
+                     Unselected locations are removed to create the
+                     subspace. If the result is not hyperrectangular
+                     then the minimum amount of unselected locations
+                     required to make it so will also be specially
+                     selected.
+
+                * ``'envelope'``
+                     The subspace is the smallest hyperrectangular
+                     subspace that contains all of the selected
+                     locations.""",
 }
