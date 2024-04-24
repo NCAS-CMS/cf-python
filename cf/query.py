@@ -495,6 +495,7 @@ class Query:
         if self.open_lower:
             repr_value = "(" + repr_value[1:]
 
+
         if self.open_upper:
             repr_value = repr_value[:-1] + ")"
 
