@@ -525,6 +525,7 @@ class QueryTest(unittest.TestCase):
         d1 = cf.wi(6, 8, open_lower=True)
         d2 = cf.wi(6, 8, open_upper=True)
         d3 = cf.wi(6, 8, open_lower=True, open_upper=True)
+        all_d = [d, d0, d1, d2, d3]
 
         e = d | c  # interval: [2, 4] | [6, 8]
         e1 = c0 | d1  # interval: [2, 4] | (6, 8]
