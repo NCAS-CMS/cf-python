@@ -713,8 +713,7 @@ class Query:
         return value
 
     def addattr(self, attr):
-        """Return a `Query` object with a new left hand side operand
-        attribute to be used during evaluation.
+        """Redefine the query to be on an object's attribute.
 
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
