@@ -144,6 +144,13 @@ class SubspaceField(mixin.Subspace):
                  locations, unless a halo has been defined (of any
                  size, including 0).
 
+            .. note:: Setting a halo size of `0` differs from not not
+                      defining a halo at all. The shape of the
+                      returned field will always be the same, but in
+                      the former case missing data will not be
+                      inserted at unselected locations (if any) within
+                      the output domain.
+
             In addition, an extra positional argument of ``'test'`` is
             allowed. When provided, the subspace is not returned,
             instead `True` or `False` is returned depending on whether
