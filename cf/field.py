@@ -13491,6 +13491,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         inplace=False,
         i=False,
         _compute_field_mass=None,
+        return_esmpy_regrid_operator=False,
     ):
         """Regrid the field to a new latitude and longitude grid.
 
@@ -13727,6 +13728,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.16.0
 
             {{inplace: `bool`, optional}}
+            
+            {{return_esmpy_regrid_operator: `bool`, optional}}
+
+                .. versionadded:: 3.16.2            
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -13744,7 +13749,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
                 operation was in-place; or the regridding operator if
-                *return_operator* is True.
+                *return_operator* is True; or the esmpy.Regrid operator
+                object if *return_esmpy_regrid_operator* is True.
 
         **Examples**
 
@@ -13819,6 +13825,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_z=dst_z,
             z=z,
             ln_z=ln_z,
+            return_esmpy_regrid_operator=return_esmpy_regrid_operator,
             inplace=inplace,
         )
 
@@ -13845,6 +13852,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         inplace=False,
         i=False,
         _compute_field_mass=None,
+        return_esmpy_regrid_operator=False,        
     ):
         """Regrid the field to a new Cartesian grid.
 
@@ -14016,6 +14024,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.16.2
 
             {{inplace: `bool`, optional}}
+            
+            {{return_esmpy_regrid_operator: `bool`, optional}}
+
+                .. versionadded:: 3.16.2               
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -14033,7 +14045,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
                 operation was in-place; or the regridding operator if
-                *return_operator* is True.
+                *return_operator* is True; or the esmpy.Regrid operator
+                object if *return_esmpy_regrid_operator* is True.
 
         **Examples**
 
@@ -14107,6 +14120,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_z=dst_z,
             z=z,
             ln_z=ln_z,
+            return_esmpy_regrid_operator=return_esmpy_regrid_operator,            
             inplace=inplace,
         )
 
