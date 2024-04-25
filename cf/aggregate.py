@@ -4906,11 +4906,11 @@ def _aggregate_2_fields(
                     actual_range[0] < valid_range[0]
                     or actual_range[1] > valid_range[1]
                 ):
-                    deld_prop = parent0.del_property("actual_range", None)
-                    if deld_prop:
+                    actual_range = parent0.del_property("actual_range", None)
+                    if actual_range is not None and is_log_level_info(logger):
                         logger.info(
                             "Deleted 'actual_range' attribute due to being "
-                            "outside of 'valid_range' attribute bounds."
+                            "outside of 'valid_range' attribute limits."
                         )
                         
             except (TypeError, IndexError):
