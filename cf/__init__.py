@@ -167,7 +167,7 @@ if Version(psutil.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of netCDF4
-_minimum_vn = "1.5.4"
+_minimum_vn = "1.6.5"
 if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
@@ -191,7 +191,7 @@ if Version(numpy.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.6"
+_minimum_vn = "3.3.7"
 if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "

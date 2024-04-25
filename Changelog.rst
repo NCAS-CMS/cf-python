@@ -35,7 +35,9 @@ version 3.16.2
 * Fix bug whereby `Field.cyclic` is not updated after a
   `Field.del_construct` operation
   (https://github.com/NCAS-CMS/cf-python/issues/758)
-
+* Changed dependency: ``cfunits>=3.3.7``
+* Changed dependency: ``netCDF4>=1.6.5``
+  
 ----
 
 version 3.16.1
