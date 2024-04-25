@@ -14045,7 +14045,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
                 operation was in-place; or the regridding operator if
-                *return_operator* is True; or the esmpy.Regrid operator
+                *return_operator* is True; or the `esmpy.Regrid` operator
                 object if *return_esmpy_regrid_operator* is True.
 
         **Examples**
