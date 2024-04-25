@@ -112,8 +112,8 @@ class IndexMixin:
             if isinstance(ind0, Integral):
                 # The previous call to __getitem__ resulted in a
                 # dimension being removed (i.e. 'ind0' is
-                # integer-valued). Therefore 'index1' must have have
-                # fewer elements than 'index0', so we need to "carry
+                # integer-valued). Therefore 'index1' must have fewer
+                # elements than 'index0', so we need to "carry
                 # forward" the integer-valued index so that it is
                 # available at evaluation time.
                 new_indices.append(ind0)
@@ -139,10 +139,9 @@ class IndexMixin:
                 #       computed as part of the whole graph execution;
                 #       i.e. we don't have to worry about a
                 #       compute-within-a-compute situation. (If this
-                #       were not the case then we could get round it
-                #       by wrapping the compute inside a `with
-                #       dask.config.set({"scheduler":
-                #       "synchronous"}):`.)
+                #       were not the case then we could add
+                #       `scheduler="synchronous"` to the compute
+                #       call.)
                 ind1 = ind1.compute()
 
             if isinstance(ind0, slice):
@@ -174,8 +173,8 @@ class IndexMixin:
                     # ind1: int, or array of int/bool
                     new_index = np.arange(*ind0.indices(original_size))[ind1]
             else:
-                # ind0: array of int. If we made it here then it can't
-                #                     be anything else. This is
+                # ind0: array of int. If we made it to here then it
+                #                     can't be anything else. This is
                 #                     because we've dealt with ind0
                 #                     being a slice or an int, the
                 #                     very first ind0 is always
@@ -305,10 +304,13 @@ class IndexMixin:
 
         # Still here? Then conform the indices by:
         #
-        # 1) Converting decreasing size 1 slices to increasing ones.
+        # 1) Converting decreasing size 1 slices to increasing
+        #    ones. This helps when the parent class can't cope with
+        #    decreasing slices.
         #
         # 2) Converting, where possible, sequences of integers to
-        #    slices.
+        #    slices. This helps when the parent class can't cope with
+        #    indices that are sequences of integers.
         ind = list(ind)
         for n, (i, size) in enumerate(zip(ind[:], self.original_shape)):
             if isinstance(i, slice):
@@ -356,7 +358,7 @@ class IndexMixin:
         """
         out = self._custom.get("original_shape")
         if out is None:
-            # If None then no subspace has been defined
+            # No subspace has been defined yet
             out = self.shape
             self._custom["original_shape"] = out
 
