@@ -793,13 +793,20 @@ class RegridTest(unittest.TestCase):
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_return_esmpy_regrid_operator(self):
-        """esmpy regrid operator returns esmpy.api.regrid.Regrid in regrids and regridc"""
+        """esmpy regrid operator returns esmpy.Regrid in regrids and regridc"""
         dst = self.dst
         src = self.src
-        
-        opers = src.regrids(dst, method="conservative", return_esmpy_regrid_operator=True)
-        operc = src.regridc(dst, method="conservative", return_esmpy_regrid_operator=True)        
-        
+
+        opers = src.regrids(
+            dst, method="conservative", return_esmpy_regrid_operator=True
+        )
+        operc = src.regridc(
+            dst,
+            axes=["Y", "X"],
+            method="conservative",
+            return_esmpy_regrid_operator=True,
+        )
+
         self.assertIsInstance(opers, esmpy.api.regrid.Regrid)
         self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
 
