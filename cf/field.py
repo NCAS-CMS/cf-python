@@ -13488,10 +13488,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         verbose=None,
+        return_esmpy_regrid_operator=False,        
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_esmpy_regrid_operator=False,
     ):
         """Regrid the field to a new latitude and longitude grid.
 
@@ -13849,10 +13849,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_z=None,
         z=None,
         ln_z=None,
+        return_esmpy_regrid_operator=False,                
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_esmpy_regrid_operator=False,        
     ):
         """Regrid the field to a new Cartesian grid.
 
