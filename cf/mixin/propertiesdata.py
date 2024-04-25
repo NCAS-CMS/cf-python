@@ -2934,7 +2934,7 @@ class PropertiesData(Properties):
         return data.count_masked()
 
     def cyclic(self, axes=None, iscyclic=True):
-        """Set the cyclicity of an axis.
+        """Get or set the cyclicity of an axis.
 
         .. seealso:: `iscyclic`
 

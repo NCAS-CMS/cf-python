@@ -1909,7 +1909,7 @@ class FieldDomain:
     def cyclic(
         self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
     ):
-        """Set the cyclicity of an axis.
+        """Get or set the cyclicity of an axis.
 
         .. versionadded:: 1.0
 
