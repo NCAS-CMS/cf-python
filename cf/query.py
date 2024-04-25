@@ -495,7 +495,6 @@ class Query:
         if self.open_lower:
             repr_value = "(" + repr_value[1:]
 
-
         if self.open_upper:
             repr_value = repr_value[:-1] + ")"
 
@@ -1740,7 +1739,7 @@ def wi(
              bound so that value0 is excluded from the
              range. By default the interval is closed
              so that value0 is included.
-             
+
              .. versionadded:: NEXTVERSION
 
         open_upper: `bool`, optional
@@ -1748,7 +1747,7 @@ def wi(
              bound so that value1 is excluded from the
              range. By default the interval is closed
              so that value1 is included.
-             
+
              .. versionadded:: NEXTVERSION
 
         units: `str` or `Units`, optional
