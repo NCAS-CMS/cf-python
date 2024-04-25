@@ -654,8 +654,8 @@ _docstring_substitution_definitions = {
     # return_esmpy_regrid_operator
     "{{return_esmpy_regrid_operator: `bool`, optional}}": """return_esmpy_regrid_operator: `bool`, optional
                 If True then do not perform the regridding, rather
-                return the esmpy.Regrid instance that defines the
-                regridding operation.""",                
+                return the `esmpy.Regrid` instance that defines the
+                regridding operation.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

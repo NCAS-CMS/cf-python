@@ -13488,7 +13488,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         verbose=None,
-        return_esmpy_regrid_operator=False,        
+        return_esmpy_regrid_operator=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13728,10 +13728,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.16.0
 
             {{inplace: `bool`, optional}}
-            
+
             {{return_esmpy_regrid_operator: `bool`, optional}}
 
-                .. versionadded:: 3.16.2            
+                .. versionadded:: 3.16.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -13849,7 +13849,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_z=None,
         z=None,
         ln_z=None,
-        return_esmpy_regrid_operator=False,                
+        return_esmpy_regrid_operator=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14024,10 +14024,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.16.2
 
             {{inplace: `bool`, optional}}
-            
+
             {{return_esmpy_regrid_operator: `bool`, optional}}
 
-                .. versionadded:: 3.16.2               
+                .. versionadded:: 3.16.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -14120,7 +14120,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_z=dst_z,
             z=z,
             ln_z=ln_z,
-            return_esmpy_regrid_operator=return_esmpy_regrid_operator,            
+            return_esmpy_regrid_operator=return_esmpy_regrid_operator,
             inplace=inplace,
         )
 
