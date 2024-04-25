@@ -668,8 +668,6 @@ class aggregateTest(unittest.TestCase):
 
     def test_aggregate_actual_range(self):
         """Test aggregation of actual_range"""
-        import cf
-
         f = cf.example_field(0)
         f.set_property("actual_range", (5, 10))
         f.set_property("valid_range", (0, 15))
