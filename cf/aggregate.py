@@ -4906,7 +4906,13 @@ def _aggregate_2_fields(
                     actual_range[0] < valid_range[0]
                     or actual_range[1] > valid_range[1]
                 ):
-                    parent0.del_property("actual_range", None)
+                    deld_prop = parent0.del_property("actual_range", None)
+                    if deld_prop:
+                        logger.info(
+                            "Deleted 'actual_range' attribute due to being "
+                            "outside of 'valid_range' attribute bounds."
+                        )
+                        
             except (TypeError, IndexError):
                 # valid_range is non-CF-compliant
                 pass
