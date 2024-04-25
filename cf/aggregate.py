@@ -4869,7 +4869,7 @@ def _aggregate_2_fields(
                     min(value0[0], value1[0]),
                     max(value0[1], value1[1]),
                 )
-            except (TypeError, IndexError):
+            except (TypeError, IndexError, KeyError):
                 # value0 and/or value1 is not set, or is
                 # non-CF-compliant.
                 parent0.del_property(prop, None)
