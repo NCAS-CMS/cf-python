@@ -791,6 +791,25 @@ class RegridTest(unittest.TestCase):
                 src.regrids(r, method="linear", weights_file=tmpfile)
             )
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_return_esmpy_regrid_operator(self):
+        """esmpy regrid operator returns esmpy.Regrid in regrids and regridc"""
+        dst = self.dst
+        src = self.src
+
+        opers = src.regrids(
+            dst, method="conservative", return_esmpy_regrid_operator=True
+        )
+        operc = src.regridc(
+            dst,
+            axes=["Y", "X"],
+            method="conservative",
+            return_esmpy_regrid_operator=True,
+        )
+
+        self.assertIsInstance(opers, esmpy.api.regrid.Regrid)
+        self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

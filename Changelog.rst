@@ -3,6 +3,9 @@ version 3.16.2
 
 **2024-04-??**
 
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``return_esmpy_regrid_operator``
+  (https://github.com/NCAS-CMS/cf-python/issues/766)
 * Allow a halo to be added by `cf.Field.indices` and
   `cf.Field.subspace`
   (https://github.com/NCAS-CMS/cf-python/issues/759)
