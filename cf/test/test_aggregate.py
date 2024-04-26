@@ -4,6 +4,8 @@ import os
 import unittest
 import warnings
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -662,6 +664,77 @@ class aggregateTest(unittest.TestCase):
             g.subspace(**{"cf_role=trajectory_id": [0]}).equals(
                 g.subspace(**{"cf_role=trajectory_id": [1]})
             )
+        )
+
+    def test_aggregate_actual_range(self):
+        """Test aggregation of actual_range"""
+        f = cf.example_field(0)
+        f.set_property("actual_range", (5, 10))
+        f.set_property("valid_range", (0, 15))
+        f0 = f[:, :2]
+        f1 = f[:, 2:4]
+        f2 = f[:, 4:]
+
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(g[0].get_property("actual_range"), (5, 10))
+
+        f1.set_property("actual_range", [2, 13])
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(g[0].get_property("actual_range"), (2, 13))
+
+        f1.set_property("actual_range", [-2, 17])
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(g[0].get_property("actual_range"), (-2, 17))
+
+        g = cf.aggregate([f0, f1, f2], respect_valid=True)
+        self.assertEqual(len(g), 1)
+        self.assertEqual(g[0].get_property("valid_range"), (0, 15))
+        self.assertFalse(g[0].has_property("actual_range"))
+
+        f1.set_property("actual_range", [0, 15])
+        g = cf.aggregate([f0, f1, f2], respect_valid=True)
+        self.assertEqual(len(g), 1)
+        self.assertEqual(g[0].get_property("valid_range"), (0, 15))
+        self.assertEqual(g[0].get_property("actual_range"), (0, 15))
+
+    def test_aggregate_numpy_array_property(self):
+        """Test aggregation of numpy array-valued properties"""
+        a = np.array([5, 10])
+        f = cf.example_field(0)
+        f.set_property("array", a)
+        f0 = f[:, :2]
+        f1 = f[:, 2:4]
+        f2 = f[:, 4:]
+
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertTrue((g[0].get_property("array") == a).all())
+
+        f1.set_property("array", np.array([-5, 20]))
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(
+            g[0].get_property("array"),
+            "[ 5 10] :AGGREGATED: [-5 20] :AGGREGATED: [ 5 10]",
+        )
+
+        f2.set_property("array", np.array([-5, 20]))
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(
+            g[0].get_property("array"),
+            "[ 5 10] :AGGREGATED: [-5 20] :AGGREGATED: [-5 20]",
+        )
+
+        f1.set_property("array", np.array([5, 10]))
+        g = cf.aggregate([f0, f1, f2])
+        self.assertEqual(len(g), 1)
+        self.assertEqual(
+            g[0].get_property("array"),
+            "[ 5 10] :AGGREGATED: [-5 20]",
         )
 
 
