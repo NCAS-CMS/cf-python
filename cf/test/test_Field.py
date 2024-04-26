@@ -2859,6 +2859,30 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.shape, (6, 11))
         self.assertTrue(g[5, :].mask.all())
 
+    def test_Field_cyclic_iscyclic(self):
+        """Test the `cyclic` and `iscyclic` Field methods."""
+        f1 = cf.example_field(1)  # no cyclic axes
+        f2 = cf.example_field(2)  # one cyclic axis, 'domainaxis2' ('X')
+
+        # Getting
+        self.assertEqual(f1.cyclic(), set())
+        self.assertFalse(f1.iscyclic("X"))
+        self.assertFalse(f1.iscyclic("Y"))
+        self.assertFalse(f1.iscyclic("Z"))
+        self.assertFalse(f1.iscyclic("T"))
+        self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
+        self.assertTrue(f2.iscyclic("X"))
+        self.assertFalse(f2.iscyclic("Y"))
+        self.assertFalse(f2.iscyclic("Z"))
+        self.assertFalse(f2.iscyclic("T"))
+
+        # Setting
+        self.assertEqual(f2.cyclic("X", iscyclic=False), set(("domainaxis2",)))
+        self.assertEqual(f2.cyclic(), set())
+        self.assertEqual(f2.cyclic("X", period=360), set())
+        self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
+        self.assertTrue(f2.iscyclic("X"))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -428,6 +428,35 @@ class DomainTest(unittest.TestCase):
         self.assertIsInstance(e.del_construct("domainaxis2"), cf.DomainAxis)
         self.assertEqual(e.cyclic(), set())
 
+    def test_Domain_cyclic_iscyclic(self):
+        """Test the `cyclic` and `iscyclic` Domain methods."""
+        # A field and its domain should have the same cyclic() output.
+        f1 = cf.example_field(1)  # no cyclic axes
+        d1 = f1.domain
+        f2 = cf.example_field(2)  # one cyclic axis, 'domainaxis2' ('X')
+        d2 = f2.domain
+
+        # Getting
+        self.assertEqual(d1.cyclic(), f1.cyclic())
+        self.assertEqual(d1.cyclic(), set())
+        self.assertFalse(d1.iscyclic("X"))
+        self.assertFalse(d1.iscyclic("Y"))
+        self.assertFalse(d1.iscyclic("Z"))
+        self.assertFalse(d1.iscyclic("T"))
+        self.assertEqual(d2.cyclic(), f2.cyclic())
+        self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+        self.assertTrue(d2.iscyclic("X"))
+        self.assertFalse(d2.iscyclic("Y"))
+        self.assertFalse(d2.iscyclic("Z"))
+        self.assertFalse(d2.iscyclic("T"))
+
+        # Setting
+        self.assertEqual(d2.cyclic("X", iscyclic=False), set(("domainaxis2",)))
+        self.assertEqual(d2.cyclic(), set())
+        self.assertEqual(d2.cyclic("X", period=360), set())
+        self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+        self.assertTrue(d2.iscyclic("X"))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

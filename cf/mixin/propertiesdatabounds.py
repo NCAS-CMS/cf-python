@@ -1607,7 +1607,7 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     def cyclic(self, axes=None, iscyclic=True):
-        """Set the cyclicity of axes of the data array.
+        """Get or set the cyclicity of axes of the data array.
 
         .. seealso:: `iscyclic`
 
