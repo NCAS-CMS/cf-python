@@ -258,7 +258,7 @@ class Query:
                 range. By default the interval is closed
                 so that value0 is included.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
             open_upper: `bool`, optional
                 Only applicable to the ``'wi'`` operator.
@@ -267,7 +267,7 @@ class Query:
                 range. By default the interval is closed
                 so that value1 is included.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
@@ -646,7 +646,7 @@ class Query:
     def open_lower(self):
         """True if the interval is open at the (excludes the) lower bound.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.16.2
 
         .. seealso:: `open_upper`
 
@@ -657,7 +657,7 @@ class Query:
     def open_upper(self):
         """True if the interval is open at the (excludes the) upper bound.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.16.2
 
         .. seealso:: `open_lower`
 
@@ -1740,7 +1740,7 @@ def wi(
              range. By default the interval is closed
              so that value0 is included.
 
-             .. versionadded:: NEXTVERSION
+             .. versionadded:: 3.16.2
 
         open_upper: `bool`, optional
              If True, open the interval at the upper
@@ -1748,7 +1748,7 @@ def wi(
              range. By default the interval is closed
              so that value1 is included.
 
-             .. versionadded:: NEXTVERSION
+             .. versionadded:: 3.16.2
 
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
