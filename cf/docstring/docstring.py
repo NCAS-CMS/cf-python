@@ -686,7 +686,7 @@ _docstring_substitution_definitions = {
                             only the computationally cheap tests are
                             performed (checking that the coordinate
                             system, cyclicity, grid shape, regridding
-                            dimesionality, mesh location, and feature
+                            dimensionality, mesh location, and feature
                             type are the same), with the grid
                             coordinates not being checked. The
                             coordinates check will be carried out,
