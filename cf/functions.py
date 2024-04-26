@@ -2036,7 +2036,7 @@ def normalize_slice(index, size, cyclic=False):
     If *index* is not a slice, or *cyclic* is True and *index* is not
     a cyclic slice, then an `IndexError` is raised.
 
-    .. versionadded:: NEXTRELEASE
+    .. versionadded:: 3.16.2
 
     :Parameters:
 
