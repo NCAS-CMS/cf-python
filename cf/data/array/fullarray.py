@@ -131,9 +131,7 @@ class FullArray(IndexMixin, Array):
 
         :Parameters:
 
-            index: `tuple` or `None`, optional
-               Provide the indices that define the subspace. If `None`
-               then the `index` attribute is used.
+            {{index: `tuple` or `None`, optional}}
 
         :Returns:
 

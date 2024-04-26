@@ -647,6 +647,10 @@ _docstring_substitution_definitions = {
                 Array will get further operations which are guaranteed
                 to negate the need for the extra layer in the Dask
                 graph.""",
+    # _get_array index
+    "{{index: `tuple` or `None`, optional}}": """index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

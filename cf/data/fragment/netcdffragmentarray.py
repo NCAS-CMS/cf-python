@@ -1,14 +1,16 @@
 import cfdm
 
 from ..array.abstract import Array
-from ..array.mixin import FileArrayMixin
+from ..array.mixin import FileArrayMixin, IndexMixin
 from .h5netcdffragmentarray import H5netcdfFragmentArray
 from .mixin import FragmentArrayMixin
 from .netcdf4fragmentarray import NetCDF4FragmentArray
 
 
+# REVIEW: getitem: `NetCDFFragmentArray`: new inheritance to allow for different netCDF backends
 class NetCDFFragmentArray(
     FragmentArrayMixin,
+    IndexMixin,
     cfdm.data.mixin.NetCDFFileMixin,
     FileArrayMixin,
     cfdm.data.mixin.FileArrayMixin,
@@ -16,8 +18,7 @@ class NetCDFFragmentArray(
 ):
     """A netCDF fragment array.
 
-    Access will be with either `netCDF4` (for local and OPenDAP files)
-    or `h5netcdf` (for S3 files).
+    Access will be with either `netCDF4` or `h5netcdf`.
 
     .. versionadded:: 3.15.0
 
@@ -175,16 +176,36 @@ class NetCDFFragmentArray(
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: h5: `__getitem__`: new factory method to choose backend
-    def __getitem__(self, indices):
-        """Returns a subspace of the fragment as a numpy array.
+    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
 
-        x.__getitem__(indices) <==> x[indices]
+        The method acts as a factory for either a
+        `NetCDF4FragmentArray` or a `H5netcdfFragmentArray` class, and
+        it is the result of calling `!_get_array` on the newly created
+        instance that is returned.
 
-        .. versionadded:: 3.15.0
+        `H5netcdfFragmentArray` will only be used if
+        `NetCDF4FragmentArray` returns a `FileNotFoundError` exception.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            {{index: `tuple` or `None`, optional}}
+
+               It is important that there is a distinct value for each
+               fragment dimension, which is guaranteed when the
+               default of the `index` attribute is being used.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
 
         """
-
         kwargs = {
             "dtype": self.dtype,
             "shape": self.shape,
@@ -205,11 +226,11 @@ class NetCDFFragmentArray(
             )
 
             try:
-                return NetCDF4FragmentArray(**kwargs)[indices]
+                return NetCDF4FragmentArray(**kwargs)._get_array(index)
             except FileNotFoundError:
                 pass
             except Exception:
-                return H5netcdfFragmentArray(**kwargs)[indices]
+                return H5netcdfFragmentArray(**kwargs)._get_array(index)
 
         # Still here?
         if len(filenames) == 1:
