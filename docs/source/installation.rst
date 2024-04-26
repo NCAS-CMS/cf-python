@@ -196,7 +196,7 @@ Required
 
 * `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.6.5 or newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
@@ -206,7 +206,7 @@ Required
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.1.0 or up to,
   but not including, 1.11.2.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

@@ -3,6 +3,9 @@ version 3.16.2
 
 **2024-04-??**
 
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``return_esmpy_regrid_operator``
+  (https://github.com/NCAS-CMS/cf-python/issues/766)
 * Allow a halo to be added by `cf.Field.indices` and
   `cf.Field.subspace`
   (https://github.com/NCAS-CMS/cf-python/issues/759)
@@ -32,12 +35,20 @@ version 3.16.2
 * Fix bug in `cf.aggregate` that sometimes put a null transpose
   operation into the Dask graph when one was not needed
   (https://github.com/NCAS-CMS/cf-python/issues/754)
+* Fix bug in `cf.aggregate` that caused a failure when property values
+  were `numpy` arrays with two or more elements
+  (https://github.com/NCAS-CMS/cf-python/issues/764)
+* Fix bug in `cf.aggregate` that didn't correctly handle the
+  "actual_range" CF attribute
+  (https://github.com/NCAS-CMS/cf-python/issues/764)
 * Fix bug whereby `Field.cyclic` is not updated after a
   `Field.del_construct` operation
   (https://github.com/NCAS-CMS/cf-python/issues/758)
 * Fix bug that meant `cyclic()` always returned an empty
   set for domains produced by `cf.Field.domain`
   (https://github.com/NCAS-CMS/cf-python/issues/762)
+* Changed dependency: ``cfunits>=3.3.7``
+* Changed dependency: ``netCDF4>=1.6.5``
 
 ----
 
