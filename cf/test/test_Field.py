@@ -2866,23 +2866,22 @@ class FieldTest(unittest.TestCase):
 
         # Getting
         self.assertEqual(f1.cyclic(), set())
-        self.assertFalse(f1.iscyclic('X'))
-        self.assertFalse(f1.iscyclic('Y'))
-        self.assertFalse(f1.iscyclic('Z'))
-        self.assertFalse(f1.iscyclic('T'))
+        self.assertFalse(f1.iscyclic("X"))
+        self.assertFalse(f1.iscyclic("Y"))
+        self.assertFalse(f1.iscyclic("Z"))
+        self.assertFalse(f1.iscyclic("T"))
         self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
-        self.assertTrue(f2.iscyclic('X'))
-        self.assertFalse(f2.iscyclic('Y'))
-        self.assertFalse(f2.iscyclic('Z'))
-        self.assertFalse(f2.iscyclic('T'))
+        self.assertTrue(f2.iscyclic("X"))
+        self.assertFalse(f2.iscyclic("Y"))
+        self.assertFalse(f2.iscyclic("Z"))
+        self.assertFalse(f2.iscyclic("T"))
 
         # Setting
-        self.assertEqual(
-            f2.cyclic('X', iscyclic=False), set(("domainaxis2",)))
+        self.assertEqual(f2.cyclic("X", iscyclic=False), set(("domainaxis2",)))
         self.assertEqual(f2.cyclic(), set())
-        self.assertEqual(f2.cyclic('X', period=360), set())
+        self.assertEqual(f2.cyclic("X", period=360), set())
         self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
-        self.assertTrue(f2.iscyclic('X'))
+        self.assertTrue(f2.iscyclic("X"))
 
 
 if __name__ == "__main__":
