@@ -537,6 +537,10 @@ class QueryTest(unittest.TestCase):
             self.assertTrue(cx.evaluate(3))
             self.assertFalse(cx.evaluate(5))
 
+        for dx in all_d:
+            self.assertTrue(dx.evaluate(7))
+            self.assertFalse(dx.evaluate(9))
+
         # Test the two open_* keywords for direct (non-compound) queries
         self.assertEqual(c.evaluate(2), c0.evaluate(2))
         self.assertTrue(c0.evaluate(2))
