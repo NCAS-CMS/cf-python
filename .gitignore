@@ -39,3 +39,6 @@ docs/.*
 
 # docs: generated docs from a development (test) build
 docs/dev/
+
+# ESMF log files
+**/PET*.ESMF_LogFile
