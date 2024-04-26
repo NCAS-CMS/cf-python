@@ -2691,6 +2691,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for c in self.constructs.filter_by_data(todict=True).values():
                 c.cfa_update_file_substitutions(substitutions)
 
+    def get_domain(self):
+        """Return the domain.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `domain`
+
+        :Returns:
+
+            `Domain`
+                 The domain.
+
+        **Examples**
+
+        >>> d = f.get_domain()
+
+        """
+        domain = super().get_domain()
+
+        # Set axis cyclicity for the domain
+        domain._cyclic = self._cyclic
+
+        return domain
+
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.
