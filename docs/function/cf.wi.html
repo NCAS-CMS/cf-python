@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
 
 
 
@@ -135,19 +135,39 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.wi<a class="headerlink" href="#cf-wi" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.wi">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">wi</code><span class="sig-paren">(</span><em class="sig-param">value0</em>, <em class="sig-param">value1</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/query.py#L1632-L1676"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.wi" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">wi</code><span class="sig-paren">(</span><em class="sig-param">value0</em>, <em class="sig-param">value1</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">open_lower=False</em>, <em class="sig-param">open_upper=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/query.py#L1711-L1816"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.wi" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “within a range” condition.</p>
+<p>The condition is a closed interval by default, inclusive of
+both the endpoints, but can be made open or half-open to exclude
+the endpoints on either end with use of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">open_lower</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">open_upper</span></code> parameters.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.contains.html#cf.contains" title="cf.contains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.contains</span></code></a>, <a class="reference internal" href="cf.eq.html#cf.eq" title="cf.eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.eq</span></code></a>, <a class="reference internal" href="cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a>, <a class="reference internal" href="cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="cf.ne.html#cf.ne" title="cf.ne"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ne</span></code></a>,
 <a class="reference internal" href="cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>, <a class="reference internal" href="cf.lt.html#cf.lt" title="cf.lt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.lt</span></code></a>, <a class="reference internal" href="cf.set.html#cf.set" title="cf.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.set</span></code></a>, <a class="reference internal" href="cf.wo.html#cf.wo" title="cf.wo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wo</span></code></a>, <a class="reference internal" href="cf.isclose.html#cf.isclose" title="cf.isclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.isclose</span></code></a></p>
 </div>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt>value0:</dt><dd><p>The lower bound of the range.</p>
 </dd>
 <dt>value1:</dt><dd><p>The upper bound of the range.</p>
+</dd>
+<dt>open_lower: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, open the interval at the lower
+bound so that value0 is excluded from the
+range. By default the interval is closed
+so that value0 is included.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
+<dt>open_upper: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, open the interval at the upper
+bound so that value1 is excluded from the
+range. By default the interval is closed
+so that value1 is included.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
 </dd>
 <dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as the
 operand being tested are assumed, if applicable. If
@@ -178,6 +198,32 @@ with a <code class="docutils literal notranslate"><span class="pre">.</span></co
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The interval can be made open on either side or both. Note that,
+as per mathematical interval notation, square brackets indicate
+closed endpoints and parentheses open endpoints in the representation:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">open_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;CF Query: (wi [5, 7))&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">open_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;CF Query: (wi (5, 7])&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">open_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">open_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;CF Query: (wi (5, 7))&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">False</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -192,7 +238,7 @@ with a <code class="docutils literal notranslate"><span class="pre">.</span></co
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

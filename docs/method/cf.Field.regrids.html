@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
 
 
 
@@ -137,15 +137,17 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/field.py#L13461-L13754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">src_z=None</em>, <em class="sig-param">dst_z=None</em>, <em class="sig-param">z=None</em>, <em class="sig-param">ln_z=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">return_esmpy_regrid_operator=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L13490-L13854"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Regrid the field to a new latitude and longitude grid.</p>
 <p>Regridding is the process of interpolating the field data
 values while preserving the qualities of the original data,
 and the metadata of the unaffected axes. The metadata for the
 regridded axes are taken from the <em>dst</em> parameter.</p>
-<p>The 2-d regridding takes place on a sphere, with the grid
-being defined by latitude and longitude spherical polar
-coordinates.</p>
+<p>The 2-d or 3-d regridding takes place on a sphere, with the
+grid being defined by latitude and longitude spherical polar
+coordinates, and any available vertical coordinates. In the
+3-d case, the regridding may be done assuming linear or log
+linear weights in the vertical.</p>
 <p><strong>Latitude and longitude coordinates</strong></p>
 <p>The source and destination grids of the regridding must both
 be defined by latitude and longitude coordinates, which may be
@@ -170,7 +172,10 @@ the case for NEMO model outputs).</p>
 <p><strong>UGRID meshes</strong></p>
 <p>Data defined on UGRID face or node cells may be regridded to
 any other latitude-longitude grid, including other UGRID
-meshes.</p>
+meshes and DSG feature types.</p>
+<p><strong>DSG feature types</strong></p>
+<p>Data on any latitude-longitude grid (including tripolar and
+UGRID meshes) may be regridded to any DSG feature type.</p>
 <p><strong>Cyclicity of the X axis</strong></p>
 <p>The cyclicity of the X (longitude) axes of the source and
 destination grids (i.e. whether or not the first and last
@@ -246,19 +251,24 @@ improvements by avoiding having to calculate the
 weights for each source field. Note that for the
 other types of <em>dst</em> parameter, the calculation of
 the regrid weights is not a lazy operation.</p>
-<div class="admonition note">
+<blockquote>
+<div><div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The source grid of the regrid operator is
+<p>When <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>, the
+source grid of the regrid operator is
 immediately checked for compatibility with
 the grid of the source field. By default
 only the computationally cheap tests are
 performed (checking that the coordinate
-system, cyclicity and grid shape are the
-same), with the grid coordinates not being
-checked. The coordinates check will be
-carried out, however, if the
-<em>check_coordinates</em> parameter is True.</p>
+system, cyclicity, grid shape, regridding
+dimensionality, mesh location, and feature
+type are the same), with the grid
+coordinates not being checked. The
+coordinates check will be carried out,
+however, if the <em>check_coordinates</em>
+parameter is True.</p>
 </div>
+</div></blockquote>
 </li>
 </ul>
 </dd>
@@ -270,38 +280,40 @@ parameter must be set unless <em>dst</em> is a
 <li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code>: Bilinear interpolation.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'bilinear'</span></code>: Deprecated alias for <code class="docutils literal notranslate"><span class="pre">'linear'</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code>: First order conservative
-interpolation. Preserves the area integral of the
-data across the interpolation from source to
-destination. It uses the proportion of the area of
-the overlapping source and destination cells to
-determine appropriate weights.</p></li>
+interpolation. Preserves the integral of the source
+field across the regridding. Weight calculation is
+based on the ratio of source cell area overlapped
+with the corresponding destination cell area.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'conservative'</span></code>: Alias for <code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'conservative_2nd'</span></code>: Second-order conservative
-interpolation. As with first order conservative
-interpolation, preserves the area integral of the
-field between source and destination using a
-weighted sum, with weights based on the
-proportionate area of intersection. In addition the
-second-order conservative method takes the source
-gradient into account, so it yields a smoother
-destination field that typically better matches the
-source data.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'patch'</span></code> Patch recovery interpolation. A second
-degree 2-d polynomial regridding method, which uses
-a least squares algorithm to calculate the
-polynomials. This method typically results in
-better approximations to values and derivatives when
+interpolation. Preserves the integral of the source
+field across the regridding. Weight calculation is
+based on the ratio of source cell area overlapped
+with the corresponding destination cell area. The
+second-order conservative calculation also includes
+the gradient across the source cell, so in general
+it gives a smoother, more accurate representation of
+the source field. This is particularly true when
+going from a coarse to finer grid.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'patch'</span></code> Patch recovery interpolation. Patch
+rendezvous method of taking the least squares fit of
+the surrounding surface patches. This is a higher
+order method that may produce interpolation weights
+that may be slightly less than 0 or slightly greater
+than 1. This method typically results in better
+approximations to values and derivatives when
 compared to bilinear interpolation.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_stod'</span></code>: Nearest neighbour interpolation
-for which each destination point is mapped to the
-closest source point. Useful for extrapolation of
-categorical data. Some destination cells may be
-unmapped.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_dtos'</span></code>: Nearest neighbour interpolation
-for which each source point is mapped to the
-destination point. Useful for extrapolation of
-categorical data. All destination cells will be
-mapped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_stod'</span></code>: Nearest neighbour source to
+destination interpolation for which each destination
+point is mapped to the closest source point. A
+source point can be mapped to multiple destination
+points. Useful for regridding categorical data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_dtos'</span></code>: Nearest neighbour destination to
+source interpolation for which each source point is
+mapped to the closest destination point. A
+destination point can be mapped to multiple source
+points. Some destination points may not be
+mapped. Useful for regridding of categorical data.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>: This is the default and can only be used
 when <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p></li>
 </ul>
@@ -481,8 +493,64 @@ no checks will be applied to it.</p>
 <p>The computation of the weights can be much more costly
 than the regridding itself, in which case reading
 pre-calculated weights can improve performance.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.2.</span></p>
+</div>
+</dd>
+<dt>src_z: optional</dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the regridding is 2-d in
+the latitude-longitude plane.</p>
+<p>If not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then 3-d spherical regridding is enabled
+by identifying the source grid vertical coordinates
+from which to derive the vertical component of the
+regridding weights. The vertical coordinate construct
+may be 1-d or 3-d and is defined by the unique
+construct returned by <code class="docutils literal notranslate"><span class="pre">f.coordinate(src_z)</span></code></p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
+<dt>dst_z: optional</dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the regridding is 2-d in
+the latitude-longitude plane.</p>
+<p>If not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then 3-d spherical regridding is enabled
+by identifying the destination grid vertical
+coordinates from which to derive the vertical
+component of the regridding weights. The vertical
+coordinate construct may be 1-d or 3-d.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
+<dt>z: optional</dt><dd><p>The <em>z</em> parameter is a convenience that may be used to
+replace both <em>src_z</em> and <em>dst_z</em> when they would
+contain identical values. If not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then 3-d
+spherical regridding is enabled. See <em>src_z</em> and
+<em>dst_z</em> for details.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">z='Z'</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">src_z='Z',</span> <span class="pre">dst_z='Z'</span></code>.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
+<dt>ln_z: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If True when <em>z</em>, <em>src_z</em> or <em>dst_z</em> are also set,
+calculate the vertical component of the regridding
+weights using the natural logarithm of the vertical
+coordinate values. This option should be used if the
+quantity being regridded varies approximately linearly
+with logarithm of the vertical coordinates. If False,
+then the weights are calculated using unaltered
+vertical values. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then an
+exception is raised if any of <em>z</em>, <em>src_z</em> or <em>dst_z</em>
+have also been set.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
@@ -516,6 +584,13 @@ about the operation.</p>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
 <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
+<dt>return_esmpy_regrid_operator: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not perform the regridding, rather
+return the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy.Regrid</span></code> instance that defines the
+regridding operation.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
 <dt>axis_order: sequence, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
 </dd>
 <dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
@@ -530,7 +605,8 @@ about the operation.</p>
 <dd class="field-even"><dl class="simple">
 <dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The regridded field construct; or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
 operation was in-place; or the regridding operator if
-<em>return_operator</em> is True.</p>
+<em>return_operator</em> is True; or the <code class="xref py py-obj docutils literal notranslate"><span class="pre">esmpy.Regrid</span></code> operator
+object if <em>return_esmpy_regrid_operator</em> is True.</p>
 </dd>
 </dl>
 </dd>
@@ -598,7 +674,7 @@ operation was in-place; or the regridding operator if
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
