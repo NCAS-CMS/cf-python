@@ -1,20 +1,8 @@
 version 3.16.2
 --------------
 
-**2024-04-??**
+**2024-04-26**
 
-* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
-  ``return_esmpy_regrid_operator``
-  (https://github.com/NCAS-CMS/cf-python/issues/766)
-* Allow a halo to be added by `cf.Field.indices` and
-  `cf.Field.subspace`
-  (https://github.com/NCAS-CMS/cf-python/issues/759)
-* Added spherical regridding to discrete sampling geometry destination
-  grids (https://github.com/NCAS-CMS/cf-python/issues/716)
-* Added 3-d spherical regridding to `cf.Field.regrids`, and the option
-  to regrid the vertical axis in logarithmic coordinates to
-  `cf.Field.regrids` and `cf.Field.regridc`
-  (https://github.com/NCAS-CMS/cf-python/issues/715)
 * Improve the performance of reading and accessing the data of PP and
   UM fields files (https://github.com/NCAS-CMS/cf-python/issues/746)
 * Improve `cf.Field.collapse` performance by lazily computing reduced
@@ -24,14 +12,26 @@ version 3.16.2
 * Reduce output CFA netCDF file size by setting the HDF5 chunksizes of
   CFA variables to be no larger than required
   (https://github.com/NCAS-CMS/cf-python/issues/739)
+* Allow a halo to be added by `cf.Field.indices` and
+  `cf.Field.subspace`
+  (https://github.com/NCAS-CMS/cf-python/issues/759)
+* Added spherical regridding to discrete sampling geometry destination
+  grids (https://github.com/NCAS-CMS/cf-python/issues/716)
+* Added 3-d spherical regridding to `cf.Field.regrids`, and the option
+  to regrid the vertical axis in logarithmic coordinates to
+  `cf.Field.regrids` and `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/715)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``return_esmpy_regrid_operator``
+  (https://github.com/NCAS-CMS/cf-python/issues/766)
+* New keyword parameters to `cf.wi`: ``open_lower`` and ``open_upper``
+  (https://github.com/NCAS-CMS/cf-python/issues/740)
 * Fix misleading error message when it is not possible to create area
   weights requested from `cf.Field.collapse`
   (https://github.com/NCAS-CMS/cf-python/issues/731)
 * Fix bug in `cf.read` when reading UM files that caused LBPROC value
   131072 (Mean over an ensemble of parallel runs) to be ignored
   (https://github.com/NCAS-CMS/cf-python/issues/737)
-* New keyword parameters to `cf.wi`: ``open_lower`` and ``open_upper``
-  (https://github.com/NCAS-CMS/cf-python/issues/740)
 * Fix bug in `cf.aggregate` that sometimes put a null transpose
   operation into the Dask graph when one was not needed
   (https://github.com/NCAS-CMS/cf-python/issues/754)
