@@ -11,6 +11,7 @@ Call as:
    $ python check_api_coverage.py <relative path to docs/source/>
 
 """
+
 import os
 import sys
 

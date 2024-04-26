@@ -1,4 +1,5 @@
 """Functions used during the creation of `Data` objects."""
+
 from functools import lru_cache
 
 import dask.array as da

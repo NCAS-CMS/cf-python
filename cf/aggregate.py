@@ -4912,7 +4912,7 @@ def _aggregate_2_fields(
                             "Deleted 'actual_range' attribute due to being "
                             "outside of 'valid_range' attribute limits."
                         )
-                        
+
             except (TypeError, IndexError):
                 # valid_range is non-CF-compliant
                 pass

@@ -20,6 +20,7 @@ Keys must be `str` or `re.Pattern` objects:
 .. versionadded:: 3.7.0
 
 """
+
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General substitutions (not indent-dependent)

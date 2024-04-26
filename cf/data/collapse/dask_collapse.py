@@ -4,6 +4,7 @@ Most of these functions are expected to be set as *chunk*, *combine* and
 *aggregate* parameters of `dask.array.reduction`
 
 """
+
 from functools import reduce
 from operator import mul
 

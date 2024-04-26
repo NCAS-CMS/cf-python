@@ -2389,9 +2389,7 @@ class DataTest(unittest.TestCase):
                 except Exception:
                     pass
                 else:
-                    self.assertTrue(
-                        (x**d).all(), "{}**{}".format(x, repr(d))
-                    )
+                    self.assertTrue((x**d).all(), "{}**{}".format(x, repr(d)))
 
                 self.assertTrue(
                     d.__truediv__(x).equals(

@@ -3046,9 +3046,11 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     axes = [i for i in range(ndim) if i not in axes]
 
     indices = [
-        (slice(j, j + min_step) for j in range(0, n, min_step))
-        if i in axes
-        else [slice(None)]
+        (
+            (slice(j, j + min_step) for j in range(0, n, min_step))
+            if i in axes
+            else [slice(None)]
+        )
         for i, n in enumerate(shape)
     ]
 

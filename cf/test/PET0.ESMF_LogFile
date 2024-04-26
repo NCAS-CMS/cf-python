@@ -1,0 +1,176 @@
+20240305 012248.251 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240305 012248.252 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012248.252 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012248.252 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012248.252 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012248.252 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012248.252 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 012539.110 INFO             PET0 Finalizing ESMF
+20240305 161333.453 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240305 161333.454 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161333.454 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161333.454 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161333.454 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161333.454 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161333.454 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 161455.038 INFO             PET0 Finalizing ESMF
+20240305 163305.856 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240305 163305.856 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163305.856 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163305.856 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163305.856 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163305.856 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163305.856 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240305 163524.643 INFO             PET0 Finalizing ESMF
+20240306 160635.770 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240306 160635.770 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160635.770 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160635.770 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160635.770 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160635.770 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160635.770 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240306 160915.596 INFO             PET0 Finalizing ESMF
+20240320 233704.383 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240320 233704.383 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233704.383 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233704.383 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233704.383 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233704.383 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233704.383 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240320 233807.432 INFO             PET0 Finalizing ESMF
+20240321 111722.473 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240321 111722.483 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111722.483 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111722.483 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111722.483 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111722.483 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111722.483 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 111856.943 INFO             PET0 Finalizing ESMF
+20240321 113715.378 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240321 113715.378 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113715.378 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113715.378 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113715.378 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113715.378 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113715.378 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240321 113847.279 INFO             PET0 Finalizing ESMF
+20240322 102043.339 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240322 102043.340 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102043.340 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102043.340 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102043.340 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102043.340 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102043.340 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 102307.905 INFO             PET0 Finalizing ESMF
+20240322 170309.234 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240322 170309.243 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170309.243 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170309.243 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170309.243 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170309.243 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170309.243 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 170453.742 INFO             PET0 Finalizing ESMF
+20240322 182847.605 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240322 182847.605 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182847.605 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182847.605 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182847.605 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182847.605 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182847.605 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 182920.160 INFO             PET0 Finalizing ESMF
+20240322 184632.175 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240322 184632.175 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 184632.175 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 184632.175 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 184632.175 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 184632.175 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 184632.175 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240322 185331.926 INFO             PET0 Finalizing ESMF
+20240325 121859.929 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240325 121859.929 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121859.929 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121859.929 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121859.929 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121859.929 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121859.929 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240325 121934.920 INFO             PET0 Finalizing ESMF
+20240326 144049.591 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240326 144049.591 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.591 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.591 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.591 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.591 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.591 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 144049.728 INFO             PET0 Finalizing ESMF
+20240326 145158.902 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240326 145158.911 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145158.911 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145158.911 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145158.911 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145158.911 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145158.911 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 145331.953 INFO             PET0 Finalizing ESMF
+20240326 150545.838 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240326 150545.838 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150545.838 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150545.838 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150545.838 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150545.838 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150545.838 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150548.147 INFO             PET0 Finalizing ESMF
+20240326 150941.129 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240326 150941.129 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150941.129 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150941.129 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150941.129 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150941.129 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150941.129 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240326 150943.663 INFO             PET0 Finalizing ESMF
+20240404 153741.371 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1682507619268/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240404 153741.371 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 153741.371 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 153741.371 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 153741.371 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 153741.371 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 153741.371 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240404 154131.262 INFO             PET0 Finalizing ESMF
+20240405 164349.095 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240405 164349.096 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164349.096 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164349.096 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164349.096 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164349.096 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164349.096 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240405 164534.295 INFO             PET0 Finalizing ESMF
+20240422 111525.448 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240422 111525.449 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111525.449 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111525.449 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111525.449 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111525.449 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111525.449 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 111710.859 INFO             PET0 Finalizing ESMF
+20240422 142630.563 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240422 142630.572 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142630.572 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142630.572 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142630.572 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142630.572 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142630.572 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240422 142712.919 INFO             PET0 Finalizing ESMF
+20240424 111546.116 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240424 111546.117 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 111546.117 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 111546.117 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 111546.117 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 111546.117 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 111546.117 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 112145.768 INFO             PET0 Finalizing ESMF
+20240424 153327.557 ERROR            PET0 ESMCI_Mesh_Regrid_Glue.C:572 ESMCI_regrid_create() Internal error: Bad condition  - /home/conda/feedstock_root/build_artifacts/esmf_1693581303648/work/src/Infrastructure/Mesh/src/Regridding/ESMCI_Interp.C, line:1461:Meshes with parametric dim == 3 and spatial dim == 3 not supported for 2nd order conservative regridding
+20240424 153327.557 ERROR            PET0 ESMCI_MeshCap.C:1676 MeshCap::regrid_create() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153327.557 ERROR            PET0 ESMF_Regrid.F90:368 ESMF_RegridStore Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153327.557 ERROR            PET0 ESMF_FieldRegrid.F90:1171 ESMF_FieldRegridStoreNX Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153327.557 ERROR            PET0 ESMF_Field_C.F90:1137 f_esmf_regridstore Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153327.557 ERROR            PET0 ESMCI_Field.C:1468 ESMCI::Field::regridstore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153327.557 ERROR            PET0 ESMC_Field.C:449 ESMC_FieldRegridStore() Internal error: Bad condition  - Internal subroutine call returned Error
+20240424 153726.635 INFO             PET0 Finalizing ESMF
