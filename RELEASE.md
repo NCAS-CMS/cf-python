@@ -2,6 +2,18 @@
   heeding the Versioning Strategy (see
   https://ncas-cms.github.io/cf-python/releases.html#versioning-strategy).
 
+* Set the `NEXTVERSION` version marker across the codebase (added in PRs
+  to mark the next version where the exact number/name is not yet decided)
+  by recursively finding all occurences within the `cf` directory and replacing
+  them with the upcoming version name `X.Y.Z` (replace `X`, `Y` and `Z`
+  appropriately for the value of the now correct `cf.__version__`),
+  via running this command in `cf-python` repo root
+  directory (don't run it repo-wide or it will e.g. edit this script!):
+
+  ```console
+  $ find cf/ -type f | xargs sed -i 's/NEXTVERSION/X.Y.Z/g'
+  ```
+
 * Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 
@@ -16,9 +28,6 @@
 
 * Make sure that `Changelog.rst` is up to date (version, date and
   changes).
-
-* Search for occurences of `NEXTRELEASE` and replace them with the
-  release version (i.e. the value of the now correct `cf.__version__`)
 
 * Deprecated methods and keyword arguments: Check the code for
   deprecated methods and keyword arguments that can be completely

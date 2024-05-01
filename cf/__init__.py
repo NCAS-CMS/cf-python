@@ -174,7 +174,7 @@ if Version(psutil.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of netCDF4
-_minimum_vn = "1.5.4"
+_minimum_vn = "1.6.5"
 if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "

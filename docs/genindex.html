@@ -44,7 +44,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.16.2</a></h1>
 
 
 
@@ -509,8 +509,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.TimeDuration.__ge__.html#cf.TimeDuration.__ge__">(cf.TimeDuration method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Field.__getitem__.html#cf.Field.__getitem__">__getitem__ (cf.Field attribute)</a>
-</li>
       <li><a href="method/cf.AuxiliaryCoordinate.__getitem__.html#cf.AuxiliaryCoordinate.__getitem__">__getitem__() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -2863,8 +2861,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.compressed_dimensions.html#cf.RaggedIndexedContiguousArray.compressed_dimensions">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Data.compute.html#cf.Data.compute">compute (cf.Data attribute)</a>
-</li>
       <li><a href="method/cf.Data.compute.html#cf.Data.compute">compute() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.Field.compute_vertical_coordinates.html#cf.Field.compute_vertical_coordinates">compute_vertical_coordinates() (cf.Field method)</a>
@@ -3741,6 +3737,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.dimension_to_auxiliary.html#cf.Field.dimension_to_auxiliary">(cf.Field method)</a>
 </li>
       </ul></li>
+      <li><a href="attribute/cf.RegridOperator.dimensionality.html#cf.RegridOperator.dimensionality">dimensionality (cf.RegridOperator attribute)</a>
+</li>
       <li><a href="class/cf.DimensionCoordinate.html#cf.DimensionCoordinate">DimensionCoordinate (class in cf)</a>
 </li>
       <li><a href="method/cf.Domain.dims.html#cf.Domain.dims">dims() (cf.Domain method)</a>
@@ -3861,9 +3859,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="attribute/cf.RegridOperator.dst_cyclic.html#cf.RegridOperator.dst_cyclic">dst_cyclic (cf.RegridOperator attribute)</a>
 </li>
+      <li><a href="attribute/cf.RegridOperator.dst_featureType.html#cf.RegridOperator.dst_featureType">dst_featureType (cf.RegridOperator attribute)</a>
+</li>
       <li><a href="attribute/cf.RegridOperator.dst_mask.html#cf.RegridOperator.dst_mask">dst_mask (cf.RegridOperator attribute)</a>
 </li>
+      <li><a href="attribute/cf.RegridOperator.dst_mesh_location.html#cf.RegridOperator.dst_mesh_location">dst_mesh_location (cf.RegridOperator attribute)</a>
+</li>
       <li><a href="attribute/cf.RegridOperator.dst_shape.html#cf.RegridOperator.dst_shape">dst_shape (cf.RegridOperator attribute)</a>
+</li>
+      <li><a href="attribute/cf.RegridOperator.dst_z.html#cf.RegridOperator.dst_z">dst_z (cf.RegridOperator attribute)</a>
 </li>
       <li><a href="function/cf.dt.html#cf.dt">dt() (in module cf)</a>
 </li>
@@ -5259,14 +5263,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="method/cf.FieldList.index.html#cf.FieldList.index">index() (cf.FieldList method)</a>
 </li>
-      <li><a href="attribute/cf.Domain.indices.html#cf.Domain.indices">indices (cf.Domain attribute)</a>
+      <li><a href="method/cf.Domain.indices.html#cf.Domain.indices">indices() (cf.Domain method)</a>
 
       <ul>
-        <li><a href="attribute/cf.Field.indices.html#cf.Field.indices">(cf.Field attribute)</a>
+        <li><a href="method/cf.Field.indices.html#cf.Field.indices">(cf.Field method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.indices.html#cf.Field.indices">indices() (cf.Field method)</a>
-</li>
       <li><a href="function/cf.indices_shape.html#cf.indices_shape">indices_shape() (in module cf)</a>
 </li>
       <li><a href="method/cf.Bounds.inherited_properties.html#cf.Bounds.inherited_properties">inherited_properties() (cf.Bounds method)</a>
@@ -5728,6 +5730,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       </ul></li>
       <li><a href="class/cf.List.html#cf.List">List (class in cf)</a>
+</li>
+      <li><a href="attribute/cf.RegridOperator.ln_z.html#cf.RegridOperator.ln_z">ln_z (cf.RegridOperator attribute)</a>
 </li>
       <li><a href="function/cf.load_stash2standard_name.html#cf.load_stash2standard_name">load_stash2standard_name() (in module cf)</a>
 </li>
@@ -6929,6 +6933,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="function/cf.open_files_threshold_exceeded.html#cf.open_files_threshold_exceeded">open_files_threshold_exceeded() (in module cf)</a>
 </li>
+      <li><a href="attribute/cf.Query.open_lower.html#cf.Query.open_lower">open_lower (cf.Query attribute)</a>
+</li>
+      <li><a href="attribute/cf.Query.open_upper.html#cf.Query.open_upper">open_upper (cf.Query attribute)</a>
+</li>
       <li><a href="attribute/cf.Query.operator.html#cf.Query.operator">operator (cf.Query attribute)</a>
 </li>
       <li><a href="method/cf.Constructs.ordered.html#cf.Constructs.ordered">ordered() (cf.Constructs method)</a>
@@ -7779,8 +7787,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
       </ul></li>
       <li><a href="method/cf.Constructs.shallow_copy.html#cf.Constructs.shallow_copy">shallow_copy() (cf.Constructs method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="attribute/cf.AuxiliaryCoordinate.shape.html#cf.AuxiliaryCoordinate.shape">shape (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -7815,6 +7821,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="attribute/cf.RaggedIndexedContiguousArray.shape.html#cf.RaggedIndexedContiguousArray.shape">(cf.RaggedIndexedContiguousArray attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.AuxiliaryCoordinate.sin.html#cf.AuxiliaryCoordinate.sin">sin() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -7965,11 +7973,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
       <li><a href="attribute/cf.RegridOperator.src_cyclic.html#cf.RegridOperator.src_cyclic">src_cyclic (cf.RegridOperator attribute)</a>
 </li>
+      <li><a href="attribute/cf.RegridOperator.src_featureType.html#cf.RegridOperator.src_featureType">src_featureType (cf.RegridOperator attribute)</a>
+</li>
       <li><a href="attribute/cf.RegridOperator.src_mask.html#cf.RegridOperator.src_mask">src_mask (cf.RegridOperator attribute)</a>
 </li>
       <li><a href="attribute/cf.RegridOperator.src_mesh_location.html#cf.RegridOperator.src_mesh_location">src_mesh_location (cf.RegridOperator attribute)</a>
 </li>
       <li><a href="attribute/cf.RegridOperator.src_shape.html#cf.RegridOperator.src_shape">src_shape (cf.RegridOperator attribute)</a>
+</li>
+      <li><a href="attribute/cf.RegridOperator.src_z.html#cf.RegridOperator.src_z">src_z (cf.RegridOperator attribute)</a>
 </li>
       <li><a href="method/cf.AuxiliaryCoordinate.standard_deviation.html#cf.AuxiliaryCoordinate.standard_deviation">standard_deviation() (cf.AuxiliaryCoordinate method)</a>
 
@@ -8061,12 +8073,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.RaggedIndexedContiguousArray.subarrays.html#cf.RaggedIndexedContiguousArray.subarrays">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
-      <li><a href="attribute/cf.Domain.subspace.html#cf.Domain.subspace">subspace (cf.Domain attribute)</a>
-
-      <ul>
-        <li><a href="attribute/cf.Field.subspace.html#cf.Field.subspace">(cf.Field attribute)</a>
+      <li><a href="attribute/cf.Field.subspace.html#cf.Field.subspace">subspace (cf.Field attribute)</a>
 </li>
-      </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.subspace.html#cf.AuxiliaryCoordinate.subspace">subspace() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -8077,6 +8085,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Count.subspace.html#cf.Count.subspace">(cf.Count method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.subspace.html#cf.DimensionCoordinate.subspace">(cf.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cf.Domain.subspace.html#cf.Domain.subspace">(cf.Domain method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.subspace.html#cf.DomainAncillary.subspace">(cf.DomainAncillary method)</a>
 </li>
@@ -8883,7 +8893,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

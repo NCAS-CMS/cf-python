@@ -2402,9 +2402,7 @@ class DataTest(unittest.TestCase):
                 except Exception:
                     pass
                 else:
-                    self.assertTrue(
-                        (x**d).all(), "{}**{}".format(x, repr(d))
-                    )
+                    self.assertTrue((x**d).all(), "{}**{}".format(x, repr(d)))
 
                 self.assertTrue(
                     d.__truediv__(x).equals(
@@ -3756,7 +3754,7 @@ class DataTest(unittest.TestCase):
             e = np.ma.array(e.array)
 
             self.assertTrue((e.mask == b.mask).all())
-            self.assertTrue(np.allclose(e, b), f"e={e}\nb={b}\ne-b={e-b}")
+            self.assertTrue(np.allclose(e, b), f"e={e}\nb={b}\ne-b={e - b}")
 
         #  Weighted ddof = 1
         for axis in axis_combinations(a):

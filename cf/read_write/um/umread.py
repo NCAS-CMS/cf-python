@@ -3487,7 +3487,7 @@ class UMRead(cfdm.read_write.IORead):
                 considerably faster in cases when the contents are not
                 required.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
         :Returns:
 
@@ -3519,7 +3519,7 @@ class UMRead(cfdm.read_write.IORead):
         """Whether or not a file is a PP file or UM fields file.
 
         Note that the file type is determined by inspecting the file's
-        content and any file suffix is not not considered.
+        content and any file suffix is not considered.
 
         :Parameters:
 
@@ -3575,7 +3575,7 @@ class UMRead(cfdm.read_write.IORead):
                 considerably faster in cases when the contents are not
                 required.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
         :Returns:
 

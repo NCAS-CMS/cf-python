@@ -45,7 +45,9 @@ Attributes
    ~cf.Query.Units
    ~cf.Query.atol
    ~cf.Query.rtol
-   
+   ~cf.Query.open_upper
+   ~cf.Query.open_lower
+
 
 .. _Query-Special:
 

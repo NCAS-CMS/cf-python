@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.RegridOperator.weights" href="cf.RegridOperator.weights.html" />
-    <link rel="prev" title="cf.RegridOperator.src_mesh_location" href="cf.RegridOperator.src_mesh_location.html" />
+    <link rel="prev" title="cf.RegridOperator.src_z" href="cf.RegridOperator.src_z.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
 
 
 
@@ -97,7 +97,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.RegridOperator.html">cf.RegridOperator</a><ul>
-      <li>Previous: <a href="cf.RegridOperator.src_mesh_location.html" title="previous chapter">cf.RegridOperator.src_mesh_location</a></li>
+      <li>Previous: <a href="cf.RegridOperator.src_z.html" title="previous chapter">cf.RegridOperator.src_z</a></li>
       <li>Next: <a href="cf.RegridOperator.weights.html" title="next chapter">cf.RegridOperator.weights</a></li>
   </ul></li>
   </ul></li>
@@ -139,6 +139,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt id="cf.RegridOperator.start_index">
 <code class="sig-prename descclassname">RegridOperator.</code><code class="sig-name descname">start_index</code><a class="headerlink" href="#cf.RegridOperator.start_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The start index of the row and column indices.</p>
+<p>If <a class="reference internal" href="cf.RegridOperator.row.html#cf.RegridOperator.row" title="cf.RegridOperator.row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">row</span></code></a> and <a class="reference internal" href="cf.RegridOperator.col.html#cf.RegridOperator.col" title="cf.RegridOperator.col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">col</span></code></a> are to be read from a weights file and
+their netCDF variables have <code class="docutils literal notranslate"><span class="pre">start_index</span></code> attributes, then
+these will be used in preference to <a class="reference internal" href="#cf.RegridOperator.start_index" title="cf.RegridOperator.start_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_index</span></code></a>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
 </div>
@@ -154,7 +157,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

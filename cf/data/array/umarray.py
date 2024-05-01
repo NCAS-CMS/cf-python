@@ -65,7 +65,7 @@ class UMArray(
                 already been set will be inferred from the lookup
                 header and cached for future use.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
             {{init source: optional}}
 
@@ -88,11 +88,11 @@ class UMArray(
                 Deprecated at version 3.15.0.
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """
@@ -276,7 +276,7 @@ class UMArray(
     def _set_FillValue(self, int_hdr, real_hdr, attributes):
         """Set the ``_FillValue`` attribute.
 
-        .. versionadded:: NEXTRELEASE
+        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -314,7 +314,7 @@ class UMArray(
 
         .. versionadded:: 3.14.0
 
-        .. versionadded:: NEXTRELEASE
+        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -374,7 +374,7 @@ class UMArray(
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.
 
-        .. versionadded:: NEXTRELEASE
+        .. versionadded:: NEXTVERSION
 
         :Parameters:
 

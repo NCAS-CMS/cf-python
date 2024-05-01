@@ -6,6 +6,7 @@ Most of these functions are expected to be passed to
 parameters.
 
 """
+
 from functools import reduce
 from operator import mul
 
@@ -1143,7 +1144,7 @@ def cf_sum_of_weights2_chunk(
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: NEXTRELEASE
+    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

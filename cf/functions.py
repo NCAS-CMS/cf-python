@@ -2142,68 +2142,48 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         if cyclic and isinstance(index, slice):
             # Check for a cyclic slice
-            start = index.start
-            stop = index.stop
-            step = index.step
-            if start is None or stop is None:
-                step = 0
-            elif step is None:
-                step = 1
+            try:
+                index = normalize_slice(index, size, cyclic=True)
+            except IndexError:
+                # Non-cyclic slice
+                pass
+            else:
+                # Cyclic slice
+                start = index.start
+                stop = index.stop
+                step = index.step
+                if (
+                    step > 0
+                    and -size <= start < 0
+                    and 0 <= stop <= size + start
+                ):
+                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    # x[ -1:0:1] => [9]
+                    # x[ -1:1:1] => [9, 0]
+                    # x[ -1:3:1] => [9, 0, 1, 2]
+                    # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                    # x[ -4:0:1] => [6, 7, 8, 9]
+                    # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                    # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                    # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                    # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                    # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    index = slice(0, stop - start, step)
+                    roll[i] = -start
 
-            if step > 0:
-                if 0 < start < size and 0 <= stop <= start:
-                    # 6:0:1 => -4:0:1
-                    # 6:1:1 => -4:1:1
-                    # 6:3:1 => -4:3:1
-                    # 6:6:1 => -4:6:1
-                    start = size - start
-                elif -size <= start < 0 and -size <= stop <= start:
-                    # -4:-10:1  => -4:1:1
-                    # -4:-9:1   => -4:1:1
-                    # -4:-7:1   => -4:3:1
-                    # -4:-4:1   => -4:6:1
-                    # -10:-10:1 => -10:0:1
-                    stop += size
-            elif step < 0:
-                if -size <= start < 0 and start <= stop < 0:
-                    # -4:-1:-1   => 6:-1:-1
-                    # -4:-2:-1   => 6:-2:-1
-                    # -4:-4:-1   => 6:-4:-1
-                    # -10:-2:-1  => 0:-2:-1
-                    # -10:-10:-1 => 0:-10:-1
-                    start += size
-                elif 0 <= start < size and start < stop < size:
-                    # 0:6:-1 => 0:-4:-1
-                    # 3:6:-1 => 3:-4:-1
-                    # 3:9:-1 => 3:-1:-1
-                    stop -= size
-
-            if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
-                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # x[ -1:0:1] => [9]
-                # x[ -1:1:1] => [9, 0]
-                # x[ -1:3:1] => [9, 0, 1, 2]
-                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                # x[ -4:0:1] => [6, 7, 8, 9]
-                # x[ -4:1:1] => [6, 7, 8, 9, 0]
-                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
-                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                index = slice(0, stop - start, step)
-                roll[i] = -start
-
-            elif step < 0 and 0 <= start < size and start - size <= stop < 0:
-                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # x[0: -4:-1] => [0, 9, 8, 7]
-                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
-                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
-                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                # x[0: -2:-1] => [0, 9]
-                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                index = slice(start - stop - 1, None, step)
-                roll[i] = -1 - stop
+                elif (
+                    step < 0 and 0 <= start < size and start - size <= stop < 0
+                ):
+                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    # x[0: -4:-1] => [0, 9, 8, 7]
+                    # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                    # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                    # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                    # x[0: -2:-1] => [0, 9]
+                    # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                    index = slice(start - stop - 1, None, step)
+                    roll[i] = -1 - stop
 
         elif keepdims and isinstance(index, Integral):
             # Convert an integral index to a slice
@@ -2226,7 +2206,122 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     return parsed_indices, roll
 
 
+def normalize_slice(index, size, cyclic=False):
+    """Normalise a slice.
+
+    If *index* is not a slice, or *cyclic* is True and *index* is not
+    a cyclic slice, then an `IndexError` is raised.
+
+    .. versionadded:: 3.16.2
+
+    :Parameters:
+
+        index:
+            The index to be normalised.
+
+        size: `int`
+            The size of the axis to which the *index* applies.
+
+        cyclic: `bool`
+            If True then normalise a cyclic slice, and raise an
+            exception if the *index* is a not a cyclic slice.
+
+    :Returns:
+
+        `slice`
+            The normalised slice.
+
+    **Examples**
+
+    >>> cf.normalize_slice(slice(1, 4), 8)
+    slice(1, 4, 1)
+    >>> cf.normalize_slice(slice(None), 8)
+    slice(0, 8, 1)
+    >>> cf.normalize_slice(slice(6, None, -1), 8)
+    slice(6, None, -1)
+    >>> cf.normalize_slice(slice(-2, 4), 8)
+    slice(6, 4, 1)
+
+    >>> cf.normalize_slice([1, 2], 8)
+    IndexError: [1, 2] is not a slice
+
+    >>> cf.normalize_slice(slice(-2, 3), 8, cyclic=True)
+    slice(-2, 3, 1)
+    >>> cf.normalize_slice(slice(6, 3), 8, cyclic=True)
+    slice(-2, 3, 1)
+
+    >>> cf.normalize_slice(slice(2, -3, -1), 8, cyclic=True)
+    slice(2, -3, -1)
+    >>> cf.normalize_slice(slice(2, 5, -1), 8, cyclic=True)
+    slice(2, -3, -1)
+
+    >>> cf.normalize_slice(slice(1, 6), 8, cyclic=True)
+    IndexError: slice(1, 6, None) is not a cyclic slice
+    >>> cf.normalize_slice([1, 2, 3, 4], 8, cyclic=True)
+    IndexError: [1, 2, 3, 4] is not a cyclic slice
+
+    """
+    if not isinstance(index, slice):
+        step = 0
+    elif cyclic:
+        start = index.start
+        stop = index.stop
+        step = index.step
+        if start is None or stop is None:
+            step = 0
+        elif step is None:
+            step = 1
+
+        if step > 0:
+            if 0 < start < size and 0 <= stop <= start:
+                # 6:0:1 => -4:0:1
+                # 6:1:1 => -4:1:1
+                # 6:3:1 => -4:3:1
+                # 6:6:1 => -4:6:1
+                start -= size
+            elif -size <= start < 0 and -size <= stop <= start:
+                # -4:-10:1  => -4:1:1
+                # -4:-9:1   => -4:1:1
+                # -4:-7:1   => -4:3:1
+                # -4:-4:1   => -4:6:1
+                # -10:-10:1 => -10:0:1
+                stop += size
+        elif step < 0:
+            if -size <= start < 0 and start <= stop < 0:
+                # -4:-1:-1   => 6:-1:-1
+                # -4:-2:-1   => 6:-2:-1
+                # -4:-4:-1   => 6:-4:-1
+                # -10:-2:-1  => 0:-2:-1
+                # -10:-10:-1 => 0:-10:-1
+                start += size
+            elif 0 <= start < size and start < stop < size:
+                # 0:6:-1 => 0:-4:-1
+                # 3:6:-1 => 3:-4:-1
+                # 3:9:-1 => 3:-1:-1
+                stop -= size
+    else:
+        start, stop, step = index.indices(size)
+        if step < 0 and stop < 0:
+            stop = None
+
+        # Return the normalized non-cyclic slice
+        return slice(start, stop, step)
+
+    if not (
+        (step > 0 and start < 0 and stop > 0)
+        or (step < 0 and start > 0 and stop < 0)
+    ):
+        raise IndexError(
+            f"{index!r} is not a {'cyclic ' if cyclic else ''}slice"
+        )
+
+    # Return the normalized cyclic slice
+    return slice(start, stop, step)
+
+
 # REVIEW: getitem: `get_subspace`: remove deprecated function
+
+
 _equals = cfdm.Data()._equals
 
 
@@ -3078,9 +3173,11 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     axes = [i for i in range(ndim) if i not in axes]
 
     indices = [
-        (slice(j, j + min_step) for j in range(0, n, min_step))
-        if i in axes
-        else [slice(None)]
+        (
+            (slice(j, j + min_step) for j in range(0, n, min_step))
+            if i in axes
+            else [slice(None)]
+        )
         for i, n in enumerate(shape)
     ]
 

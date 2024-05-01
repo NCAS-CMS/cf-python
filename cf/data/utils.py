@@ -1,4 +1,5 @@
 """General functions useful for `Data` functionality."""
+
 from functools import lru_cache, partial, reduce
 from itertools import product
 from operator import mul
@@ -1049,9 +1050,11 @@ def normalize_chunks(chunks, shape=None, dtype=None):
         return normalize_chunks(chunks, shape=shape, dtype=dtype)
 
     out = [
-        (nan,)
-        if isnan(size)
-        else normalize_chunks(chunk, shape=(size,), dtype=dtype)[0]
+        (
+            (nan,)
+            if isnan(size)
+            else normalize_chunks(chunk, shape=(size,), dtype=dtype)[0]
+        )
         for chunk, size in zip(chunks, shape)
     ]
     return tuple(out)

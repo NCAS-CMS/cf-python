@@ -207,6 +207,8 @@ class Query:
         exact=True,
         rtol=None,
         atol=None,
+        open_lower=False,
+        open_upper=False,
     ):
         """**Initialisation**
 
@@ -249,6 +251,24 @@ class Query:
 
                 .. versionadded:: 3.15.2
 
+            open_lower: `bool`, optional
+                Only applicable to the ``'wi'`` operator.
+                If True, open the interval at the lower
+                bound so that value0 is excluded from the
+                range. By default the interval is closed
+                so that value0 is included.
+
+                .. versionadded:: 3.16.2
+
+            open_upper: `bool`, optional
+                Only applicable to the ``'wi'`` operator.
+                If True, open the interval at the upper
+                bound so that value1 is excluded from the
+                range. By default the interval is closed
+                so that value1 is included.
+
+                .. versionadded:: 3.16.2
+
             exact: deprecated at version 3.0.0.
                 Use `re.compile` objects in *value* instead.
 
@@ -289,6 +309,16 @@ class Query:
             self._rtol = rtol
             self._atol = atol
 
+        if open_lower or open_upper:
+            if operator != "wi":
+                raise ValueError(
+                    "Can only set the 'open_lower' and 'open_upper' "
+                    "parameters for the 'wi' operator"
+                )
+
+            self._open_lower = open_lower
+            self._open_upper = open_upper
+
     def __dask_tokenize__(self):
         """Return a hashable value fully representative of the object.
 
@@ -315,6 +345,9 @@ class Query:
         operator = self._operator
         if operator == "isclose":
             value += (self.rtol, self.atol)
+
+        if operator == "wi":
+            value += (self.open_lower, self.open_upper)
 
         return (self.__class__, operator, self._attr) + value
 
@@ -452,8 +485,21 @@ class Query:
         attr = ".".join(self._attr)
         operator = self._operator
         compound = self._compound
+
+        # For "wi" queries only, open intervals are supported. For "wi" _value
+        # is a list of two values, with representation from string list form
+        # of '[a, b]' which corresponds to the standard mathematical notation
+        # for a closed interval, the default. But an open endpoint is indicated
+        # by a parenthesis, so adjust repr. to convert square bracket(s).
+        repr_value = str(self._value)
+        if self.open_lower:
+            repr_value = "(" + repr_value[1:]
+
+        if self.open_upper:
+            repr_value = repr_value[:-1] + ")"
+
         if not compound:
-            out = f"{attr}({operator} {self._value!s}"
+            out = f"{attr}({operator} {repr_value}"
             rtol = self.rtol
             if rtol is not None:
                 out += f" rtol={rtol}"
@@ -597,6 +643,28 @@ class Query:
         raise AttributeError(f"{self!r} has indeterminate units")
 
     @property
+    def open_lower(self):
+        """True if the interval is open at the (excludes the) lower bound.
+
+        .. versionadded:: 3.16.2
+
+        .. seealso:: `open_upper`
+
+        """
+        return getattr(self, "_open_lower", False)
+
+    @property
+    def open_upper(self):
+        """True if the interval is open at the (excludes the) upper bound.
+
+        .. versionadded:: 3.16.2
+
+        .. seealso:: `open_lower`
+
+        """
+        return getattr(self, "_open_upper", False)
+
+    @property
     def rtol(self):
         """The tolerance on relative numerical differences.
 
@@ -644,8 +712,7 @@ class Query:
         return value
 
     def addattr(self, attr):
-        """Return a `Query` object with a new left hand side operand
-        attribute to be used during evaluation. TODO.
+        """Redefine the query to be on an object's attribute.
 
         If another attribute has previously been specified, then the new
         attribute is considered to be an attribute of the existing
@@ -803,6 +870,8 @@ class Query:
             "_operator",
             "_rtol",
             "_atol",
+            "_open_lower",
+            "_open_upper",
         ):
             x = getattr(self, attr, None)
             y = getattr(other, attr, None)
@@ -905,7 +974,17 @@ class Query:
             if _wi is not None:
                 return _wi(value)
 
-            return (x >= value[0]) & (x <= value[1])
+            if self.open_lower:
+                lower_bound = x > value[0]
+            else:
+                lower_bound = x >= value[0]
+
+            if self.open_upper:
+                upper_bound = x < value[1]
+            else:
+                upper_bound = x <= value[1]
+
+            return lower_bound & upper_bound
 
         if operator == "eq":
             try:
@@ -1629,8 +1708,20 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
     )
 
 
-def wi(value0, value1, units=None, attr=None):
+def wi(
+    value0,
+    value1,
+    units=None,
+    attr=None,
+    open_lower=False,
+    open_upper=False,
+):
     """A `Query` object for a "within a range" condition.
+
+    The condition is a closed interval by default, inclusive of
+    both the endpoints, but can be made open or half-open to exclude
+    the endpoints on either end with use of the `open_lower` and
+    `open_upper` parameters.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wo`, `cf.isclose`
@@ -1642,6 +1733,22 @@ def wi(value0, value1, units=None, attr=None):
 
         value1:
              The upper bound of the range.
+
+        open_lower: `bool`, optional
+             If True, open the interval at the lower
+             bound so that value0 is excluded from the
+             range. By default the interval is closed
+             so that value0 is included.
+
+             .. versionadded:: 3.16.2
+
+        open_upper: `bool`, optional
+             If True, open the interval at the upper
+             bound so that value1 is excluded from the
+             range. By default the interval is closed
+             so that value1 is included.
+
+             .. versionadded:: 3.16.2
 
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
@@ -1671,9 +1778,42 @@ def wi(value0, value1, units=None, attr=None):
     True
     >>> q.evaluate(4)
     False
+    >>> q.evaluate(5)
+    True
+    >>> q.evaluate(7)
+    True
+
+    The interval can be made open on either side or both. Note that,
+    as per mathematical interval notation, square brackets indicate
+    closed endpoints and parentheses open endpoints in the representation:
+
+    >>> q = cf.wi(5, 7, open_upper=True)
+    >>> q
+    <CF Query: (wi [5, 7))>
+    >>> q.evaluate(7)
+    False
+    >>> q = cf.wi(5, 7, open_lower=True)
+    >>> q
+    <CF Query: (wi (5, 7])>
+    >>> q.evaluate(5)
+    False
+    >>> q = cf.wi(5, 7, open_lower=True, open_upper=True)
+    >>> q
+    <CF Query: (wi (5, 7))>
+    >>> q.evaluate(5)
+    False
+    >>> q.evaluate(7)
+    False
 
     """
-    return Query("wi", [value0, value1], units=units, attr=attr)
+    return Query(
+        "wi",
+        [value0, value1],
+        units=units,
+        attr=attr,
+        open_lower=open_lower,
+        open_upper=open_upper,
+    )
 
 
 def wo(value0, value1, units=None, attr=None):
@@ -2465,10 +2605,6 @@ def seasons(n=4, start=12):
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-
-    TODO
-
-    .. seealso:: `cf.mam`, `cf.jja`, `cf.son`, `cf.djf`
 
     :Parameters:
 

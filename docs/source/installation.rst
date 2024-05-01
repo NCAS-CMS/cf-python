@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.17.0``):
+   you want to install, e.g. ``3.16.2``):
 
    .. code-block:: console
 
@@ -196,7 +196,7 @@ Required
 
 * `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.6.5 or newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).

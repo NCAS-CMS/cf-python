@@ -43,7 +43,7 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
 
             {{init attributes: `dict` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -54,11 +54,11 @@ class FullFragmentArray(FragmentArrayMixin, FullArray):
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """

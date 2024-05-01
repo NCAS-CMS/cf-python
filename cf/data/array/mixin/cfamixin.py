@@ -151,11 +151,11 @@ class CFAMixin:
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """

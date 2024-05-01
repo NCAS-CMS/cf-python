@@ -69,7 +69,7 @@ class NetCDFFragmentArray(
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -77,18 +77,18 @@ class NetCDFFragmentArray(
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """

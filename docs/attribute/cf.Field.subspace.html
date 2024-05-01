@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.indices" href="cf.Field.indices.html" />
-    <link rel="prev" title="cf.Field.__getitem__" href="cf.Field.__getitem__.html" />
+    <link rel="next" title="cf.Field.arccos" href="../method/cf.Field.arccos.html" />
+    <link rel="prev" title="cf.Field.__getitem__" href="../method/cf.Field.__getitem__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
 
 
 
@@ -97,8 +97,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.__getitem__.html" title="previous chapter">cf.Field.__getitem__</a></li>
-      <li>Next: <a href="cf.Field.indices.html" title="next chapter">cf.Field.indices</a></li>
+      <li>Previous: <a href="../method/cf.Field.__getitem__.html" title="previous chapter">cf.Field.__getitem__</a></li>
+      <li>Next: <a href="../method/cf.Field.arccos.html" title="next chapter">cf.Field.arccos</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -193,58 +193,116 @@ a <a class="reference external" href="https://docs.python.org/3/library/function
 <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
 a null result.</p></li>
 </ul>
+<p><strong>Halos</strong></p>
+<p>If a halo is defined via a positional argument, then each
+subspaced axis will be extended to include that many extra
+elements at each “side” of the axis. The number of extra
+elements will be automatically reduced if including the full
+amount defined by the halo would extend the subspace beyond
+the axis limits.</p>
+<p>For instance, <code class="docutils literal notranslate"><span class="pre">f.subspace(X=slice(10,</span> <span class="pre">20))</span></code> will give
+identical results to each of <code class="docutils literal notranslate"><span class="pre">f.subspace(0,</span> <span class="pre">X=slice(10,</span>
+<span class="pre">20))</span></code>, <code class="docutils literal notranslate"><span class="pre">f.subspace(1,</span> <span class="pre">X=slice(11,</span> <span class="pre">19))</span></code>, <code class="docutils literal notranslate"><span class="pre">f.subspace(2,</span>
+<span class="pre">X=slice(12,</span> <span class="pre">18))</span></code>, etc.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.0.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a>, <a class="reference internal" href="../method/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p>
+<p><a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a>, <a class="reference internal" href="../method/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.__setitem__.html#cf.Field.__setitem__" title="cf.Field.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a>, <a class="reference internal" href="../method/cf.Domain.subspace.html#cf.Domain.subspace" title="cf.Domain.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain.subspace</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>positional arguments: <em>optional</em></dt><dd><p>There are three modes of operation, each of which provides
-a different type of subspace:</p>
+<dt>config: optional</dt><dd><p>Configure the subspace by specifying the mode of
+operation (<code class="docutils literal notranslate"><span class="pre">mode</span></code>) and any halo to be added to the
+subspaced axes (<code class="docutils literal notranslate"><span class="pre">halo</span></code>), with positional arguments
+in the format <code class="docutils literal notranslate"><span class="pre">mode</span></code>, or <code class="docutils literal notranslate"><span class="pre">halo</span></code>, or <code class="docutils literal notranslate"><span class="pre">mode,</span>
+<span class="pre">halo</span></code>, or with no positional arguments at all.</p>
+<p>A mode of operation is given as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, and a halo as
+a non-negative <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or any object that can be
+converted to one):</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
+<col style="width: 27%" />
+<col style="width: 73%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p><em>argument</em></p></th>
+<tr class="row-odd"><th class="head"><p><em>mode</em></p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'compress'</span></code></p></td>
-<td><p>This is the default mode. Unselected
-locations are removed to create the
-returned subspace. Note that if a
-multi-dimensional metadata construct is
-being used to define the indices then some
-missing data may still be inserted at
-unselected locations.</p></td>
+<tr class="row-even"><td><p>Not provided</p></td>
+<td><p>If no positional arguments are
+provided then assume the
+<code class="docutils literal notranslate"><span class="pre">'compress'</span></code> mode of operation with
+no halo added to the subspaced axes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'envelope'</span></code></p></td>
-<td><p>The returned subspace is the smallest that
-contains all of the selected
-indices. Missing data is inserted at
-unselected locations within the envelope.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p>Define the mode of operation with no
+halo added to the subspaced axes.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'full'</span></code></p></td>
-<td><p>The returned subspace has the same domain
-as the original field construct. Missing
-data is inserted at unselected locations.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode,</span> <span class="pre">halo</span></code></p></td>
+<td><p>Define a mode of operation, as well as
+a halo to be added to the subspaced
+axes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'test'</span></code></p></td>
-<td><p>May be used on its own or in addition to
-one of the other positional arguments. Do
-not create a subspace, but return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>
-or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on whether or not it
-is possible to create specified the
-subspace.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">halo</span></code></p></td>
+<td><p>Assume the <code class="docutils literal notranslate"><span class="pre">'compress'</span></code> mode of
+operation and define a halo to be
+added to the subspaced axes.</p></td>
 </tr>
 </tbody>
 </table>
+<p>Valid modes are:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">'compress'</span></code> This is the default.</dt><dd><p>Unselected locations are removed to create the
+subspace. If the result is not hyperrectangular
+then the minimum amount of unselected locations
+required to make it so will also be specially
+selected. Missing data is inserted at the
+specially selected locations, unless a halo has
+been defined (of any size, including 0).</p>
 </dd>
-<dt>keyword parameters: <em>optional</em></dt><dd><p>A keyword name is an identity of a metadata construct, and
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">'envelope'</span></code></dt><dd><p>The subspace is the smallest hyperrectangular
+subspace that contains all of the selected
+locations. Missing data is inserted at unselected
+locations within the envelope, unless a halo has
+been defined (of any size, including 0).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">'full'</span></code></dt><dd><p>The subspace has the same domain as the original
+construct. Missing data is inserted at unselected
+locations, unless a halo has been defined (of any
+size, including 0).</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting a halo size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code> differs from not
+not defining a halo at all. The shape of the
+returned field will always be the same, but
+in the former case missing data will not be
+inserted at unselected locations (if any)
+within the output domain.</p>
+</div>
+<p>In addition, an extra positional argument of <code class="docutils literal notranslate"><span class="pre">'test'</span></code>
+is allowed. When provided, the subspace is not
+returned, instead <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> is returned
+depending on whether or not it is possible for the
+requested subspace to be created.</p>
+</dd>
+<dt>keyword parameters: optional</dt><dd><p>A keyword name is an identity of a metadata construct, and
 the keyword value provides a condition for inferring
 indices that apply to the dimension (or dimensions)
 spanned by the metadata construct’s data. Indices are
@@ -308,7 +366,7 @@ subspace.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

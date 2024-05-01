@@ -4,6 +4,7 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
+
 from functools import partial
 
 import dask.array as da

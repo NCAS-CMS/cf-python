@@ -4852,20 +4852,36 @@ def _aggregate_2_fields(
         value0 = parent0.get_property(prop, None)
         value1 = parent1.get_property(prop, None)
 
+        if prop in ("_FillValue", "missing_value"):
+            continue
+
         if prop in ("valid_min", "valid_max", "valid_range"):
             if not m0.respect_valid:
                 parent0.del_property(prop, None)
 
             continue
 
-        if prop in ("_FillValue", "missing_value"):
+        if prop == "actual_range":
+            try:
+                # Try to extend the actual range to encompass both
+                # value0 and value1
+                actual_range = (
+                    min(value0[0], value1[0]),
+                    max(value0[1], value1[1]),
+                )
+            except (TypeError, IndexError, KeyError):
+                # value0 and/or value1 is not set, or is
+                # non-CF-compliant.
+                parent0.del_property(prop, None)
+            else:
+                parent0.set_property(prop, actual_range)
+
             continue
 
         # Still here?
-        if isinstance(value0, str) or isinstance(value1, str):
-            if value0 == value1:
-                continue
-        elif parent0._equals(value0, value1):
+        if parent0._equals(value0, value1):
+            # Both values are equal, so no need to update the
+            # property.
             continue
 
         if concatenate:
@@ -4876,9 +4892,30 @@ def _aggregate_2_fields(
                     )
                 else:
                     parent0.set_property(prop, f" :AGGREGATED: {value1}")
-        else:
-            if value0 is not None:
-                parent0.del_property(prop)
+        elif value0 is not None:
+            parent0.del_property(prop)
+
+    # Check that actual_range is within the bounds of valid_range, and
+    # delete it if it isn't.
+    actual_range = parent0.get_property("actual_range", None)
+    if actual_range is not None:
+        valid_range = parent0.get_property("valid_range", None)
+        if valid_range is not None:
+            try:
+                if (
+                    actual_range[0] < valid_range[0]
+                    or actual_range[1] > valid_range[1]
+                ):
+                    actual_range = parent0.del_property("actual_range", None)
+                    if actual_range is not None and is_log_level_info(logger):
+                        logger.info(
+                            "Deleted 'actual_range' attribute due to being "
+                            "outside of 'valid_range' attribute limits."
+                        )
+
+            except (TypeError, IndexError):
+                # valid_range is non-CF-compliant
+                pass
 
     # Make a note that the parent construct in this _Meta object has
     # already been aggregated

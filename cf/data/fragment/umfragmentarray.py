@@ -10,6 +10,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
     """
 
     # REVIEW: h5: `__init__`: replace units/calendar API with attributes
+    # REVIEW: h5: `__init__`: new keyword 'storage_options'
     def __init__(
         self,
         filename=None,
@@ -19,6 +20,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
         aggregated_units=False,
         aggregated_calendar=False,
         attributes=None,
+        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -53,22 +55,24 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 already been set will be inferred from the lookup
                 header and cached for future use.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
             {{aggregated_units: `str` or `None`, optional}}
 
             {{aggregated_calendar: `str` or `None`, optional}}
+
+            {{init storage_options: `dict` or `None`, optional}}
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """

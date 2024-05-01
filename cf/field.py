@@ -2689,6 +2689,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for c in self.constructs.filter_by_data(todict=True).values():
                 c.cfa_update_file_substitutions(substitutions)
 
+    def get_domain(self):
+        """Return the domain.
+
+        .. versionadded:: 3.16.2
+
+        .. seealso:: `domain`
+
+        :Returns:
+
+            `Domain`
+                 The domain.
+
+        **Examples**
+
+        >>> d = f.get_domain()
+
+        """
+        domain = super().get_domain()
+
+        # Set axis cyclicity for the domain
+        domain._cyclic = self._cyclic
+
+        return domain
+
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.
@@ -8856,7 +8880,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             inplace=inplace,
         )
 
-    def indices(self, *mode, **kwargs):
+    def indices(self, *config, **kwargs):
         """Create indices that define a subspace of the field construct.
 
         The subspace is defined by identifying indices based on the
@@ -8907,39 +8931,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         actually created, these masks are all automatically applied to
         the result.
 
+        **Halos**
+
+        {{subspace halos}}
+
+        For instance, ``f.indices(X=slice(10, 20))`` will give
+        identical results to each of ``f.indices(0, X=slice(10,
+        20))``, ``f.indices(1, X=slice(11, 19))``, ``f.indices(2,
+        X=slice(12, 18))``, etc.
+
+        If a halo has been defined (of any size, including 0), then no
+        ancillary masks will be created.
+
+        .. versionadded:: 1.0
+
         .. seealso:: `subspace`, `where`, `__getitem__`,
                      `__setitem__`, `cf.Domain.indices`
 
         :Parameters:
 
-            mode: `str`, *optional*
-                There are three modes of operation, each of which
-                provides indices for a different type of subspace:
+            {{config: optional}}
 
-                ==============  ======================================
-                *mode*          Description
-                ==============  ======================================
-                ``'compress'``  This is the default mode. Unselected
-                                locations are removed to create the
-                                returned subspace. Note that if a
-                                multi-dimensional metadata construct
-                                is being used to define the indices
-                                then some missing data may still be
-                                inserted at unselected locations.
+                {{subspace valid modes Field}}
 
-                ``'envelope'``  The returned subspace is the smallest
-                                that contains all of the selected
-                                indices. Missing data is inserted at
-                                unselected locations within the
-                                envelope.
-
-                ``'full'``      The returned subspace has the same
-                                domain as the original field
-                                construct. Missing data is inserted at
-                                unselected locations.
-                ==============  ======================================
-
-            kwargs: *optional*
+            kwargs: optional
                 A keyword name is an identity of a metadata construct,
                 and the keyword value provides a condition for
                 inferring indices that apply to the dimension (or
@@ -9062,7 +9077,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [-- -- -- -- -- -- 270.6 273.0 270.6]]]
 
         """
-        if "exact" in mode:
+        if "exact" in config:
             _DEPRECATION_ERROR_ARG(
                 self,
                 "indices",
@@ -9072,26 +9087,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 removed_at="4.0.0",
             )  # pragma: no cover
 
-        if len(mode) > 1:
-            raise ValueError(
-                "Can't provide more than one positional argument. "
-                f"Got: {', '.join(repr(x) for x in mode)}"
-            )
-
-        if not mode or "compress" in mode:
-            mode = "compress"
-        elif "envelope" in mode:
-            mode = "envelope"
-        elif "full" in mode:
-            mode = "full"
-        else:
-            raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
-
         data_axes = self.get_data_axes()
 
         # Get the indices for every domain axis in the domain,
         # including any ancillary masks
-        domain_indices = self._indices(mode, data_axes, True, kwargs)
+        domain_indices = self._indices(config, data_axes, True, kwargs)
 
         # Initialise the output indices with any ancillary masks.
         # Ensure that each ancillary mask is broadcastable to the
@@ -9123,7 +9123,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # spanned by the data
         if len(axis_indices) > len(data_axes):
             for axis, index in axis_indices.items():
-                if axis in data_axes or index == slice(None):
+                if axis in data_axes or (
+                    isinstance(index, slice) and index == slice(None)
+                ):
                     continue
 
                 import dask.array as da
@@ -10524,9 +10526,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_bounds[0 : length - lower_offset, 1:] = old_bounds[
                         lower_offset:length, 1:
                     ]
-                    new_bounds[
-                        length - lower_offset : length, 1:
-                    ] = old_bounds[length - 1, 1:]
+                    new_bounds[length - lower_offset : length, 1:] = (
+                        old_bounds[length - 1, 1:]
+                    )
 
                 coord.set_bounds(self._Bounds(data=new_bounds))
 
@@ -13339,44 +13341,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           ``3:-2:-1``) is assumed to "wrap" around, rather then producing
           a null result.
 
+        **Halos**
 
-        .. seealso:: `indices`, `squeeze`, `where`, `__getitem__`
+        {{subspace halos}}
+
+        For instance, ``f.subspace(X=slice(10, 20))`` will give
+        identical results to each of ``f.subspace(0, X=slice(10,
+        20))``, ``f.subspace(1, X=slice(11, 19))``, ``f.subspace(2,
+        X=slice(12, 18))``, etc.
+
+        .. versionadded:: 1.0
+
+        .. seealso:: `indices`, `where`, `__getitem__`,
+                     `__setitem__`, `cf.Domain.subspace`
 
         :Parameters:
 
-            positional arguments: *optional*
-                There are three modes of operation, each of which provides
-                a different type of subspace:
+            {{config: optional}}
 
-                ==============  ==========================================
-                *argument*      Description
-                ==============  ==========================================
-                ``'compress'``  This is the default mode. Unselected
-                                locations are removed to create the
-                                returned subspace. Note that if a
-                                multi-dimensional metadata construct is
-                                being used to define the indices then some
-                                missing data may still be inserted at
-                                unselected locations.
+                {{subspace valid modes Field}}
 
-                ``'envelope'``  The returned subspace is the smallest that
-                                contains all of the selected
-                                indices. Missing data is inserted at
-                                unselected locations within the envelope.
+                In addition, an extra positional argument of ``'test'``
+                is allowed. When provided, the subspace is not
+                returned, instead `True` or `False` is returned
+                depending on whether or not it is possible for the
+                requested subspace to be created.
 
-                ``'full'``      The returned subspace has the same domain
-                                as the original field construct. Missing
-                                data is inserted at unselected locations.
-
-                ``'test'``      May be used on its own or in addition to
-                                one of the other positional arguments. Do
-                                not create a subspace, but return `True`
-                                or `False` depending on whether or not it
-                                is possible to create specified the
-                                subspace.
-                ==============  ==========================================
-
-            keyword parameters: *optional*
+            keyword parameters: optional
                 A keyword name is an identity of a metadata construct, and
                 the keyword value provides a condition for inferring
                 indices that apply to the dimension (or dimensions)
@@ -13568,6 +13559,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         verbose=None,
+        return_esmpy_regrid_operator=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13616,7 +13608,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         any other latitude-longitude grid, including other UGRID
         meshes and DSG feature types.
 
-        **DSG feature types*
+        **DSG feature types**
 
         Data on any latitude-longitude grid (including tripolar and
         UGRID meshes) may be regridded to any DSG feature type.
@@ -13768,7 +13760,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             dst_z: optional
                 If `None`, the default, then the regridding is 2-d in
@@ -13782,7 +13774,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -13796,17 +13788,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{verbose: `int` or `str` or `None`, optional}}
 
                 .. versionadded:: 3.16.0
 
             {{inplace: `bool`, optional}}
+
+            {{return_esmpy_regrid_operator: `bool`, optional}}
+
+                .. versionadded:: 3.16.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -13824,7 +13820,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
                 operation was in-place; or the regridding operator if
-                *return_operator* is True.
+                *return_operator* is True; or the `esmpy.Regrid` operator
+                object if *return_esmpy_regrid_operator* is True.
 
         **Examples**
 
@@ -13899,6 +13896,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_z=dst_z,
             z=z,
             ln_z=ln_z,
+            return_esmpy_regrid_operator=return_esmpy_regrid_operator,
             inplace=inplace,
         )
 
@@ -13922,6 +13920,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_z=None,
         z=None,
         ln_z=None,
+        return_esmpy_regrid_operator=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14067,7 +14066,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             dst_z: optional
                 If not `None` then *dst_z* specifies the identity of a
@@ -14077,7 +14076,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             z: optional
                 The *z* parameter is a convenience that may be used to
@@ -14089,13 +14088,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Example:*
                   ``z='Z'`` is equivalent to ``src_z='Z', dst_z='Z'``.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{ln_z: `bool` or `None`, optional}}
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: 3.16.2
 
             {{inplace: `bool`, optional}}
+
+            {{return_esmpy_regrid_operator: `bool`, optional}}
+
+                .. versionadded:: 3.16.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -14113,7 +14116,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field` or `None` or `RegridOperator`
                 The regridded field construct; or `None` if the
                 operation was in-place; or the regridding operator if
-                *return_operator* is True.
+                *return_operator* is True; or the `esmpy.Regrid` operator
+                object if *return_esmpy_regrid_operator* is True.
 
         **Examples**
 
@@ -14187,6 +14191,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_z=dst_z,
             z=z,
             ln_z=ln_z,
+            return_esmpy_regrid_operator=return_esmpy_regrid_operator,
             inplace=inplace,
         )
 

@@ -55,7 +55,7 @@ class CFImplementation(cfdm.CFDMImplementation):
     def nc_set_hdf5_chunksizes(self, data, sizes, override=False):
         """Set the data HDF5 chunksizes.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.16.2
 
         :Parameters:
 

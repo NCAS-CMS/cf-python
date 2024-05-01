@@ -36,6 +36,9 @@ class QueryTest(unittest.TestCase):
         s = q | r
         t = cf.Query("gt", 12, attr="bounds")
         u = s & t
+        v = cf.wi(2, 5, open_lower=True)
+        w = cf.wi(2, 5, open_upper=True)
+        x = cf.wi(2, 5, open_lower=True, open_upper=True)
 
         repr(q)
         repr(s)
@@ -47,6 +50,13 @@ class QueryTest(unittest.TestCase):
         str(u)
         u.dump(display=False)
 
+        # For "wi", check repr. provides correct notation for open/closed-ness
+        # of the interval captured.
+        self.assertEqual(repr(q), "<CF Query: (wi [2, 5])>")
+        self.assertEqual(repr(v), "<CF Query: (wi (2, 5])>")
+        self.assertEqual(repr(w), "<CF Query: (wi [2, 5))>")
+        self.assertEqual(repr(x), "<CF Query: (wi (2, 5))>")
+
         u.attr
         u.operator
         q.attr
@@ -57,6 +67,16 @@ class QueryTest(unittest.TestCase):
 
         self.assertTrue(u.equals(u.copy(), verbose=2))
         self.assertFalse(u.equals(t, verbose=0))
+
+        self.assertTrue(q.equals(q.copy()))
+        self.assertTrue(
+            q.equals(cf.wi(2, 5, open_lower=False, open_upper=False))
+        )
+        self.assertFalse(q.equals(v))
+        self.assertFalse(q.equals(w))
+        self.assertFalse(q.equals(x))
+        self.assertFalse(v.equals(w))
+        self.assertFalse(v.equals(x))
 
         copy.deepcopy(u)
 
@@ -494,16 +514,70 @@ class QueryTest(unittest.TestCase):
             self.assertNotEqual(cf.set([3, 8, 11]), x)
 
         c = cf.wi(2, 4)
+        c0 = cf.wi(2, 4, open_lower=False)  # equivalent to c, to check default
+        c1 = cf.wi(2, 4, open_lower=True)
+        c2 = cf.wi(2, 4, open_upper=True)
+        c3 = cf.wi(2, 4, open_lower=True, open_upper=True)
+        all_c = [c, c0, c1, c2, c3]
+
         d = cf.wi(6, 8)
+        d0 = cf.wi(6, 8, open_lower=False)  # equivalent to d, to check default
+        d1 = cf.wi(6, 8, open_lower=True)
+        d2 = cf.wi(6, 8, open_upper=True)
+        d3 = cf.wi(6, 8, open_lower=True, open_upper=True)
+        all_d = [d, d0, d1, d2, d3]
 
-        e = d | c
+        e = d | c  # interval: [2, 4] | [6, 8]
+        e1 = c0 | d1  # interval: [2, 4] | (6, 8]
+        e2 = c1 | d2  # interval: (2, 4] | [6, 8)
+        e3 = d3 | c3  # interval: (6, 8) | (2, 4)
+        all_e = [e, e1, e2, e3]
 
-        self.assertTrue(c.evaluate(3))
-        self.assertFalse(c.evaluate(5))
+        for cx in all_c:
+            self.assertTrue(cx.evaluate(3))
+            self.assertFalse(cx.evaluate(5))
 
-        self.assertTrue(e.evaluate(3))
-        self.assertTrue(e.evaluate(7))
-        self.assertFalse(e.evaluate(5))
+        for dx in all_d:
+            self.assertTrue(dx.evaluate(7))
+            self.assertFalse(dx.evaluate(9))
+
+        # Test the two open_* keywords for direct (non-compound) queries
+        self.assertEqual(c.evaluate(2), c0.evaluate(2))
+        self.assertTrue(c0.evaluate(2))
+        self.assertFalse(c1.evaluate(2))
+        self.assertTrue(c2.evaluate(2))
+        self.assertFalse(c3.evaluate(2))
+        self.assertEqual(c.evaluate(4), c0.evaluate(4))
+        self.assertTrue(c0.evaluate(4))
+        self.assertTrue(c1.evaluate(4))
+        self.assertFalse(c2.evaluate(4))
+        self.assertFalse(c3.evaluate(4))
+
+        for ex in all_e:
+            self.assertTrue(e.evaluate(3))
+            self.assertTrue(e.evaluate(7))
+            self.assertFalse(e.evaluate(5))
+
+        # Test the two open_* keywords for compound queries.
+        # Must be careful to capture correct openness/closure of any inner
+        # bounds introduced through compound queries, e.g. for 'e' there
+        # are internal endpoints at 4 and 6 to behave like in 'c' and 'd'.
+        self.assertTrue(e.evaluate(2))
+        self.assertTrue(e1.evaluate(2))
+        self.assertFalse(e2.evaluate(2))
+        self.assertFalse(e3.evaluate(2))
+        self.assertTrue(e.evaluate(4))
+        self.assertTrue(e1.evaluate(4))
+        self.assertTrue(e2.evaluate(4))
+        self.assertFalse(e3.evaluate(4))
+        self.assertTrue(e.evaluate(6))
+        self.assertFalse(e1.evaluate(6))
+        self.assertTrue(e2.evaluate(6))
+        self.assertFalse(e3.evaluate(6))
+        self.assertTrue(e.evaluate(8))
+        self.assertTrue(e1.evaluate(8))
+        self.assertFalse(e2.evaluate(8))
+        self.assertFalse(e3.evaluate(8))
 
         self.assertEqual(3, c)
         self.assertNotEqual(5, c)
@@ -646,6 +720,8 @@ class QueryTest(unittest.TestCase):
             cf.wo(2, 5, attr="day") | cf.set(cf.Data([1, 2], "km")),
             cf.eq(8) | cf.lt(9) & cf.ge(10),
             cf.isclose(1, "days", rtol=10, atol=99),
+            cf.wi(-5, 5, open_lower=True),
+            cf.wi(-5, 5, open_lower=True, open_upper=True),
         ):
             self.assertEqual(tokenize(q), tokenize(q.copy()))
 
@@ -655,6 +731,34 @@ class QueryTest(unittest.TestCase):
         )
         self.assertNotEqual(
             tokenize(cf.isclose(9)), tokenize(cf.isclose(9, rtol=10))
+        )
+
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True)), tokenize(cf.wi(-5, 5))
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_upper=True)), tokenize(cf.wi(-5, 5))
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_upper=True)),
+            tokenize(cf.wi(-5, 5, open_lower=True)),
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
+            tokenize(cf.wi(-5, 5)),
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
+            tokenize(cf.wi(-5, 5, open_lower=True)),
+        )
+        self.assertNotEqual(
+            tokenize(cf.wi(-5, 5, open_lower=True, open_upper=True)),
+            tokenize(cf.wi(-5, 5, open_upper=True)),
+        )
+        # Check defaults
+        self.assertEqual(
+            tokenize(cf.wi(-5, 5, open_lower=False, open_upper=False)),
+            tokenize(cf.wi(-5, 5)),
         )
 
     def test_Query_Units(self):

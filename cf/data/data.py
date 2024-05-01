@@ -1459,7 +1459,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 If `None` then do nothing. Otherwise set
                 `__asanyarray__` to the Boolean value of *asanyarray*.
 
-                .. versionadded:: NEXTRELEASE
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 

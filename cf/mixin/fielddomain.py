@@ -1,10 +1,10 @@
 import logging
 from numbers import Integral
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 from dask.array.slicing import normalize_index
+from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -13,7 +13,11 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+    normalize_slice,
+)
 from ..query import Query
 from ..units import Units
 
@@ -199,7 +203,7 @@ class FieldDomain:
 
         return True
 
-    def _indices(self, mode, data_axes, ancillary_mask, kwargs):
+    def _indices(self, config, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
 
@@ -213,9 +217,9 @@ class FieldDomain:
 
         :Parameters:
 
-            mode: `str`
-                The mode of operation. See the *mode* parameter of
-                `indices` for details.
+            config: `tuple`
+                The mode of operation and the halo size. See the
+                *config* parameter of `indices` for details.
 
             data_axes: sequence of `str`, or `None`
                 The domain axis identifiers of the data axes, or
@@ -250,9 +254,46 @@ class FieldDomain:
         """
         debug = is_log_level_debug(logger)
 
-        compress = mode == "compress"
+        # Parse mode and halo
+        n_config = len(config)
+        if not n_config:
+            mode = None
+            halo = None
+        elif n_config == 1:
+            try:
+                halo = int(config[0])
+            except ValueError:
+                mode = config[0]
+                halo = None
+            else:
+                mode = None
+        elif n_config == 2:
+            mode, halo = config
+        else:
+            raise ValueError(
+                "Can't provide more than two positional arguments. "
+                f"Got: {', '.join(repr(x) for x in config)}"
+            )
+
+        compress = mode is None or mode == "compress"
         envelope = mode == "envelope"
         full = mode == "full"
+        if not (compress or envelope or full):
+            raise ValueError(f"Invalid mode of operation: {mode!r}")
+
+        if halo is not None:
+            try:
+                halo = int(halo)
+            except ValueError:
+                ok = False
+            else:
+                ok = halo >= 0
+
+            if not ok:
+                raise ValueError(
+                    "halo positional argument must be convertible to a "
+                    f"non-negative integer. Got {halo!r}"
+                )
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -374,18 +415,17 @@ class FieldDomain:
                     #             [7,4,2], slice(0,4,2),
                     #             numpy.array([2,4,7]),
                     #             [True,False,True]
-                    index = value
                     if debug:
                         logger.debug("  1-d CASE 1:")  # pragma: no cover
 
                     index = value
 
                     if envelope or full:
+                        # Set ind
                         size = domain_axes[axis].get_size()
-                        # TODODASK: consider using dask.arange here
-                        d = np.arange(size)  # self._Data(range(size))
-                        ind = (d[value],)  # .array,)
-                        index = slice(None)
+                        ind = (np.arange(size)[value],)
+                        # Placeholder which will be overwritten later
+                        index = None
 
                 elif (
                     item is not None
@@ -448,10 +488,24 @@ class FieldDomain:
                     index = slice(start, stop, 1)
 
                     if full:
-                        d = self._Data(da.arange(size))
-                        d.cyclic(0)
-                        ind = (d[index].array,)
-                        index = slice(None)
+                        # Set ind
+                        try:
+                            index = normalize_slice(index, size, cyclic=True)
+                        except IndexError:
+                            # Index is not a cyclic slice
+                            ind = (np.arange(size)[index],)
+                        else:
+                            # Index is a cyclic slice
+                            ind = (
+                                np.arange(size)[
+                                    np.arange(
+                                        index.start, index.stop, index.step
+                                    )
+                                ],
+                            )
+
+                        # Placeholder which will be overwritten later
+                        index = None
 
                 elif item is not None:
                     # 1-d CASE 3: All other 1-d cases
@@ -477,12 +531,12 @@ class FieldDomain:
                         else:
                             ind = np.where(index)
 
-                        index = slice(None)
+                        # Placeholder which will be overwritten later
+                        index = None
                     else:
                         # Convert bool to int, to save memory.
                         size = domain_axes[axis].get_size()
                         index = normalize_index(index, (size,))[0]
-
                 else:
                     raise ValueError(
                         "Must specify a domain axis construct or a "
@@ -537,16 +591,21 @@ class FieldDomain:
                 ]
 
                 # Find loctions that are True in all of the
-                # construct's matches
+                # constructs' matches
                 item_match = item_matches.pop()
                 for m in item_matches:
                     item_match &= m
 
-                item_match = item_match.compute()
-                if np.ma.isMA:
+                # Set ind
+                item_match = np.asanyarray(item_match)
+                if np.ma.isMA(item_match):
                     ind = np.ma.where(item_match)
                 else:
                     ind = np.where(item_match)
+
+                # Placeholders which will be overwritten later
+                for axis in canonical_axes:
+                    indices[axis] = None
 
                 if debug:
                     logger.debug(
@@ -567,13 +626,13 @@ class FieldDomain:
                     if item.has_bounds()
                 ]
 
-                # If there are exactly two 2-d contructs constructs,
-                # both with cell bounds and both with 'cf.contains'
-                # values, then do an extra check to remove any cells
-                # already selected for which the given value is in
-                # fact outside of the cell. This could happen if the
-                # cells are not rectangular (e.g. for curvilinear
-                # latitudes and longitudes array).
+                # If there are exactly two 2-d constructs, both with
+                # cell bounds and both with 'cf.contains' values, then
+                # do an extra check to remove any cells already
+                # selected for which the given value is in fact
+                # outside of the cell. This could happen if the cells
+                # are not rectilinear (e.g. for curvilinear latitudes
+                # and longitudes arrays).
                 if n_items == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
@@ -640,7 +699,8 @@ class FieldDomain:
             if ind is not None:
                 mask_component_shape = []
                 masked_subspace_size = 1
-                ind = np.array(ind)
+                # TODONUMPY2: https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+                ind = np.array(ind, copy=False)
 
                 for i, (axis, start, stop) in enumerate(
                     zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
@@ -648,28 +708,35 @@ class FieldDomain:
                     if data_axes and axis not in data_axes:
                         continue
 
-                    if indices[axis] == slice(None):
-                        if compress:
-                            # Create a compressed index for this axis
-                            size = stop - start + 1
-                            index = sorted(set(ind[i]))
-                        elif envelope:
-                            # Create an envelope index for this axis
-                            stop += 1
-                            size = stop - start
-                            index = slice(start, stop)
-                        elif full:
-                            # Create a full index for this axis
-                            start = 0
-                            stop = domain_axes[axis].get_size()
-                            size = stop - start
-                            index = slice(None)
-                        else:
-                            raise ValueError(
-                                "Must have mode full, envelope or compress"
-                            )  # pragma: no cover
+                    if compress:
+                        # Create a compressed index for this axis
+                        size = stop - start + 1
+                        index = sorted(set(ind[i]))
+                    elif envelope:
+                        # Create an envelope index for this axis
+                        stop += 1
+                        size = stop - start
+                        index = slice(start, stop)
+                    elif full:
+                        # Create a full index for this axis
+                        start = 0
+                        stop = domain_axes[axis].get_size()
+                        size = stop - start
+                        index = slice(None)
+                    else:
+                        raise ValueError(
+                            "Must have mode full, envelope, or compress"
+                        )  # pragma: no cover
 
-                        indices[axis] = index
+                    # Overwrite the placeholder value of None
+                    if indices[axis] is not None:
+                        raise ValueError(
+                            "This error means that there is a bug: The "
+                            "'indices' dictionary should contain None for "
+                            "each axis with an 'ind'."
+                        )
+
+                    indices[axis] = index
 
                     mask_component_shape.append(size)
                     masked_subspace_size *= size
@@ -677,11 +744,207 @@ class FieldDomain:
 
                 create_mask = (
                     ancillary_mask
+                    and halo is None
                     and data_axes
                     and ind.shape[1] < masked_subspace_size
                 )
             else:
                 create_mask = False
+
+            # --------------------------------------------------------
+            # Add a halo to the subspaced axes
+            # --------------------------------------------------------
+            if halo:
+                # Note: We're about to make 'indices' inconsistent
+                #       with 'ind', but that's OK because we're not
+                #       going to use 'ind' again as 'create_mask' is
+                #       False.
+                reduced_halo = False
+                for axis in item_axes:
+                    index = indices[axis]
+                    size = domain_axes[axis].get_size()
+
+                    try:
+                        # Is index a cyclic slice?
+                        index = normalize_slice(index, size, cyclic=True)
+                    except IndexError:
+                        try:
+                            index = normalize_slice(index, size)
+                        except IndexError:
+                            # Index is not a slice
+                            cyclic = False
+                        else:
+                            # Index is a non-cyclic slice, but if the
+                            # axis is cyclic then it could become a
+                            # cyclic slice once the halo is added.
+                            cyclic = self.iscyclic(axis)
+                    else:
+                        # Index is a cyclic slice
+                        cyclic = self.iscyclic(axis)
+                        if not cyclic:
+                            raise IndexError(
+                                "Can't take a cyclic slice of a non-cyclic "
+                                "axis"
+                            )
+
+                    if cyclic:
+                        # Cyclic slice, or potentially cyclic slice.
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(0, 2)        -> slice(-1, 3)
+                        #   slice(-1, 2)       -> slice(-2, 3)
+                        #   slice(1, None, -1) -> slice(2, -2, -1)
+                        #   slice(1, -2, -1)   -> slice(2, -3, -1)
+                        start = index.start
+                        stop = index.stop
+                        step = index.step
+                        if step not in (1, -1):
+                            # This restriction is due to the fact that
+                            # the extended index is a slice (rather
+                            # than a list of integers), and so we
+                            # can't represent the uneven spacing that
+                            # would be required if abs(step) != 1.
+                            # Note that cyclic slices created by this
+                            # method will always have a step of 1.
+                            raise IndexError(
+                                "A cyclic slice index can only have halos if "
+                                f"it has step 1 or -1. Got {index!r}"
+                            )
+
+                        if step < 0 and stop is None:
+                            stop = -1
+
+                        if step > 0:
+                            # Increasing cyclic slice
+                            start = start - halo
+                            if start < stop - size:
+                                start = stop - size
+                                reduced_halo = True
+
+                            stop = stop + halo
+                            if stop > size + start:
+                                stop = size + start
+                                reduced_halo = True
+
+                        else:
+                            # Decreasing cyclic slice
+                            start = start + halo
+                            if start > size + stop:
+                                start = size + stop
+                                reduced_halo = True
+
+                            stop = stop - halo
+                            if stop < start - size:
+                                stop = start - size
+                                reduced_halo = True
+
+                        index = slice(start, stop, step)
+                    else:
+                        # A list/1-d array of int/bool, or a
+                        # non-cyclic slice that can't become cyclic.
+                        #
+                        # E.g. for halo=1 and size=5:
+                        #   slice(1, 3)                       -> [0, 1, 2, 3]
+                        #   slice(1, 4, 2)                    -> [0, 1, 3, 4]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   slice(2, 0, -1)                   -> [3, 2, 1, 0]
+                        #   [1, 2]                            -> [0, 1, 2, 3]
+                        #   [1, 3]                            -> [0, 1, 3, 4]
+                        #   [2, 1]                            -> [3, 2, 1, 0]
+                        #   [3, 1]                            -> [4, 3, 1, 0]
+                        #   [1, 3, 2]                         -> [0, 1, 3, 2, 1]
+                        #   [False, True, False, True, False] -> [0, 1, 3, 4]
+                        if isinstance(index, slice):
+                            index = np.arange(size)[index]
+                        else:
+                            if is_dask_collection(index):
+                                index = np.asanyarray(index)
+
+                            index = normalize_index(index, (size,))[0]
+
+                        # Find the left-most and right-most elements
+                        # ('iL' and iR') of the sequence of positive
+                        # integers, and whether the sequence is
+                        # increasing or decreasing at each end
+                        # ('increasing_L' and 'increasing_R')
+                        #
+                        # For instance:
+                        #
+                        # ------------ -- -- ------------ ------------
+                        # index        iL iR increasing_L increasing_R
+                        # ------------ -- -- ------------ ------------
+                        # [1, 2, 3, 4]  1  4 True         True
+                        # [4, 3, 2, 1]  4  1 False        False
+                        # [2, 1, 3, 4]  2  4 False        True
+                        # [1, 2, 4, 3]  1  3 True         False
+                        # [2, 2, 3, 4]  2  4 True         True
+                        # [2, 2, 4, 3]  2  3 True         False
+                        # [3, 3, 4, 4]  3  4 True         True
+                        # [4, 4, 3, 3]  4  3 False        False
+                        # [10]         10 10 True         True
+                        # ------------ -- -- ------------ ------------
+                        n_index = index.size
+                        if n_index == 1:
+                            iL = index[0]
+                            iR = iL
+                            increasing_L = True
+                            increasing_R = True
+                        elif n_index > 1:
+                            iL = index[0]
+                            iR = index[-1]
+                            increasing_L = iL <= index[np.argmax(index != iL)]
+                            increasing_R = (
+                                iR >= index[-1 - np.argmax(index[::-1] != iR)]
+                            )
+                        else:
+                            raise IndexError(
+                                "Can't add a halo to a zero-sized index: "
+                                f"{index}"
+                            )
+
+                        # Extend the list at each end, but not
+                        # exceeding the axis limits.
+                        if increasing_L:
+                            start = iL - halo
+                            if start < 0:
+                                start = 0
+                                reduced_halo = True
+
+                            left = range(start, iL)
+                        else:
+                            start = iL + halo
+                            if start > size - 1:
+                                start = size - 1
+                                reduced_halo = True
+
+                            left = range(start, iL, -1)
+
+                        if increasing_R:
+                            stop = iR + 1 + halo
+                            if stop > size:
+                                stop = size
+                                reduced_halo = True
+
+                            right = range(iR + 1, stop)
+                        else:
+                            stop = iR - 1 - halo
+                            if stop < -1:
+                                stop = -1
+                                reduced_halo = True
+
+                            right = range(iR - 1, stop, -1)
+
+                        index = index.tolist()
+                        index[:0] = left
+                        index.extend(right)
+
+                    # Reset the returned index
+                    indices[axis] = index
+
+                if reduced_halo:
+                    logger.warning(
+                        "Halo reduced to keep subspace within axis limits"
+                    )
 
             # Create an ancillary mask for these axes
             if debug:
@@ -1646,7 +1909,7 @@ class FieldDomain:
     def cyclic(
         self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
     ):
-        """Set the cyclicity of an axis.
+        """Get or set the cyclicity of an axis.
 
         .. versionadded:: 1.0
 
@@ -2421,6 +2684,109 @@ class FieldDomain:
 
         # Return the construct key
         return out
+
+    def del_construct(self, *identity, default=ValueError(), **filter_kwargs):
+        """Remove a metadata construct.
+
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the field nor metadata
+        constructs, nor be referenced by any cell method
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
+
+        .. versionadded:: 3.16.2
+
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
+
+        :Parameters:
+
+            identity:
+                Select the unique construct that has the identity,
+                defined by its `!identities` method, that matches the
+                given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            default: optional
+                Return the value of the *default* parameter if the
+                data axes have not been set.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+                .. versionadded:: 3.16.2
+
+        :Returns:
+
+                The removed metadata construct.
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.del_construct('time')
+        <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >
+        >>> f.del_construct('time')
+        Traceback (most recent call last):
+            ...
+        ValueError: Can't find unique construct to remove
+        >>> f.del_construct('time', default='No time')
+        'No time'
+        >>> f.del_construct('dimensioncoordinate1')
+        <{{repr}}DimensionCoordinate: longitude(8) degrees_east>
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), ncdim%lon(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+
+        """
+        # Need to re-define to overload this method since cfdm doesn't
+        # have the concept of cyclic axes, so have to update the
+        # register of cyclic axes when we delete a construct in cf.
+
+        # Get the relevant key first because it will be lost upon deletion
+        key = self.construct_key(*identity, default=None, **filter_kwargs)
+        cyclic_axes = self._cyclic
+
+        deld_construct = super().del_construct(
+            *identity, default=None, **filter_kwargs
+        )
+        if deld_construct is None:
+            if default is None:
+                return
+
+            return self._default(
+                default, "Can't find unique construct to remove"
+            )
+
+        # If the construct deleted was a cyclic axes, remove it from the set
+        # of stored cyclic axes, to sync that. This is safe now, since given
+        # the block above we can be sure the deletion was successful.
+        if key in cyclic_axes:
+            # Never change value of _cyclic attribute in-place. Only copy now
+            # when the copy is known to be required.
+            cyclic_axes = cyclic_axes.copy()
+            cyclic_axes.remove(key)
+            self._cyclic = cyclic_axes
+
+        return deld_construct
 
     def set_coordinate_reference(
         self, coordinate_reference, key=None, parent=None, strict=True
