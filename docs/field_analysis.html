@@ -44,7 +44,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.16.2</a></h1>
 
 
 
@@ -1540,100 +1540,14 @@ input at most one source point.</p>
 <section id="spherical-regridding">
 <span id="id14"></span><h2>Spherical regridding<a class="headerlink" href="#spherical-regridding" title="Permalink to this headline">¶</a></h2>
 <p>Regridding from and to spherical coordinate systems using the
-<a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
-simultaneously. All other axes are unchanged. The calculation of the
-regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
-<p>The following combinations of spherical source and destination domain
-coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Spherical source domain</p></th>
-<th class="head"><p>Spherical destination domain</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-<td><p><a href="#id79"><span class="problematic" id="id80">`UGRID mesh`_</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-<td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-<td><p><a href="#id81"><span class="problematic" id="id82">`UGRID mesh`_</span></a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-<td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-<td><p><a href="#id83"><span class="problematic" id="id84">`UGRID mesh`_</span></a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-<td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-<td><p><a href="#id85"><span class="problematic" id="id86">`UGRID mesh`_</span></a></p></td>
-</tr>
-<tr class="row-even"><td><p><a href="#id87"><span class="problematic" id="id88">`UGRID mesh`_</span></a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a href="#id89"><span class="problematic" id="id90">`UGRID mesh`_</span></a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated latitude-longitude</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a href="#id91"><span class="problematic" id="id92">`UGRID mesh`_</span></a></p></td>
-<td><p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><a href="#id93"><span class="problematic" id="id94">`UGRID mesh`_</span></a></p></td>
-<td><p><a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a></p></td>
-</tr>
-<tr class="row-even"><td><p><a href="#id95"><span class="problematic" id="id96">`UGRID mesh`_</span></a></p></td>
-<td><p><a href="#id97"><span class="problematic" id="id98">`UGRID mesh`_</span></a></p></td>
-</tr>
-</tbody>
-</table>
+<a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is available for the ‘X’, ‘Y’ and (if
+requested) ‘Z’ axes simultaneously. All other axes are unchanged. The
+calculation of the regridding weights is based on areas and distances
+on the surface of the sphere, rather than in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
+<p>Spherical regridding can occur between source and destination grids
+that comprise any pairing of <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude">Latitude-longitude</a>, <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole">Rotated
+latitude-longitude</a>, <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings">Plane projection</a>, <a class="reference external" href="https://doi.org/10.1007%2FBF00211684">Tripolar</a>, <a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html#mesh-topology-variables">UGRID mesh</a>,
+and <a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries">DSG feature type</a> coordinate systems.</p>
 <p>The most convenient usage is when the destination domain exists
 in another field construct. In this case, all you need to specify is the
 field construct having the desired destination domain and the
@@ -1776,13 +1690,11 @@ point will not participate in the regridding.</p>
 </section>
 <section id="vertical-regridding">
 <span id="id17"></span><h2>Vertical regridding<a class="headerlink" href="#vertical-regridding" title="Permalink to this headline">¶</a></h2>
-<p>The only option for regridding along a vertical axis is to use
-Cartesian regridding. However, care must be taken to ensure that the
-vertical axis is transformed so that it’s coordinate values vary
-linearly. For example, to regrid data on one set of vertical pressure
-coordinates to another set, the pressure coordinates may first be
-transformed into the logarithm of pressure, and then changed back to
-pressure coordinates after the regridding operation.</p>
+<p>Vertical regridding may be incorporated into either spherical or
+Cartesian regridding, but in both cases the vertical coordinates need
+to be explicitly identified, and whether or not to calculate the
+regridding weights according to the natural logarithm of the vertical
+coordinate values stated.</p>
 <div class="literal-block-wrapper docutils container" id="id58">
 <div class="code-block-caption"><span class="caption-text"><em>Regrid a field construct from one set of pressure levels
 to another.</em></span><a class="headerlink" href="#id58" title="Permalink to this code">¶</a></div>
@@ -1799,19 +1711,8 @@ to another.</em></span><a class="headerlink" href="#id58" title="Permalink to th
 <span class="go">Auxiliary coords: latitude(grid_latitude(11), grid_longitude(10)) = [[67.12, ..., 66.07]] degrees_north</span>
 <span class="go">                : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east</span>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z_p</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">z_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[850. 700. 500. 250.  50.]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z_ln_p</span> <span class="o">=</span> <span class="n">z_p</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z_ln_p</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Z&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">z_ln_p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">z_ln_p</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_p</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">632</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mf">320.</span><span class="p">],</span> <span class="s1">&#39;hPa&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span> <span class="o">=</span> <span class="n">new_z_p</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Z&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">new_z_ln_p</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new_z_p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_z</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">632</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mf">320.</span><span class="p">],</span> <span class="s1">&#39;hPa&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">new_z</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">ln_z</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
 <span class="go">-------------------------------</span>
@@ -1827,10 +1728,6 @@ to another.</em></span><a class="headerlink" href="#id58" title="Permalink to th
 </pre></div>
 </div>
 </div>
-<p>Note that the <a class="reference internal" href="method/cf.Field.replace_construct.html#cf.Field.replace_construct" title="cf.Field.replace_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_construct</span></code></a> method of the field construct
-is used to directly replace the vertical dimension coordinate construct,
-without having to manually match up the corresponding domain axis
-construct and construct key.</p>
 <hr class="docutils" />
 </section>
 </section>
@@ -2573,7 +2470,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.12.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id77">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2600,7 +2497,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.12.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2752,7 +2649,7 @@ azimuthal angle.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -3487,7 +3487,7 @@ class UMRead(cfdm.read_write.IORead):
                 considerably faster in cases when the contents are not
                 required.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
         :Returns:
 
@@ -3575,7 +3575,7 @@ class UMRead(cfdm.read_write.IORead):
                 considerably faster in cases when the contents are not
                 required.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
         :Returns:
 

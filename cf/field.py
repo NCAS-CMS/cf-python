@@ -2694,7 +2694,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def get_domain(self):
         """Return the domain.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.16.2
 
         .. seealso:: `domain`
 

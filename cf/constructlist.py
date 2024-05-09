@@ -240,7 +240,6 @@ class ConstructList(list, Container, cfdm.Container):
     insert = list.insert
     pop = list.pop
     reverse = list.reverse
-    sort = list.sort
 
     # ----------------------------------------------------------------
     # Methods

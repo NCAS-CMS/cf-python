@@ -2695,7 +2695,7 @@ class FieldDomain:
         removed even if it is referenced by coordinate reference
         construct.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.16.2
 
         .. seealso:: `get_construct`, `constructs`, `has_construct`,
                      `set_construct`
@@ -2722,7 +2722,7 @@ class FieldDomain:
 
             {{filter_kwargs: optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.16.2
 
         :Returns:
 

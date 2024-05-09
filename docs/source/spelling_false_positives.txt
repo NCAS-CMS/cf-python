@@ -209,6 +209,7 @@ hdf
 HDF
 Hovmuller
 hPa
+hyperrectangular
 iadd
 iand
 iaxes
@@ -269,6 +270,7 @@ lbtim
 le
 len
 linebreaks
+ln
 loadd
 lon
 lossy

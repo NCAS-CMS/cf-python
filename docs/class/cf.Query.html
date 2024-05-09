@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
 
 
 
@@ -136,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.1/cf/query.py#L32-L1237"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">open_lower=False</em>, <em class="sig-param">open_upper=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/query.py#L32-L1316"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition for subsequent evaluation.</p>
 <p>A condition that may be applied to any object may be stored in a
@@ -385,6 +385,24 @@ tolerance on absolute numerical differences. If
 <p><span class="versionmodified added">New in version 3.15.2.</span></p>
 </div>
 </dd>
+<dt>open_lower: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Only applicable to the <code class="docutils literal notranslate"><span class="pre">'wi'</span></code> operator.
+If True, open the interval at the lower
+bound so that value0 is excluded from the
+range. By default the interval is closed
+so that value0 is included.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
+<dt>open_upper: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Only applicable to the <code class="docutils literal notranslate"><span class="pre">'wi'</span></code> operator.
+If True, open the interval at the upper
+bound so that value1 is excluded from the
+range. By default the interval is closed
+so that value1 is included.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.2.</span></p>
+</div>
+</dd>
 <dt>exact: deprecated at version 3.0.0.</dt><dd><p>Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
 </dd>
 </dl>
@@ -401,7 +419,7 @@ tolerance on absolute numerical differences. If
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a></p></td>
-<td><p>Return a <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object with a new left hand side operand attribute to be used during evaluation.</p></td>
+<td><p>Redefine the query to be on an object’s attribute.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Query.copy.html#cf.Query.copy" title="cf.Query.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
@@ -465,6 +483,12 @@ tolerance on absolute numerical differences. If
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.rtol.html#cf.Query.rtol" title="cf.Query.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a></p></td>
 <td><p>The tolerance on relative numerical differences.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Query.open_upper.html#cf.Query.open_upper" title="cf.Query.open_upper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_upper</span></code></a></p></td>
+<td><p>True if the interval is open at the (excludes the) upper bound.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Query.open_lower.html#cf.Query.open_lower" title="cf.Query.open_lower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_lower</span></code></a></p></td>
+<td><p>True if the interval is open at the (excludes the) lower bound.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -520,7 +544,7 @@ tolerance on absolute numerical differences. If
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2024, NCAS | Page built on 2024-04-26.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
