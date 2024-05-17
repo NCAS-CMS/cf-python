@@ -191,7 +191,7 @@ _relational_methods = (
 )
 
 _xxx = namedtuple(
-    "data_dimension", ["size", "axis", "key", "coord", "coord_type", "scalar"]
+    "data_dimension", ["size", "axis", "keys", "coords", "coord_type", "scalar"]
 )
 
 # _empty_set = set()
@@ -1006,35 +1006,63 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     if identity is None and relaxed_identities:
                         identity = coord.identity(relaxed=True, default=None)
+                        
+                    keys = (key,)
+                    coords = (coord,)
                 else:
-                    key, coord = f.auxiliary_coordinate(
-                        item=True,
-                        default=(None, None),
-                        filter_by_axis=(axis,),
-                        axis_mode="exact",
-                    )
-                    if coord is not None:
-                        # This axis of the domain does not have a
-                        # dimension coordinate but it does have
-                        # exactly one 1-d auxiliary coordinate, so
-                        # that will do.
-                        identity = coord.identity(strict=True, default=None)
+                    discrete_axis = f.has_property('featureType') or f.domain_topologies(todict=True)
+                    if discrete_axis:
+                        x = {}
+                        for key, coord in f.auxiliary_coordinates(
+                                filter_by_axis=(axis,),
+                                axis_mode="exact", todict=True
+                        ).items():                        
+                            identity = coord.identity(strict=True, default=None)
+                            if identity is None and relaxed_identities:
+                                identity = coord.identity(
+                                    relaxed=True, default=None
+                                )
+                            if identity is not None:
+                                x[identity] = key
 
-                        if identity is None and relaxed_identities:
-                            identity = coord.identity(
-                                relaxed=True, default=None
-                            )
+                        if x:
+                            # E.g. {2:3, 4:6, 1:7} -> (1, 2, 4), (7, 3, 6)
+                            identity, keys = tuple(zip(*sorted(x.items())))
+                            coords = tuple(f.auxiliary_coordinate(key) for key in keys)
+                        else:
+                            identity = None
+                            keys = None
+                            coords = None
+                    else:                    
+                        key, coord = f.auxiliary_coordinate(
+                            item=True,
+                            default=(None, None),
+                            filter_by_axis=(axis,),
+                            axis_mode="exact",
+                        )
+                        if coord is not None:
+                            # This axis of the domain does not have a
+                            # dimension coordinate but it does have
+                            # exactly one 1-d auxiliary coordinate, so
+                            # that will do.
+                            coords = (coord,)
+                            identity = coord.identity(strict=True, default=None)
+                            if identity is None and relaxed_identities:
+                                identity = coord.identity(
+                                    relaxed=True, default=None
+                                )
+                                
 
                 if identity is None:
                     identity = i
                 else:
-                    coord_type = coord.construct_type
+                    coord_type = coords[0].construct_type
 
                 out[identity] = _xxx(
                     size=f.domain_axis(axis).get_size(),
                     axis=axis,
-                    key=key,
-                    coord=coord,
+                    keys=keys,
+                    coords=coords,
                     coord_type=coord_type,
                     scalar=(axis not in data_axes),
                 )
@@ -1178,48 +1206,49 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"{a.size} {identity!r} axis"
                 )
 
-            # Ensure matching axis directions
-            if y.coord.direction() != a.coord.direction():
-                other.flip(y.axis, inplace=True)
-
-            # Check for matching coordinate values
-            if not y.coord._equivalent_data(a.coord):
-                raise ValueError(
-                    f"Can't combine size {y.size} {identity!r} axes with "
-                    f"non-matching coordinate values"
-                )
-
-            # Check coord refs
-            refs1 = field1.get_coordinate_reference(construct=y.key, key=True)
-            refs0 = field0.get_coordinate_reference(construct=a.key, key=True)
-
-            n_refs = len(refs1)
-            n0_refs = len(refs0)
-
-            if n_refs != n0_refs:
-                raise ValueError(
-                    f"Can't combine {self.__class__.__name__!r} with "
-                    f"{other.__class__.__name__!r} because the coordinate "
-                    f"references have different lengths: {n_refs} and "
-                    f"{n0_refs}."
-                )
-
-            n_equivalent_refs = 0
-            for ref1 in refs1:
-                for ref0 in refs0[:]:
-                    if field1._equivalent_coordinate_references(
-                        field0, key0=ref1, key1=ref0, axis_map=axis_map
-                    ):
-                        n_equivalent_refs += 1
-                        refs0.remove(ref0)
-                        break
-
-            if n_equivalent_refs != n_refs:
-                raise ValueError(
-                    f"Can't combine {self.__class__.__name__!r} with "
-                    f"{other.__class__.__name__!r} because the fields have "
-                    "incompatible coordinate references."
-                )
+            for a_key, a_coord, y_key, y_coord in zip(a.keys, a.coords, y.keys, y.coords):
+                # Ensure matching axis directions
+                if y_coord.direction() != a_coord.direction():
+                    other.flip(y.axis, inplace=True)
+    
+                # Check for matching coordinate values
+                if not y_coord._equivalent_data(a_coord):
+                    raise ValueError(
+                        f"Can't combine size {y.size} {identity!r} axes with "
+                        f"non-matching coordinate values"
+                    )
+    
+                # Check coord refs
+                refs1 = field1.get_coordinate_reference(construct=y_key, key=True)
+                refs0 = field0.get_coordinate_reference(construct=a_key, key=True)
+    
+                n_refs = len(refs1)
+                n0_refs = len(refs0)
+    
+                if n_refs != n0_refs:
+                    raise ValueError(
+                        f"Can't combine {self.__class__.__name__!r} with "
+                        f"{other.__class__.__name__!r} because the coordinate "
+                        f"references have different lengths: {n_refs} and "
+                        f"{n0_refs}."
+                    )
+    
+                n_equivalent_refs = 0
+                for ref1 in refs1:
+                    for ref0 in refs0[:]:
+                        if field1._equivalent_coordinate_references(
+                            field0, key0=ref1, key1=ref0, axis_map=axis_map
+                        ):
+                            n_equivalent_refs += 1
+                            refs0.remove(ref0)
+                            break
+    
+                if n_equivalent_refs != n_refs:
+                    raise ValueError(
+                        f"Can't combine {self.__class__.__name__!r} with "
+                        f"{other.__class__.__name__!r} because the fields have "
+                        "incompatible coordinate references."
+                    )
 
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
@@ -1425,7 +1454,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         axis_map = {}
 
         for cm in self.cell_methods(todict=True).values():
-            for axis in cm.get_axes(()):
+
+            axes = cm.get_axis_identities(None)
+            if axes is None:
+                axes = cm.get_axes(None)
+            
+            for axis in axes:
                 if axis in axis_map:
                     continue
 
