@@ -1040,6 +1040,17 @@ class UMField:
             cf_properties["stash_code"] = str(stash)
             cf_properties["submodel"] = str(submodel)
 
+            # Convert the UM version to a string and provide it as a
+            # CF property. E.g. 405 -> '4.5', 606.3 -> '6.6.3', 1002
+            # -> '10.2'
+            a, b = divmod(int(self.um_version), 100)
+            fraction = str(self.um_version).split(".")[-1]
+            um = f"{a}.{b}"
+            if fraction != "0" and fraction != str(self.um_version):
+                um += f".{fraction}"
+
+            cf_properties["um_version"] = um
+
             # --------------------------------------------------------
             # Set the data and extra data
             # --------------------------------------------------------

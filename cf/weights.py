@@ -1461,9 +1461,9 @@ class Weights(Container, cfdm.Container):
         else:
             # Bounds exist
             if methods:
-                weights[(da_key,)] = (
-                    f"linear {f.constructs.domain_axis_identity(da_key)}"
-                )
+                weights[
+                    (da_key,)
+                ] = f"linear {f.constructs.domain_axis_identity(da_key)}"
             else:
                 weights[(da_key,)] = dim.cellsize
 

@@ -1,3 +1,13 @@
+version NEXTRELEASE
+-------------------
+
+**2024-??-??**
+
+* Include the UM version as a field property when reading UM files
+  (https://github.com/NCAS-CMS/cf-python/issues/777)
+
+----
+
 version 3.16.2
 --------------
 
