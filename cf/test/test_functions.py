@@ -17,9 +17,12 @@ class functionTest(unittest.TestCase):
     def setUp(self):
         self.test_only = ()
 
-    def test_example_field(self):
-        self.assertIsInstance(cf.example_fields(), cf.FieldList)
-        for f in cf.example_fields():
+    def test_example_field_example_fields(self):
+        e = cf.example_fields()
+        self.assertIsInstance(e, cf.FieldList)
+
+        for f in e:
+            self.assertIsInstance(f, cf.Field)
             f.dump(display=False)
 
         with self.assertRaises(ValueError):
