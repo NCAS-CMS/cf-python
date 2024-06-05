@@ -1,6 +1,7 @@
 import cfdm
 
 from .cfimplementation import implementation
+from .fieldlist import FieldList
 
 _implementation = implementation()
 
@@ -13,7 +14,7 @@ example_field.__doc__ = cfdm.example_field.__doc__.replace("cfdm.", "cf.")
 
 
 def example_fields(*n, _func=example_field):
-    return cfdm.example_fields(*n, _func=_func)
+    return FieldList(cfdm.example_fields(*n, _func=_func))
 
 
 example_fields.__doc__ = cfdm.example_fields.__doc__.replace("cfdm.", "cf.")
