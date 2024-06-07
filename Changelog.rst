@@ -7,6 +7,9 @@ version NEXTRELEASE
 * Fix bug where `cf.example_fields` returned a `list`
   of Fields rather than a `Fieldlist`
   (https://github.com/NCAS-CMS/cf-python/issues/725)
+* Fix bug where `cf.functions.normalize_slice` doesn't correctly
+  handle certain cyclic slices
+  (https://github.com/NCAS-CMS/cf-python/issues/774)
 
 ----
 

@@ -2132,8 +2132,8 @@ def normalize_slice(index, size, cyclic=False):
         return slice(start, stop, step)
 
     if not (
-        (step > 0 and start < 0 and stop > 0)
-        or (step < 0 and start > 0 and stop < 0)
+        (step > 0 and start < 0 and stop >= 0)
+        or (step < 0 and start >= 0 and stop < 0)
     ):
         raise IndexError(
             f"{index!r} is not a {'cyclic ' if cyclic else ''}slice"
