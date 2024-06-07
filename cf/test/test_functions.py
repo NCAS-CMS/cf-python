@@ -396,7 +396,7 @@ class functionTest(unittest.TestCase):
             )
         self.assertEqual(
             cf.normalize_slice(slice(0, 7, -1), 8, cyclic=True),
-            slice(0, 7, -1)
+            slice(0, -1, -1)
             )        
         self.assertEqual(
             cf.normalize_slice(slice(-1, -8, 1), 8, cyclic=True),
