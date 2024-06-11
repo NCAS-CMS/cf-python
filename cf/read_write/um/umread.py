@@ -1043,6 +1043,11 @@ class UMField:
             # Convert the UM version to a string and provide it as a
             # CF property. E.g. 405 -> '4.5', 606.3 -> '6.6.3', 1002
             # -> '10.2'
+            #
+            # Note: We don't just do `divmod(self.um_version, 100)`
+            #       because if self.um_version has a fractional part
+            #       then it would likely get altered in the divmod
+            #       calculation.
             a, b = divmod(int(self.um_version), 100)
             fraction = str(self.um_version).split(".")[-1]
             um = f"{a}.{b}"
