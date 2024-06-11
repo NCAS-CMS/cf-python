@@ -1,3 +1,15 @@
+
+version NEXTRELEASE
+-------------------
+
+**2024-??-??**
+
+* Fix bug where `cf.example_fields` returned a `list`
+  of Fields rather than a `Fieldlist`
+  (https://github.com/NCAS-CMS/cf-python/issues/725)
+
+----
+
 version 3.16.2
 --------------
 
