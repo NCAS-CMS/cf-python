@@ -10479,9 +10479,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     new_bounds[0 : length - lower_offset, 1:] = old_bounds[
                         lower_offset:length, 1:
                     ]
-                    new_bounds[length - lower_offset : length, 1:] = (
-                        old_bounds[length - 1, 1:]
-                    )
+                    new_bounds[
+                        length - lower_offset : length, 1:
+                    ] = old_bounds[length - 1, 1:]
 
                 coord.set_bounds(self._Bounds(data=new_bounds))
 
