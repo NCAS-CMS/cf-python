@@ -511,7 +511,7 @@ class _Meta:
                         "cf_role": None,
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": hasbounds,
-                        "coordrefs": self.find_coordrefs(axis),
+                        "coordrefs": self.find_coordrefs(dim_coord_key),
                         "cellsize": cellsize,
                         "spacing": spacing,
                     }
