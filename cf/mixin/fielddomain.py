@@ -2364,7 +2364,7 @@ class FieldDomain:
 
         .. versionaddedd:: NEXTVERSION
 
-        .. seealso:: `domain_axis`
+        .. seealso:: `domain_axis`, `coordinates`
 
         :Parameters:
 
