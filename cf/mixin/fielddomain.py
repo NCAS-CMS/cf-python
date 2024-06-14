@@ -2354,7 +2354,7 @@ class FieldDomain:
         correspond to a continuous physical quantity, but only the
         following types of discrete axis are identified here:
 
-        * The feature instance axis of a discreate sampling geometry
+        * The feature instance axis of a discrete sampling geometry
           (DSG) domain.
 
         * An axis spanned by the domain topology construct of an
