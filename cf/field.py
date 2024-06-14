@@ -203,7 +203,7 @@ class _Axis_characterisation:
 
     """
 
-    # The size of the axis, a positive integer.
+    # The size of the axis, an integer.
     size: int = -1
     # The domain axis identifier. E.g. 'domainaxis0'
     axis: str = ""
