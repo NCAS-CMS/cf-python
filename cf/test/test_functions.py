@@ -389,24 +389,24 @@ class functionTest(unittest.TestCase):
             cf.normalize_slice(slice(2, 5, -2), 8, cyclic=True),
             slice(2, -3, -2),
         )
-        
+
         self.assertEqual(
             cf.normalize_slice(slice(-8, 0, 1), 8, cyclic=True),
-            slice(-8, 0, 1)
-            )
+            slice(-8, 0, 1),
+        )
         self.assertEqual(
             cf.normalize_slice(slice(0, 7, -1), 8, cyclic=True),
-            slice(0, -1, -1)
-            )        
+            slice(0, -1, -1),
+        )
         self.assertEqual(
             cf.normalize_slice(slice(-1, -8, 1), 8, cyclic=True),
-            slice(-1, 0, 1)
-            )
+            slice(-1, 0, 1),
+        )
         self.assertEqual(
             cf.normalize_slice(slice(-8, -1, -1), 8, cyclic=True),
-            slice(0, -1, -1)
-            )        
-        
+            slice(0, -1, -1),
+        )
+
         with self.assertRaises(IndexError):
             cf.normalize_slice([1, 2], 8)
 
