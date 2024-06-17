@@ -1024,6 +1024,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             x[identity] = key
 
                     if x:
+                        # Get the sorted identities (sorted so that
+                        # they're comparable between fields) and their
+                        # corresponding keys.
+                        #
                         # E.g. {2:3, 4:6, 1:7} -> (1, 2, 4), (7, 3, 6)
                         identity, keys = tuple(zip(*sorted(x.items())))
                         coords = tuple(
