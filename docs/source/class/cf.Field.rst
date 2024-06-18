@@ -518,6 +518,7 @@ Domain axes
    ~cf.Field.direction
    ~cf.Field.directions
    ~cf.Field.iscyclic
+   ~cf.Field.is_discrete_axis
    ~cf.Field.isperiodic
    ~cf.Field.item_axes
    ~cf.Field.items_axes

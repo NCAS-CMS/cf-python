@@ -749,6 +749,11 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             f + ("a string",)
 
+        # Addition with a UGRID discrete axis
+        f = cf.example_field(8)
+        g = f + f
+        self.assertEqual(g.shape, f.shape)
+
     def test_Field__mul__(self):
         f = self.f.copy().squeeze()
 
@@ -2882,6 +2887,28 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f2.cyclic("X", period=360), set())
         self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
         self.assertTrue(f2.iscyclic("X"))
+
+    def test_Field_is_discrete_axis(self):
+        """Test the `is_discrete_axis` Field method."""
+        # No discrete axes
+        f = cf.example_field(1)
+        for axis in f.domain_axes(todict=True):
+            self.assertFalse(f.is_discrete_axis(axis))
+
+        # UGRID
+        f = cf.example_field(8)
+        self.assertTrue(f.is_discrete_axis("X"))
+        self.assertFalse(f.is_discrete_axis("T"))
+
+        # DSG
+        f = cf.example_field(4)
+        self.assertTrue(f.is_discrete_axis("cf_role=timeseries_id"))
+        self.assertFalse(f.is_discrete_axis("ncdim%timeseries"))
+
+        # Geometries
+        f = cf.example_field(6)
+        self.assertTrue(f.is_discrete_axis("cf_role=timeseries_id"))
+        self.assertFalse(f.is_discrete_axis("time"))
 
 
 if __name__ == "__main__":

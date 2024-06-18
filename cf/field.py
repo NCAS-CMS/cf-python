@@ -1,5 +1,5 @@
 import logging
-from collections import namedtuple
+from dataclasses import dataclass
 from functools import reduce
 from operator import mul as operator_mul
 from os import sep
@@ -190,11 +190,29 @@ _relational_methods = (
     "__ge__",
 )
 
-_xxx = namedtuple(
-    "data_dimension", ["size", "axis", "key", "coord", "coord_type", "scalar"]
-)
 
-# _empty_set = set()
+@dataclass()
+class _Axis_characterisation:
+    """Characterise a domain axis.
+
+    Used by `_binary_operation` to help with ascertaining if there is
+    a common axis in two fields.
+
+    .. versionaddedd:: NEXTVERSION
+
+    """
+
+    # The size of the axis, an integer.
+    size: int = -1
+    # The domain axis identifier. E.g. 'domainaxis0'
+    axis: str = ""
+    # The coordinate constructs that characterize the axis
+    coords: tuple = ()
+    # The identifiers of the coordinate
+    # constructs. E.g. ('dimensioncoordinate1',)
+    keys: tuple = ()
+    # Whether or not the axis is spanned by the field's data array
+    axis_in_data_axes: bool = True
 
 
 class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
@@ -985,80 +1003,127 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             data_axes = f.get_data_axes()
             for axis in f.domain_axes(todict=True):
                 identity = None
-                key = None
-                coord = None
-                coord_type = None
 
-                key, coord = f.dimension_coordinate(
-                    item=True, default=(None, None), filter_by_axis=(axis,)
-                )
-                if coord is not None:
-                    # This axis of the domain has a dimension
-                    # coordinate
-                    identity = coord.identity(strict=True, default=None)
-                    if identity is None:
-                        # Dimension coordinate has no identity, but it
-                        # may have a recognised axis.
-                        for ctype in ("T", "X", "Y", "Z"):
-                            if getattr(coord, ctype, False):
-                                identity = ctype
-                                break
-
-                    if identity is None and relaxed_identities:
-                        identity = coord.identity(relaxed=True, default=None)
-                else:
-                    key, coord = f.auxiliary_coordinate(
-                        item=True,
-                        default=(None, None),
+                if self.is_discrete_axis(axis):
+                    # This is a discrete axis whose identity is
+                    # inferred from all of its auxiliary coordinates
+                    x = {}
+                    for key, aux_coord in f.auxiliary_coordinates(
                         filter_by_axis=(axis,),
-                        axis_mode="exact",
+                        axis_mode="and",
+                        todict=True,
+                    ).items():
+                        identity = aux_coord.identity(
+                            strict=True, default=None
+                        )
+                        if identity is None and relaxed_identities:
+                            identity = aux_coord.identity(
+                                relaxed=True, default=None
+                            )
+                        if identity is not None:
+                            x[identity] = key
+
+                    if x:
+                        # Get the sorted identities (sorted so that
+                        # they're comparable between fields) and their
+                        # corresponding keys.
+                        #
+                        # E.g. {2:3, 4:6, 1:7} -> (1, 2, 4), (7, 3, 6)
+                        identity, keys = tuple(zip(*sorted(x.items())))
+                        coords = tuple(
+                            f.auxiliary_coordinate(key) for key in keys
+                        )
+                    else:
+                        identity = None
+                        keys = ()
+                        coords = ()
+                else:
+                    key, dim_coord = f.dimension_coordinate(
+                        item=True, default=(None, None), filter_by_axis=(axis,)
                     )
-                    if coord is not None:
-                        # This axis of the domain does not have a
-                        # dimension coordinate but it does have
-                        # exactly one 1-d auxiliary coordinate, so
-                        # that will do.
-                        identity = coord.identity(strict=True, default=None)
+                    if dim_coord is not None:
+                        # This non-discrete axis has a dimension
+                        # coordinate
+                        identity = dim_coord.identity(
+                            strict=True, default=None
+                        )
+                        if identity is None:
+                            # Dimension coordinate has no identity,
+                            # but it may have a recognised axis.
+                            for ctype in ("T", "X", "Y", "Z"):
+                                if getattr(dim_coord, ctype, False):
+                                    identity = ctype
+                                    break
 
                         if identity is None and relaxed_identities:
-                            identity = coord.identity(
+                            identity = dim_coord.identity(
                                 relaxed=True, default=None
                             )
 
+                        keys = (key,)
+                        coords = (dim_coord,)
+                    else:
+                        key, aux_coord = f.auxiliary_coordinate(
+                            item=True,
+                            default=(None, None),
+                            filter_by_axis=(axis,),
+                            axis_mode="exact",
+                        )
+                        if aux_coord is not None:
+                            # This non-discrete axis does not have a
+                            # dimension coordinate but it does have
+                            # exactly one 1-d auxiliary coordinate, so
+                            # that will do.
+                            coords = (aux_coord,)
+                            identity = aux_coord.identity(
+                                strict=True, default=None
+                            )
+                            if identity is None and relaxed_identities:
+                                identity = aux_coord.identity(
+                                    relaxed=True, default=None
+                                )
+
                 if identity is None:
                     identity = i
-                else:
-                    coord_type = coord.construct_type
 
-                out[identity] = _xxx(
+                out[identity] = _Axis_characterisation(
                     size=f.domain_axis(axis).get_size(),
                     axis=axis,
-                    key=key,
-                    coord=coord,
-                    coord_type=coord_type,
-                    scalar=(axis not in data_axes),
+                    keys=keys,
+                    coords=coords,
+                    axis_in_data_axes=axis in data_axes,
                 )
 
         for identity, y in tuple(out1.items()):
-            asdas = True
-            if y.scalar and identity in out0 and isinstance(identity, str):
+            missing_axis_inserted = False
+            if (
+                not y.axis_in_data_axes
+                and identity in out0
+                and isinstance(identity, str)
+            ):
                 a = out0[identity]
                 if a.size > 1:
+                    # Put missing axis into data axes
                     field1.insert_dimension(y.axis, position=0, inplace=True)
-                    asdas = False
+                    missing_axis_inserted = True
 
-            if y.scalar and asdas:
+            if not missing_axis_inserted and not y.axis_in_data_axes:
                 del out1[identity]
 
         for identity, a in tuple(out0.items()):
-            asdas = True
-            if a.scalar and identity in out1 and isinstance(identity, str):
+            missing_axis_inserted = False
+            if (
+                not a.axis_in_data_axes
+                and identity in out1
+                and isinstance(identity, str)
+            ):
                 y = out1[identity]
                 if y.size > 1:
+                    # Put missing axis into data axes
                     field0.insert_dimension(a.axis, position=0, inplace=True)
-                    asdas = False
+                    missing_axis_inserted = True
 
-            if a.scalar and asdas:
+            if not missing_axis_inserted and not a.axis_in_data_axes:
                 del out0[identity]
 
         squeeze1 = []
@@ -1069,15 +1134,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         axes_added_from_field1 = []
 
         # Dictionary of size > 1 axes from field1 which will replace
-        # matching size 1 axes in field0. E.g. {'domainaxis1':
-        #     data_dimension(
-        #         size=8,
-        #         axis='domainaxis1',
-        #         key='dimensioncoordinate1',
-        #         coord=<CF DimensionCoordinate: longitude(8) degrees_east>,
-        #         coord_type='dimension_coordinate',
-        #         scalar=False
-        #     )
+        # matching size 1 axes in field0.
+        #
+        # E.g. {'domainaxis1': _Axis_characterisation(
+        #   size=8,
+        #   axis='domainaxis1',
+        #   keys=('dimensioncoordinate1',),
+        #   coords=(CF DimensionCoordinate: longitude(8) degrees_east>,),
+        #   axis_in_data_axes=True)
         # }
         axes_to_replace_from_field1 = {}
 
@@ -1178,48 +1242,55 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"{a.size} {identity!r} axis"
                 )
 
-            # Ensure matching axis directions
-            if y.coord.direction() != a.coord.direction():
-                other.flip(y.axis, inplace=True)
+            for a_key, a_coord, y_key, y_coord in zip(
+                a.keys, a.coords, y.keys, y.coords
+            ):
+                # Ensure matching axis directions
+                if y_coord.direction() != a_coord.direction():
+                    other.flip(y.axis, inplace=True)
 
-            # Check for matching coordinate values
-            if not y.coord._equivalent_data(a.coord):
-                raise ValueError(
-                    f"Can't combine size {y.size} {identity!r} axes with "
-                    f"non-matching coordinate values"
+                # Check for matching coordinate values
+                if not y_coord._equivalent_data(a_coord):
+                    raise ValueError(
+                        f"Can't combine size {y.size} {identity!r} axes with "
+                        f"non-matching coordinate values"
+                    )
+
+                # Check coord refs
+                refs1 = field1.get_coordinate_reference(
+                    construct=y_key, key=True
+                )
+                refs0 = field0.get_coordinate_reference(
+                    construct=a_key, key=True
                 )
 
-            # Check coord refs
-            refs1 = field1.get_coordinate_reference(construct=y.key, key=True)
-            refs0 = field0.get_coordinate_reference(construct=a.key, key=True)
+                n_refs = len(refs1)
+                n0_refs = len(refs0)
 
-            n_refs = len(refs1)
-            n0_refs = len(refs0)
+                if n_refs != n0_refs:
+                    raise ValueError(
+                        f"Can't combine {self.__class__.__name__!r} with "
+                        f"{other.__class__.__name__!r} because the coordinate "
+                        f"references have different lengths: {n_refs} and "
+                        f"{n0_refs}."
+                    )
 
-            if n_refs != n0_refs:
-                raise ValueError(
-                    f"Can't combine {self.__class__.__name__!r} with "
-                    f"{other.__class__.__name__!r} because the coordinate "
-                    f"references have different lengths: {n_refs} and "
-                    f"{n0_refs}."
-                )
+                n_equivalent_refs = 0
+                for ref1 in refs1:
+                    for ref0 in refs0[:]:
+                        if field1._equivalent_coordinate_references(
+                            field0, key0=ref1, key1=ref0, axis_map=axis_map
+                        ):
+                            n_equivalent_refs += 1
+                            refs0.remove(ref0)
+                            break
 
-            n_equivalent_refs = 0
-            for ref1 in refs1:
-                for ref0 in refs0[:]:
-                    if field1._equivalent_coordinate_references(
-                        field0, key0=ref1, key1=ref0, axis_map=axis_map
-                    ):
-                        n_equivalent_refs += 1
-                        refs0.remove(ref0)
-                        break
-
-            if n_equivalent_refs != n_refs:
-                raise ValueError(
-                    f"Can't combine {self.__class__.__name__!r} with "
-                    f"{other.__class__.__name__!r} because the fields have "
-                    "incompatible coordinate references."
-                )
+                if n_equivalent_refs != n_refs:
+                    raise ValueError(
+                        f"Can't combine {self.__class__.__name__!r} with "
+                        f"{other.__class__.__name__!r} because the fields "
+                        "have incompatible coordinate references."
+                    )
 
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data

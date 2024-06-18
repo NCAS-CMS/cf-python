@@ -207,6 +207,7 @@ Domain axes
    ~cf.Domain.direction
    ~cf.Domain.directions
    ~cf.Domain.iscyclic
+   ~cf.Domain.is_discrete_axis
 
 Subspacing
 ----------
