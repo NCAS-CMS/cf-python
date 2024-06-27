@@ -315,10 +315,10 @@ _docstring_substitution_definitions = {
                 any of the intermediate or final aggregation steps
                 operates on no more than ``split_every`` inputs. The
                 depth of the aggregation graph will be
-                :math:`log_{split_every}(input chunks along reduced
-                axes)`. Setting to a low value can reduce cache size
-                and network transfers, at the cost of more CPU and a
-                larger dask graph.
+                :math:`log_{split\_every}}(\textnormal{input chunks
+                along reduced axes})`. Setting to a low value can reduce
+                cache size and network transfers, at the cost of more
+                CPU and a larger dask graph.
 
                 By default, `dask` heuristically decides on a good
                 value. A default can also be set globally with the
