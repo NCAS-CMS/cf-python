@@ -1299,7 +1299,7 @@ def _read_a_file(
                 warn_valid=warn_valid,
                 domain=domain,
                 storage_options=storage_options,
-                netcdf_engine=netcdf_backend,
+                netcdf_backend=netcdf_backend,
             )
         except MaskError:
             # Some data required for field interpretation is missing,
