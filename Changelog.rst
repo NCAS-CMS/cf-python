@@ -1,5 +1,5 @@
-version NEXTRELEASE
--------------------
+version NEXTVERSION + 1
+-----------------------
 
 **2024-??-??**
 
@@ -16,7 +16,28 @@ version NEXTRELEASE
 * Changed dependency: ``cfunits>=3.3.7``
 
 ----
-  
+
+version NEXTVERSION
+-------------------
+
+**2024-??-??**
+
+* New method: `cf.Field.is_discrete_axis`
+  (https://github.com/NCAS-CMS/cf-python/issues/784)
+* Include the UM version as a field property when reading UM files
+  (https://github.com/NCAS-CMS/cf-python/issues/777)
+* Fix bug where `cf.example_fields` returned a `list` of Fields rather
+  than a `Fieldlist`
+  (https://github.com/NCAS-CMS/cf-python/issues/725)
+* Fix bug where combining UGRID fields erroneously creates an extra
+  axis and broadcasts over it
+  (https://github.com/NCAS-CMS/cf-python/issues/784)
+* Fix bug where `cf.normalize_slice` doesn't correctly
+  handle certain cyclic slices
+  (https://github.com/NCAS-CMS/cf-python/issues/774)
+
+----
+
 version 3.16.2
 --------------
 

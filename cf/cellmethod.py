@@ -486,8 +486,7 @@ class CellMethod(cfdm.CellMethod):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
-        """Change the axes of the cell method according to a given
-        mapping.
+        """Replace the axes of the cell method.
 
         :Parameters:
 

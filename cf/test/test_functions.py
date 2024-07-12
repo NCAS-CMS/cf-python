@@ -17,8 +17,12 @@ class functionTest(unittest.TestCase):
     def setUp(self):
         self.test_only = ()
 
-    def test_example_field(self):
-        for f in cf.example_fields():
+    def test_example_field_example_fields(self):
+        e = cf.example_fields()
+        self.assertIsInstance(e, cf.FieldList)
+
+        for f in e:
+            self.assertIsInstance(f, cf.Field)
             f.dump(display=False)
 
         with self.assertRaises(ValueError):
@@ -388,6 +392,23 @@ class functionTest(unittest.TestCase):
         self.assertEqual(
             cf.normalize_slice(slice(2, 5, -2), 8, cyclic=True),
             slice(2, -3, -2),
+        )
+
+        self.assertEqual(
+            cf.normalize_slice(slice(-8, 0, 1), 8, cyclic=True),
+            slice(-8, 0, 1),
+        )
+        self.assertEqual(
+            cf.normalize_slice(slice(0, 7, -1), 8, cyclic=True),
+            slice(0, -1, -1),
+        )
+        self.assertEqual(
+            cf.normalize_slice(slice(-1, -8, 1), 8, cyclic=True),
+            slice(-1, 0, 1),
+        )
+        self.assertEqual(
+            cf.normalize_slice(slice(-8, -1, -1), 8, cyclic=True),
+            slice(0, -1, -1),
         )
 
         with self.assertRaises(IndexError):

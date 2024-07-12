@@ -7,6 +7,10 @@
   pip install sphinxcontrib-spelling==4.3.0
   pip install sphinxcontrib.serializinghtml==1.1.5
   pip install sphinxcontrib.htmlhelp==1.0.3
+  pip install sphinxcontrib-devhelp==1.0.2
+  pip install sphinxcontrib-serializinghtml==1.1.3
+  pip install sphinxcontrib-qthelp==1.0.3
+  pip install alabaster==0.7.13
   pip install sphinx==2.4.5
   ```
 

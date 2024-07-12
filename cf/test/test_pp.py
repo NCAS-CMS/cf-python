@@ -57,7 +57,7 @@ class ppTest(unittest.TestCase):
         g = cf.read(self.ppextradata, um={"fmt": "pp"})[0]
         self.assertTrue(f.equals(g))
 
-        for vn in (4.5, 405, "4.5", None):
+        for vn in (4.5, 405, "4.5"):
             g = cf.read(self.ppextradata, um={"fmt": "pp", "version": vn})[0]
             self.assertTrue(f.equals(g))
 
@@ -137,6 +137,13 @@ class ppTest(unittest.TestCase):
         self.assertTrue(f.dimension_coordinate("height", default=False))
         self.assertTrue(f.dimension_coordinate("time", default=False))
         self.assertTrue(f.auxiliary_coordinate("longitude", default=False))
+
+    def test_PP_um_version(self):
+        f = cf.read(self.ppfile)[0]
+        self.assertEqual(f.get_property("um_version"), "11.0")
+
+        f = cf.read(self.ppfile, um={"version": "6.6.3"})[0]
+        self.assertEqual(f.get_property("um_version"), "6.6.3")
 
 
 if __name__ == "__main__":

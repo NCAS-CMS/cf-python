@@ -2347,6 +2347,98 @@ class FieldDomain:
 
         return axis in self.cyclic()
 
+    def is_discrete_axis(self, *identity, **filter_kwargs):
+        """Return True if the given axis is discrete.
+
+        In general, a discrete axis is any axis that does not
+        correspond to a continuous physical quantity, but only the
+        following types of discrete axis are identified here:
+
+        * The feature instance axis of a discrete sampling geometry
+          (DSG) domain.
+
+        * An axis spanned by the domain topology construct of an
+          unstructured grid.
+
+        * The axis with geometry cells.
+
+        .. versionaddedd:: NEXTVERSION
+
+        .. seealso:: `domain_axis`, `coordinates`
+
+        :Parameters:
+
+            identity: `tuple`, optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given ``value``,
+                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+                1-d coordinate constructs that all span the same
+                domain axis construct then that domain axis construct
+                is selected. See `coordinates` for details.
+
+                Additionally, if there is a `Field` data array and a
+                value matches the integer position of an array
+                dimension, then the corresponding domain axis
+                construct is selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        **Examples**
+
+        >>> f = cf.example_{{class_lower}}(8)
+        >>> f.is_discrete_axis('X')
+        True
+        >>> f.is_discrete_axis('T')
+        False
+
+        """
+        # Get the axis key
+        axis = self.domain_axis(*identity, key=True, **filter_kwargs)
+
+        # DSG
+        if self.has_property("featureType") and not self.dimension_coordinate(
+            filter_by_axis=(axis,), default=False
+        ):
+            ctypes = ("X", "Y", "T")
+            n = 0
+            for aux in self.auxiliary_coordinates(
+                filter_by_axis=(axis,), axis_mode="and", todict=True
+            ).values():
+                if aux.ctype in ctypes:
+                    n += 1
+
+            if n == len(ctypes):
+                return True
+
+        # UGRID
+        if self.domain_topologies(
+            filter_by_axis=(axis,), axis_mode="exact", todict=True
+        ):
+            return True
+
+        # Geometries
+        for aux in self.auxiliary_coordinates(
+            filter_by_axis=(axis,), axis_mode="exact", todict=True
+        ).values():
+            if aux.get_geometry(None):
+                return True
+
+        # Still here? Then the axis is not discrete.
+        return False
+
     def match_by_rank(self, *ranks):
         """Whether or not the number of domain axis constructs satisfies
         conditions.
