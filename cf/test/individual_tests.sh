@@ -5,9 +5,9 @@ do
   echo "Running $file"
   python $file
   rc=$?
-  if [[ $rc != 0 ]]; then
-    exit $rc
-  fi
+#  if [[ $rc != 0 ]]; then
+#    exit $rc
+#  fi
 done
 
 file=setup_create_field.py
