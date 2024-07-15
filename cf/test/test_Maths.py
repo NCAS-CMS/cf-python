@@ -4,6 +4,8 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import numpy as np
+
 import cf
 
 
@@ -206,6 +208,125 @@ class MathTest(unittest.TestCase):
         zeros = cg.copy()
         zeros[...] = 0
         self.assertTrue(cg.data.equals(zeros.data, rtol=0, atol=1e-15))
+
+    def test_histogram(self):
+        f = cf.example_field(0)
+        g = f.copy()
+        g.standard_name = "air_temperature"
+        g[...] = np.arange(40).reshape(5, 8) + 253.15
+        g.override_units("K", inplace=True)
+
+        # 1-d histogram
+        indices = f.digitize(10)
+        h = cf.histogram(indices)
+        self.assertTrue((h.array == [9, 7, 9, 4, 5, 1, 1, 1, 2, 1]).all)
+        h = cf.histogram(indices, density=True)
+        self.assertTrue(
+            (
+                h.array
+                == [
+                    15.734265734265733,
+                    12.237762237762242,
+                    15.734265734265733,
+                    6.9930069930069925,
+                    8.74125874125874,
+                    1.748251748251749,
+                    1.7482517482517475,
+                    1.748251748251749,
+                    3.496503496503498,
+                    1.748251748251744,
+                ]
+            ).all
+        )
+        integral = (h * h.dimension_coordinate().cellsize).sum()
+        self.assertEqual(integral.array, 1)
+
+        # 2-d histogram
+        indices_t = g.digitize(5)
+        h = cf.histogram(indices, indices_t)
+        self.assertEqual(h.Units, cf.Units())
+        self.assertTrue(
+            (
+                h.array
+                == [
+                    [3, 3, 2, -1, -1, -1, -1, -1, -1, -1],
+                    [1, 1, 2, 1, 3, -1, -1, -1, -1, -1],
+                    [1, -1, -1, 1, -1, 1, 1, 1, 2, 1],
+                    [2, 1, 1, 2, 2, -1, -1, -1, -1, -1],
+                    [2, 2, 4, -1, -1, -1, -1, -1, -1, -1],
+                ]
+            ).all()
+        )
+
+        h = cf.histogram(indices, indices_t, density=True)
+        self.assertEqual(h.Units, cf.Units())
+        self.assertTrue(
+            (
+                h.array
+                == [
+                    [
+                        0.6724045185583661,
+                        0.6724045185583664,
+                        0.44826967903891074,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                    ],
+                    [
+                        0.22413483951945457,
+                        0.2241348395194546,
+                        0.44826967903890913,
+                        0.22413483951945457,
+                        0.6724045185583637,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                    ],
+                    [
+                        0.22413483951945457,
+                        -1,
+                        -1,
+                        0.22413483951945457,
+                        -1,
+                        0.2241348395194547,
+                        0.22413483951945448,
+                        0.2241348395194547,
+                        0.4482696790389094,
+                        0.224134839519454,
+                    ],
+                    [
+                        0.4482696790389124,
+                        0.22413483951945626,
+                        0.2241348395194562,
+                        0.4482696790389124,
+                        0.4482696790389124,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                    ],
+                    [
+                        0.4482696790389059,
+                        0.44826967903890597,
+                        0.8965393580778118,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                    ],
+                ]
+            ).all()
+        )
 
 
 if __name__ == "__main__":
