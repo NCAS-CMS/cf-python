@@ -3,6 +3,8 @@ version NEXTVERSION
 
 **2024-??-??**
 
+* New keyword parameter to `cf.histogram`: ``density``
+  (https://github.com/NCAS-CMS/cf-python/issues/794)
 * New method: `cf.Field.is_discrete_axis`
   (https://github.com/NCAS-CMS/cf-python/issues/784)
 * Include the UM version as a field property when reading UM files
