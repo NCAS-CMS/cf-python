@@ -231,7 +231,7 @@ def histogram(*digitized, density=False):
     >>> print(p)
     Field: long_name=probability density function
     ---------------------------------------------
-    Data            : long_name=probability density function(specific_humidity(10))
+    Data            : long_name=probability density function(specific_humidity(10)) 1
     Cell methods    : latitude: longitude: point
     Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1
     >>> print(p.data.round(2).array))
@@ -283,7 +283,7 @@ def histogram(*digitized, density=False):
     >>> print(p)
     Field: long_name=probability density function
     ---------------------------------------------
-    Data            : long_name=probability density function(air_temperature(5), specific_humidity(10))
+    Data            : long_name=probability density function(air_temperature(5), specific_humidity(10)) K-1
     Cell methods    : latitude: longitude: point
     Dimension coords: air_temperature(5) = [257.05, ..., 288.25] K
                     : specific_humidity(10) = [0.01015, ..., 0.13885] 1
@@ -320,7 +320,6 @@ def histogram(*digitized, density=False):
         # Convert counts to densities
         out /= out.data.sum() * bin_measures
 
-        out.override_units(Units(), inplace=True)
         out.del_property("standard_name", None)
         out.set_property("long_name", "probability density function")
 

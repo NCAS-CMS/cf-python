@@ -223,6 +223,7 @@ class MathTest(unittest.TestCase):
         h = cf.histogram(indices)
         self.assertTrue((h.array == [9, 7, 9, 4, 5, 1, 1, 1, 2, 1]).all)
         h = cf.histogram(indices, density=True)
+        self.assertEqual(h.Units, cf.Units("1"))
         # Check that integral is 1
         bin_measures = h.dimension_coordinate().cellsize
         integral = (h * bin_measures).sum()
@@ -247,7 +248,7 @@ class MathTest(unittest.TestCase):
         )
 
         h = cf.histogram(indices, indices_t, density=True)
-        self.assertEqual(h.Units, cf.Units())
+        self.assertEqual(h.Units, cf.Units("K-1"))
         # Check that integral is 1
         bin_measures = h.dimension_coordinate("air_temperature").cellsize
         bin_measures.outerproduct(
