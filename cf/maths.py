@@ -308,7 +308,8 @@ def histogram(*digitized, density=False):
 
     if density:
         # Get the measure of each bin. This is the outer product of
-        # the cell sizes of each dimension coordinate construct.
+        # the cell sizes of each dimension coordinate construct (the
+        # dimension coordinate constructs define the bins).
         data_axes = out.get_data_axes()
         dim = out.dimension_coordinate(filter_by_axis=(data_axes[0],))
         bin_measures = dim.cellsize
