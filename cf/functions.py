@@ -1244,6 +1244,14 @@ class active_storage(ConstantAccess):
                 insertion into the `CONSTANTS` dictionary.
 
         """
+        try:
+            from activestorage import Active
+        except ModuleNotFoundError as error:
+            if arg:
+                raise ModuleNotFoundError(
+                    f"Can't enable active storage operations: {error}"
+                )
+        
         return bool(arg)
 
 
@@ -1450,6 +1458,26 @@ def total_memory():
     """The total amount of physical memory (in bytes)."""
     return CONSTANTS["TOTAL_MEMORY"]
 
+
+def is_log_level_debug(logger):
+    """Return True if and only if log level is at least DEBUG.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `log_level`
+
+    :Parameters:
+
+        logger: `logging.Logger`
+           The logger in use.
+
+    :Returns:
+
+        `bool`
+            Whether or not the log level is at least DEBUG.
+
+    """
+    return logger.parent.level <= logging.DEBUG
 
 # --------------------------------------------------------------------
 # Aliases (for back-compatibility etc.):
