@@ -1,6 +1,7 @@
 # REVIEW: active: `collapse_active.py`: new module for active storage functionality
 import logging
 from functools import wraps
+from numbers import Integral
 
 try:
     from activestorage import Active
@@ -59,14 +60,47 @@ def active_chunk(method, x, **kwargs):
     {'N': 7008, 'sum': 7006221.66903949}
 
     """
-    if kwargs.get("computing_meta"):
-        return x
+    # Return None if active storage reduction is not approriate, or
+    # raise an ActiveStorageError it is appropriate but can't/didn't
+    # work
+    if not cf_active_storage():
+        return
 
     weighted = kwargs.get("weights") is not None
     if weighted:
-        raise ValueError(f"Can't do weighted {method!r} active reductions")
+        return
 
-    filename = x.get_filename()
+    axis = kwargs.get("axis")
+    if axis is not None:
+        if isinstance(axis, Integral):
+            axis = (axis,)
+
+        if len(axis) < x.ndim:
+            return
+
+    try:
+        filename = x.get_filename()
+    except AttributeError:
+        # This Dask chunk is not a data definition
+        return
+    else:
+        if not filename:
+            # This data definition doesn't have any files, so can't
+            # support active storage reductions.
+            return
+
+    if hasattr(x, "actify"):
+        url = active_storage_url().value
+        if url is None:
+            raise ActiveStorageError("No active storage URL")
+
+        x = x.actify(url)
+
+    # Still here? Then do active storage reduction
+    if kwargs.get("computing_meta"):
+        return x
+
+    #    filename = x.get_filename()
     filename = "/".join(filename.split("/")[3:])
 
     max_threads = 100
@@ -75,7 +109,7 @@ def active_chunk(method, x, **kwargs):
         "uri": filename,
         "ncvar": x.get_address(),
         "storage_options": x.get_storage_options(),
-        "active_storage_url": x.get_active_storage_url(),
+        "active_storage_url": url,  # x.get_active_storage_url(),
         "storage_type": "s3",  # Temporary requirement!
         "max_threads": max_threads,
     }
@@ -345,19 +379,22 @@ def active_storage_chunk(method):
     def decorator(chunk_function):
         @wraps(chunk_function)
         def wrapper(*args, **kwargs):
-            if args:
-                x = args[0]
+            #            if args:
+            #                x = args[0]
+            #            else:
+            #                x = kwargs["x"]
+            #
+            #            if getattr(x, "actified", False):
+            try:
+                # Try doing an active storage reduction on
+                # actified chunk data
+                out = active_chunk(method, *args, **kwargs)
+            except ActiveStorageError as warning:
+                # The active storage reduction failed
+                logger.warning(f"{warning}. Reverting to local reduction.")
             else:
-                x = kwargs["x"]
-
-            if getattr(x, "actified", False):
-                try:
-                    # Try doing an active storage reduction on
-                    # actified chunk data
-                    return active_chunk(method, *args, **kwargs)
-                except ActiveStorageError as error:
-                    # The active storage reduction failed
-                    logger.warning(f"{error}. Reverting to local reduction.")
+                if out is not None:
+                    return out
 
             # Still here? Then do a local reduction.
             return chunk_function(*args, **kwargs)
