@@ -224,7 +224,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     # REVIEW: active: `mean`: active storage decoration, new keyword 'active_stoarage'
-    @active_storage("mean")
+#    @active_storage("mean")
     def mean(
         self,
         a,
@@ -274,6 +274,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        print ('KKKKKKKKKK')
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
         if chunk_function is None:

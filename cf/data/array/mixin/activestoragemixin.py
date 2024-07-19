@@ -13,6 +13,23 @@ class ActiveStorageMixin:
     """
 
     @property
+    def is_actifiable(self):
+        """Whether active storage operations are possible.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `actify`, `get_active_storage_url`
+
+        :Returns:
+
+            `bool`
+                `True` if active stoage operations are possible,
+                otherwise `False`.
+
+        """
+        return self.get_filename(None) is not None
+
+    @property
     def actified(self):
         """Whether active storage operations are possible.
 

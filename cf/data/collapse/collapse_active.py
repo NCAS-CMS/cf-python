@@ -60,9 +60,13 @@ def active_chunk(method, x, **kwargs):
     {'N': 7008, 'sum': 7006221.66903949}
 
     """
-    # Return None if active storage reduction is not approriate, or
-    # raise an ActiveStorageError it is appropriate but can't/didn't
-    # work
+    # Return None if active storage reduction is not approriate:
+    #
+    #  * The reduction is weighted
+    #  * The reduction is over a subset of axes
+    #  * x.is_actifiable is False
+    if not kwargs.get("computing_meta"):
+        print(method, repr(x), kwargs)
     if not cf_active_storage():
         return
 
@@ -78,29 +82,34 @@ def active_chunk(method, x, **kwargs):
         if len(axis) < x.ndim:
             return
 
-    try:
-        filename = x.get_filename()
-    except AttributeError:
-        # This Dask chunk is not a data definition
+#    try:
+#        filename = x.get_filename()
+#    except AttributeError:
+#        # This Dask chunk is not a data definition
+#        return
+#    else:
+#        if not filename:
+#            # This data definition doesn't have any files, so can't
+#            # support active storage reductions.
+#            return
+
+    if not getattr(x, "is_actifiable", False):
+        print ('not is act', axis)
         return
-    else:
-        if not filename:
-            # This data definition doesn't have any files, so can't
-            # support active storage reductions.
-            return
-
-    if hasattr(x, "actify"):
-        url = active_storage_url().value
-        if url is None:
-            raise ActiveStorageError("No active storage URL")
-
-        x = x.actify(url)
-
+    
+    # Raise an ActiveStorageError the active storage reduction can't
+    # happen
+    url = active_storage_url().value
+    if url is None:
+        raise ActiveStorageError("No active storage URL")
+    
+    x = x.actify(url)
+    
     # Still here? Then do active storage reduction
     if kwargs.get("computing_meta"):
         return x
 
-    #    filename = x.get_filename()
+    filename = x.get_filename()
     filename = "/".join(filename.split("/")[3:])
 
     max_threads = 100
@@ -124,6 +133,8 @@ def active_chunk(method, x, **kwargs):
     import datetime
     import time
 
+    # Raise an ActiveStorageError active storage reductions fail
+    # whilst happening
     try:
         lock = False  # True #False
         if lock:
@@ -151,6 +162,7 @@ def active_chunk(method, x, **kwargs):
                 f"maxT={max_threads}",
             )
     except Exception as error:
+        print ('565')
         raise ActiveStorageError(error)
 
     # Reformat the components dictionary to match the output of the
@@ -391,7 +403,9 @@ def active_storage_chunk(method):
                 out = active_chunk(method, *args, **kwargs)
             except ActiveStorageError as warning:
                 # The active storage reduction failed
-                logger.warning(f"{warning}. Reverting to local reduction.")
+                logger.warning(
+                    f"Dask chunk reverting to local reduction: {warning}"
+                )
             else:
                 if out is not None:
                     return out
