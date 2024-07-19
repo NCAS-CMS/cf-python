@@ -23,7 +23,7 @@ class ActiveStorageError(Exception):
     pass
 
 
-def active_chunk_function(method, x, **kwargs):
+def active_chunk_function(method, x, weights=None, axis=None, keepdims=True, **kwargs):
     """Collapse data in a chunk with active storage.
 
     If an active storage reduction is not approriate then `None` is
@@ -85,13 +85,11 @@ def active_chunk_function(method, x, **kwargs):
         # local reduction
         return
     
-    weighted = kwargs.get("weights") is not None
-    if weighted:
+    if weights is not None:
         # Active storage is not allowed for weighted reductions => do
         # a local reduction
         return
 
-    axis = kwargs.get("axis")
     if axis is not None:
         if isinstance(axis, Integral):
             axis = (axis,)
@@ -213,7 +211,7 @@ def actify(method):
             #    x = kwargs["x"]
             try:
                 # Try doing an active storage reduction                
-                print (method, args, kwargs)
+#                print (method, args, kwargs)
                 out = active_chunk_function(method, *args, **kwargs)
             except ActiveStorageError as warning:
                 # The active storage reduction failed
