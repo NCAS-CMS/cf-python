@@ -104,7 +104,7 @@ _ARRAY = 1  # =  0b0001
 _CACHE = 2  # =  0b0010
 _CFA = 4  # =    0b0100
 # REVIEW: active: `data.py`: Set the active storage status bit mask
-_ACTIVE = 8  # = 0b1000
+#_ACTIVE = 8  # = 0b1000
 _ALL = 15  # =   0b1111
 
 
@@ -468,8 +468,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # compressed input arrays this will contain extra
             # information, such as a count or index variable.
             self._set_Array(array)
-            # Data files are candidates for active storage reductions
-            self._set_active_storage(True)
+#            # Data files are candidates for active storage reductions
+#            self._set_active_storage(True)
 
         # Cast the input data as a dask array
         kwargs = init_options.get("from_array", {})
@@ -1426,10 +1426,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-        # REVIEW: active: `_clear_after_dask_update`: update active storage status
-        if clear & _ACTIVE:
-            # Set active storage to False
-            self._del_active_storage()
+#        # REVIEW: active: `_clear_after_dask_update`: update active storage status
+#        if clear & _ACTIVE:
+#            # Set active storage to False
+#            self._del_active_storage()
 
     # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
     def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
@@ -1550,32 +1550,32 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._clear_after_dask_update(clear)
         return out
 
-    # REVIEW: active: `_del_active_storage`: new method `_del_active_storage`
-    def _del_active_storage(self):
-        """Set the active storage reduction status to False.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `active_storage`, `_set_active_storage`
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d = cf.Data([9])
-        >>> d.active_storage()
-        False
-        >>> d._set_active_storage(True)
-        >>> d.active_storage()
-        True
-        >>> d._del_active_storage()
-        >>> d.active_storage()
-        False
-
-        """
-        self._custom.pop("active_storage", False)
+#    # REVIEW: active: `_del_active_storage`: new method `_del_active_storage`
+#    def _del_active_storage(self):
+#        """Set the active storage reduction status to False.
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        .. seealso:: `active_storage`, `_set_active_storage`
+#
+#        :Returns:
+#
+#            `None`
+#
+#        **Examples**
+#
+#        >>> d = cf.Data([9])
+#        >>> d.active_storage()
+#        False
+#        >>> d._set_active_storage(True)
+#        >>> d.active_storage()
+#        True
+#        >>> d._del_active_storage()
+#        >>> d.active_storage()
+#        False
+#
+#        """
+#        self._custom.pop("active_storage", False)
 
     def _del_cached_elements(self):
         """Delete any cached element values.
@@ -1636,32 +1636,32 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
-    # REVIEW: active: `_set_active_storage`: new method `_set_active_storage`
-    def _set_active_storage(self, value):
-        """Set the active storage reduction status.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `active_storage`, `_del_active_storage`
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d = cf.Data([9])
-        >>> d.active_storage()
-        False
-        >>> d._set_active_storage(True)
-        >>> d.active_storage()
-        True
-        >>> d._del_active_storage()
-        >>> d.active_storage()
-        False
-
-        """
-        self._custom["active_storage"] = bool(value)
+#    # REVIEW: active: `_set_active_storage`: new method `_set_active_storage`
+#    def _set_active_storage(self, value):
+#        """Set the active storage reduction status.
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        .. seealso:: `active_storage`, `_del_active_storage`
+#
+#        :Returns:
+#
+#            `None`
+#
+#        **Examples**
+#
+#        >>> d = cf.Data([9])
+#        >>> d.active_storage()
+#        False
+#        >>> d._set_active_storage(True)
+#        >>> d.active_storage()
+#        True
+#        >>> d._del_active_storage()
+#        >>> d.active_storage()
+#        False
+#
+#        """
+#        self._custom["active_storage"] = bool(value)
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -3317,10 +3317,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        # REVIEW: active: `rechunk`: Do not change active storage status after a rechunk
+#        # REVIEW: active: `rechunk`: Do not change active storage status after a rechunk
         d._set_dask(
-            dx, clear=_ALL ^ _ARRAY ^ _CACHE ^ _ACTIVE, asanyarray=True
+            dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True
         )
+#        d._set_dask(
+#            dx, clear=_ALL ^ _ARRAY ^ _CACHE ^ _ACTIVE, asanyarray=True
+#        )
 
         return d
 

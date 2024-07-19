@@ -864,7 +864,7 @@ def collapse(
         "split_every": split_every,
         "mtol": mtol,
         # REVIEW: active: `collapse`: pass the active storage status onto the collapse functions
-        "active_storage": d.active_storage,
+#        "active_storage": d.active_storage,
     }
 
     weights = parse_weights(d, weights, axis)
