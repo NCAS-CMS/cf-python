@@ -150,7 +150,7 @@ version 3.16.0
 * New dependency: ``scipy>=1.10.0``
 
 ----
-  
+
 version 3.15.4
 --------------
 

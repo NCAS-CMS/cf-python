@@ -14,13 +14,16 @@ class Collapse(metaclass=DocstringRewriteMeta):
     **Active storage reductions**
 
     A collapse method (such as `max`, `var`, etc.) will attempt to
-    make use of active storage reductions when all of the following
-    conditions are met:
+    make use of active storage reduction on an individual `dask` chunk
+    when all of the following conditions are met:
 
       * `cf.active_storage()` is True;
 
-      * ``cf.active_storage_url()`` returns the URL of an active
+      * ``cf.active_storage_url()`` returns the URL of a valid active
         storage server;
+
+      * the `dask` chunk's data are defined by a netCDF-4 file on disk
+        (rather than in any other file format, or in memory);
 
       * it is possible to import the `activestorage.Active` class;
 
@@ -31,34 +34,24 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
       * the collapse is unweighted;
 
-      * the data are in netCDF-4 files on disk (rather than in
-        any other file format, or in memory);
+      * the data are not numerically packed.
 
-      * the data are not compressed by convention;
-
-      * the `Collapse` method's *active_storage* parameter is True;
-
-      * the `Collapse` method's *chunk_function* parameter is `None`;
-
-      * the `active_storage` attribute of the `Data` object being
-        collapsed is `True`, indicating that active storage operations
-        are possible, provided all of the other conditions are also
-        met. In general, it will only be `True` for data that are in
-        files on disk, are not compressed by convention, and have not
-        been previously operated on, apart from by subspacing
-        operations.
-
-    in which case the Dask graph is modified to expect the per-chunk
-    reductions to be carried out externally.
+    If any of these conditions are not met then the `dask` chunk will
+    be collapsed "as usual", i.e. by retrieving the data to memory (if
+    it is not already there) and using the local client to perform the
+    collapse calculations.
 
     .. note:: The performance improvements from using active storage
               operations will increase the closer, in a network sense,
               the active storage server is to the data storage. If the
               active storage server is sufficiently far away from the
-              data then it may be faster and require less energy to do
-              a normal, non-active operation.
-
-    See `cf.data.collapse.active_storage` for details.
+              data then it could even be faster and require less
+              energy to do non-active operation of the local client.
+              The performance improvements from using active storage
+            
+    See `cf.data.collapse.collapse_active.actify` and
+    `cf.data.collapse.collapse_active.active_chunk_function` for
+    further details.
 
     .. versionadded:: 3.14.0
 
@@ -252,7 +245,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        print ('KKKKKKKKKK')
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
         if chunk_function is None:

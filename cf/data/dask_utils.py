@@ -122,7 +122,7 @@ def cf_contains(a, value):
     :Returns:
 
         `numpy.ndarray`
-            A size 1 Boolean array with the same number of dimensions
+            A size 1 Boolean array, with the same number of dimensions
             as *a*, that indicates whether or not *a* contains the
             value.
 

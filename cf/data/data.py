@@ -99,11 +99,11 @@ _DEFAULT_HARDMASK = True
 # Contstants used to specify which `Data` components should be cleared
 # when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # =   0b0000
-_ARRAY = 1  # =  0b0001
-_CACHE = 2  # =  0b0010
-_CFA = 4  # =    0b0100
-_ALL = 15  # =   0b1111
+_NONE = 0  # =  0b0000
+_ARRAY = 1  # = 0b0001
+_CACHE = 2  # = 0b0010
+_CFA = 4  # =   0b0100
+_ALL = 15  # =  0b1111
 
 
 class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
@@ -966,7 +966,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         #   so we set asanyarray=True to ensure that, if required,
         #   they are converted at compute time.
         # ------------------------------------------------------------
-        new._set_dask(dx, clear=_ALL, asanyarray=True)
+        new._set_dask(dx, asanyarray=True)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -3047,7 +3047,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         depth += abs(origin)
 
-        # TODO: check that this is OK
         dx = d.to_dask_array()
 
         # REVIEW: getitem: `percentile`: rectify comment
@@ -3246,9 +3245,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(
-            dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True
-        )
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
 
         return d
 

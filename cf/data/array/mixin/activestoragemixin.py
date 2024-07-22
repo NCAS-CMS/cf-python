@@ -1,7 +1,7 @@
 # REVIEW: active: `ActiveStorageMixin`: new mixin class `ActiveStorageMixin`
-#try:
+# try:
 #    from activestorage import Active
-#except ModuleNotFoundError:
+# except ModuleNotFoundError:
 #    Active = None
 
 
@@ -33,6 +33,8 @@ class ActiveStorageMixin:
             return False
 
         return True
+
+
 #        return self.get_filename(None) is not None
 
 #    @property

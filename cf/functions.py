@@ -2,6 +2,7 @@ import atexit
 import csv
 import ctypes.util
 import importlib
+import logging
 import os
 import platform
 import re
@@ -162,7 +163,7 @@ else:
         return float(virtual_memory().available)
 
 
-# REVIEW: active: `configuration`: new keywords 'active_storage', 'active_storage_url'
+# REVIEW: active: `configuration`: new keywords 'active_storage', 'active_storage_url', 'active_storage_max_requests'
 def configuration(
     atol=None,
     rtol=None,
@@ -174,6 +175,7 @@ def configuration(
     bounds_combination_mode=None,
     active_storage=None,
     active_storage_url=None,
+    active_storage_max_requests=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -194,6 +196,7 @@ def configuration(
     * `bounds_combination_mode`
     * `active_storage`
     * `active_storage_url`
+    * `active_storage_max_requests`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -213,7 +216,8 @@ def configuration(
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `regrid_logging`,
                  `relaxed_identities`, `bounds_combination_mode`,
-                 `active_storage`, `active_storage_url`
+                 `active_storage`, `active_storage_url`,
+                 `active_storage_max_requests`
 
     :Parameters:
 
@@ -278,6 +282,11 @@ def configuration(
 
             .. versionadded:: NEXTVERSION
 
+        active_storage_max_requests: `int` or `Constant`, optional
+            The new value. The default is to not change the value.
+
+            .. versionadded:: NEXTVERSION
+
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -309,7 +318,8 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001,
      'active_storage': False,
-     'active_storage_url': None}
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -325,7 +335,8 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None}
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -336,7 +347,8 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None}
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
 
     Use as a context manager:
 
@@ -363,7 +375,8 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None}
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -374,7 +387,8 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'active_storage': False,
-     'active_storage_url': None}
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
 
     """
     if of_fraction is not None:
@@ -407,10 +421,11 @@ def configuration(
         bounds_combination_mode=bounds_combination_mode,
         active_storage=active_storage,
         active_storage_url=active_storage_url,
+        active_storage_max_requests=active_storage_max_requests,
     )
 
 
-# REVIEW: active: `_configuration`: new keywords 'active_storage', 'active_storage_url'
+# REVIEW: active: `_configuration`: new keywords 'active_storage', 'active_storage_url', 'active_storage_max_requests'
 def _configuration(_Configuration, **kwargs):
     """Internal helper function to provide the logic for
     `cf.configuration`.
@@ -459,6 +474,7 @@ def _configuration(_Configuration, **kwargs):
         "bounds_combination_mode": bounds_combination_mode,
         "active_storage": active_storage,
         "active_storage_url": active_storage_url,
+        "active_storage_max_requests": active_storage_max_requests,
     }
 
     old_values = {}
@@ -1192,7 +1208,8 @@ class active_storage(ConstantAccess):
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `active_storage_url`, `configuration`
+    .. seealso:: `active_storage_max_requests`, `active_storage_url`,
+                 `configuration`
 
     :Parameters:
 
@@ -1251,7 +1268,7 @@ class active_storage(ConstantAccess):
                 raise ModuleNotFoundError(
                     f"Can't enable active storage operations: {error}"
                 )
-        
+
         return bool(arg)
 
 
@@ -1261,7 +1278,8 @@ class active_storage_url(ConstantAccess):
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso::  `active_storage`, `configuration`
+    .. seealso:: `active_storage`, `active_storage_max_requests`,
+                 `configuration`
 
     :Parameters:
 
@@ -1317,6 +1335,86 @@ class active_storage_url(ConstantAccess):
             return arg
 
         return str(arg)
+
+
+# REVIEW: active: `active_storage_max_requests`: new function
+class active_storage_max_requests(ConstantAccess):
+    """Cconcurrent active storage server requests per `dask` chunk.
+
+    This is the maximum number of concurrent requests per `dask` chunk
+    that are sent to the active storage server by an `Active`
+    instance. The default is ``100``. The optimum number may be
+    estimated by :math:`N = N_{max} / min(N_{PE}, N_{chunk})`, where
+
+    * :math:`N_{max}` is the maximum number of requests that the
+      active storage server can process concurrently before its
+      performance is degraded;
+
+    * :math:`N_{PE}` the number of available PEs on the local client.
+
+    * :math:`N_{chunk}` the number of `dask` chunks being reduced with
+      active storage.
+
+    This formula only applies to cases where all `dask` chunks for the
+    collapse operation are utilising active storage. If some are not
+    then :math:`N` will likely be underestimated.
+    
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `active_storage`, `active_storage_url`,
+                 `configuration`
+
+    :Parameters:
+
+        arg: `int` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cf.active_storage_max_requests())
+    100
+    >>> with cf.active_storage_max_requests(25):
+    ...     print(cf.active_storage_max_requests())
+    ...
+    25
+    >>> print(cf.active_storage_max_requests())
+    None
+    >>> print(cf.active_storage_max_requests(12)
+    None
+    >>> cf.active_storage_max_requests()
+    12
+
+    """
+
+    _name = "active_storage_max_requests"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return int(arg)
 
 
 def CF():
@@ -1478,6 +1576,7 @@ def is_log_level_debug(logger):
 
     """
     return logger.parent.level <= logging.DEBUG
+
 
 # --------------------------------------------------------------------
 # Aliases (for back-compatibility etc.):

@@ -1,5 +1,7 @@
 # REVIEW: active: `collapse_active.py`: new module for active storage functionality
+import datetime
 import logging
+import time
 from functools import wraps
 from numbers import Integral
 
@@ -8,8 +10,12 @@ try:
 except ModuleNotFoundError:
     pass
 
-from ...functions import active_storage as cf_active_storage
-from ...functions import active_storage_url, is_log_level_debug
+from ...functions import (
+    active_storage,
+    active_storage_max_requests,
+    active_storage_url,
+    is_log_level_debug,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +29,7 @@ class ActiveStorageError(Exception):
     pass
 
 
-def active_chunk_function(method, x, weights=None, axis=None, keepdims=True, **kwargs):
+def active_chunk_function(method, *args, **kwargs):
     """Collapse data in a chunk with active storage.
 
     If an active storage reduction is not approriate then `None` is
@@ -54,111 +60,135 @@ def active_chunk_function(method, x, weights=None, axis=None, keepdims=True, **k
     **Examples**
 
     >>> d = active_chunk_function('sum', x)
-    >>> d
+    >>> print(d)
     {'N': 7008, 'sum': 7006221.66903949}
 
-    Active storage reduction is not yet possible for variances:
+    Active storage reduction is not (yet) possible for variances:
 
-    >>> d = active_chunk_function('variance', x)
+    >>> d = active_chunk_function('variance', x, weights)
     >>> print(d)
     None
 
     """
+    x = args[0]
     if kwargs.get("computing_meta"):
-        print("COMPUTING_META", method, repr(x), kwargs)
         return x
-        
-    # Return None if active storage reduction is not appropriate
-    print(method, repr(x), kwargs)
-        
-    if not cf_active_storage():
-        # Active storage is turned off => do a local reduction
+
+    # ----------------------------------------------------------------
+    # Return None if active storage reduction is not
+    # appropriate. Inside `actify` this will trigger a local reduction
+    # to be carried out instead.
+    # ----------------------------------------------------------------
+    if not active_storage():
+        # Active storage is turned off
         return
 
+    url = kwargs.get("active_storage_url")
+    if url is None:
+        url = active_storage_url().value
+        if url is None:
+            return
+
     if method not in active_reduction_methods:
-        # Active storage is not available for this method => do a
-        # local reduction
+        # Active storage is not available for this method
         return
 
     if not getattr(x, "active_storage", False):
-        # Active storage operations are not allowed on 'x' => do a
-        # local reduction
-        return
-    
-    if weights is not None:
-        # Active storage is not allowed for weighted reductions => do
-        # a local reduction
+        # Active storage operations are not allowed on 'x'
         return
 
+    if len(args) == 2:
+        # Weights, if present, are always passed in as a positional
+        # parameter, never as a keyword parameter. See
+        # `dask.array.reductions.reduction`.
+        weights = args[1]
+        if weights is not None:
+            # Active storage is not allowed for weighted reductions
+            return
+
+    axis = kwargs.get("axis")
     if axis is not None:
         if isinstance(axis, Integral):
             axis = (axis,)
 
         if len(axis) < x.ndim:
             # Active storage is not allowed for reductions over a
-            # subset of the axes => do a local reduction
+            # subset of the axes
             return
-
-    # Raise an ActiveStorageError if the active storage reduction can't
-    # happen or fails
-    url = active_storage_url().value
-    if url is None:
-        # Active storage operations are not possible when an active
-        # storage URL has not been set => do a local reduction
-        raise ActiveStorageError("No active storage URL")
 
     # ----------------------------------------------------------------
     # Still here? Set up an Active instance that will carry out the
-    # active storage operation.
+    # active storage operation. If it fails then this will trigger
+    # (inside `actify`) a local reduction being carried out instead.
     # ----------------------------------------------------------------
-    index = x.index()
-
-    filename = x.get_filename()        
-    filename = "/".join(filename.split("/")[3:])
-
-    max_threads = 100
+    filename = x.get_filename()
+    address = x.get_address()
+    max_requests = active_storage_max_requests()
 
     active_kwargs = {
-        "uri": filename,
-        "ncvar": x.get_address(),
+        "uri": "/".join(filename.split("/")[3:]),
+        "ncvar": address,
         "storage_options": x.get_storage_options(),
-        "active_storage_url": url,  # x.get_active_storage_url(),
-        "storage_type": "s3",  # Temporary requirement!
-        "max_threads": max_threads,
+        "active_storage_url": url,
+        "storage_type": "s3",  # Temporary requirement to Active!
+        "max_threads": max_requests,
     }
+
+    index = x.index()
+    
+    debug = is_log_level_debug(logger)
+    debug = True
+    if debug:
+        start = time.time()
+        details = (
+            f"{method!r} (file={filename}, address={address}, url={url}, "
+            f"max_requests={max_requests}, chunk={index})"
+        )
+#        logger.debug(
+        print(
+            f"INITIATING active storage reduction {details}: "
+            f"{datetime.datetime.now()}"
+        )  # prgama: no cover
 
     active = Active(**active_kwargs)
     active.method = method
     active.components = True
 
-    if is_log_level_debug:
-        logger.debug(f"Active call: Active(**{active_kwargs})[{index}]")
-
-    import datetime
-    import time
+    # Force active storage reduction on remote server 
+    active._version = 2
 
     # ----------------------------------------------------------------
-    # Execute the active storage operation
+    # Execute the active storage operation by indexing the Active
+    # instance
     # ----------------------------------------------------------------
     try:
-        start = time.time()
-        print("START  unlocked", index, datetime.datetime.now())
         d = active[index]
-        print(
-            "FINISH unlocked",
-            datetime.datetime.now(),
-            time.time() - start,
-            f"maxT={max_threads}",
-        )
+        print ("active.metric_data =",active.metric_data)
     except Exception as error:
         # Something went wrong with the active storage operations =>
-        # do a local reduction
-        print ('565')
-        raise ActiveStorageError(error)
+        # Raise an ActiveStorageError that will trigger (inside
+        # `actify`) a local reduction to be carried out instead.
+        if debug:
+            print(
+#            logger.debug(
+                f"FAILED in active storage reduction {details} ({error}): "
+                f"{round(time.time() - start, 6):.6f}s "
+                "=> reverting to local computation"
+            )  # prgama: no cover
 
+        raise
+        raise ActiveStorageError()    
+    else:
+        if debug:
+            print(
+#            logger.debug(
+                f"FINISHED active storage reduction {details}: "
+                f"{round(time.time() - start, 6):.6f}s"
+            )  # prgama: no cover
     # ----------------------------------------------------------------
-    # Reformat the components dictionary to match the output of the
-    # corresponding local chunk function
+    # Active storage reduction was a success. Reformat the resulting
+    # components dictionary to match the output of the corresponding
+    # local chunk function (e.g. `cf_mean_chunk`).
     # ----------------------------------------------------------------
     if method == "max":
         # Local chunk function `cf_max_chunk`
@@ -185,10 +215,11 @@ def actify(method):
     Intended for to decorate the ``cf_*_chunk`` methods in
     cf.data.collapse.dask_collapse`.
 
-    When a ``cf_*_chunk`` method is decorated, then its computations
-    will be carried out in active storage, if that is appropriate and
-    possible. Whether or not computations are done in active storage
-    is determined by `active_chunk_function`.
+    When a ``cf_*_chunk`` method is decorated, its computations will
+    be attempted in active storage. If that is not possible (due to
+    configuration settings, limitations on the type of reduction that
+    can be done in active storage, or the active storage reduction
+    failed) then the computations will be done locally "as usual".
 
     .. versionadded:: NEXTVERSION
 
@@ -204,24 +235,15 @@ def actify(method):
     def decorator(chunk_function):
         @wraps(chunk_function)
         def wrapper(*args, **kwargs):
-            
-            #if args: TODO
-            #    x = args[0]
-            #else:
-            #    x = kwargs["x"]
             try:
-                # Try doing an active storage reduction                
-#                print (method, args, kwargs)
+                # Try doing an active storage reduction
                 out = active_chunk_function(method, *args, **kwargs)
-            except ActiveStorageError as warning:
+            except ActiveStorageError:
                 # The active storage reduction failed
-                logger.warning(
-                    "Dask chunk failed in active storage reduction => "
-                    f"reverting to local computation: {warning}"
-                )
+                pass
             else:
                 if out is not None:
-                    # The active storage reduction succeeded                
+                    # The active storage reduction succeeded
                     return out
 
             # Still here? Then using active storage is not
