@@ -14,7 +14,7 @@ from ...functions import (
     active_storage,
     active_storage_max_requests,
     active_storage_url,
-    is_log_level_debug,
+    is_log_level_info,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,9 +32,17 @@ class ActiveStorageError(Exception):
 def active_chunk_function(method, *args, **kwargs):
     """Collapse data in a chunk with active storage.
 
+    Called by the `actify` decorator function.
+
     If an active storage reduction is not approriate then `None` is
-    returned, or else an ActiveStorageError is raised if the active
-    storage operation fails.
+    returned.
+
+    If the active storage operation fails then ActiveStorageError is
+    raised.
+
+    If the active storage operation is successful then a dictionary of
+    redcution components, similar to that returned by a ``cf_*_chunk``
+    method, is returned.
 
     .. versionadded:: NEXTVERSION
 
@@ -54,8 +62,8 @@ def active_chunk_function(method, *args, **kwargs):
     :Returns:
 
         `dict` or `None`
-            The reduced data in component form, or else `None` if an
-            active storage reduction is not approriate.
+            The reduced data in component form, or `None` if an active
+            storage reduction is not approriate.
 
     **Examples**
 
@@ -71,13 +79,15 @@ def active_chunk_function(method, *args, **kwargs):
 
     """
     x = args[0]
+
+    # Dask reduction machinery
     if kwargs.get("computing_meta"):
         return x
 
     # ----------------------------------------------------------------
-    # Return None if active storage reduction is not
-    # appropriate. Inside `actify` this will trigger a local reduction
-    # to be carried out instead.
+    # Return None if active storage reduction is not appropriate.
+    # Inside `actify`, this will trigger a local reduction to be
+    # carried out instead.
     # ----------------------------------------------------------------
     if not active_storage():
         # Active storage is turned off
@@ -87,23 +97,27 @@ def active_chunk_function(method, *args, **kwargs):
     if url is None:
         url = active_storage_url().value
         if url is None:
+            # Active storage is not possible when no active storage
+            # server URL has been provided
             return
 
     if method not in active_reduction_methods:
-        # Active storage is not available for this method
+        # Active storage is not (yet) available for this method
         return
 
     if not getattr(x, "active_storage", False):
-        # Active storage operations are not allowed on 'x'
+        # The data data object 'x' is incompatible with active storage
+        # operations. E.g. it is a UMArray object, a numpy array, etc.
         return
 
     if len(args) == 2:
         # Weights, if present, are always passed in as a positional
-        # parameter, never as a keyword parameter. See
-        # `dask.array.reductions.reduction`.
+        # parameter, never as a keyword parameter (see
+        # `dask.array.reductions.reduction` for details).
         weights = args[1]
         if weights is not None:
-            # Active storage is not allowed for weighted reductions
+            # Active storage is not (yet) allowed for weighted
+            # reductions
             return
 
     axis = kwargs.get("axis")
@@ -112,14 +126,15 @@ def active_chunk_function(method, *args, **kwargs):
             axis = (axis,)
 
         if len(axis) < x.ndim:
-            # Active storage is not allowed for reductions over a
-            # subset of the axes
+            # Active storage is not (yet) allowed for reductions over
+            # a subset of the axes
             return
 
     # ----------------------------------------------------------------
     # Still here? Set up an Active instance that will carry out the
-    # active storage operation. If it fails then this will trigger
-    # (inside `actify`) a local reduction being carried out instead.
+    # active storage operation. If the operation fails, for any
+    # reason, then this will trigger (inside `actify`) a local
+    # reduction being carried out instead.
     # ----------------------------------------------------------------
     filename = x.get_filename()
     address = x.get_address()
@@ -136,25 +151,23 @@ def active_chunk_function(method, *args, **kwargs):
 
     index = x.index()
     
-    debug = is_log_level_debug(logger)
-    debug = True
-    if debug:
+    info = is_log_level_info(logger)
+    if info:
+        # Do some detailed logging
         start = time.time()
         details = (
             f"{method!r} (file={filename}, address={address}, url={url}, "
-            f"max_requests={max_requests}, chunk={index})"
+            f"chunk={index})"
         )
-#        logger.debug(
-        print(
-            f"INITIATING active storage reduction {details}: "
-            f"{datetime.datetime.now()}"
-        )  # prgama: no cover
+        logger.info(
+            f"STARTED  active storage {details}: {datetime.datetime.now()}"
+        )  # pragma: no cover
 
     active = Active(**active_kwargs)
     active.method = method
     active.components = True
 
-    # Force active storage reduction on remote server 
+    # Force an active storage reduction on the remote server
     active._version = 2
 
     # ----------------------------------------------------------------
@@ -163,32 +176,40 @@ def active_chunk_function(method, *args, **kwargs):
     # ----------------------------------------------------------------
     try:
         d = active[index]
-        print ("active.metric_data =",active.metric_data)
     except Exception as error:
         # Something went wrong with the active storage operations =>
-        # Raise an ActiveStorageError that will trigger (inside
-        # `actify`) a local reduction to be carried out instead.
-        if debug:
-            print(
-#            logger.debug(
-                f"FAILED in active storage reduction {details} ({error}): "
-                f"{round(time.time() - start, 6):.6f}s "
-                "=> reverting to local computation"
-            )  # prgama: no cover
-
-        raise
-        raise ActiveStorageError()    
+        # Raise an ActiveStorageError that will in tuen trigger
+        # (inside `actify`) a local reduction to be carried out
+        # instead.
+        raise ActiveStorageError(
+            f"FAILED in active storage {details} ({error}))"
+        )
     else:
-        if debug:
-            print(
-#            logger.debug(
-                f"FINISHED active storage reduction {details}: "
-                f"{round(time.time() - start, 6):.6f}s"
-            )  # prgama: no cover
+        # Active storage reduction was successful     
+        if info:
+            # Do some detailed logging
+            try:
+                md = active.metric_data
+            except AttributeError:
+                logger.info(
+                    f"FINISHED active storage {details}: "
+                    f"{time.time() - start:6.2f}s"
+                )  # pragma: no cover
+            else:
+                logger.info(
+                    f"FINISHED active storage {details}: "
+                    f"dataset chunks: {md['dataset chunks']}, "
+                    f"load nc (s): {md['load nc time']:6.2f}, "
+                    f"indexing (s): {md['indexing time (s)']:6.2f}, "
+                    f"reduction (s): {md['reduction time (s)']:6.2f}, "
+                    f"selection 2 (s): {md['selection 2 time (s)']:6.2f}, "
+                    f"Total: {(time.time() - start):6.2f}s"
+                )  # pragma: no cover
+            
     # ----------------------------------------------------------------
     # Active storage reduction was a success. Reformat the resulting
-    # components dictionary to match the output of the corresponding
-    # local chunk function (e.g. `cf_mean_chunk`).
+    # components dictionary 'd' to match the output of the
+    # corresponding local chunk function (e.g. `cf_mean_chunk`).
     # ----------------------------------------------------------------
     if method == "max":
         # Local chunk function `cf_max_chunk`
@@ -238,9 +259,11 @@ def actify(method):
             try:
                 # Try doing an active storage reduction
                 out = active_chunk_function(method, *args, **kwargs)
-            except ActiveStorageError:
+            except ActiveStorageError as error:
                 # The active storage reduction failed
-                pass
+                logger.warning(
+                    f"{error} => reverting to local computation"
+                )  # pragma: no cover
             else:
                 if out is not None:
                     # The active storage reduction succeeded

@@ -1557,8 +1557,8 @@ def total_memory():
     return CONSTANTS["TOTAL_MEMORY"]
 
 
-def is_log_level_debug(logger):
-    """Return True if and only if log level is at least DEBUG.
+def is_log_level_info(logger):
+    """Return True if and only if log level is at least INFO.
 
     .. versionadded:: NEXTVERSION
 
@@ -1572,10 +1572,10 @@ def is_log_level_debug(logger):
     :Returns:
 
         `bool`
-            Whether or not the log level is at least DEBUG.
+            Whether or not the log level is at least INFO.
 
     """
-    return logger.parent.level <= logging.DEBUG
+    return logger.parent.level <= logging.INFO
 
 
 # --------------------------------------------------------------------
