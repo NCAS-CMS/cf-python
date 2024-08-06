@@ -1262,7 +1262,7 @@ class active_storage(ConstantAccess):
 
         """
         try:
-            from activestorage import Active
+            from activestorage import Active  # noqa: F401
         except ModuleNotFoundError as error:
             if arg:
                 raise ModuleNotFoundError(
@@ -1358,7 +1358,7 @@ class active_storage_max_requests(ConstantAccess):
     This formula only applies to cases where all `dask` chunks for the
     collapse operation are utilising active storage. If some are not
     then :math:`N` will likely be underestimated.
-    
+
     .. versionadded:: NEXTVERSION
 
     .. seealso:: `active_storage`, `active_storage_url`,
