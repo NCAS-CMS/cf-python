@@ -621,7 +621,7 @@ retrieved with the `~Field.properties` method:
 .. code-block:: python
    :caption: *Retrieve all of the descriptive properties*
 
-   >>> q, t = cf.read('file.nc')
+   >>> q, t = cf.read('file.nc')[1]
    >>> t.properties()
    {'Conventions': 'CF-1.11',
     'project': 'research',
