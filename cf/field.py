@@ -14281,20 +14281,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             ignore_coordinate_units: `bool`, optional
                 If True then the coordinates providing the cell
-                spacings along the axis are assumed to dimensionless,
-                even if they do in fact have units. This does not
-                change the returned numerical values, but will alter
-                the units of the returned field. If False (the
-                default) then the coordinate units will propagate
-                through to the result.
-
-                If *ignore_coordinate_units* is False then the units
-                of the returned field construct will be the original
-                units divided by the coordinate units.
-
-                If *ignore_coordinate_units* is True then the units of
-                the returned field construct will be identical to the
+                spacings along the specified axis are assumed to be
+                dimensionless, even if they do in fact have
+                units. This does not change the magnitude of the
+                returned numerical values, but the units of the
+                returned field construct will be identical to the
                 original units.
+
+                If False (the default) then the coordinate units will
+                propagate through to the result. i.e. the units of the
+                returned field construct will be the original units
+                divided by the coordinate units.
 
                 For example, for a field construct with units of
                 ``m.s-1`` and X coordinate units of ``radians``, the
@@ -14436,8 +14433,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             d.insert_dimension(position=1, inplace=True)
 
         if ignore_coordinate_units:
-            # Remove the coordinate units before we calculate the
-            # derivative
+            # Remove the coordinate units from the coordinate
+            # differences, before we calculate the derivative.
             d.override_units(None, inplace=True)
 
         # Find the derivative
