@@ -696,7 +696,6 @@ class TimeDuration:
             op: `str`, the binary comparison operator to apply.
 
         """
-
         if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, op))
 
@@ -737,11 +736,7 @@ class TimeDuration:
                 do not skip.
 
         """
-        check_simple_types = [int, float]
-        if may_be_datetime:
-            check_simple_types.append(self.__class__)
-
-        if isinstance(other, tuple(check_simple_types)):
+        if isinstance(other, (int, float, self.__class__)):
             return self._binary_operation(other, op, aug_assignment)
 
         if may_be_datetime and hasattr(other, "timetuple"):

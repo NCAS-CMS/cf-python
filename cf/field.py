@@ -8380,7 +8380,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         within_days.Units.istime
                         and TimeDuration(24, "hours") % within_days
                     ):
-                        # % Data(1, 'day'): # % within_days:
                         raise ValueError(
                             f"Can't collapse: within_days={within_days!r} "
                             "is not an exact factor of 1 day"
