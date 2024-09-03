@@ -3458,6 +3458,36 @@ class PropertiesData(Properties):
         return set()
 
     @_inplace_enabled(default=False)
+    def filled(self, fill_value=None, inplace=False):
+        """Replace masked elements with a fill value.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            fill_value: scalar, optional
+                The fill value. By default the fill returned by
+                `get_fill_value` is used, or if this is not set then
+                the netCDF default fill value for the data type is
+                used (as defined by `netCDF.fillvals`).
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with filled data, or `None` if the
+                operation was in-place.
+
+        """
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "filled",
+            fill_value=fill_value,
+            inplace=inplace,
+        )
+
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
 

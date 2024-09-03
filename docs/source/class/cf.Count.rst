@@ -185,6 +185,7 @@ Data
    ~cf.Count.count
    ~cf.Count.count_masked
    ~cf.Count.fill_value
+   ~cf.Count.filled
    ~cf.Count.masked_invalid
 
 .. autosummary::

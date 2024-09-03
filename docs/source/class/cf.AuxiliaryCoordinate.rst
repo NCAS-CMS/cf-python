@@ -275,6 +275,7 @@ Data
    ~cf.AuxiliaryCoordinate.count
    ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.fill_value
+   ~cf.AuxiliaryCoordinate.filled
    ~cf.AuxiliaryCoordinate.masked_invalid
 
 .. autosummary::

@@ -191,6 +191,7 @@ Data
    ~cf.Bounds.count
    ~cf.Bounds.count_masked
    ~cf.Bounds.fill_value
+   ~cf.Bounds.filled
    ~cf.Bounds.masked_invalid
 
 .. autosummary::

@@ -214,6 +214,7 @@ Data
    ~cf.CellMeasure.count
    ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.fill_value
+   ~cf.CellMeasure.filled
    ~cf.CellMeasure.masked_invalid
 
 .. autosummary::
