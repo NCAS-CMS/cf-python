@@ -4,7 +4,7 @@ version NEXTVERSION
 **2024-??-??**
 
 * New method: `cf.Field.filled`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/811)
 * New method: `cf.Field.is_discrete_axis`
   (https://github.com/NCAS-CMS/cf-python/issues/784)
 * Include the UM version as a field property when reading UM files
