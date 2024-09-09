@@ -32,7 +32,7 @@ class MathTest(unittest.TestCase):
                     one_sided_at_boundary=one_sided,
                 )
 
-                self.assertTrue(c.Units == cf.Units("m-2 rad-2"))
+                self.assertEqual(c.Units, cf.Units("m-2"))
 
                 term1 = (x * sin_theta).derivative(
                     "Y", one_sided_at_boundary=one_sided
@@ -68,7 +68,7 @@ class MathTest(unittest.TestCase):
                     x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(d.Units == cf.Units("m-2"))
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -121,7 +121,7 @@ class MathTest(unittest.TestCase):
                     one_sided_at_boundary=one_sided,
                 )
 
-                self.assertTrue(d.Units == cf.Units("m-2 rad-2"), d.Units)
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -157,7 +157,7 @@ class MathTest(unittest.TestCase):
                     x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(d.Units == cf.Units("m-2"))
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided

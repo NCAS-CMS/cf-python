@@ -7,6 +7,13 @@ version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/784)
 * Include the UM version as a field property when reading UM files
   (https://github.com/NCAS-CMS/cf-python/issues/777)
+* New keyword parameter to `cf.Field.derivative`:
+  ``ignore_coordinate_units``
+  (https://github.com/NCAS-CMS/cf-python/issues/807)
+* Fix bug that sometimes puts an incorrect ``radian-1`` or
+  ``radian-2`` in the returned units of the differential operator
+  methods and functions
+  (https://github.com/NCAS-CMS/cf-python/issues/807)
 * Fix bug where `cf.example_fields` returned a `list` of Fields rather
   than a `Fieldlist`
   (https://github.com/NCAS-CMS/cf-python/issues/725)
