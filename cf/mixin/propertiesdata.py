@@ -3467,7 +3467,7 @@ class PropertiesData(Properties):
 
             fill_value: scalar, optional
                 The fill value. By default the fill returned by
-                `get_fill_value` is used, or if this is not set then
+                `fill_value` is used, or if this is not set then
                 the netCDF default fill value for the data type is
                 used (as defined by `netCDF.fillvals`).
 
