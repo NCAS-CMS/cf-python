@@ -186,6 +186,7 @@ Data
    ~cf.Index.count
    ~cf.Index.count_masked
    ~cf.Index.fill_value
+   ~cf.Index.filled
    ~cf.Index.masked_invalid
 
 .. autosummary::

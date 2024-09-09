@@ -281,6 +281,7 @@ Data
    ~cf.DimensionCoordinate.count
    ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.fill_value
+   ~cf.DimensionCoordinate.filled
    ~cf.DimensionCoordinate.masked_invalid
 
 .. autosummary::

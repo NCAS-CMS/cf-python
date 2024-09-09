@@ -190,6 +190,7 @@ Data
    ~cf.FieldAncillary.count
    ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.fill_value
+   ~cf.FieldAncillary.filled
    ~cf.FieldAncillary.masked_invalid
 
 .. autosummary::

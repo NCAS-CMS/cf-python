@@ -2080,6 +2080,41 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     @_inplace_enabled(default=False)
+    def filled(self, fill_value=None, bounds=True, inplace=False):
+        """Replace masked elements with a fill value.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            fill_value: scalar, optional
+                The fill value. By default the fill returned by
+                `fill_value` is used, or if this is not set then
+                the netCDF default fill value for the data type is
+                used (as defined by `cf.default_netCDF_fillvals`).
+
+            bounds: `bool`, optional
+                If False then do not alter any bounds. By default any
+                bounds are also altered.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with filled data, or `None` if the
+                operation was in-place.
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "filled",
+            (fill_value,),
+            bounds=bounds,
+            inplace=inplace,
+        )
+
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
 

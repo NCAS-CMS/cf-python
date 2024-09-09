@@ -2926,6 +2926,16 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.is_discrete_axis("cf_role=timeseries_id"))
         self.assertFalse(f.is_discrete_axis("time"))
 
+    def test_Field_filled(self):
+        """Test Field.filled."""
+        f = cf.example_field(0)
+        f.where(cf.gt(0.1), cf.masked, inplace=1)
+        self.assertEqual(f.data.count_masked(), 5)
+        self.assertIsNone(f.filled(-999, inplace=True))
+        values, counts = np.unique(f, return_counts=True)
+        self.assertEqual(values[0], -999)
+        self.assertEqual(counts[0], 5)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -260,6 +260,7 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.fill_value
+   ~cf.DomainAncillary.filled
    ~cf.DomainAncillary.masked_invalid
 
 .. autosummary::

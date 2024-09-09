@@ -210,6 +210,7 @@ Data
    ~cf.Field.count
    ~cf.Field.count_masked
    ~cf.Field.fill_value
+   ~cf.Field.filled
    ~cf.Field.masked_invalid
 	    
 .. autosummary::
