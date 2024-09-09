@@ -3469,7 +3469,7 @@ class PropertiesData(Properties):
                 The fill value. By default the fill returned by
                 `fill_value` is used, or if this is not set then
                 the netCDF default fill value for the data type is
-                used (as defined by `netCDF.fillvals`).
+                used (as defined by `cf.default_netCDF_fillvals`).
 
             {{inplace: `bool`, optional}}
 
