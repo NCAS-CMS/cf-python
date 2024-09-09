@@ -2982,7 +2982,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
         >>> lp = f.laplacian_xy(radius='earth')
         >>> lp
-        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2.rad-2>
+        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2>
         >>> print(lp.array)
         [[-- -- -- -- -- -- -- --]
          [-- -- -- -- -- -- -- --]
@@ -3050,19 +3050,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             r2_sin_theta = sin_theta * r**2
 
             d2f_dphi2 = f.derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ).derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             )
 
             term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
 
             df_dtheta = f.derivative(
-                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             )
 
             term2 = (df_dtheta * sin_theta).derivative(
-                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ) / r2_sin_theta
 
             f = term1 + term2
@@ -11606,8 +11618,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
         >>> fx, fy = f.grad_xy(radius='earth')
         >>> fx, fy
-        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
-         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1>,
+         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1>)
         >>> print(fx.array)
         [[0. 0. 0. 0. 0. 0. 0. 0.]
          [0. 0. 0. 0. 0. 0. 0. 0.]
@@ -11678,7 +11690,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             r = f.radius(default=radius)
 
             X = f.derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ) / (theta.sin() * r)
 
             Y = (
@@ -11686,6 +11701,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     y_key,
                     wrap=None,
                     one_sided_at_boundary=one_sided_at_boundary,
+                    ignore_coordinate_units=True,
                 )
                 / r
             )
@@ -14225,9 +14241,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         axis,
         wrap=None,
         one_sided_at_boundary=False,
+        cyclic=None,
+        ignore_coordinate_units=False,
         inplace=False,
         i=False,
-        cyclic=None,
     ):
         """Calculate the derivative along the specified axis.
 
@@ -14260,6 +14277,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 True, then one-sided finite differences are calculated
                 at the non-cyclic boundaries. By default missing
                 values are set at non-cyclic boundaries.
+
+            ignore_coordinate_units: `bool`, optional
+                If True then the coordinates providing the cell
+                spacings along the specified axis are assumed to be
+                dimensionless, even if they do in fact have
+                units. This does not change the magnitude of the
+                returned numerical values, but the units of the
+                returned field construct will be identical to the
+                original units.
+
+                If False (the default) then the coordinate units will
+                propagate through to the result. i.e. the units of the
+                returned field construct will be the original units
+                divided by the coordinate units.
+
+                For example, for a field construct with units of
+                ``m.s-1`` and X coordinate units of ``radians``, the
+                units of the X derivative will be ``m.s-1.radians-1``
+                by default, or ``m.s-1`` if *ignore_coordinate_units*
+                is True.
+
+                .. versionadded:: NEXTVERSION
 
             {{inplace: `bool`, optional}}
 
@@ -14391,6 +14430,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # the data
         for _ in range(self.ndim - 1 - axis_index):
             d.insert_dimension(position=1, inplace=True)
+
+        if ignore_coordinate_units:
+            # Remove the coordinate units from the coordinate
+            # differences, before we calculate the derivative.
+            d.override_units(None, inplace=True)
 
         # Find the derivative
         f.data /= d

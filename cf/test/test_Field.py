@@ -2018,9 +2018,15 @@ class FieldTest(unittest.TestCase):
     def test_Field_derivative(self):
         f = cf.example_field(0)
         f[...] = np.arange(9)[1:] * 45
+        x = f.dimension_coordinate("X")
+
+        # Ignore coordinate units
+        d = f.derivative("X", ignore_coordinate_units=True)
+        self.assertEqual(d.Units, f.Units)
 
         # Check a cyclic periodic axis
         d = f.derivative("X")
+        self.assertEqual(d.Units, f.Units / x.Units)
         self.assertTrue(np.allclose(d[:, 1:-1].array, 1))
         self.assertTrue(np.allclose(d[:, [0, -1]].array, -3))
 
@@ -2028,7 +2034,7 @@ class FieldTest(unittest.TestCase):
         # case
         f1 = f[:, ::-1]
         d1 = f1.derivative("X")
-        self.assertTrue(d1.data.equals(d.data))
+        self.assertTrue(d1.data.equals(d.data, verbose=-1))
 
         # Check non-cyclic
         d = f.derivative("X", wrap=False)
@@ -2490,12 +2496,21 @@ class FieldTest(unittest.TestCase):
                     radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
+                self.assertEqual(x.Units, y.Units)
+                self.assertEqual(y.Units, cf.Units("m-1"))
 
                 x0 = f.derivative(
-                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                    "X",
+                    wrap=wrap,
+                    one_sided_at_boundary=one_sided,
                 ) / (sin_theta * r)
-                y0 = f.derivative("Y", one_sided_at_boundary=one_sided) / r
+                y0 = (
+                    f.derivative(
+                        "Y",
+                        one_sided_at_boundary=one_sided,
+                    )
+                    / r
+                )
 
                 # Check the data
                 with cf.rtol(1e-10):
@@ -2528,7 +2543,8 @@ class FieldTest(unittest.TestCase):
             for one_sided in (True, False):
                 x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
 
-                self.assertTrue(x.Units == y.Units == cf.Units("m-1"))
+                self.assertEqual(x.Units, y.Units)
+                self.assertEqual(y.Units, cf.Units("m-1"))
 
                 x0 = f.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -2572,7 +2588,7 @@ class FieldTest(unittest.TestCase):
                     radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
+                self.assertEqual(lp.Units, cf.Units("m-2"))
 
                 lp0 = cf.div_xy(
                     *f.grad_xy(
@@ -2580,7 +2596,7 @@ class FieldTest(unittest.TestCase):
                         x_wrap=wrap,
                         one_sided_at_boundary=one_sided,
                     ),
-                    radius=2,
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -2604,7 +2620,7 @@ class FieldTest(unittest.TestCase):
                     x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(lp.Units == cf.Units("m-2"))
+                self.assertEqual(lp.Units, cf.Units("m-2"))
 
                 lp0 = cf.div_xy(
                     *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
