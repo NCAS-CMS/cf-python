@@ -737,10 +737,13 @@ class TimeDuration:
 
         """
         if isinstance(other, (int, float, self.__class__)):
+            # 'other' is a number or another TimeDuration object => we
+            # can use the usual binary operation method.
             return self._binary_operation(other, op, aug_assignment)
 
         if may_be_datetime and hasattr(other, "timetuple"):
-            # other is a date-time object
+            # 'other' is a date-time object => we must use the special
+            # datetime arithmetic operation.
             try:
                 return self._datetime_arithmetic(other, getattr(operator, op))
             except TypeError:
