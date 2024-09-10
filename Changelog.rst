@@ -9,6 +9,8 @@ version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/784)
 * Include the UM version as a field property when reading UM files
   (https://github.com/NCAS-CMS/cf-python/issues/777)
+* Fix bug that caused climatological time collapses within/over days
+  to fail (https://github.com/NCAS-CMS/cf-python/issues/809)
 * New keyword parameter to `cf.Field.derivative`:
   ``ignore_coordinate_units``
   (https://github.com/NCAS-CMS/cf-python/issues/807)

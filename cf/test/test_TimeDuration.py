@@ -107,7 +107,18 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(
             cf.TimeDuration(36, "calendar_months") // 8.25, cf.M(4.0)
         )
-        self.assertEqual(cf.TimeDuration(36, "calendar_months") % 10, cf.M(6))
+
+        for y in (
+            10,
+            cf.Data(10, "calendar_months"),
+            cf.TimeDuration(10, "calendar_months"),
+        ):
+            self.assertEqual(
+                cf.TimeDuration(36, "calendar_months") % y, cf.M(6)
+            )
+
+        for y in (10, cf.Data(10, "hours"), cf.h(10), cf.D(5 / 12), cf.m(600)):
+            self.assertEqual(cf.h(36) % y, cf.h(6))
 
         self.assertEqual(
             cf.TimeDuration(24, "hours") + cf.TimeDuration(0.5, "days"),
