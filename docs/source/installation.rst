@@ -102,7 +102,7 @@ details.
 
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
-visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
+visualisation package <https://ncas-cms.github.io/cf-plot/build/>`_, run:
 
 .. code-block:: console
    :caption: *Install with conda.*

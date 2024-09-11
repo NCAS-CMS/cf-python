@@ -87,15 +87,15 @@ for start, end, prefix in time_periods:
     )
 
 # %%
-# 7. Create two plots - one for the 1850-2020 time period and another for the 1980-2020 time period using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_.
+# 7. Create two plots - one for the 1850-2020 time period and another for the 1980-2020 time period using `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_.
 # The results are multiplied by 10 so that each plot displays the temperature trend in K/decade with stippling to indicate areas where the trend is statistically significant (p-value < 0.05).
-# Here `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area with two rows and one column, and setting the bottom margin to 0.2.
-# It is closed by `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# `cfplot.gpos <http://ajheaps.github.io/cf-plot/gpos.html>`_ is used to set the plotting position of both the plots;
-# `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the map projection to Robinson;
-# `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available;
-# `cfplot.levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels;
-# and `cfplot.stipple <http://ajheaps.github.io/cf-plot/stipple.html>`_ is used to add stippling to show statistically significant areas:
+# Here `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to define the parts of the plot area with two rows and one column, and setting the bottom margin to 0.2.
+# It is closed by `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
+# `cfplot.gpos <https://ncas-cms.github.io/cf-plot/build/gpos.html>`_ is used to set the plotting position of both the plots;
+# `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to set the map projection to Robinson;
+# `cfplot.cscale <https://ncas-cms.github.io/cf-plot/build/cscale.html>`_ is used to choose one of the colour maps amongst many available;
+# `cfplot.levs <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to set the contour levels;
+# and `cfplot.stipple <https://ncas-cms.github.io/cf-plot/build/stipple.html>`_ is used to add stippling to show statistically significant areas:
 
 cfp.gopen(rows=2, columns=1, bottom=0.2)
 
