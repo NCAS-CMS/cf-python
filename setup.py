@@ -157,8 +157,8 @@ Visualization
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the
-[cfplot](https://ncas-cms.github.io/cf-plot/build/) package, that needs to be
-installed seprately to the ``cf`` package.
+`cf-plot <https://ncas-cms.github.io/cf-plot/build/>`_ package, that
+needs to be installed seprately to the ``cf`` package.
 
 See the `cfplot gallery
 <https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the full range
