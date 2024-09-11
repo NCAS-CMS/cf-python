@@ -41,7 +41,7 @@ region = sst.subspace(X=cf.wi(360 - 170, 360 - 120), Y=cf.wi(-5, 5))
 # - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
 #   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
-# - `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+# - `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map limits and projection;
 # - `cfplot.setvars <https://ncas-cms.github.io/cf-plot/build/setvars.html>`_ is used to
 #   set various attributes of the plot, like setting the land colour to grey;

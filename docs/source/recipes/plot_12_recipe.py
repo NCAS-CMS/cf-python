@@ -77,8 +77,8 @@ high = aod.where(mask, cf.masked)
 # - `plt.suptitle <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html>`_
 #   is used to add a title for the whole figure;
 # - the subplots for plotting are selected using
-#   `cfplot.gpos <https://ajheaps.github.io/cf-plot/gpos.html>`_ after which
-#   `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+#   `cfplot.gpos <https://ncas-cms.github.io/cf-plot/build/gpos.html>`_ after which
+#   `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map limits and resolution for the subplots;
 # - and as cf-plot stores the plot in a plot object with the name
 #   ``cfp.plotvars.plot``, country borders are added using normal
