@@ -52,17 +52,17 @@ projtypes = ["cyl", "npstere", "spstere", "moll", "cyl", "robin"]
 # However, OSGB and EuroPP will require very different data anyway.
 for i, proj in enumerate(projtypes):
     cfp.gpos(i + 1)
-    if projtypes[i] == "lcc":
+    if proj == "lcc":
         cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
-    if (projtypes[i] == "OSGB") or (projtypes[i] == "EuroPP"):
-        cfp.mapset(proj=projtypes[i], resolution="50m")
+    if proj in ("OSGB", "EuroPP"):
+        cfp.mapset(proj=proj, resolution="50m")
     else:
-        cfp.mapset(proj=projtypes[i])
+        cfp.mapset(proj=proj)
     if i == len(projtypes) - 1:
         cfp.con(
             f.subspace(pressure=850),
             lines=False,
-            title=projtypes[i],
+            title=proj,
             colorbar_position=[0.1, 0.1, 0.8, 0.02],
             colorbar_orientation="horizontal",
         )
@@ -72,7 +72,7 @@ for i, proj in enumerate(projtypes):
         cfp.con(
             f.subspace(pressure=850),
             lines=False,
-            title=projtypes[i],
+            title=proj,
             colorbar=False,
         )
 cfp.gclose()
