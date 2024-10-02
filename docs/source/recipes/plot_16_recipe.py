@@ -19,7 +19,8 @@ import cf
 # 2. Read the field in:
 # Here I've used sample data ggap.nc (and later pressure=850),
 # but you could use tas_A1.nc (with time=15)
-f = cf.read("~/cfplot_data/ggap.nc")[0]
+PATH = "~/git-repos/cf-plot/cfplot/test/cfplot_data"
+f = cf.read(f"{PATH}/ggap.nc")[0]
 
 # %%
 # 3. Create the file with subplots:
@@ -36,7 +37,9 @@ cfp.gopen(rows=2, columns=3, bottom=0.2, file="projections.png")
 # However you could also use other such as "rotated", "ortho" or
 # "merc", "ukcp", "osgb", or "EuroPP"
 # https://ncas-cms.github.io/cf-plot/build/user_guide.html#appendixc
-projtypes = ["cyl", "npstere", "spstere", "moll", "lcc", "robin"]
+# TODO SB update second 'cyl' to 'lcc', replaced for now due to possible bug,
+# see: https://github.com/NCAS-CMS/cf-plot/issues/75
+projtypes = ["cyl", "npstere", "spstere", "moll", "cyl", "robin"]
 
 # %%
 # 5. We then use a for loop to cycle through all the different projection
