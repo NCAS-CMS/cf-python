@@ -2,9 +2,8 @@
 Plotting contour subplots with different projections
 ====================================================
 
-In this recipe, we will plot different projections for the same
-data to illustrate visually the ones available in order to more
-visually decide which is suitable.
+In this recipe, we will plot the same data using different projections
+as subplots to illustrate visually some available possibilities.
 
 """
 
@@ -17,8 +16,7 @@ import cf
 
 # %%
 # 2. Read the field in:
-PATH = "~/git-repos/cf-plot/cfplot/test/cfplot_data"
-f = cf.read(f"{PATH}/ggap.nc")[0]
+f = cf.read("~/recipes/ggap.nc")[0]
 
 # %%
 # 3. Create the file with subplots. If changing the number of subplots,
