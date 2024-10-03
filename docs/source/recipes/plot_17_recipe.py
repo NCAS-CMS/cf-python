@@ -18,7 +18,8 @@ import cf
 # Here I've used sample data ggap.nc (and later pressure=850), but you could use tas_A1.nc
 # (with time=15)
 
-f = cf.read("~/cfplot_data/ggap.nc")[0]
+PATH="~/git-repos/cf-plot/cfplot/test/cfplot_data"
+f = cf.read(f"{PATH}/ggap.nc")[0]
 
 # %%
 # 3. Choose a set of predefined colour scales to view (based on NCAR)
@@ -75,15 +76,15 @@ cfp.gopen(rows=2, columns=3, bottom=0.2, file="ColourPlot.png")
 for i, colour_scale in enumerate(colour_scale):
     cfp.gpos(i + 1)
     cfp.mapset(proj="cyl")
-    cfp.cscale(colour_scale[i])
+    cfp.cscale(colour_scale)
     if i == len(colour_scale) + 1:
         cfp.con(
             f.subspace(pressure=850),
             lines=False,
-            title=colour_scale[i],
+            title=colour_scale,
             colorbar_position=[0.1, 0.1, 0.8, 0.02],
             colorbar_orientation="horizontal",
         )
     else:
-        cfp.con(f.subspace(pressure=850), title=colour_scale[i], lines=False)
+        cfp.con(f.subspace(pressure=850), title=colour_scale, lines=False)
 cfp.gclose(view=True)
