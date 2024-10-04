@@ -34,25 +34,15 @@ f = cf.read(f"{PATH}/ggap.nc")[0]
 
 # %%
 # a. Perceptually uniform colour scales, with no zero value
-colour_scale_pu = [
-    "viridis",
-    "magma",
-    "inferno",
-]  # "plasma", "parula", "gray"]
+colour_scale_pu = ["viridis", "magma", "plasma"]
 
 
 # %%
 # b. NCAR Command Language - Enhanced to help with colour blindness
 colour_scale_ncl = [
-    "StepSeq25",
-    "posneg_2",
-    # "posneg_1",
-    # "BlueDarkOrange18",
-    # "BlueDarkRed18",
+    "posneg_1",
     "GreenMagenta16",
-    # "BlueGreen14",
-    # "BrownBlue12",
-    # "Cat12",
+    "StepSeq25",
 ]
 
 
@@ -63,12 +53,9 @@ colour_scale_ncl = [
 # You could instead use cfp.cscale('wiki_2_0', ncols=16, below=2, above=14)
 # or any other orography colour scale in a similar way.
 colour_scale_ob = [
-    "os250kmetres",
     "wiki_1_0_2",
-    # "wiki_1_0_3",
-    # "wiki_2_0",
-    # "wiki_2_0_reduced",
-    "arctic",
+    "wiki_2_0",
+    "wiki_2_0_reduced",
 ]
 
 
@@ -107,7 +94,8 @@ for i, colour_scale in enumerate(colour_scales_columns):
             axes=False,
             colorbar_drawedges=False,
             colorbar_title=f"Shown in '{colour_scale}'",
-            colorbar_fraction=0.03,
+            colorbar_fraction=0.04,
+            colorbar_thick=0.02,
             colorbar_fontsize=11,
         )
     elif i < 3:
@@ -127,7 +115,8 @@ for i, colour_scale in enumerate(colour_scales_columns):
             title=set_title,
             colorbar_drawedges=False,
             colorbar_title=f"Shown in '{colour_scale}'",
-            colorbar_fraction=0.03,
+            colorbar_fraction=0.04,
+            colorbar_thick=0.02,
             colorbar_fontsize=11,
         )
 
@@ -138,8 +127,9 @@ for i, colour_scale in enumerate(colour_scales_columns):
             axes=False,
             colorbar_drawedges=False,
             colorbar_title=f"Shown in '{colour_scale}'",
+            colorbar_fraction=0.04,
+            colorbar_thick=0.02,
             colorbar_fontsize=11,
-            colorbar_fraction=0.03,
         )
 
 cfp.gclose(view=True)
