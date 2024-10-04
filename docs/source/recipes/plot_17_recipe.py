@@ -18,8 +18,7 @@ import cf
 
 # %%
 # 2. Read the field in:
-PATH = "~/git-repos/cf-plot/cfplot/test/cfplot_data"
-f = cf.read(f"{PATH}/ggap.nc")[0]
+f = cf.read(f"~/recipes/ggap.nc")[0]
 
 # %%
 # 3. Choose a set of predefined colour scales to view. These can be chosen
@@ -68,7 +67,7 @@ colour_scales_columns = [
 # %%
 # 5. Create the figure and give it an overall title. Ensure the
 # number of rows * number of columns = number of colour scales:
-cfp.gopen(rows=3, columns=3, bottom=0.1, top=0.85, file="colour_scales.png")
+cfp.gopen(rows=3, columns=3, bottom=0.1, top=0.85)
 plt.suptitle(
     (
         "Air temperature (K) at 850 mbar pressure shown in different "
