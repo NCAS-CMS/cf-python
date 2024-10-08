@@ -18,7 +18,7 @@ import cf
 
 # %%
 # 2. Read the field in:
-f = cf.read(f"~/recipes/ggap.nc")[0]
+f = cf.read("~/recipes/ggap.nc")[0]
 
 # %%
 # 3. Choose a set of predefined colour scales to view. These can be chosen
@@ -84,41 +84,31 @@ for i, colour_scale in enumerate(colour_scales_columns):
     cfp.gpos(i + 1)
     cfp.cscale(colour_scale)
 
-    # For the topmost plots, label the coumn with the colour scale category
+    # For the topmost plots, label the column with the colour scale category
     # using the 'title' argument, otherwise don't add a title.
-    if i < 3:
-        # Ensure the order the titles are written in corresponds to the
-        # order unzipped in step 4, so the columns match up correctly.
-        if i == 0:
-            set_title = "Perceptually uniform\ncolour maps"
-        elif i == 1:
-            set_title = (
-                "NCL colour maps enhanced to \nhelp with colour blindness"
-            )
-        elif i == 2:
-            set_title = "Orography/bathymetry\ncolour maps"
-
-        cfp.con(
-            f.subspace(pressure=850),
-            title=set_title,
-            lines=False,
-            axes=False,
-            colorbar_drawedges=False,
-            colorbar_title=f"Shown in '{colour_scale}'",
-            colorbar_fraction=0.04,
-            colorbar_thick=0.02,
-            colorbar_fontsize=11,
+    # Ensure the order the titles are written in corresponds to the
+    # order unzipped in step 4, so the columns match up correctly.
+    if i == 0:
+        set_title = "Perceptually uniform\ncolour maps"
+    elif i == 1:
+        set_title = (
+            "NCL colour maps enhanced to \nhelp with colour blindness"
         )
+    elif i == 2:
+        set_title = "Orography/bathymetry\ncolour maps"
     else:
-        cfp.con(
-            f.subspace(pressure=850),
-            lines=False,
-            axes=False,
-            colorbar_drawedges=False,
-            colorbar_title=f"Shown in '{colour_scale}'",
-            colorbar_fraction=0.04,
-            colorbar_thick=0.02,
-            colorbar_fontsize=11,
-        )
+        set_title = ""
+
+    cfp.con(
+        f.subspace(pressure=850),
+        title=set_title,
+        lines=False,
+        axes=False,
+        colorbar_drawedges=False,
+        colorbar_title=f"Shown in '{colour_scale}'",
+        colorbar_fraction=0.04,
+        colorbar_thick=0.02,
+        colorbar_fontsize=11,
+    )
 
 cfp.gclose(view=True)
