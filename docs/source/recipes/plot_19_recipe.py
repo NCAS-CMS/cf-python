@@ -19,40 +19,83 @@ sst = f[0]  # Select the SST variable
 # Collapse data by area mean (average over spatial dimensions)
 am_max = sst.collapse("area: maximum")  # equivalent to "X Y: mean"
 am_min = sst.collapse("area: minimum")  # equivalent to "X Y: mean"
-#am.squeeze(inplace=True)cf.seasons()
 print("AM SEASONAL IS", am_min, am_max)
-# REDUCE TO TEST
-am_min = am_min[-100:]  # final 100 points
-am_max = am_max[-100:]  # final 100 points
 
-# Check available coordinates (already found 'dimensioncoordinate0' as the
-# time coordinate)
-###print("Available coordinates:", am.coordinates())
+# Reduce all timeseries down to just 1980+ since there are some data
+# quality issues before 1970
+am_max = am_max.subspace(T=cf.ge(cf.dt("1980-01-01")))
+am_min = am_min.subspace(T=cf.ge(cf.dt("1980-01-01")))
+print("FINAL FIELDS ARE", am_max, am_min)
 
-###am_dim_key, am_data = am.coordinate("dimensioncoordinate0", item=True)
 am_sub_1 = am_min.collapse("T: mean", group=cf.mam())
 am_sub_2 = am_min.collapse("T: mean", group=cf.jja())
 am_sub_3 = am_min.collapse("T: mean", group=cf.son())
 am_sub_4 = am_min.collapse("T: mean", group=cf.djf())
+
 am_sub_5 = am_max.collapse("T: mean", group=cf.mam())
 am_sub_6 = am_max.collapse("T: mean", group=cf.jja())
 am_sub_7 = am_max.collapse("T: mean", group=cf.son())
 am_sub_8 = am_max.collapse("T: mean", group=cf.djf())
 
 
+cfp.gopen(rows=2, columns=1, bottom=0.2, file="global_avg_sst_plot.png")
 
-"""
-am_sub_1 = am.subspace(**{am_dim_key: cf.mam()})
-am_sub_2 = am.subspace(**{am_dim_key: cf.month(3)})
-am_sub_3 = am.subspace(**{am_dim_key: cf.month(4)})
-am_sub_4 = am.subspace(**{am_dim_key: cf.month(5)})
-am_sub_2 = am_sub_2 - am_sub_1
-am_sub_3 = am_sub_3 - am_sub_1
-am_sub_4 = am_sub_4 - am_sub_1
-"""
+# Put maxima subplot at top since these values are higher, given
+# increasing x axis
+xticks = list(range(1980, 2024))
+xlabels = [None for i in xticks]
 
+cfp.gpos(1)
+cfp.lineplot(
+    am_max,
+    color="grey",
+    xlabel="",
+    #xticks=xticks,
+    #xticklabels=xlabels,
+)
+cfp.lineplot(
+    am_sub_5,
+    color="red",
+    markeredgecolor="red",
+    marker="o",
+    xlabel="",
+    #xticks=xticks,
+    #xticklabels=xlabels,
+)
+cfp.lineplot(
+    am_sub_6,
+    color="green",
+    markeredgecolor="green",
+    marker="o",
+    xlabel="",
+    #xticks=xticks,
+    #xticklabels=xlabels,
+)
+cfp.lineplot(
+    am_sub_7,
+    color="blue",
+    markeredgecolor="blue",
+    marker="o",
+    xlabel="",
+    #xticks=xticks,
+    #xticklabels=xlabels,
+)
+cfp.lineplot(
+    am_sub_8,
+    color="purple",
+    markeredgecolor="purple",
+    marker="o",
+    xlabel="",
+    #xticks=xticks,
+    #xticklabels=xlabels,
+)
 
-cfp.gopen(file="global_avg_sst_plot.png")
+# Minima subplot below the maxima one
+cfp.gpos(2)
+cfp.lineplot(
+    am_min,
+    color="grey",
+)
 #cfp.lineplot(
 #    am,
 #    color="blue",
@@ -63,33 +106,26 @@ cfp.gopen(file="global_avg_sst_plot.png")
 cfp.lineplot(
     am_sub_1,
     color="red",
+    markeredgecolor="red",
+    marker="o"
 )
 cfp.lineplot(
     am_sub_2,
     color="green",
+    markeredgecolor="green",
+    marker="o"
 )
 cfp.lineplot(
     am_sub_3,
     color="blue",
+    markeredgecolor="blue",
+    marker="o"
 )
 cfp.lineplot(
     am_sub_4,
     color="purple",
+    markeredgecolor="purple",
+    marker="o"
 )
-cfp.lineplot(
-    am_sub_5,
-    color="red",
-)
-cfp.lineplot(
-    am_sub_6,
-    color="green",
-)
-cfp.lineplot(
-    am_sub_7,
-    color="blue",
-)
-cfp.lineplot(
-    am_sub_8,
-    color="purple",
-)
+
 cfp.gclose()
