@@ -27,9 +27,6 @@ orog = cf.read(f"{PATH}/1km_elevation.nc")[0]
 snow = cf.read(f"{PATH}/snowcover")[0]
 # Could use any of the seven days by indexing differently
 snow_day = snow[0]  # first day, Jan 1st of this year (2024)
-snow_day.dump()
-orog.dump()
-print("OROG DATA IS", orog.data)
 
 # %%
 # 3. Choose the regions and subspace to same area for both datasets:
@@ -39,10 +36,10 @@ print("OROG DATA IS", orog.data)
 # Tool for finding rectangular  area for lat and lon points
 # https://www.findlatitudeandlongitude.com/l/Yorkshire%2C+England/5009414/
 region_in_mid_uk = [(-3.0, -1.0), (52.0, 55.0)]  # lon then lat
-use_orog = orog.subspace(
+sub_orog = orog.subspace(
     longitude=cf.wi(*region_in_mid_uk[0]), latitude=cf.wi(*region_in_mid_uk[1])
 )
-use_snow = snow_day.subspace(
+sub_snow = snow_day.subspace(
     longitude=cf.wi(*region_in_mid_uk[0]), latitude=cf.wi(*region_in_mid_uk[1])
 )
 
@@ -51,23 +48,22 @@ use_snow = snow_day.subspace(
 # Reassign the units as they are removed by cf-python after calculation
 # Only do this if you are certain the units are convertible to %
 # This normalises to between 0 and 1 so multiply by 100 to get a percentage:
-use_snow_normal = ((use_snow - use_snow.minimum()) / (use_snow.range())) * 100
-# TODO SB not CF Compliant way to handle normalisation, check
-use_snow_normal.override_units("percentage", inplace=True)
+sub_snow = ((sub_snow - sub_snow.minimum()) / (sub_snow.range())) * 100
+sub_snow.override_units("1", inplace=True)
 
 # %%
 # 5. Regrid the data to have a comparable array.
 # Here the orography file is regridded to the snow file
 # as snow is higher resolution (if this doesnt work switch them).
-reg = use_orog.regrids(use_snow_normal, method="linear")
+regridded_orog = sub_orog.regrids(sub_snow, method="linear")
 
 # %%
 # 6. Squeeze snow data to remove the size 1 axes
-use_snow_normal = use_snow_normal.squeeze()
+sub_snow = sub_snow.squeeze()
 
 # %%
 #  7. Final statistical calculations
-coefficient = mstats.pearsonr(reg.array, use_snow_normal.array)
+coefficient = mstats.pearsonr(regridded_orog.array, sub_snow.array)
 print(f"The Pearson correlation coefficient is: {coefficient}")
 
 
@@ -78,21 +74,21 @@ print(f"The Pearson correlation coefficient is: {coefficient}")
 # colour_scale.txt is a colour scale specifically made and saved to show
 # the data but you could make your own or use existing ones from
 # https://ncas-cms.github.io/cf-plot/build/colour_scales.html
-# You will also need to adjust the labels and axis for your region
+# You will also need to adjust the labels and axis for your regridded_orogion
 cfp.gopen(
-    rows=1, columns=2, top=0.85, wspace=0.001,
+    rows=1, columns=2, top=0.85,
     file="snow_and_orog_on_same_grid.png",
     user_position=True,
 )
-# TODO SB cfp.cscale("~/cfplot_data/colour_scale.txt")
+
 # Joint config including adding an overall title
 plt.suptitle(
     (
-        "Snow cover in relation to elevation over the same area of the UK "
-        "at midnight on\n2024-01-01: the correlation coefficient between "
-        f"the two datasets is {coefficient.statistic:.4g} (4 s.f.)"
+        "Snow cover compared to elevation for the same area of the UK "
+        "at midnight\n2024-01-01, with correlation coefficient "
+        f"(on the same grid) of {coefficient.statistic:.4g} (4 s.f.)"
     ),
-    fontsize=18,
+    fontsize=17,
 )
 cfp.mapset(resolution="10m")
 cfp.setvars(ocean_color="white", lake_color="white")
@@ -103,11 +99,11 @@ label_info = {
     "yticks": (52, 53, 54, 55),
 }
 
-
+# PLot the two contour plots as columns
 cfp.gpos(1)
 cfp.cscale("wiki_2_0_reduced")
 cfp.con(
-    reg,
+    regridded_orog,
     lines=False,
     title="Elevation (from 1km-resolution orography)",
     colorbar_drawedges=False,
@@ -115,10 +111,9 @@ cfp.con(
 )
 cfp.gpos(2)
 cfp.cscale("precip4_11lev", ncols=22, reverse=1)
-cfp.con(use_snow_normal, lines=False,
+cfp.con(sub_snow, lines=False,
         title="Snow cover extent (from satellite imagery)",
         colorbar_drawedges=False,
-        yaxis=False,  # since is same as one on first column plot
         **label_info
 )
 
