@@ -1,11 +1,13 @@
 """
-Plot to compare two linked datasets: Snow against Elevation
-===========================================================
+Calculating the Pearson correlation coefficient between datasets
+================================================================
 
-In this recipe, we will plot a dependant variable (in this example snow
-cover) against an independent variable (elevation). This will be on a
-contour plot separately and together, then finding the coefficient of
-correlation and making an elevation line plot.
+In this recipe, we will take two datasets, one for an independent variable
+(in this example elevation) and one for a dependant variable (snow
+cover over a particuar day), regrid them to the same resolution then
+calculate the correlation coefficient, to get a measure of the relationship
+between them.
+
 """
 
 # %%
@@ -17,28 +19,34 @@ import matplotlib.pyplot as plt
 import scipy.stats.mstats as mstats
 
 # %%
-# 2. Read the data in:
-# We are investigating the influence of the land height on the snow cover,
-# so snow cover is the dependent variable. You can use different variable
-# names for easier understanding.
-# We are selecting the first field in the data with [0]
+# 2. Read the data in and unpack the Fields from FieldLists using indexing.
+# In our example We are investigating the influence of the land height on
+# the snow cover extent, so snow cover is the dependent variable. The data
+# was sourced from
+# TODO SOURCES:
 PATH = "~/summerstudents/final-recipes/new-required-datasets"
 orog = cf.read(f"{PATH}/1km_elevation.nc")[0]
 snow = cf.read(f"{PATH}/snowcover")[0]
-# Could use any of the seven days by indexing differently
-snow_day = snow[0]  # first day, Jan 1st of this year (2024)
-# Find day corresponding to aggregated dataset
-snow_day_dt = snow_day.coordinate("time")[0].data
-snow_day_daystring = f"{snow_day_dt.datetime_as_string[0].split(" ")[0]}"
+
 
 # %%
-# 3. Choose the regions and subspace to same area for both datasets:
-# Ensuring both datasets cover it, and also that its not too large as then
-# regridding could cause the program to crash on small computers (dont
-# regrid the whole map), as well as being mainly land.
-# Tool for finding rectangular  area for lat and lon points
-# https://www.findlatitudeandlongitude.com/l/Yorkshire%2C+England/5009414/
-region_in_mid_uk = [(-3.0, -1.0), (52.0, 55.0)]  # lon then lat
+# 3. Choose the day of pre-aggregated snow cover to investigate. We will
+# take the first datetime element corresponding to the first day from the
+# datasets, 1st January 2024, but by changing the indexing you can explore
+# other days by changing the index. We also get the string corresponding to
+# the date, to reference later:
+snow_day = snow[0]
+snow_day_dt = snow_day.coordinate("time")[0].data
+snow_day_daystring = f"{snow_day_dt.datetime_as_string[0].split(' ')[0]}"
+
+# %%
+# 4. Choose the region to consider to compare the relationship across,
+# which must be defined across both datasets, though not necessarily on the
+# same grid since we regrid to the same grid next and subspace to the same
+# area for both datasets ready for comparison in the next steps. By changing
+# the latitude and longitude points in the tuple below, you can change the
+# area that is used:
+region_in_mid_uk = ((-3.0, -1.0), (52.0, 55.0))
 sub_orog = orog.subspace(
     longitude=cf.wi(*region_in_mid_uk[0]), latitude=cf.wi(*region_in_mid_uk[1])
 )
@@ -47,46 +55,47 @@ sub_snow = snow_day.subspace(
 )
 
 # %%
-# 4. Normalise the data and change the units appropriately.
-# Reassign the units as they are removed by cf-python after calculation
-# Only do this if you are certain the units are convertible to %
-# This normalises to between 0 and 1 so multiply by 100 to get a percentage:
-sub_snow = ((sub_snow - sub_snow.minimum()) / (sub_snow.range())) * 100
+# 5. Ensure data quality, since the standard name here corresponds to a
+# unitless fraction, but the values are in the tens, so we need to
+# normalise these to all lie between 0 and 1 and change the units
+# appropriately:
+sub_snow = ((sub_snow - sub_snow.minimum()) / (sub_snow.range()))
 sub_snow.override_units("1", inplace=True)
 
 # %%
-# 5. Regrid the data to have a comparable array.
-# Here the orography file is regridded to the snow file
-# as snow is higher resolution (if this doesnt work switch them).
+# 6. Regrid the data so that they lie on the same grid and therefore each
+# array structure has values with corresponding geospatial points that
+# can be statistically compared. Here the elevation field is regridded to the
+# snow field since the snow is higher-resolution, but the other way round is
+# possible by switching the field order:
 regridded_orog = sub_orog.regrids(sub_snow, method="linear")
 
 # %%
-# 6. Squeeze snow data to remove the size 1 axes
+# 7. Squeeze the snow data to remove the size 1 axes so we have arrays of
+# the same dimensions for each of the two fields to compare:
 sub_snow = sub_snow.squeeze()
 
 # %%
-#  7. Final statistical calculations
+# 8. Finally, perform the statistical calculation by using the SciPy method
+# to find the Pearson correlation coefficient for the two arrays now they are
+# in comparable form. Note we need to use 'scipy.stats.mstats' and not
+# 'scipy.stats' for the 'pearsonr' method, to account for masked
+# data in the array(s) properly:
 coefficient = mstats.pearsonr(regridded_orog.array, sub_snow.array)
-# Need to use scipy.stats.mstats, not just scipy.stats, to account for masked
-# data in the array(s) properly.
 print(f"The Pearson correlation coefficient is: {coefficient}")
 
-
 # %%
-# 8. Plots including title stating the coefficient.
-# First it outputs the newly formatted data, you can change the file names
-# the plots will save as.
-# colour_scale.txt is a colour scale specifically made and saved to show
-# the data but you could make your own or use existing ones from
-# https://ncas-cms.github.io/cf-plot/build/colour_scales.html
-# You will also need to adjust the labels and axis for your regridded_orogion
+# 9. Make a final plot showing the two arrays side-by-side and quoting the
+# determined Pearson correlation coefficient to illustrate the relatoinship
+# and its strength visually. We use 'gpos' to position the plots in two
+# columns and apply some specific axes ticks and labels for clarity.
 cfp.gopen(
     rows=1, columns=2, top=0.85,
     file="snow_and_orog_on_same_grid.png",
     user_position=True,
 )
 
-# Joint config including adding an overall title
+# Joint configuration of the plots, including adding an overall title
 plt.suptitle(
     (
         "Snow cover compared to elevation for the same area of the UK "
@@ -105,7 +114,7 @@ label_info = {
     "yticks": (52, 53, 54, 55),
 }
 
-# PLot the two contour plots as columns
+# Plot the two contour plots as columns
 cfp.gpos(1)
 cfp.cscale("wiki_2_0_reduced")
 cfp.con(
@@ -116,7 +125,9 @@ cfp.con(
     **label_info,
 )
 cfp.gpos(2)
-cfp.cscale("precip4_11lev", ncols=22, reverse=1)
+# Don't add extentions on the colourbar since it can only be 0 to 1 inclusive
+cfp.levs(min=0, max=1, step=0.1, extend="neither")
+cfp.cscale("precip_11lev", ncols=11, reverse=1)
 cfp.con(sub_snow, lines=False,
         title="Snow cover extent (from satellite imagery)",
         colorbar_drawedges=False,
