@@ -3,7 +3,7 @@ Calculating the Pearson correlation coefficient between datasets
 ================================================================
 
 In this recipe, we will take two datasets, one for an independent variable
-(in this example elevation) and one for a dependant variable (snow
+(in this example elevation) and one for a dependent variable (snow
 cover over a particuar day), regrid them to the same resolution then
 calculate the correlation coefficient, to get a measure of the relationship
 between them.
@@ -29,11 +29,8 @@ import scipy.stats.mstats as mstats
 # and the elevation data is the 'NOAA NGDC GLOBE topo: elevation data' dataset
 # which can be sourced from the IRI Data Library, or details found, at:
 # http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NGDC/.GLOBE/.topo/index.html.
-PATH = "~/summerstudents/final-recipes/new-required-datasets"
-orog = cf.read(f"{PATH}/1km_elevation.nc")[0]
-snow = cf.read(f"{PATH}/snowcover")[0]
-orog.dump()
-
+orog = cf.read("~/recipes/1km_elevation.nc")[0]
+snow = cf.read("~/recipes/snowcover")[0]
 
 # %%
 # 3. Choose the day of pre-aggregated snow cover to investigate. We will
