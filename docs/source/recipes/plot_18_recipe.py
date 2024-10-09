@@ -21,12 +21,18 @@ import scipy.stats.mstats as mstats
 # %%
 # 2. Read the data in and unpack the Fields from FieldLists using indexing.
 # In our example We are investigating the influence of the land height on
-# the snow cover extent, so snow cover is the dependent variable. The data
-# was sourced from
-# TODO SOURCES:
+# the snow cover extent, so snow cover is the dependent variable. The snow
+# cover data is the
+# 'Snow Cover Extent 2017-present (raster 500 m), Europe, daily – version 1'
+# sourced from the Copernicus Land Monitoring Service which is described at:
+# https://land.copernicus.eu/en/products/snow/snow-cover-extent-europe-v1-0-500m
+# and the elevation data is the 'NOAA NGDC GLOBE topo: elevation data' dataset
+# which can be sourced from the IRI Data Library, or details found, at:
+# http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NGDC/.GLOBE/.topo/index.html.
 PATH = "~/summerstudents/final-recipes/new-required-datasets"
 orog = cf.read(f"{PATH}/1km_elevation.nc")[0]
 snow = cf.read(f"{PATH}/snowcover")[0]
+orog.dump()
 
 
 # %%
