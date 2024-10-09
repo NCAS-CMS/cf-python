@@ -27,6 +27,9 @@ orog = cf.read(f"{PATH}/1km_elevation.nc")[0]
 snow = cf.read(f"{PATH}/snowcover")[0]
 # Could use any of the seven days by indexing differently
 snow_day = snow[0]  # first day, Jan 1st of this year (2024)
+# Find day corresponding to aggregated dataset
+snow_day_dt = snow_day.coordinate("time")[0].data
+snow_day_daystring = f"{snow_day_dt.datetime_as_string[0].split(" ")[0]}"
 
 # %%
 # 3. Choose the regions and subspace to same area for both datasets:
@@ -64,6 +67,8 @@ sub_snow = sub_snow.squeeze()
 # %%
 #  7. Final statistical calculations
 coefficient = mstats.pearsonr(regridded_orog.array, sub_snow.array)
+# Need to use scipy.stats.mstats, not just scipy.stats, to account for masked
+# data in the array(s) properly.
 print(f"The Pearson correlation coefficient is: {coefficient}")
 
 
@@ -85,8 +90,9 @@ cfp.gopen(
 plt.suptitle(
     (
         "Snow cover compared to elevation for the same area of the UK "
-        "at midnight\n2024-01-01, with correlation coefficient "
-        f"(on the same grid) of {coefficient.statistic:.4g} (4 s.f.)"
+        f"aggregated across\n day {snow_day_daystring} with correlation "
+        "coefficient (on the same grid) of "
+        f"{coefficient.statistic:.4g} (4 s.f.)"
     ),
     fontsize=17,
 )
