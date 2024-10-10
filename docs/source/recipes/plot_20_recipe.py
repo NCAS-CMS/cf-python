@@ -1,3 +1,12 @@
+"""
+Calculating and plotting the divergence of sea current vectors
+==============================================================
+
+In this recipe, we will calculate the divergence of depth-averaged
+currents in the Irish Sea, then plot the divergence as a contour
+fill plot underneath the vectors themselves in a vector plot.
+"""
+
 import cfplot as cfp
 import cf
 
