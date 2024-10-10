@@ -58,7 +58,7 @@ print(w_2, w_2[:10].data.array)
 cfp.mapset(resolution="10m")  # makes UK coastline more high-res
 cfp.gopen(file="irish-sea-currents.png")
 # BTW ignore the warnings below - they aren't relevant.
-cfp.vect(u=u_2, v=v_2, stride=2, scale=8, key_length=5)
+cfp.vect(u=u_2, v=v_2, stride=5, scale=2, key_length=1)
 cfp.levs(min=-5, max=5, step=0.5)
 cfp.con(w_1, blockfill=True, lines=False)
 cfp.gclose()
