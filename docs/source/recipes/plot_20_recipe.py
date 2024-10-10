@@ -16,7 +16,8 @@ v = v.squeeze()
 
 # Now we need to use some means to condense the u and v fields in the same way into
 # having 1 time point, not 720 - for example we can just pick a time value out:
-chosen_time = "2006-01-16 00:00:00"
+print("Times are", v.construct("T").data.datetime_as_string)
+chosen_time = "2006-01-15 23:30:00"  # 720 choices to choose from!
 v_1 = v.subspace(T=cf.dt(chosen_time))
 u_1 = u.subspace(T=cf.dt(chosen_time))
 v_1 = v_1.squeeze()
@@ -32,8 +33,6 @@ print(v_1)
 # Note that there appear to be some really large vectors all pointing in the
 # same direction which are spamming the plot. We need to remove these. By
 # looking at the data we can see what these are and work out how to remove them:
-print(u.data)
-print(u[:10].data.array)
 
 # ... shows more of the array
 
@@ -52,21 +51,16 @@ w_1 = w.subspace(T=cf.dt(chosen_time))
 # This field also needs masking for those data points.
 w_2 = w_1.where(cf.lt(-9e+03), cf.masked)
 print(w_2)
-print(w_2, w_2[:10].data.array)
+
+
+# Plot divergence in the background
+div = cf.div_xy(u_2, v_2, radius="earth")
+
 
 # Our final basic plot:
 cfp.mapset(resolution="10m")  # makes UK coastline more high-res
-cfp.gopen(file="irish-sea-currents.png")
-# BTW ignore the warnings below - they aren't relevant.
-cfp.vect(u=u_2, v=v_2, stride=5, scale=2, key_length=1)
-cfp.levs(min=-5, max=5, step=0.5)
-cfp.con(w_1, blockfill=True, lines=False)
+cfp.gopen(file=f"irish-sea-currents-with-divergence-{chosen_time}.png")
+cfp.cscale("ncl_default")
+cfp.vect(u=u_2, v=v_2, stride=6, scale=3, key_length=1)
+cfp.con(div, lines=False)
 cfp.gclose()
-
-# Ideas for TODOs:
-# investigate difference days (do this by changing the 'T=cf.dt("2006-01-16 00:00:00")') datetime
-# values to different ones in the time coordinate data so you look at different days, or repace it
-# with a collapse over some stat e.g. mean to show the mean over all the times,
-# calculate divergence, calculate curl / relative voriticity, calculate absolute voriticity,
-# explore the other dataset as well (that covers other dates/times) - you could compare the
-# two to effectively compare the currents across different dates.
