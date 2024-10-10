@@ -62,5 +62,12 @@ cfp.mapset(resolution="10m")  # makes UK coastline more high-res
 cfp.gopen(file=f"irish-sea-currents-with-divergence-{chosen_time}.png")
 cfp.cscale("ncl_default")
 cfp.vect(u=u_2, v=v_2, stride=6, scale=3, key_length=1)
-cfp.con(div, lines=False)
+cfp.con(
+    div,
+    lines=False,
+    title=(
+        f"Depth-averaged Irish Sea currents at {chosen_time} "
+        "with their divergence shown"
+    )
+)
 cfp.gclose()
