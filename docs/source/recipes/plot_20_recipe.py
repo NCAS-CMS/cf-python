@@ -19,8 +19,7 @@ import cf
 # Irish Sea area. It was found via the CEDA Archive at the location of:
 # https://catalogue.ceda.ac.uk/uuid/1b89e025eedd49e8976ee0721ec6e9b5, with
 # DOI of https://dx.doi.org/10.5285/031e7ca1-9710-280d-e063-6c86abc014a0:
-f = cf.read(
-    "~/summerstudents/final-recipes/new-required-datasets/POLCOMS_WAM_ZUV_01_16012006.nc")
+f = cf.read("~/recipes/POLCOMS_WAM_ZUV_01_16012006.nc")
 
 # %%
 # 3. Get the separate vector components, which are stored as separate fields.

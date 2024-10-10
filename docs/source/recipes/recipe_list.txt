@@ -17,7 +17,7 @@ plot_08_recipe.html#sphx-glr-recipes-plot-08-recipe-py
 plot_09_recipe.html#sphx-glr-recipes-plot-09-recipe-py
 <div class="sphx-glr-thumbcontainer histogram" tooltip="Histogram">
 plot_10_recipe.html#sphx-glr-recipes-plot-10-recipe-py
-<div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip=" Subspace, Contourmap, Mathematical Operations">
+<div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip="Subspace, Contourmap, Mathematical Operations">
 plot_11_recipe.html#sphx-glr-recipes-plot-11-recipe-py
 <div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Subspace, Collapse">
 plot_12_recipe.html#sphx-glr-recipes-plot-12-recipe-py
@@ -27,4 +27,8 @@ plot_13_recipe.html#sphx-glr-recipes-plot-13-recipe-py
 plot_14_recipe.html#sphx-glr-recipes-plot-14-recipe-py
 <div class="sphx-glr-thumbcontainer subspace collapse contourmap" tooltip="Subspace, Collapse, Contourmap">
 plot_15_recipe.html#sphx-glr-recipes-plot-15-recipe-py
-<div class="sphx-glr-thumbcontainer histogram subspace" tooltip="Histogram, Subspace">
+<div class="sphx-glr-thumbcontainer histogram subspace" tooltip="Histogram, Subspace, Subplot">
+plot_16_recipe.html#sphx-glr-recipes-plot-16-recipe-py
+<div class="sphx-glr-thumbcontainer contourmap subspace subplot" tooltip="Contourmap, Subspace, Subplot">
+plot_20_recipe.html#sphx-glr-recipes-plot-20-recipe-py
+<div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip="Subspace, Contourmap, Mathematical Operations">
