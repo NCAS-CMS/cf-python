@@ -6,11 +6,9 @@ from ensemble simulation data for 1941.
 """
 
 import cfplot as cfp
-import cf
-import numpy as np
-import pandas as pd
-from datetime import timedelta
 import matplotlib.pyplot as plt
+
+import cf
 
 # 1. Load the dataset
 f = cf.read("~/recipes_break/ERA5_monthly_averaged_SST.nc")
@@ -34,7 +32,8 @@ colours_seasons_map = {
 }
 
 cfp.gopen(
-    rows=2, columns=1, bottom=0.1, top=0.85, file="global_avg_sst_plot.png")
+    rows=2, columns=1, bottom=0.1, top=0.85, file="global_avg_sst_plot.png"
+)
 
 # Put maxima subplot at top since these values are higher, given
 # increasing x axis
@@ -77,7 +76,7 @@ for colour, season_query in colours_seasons_map.items():
         markeredgecolor=colour,
         marker="o",
         xlabel="",
-        title="Minima per month or season"
+        title="Minima per month or season",
     )
 cfp.lineplot(
     am_min,
