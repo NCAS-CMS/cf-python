@@ -18,7 +18,7 @@ import cf
 
 # %%
 # 2. Read the dataset in extract the SST Field from the FieldList:
-f = cf.read("~/recipes_break/ERA5_monthly_averaged_SST.nc")
+f = cf.read("~/recipes/ERA5_monthly_averaged_SST.nc")
 sst = f[0]  # this gives the sea surface temperature (SST)
 
 # %%
