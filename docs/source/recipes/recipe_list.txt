@@ -7,7 +7,7 @@ plot_03_recipe.html#sphx-glr-recipes-plot-03-recipe-py
 plot_04_recipe.html#sphx-glr-recipes-plot-04-recipe-py
 <div class="sphx-glr-thumbcontainer regrid" tooltip="Regrid">
 plot_05_recipe.html#sphx-glr-recipes-plot-05-recipe-py
-<div class="sphx-glr-thumbcontainer subspace contourmap" tooltip="Subspace, Contourmap">
+<div class="sphx-glr-thumbcontainer subspace contourmap vectorplot" tooltip="Subspace, Contourmap, Vectorplot">
 plot_06_recipe.html#sphx-glr-recipes-plot-06-recipe-py
 <div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="Regrid, Contourmap">
 plot_07_recipe.html#sphx-glr-recipes-plot-07-recipe-py
@@ -31,4 +31,4 @@ plot_15_recipe.html#sphx-glr-recipes-plot-15-recipe-py
 plot_16_recipe.html#sphx-glr-recipes-plot-16-recipe-py
 <div class="sphx-glr-thumbcontainer contourmap subspace subplot" tooltip="Contourmap, Subspace, Subplot">
 plot_20_recipe.html#sphx-glr-recipes-plot-20-recipe-py
-<div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip="Subspace, Contourmap, Mathematical Operations">
+<div class="sphx-glr-thumbcontainer subspace contourmap vectorplot maths masking" tooltip="Subspace, Contourmap, Vectorplot, Mathematical Operations">
