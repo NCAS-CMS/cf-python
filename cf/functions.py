@@ -1558,7 +1558,7 @@ def total_memory():
 
 
 def is_log_level_info(logger):
-    """Return True if and only if log level is at least INFO.
+    """Return True if and only if log level is at least as verbose as INFO.
 
     .. versionadded:: NEXTVERSION
 
