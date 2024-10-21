@@ -16,10 +16,10 @@ class IndexMixin:
 
     **Examples**
 
-    >>> a = cf.{{class}}(....)
+    >>> a = cf.{{class}}(...)
     >>> a.shape
     (6, 5)
-    >>> print(np.asanyarray(a)
+    >>> print(np.asanyarray(a))
     [[ 0  1  2  3  4])
      [ 5  6  7  8  9]
      [10 11 12 13 14]

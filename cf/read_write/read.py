@@ -737,7 +737,7 @@ def read(
               ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
 
             *Parameter example:*
-              ``{'key: 'scaleway-api-key...', 'secret':
+              ``{'key': 'scaleway-api-key...', 'secret':
               'scaleway-secretkey...', 'endpoint_url':
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``

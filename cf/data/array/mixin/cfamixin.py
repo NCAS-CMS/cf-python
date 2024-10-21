@@ -254,7 +254,7 @@ class CFAMixin:
             3-`tuple`
                 1. The shape of the aggregated data.
                 2. The shape of the array of fragments.
-                3. The parsed aggregation instructsions.
+                3. The parsed aggregation instructions.
 
         """
         aggregated_data = {}
@@ -517,10 +517,10 @@ class CFAMixin:
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
-        A fragmented dimenion (i.e. one spanned by two or fragments)
-        will always have a subarray size equal to the size of each of
-        its fragments, overriding any other size implied by the
-        *shapes* parameter.
+        A fragmented dimension (i.e. one spanned by two or more
+        fragments) will always have a subarray size equal to the
+        size of each of its fragments, overriding any other size
+        implied by the *shapes* parameter.
 
         .. versionadded:: 3.14.0
 
@@ -585,7 +585,7 @@ class CFAMixin:
             if dim in f_dims:
                 # This aggregated dimension is spanned by two or more
                 # fragments => set the chunks to be the same size as
-                # the each fragment.
+                # each fragment.
                 c = []
                 index = [0] * ndim
                 for j in range(n_fragments):

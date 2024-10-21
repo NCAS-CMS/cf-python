@@ -18,7 +18,7 @@ class H5netcdfArray(
 
     **Active storage reductions**
 
-    An active storage reductionx may be enabled with the `actify`
+    An active storage reduction may be enabled with the `actify`
     method. See `cf.data.collapse.Collapse` for details.
 
     .. versionadded:: NEXTVERSION

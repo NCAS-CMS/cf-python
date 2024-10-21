@@ -1462,7 +1462,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
                 "difficult to diagnose, as dask will have silently "
-                "trapped it and returned NotImplemented (seeprint , for "
+                "trapped it and returned NotImplemented (see, for "
                 "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
                 "way to go if the cause of the error is not obvious."
@@ -9937,7 +9937,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             dx = self._custom["dask"]
             # Note: The mask hardness functions have their own calls
-            #       to 'cf_asanyarray', so we can don't need worry about
+            #       to 'cf_asanyarray', so we don't need to worry about
             #       setting another one.
         else:
             if asanyarray is None:

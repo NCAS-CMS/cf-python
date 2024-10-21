@@ -32,8 +32,8 @@ class ActiveStorageError(Exception):
 def actify(method):
     """Decorator for active storage reductions on chunks.
 
-    Intended for to decorate the ``cf_*_chunk`` methods in
-    cf.data.collapse.dask_collapse`.
+    Intended to decorate the ``cf_*_chunk`` methods in
+    `cf.data.collapse.dask_collapse`.
 
     When a ``cf_*_chunk`` method is decorated, its computations will
     be attempted in active storage. If that is not possible (due to
@@ -155,7 +155,7 @@ def active_chunk_function(method, *args, **kwargs):
         return
 
     if not getattr(x, "active_storage", False):
-        # The data data object 'x' is incompatible with active storage
+        # The data object 'x' is incompatible with active storage
         # operations. E.g. it is a UMArray object, a numpy array, etc.
         return
 

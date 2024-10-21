@@ -21,7 +21,7 @@ class ArrayMixin:
     # REVIEW: active: `_meta`: Moved to here from `FileArrayMixin`
     @property
     def _meta(self):
-        """Normalize the array to an appropriate Dask meta object.
+        """Normalise the array to an appropriate Dask meta object.
 
         The Dask meta can be thought of as a suggestion to Dask. Dask
         uses this meta to generate the task graph until it can infer

@@ -736,7 +736,7 @@ def cf_filled(a, fill_value=None):
 def cf_asanyarray(a):
     """Convert to a `numpy` array.
 
-    Only do this is the input *a* has an `__asanyarray__` attribute
+    Only do this if the input *a* has an `__asanyarray__` attribute
     with value True.
 
     .. versionadded:: NEXTVERSION
