@@ -71,14 +71,13 @@ class H5netcdfArray(
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because the netCDF file is about to be
-        #       accessed.
+        # We need to lock because the netCDF file is about to be accessed.
         self._lock.acquire()
 
-        # Note: It's cfdm.H5netcdfArray.__getitem__ that we want to
-        #       call here, but we use 'Container' in super because
-        #       that comes immediately before cfdm.H5netcdfArray in
-        #       the method resolution order.
+        # It's cfdm.H5netcdfArray.__getitem__ that we want to
+        # call here, but we use 'Container' in super because
+        # that comes immediately before cfdm.H5netcdfArray in
+        # the method resolution order.
         array = super(Container, self).__getitem__(index)
 
         self._lock.release()
