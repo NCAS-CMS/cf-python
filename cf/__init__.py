@@ -216,12 +216,6 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-# _minimum_vn = "2022.12.1"
-# if Version(dask.__version__) < Version(_minimum_vn):
-#    raise RuntimeError(
-#        f"Bad dask version: cf requires dask>={_minimum_vn}. "
-#        f"Got {dask.__version__} at {dask.__file__}"
-#    )
 
 # Check the version of Python
 _minimum_vn = "3.8.0"
