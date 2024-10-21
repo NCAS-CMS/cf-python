@@ -233,7 +233,10 @@ class NetCDFFragmentArray(
                 return H5netcdfFragmentArray(**kwargs)._get_array(index)
 
         # Still here?
+        if not filenames:
+            raise FileNotFoundError(f"No fragment files")
+        
         if len(filenames) == 1:
             raise FileNotFoundError(f"No such fragment file: {filenames[0]}")
-
+        
         raise FileNotFoundError(f"No such fragment files: {filenames}")
