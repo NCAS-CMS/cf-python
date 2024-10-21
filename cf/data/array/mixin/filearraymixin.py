@@ -17,6 +17,7 @@ class FileArrayMixin:
         .. versionadded:: 3.15.0
 
         """
+        print(6666)
         return (
             self.__class__,
             self.shape,
