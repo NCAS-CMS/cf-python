@@ -5592,7 +5592,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         When the data being collapsed are stored remotely, the
         collapse calculations may be carried out on a server (ideally
         one that is close in a network distance sense) to the data,
-        thereby removing the time and energy costs of transfering the
+        thereby removing the time and energy costs of transferring the
         entire un-collapsed data to the local client. Whether or not
         this will occur is determined on a case-by-case basis, and
         will only be done if all of the following criteria are met:
