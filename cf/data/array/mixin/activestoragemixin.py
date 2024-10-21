@@ -1,8 +1,4 @@
 # REVIEW: active: `ActiveStorageMixin`: new mixin class `ActiveStorageMixin`
-# try:
-#    from activestorage import Active
-# except ModuleNotFoundError:
-#    Active = None
 
 
 class ActiveStorageMixin:
