@@ -213,7 +213,7 @@ basic data computation over four chunks:
     [18 19 20 21 22 23]
     [24 25 26 27 28 29]]
    >>> e = d ** 2 + d
-   >>> e.to_dask_array().visualize('dask_task_graph.png')
+   >>> e.to_dask_array().visualize('dask_task_graph.svg')
    >>> print(e.array)
    [[  0   2   6  12  20  30]
     [ 42  56  72  90 110 132]
@@ -221,14 +221,14 @@ basic data computation over four chunks:
     [342 380 420 462 506 552]
     [600 650 702 756 812 870]]
 
-The image file ``dask_task_graph.png`` contains the visualisation of
+The image file ``dask_task_graph.svg`` contains the visualisation of
 the Dask task graph, showing the operations on each chunk:
 
 .. figure:: images/dask_task_graph.svg
    :scale: 8 %
 
 The operations were only executed when their result was requested with
-the final ``e.array`` command. The boxes in ``dask_task_graph.png``
+the final ``e.array`` command. The boxes in ``dask_task_graph.svg``
 represent the data chunks and the circles represent the operations to
 be performed on the chunks. The five boxes in the bottom row are the
 starting data (i.e. the four chunks of ``d`` and the scalar ``2``),
