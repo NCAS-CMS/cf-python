@@ -4610,7 +4610,7 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The `cf.read`
 function creates data in this manner. A pointer to an array in a
 netCDF file can be stored in a `cf.NetCDF4Array` or
-`~cf.H5netcdfAarray` instance, which is is used to initialise a
+`~cf.H5netcdfAarray` instance, which is used to initialise a
 `cf.Data` instance.
 
 .. code-block:: python

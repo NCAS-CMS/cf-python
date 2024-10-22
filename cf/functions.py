@@ -1339,7 +1339,7 @@ class active_storage_url(ConstantAccess):
 
 # REVIEW: active: `active_storage_max_requests`: new function
 class active_storage_max_requests(ConstantAccess):
-    """Cconcurrent active storage server requests per `dask` chunk.
+    """Concurrent active storage server requests per `dask` chunk.
 
     This is the maximum number of concurrent requests per `dask` chunk
     that are sent to the active storage server by an `Active`
@@ -1350,7 +1350,7 @@ class active_storage_max_requests(ConstantAccess):
       active storage server can process concurrently before its
       performance is degraded;
 
-    * :math:`N_{PE}` the number of available PEs on the local client.
+    * :math:`N_{PE}` the number of available PEs on the local client;
 
     * :math:`N_{chunk}` the number of `dask` chunks being reduced with
       active storage.
