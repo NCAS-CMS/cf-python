@@ -55,7 +55,6 @@ class ActiveStorageTest(unittest.TestCase):
         with cf.configuration(active_storage=True, active_storage_url="dummy"):
             self.assertTrue(cf.active_storage())
             self.assertEqual(cf.active_storage_url(), "dummy")
-            #            self.assertTrue(f.data.active_storage)
             active_array = f.collapse("mean", weights=False).array
 
         self.assertEqual(active_array, local_array)

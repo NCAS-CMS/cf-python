@@ -188,15 +188,20 @@ def active_chunk_function(method, *args, **kwargs):
     filename = x.get_filename()
     address = x.get_address()
     max_requests = active_storage_max_requests()
-
     active_kwargs = {
         "uri": "/".join(filename.split("/")[3:]),
         "ncvar": address,
         "storage_options": x.get_storage_options(),
         "active_storage_url": url,
-        "storage_type": "s3",  # Temporary requirement to Active!
+        "storage_type": "s3",
         "max_threads": max_requests,
     }
+    # WARNING: The "uri", "storage_options", and "storage_type" keys
+    #          of the `active_kwargs` dictionary are currently
+    #          formatted according to the whims of the `Active` class
+    #          (i.e. the pyfive branch of PyActiveStorage). Future
+    #          versions of `Active` will have a better API, that will
+    #          require improvements to `active_kwargs`.
 
     index = x.index()
 
