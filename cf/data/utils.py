@@ -849,7 +849,7 @@ def collapse(
             ``N-ddof`` where ``N`` is the number of non-missing
             elements. A value of 1 applies Bessel's correction. If the
             calculation is weighted then *ddof* can only be 0 or 1.
- 
+
             For collapse functions for which delta degrees of freedom
             is not applicable (such as `max`), *ddof* must be `None`.
 

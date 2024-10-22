@@ -3373,10 +3373,10 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35 
-    HDF5 library: 1.12.2 
-    netcdf library: 4.9.3-development 
-    udunits2 library: /home/user/lib/libudunits2.so.0 
+    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
+    HDF5 library: 1.12.2
+    netcdf library: 4.9.3-development
+    udunits2 library: /home/user/lib/libudunits2.so.0
     esmpy/ESMF: 8.6.1 /home/user/lib/python3.12/site-packages/esmpy/__init__.py
     Python: 3.12.2 /home/user/bin/python
     dask: 2024.6.0 /home/user/lib/python3.12/site-packages/dask/__init__.py

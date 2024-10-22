@@ -234,9 +234,9 @@ class NetCDFFragmentArray(
 
         # Still here?
         if not filenames:
-            raise FileNotFoundError(f"No fragment files")
-        
+            raise FileNotFoundError("No fragment files")
+
         if len(filenames) == 1:
             raise FileNotFoundError(f"No such fragment file: {filenames[0]}")
-        
+
         raise FileNotFoundError(f"No such fragment files: {filenames}")

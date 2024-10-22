@@ -222,7 +222,7 @@ def active_chunk_function(method, *args, **kwargs):
     active.method = method
     active.components = True
 
-    # Instruct the `Active` class to do attempt active storage
+    # Instruct the `Active` class to attempt an active storage
     # reduction on the remote server
     #
     # WARNING: The `_version` API of `Active` is likely to change from
