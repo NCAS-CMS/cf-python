@@ -8650,6 +8650,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         data_axes.insert(position, axis)
         d._axes = data_axes
 
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = list(chunksizes)
+            chunksizes.insert(position, 1)
+            d.nc_set_hdf5_chunksizes(chunksizes)
+
         return d
 
     @_deprecated_kwarg_check("size", version="3.14.0", removed_at="5.0.0")
@@ -11891,6 +11898,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = [
+                size for i, size in enumerate(chunksizes) if i not in iaxes
+            ]
+            d.nc_set_hdf5_chunksizes(chunksizes)
+
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -12137,6 +12152,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         d._set_dask(dx)
+
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = [chunksizes[i] for i in axes]
+            d.nc_set_hdf5_chunksizes(chunksizes)
+
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
