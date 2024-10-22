@@ -98,7 +98,12 @@ class functionTest(unittest.TestCase):
         # Test the setting of each lone item.
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
-            cf.configuration(**{setting: value})
+            try:
+                cf.configuration(**{setting: value})
+            except ModuleNotFoundError as error:
+                print(f"WARNING: not testing {setting!r} due to: {error}")
+                continue
+            
             post_set = cf.configuration()
 
             # Expect a dict that is identical to the original to start
