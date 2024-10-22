@@ -270,8 +270,10 @@ environments for which these features are not required.
 
 .. rubric:: Active storage collapses
 
-* `activestorage <https://pypi.org/project/activestorage>`_, version 1.0.0
-  or newer.
+* `activestorage <https://github.com/NCAS-CMS/PyActiveStorage>`_. This
+  library is not yet in PyPi (it will be soon), so in the interim you
+  must use a copy of the ``pyfive`` branch of the
+  https://github.com/NCAS-CMS/PyActiveStorage repository.
 
 ----
 
