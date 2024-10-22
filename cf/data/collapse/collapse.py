@@ -93,7 +93,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -206,7 +206,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -272,7 +272,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         weights=None,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -325,7 +325,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         dtype=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -391,7 +391,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -453,7 +453,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -502,7 +502,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -569,7 +569,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -635,7 +635,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -702,7 +702,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -771,7 +771,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -841,7 +841,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -959,7 +959,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         split_every=None,
         chunk_function=None,

@@ -7402,7 +7402,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group=None,
         group_span=None,
         group_contiguous=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         regroup=None,
         coordinate=None,

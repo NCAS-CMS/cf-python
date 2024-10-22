@@ -282,14 +282,12 @@ _docstring_substitution_definitions = {
                 The sample size threshold below which collapsed values
                 are set to missing data. It is defined as a fraction
                 (between 0 and 1 inclusive) of the contributing input
-                data values.
-
-                The default of *mtol* is 1, meaning that a missing
-                datum in the output array occurs whenever all of its
+                data values. A missing value in the output array
+                occurs whenever more than ``100*mtol%`` of its
                 contributing input array elements are missing data.
 
-                For other values, a missing datum in the output array
-                occurs whenever more than ``100*mtol%`` of its
+                The default of *mtol* is 1, meaning that a missing
+                value in the output array occurs whenever all of its
                 contributing input array elements are missing data.
 
                 Note that for non-zero values of *mtol*, different
@@ -300,10 +298,10 @@ _docstring_substitution_definitions = {
     "{{ddof: number}}": """ddof: number
                 The delta degrees of freedom, a non-negative
                 number. The number of degrees of freedom used in the
-                calculation is (N-*ddof*) where N represents the
-                number of non-missing elements. A value of 1 applies
-                Bessel's correction. If the calculation is weighted
-                then *ddof* can only be 0 or 1.""",
+                calculation is ``N-ddof`` where ``N`` is the number of
+                non-missing elements. A value of 1 applies Bessel's
+                correction. If the calculation is weighted then *ddof*
+                can only be 0 or 1.""",
     # split_every
     "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
                 Determines the depth of the recursive aggregation. If

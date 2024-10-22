@@ -41,14 +41,13 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
         mtol: number
             The sample size threshold below which collapsed values are
             set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
+            0 and 1 inclusive) of the contributing input data
+            values. A missing value in the output array occurs
+            whenever more than ``100*mtol%`` of its contributing input
+            array elements are missing data.
 
-            The default of *mtol* is 1, meaning that a missing datum
+            The default of *mtol* is 1, meaning that a missing value
             in the output array occurs whenever all of its
-            contributing input array elements are missing data.
-
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
             contributing input array elements are missing data.
 
             Note that for non-zero values of *mtol*, different
