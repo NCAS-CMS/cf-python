@@ -883,7 +883,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     raise ValueError(
                         f"Can't write {cfvar!r} as a CFA-netCDF "
                         "aggregation variable: Dask chunk defined by index "
-                        f"{indices} spans two or more fragments."
+                        f"{indices} spans two or more fragments. "
                         "A possible fix for this is to set chunks=None as "
                         "an argument of a prior call to cf.read"
                     )

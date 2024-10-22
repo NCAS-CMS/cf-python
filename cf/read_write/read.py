@@ -672,8 +672,8 @@ def read(
               names. Each key may be specified with or without the
               ``${*}`` syntax (where `*` represents any amount of any
               characters). For instance, ``{'substitution':
-              'replacement'}`` and ``{'${substitution}' are equivalent
-              'replacement'}``. The substitutions are used in
+              'replacement'}`` and ``{'${substitution}': 'replacement'}``'
+              are equivalent. The substitutions are used in
               conjunction with, and take precedence over, any that are
               stored in the CFA-netCDF file by the ``substitutions``
               attribute of the ``file`` fragement array variable.
@@ -742,7 +742,7 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-           .. versionadded:: NEXTVERSION
+            .. versionadded:: NEXTVERSION
 
         cache: `bool`, optional
             If True, the default, then cache the first and last array
