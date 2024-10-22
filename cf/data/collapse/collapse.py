@@ -47,7 +47,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
               active storage server is sufficiently far away from the
               data then it could even be faster and require less
               energy to do non-active operation of the local client.
-              The performance improvements from using active storage
 
     See `cf.data.collapse.collapse_active.actify` and
     `cf.data.collapse.collapse_active.active_chunk_function` for
