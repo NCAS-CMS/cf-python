@@ -222,7 +222,12 @@ def active_chunk_function(method, *args, **kwargs):
     active.method = method
     active.components = True
 
-    # Force an active storage reduction on the remote server
+    # Instruct the `Active` class to do attempt active storage
+    # reduction on the remote server
+    #
+    # WARNING: The `_version` API of `Active` is likely to change from
+    #          the current version (i.e. the pyfive branch of
+    #          PyActiveStorage)
     active._version = 2
 
     # ----------------------------------------------------------------
