@@ -9,7 +9,7 @@ class NetCDFArray:
 
     def __init__(self, *args, **kwargs):
         """**Initialisation**"""
-        from ..functions import DeprecationError
+        from ...functions import DeprecationError
 
         raise DeprecationError(
             f"{self.__class__.__name__} was deprecated at version NEXTVERSION "
