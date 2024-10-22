@@ -860,7 +860,7 @@ Active storage collapses
 When the data being collapsed are stored remotely, the collapse
 calculations may be carried out on a server that is close (in a
 network distance sense) to the data, thereby removing the time and
-power costs of transfering the entire un-collapsed data to the local
+power costs of transferring the entire un-collapsed data to the local
 client.
 
 Whether or not this will occur for an individual `dask` chunk is
