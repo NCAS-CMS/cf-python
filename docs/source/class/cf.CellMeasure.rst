@@ -433,6 +433,9 @@ NetCDF
    ~cf.CellMeasure.nc_set_variable 
    ~cf.CellMeasure.nc_get_external
    ~cf.CellMeasure.nc_set_external 
+   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cf.CellMeasure.nc_hdf5_chunksizes
+   ~cf.CellMeasure.nc_set_hdf5_chunksizes
 
 CFA
 ---

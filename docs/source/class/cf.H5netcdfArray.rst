@@ -23,6 +23,7 @@ Inspection
    ~cf.H5netcdfArray.get_compression_type
    ~cf.H5netcdfArray.get_subspace
    ~cf.H5netcdfArray.get_attributes
+   ~cf.H5netcdfArray.index
 
    
 .. rubric:: Attributes
@@ -37,6 +38,7 @@ Inspection
    ~cf.H5netcdfArray.ndim
    ~cf.H5netcdfArray.shape
    ~cf.H5netcdfArray.size
+   ~cf.H5netcdfArray.original_shape
 
 Units
 -----
@@ -50,6 +52,7 @@ Units
    
    ~cf.H5netcdfArray.get_calendar
    ~cf.H5netcdfArray.get_units
+   ~cf.H5netcdfArray.Units
    
 File
 ----
@@ -73,6 +76,9 @@ File
    ~cf.H5netcdfArray.get_mask
    ~cf.H5netcdfArray.get_unpack
    ~cf.H5netcdfArray.get_storage_options
+   ~cf.H5netcdfArray.add_file_location
+   ~cf.H5netcdfArray.del_file_location
+   ~cf.H5netcdfArray.file_locations
    ~cf.H5netcdfArray._lock
    
 Miscellaneous
@@ -94,10 +100,7 @@ Active storage
    :toctree: ../method/
    :template: method.rst
    
-   ~cf.H5netcdfArray.actify
-   ~cf.H5netcdfArray.get_active_url
-   ~cf.H5netcdfArray.get_active_method
-   ~cf.H5netcdfArray.get_active_axis
+   ~cf.H5netcdfArray.active_storage
    
 Special
 -------
@@ -135,4 +138,5 @@ Deprecated
    :toctree: ../method/                   
    :template: method.rst                  
                                           
+   ~cf.H5netcdfArray.filename
    ~cf.H5netcdfArray.get_missing_values

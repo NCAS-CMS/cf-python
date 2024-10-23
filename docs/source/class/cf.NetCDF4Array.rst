@@ -23,6 +23,7 @@ Inspection
    ~cf.NetCDF4Array.get_compression_type
    ~cf.NetCDF4Array.get_subspace
    ~cf.NetCDF4Array.get_attributes
+   ~cf.NetCDF4Array.index
 
    
 .. rubric:: Attributes
@@ -37,6 +38,7 @@ Inspection
    ~cf.NetCDF4Array.ndim
    ~cf.NetCDF4Array.shape
    ~cf.NetCDF4Array.size
+   ~cf.NetCDF4Array.original_shape
 
 Units
 -----
@@ -50,7 +52,10 @@ Units
    
    ~cf.NetCDF4Array.get_calendar
    ~cf.NetCDF4Array.get_units
-   
+   ~cf.NetCDF4Array.Units
+
+
+
 File
 ----
    
@@ -73,6 +78,9 @@ File
    ~cf.NetCDF4Array.get_mask
    ~cf.NetCDF4Array.get_unpack
    ~cf.NetCDF4Array.get_storage_options
+   ~cf.NetCDF4Array.add_file_location
+   ~cf.NetCDF4Array.del_file_location
+   ~cf.NetCDF4Array.file_locations
    ~cf.NetCDF4Array._lock
    
 Miscellaneous
@@ -93,11 +101,8 @@ Active storage
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
-   ~cf.NetCDF4Array.actify
-   ~cf.NetCDF4Array.get_active_url
-   ~cf.NetCDF4Array.get_active_method
-   ~cf.NetCDF4Array.get_active_axis
+
+   ~cf.NetCDF4Array.active_storage
    
 Special
 -------
@@ -134,5 +139,6 @@ Deprecated
    :nosignatures:                         
    :toctree: ../method/                   
    :template: method.rst                  
-                                          
+
+   ~cf.NetCDF4Array.filename
    ~cf.NetCDF4Array.get_missing_values

@@ -407,6 +407,9 @@ NetCDF
    ~cf.FieldAncillary.nc_get_variable
    ~cf.FieldAncillary.nc_has_variable
    ~cf.FieldAncillary.nc_set_variable 
+   ~cf.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_set_hdf5_chunksizes
 
 CFA
 ---
