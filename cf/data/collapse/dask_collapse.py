@@ -1265,7 +1265,7 @@ def cf_var_chunk(
     _{X_{i}}^{2}+N_{X_{i}}\mu _{X_{i}}^{2}\right]}-\left[\sum
     _{i}{N_{X_{i}}}\right]\mu _{X}^{2}\right)}}
 
-    where X_{i}\cap X_{j}=\varnothing , \forall i<j.
+    where X_{i}\cap X_{j}=\emptyset , \forall i<j.
 
     See
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
