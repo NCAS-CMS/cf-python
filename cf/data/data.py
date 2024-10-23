@@ -387,7 +387,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                         self._set_dask(array, copy=copy, clear=_NONE)
                 else:
                     self._set_dask(
-                        array, copy=copy, clear=_NONE, asanyarray=None
+                        array, copy=copy, clear=_NONE, __asanyarray__=None
                     )
             else:
                 self._del_dask(None, clear=_NONE)
@@ -515,7 +515,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # REVIEW: getitem: `__init__`: set 'asanyarray'
         # Store the dask array
-        self._set_dask(dx, clear=_NONE, asanyarray=None)
+        self._set_dask(dx, clear=_NONE, __asanyarray__=None)
 
         # Override the data type
         if dtype is not None:
@@ -966,7 +966,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         #   so we set asanyarray=True to ensure that, if required,
         #   they are converted at compute time.
         # ------------------------------------------------------------
-        new._set_dask(dx, asanyarray=True)
+        new._set_dask(dx, __asanyarray__=True)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -1184,19 +1184,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     # REVIEW: getitem: `__asanyarray__`: new property `__asanyarray__`
     @property
     def __asanyarray__(self):
-        """Whether the chunks need conversion to a `numpy` array.
+        """Whether the chunks need conversion to `numpy` arrays.
 
         .. versionadded:: NEXTVERSION
 
         :Returns:
 
             `bool`
-                If True then at compute time add a final operation
-                (not in-place) to the Dask graph that converts a
-                chunk's array object to a `numpy` array if the array
-                object has an `__asanyarray__` attribute that is
-                `True`, or else does nothing. If False then do not add
-                this operation.
+                If True then at compute time add to the Dask graph
+                (not in-place) a `cf_asanyarray` operation, which
+                converts a chunk's array object to a `numpy` array,
+                but only if the array object itself has an
+                `__asanyarray__` attribute that is `True`. If False
+                then this operation is not added to the Dask graph.
 
         """
         return self._custom.get("__asanyarray__", True)
@@ -1415,7 +1415,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             self._cfa_del_write()
 
     # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
-    def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
+    def _set_dask(self, dx, copy=False, clear=_ALL, __asanyarray__=False):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
@@ -1438,9 +1438,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 results in all components being removed. See
                 `_clear_after_dask_update` for details.
 
-            asanyarray: `bool` or `None`, optional
-                If `None` then do nothing. Otherwise set
-                `__asanyarray__` to the Boolean value of *asanyarray*.
+            __asanyarray__: `bool` or `None`, optional
+                If `None` then do nothing. Otherwise set the
+                `__asanyarray__` attribute to *__asanyarray__*.
 
                 .. versionadded:: NEXTVERSION
 
@@ -1474,8 +1474,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         custom = self._custom
         custom["dask"] = dx
         # REVIEW: getitem: `_set_dask`: set '__asanyarray__'
-        if asanyarray is not None:
-            custom["__asanyarray__"] = bool(asanyarray)
+        if __asanyarray__ is not None:
+            custom["__asanyarray__"] = bool(__asanyarray__)
 
         self._clear_after_dask_update(clear)
 
@@ -3245,7 +3245,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, __asanyarray__=True)
 
         return d
 
@@ -4258,7 +4258,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # REVIEW: getitem: `concatenate`: set 'asanyarray'
         # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
+        data0._set_dask(dx, clear=_ALL ^ cfa, __asanyarray__=asanyarray)
 
         # Set appropriate cached elements
         cached_elements = {}
@@ -6858,7 +6858,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = self.to_dask_array(asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+            self._set_dask(dx, clear=_NONE, __asanyarray__=None)
 
         return location
 
@@ -10231,7 +10231,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = self.to_dask_array(asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+            self._set_dask(dx, clear=_NONE, __asanyarray__=None)
 
         return location
 
@@ -11693,7 +11693,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = self.to_dask_array(asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=_NONE, asanyarray=None)
+        self._set_dask(dx, clear=_NONE, __asanyarray__=None)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
