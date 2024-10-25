@@ -60,13 +60,13 @@ def to_dask(array, chunks, **from_array_options):
     if is_dask_collection(array):
         return array
 
-    # REVIEW: getitem: `to_dask`: set 'asanyarray'
+    # REVIEW: getitem: `to_dask`: set '_asanyarray'
     if hasattr(array, "to_dask_array"):
         try:
             return array.to_dask_array(chunks=chunks)
         except TypeError:
             try:
-                return array.to_dask_array(asanyarray=False)
+                return array.to_dask_array(_asanyarray=False)
             except TypeError:
                 return array.to_dask_array()
 

@@ -749,10 +749,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
-            # REVIEW: getitem: `_cfa_write_non_standard_terms`: set 'asanyarray'
+            # REVIEW: getitem: `_cfa_write_non_standard_terms`: set '_asanyarray'
             # '_cfa_unique' has its own call to 'cf_asanyarray', so
-            # we can set 'asanyarray=False'.
-            dx = data.to_dask_array(asanyarray=False)
+            # we can set '_asanyarray=False'.
+            dx = data.to_dask_array(_asanyarray=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
@@ -968,7 +968,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         dtype = np.dtype(np.int32)
         # REVIEW: getitem: `_cfa_aggregation_instructions`: set 'asanyarray'
         if (
-            max(data.to_dask_array(asanyarray=False).chunksize)
+            max(data.to_dask_array(_asanyarray=False).chunksize)
             > np.iinfo(dtype).max
         ):
             dtype = np.dtype(np.int64)

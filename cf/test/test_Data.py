@@ -4527,11 +4527,11 @@ class DataTest(unittest.TestCase):
         #       `cf_asanyarray` layer
         d = cf.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 3)
+        self.assertEqual(len(dict(d.to_dask_array(_asanyarray=False).dask)), 3)
 
         # Check that there are fewer keys after culling
         d.cull_graph()
-        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 2)
+        self.assertEqual(len(dict(d.to_dask_array(_asanyarray=False).dask)), 2)
 
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""

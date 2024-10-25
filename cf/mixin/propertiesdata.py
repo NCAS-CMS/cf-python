@@ -4693,7 +4693,7 @@ class PropertiesData(Properties):
         )
 
     # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
-    def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
+    def to_dask_array(self, apply_mask_hardness=False, _asanyarray=None):
         """Convert the data to a `dask` array.
 
         .. warning:: By default, the mask hardness of the returned
@@ -4721,7 +4721,7 @@ class PropertiesData(Properties):
 
                 .. versionadded:: NEXTVERSION
 
-            {{asanyarray: `bool` or `None`, optional}}
+            {{_asanyarray: `bool`, optional}}
 
                 .. versionadded:: NEXTVERSION
 
@@ -4744,7 +4744,7 @@ class PropertiesData(Properties):
             raise ValueError("Can't get dask array when there is no data")
 
         return data.to_dask_array(
-            apply_mask_hardness=apply_mask_hardness, asanyarray=asanyarray
+            apply_mask_hardness=apply_mask_hardness, _asanyarray=_asanyarray
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
