@@ -117,8 +117,8 @@ class FragmentArrayMixin:
                 if isinstance(array, dict):
                     # 'array' is a dictionary.
                     raise ValueError(
-                        "TODOACTIVE. Placeholder notification thatn "
-                        "we can't yet dealing with active "
+                        "TODOACTIVE. Placeholder notification that "
+                        "we can't yet deal with active "
                         "storage reductions on CFA fragments."
                     )
                 else:
