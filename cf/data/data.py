@@ -9901,7 +9901,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 If True then force the mask hardness of the returned
                 array to be that given by the `hardmask` attribute.
 
-            {{_asanyarray: `bool`, optional}}
+            _asanyarray: `bool`, optional
+               If True (the default) and the `__asanyarray__`
+               attribute is also `True`, then a `cf_asanyarray`
+               operation is added to the graph of the returned Dask
+               array. If False then this operation is not added.
+
+               In general, setting *_asanyarray* to False should only
+               be done if it is known that a) the returned Dask array
+               is never going to be computed; or b) it is not
+               necessary to add a `cf_asanyarray` operation in lieu of
+               its functionality being implemented by a new Dask graph
+               layer that is going to be created at a later stage. See
+               `cf.data.dask_utils.cf_asanyarray` for further details.
 
                 .. versionadded:: NEXTVERSION
 
@@ -11968,11 +11980,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         .. versionadded:: 3.15.0
 
-        .. seealso:: `to_dask_array`, `tolist`
+        .. seealso:: `to_dask_array`
 
         :Parameters:
 
-            `optimize_graph`: `bool`
+            optimize_graph: `bool`
                 If True, the default, then prior to being converted to
                 a dictionary, the graph is optimised to remove unused
                 chunks. Note that optimising the graph can add a
@@ -11984,7 +11996,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
                 .. versionadded:: NEXTVERSION
 
-            {{_asanyarray: `bool`, optional}}
+            _asanyarray: `bool`, optional
+               If True (the default) and the `__asanyarray__`
+               attribute is also `True`, then a `cf_asanyarray`
+               operation is added to the dictionary representation of
+               the Dask graph. If False then this operation is not
+               added. See `to_dask_array` for details.
 
                 .. versionadded:: NEXTVERSION
 

@@ -4692,38 +4692,12 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
-    def to_dask_array(self, apply_mask_hardness=False, _asanyarray=None):
+    def to_dask_array(self):
         """Convert the data to a `dask` array.
-
-        .. warning:: By default, the mask hardness of the returned
-                     dask array might not be the same as that
-                     specified by the `hardmask` attribute.
-
-                     This could cause problems if a subsequent
-                     operation on the returned dask array involves the
-                     un-masking of masked values (such as by indexed
-                     assignment).
-
-                     To guarantee that the mask hardness of the
-                     returned dask array is correct, set the
-                     *apply_mask_hardness* parameter to True.
 
         .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.to_dask_array`
-
-        :Parameters:
-
-            apply_mask_hardness: `bool`, optional
-                If True then force the mask hardness of the returned
-                array to be that given by the `hardmask` attribute.
-
-                .. versionadded:: NEXTVERSION
-
-            {{_asanyarray: `bool`, optional}}
-
-                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -4743,9 +4717,7 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't get dask array when there is no data")
 
-        return data.to_dask_array(
-            apply_mask_hardness=apply_mask_hardness, _asanyarray=_asanyarray
-        )
+        return data.to_dask_array()
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

@@ -632,21 +632,6 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
-    # REVIEW: getitem: `_docstring_substitution_definitions`: 'asanyarray'
-    # asanyarray
-    "{{_asanyarray: `bool`, optional}": """_asanyarray: `bool`, optional
-               If True (the default) and the `__asanyarray__`
-               attribute is also `True`, then add a `cf_asanyarray`
-               operation to the graph of the returned Dask array. If
-               False then this operation is not added. Setting
-               *_asanyarray* to False should only be done if it is
-               known that a) the returned Dask array is never going to
-               be computed; or b) it is not necessary to add a
-               `cf_asanyarray` operation in lieu of its functionality
-               being implemented by a new Dask graph layer that is
-               going to be created at a later stage. See
-               `cf.data.dask_utils.cf_asanyarray` for further
-               details.""",
     # _get_array index
     "{{index: `tuple` or `None`, optional}}": """index: `tuple` or `None`, optional
                Provide the indices that define the subspace. If `None`
