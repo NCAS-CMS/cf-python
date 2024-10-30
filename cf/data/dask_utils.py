@@ -9,6 +9,7 @@ from functools import partial
 
 import dask.array as da
 import numpy as np
+from cfdm.data.dask_utils import cfdm_asanyarray
 from dask.core import flatten
 from scipy.ndimage import convolve1d
 
@@ -127,9 +128,8 @@ def cf_contains(a, value):
             value.
 
     """
-    # REVIEW: getitem: `cf_contains`: convert a to a usable array
-    a = cf_asanyarray(a)
-    value = cf_asanyarray(value)
+    a = cfdm_asanyarray(a)
+    value = cfdm_asanyarray(value)
     return np.array(value in a).reshape((1,) * a.ndim)
 
 
@@ -163,8 +163,7 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
-    # REVIEW: getitem: `cf_convolve1d`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
 
     # Cast to float to ensure that NaNs can be stored
     if a.dtype != float:
@@ -185,39 +184,6 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             c = np.ma.masked_invalid(c)
 
     return c
-
-
-def cf_harden_mask(a):
-    """Harden the mask of a masked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    .. versionadded:: 3.14.0
-
-    .. seealso:: `cf.Data.harden_mask`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a hardened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with hardened mask.
-
-    """
-    # REVIEW: getitem: `cf_harden_mask`: convert a to a usable array
-    a = cf_asanyarray(a)
-    if np.ma.isMA(a):
-        try:
-            a.harden_mask()
-        except AttributeError:
-            # Trap cases when the input array is not a numpy array
-            # (e.g. it might be numpy.ma.masked).
-            pass
-
-    return a
 
 
 def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
@@ -279,8 +245,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    # REVIEW: getitem: `cf_percentile`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
 
     if np.ma.isMA(a) and not np.ma.is_masked(a):
         # Masked array with no masked elements
@@ -355,144 +320,6 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     return p
 
 
-def cf_soften_mask(a):
-    """Soften the mask of a masked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    .. versionadded:: 3.14.0
-
-    .. seealso:: `cf.Data.soften_mask`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a softened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with softened mask.
-
-    """
-    # REVIEW: getitem: `cf_soften_mask`: convert a to a usable array
-    a = cf_asanyarray(a)
-
-    if np.ma.isMA(a):
-        try:
-            a.soften_mask()
-        except AttributeError:
-            # Trap cases when the input array is not a numpy array
-            # (e.g. it might be numpy.ma.masked).
-            pass
-
-    return a
-
-
-def cf_where(array, condition, x, y, hardmask):
-    """Set elements of *array* from *x* or *y* depending on *condition*.
-
-    The input *array* is not changed in-place.
-
-    See `where` for details on the expected functionality.
-
-    .. note:: This function correctly sets the mask hardness of the
-              output array.
-
-    .. versionadded:: 3.14.0
-
-    .. seealso:: `cf.Data.where`
-
-    :Parameters:
-
-        array: numpy.ndarray
-            The array to be assigned to.
-
-        condition: numpy.ndarray
-            Where False or masked, assign from *y*, otherwise assign
-            from *x*.
-
-        x: numpy.ndarray or `None`
-            *x* and *y* must not both be `None`.
-
-        y: numpy.ndarray or `None`
-            *x* and *y* must not both be `None`.
-
-        hardmask: `bool`
-           Set the mask hardness for a returned masked array. If True
-           then a returned masked array will have a hardened mask, and
-           the mask of the input *array* (if there is one) will be
-           applied to the returned array, in addition to any masked
-           elements arising from assignments from *x* or *y*.
-
-    :Returns:
-
-        `numpy.ndarray`
-            A copy of the input *array* with elements from *y* where
-            *condition* is False or masked, and elements from *x*
-            elsewhere.
-
-    """
-    # REVIEW: getitem: `cf_where`: convert array, condition, x, y to usable arrays
-    array = cf_asanyarray(array)
-    condition = cf_asanyarray(condition)
-    if x is not None:
-        x = cf_asanyarray(x)
-
-    if y is not None:
-        y = cf_asanyarray(y)
-
-    mask = None
-
-    if np.ma.isMA(array):
-        # Do a masked where
-        where = np.ma.where
-        if hardmask:
-            mask = array.mask
-    elif np.ma.isMA(x) or np.ma.isMA(y):
-        # Do a masked where
-        where = np.ma.where
-    else:
-        # Do a non-masked where
-        where = np.where
-        hardmask = False
-
-    condition_is_masked = np.ma.isMA(condition)
-    if condition_is_masked:
-        condition = condition.astype(bool)
-
-    if x is not None:
-        # Assign values from x
-        if condition_is_masked:
-            # Replace masked elements of condition with False, so that
-            # masked locations are assigned from array
-            c = condition.filled(False)
-        else:
-            c = condition
-
-        array = where(c, x, array)
-
-    if y is not None:
-        # Assign values from y
-        if condition_is_masked:
-            # Replace masked elements of condition with True, so that
-            # masked locations are assigned from array
-            c = condition.filled(True)
-        else:
-            c = condition
-
-        array = where(c, array, y)
-
-    if hardmask:
-        if mask is not None and mask.any():
-            # Apply the mask from the input array to the result
-            array.mask |= mask
-
-        array.harden_mask()
-
-    return array
-
-
 def _getattr(x, attr):
     return getattr(x, attr, False)
 
@@ -537,7 +364,7 @@ def cf_YMDhms(a, attr):
     array([1, 2])
 
     """
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     return _array_getattr(a, attr=attr)
 
 
@@ -570,8 +397,7 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    # REVIEW: getitem: `cf_rt2dt`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
 
@@ -626,8 +452,7 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
-    # REVIEW: getitem: `cf_dt2rt`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     return dt2rt(a, units_out=units, units_in=None)
 
 
@@ -668,8 +493,7 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
-    # REVIEW: getitem: `cf_units`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
@@ -693,8 +517,7 @@ def cf_is_masked(a):
             values.
 
     """
-    # REVIEW: getitem: `cf_is_masked`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     out = np.ma.is_masked(a)
     return np.array(out).reshape((1,) * a.ndim)
 
@@ -727,33 +550,5 @@ def cf_filled(a, fill_value=None):
     [[-999    2    3]]
 
     """
-    # REVIEW: getitem: `cf_filled`: convert a to a usable array
-    a = cf_asanyarray(a)
+    a = cfdm_asanyarray(a)
     return np.ma.filled(a, fill_value=fill_value)
-
-
-# REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
-def cf_asanyarray(a):
-    """Convert to a `numpy` array.
-
-    Only do this if the input *a* has an `__asanyarray__` attribute
-    with value True.
-
-    .. versionadded:: NEXTVERSION
-
-    :Parameters:
-
-        a: array_like
-            The array.
-
-    :Returns:
-
-            The array converted to a `numpy` array, or the input array
-            unchanged if ``a.__asanyarray__`` False.
-
-    """
-    # REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
-    if getattr(a, "__asanyarray__", False):
-        return np.asanyarray(a)
-
-    return a

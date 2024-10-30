@@ -39,7 +39,8 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-# To facilitate the testing of logging outputs (see comment tag 'Logging note')
+# To facilitate the testing of logging outputs (see comment tag
+# 'Logging note')
 logger = cf.logging.getLogger(__name__)
 
 
@@ -60,11 +61,6 @@ ma[1, 2, 3, :] = np.ma.masked
 
 mw = np.ma.array(w, mask=ma.mask)
 
-# If True, all tests that will not pass temporarily due to the LAMA-to-Dask
-# migration will be skipped. These skips will be incrementally removed as the
-# migration progresses. TODODASK: ensure all skips are removed once complete.
-TEST_DASKIFIED_ONLY = True
-
 
 def reshape_array(a, axes):
     """Reshape array reducing given axes' dimensions to a final axis."""
@@ -77,24 +73,19 @@ def reshape_array(a, axes):
     return b
 
 
-def axis_combinations(a):
-    """Return a list of axes combinations to iterate over."""
+def axis_combinations(ndim):
+    """Create axes permutations for `test_Data_flatten`"""
     return [
         axes
-        for n in range(1, a.ndim + 1)
-        for axes in itertools.combinations(range(a.ndim), n)
+        for n in range(1, ndim + 1)
+        for axes in itertools.permutations(range(ndim), n)
     ]
 
 
 class DataTest(unittest.TestCase):
     """Unit test for the Data class."""
 
-    axes_combinations = axis_combinations(a)
-    # [
-    #    axes
-    #    for n in range(1, a.ndim + 1)
-    #    for axes in itertools.combinations(range(a.ndim), n)
-    # ]
+    axes_combinations = axis_combinations(a.ndim)
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -751,7 +742,7 @@ class DataTest(unittest.TestCase):
 
         # Test outputs covering a representative selection of parameters
         s1 = d.stats()
-        s1_lazy = d.stats(compute=False)
+        s1_lazy = d.stats(values=False)
         exp_result = {
             "minimum": 1,
             "mean": 1.0,
@@ -771,7 +762,7 @@ class DataTest(unittest.TestCase):
         )
 
         s2 = d.stats(all=True)
-        s2_lazy = d.stats(compute=False, all=True)
+        s2_lazy = d.stats(values=False, all=True)
         exp_result = {
             "minimum": 1,
             "mean": 1.0,
@@ -798,7 +789,7 @@ class DataTest(unittest.TestCase):
         )
 
         s3 = d.stats(sum=True, weights=1)
-        s3_lazy = d.stats(compute=False, sum=True, weights=1)
+        s3_lazy = d.stats(values=False, sum=True, weights=1)
         exp_result = {
             "minimum": 1,
             "mean": 1.0,
@@ -820,7 +811,7 @@ class DataTest(unittest.TestCase):
 
         s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
         s4_lazy = d.stats(
-            compute=False, mean_of_upper_decile=True, range=False, weights=2.0
+            values=False, mean_of_upper_decile=True, range=False, weights=2.0
         )
         exp_result = {
             "minimum": 1,
@@ -1002,21 +993,25 @@ class DataTest(unittest.TestCase):
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
     def test_Data_flatten(self):
-        """Test the `flatten` Data method."""
-        d = cf.Data(self.ma.copy())
-        self.assertTrue(d.equals(d.flatten([]), verbose=2))
+        """Test Data.flatten."""
+        ma = np.ma.arange(24).reshape(1, 2, 3, 4)
+        ma[0, 1, 1, 2] = cf.masked
+        ma[0, 0, 2, 1] = cf.masked
+
+        d = cf.Data(ma.copy())
+        self.assertTrue(d.equals(d.flatten([]), verbose=3))
         self.assertIsNone(d.flatten(inplace=True))
 
-        d = cf.Data(self.ma.copy())
+        d = cf.Data(ma.copy())
 
-        b = self.ma.flatten()
+        b = ma.flatten()
         for axes in (None, list(range(d.ndim))):
             e = d.flatten(axes)
             self.assertEqual(e.ndim, 1)
             self.assertEqual(e.shape, b.shape)
-            self.assertTrue(cf.functions._numpy_allclose(e.array, b))
+            self.assertTrue(e.equals(cf.Data(b), verbose=3))
 
-        for axes in self.axes_combinations:
+        for axes in axis_combinations(d.ndim):
             e = d.flatten(axes)
 
             if len(axes) <= 1:
@@ -1028,9 +1023,24 @@ class DataTest(unittest.TestCase):
                     np.prod([n for i, n in enumerate(d.shape) if i in axes]),
                 )
 
-            self.assertEqual(e.shape, tuple(shape))
+            self.assertEqual(e.shape, tuple(shape), axes)
             self.assertEqual(e.ndim, d.ndim - len(axes) + 1)
             self.assertEqual(e.size, d.size)
+
+        for n in range(4):
+            e = d.flatten(n)
+            f = d.flatten([n])
+            self.assertTrue(e.equals(f))
+
+        with self.assertRaises(ValueError):
+            d.flatten(99)
+
+        d = cf.Data(9)
+        self.assertTrue(d.equals(d.flatten()))
+        self.assertTrue(d.equals(d.flatten([])))
+
+        with self.assertRaises(ValueError):
+            d.flatten(0)
 
     def test_Data_cached_arithmetic_units(self):
         """Test arithmetic with, and units of, Data cached to disk."""
@@ -1479,7 +1489,6 @@ class DataTest(unittest.TestCase):
         f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
-        # REVIEW: getitem: `test_Data__getitem__`: Chained subspaces reading from disk
         # Chained subspaces reading from disk
         f = cf.read(self.filename)[0]
         d = f.data
@@ -3213,19 +3222,20 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.compute(), 2.5)
 
     def test_Data_persist(self):
-        """Test the `persist` Data method."""
+        """Test Data.persist."""
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
-        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+        d = cf.Data([[1, 2, 3.0, 4]], "km", chunks=2)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d.transpose(inplace=True)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 3)
 
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
-        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
-        self.assertEqual(
-            e.to_dask_array().npartitions, d.to_dask_array().npartitions
-        )
+        self.assertEqual(len(e.to_dask_array().dask.layers), 2)
+        self.assertEqual(d.npartitions, 2)
+        self.assertEqual(e.npartitions, d.npartitions)
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):
@@ -3290,7 +3300,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
-        # REVIEW: getitem: `test_Data_rechunk`: rechunking after a __getitem__
         # Test rechunking after a __getitem__
         e = d[:2].rechunk((2, 5))
         self.assertTrue(e.equals(d[:2]))
@@ -3414,7 +3423,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.sum(b * w, axis=-1)
@@ -3432,7 +3441,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.max(b, axis=-1)
             b = np.ma.asanyarray(b)
@@ -3449,7 +3458,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.max(abs(b), axis=-1)
             b = np.ma.asanyarray(b)
@@ -3467,7 +3476,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.ma.average(b, axis=-1, weights=w)
@@ -3486,7 +3495,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.ma.average(abs(b), axis=-1, weights=w)
@@ -3504,7 +3513,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = (np.max(b, axis=-1) + np.min(b, axis=-1)) / 2.0
             b = np.ma.asanyarray(b)
@@ -3524,7 +3533,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.min(b, axis=-1)
             b = np.ma.asanyarray(b)
@@ -3541,7 +3550,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.min(abs(b), axis=-1)
             b = np.ma.asanyarray(b)
@@ -3559,7 +3568,7 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.max(b, axis=-1) - np.min(b, axis=-1)
             b = np.ma.asanyarray(b)
@@ -3580,7 +3589,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.ma.average(b * b, axis=-1, weights=w) ** 0.5
@@ -3598,7 +3607,7 @@ class DataTest(unittest.TestCase):
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.sum(np.ones_like(b), axis=-1)
             b = np.ma.asanyarray(b)
@@ -3613,7 +3622,7 @@ class DataTest(unittest.TestCase):
         a = self.a
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.sum(np.ones_like(b), axis=-1)
             b = np.asanyarray(b)
@@ -3642,7 +3651,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.sum(b * w, axis=-1)
@@ -3661,7 +3670,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.sum(b * b * w, axis=-1)
@@ -3681,7 +3690,7 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weights=None
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             b = np.sum(np.ones_like(b), axis=-1)
             b = np.ma.asanyarray(b)
@@ -3692,7 +3701,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             w = np.ma.masked_where(b.mask, w)
@@ -3713,12 +3722,12 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weights=None
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             e = d.sum_of_weights2(axes=axis)
             f = d.sum_of_weights(axes=axis)
             self.assertTrue(e.equals(f))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             w = np.ma.masked_where(b.mask, w)
@@ -3739,7 +3748,7 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weighted ddof = 0
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             mu, V1 = np.ma.average(b, axis=-1, weights=w, returned=True)
@@ -3757,7 +3766,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b), f"e={e}\nb={b}\ne-b={e - b}")
 
         #  Weighted ddof = 1
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             mu, V1 = np.ma.average(b, axis=-1, weights=w, returned=True)
@@ -3776,7 +3785,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Unweighted ddof = 1
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             mu, V1 = np.ma.average(b, axis=-1, returned=True)
             mu = mu.reshape(mu.shape + (1,))
@@ -3798,7 +3807,7 @@ class DataTest(unittest.TestCase):
         weights = self.w
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
-        for axis in axis_combinations(a):
+        for axis in axis_combinations(a.ndim):
             b = reshape_array(a, axis)
             w = reshape_array(weights, axis)
             b = np.ma.filled(b, np.nan)
@@ -3946,12 +3955,12 @@ class DataTest(unittest.TestCase):
             d.var,
             d.mean_of_upper_decile,
         ):
-            for axis in axis_combinations(d):
+            for axis in axis_combinations(d.ndim):
                 e = func(axes=axis, squeeze=False)
                 s = [1 if i in axis else n for i, n in enumerate(d.shape)]
                 self.assertEqual(e.shape, tuple(s))
 
-            for axis in axis_combinations(d):
+            for axis in axis_combinations(d.ndim):
                 e = func(axes=axis, squeeze=True)
                 s = [n for i, n in enumerate(d.shape) if i not in axis]
                 self.assertEqual(e.shape, tuple(s))
@@ -4132,10 +4141,9 @@ class DataTest(unittest.TestCase):
         dx = d.to_dask_array()
         self.assertIsInstance(dx, da.Array)
         self.assertTrue((d.array == dx.compute()).all())
-        self.assertIs(da.asanyarray(d), dx)
 
     def test_Data_flat(self):
-        """Test the `flat` Data method."""
+        """Test the Data.flat."""
         d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
         self.assertEqual(list(d.flat()), [1, 3, 4])
         self.assertEqual(
@@ -4143,7 +4151,7 @@ class DataTest(unittest.TestCase):
         )
 
     def test_Data_tolist(self):
-        """Test the `tolist` Data method."""
+        """Test the Data.tolist"""
         for x in (1, [1, 2], [[1, 2], [3, 4]]):
             d = cf.Data(x)
             e = d.tolist()
@@ -4259,12 +4267,10 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d._rtol, 0.001)
 
     def test_Data_hardmask(self):
-        """Test the `hardmask` Data property."""
+        """Test Data.hardmask."""
         d = cf.Data([1, 2, 3])
         d.hardmask = True
         self.assertTrue(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
-
         d[0] = cf.masked
         self.assertTrue((d.array.mask == [True, False, False]).all())
         d[...] = 999
@@ -4275,18 +4281,24 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array.mask == [False, False, False]).all())
 
     def test_Data_harden_mask(self):
-        """Test the `harden_mask` Data method."""
+        """Test Data.harden_mask."""
         d = cf.Data([1, 2, 3], hardmask=False)
         d.harden_mask()
         self.assertTrue(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d[0] = cf.masked
+        self.assertEqual(d[0].array, np.ma.masked)
+        d[0] = 99
+        self.assertEqual(d[0].array, np.ma.masked)
 
     def test_Data_soften_mask(self):
-        """Test the `soften_mask` Data method."""
+        """Test Data.soften_mask."""
         d = cf.Data([1, 2, 3], hardmask=True)
         d.soften_mask()
         self.assertFalse(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d[0] = cf.masked
+        self.assertEqual(d[0].array, np.ma.masked)
+        d[0] = 99
+        self.assertEqual(d[0].array, 99)
 
     def test_Data_compressed_array(self):
         """Test the `compressed_array` Data property."""
@@ -4450,8 +4462,8 @@ class DataTest(unittest.TestCase):
         cf.write(f, file_A)
         cf.write(f, file_B)
 
-        a = cf.read(file_A, chunks=4)[0].data
-        b = cf.read(file_B, chunks=4)[0].data
+        a = cf.read(file_A, dask_chunks=4)[0].data
+        b = cf.read(file_B, dask_chunks=4)[0].data
         b += 999
         c = cf.Data(b.array, units=b.Units, chunks=4)
 
@@ -4520,18 +4532,33 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._get_cached_elements())
 
-    # REVIEW: getitem: `test_Data_cull_graph`: prevent new asanyarray layer
     def test_Data_cull_graph(self):
-        """Test `Data.cull`"""
-        # Note: The number of layers in the culled graphs include a
-        #       `cf_asanyarray` layer
+        """Test Data.cull_graph."""
         d = cf.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(len(dict(d.to_dask_array(_asanyarray=False).dask)), 3)
+        self.assertEqual(
+            len(
+                dict(
+                    d.to_dask_array(
+                        _apply_mask_hardness=False, _asanyarray=False
+                    ).dask
+                )
+            ),
+            3,
+        )
 
         # Check that there are fewer keys after culling
         d.cull_graph()
-        self.assertEqual(len(dict(d.to_dask_array(_asanyarray=False).dask)), 2)
+        self.assertEqual(
+            len(
+                dict(
+                    d.to_dask_array(
+                        _apply_mask_hardness=False, _asanyarray=False
+                    ).dask
+                )
+            ),
+            2,
+        )
 
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""
@@ -4677,7 +4704,7 @@ class DataTest(unittest.TestCase):
         )
 
         cf.write(f, file_A)
-        d = cf.read(file_A, chunks=4)[0].data
+        d = cf.read(file_A, dask_chunks=4)[0].data
         self.assertGreater(d.npartitions, 1)
 
         e = d.copy()
@@ -4696,9 +4723,9 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.file_locations(), set((location,)))
 
     def test_Data_todict(self):
-        """Test Data.todict"""
+        """Test Data.todict."""
         d = cf.Data([1, 2, 3, 4], chunks=2)
-        key = d.to_dask_array().name
+        key = d.to_dask_array(_apply_mask_hardness=False).name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
@@ -4779,7 +4806,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.pad_missing(99, to_size=99)
 
-    # REVIEW: getitem: `test_Data_is_masked`: test `Data.is_masked`
     def test_Data_is_masked(self):
         """Test Data.is_masked."""
         d = cf.Data(np.arange(6).reshape(2, 3))

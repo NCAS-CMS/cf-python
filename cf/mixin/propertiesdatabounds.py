@@ -4,7 +4,6 @@ import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
-from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -4052,7 +4051,7 @@ class PropertiesDataBounds(PropertiesData):
     @_inplace_enabled(default=False)
     def rechunk(
         self,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
         threshold=None,
         block_size_limit=None,
         balance=False,

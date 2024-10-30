@@ -2,13 +2,18 @@
 import cfdm
 
 from ...mixin_container import Container
-from .locks import netcdf_lock
-from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin, IndexMixin
+
+# from .locks import netcdf_lock
+from .mixin import (  # , IndexMixin
+    ActiveStorageMixin,
+    ArrayMixin,
+    FileArrayMixin,
+)
 
 
 class H5netcdfArray(
     ActiveStorageMixin,
-    IndexMixin,
+    #    IndexMixin,
     FileArrayMixin,
     ArrayMixin,
     Container,
@@ -25,60 +30,58 @@ class H5netcdfArray(
 
     """
 
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
+    # def __dask_tokenize__(self):
+    #     """Return a value fully representative of the object.
 
-        .. versionadded:: NEXTVERSION
+    #     .. versionadded:: NEXTVERSION
 
-        """
-        return super().__dask_tokenize__() + (self.get_mask(),)
+    #     """
+    #     return super().__dask_tokenize__() + (self.get_mask(),)
 
-    @property
-    def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
+    # @property
+    # def _lock(self):
+    #     """Set the lock for use in `dask.array.from_array`.
 
-        Returns a lock object because concurrent reads are not
-        currently supported by the HDF5 library. The lock object will
-        be the same for all `NetCDF4Array` and `H5netcdfArray`
-        instances, regardless of the dataset they access, which means
-        that access to all netCDF and HDF files coordinates around the
-        same lock.
+    #     Returns a lock object because concurrent reads are not
+    #     currently supported by the HDF5 library. The lock object will
+    #     be the same for all `NetCDF4Array` and `H5netcdfArray`
+    #     instances, regardless of the dataset they access, which means
+    #     that access to all netCDF and HDF files coordinates around the
+    #     same lock.
 
-        .. versionadded:: NEXTVERSION
+    #     .. versionadded:: NEXTVERSION
 
-        """
-        return netcdf_lock
+    #     """
+    #     return netcdf_lock
 
-    # REVIEW: h5: `_get_array`: Ignore this for h5 review
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array.
-    def _get_array(self, index=None):
-        """Returns a subspace of the dataset variable.
+    # def _get_array(self, index=None):
+    #     """Returns a subspace of the dataset variable.
 
-        .. versionadded:: NEXTVERSION
+    #     .. versionadded:: NEXTVERSION
 
-        .. seealso:: `__array__`, `index`
+    #     .. seealso:: `__array__`, `index`
 
-        :Parameters:
+    #     :Parameters:
 
-            {{index: `tuple` or `None`, optional}}
+    #         {{index: `tuple` or `None`, optional}}
 
-        :Returns:
+    #     :Returns:
 
-            `numpy.ndarray`
-                The subspace.
+    #         `numpy.ndarray`
+    #             The subspace.
 
-        """
-        if index is None:
-            index = self.index()
+    #     """
+    #     if index is None:
+    #         index = self.index()
 
-        # We need to lock because the netCDF file is about to be accessed.
-        self._lock.acquire()
+    #     # We need to lock because the netCDF file is about to be accessed.
+    #     self._lock.acquire()
 
-        # It's cfdm.H5netcdfArray.__getitem__ that we want to
-        # call here, but we use 'Container' in super because
-        # that comes immediately before cfdm.H5netcdfArray in
-        # the method resolution order.
-        array = super(Container, self).__getitem__(index)
+    #     # It's cfdm.H5netcdfArray.__getitem__ that we want to
+    #     # call here, but we use 'Container' in super because
+    #     # that comes immediately before cfdm.H5netcdfArray in
+    #     # the method resolution order.
+    #     array = super(Container, self).__getitem__(index)
 
-        self._lock.release()
-        return array
+    #     self._lock.release()
+    #     return array
