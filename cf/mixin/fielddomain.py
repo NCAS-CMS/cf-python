@@ -18,7 +18,7 @@ from ..functions import (
     bounds_combination_mode,
     normalize_slice,
 )
-from ..query import Query
+from ..query import Query, wi
 from ..units import Units
 
 logger = logging.getLogger(__name__)
@@ -447,43 +447,84 @@ class FieldDomain:
                         anchor0 = value.value[1]
                         anchor1 = value.value[0]
 
-                    a = self.anchor(axis, anchor0, dry_run=True)["roll"]
-                    b = self.flip(axis).anchor(axis, anchor1, dry_run=True)[
-                        "roll"
-                    ]
-
-                    size = item.size
-                    if abs(anchor1 - anchor0) >= item.period():
-                        if value.operator == "wo":
-                            set_start_stop = 0
-                        else:
-                            set_start_stop = -a
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    elif a + b == size:
-                        b = self.anchor(axis, anchor1, dry_run=True)["roll"]
-                        if (b == a and value.operator == "wo") or not (
-                            b == a or value.operator == "wo"
-                        ):
-                            set_start_stop = -a
-                        else:
-                            set_start_stop = 0
-
-                        start = set_start_stop
-                        stop = set_start_stop
+#                    if value.operator == "wi":
+                    if item.increasing:
+                        a= value.value[0]
                     else:
-                        if value.operator == "wo":
-                            start = b - size
-                            stop = -a + size
+                        a = value.value[1]
+                        
+                    offset = self.anchor(axis, a, dry_run=True)["roll"]
+                    nperiod = self.anchor(axis, a, dry_run=True)["nperiod"]
+                    item = item + nperiod
+                    item = item.roll(0, offset)
+                    n = np.roll(np.arange(item.size), offset, 0)
+                    print(n, (item == value).array, item.array, value)
+                 
+                    if value.operator == "wi":
+                        n = n[item == value]
+                        if not n.size:
+                            raise ValueError(
+                                f"No indices found from: {identity}={value!r}"
+                            )
+                        
+                        start = n[0]
+                        stop = n[-1] + 1
+                    else:
+                        n = n[item == wi(*value.value)]
+                        if n.size == item.size:
+                            raise ValueError(
+                                f"No indices found from: {identity}={value!r}"
+                            )
+                    
+                        start = n[-1] + 1
+                        stop = start - n.size
+                    print(n)
+                    print ('start, stop=',start, stop)
+             
+                    if False: #else:
+                        a = self.anchor(axis, anchor0, dry_run=True)["roll"]
+                        b = self.flip(axis).anchor(axis, anchor1, dry_run=True)[
+                            "roll"
+                        ]
+                        print('a, b=', a, b)
+                        size = item.size
+                        if abs(anchor1 - anchor0) >= item.period():
+                            if value.operator == "wo":
+                                start = 0
+                                stop = 0
+                            else:
+                                start = -a
+                                stop = -a + size
+                        elif a + b == size:
+                            b = self.anchor(axis, anchor1, dry_run=True)["roll"]
+                            if value.operator == "wi":
+                                start = -a
+                                stop = -a + size
+                            elif (b == a and value.operator == "wo") or not (
+                                b == a or value.operator == "wo"
+                            ):
+                                start = -a
+                                stop = -a
+                            else:
+                                start = 0
+                                stop = 0
+    
+    #                        start = set_start_stop
+    #                        stop = set_start_stop
                         else:
-                            start = -a
-                            stop = b - size
+                            if value.operator == "wo":
+                                print('HERE0.9')
+                                start = b - size
+                                stop = -a + size
+                            else:
+                                print('HERE1')
+                                start = -a
+                                stop = b - size
 
-                    if start == stop == 0:
-                        raise ValueError(
-                            f"No indices found from: {identity}={value!r}"
-                        )
+                    #if start == stop == 0:
+                    #    raise ValueError(
+                    #        f"No indices found from: {identity}={value!r}"
+                    #    )
 
                     index = slice(start, stop, 1)
 
