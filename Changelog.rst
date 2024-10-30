@@ -1,27 +1,16 @@
-version NEXTVERSION + 1
------------------------
+version NEXTVERSION
+-------------------
 
 **2024-??-??**
 
+* New function: `cf.cell_overlaps`
+  (https://github.com/NCAS-CMS/cf-python/issues/824)
 * Allow access to netCDF-4 files in S3 object stores
   (https://github.com/NCAS-CMS/cf-python/issues/712)
 * New class `cf.H5netcdfArray`
 * New class `cf.NetCDF4Array`
 * New class `cf.CFAH5netcdfArray`
 * New class `cf.CFANetCDF4Array`
-* New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
-* New dependency: ``s3fs>=2024.2.0``
-* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
-* Changed dependency: ``cfunits>=3.3.7``
-
-----
-
-version NEXTVERSION
--------------------
-
-**2024-??-??**
-
 * New method: `cf.Field.filled`
   (https://github.com/NCAS-CMS/cf-python/issues/811)
 * New method: `cf.Field.is_discrete_axis`
@@ -43,9 +32,13 @@ version NEXTVERSION
 * Fix bug where combining UGRID fields erroneously creates an extra
   axis and broadcasts over it
   (https://github.com/NCAS-CMS/cf-python/issues/784)
-* Fix bug where `cf.normalize_slice` doesn't correctly
-  handle certain cyclic slices
-  (https://github.com/NCAS-CMS/cf-python/issues/774)
+* Fix bug where `cf.normalize_slice` doesn't correctly handle certain
+  cyclic slices (https://github.com/NCAS-CMS/cf-python/issues/774)
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.2.0``
+* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
+* Changed dependency: ``cfunits>=3.3.7``
 
 ----
 

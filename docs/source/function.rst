@@ -106,6 +106,7 @@ Condition constructors
    cf.cellge
    cf.cellle
    cf.celllt
+   cf.cell_overlaps
    cf.cellwi
    cf.cellwo
 

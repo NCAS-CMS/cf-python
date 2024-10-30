@@ -3767,22 +3767,22 @@ For convenience, many commonly used conditions can be created with
 
 The following `cf.Query` constructors are available:
 
-=============  ======================================================================
+============  ==================================================
 *General conditions*
--------------------------------------------------------------------------------------
-Constructor    Description
-=============  ======================================================================
-`cf.lt`        A `cf.Query` object for a "strictly less than" condition
-`cf.le`        A `cf.Query` object for a "less than or equal" condition
-`cf.gt`        A `cf.Query` object for a "strictly greater than" condition
-`cf.ge`        A `cf.Query` object for a "strictly greater than or equal" condition
-`cf.eq`        A `cf.Query` object for an "equal" condition
-`cf.ne`        A `cf.Query` object for a "not equal" condition
-`cf.wi`        A `cf.Query` object for a "within a range" condition
-`cf.wo`        A `cf.Query` object for a "without a range" condition
-`cf.set`       A `cf.Query` object for a "member of set" condition
-`cf.isclose`   A `cf.Query` object for an "is close" condition
-=============  ======================================================================
+----------------------------------------------------------------
+Constructor   Description
+============  ==================================================
+`cf.lt`       A condition for "strictly less than a value"
+`cf.le`       A condition for "less than or equal to a value"
+`cf.gt`       A condition for "strictly greater than a value"
+`cf.ge`       A condition for "greater than or equal to a value"
+`cf.eq`       A condition for "equal to a value"
+`cf.ne`       A condition for "not equal to a value"
+`cf.isclose`  A condition for "is close to a value"
+`cf.wi`       A condition for "lies within a range"
+`cf.wo`       A condition for "lies outside (without) a range"
+`cf.set`      A condition for "is member of a set"
+============  ==================================================
 
 |
 
@@ -3806,20 +3806,21 @@ Constructor    Description
 
 |
 
-=============  ========================================================================
+==================  ==================================================================
 *Coordinate cell conditions*
----------------------------------------------------------------------------------------
-Constructor    Description
-=============  ========================================================================
-`cf.contains`  A `cf.Query` object for a "cell contains" condition
-`cf.cellsize`  A `cf.Query` object for a "cell size" condition
-`cf.cellgt`    A `cf.Query` object for a "cell bounds strictly greater than" condition
-`cf.cellge`    A `cf.Query` object for a "cell bounds greater than or equal" condition
-`cf.celllt`    A `cf.Query` object for a "cell bounds strictly less than" condition
-`cf.cellle`    A `cf.Query` object for a "cell bounds less than or equal" condition
-`cf.cellwi`    A `cf.Query` object for a "cell bounds lie within range" condition
-`cf.cellwo`    A `cf.Query` object for a "cell bounds lie without range" condition
-=============  ========================================================================
+--------------------------------------------------------------------------------------
+Constructor         Description
+==================  ==================================================================
+`cf.contains`       A condition for "cell contains a value".
+`cf.cellsize`       A condition for "cell size".
+`cf.cellgt`         A condition for "entire cell is strictly greater than a value".
+`cf.cellge`         A condition for "entire cell is greater than or equal to a value".
+`cf.celllt`         A condition for "entire cell is strictly less than a value".
+`cf.cellle`         A condition for "entire cell is less than or equal to a value".
+`cf.cell_overlaps`  A condition for "part of cell overlaps with a range".
+`cf.cellwi`         A condition for "cell lies completely within a range".
+`cf.cellwo`         A condition for "cell lies completely outside a range".
+==================  ==================================================================
 
 .. code-block:: python
    :caption: *Some examples of 'cf.Query' objects returned by

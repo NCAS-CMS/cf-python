@@ -850,6 +850,36 @@ class QueryTest(unittest.TestCase):
         self.assertIsNone(q.rtol)
         self.assertIsNone(q.atol)
 
+    def test_Query_cell_overlaps(self):
+        # Test cf.cell_overlaps.
+        f = cf.example_field(2)
+        t = f.dimension_coordinate("T")
+        t2 = cf.cell_overlaps(cf.dt(1960, 1, 2), cf.dt(1960, 12, 29)) == t
+        self.assertEqual(t2.sum(), 12)
+        t2 = cf.cell_overlaps(cf.dt(1960, 1, 29), cf.dt(1960, 12, 2)) == t
+        self.assertEqual(t2.sum(), 12)
+
+        t.del_bounds()
+        t2 = cf.cell_overlaps(cf.dt(1960, 1, 2), cf.dt(1960, 12, 29)) == t
+        self.assertEqual(t2.sum(), 12)
+        t2 = cf.cell_overlaps(cf.dt(1960, 1, 29), cf.dt(1960, 12, 2)) == t
+        self.assertEqual(t2.sum(), 10)
+
+    def test_Query_cellwi(self):
+        # Test cf.cellwi.
+        f = cf.example_field(2)
+        t = f.dimension_coordinate("T")
+        t2 = cf.cellwi(cf.dt(1960, 1, 2), cf.dt(1960, 12, 29)) == t
+        self.assertEqual(t2.sum(), 10)
+        t2 = cf.cellwi(cf.dt(1960, 1, 29), cf.dt(1960, 12, 2)) == t
+        self.assertEqual(t2.sum(), 10)
+
+        t.del_bounds()
+        t2 = cf.cellwi(cf.dt(1960, 1, 2), cf.dt(1960, 12, 29)) == t
+        self.assertEqual(t2.sum(), 12)
+        t2 = cf.cellwi(cf.dt(1960, 1, 29), cf.dt(1960, 12, 2)) == t
+        self.assertEqual(t2.sum(), 10)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

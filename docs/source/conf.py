@@ -465,7 +465,7 @@ from os.path import dirname, relpath
 
 import cf
 
-link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
+link_release = re.search(r"(\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):

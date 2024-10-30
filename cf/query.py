@@ -1320,7 +1320,7 @@ class Query:
 # Constructor functions
 # --------------------------------------------------------------------
 def lt(value, units=None, attr=None):
-    """A `Query` object for a "strictly less than" condition.
+    """A condition for "strictly less than a value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1347,7 +1347,7 @@ def lt(value, units=None, attr=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1381,7 +1381,7 @@ def lt(value, units=None, attr=None):
 
 
 def le(value, units=None, attr=None):
-    """A `Query` object for a "less than or equal" condition.
+    """A condition for "less than or equal to value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1408,7 +1408,7 @@ def le(value, units=None, attr=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1425,7 +1425,7 @@ def le(value, units=None, attr=None):
 
 
 def gt(value, units=None, attr=None):
-    """A `Query` object for a "strictly greater than" condition.
+    """A condition for "strictly greater than a value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1452,7 +1452,7 @@ def gt(value, units=None, attr=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1469,7 +1469,7 @@ def gt(value, units=None, attr=None):
 
 
 def ge(value, units=None, attr=None):
-    """A `Query` object for a "greater than or equal" condition.
+    """A condition for "greater than or equal to a value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1496,7 +1496,7 @@ def ge(value, units=None, attr=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1521,7 +1521,7 @@ def ge(value, units=None, attr=None):
 
 
 def eq(value, units=None, attr=None, exact=True):
-    """A `Query` object for an "equal" condition.
+    """A condition for "equal to a value".
 
     .. seealso:: `cf.contains`, `cf.ge`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1551,7 +1551,7 @@ def eq(value, units=None, attr=None, exact=True):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1581,7 +1581,7 @@ def eq(value, units=None, attr=None, exact=True):
 
 
 def ne(value, units=None, attr=None, exact=True):
-    """A `Query` object for a "not equal" condition.
+    """A condition for "not equalto a value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1611,7 +1611,7 @@ def ne(value, units=None, attr=None, exact=True):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1633,7 +1633,7 @@ def ne(value, units=None, attr=None, exact=True):
 
 
 def isclose(value, units=None, attr=None, rtol=None, atol=None):
-    """A `Query` object for an "is close" condition.
+    """A condition for an "is close to a value".
 
     .. versionadded:: 3.15.2
 
@@ -1674,7 +1674,7 @@ def isclose(value, units=None, attr=None, rtol=None, atol=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1716,7 +1716,7 @@ def wi(
     open_lower=False,
     open_upper=False,
 ):
-    """A `Query` object for a "within a range" condition.
+    """A condition for "lies within a range".
 
     The condition is a closed interval by default, inclusive of
     both the endpoints, but can be made open or half-open to exclude
@@ -1767,7 +1767,7 @@ def wi(
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1817,7 +1817,7 @@ def wi(
 
 
 def wo(value0, value1, units=None, attr=None):
-    """A `Query` object for a "without a range" condition.
+    """A condition for "lies outside (without) a range".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wi`, `cf.isclose`
@@ -1847,7 +1847,7 @@ def wo(value0, value1, units=None, attr=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1864,7 +1864,7 @@ def wo(value0, value1, units=None, attr=None):
 
 
 def set(values, units=None, attr=None, exact=True):
-    """A `Query` object for a "member of set" condition.
+    """A condition for "is member of a set".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -1894,7 +1894,7 @@ def set(values, units=None, attr=None, exact=True):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1916,7 +1916,7 @@ def set(values, units=None, attr=None, exact=True):
 
 
 def contains(value, units=None):
-    """A `Query` object for a "cell contains" condition.
+    """A condition for "cell contains a value".
 
     .. versionadded:: 3.0.0
 
@@ -1939,7 +1939,7 @@ def contains(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -1977,7 +1977,7 @@ def contains(value, units=None):
 
 
 def year(value):
-    """A `Query` object for a "year" condition.
+    """A condition for "year is equal to a value".
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
@@ -1991,7 +1991,7 @@ def year(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2013,7 +2013,7 @@ def year(value):
 
 
 def month(value):
-    """A `Query` object for a "month of the year" condition.
+    """A condition for "month is equal to a value".
 
     .. seealso:: `cf.year`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -2027,7 +2027,7 @@ def month(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2049,7 +2049,7 @@ def month(value):
 
 
 def day(value):
-    """A `Query` object for a "day of the month" condition.
+    """A condition for "day is equal to a value".
 
     .. seealso:: `cf.year`, `cf.month`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -2063,7 +2063,7 @@ def day(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2085,7 +2085,7 @@ def day(value):
 
 
 def hour(value):
-    """A `Query` object for a "hour of the day" condition.
+    """A condition for "hour is equal to a value".
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
@@ -2099,7 +2099,7 @@ def hour(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     In this context, any object which has a `!hour` attribute is
     considered to be a date-time variable.
@@ -2120,7 +2120,7 @@ def hour(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2142,7 +2142,7 @@ def hour(value):
 
 
 def minute(value):
-    """A `Query` object for a "minute of the hour" condition.
+    """A condition for "minute is equal to a value".
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -2156,7 +2156,7 @@ def minute(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2178,7 +2178,7 @@ def minute(value):
 
 
 def second(value):
-    """A `Query` object for a "second of the minute" condition.
+    """A condition for "second is equal to a value".
 
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.seasons`, `cf.djf`, `cf.mam`,
@@ -2192,7 +2192,7 @@ def second(value):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2214,10 +2214,11 @@ def second(value):
 
 
 def cellsize(value, units=None):
-    """A `Query` object for a "cell size" condition.
+    """A condition for "cell size".
 
     .. seealso:: `cf.contains`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
-                 `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
+                 `cf.cellle`, `cf.celllt`, `cf.cell_overlaps`,
+                 `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -2234,7 +2235,7 @@ def cellsize(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2254,29 +2255,89 @@ def cellsize(value, units=None):
         return Query("eq", value, units=units, attr="cellsize")
 
 
-def cellwi(value0, value1, units=None):
-    """A `Query` object for a "cell bounds lie within range" condition.
+def cell_overlaps(value0, value1, units=None):
+    """A condition for "part of cell overlaps with a range".
+
+    The range is closed, meaning that is inclusive of its end points.
+
+    .. versionadded:: NEXTVERSION
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
-                 `cf.cellwo`
+                 `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
+
+        value0:
+             The lower bound of the range.
+
+        value1:
+             The upper bound of the range.
+
+        units: `str` or `Units`, optional
+            The units of *value0* and *value1*. By default, the same
+            units as the operand being tested are assumed, if
+            applicable. If *units* is specified and *value0* or
+            *value1* already has units (such as those attached to a
+            `Data` object), then those units must be equivalent to
+            *units*.
 
         value:
             The query condition's value.
 
+    :Returns:
+
+        `Query`
+            The condition.
+
+    **Examples**
+
+    >>> cf.cell_overlaps(5, 10)
+    <CF Query: [upper_bounds(ge 5) & lower_bounds(le 10)]>
+    >>> cf.cell_overlaps(cf.Data(5, 'km'), cf.Data(10, 'km'))
+    <CF Query: [upper_bounds(ge 5 km) & lower_bounds(le 10 km)]>
+    >>> cf.cell_overlaps(5, 10, units="km")
+    <CF Query: [upper_bounds(ge 5 km) & lower_bounds(le 10 km)]>
+    >>> cf.cell_overlaps(cf.Data(5, 'km'), cf.Data(10000, 'm'))
+    <CF Query: [upper_bounds(ge 5 km) & lower_bounds(le 10000 m)]>
+    >>> cf.cell_overlaps(0.2, 0.3)
+    <CF Query: [upper_bounds(ge 0.2) & lower_bounds(le 0.3)]>
+
+    """
+    return Query("ge", value0, units=units, attr="upper_bounds") & Query(
+        "le", value1, units=units, attr="lower_bounds"
+    )
+
+
+def cellwi(value0, value1, units=None):
+    """A condition for "cell lies completely within a range".
+
+    The range is closed, meaning that is inclusive of its end points.
+
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cell_overlaps`, `cf.cellwo`
+
+    :Parameters:
+
+        value0:
+             The lower bound of the range.
+
+        value1:
+             The upper bound of the range.
+
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the
-            operand being tested are assumed, if applicable. If
-            *units* is specified and *value* already has units (such
-            as those attached to a `Data` object), then the pair of
-            units must be equivalent.
+            The units of *value0* and *value1*. By default, the same
+            units as the operand being tested are assumed, if
+            applicable. If *units* is specified and *value0* or
+            *value1* already has units (such as those attached to a
+            `Data` object), then those units must be equivalent to
+            *units*.
 
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2296,28 +2357,34 @@ def cellwi(value0, value1, units=None):
 
 
 def cellwo(value0, value1, units=None):
-    """A `Query` object for a "cell bounds lie without range" condition.
+    """A condition for "cell lies completely outside a range".
+
+    The range is closed, meaning that is inclusive of its end points.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
-                 `cf.cellwi`
+                 `cf.cell_overlaps`, `cf.cellwi`
 
     :Parameters:
 
-        value:
-            The query condition's value.
+        value0:
+             The lower bound of the range.
+
+        value1:
+             The upper bound of the range.
 
         units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the
-            operand being tested are assumed, if applicable. If
-            *units* is specified and *value* already has units (such
-            as those attached to a `Data` object), then the pair of
-            units must be equivalent.
+            The units of *value0* and *value1*. By default, the same
+            units as the operand being tested are assumed, if
+            applicable. If *units* is specified and *value0* or
+            *value1* already has units (such as those attached to a
+            `Data` object), then those units must be equivalent to
+            *units*.
 
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2337,12 +2404,11 @@ def cellwo(value0, value1, units=None):
 
 
 def cellgt(value, units=None):
-    """A `Query` object for a "cell bounds strictly greater than"
-    condition.
+    """A condition for "entire cell is strictly greater than a value".
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`
-                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
-                 `cf.cellwo`
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cell_overlaps`, `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -2359,7 +2425,7 @@ def cellgt(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2375,12 +2441,11 @@ def cellgt(value, units=None):
 
 
 def cellge(value, units=None):
-    """A `Query` object for a "cell bounds greater than or equal"
-    condition.
+    """A condition for "entire cell is greater than or equal to a value".
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellgt`,
-                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
-                 `cf.cellwo`
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cell_overlaps`, `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -2398,7 +2463,7 @@ def cellge(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2414,12 +2479,11 @@ def cellge(value, units=None):
 
 
 def celllt(value, units=None):
-    """A `Query` object for a “cell bounds strictly less than”
-    condition.
+    """A condition for "entire cell is strictly less than a value".
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
-                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.cellwi`,
-                 `cf.cellwo`
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`,
+                 `cf.cell_overlaps`, `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -2436,7 +2500,7 @@ def celllt(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2452,12 +2516,11 @@ def celllt(value, units=None):
 
 
 def cellle(value, units=None):
-    """A `Query` object for a "cell bounds less than or equal"
-    condition.
+    """A condition for "entire cell is less than or equal to a value".
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
-                 `cf.cellgt`, `cf.cellne`, `cf.celllt`, `cf.cellwi`,
-                 `cf.cellwo`
+                 `cf.cellgt`, `cf.cellne`, `cf.celllt`,
+                 `cf.cell_overlaps`, `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -2474,7 +2537,7 @@ def cellle(value, units=None):
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2490,8 +2553,7 @@ def cellle(value, units=None):
 
 
 def jja():
-    """A `Query` object for a "month of year in June, July or August"
-    condition.
+    """A conditon for "month is June, July, or August".
 
     .. versionadded:: 1.0
 
@@ -2502,7 +2564,7 @@ def jja():
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2516,8 +2578,7 @@ def jja():
 
 
 def son():
-    """A `Query` object for a "month of year in September, October,
-    November" condition.
+    """A condition for "month is September, October, or November".
 
     .. versionadded:: 1.0
 
@@ -2528,7 +2589,7 @@ def son():
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2542,8 +2603,7 @@ def son():
 
 
 def djf():
-    """A `Query` object for a "month of year in December, January,
-    February" condition.
+    """A condition for "month is December, January, or February".
 
     .. versionadded:: 1.0
 
@@ -2554,7 +2614,7 @@ def djf():
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2569,8 +2629,7 @@ def djf():
 
 
 def mam():
-    """A `Query` object for a "month of year in March, April, May"
-    condition.
+    """A condition for "month is March, April, or May".
 
     .. versionadded:: 1.0
 
@@ -2581,7 +2640,7 @@ def mam():
     :Returns:
 
         `Query`
-            The query object.
+            The condition.
 
     **Examples**
 
@@ -2595,8 +2654,7 @@ def mam():
 
 
 def seasons(n=4, start=12):
-    """A customisable list of `Query` objects for "seasons in a year"
-    conditions.
+    """Customisable conditions for "seasons in a year".
 
     Note that any date-time that lies within a particular season will
     satisfy that query.
@@ -2619,7 +2677,7 @@ def seasons(n=4, start=12):
     :Returns:
 
         `list` of `Query`
-            The query objects.
+            The conditions.
 
     **Examples**
 
