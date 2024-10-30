@@ -1,35 +1,17 @@
-import cfdm
-from dask.utils import SerializableLock
+# REVIEW: h5: `NetCDFArray`: Replaced by `NetCDF4Array`
+class NetCDFArray:
+    """A netCDF array accessed with `netCDF4`.
 
-from ...mixin_container import Container
-from .mixin import ArrayMixin, FileArrayMixin
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `cf.NetCDF4Array` instead.
 
-# Global lock for netCDF file access
-_lock = SerializableLock()
+    """
 
+    def __init__(self, *args, **kwargs):
+        """**Initialisation**"""
+        from ...functions import DeprecationError
 
-class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
-    """An array stored in a netCDF file."""
-
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
-
-        .. versionadded:: 3.15.0
-
-        """
-        return super().__dask_tokenize__() + (self.get_mask(),)
-
-    @property
-    def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
-
-        Returns a lock object because concurrent reads are not
-        currently supported by the netCDF-C library. The lock object
-        will be the same for all `NetCDFArray` instances, regardless
-        of the dataset they access, which means that access to all
-        netCDF files coordinates around the same lock.
-
-        .. versionadded:: 3.14.0
-
-        """
-        return _lock
+        raise DeprecationError(
+            f"{self.__class__.__name__} was deprecated at version NEXTVERSION "
+            "and is no longer available. Use cf.NetCDF4Array instead."
+        )

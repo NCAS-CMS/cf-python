@@ -2317,7 +2317,7 @@ class FieldDomain:
 
             {{filter_kwargs: optional}}
 
-                .. versionadded:: (cfdm) 3.9.0
+                .. versionadded:: 3.9.0
 
         :Returns:
 

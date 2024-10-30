@@ -1,4 +1,4 @@
-from numbers import Integral
+from math import prod
 
 import numpy as np
 
@@ -12,69 +12,70 @@ class FragmentArrayMixin:
 
     """
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the fragment as a numpy array.
+    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
 
-        x.__getitem__(indices) <==> x[indices]
+        .. versionadded:: NEXTVERSION
 
-        Indexing is similar to numpy indexing, with the following
-        differences:
+        .. seealso:: `__array__`, `index`
 
-          * A dimension's index can't be rank-reducing, i.e. it can't
-            be an integer, a scalar `numpy` array, nor a scalar `dask`
-            array.
+        :Parameters:
 
-          * When two or more dimension's indices are sequences of
-            integers then these indices work independently along each
-            dimension (similar to the way vector subscripts work in
-            Fortran).
+            {{index: `tuple` or `None`, optional}}
 
-        .. versionadded:: 3.15.0
+               It is important that there is a distinct value for each
+               fragment dimension, which is guaranteed when the
+               default of the `index` attribute is being used.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
 
         """
-        # TODOACTIVE: modify this for the case when
-        #             super().__getitem__(tuple(indices)) returns a
-        #             dictionary
-
-        indices = self._parse_indices(indices)
+        if index is None:
+            index = self.index()
 
         try:
-            array = super().__getitem__(tuple(indices))
+            array = super()._get_array(index)
         except ValueError:
             # A ValueError is expected to be raised when the fragment
             # variable has fewer than 'self.ndim' dimensions (we know
-            # this because because 'indices' has 'self.ndim'
+            # that this is the case because 'index' has 'self.ndim'
             # elements).
-            axis = self._size_1_axis(indices)
+            axis = self._size_1_axis(index)
             if axis is not None:
                 # There is a unique size 1 index that must correspond
                 # to the missing dimension => Remove it from the
                 # indices, get the fragment array with the new
                 # indices; and then insert the missing size one
                 # dimension.
-                indices.pop(axis)
-                array = super().__getitem__(tuple(indices))
+                index = list(index)
+                index.pop(axis)
+                array = super()._get_array(tuple(index))
                 array = np.expand_dims(array, axis)
             else:
                 # There are multiple size 1 indices so we don't know
                 # how many missing dimensions the fragment has, nor
                 # their positions => Get the full fragment array and
                 # then reshape it to the shape of the dask compute
-                # chunk.
-                array = super().__getitem__(Ellipsis)
-                if array.size != self.size:
+                # chunk; and then apply the index.
+                array = super()._get_array(Ellipsis)
+                if array.size > prod(self.original_shape):
                     raise ValueError(
                         f"Can't get CFA fragment data from ({self}) when "
                         "the fragment has two or more missing size 1 "
                         "dimensions, whilst also spanning two or more "
-                        "dask compute chunks."
+                        "Dask compute chunks."
                         "\n\n"
                         "Consider re-creating the data with exactly one "
-                        "dask compute chunk per fragment (e.g. by setting "
+                        "Dask compute chunk per fragment (e.g. by setting "
                         "'chunks=None' as a keyword to cf.read)."
                     )
 
-                array = array.reshape(self.shape)
+                array = array.reshape(self.original_shape)
+                array = array[index]
 
         array = self._conform_to_aggregated_units(array)
         return array
@@ -116,8 +117,8 @@ class FragmentArrayMixin:
                 if isinstance(array, dict):
                     # 'array' is a dictionary.
                     raise ValueError(
-                        "TODOACTIVE. This error is notification of an "
-                        "unreplaced placeholder for dealing with active "
+                        "TODOACTIVE. Placeholder notification that "
+                        "we can't yet deal with active "
                         "storage reductions on CFA fragments."
                     )
                 else:
@@ -128,93 +129,14 @@ class FragmentArrayMixin:
 
         return array
 
-    def _parse_indices(self, indices):
-        """Parse the indices that retrieve the fragment data.
-
-        Ellipses are replaced with the approriate number of `slice`
-        instances, and rank-reducing indices (such as an integer or
-        scalar array) are disallowed.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            indices: `tuple` or `Ellipsis`
-                The array indices to be parsed.
-
-        :Returns:
-
-            `list`
-                The parsed indices.
-
-        **Examples**
-
-        >>> a.shape
-        (12, 1, 73, 144)
-        >>> a._parse_indices([2, 4, 5], Ellipsis, slice(45, 67))
-        [[2, 4, 5], slice(0, 1), slice(0, 73), slice(45, 67)]
-        >>> a._parse_indices([2, 4, 5], [0], slice(None), slice(45, 67))
-        [[2, 4, 5], [0], slice(0, 73), slice(45, 67)]
-
-        """
-        shape = self.shape
-        if indices is Ellipsis:
-            return [slice(0, n) for n in shape]
-
-        indices = list(indices)
-
-        # Check indices
-        has_ellipsis = False
-        for i, (index, n) in enumerate(zip(indices, shape)):
-            if isinstance(index, slice):
-                if index == slice(None):
-                    indices[i] = slice(0, n)
-
-                continue
-
-            if index is Ellipsis:
-                has_ellipsis = True
-                continue
-
-            if isinstance(index, Integral) or not getattr(index, "ndim", True):
-                # TODOCFA: what about [] or np.array([])?
-
-                # 'index' is an integer or a scalar numpy/dask array
-                raise ValueError(
-                    f"Can't subspace {self.__class__.__name__} with a "
-                    f"rank-reducing index: {index!r}"
-                )
-
-        if has_ellipsis:
-            # Replace Ellipsis with one or more slices
-            indices2 = []
-            length = len(indices)
-            n = self.ndim
-            for index in indices:
-                if index is Ellipsis:
-                    m = n - length + 1
-                    indices2.extend([slice(None)] * m)
-                    n -= m
-                else:
-                    indices2.append(index)
-                    n -= 1
-
-                length -= 1
-
-            indices = indices2
-
-            for i, (index, n) in enumerate(zip(indices, shape)):
-                if index == slice(None):
-                    indices[i] = slice(0, n)
-
-        return indices
-
     def _size_1_axis(self, indices):
         """Find the position of a unique size 1 index.
 
         .. versionadded:: 3.15.0
 
         .. seealso:: `_parse_indices`, `__getitem__`
+
+        :Paramealso:: `_parse_indices`, `__getitem__`
 
         :Parameters:
 
@@ -244,33 +166,12 @@ class FragmentArrayMixin:
         None
 
         """
-        axis = None
+        # REVIEW: getitem: `_size_1_axis`: refactor to use `original_shape`
+        original_shape = self.original_shape
+        if original_shape.count(1):
+            return original_shape.index(1)
 
-        n_size_1 = 0  # Number of size 1 indices
-        for i, (index, n) in enumerate(zip(indices, self.shape)):
-            try:
-                x = index.indices(n)
-                if abs(x[1] - x[0]) == 1:
-                    # Index is a size 1 slice
-                    n_size_1 += 1
-                    axis = i
-            except AttributeError:
-                try:
-                    if index.size == 1:
-                        # Index is a size 1 numpy or dask array
-                        n_size_1 += 1
-                        axis = i
-                except AttributeError:
-                    if len(index) == 1:
-                        # Index is a size 1 list
-                        n_size_1 += 1
-                        axis = i
-
-        if n_size_1 > 1:
-            # There are two or more size 1 indices
-            axis = None
-
-        return axis
+        return
 
     @property
     def aggregated_Units(self):

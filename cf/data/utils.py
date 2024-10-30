@@ -780,7 +780,7 @@ def collapse(
             The function that collapses the underlying `dask` array of
             *d*. Must have the minimum signature (parameters and
             default values) ``func(dx, axis=None, keepdims=False,
-            mtol=None, split_every=None)`` (optionally including
+            mtol=1, split_every=None)`` (optionally including
             ``weights=None`` or ``ddof=None``), where ``dx`` is a the
             dask array contained in *d*.
 
@@ -829,23 +829,29 @@ def collapse(
         mtol: number, optional
             The sample size threshold below which collapsed values are
             set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
+            0 and 1 inclusive) of the contributing input data
+            values. A missing value in the output array occurs
+            whenever more than ``100*mtol%`` of its contributing input
+            array elements are missing data.
 
-            The default of *mtol* is 1, meaning that a missing datum
+            The default of *mtol* is 1, meaning that a missing value
             in the output array occurs whenever all of its
             contributing input array elements are missing data.
 
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
-            contributing input array elements are missing data.
+            Note that for non-zero values of *mtol*, different
+            collapsed elements may have different sample sizes,
+            depending on the distribution of missing data in the input
+            data.
 
         ddof: number, optional
-            The delta degrees of freedom. The number of degrees of
-            freedom used in the calculation is (N-*ddof*) where N
-            represents the number of non-missing elements.
+            The delta degrees of freedom, a non-negative number. The
+            number of degrees of freedom used in the calculation is
+            ``N-ddof`` where ``N`` is the number of non-missing
+            elements. A value of 1 applies Bessel's correction. If the
+            calculation is weighted then *ddof* can only be 0 or 1.
 
-            For collapse functions that do not have a ``ddof``
-            parameter, *ddof* must be `None`.
+            For collapse functions for which delta degrees of freedom
+            is not applicable (such as `max`), *ddof* must be `None`.
 
         split_every: `int` or `dict`, optional
             Determines the depth of the recursive aggregation. See
@@ -863,6 +869,8 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
+        # REVIEW: active: `collapse`: pass the active storage status onto the collapse functions
+        #        "active_storage": d.active_storage,
     }
 
     weights = parse_weights(d, weights, axis)
@@ -872,7 +880,12 @@ def collapse(
     if ddof is not None:
         kwargs["ddof"] = ddof
 
-    dx = d.to_dask_array()
+    # REVIEW: getitem: `collapse`: set 'asanyarray'
+    # The applicable chunk function will have its own call to
+    # 'cf_asanyarray', so we can set '_asanyarray=False'. Also, setting
+    # _asanyarray=False will ensure that any active storage operations
+    # are not compromised.
+    dx = d.to_dask_array(_asanyarray=False)
     dx = func(dx, **kwargs)
     d._set_dask(dx)
 
@@ -985,8 +998,10 @@ def parse_weights(d, weights, axis=None):
     w = []
     shape = d.shape
     axes = d._axes
+    # REVIEW: active: `parse_weights`: minor refactor
+    Data = type(d)
     for key, value in weights.items():
-        value = type(d).asdata(value)
+        value = Data.asdata(value)
 
         # Make sure axes are in ascending order
         if key != tuple(sorted(key)):

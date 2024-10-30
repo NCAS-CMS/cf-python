@@ -208,8 +208,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # one dask chunk
             if data.npartitions == 1:
                 data._cfa_set_write(True)
+
+            # REVIEW: h5: `_create_data`: control caching
             if (
                 not compression_index
+                and self.read_vars.get("cache")
                 and self.implementation.get_construct_type(construct)
                 != "field"
             ):
@@ -251,17 +254,20 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
+        # REVIEW: h5: `_create_data`: replace units/calendar API with attributes
+        attributes = kwargs["attributes"]
         data = self._create_Data(
             cfa_array,
             ncvar,
-            units=kwargs["units"],
-            calendar=kwargs["calendar"],
+            units=attributes.get("units"),
+            calendar=attributes.get("calendar"),
         )
 
+        # REVIEW: h5: `_create_data`: don't cache data from CFA variables
         # Note: We don't cache elements from CFA variables, because
         #       the data are in fragment files which have not been
-        #       opened; and may not not even be openable, such as
-        #       could be the case if a fragement was on tape storage.
+        #       opened and may not not even be openable (such as could
+        #       be the case if a fragment file was on tape storage).
 
         # Set the CFA write status to True iff each non-aggregated
         # axis has exactly one dask storage chunk
@@ -503,6 +509,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `None`
 
         """
+
         if data.data.get_compression_type():
             # Don't get cached elements from arrays compressed by
             # convention, as they'll likely be wrong.
@@ -617,6 +624,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Store the elements in the data object
         data._set_cached_elements(elements)
 
+    # REVIEW: h5: `_create_cfanetcdfarray`: docstring/comment improvements
     def _create_cfanetcdfarray(
         self,
         ncvar,
@@ -649,13 +657,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Returns:
 
             (`CFANetCDFArray`, `dict`)
-                The new `NetCDFArray` instance and dictionary of the
-                kwargs used to create it.
+                The new `CFANetCDFArray` instance and dictionary of
+                the kwargs used to create it.
 
         """
         g = self.read_vars
 
-        # Get the kwargs needed to instantiate a general NetCDFArray
+        # Get the kwargs needed to instantiate a general netCDF array
         # instance
         kwargs = self._create_netcdfarray(
             ncvar,
@@ -664,8 +672,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
-        # Get rid of the incorrect shape of (). This will end up
-        # getting set correctly by the CFANetCDFArray instance.
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the CFANetCDFArray instance.
         kwargs.pop("shape", None)
 
         aggregated_data = g["cfa_aggregated_data"][ncvar]
@@ -691,8 +699,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["x"] = aggregation_instructions
         kwargs["instructions"] = " ".join(sorted(instructions))
 
+        # REVIEW: h5: `_create_cfanetcdfarray`: choose the correct netCDF backend
         # Use the kwargs to create a CFANetCDFArray instance
-        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        if g["original_netCDF4"]:
+            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
+        else:
+            # h5netcdf
+            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         return array, kwargs
 
@@ -727,18 +740,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Returns:
 
             (`CFANetCDFArray`, `dict`)
-                The new `NetCDFArray` instance and dictionary of the
-                kwargs used to create it.
+                The new `CFANetCDFArray` instance and dictionary of
+                the kwargs used to create it.
 
         """
         g = self.read_vars
 
-        # Get the kwargs needed to instantiate a general NetCDFArray
+        # Get the kwargs needed to instantiate a general netCDF array
         # instance
         kwargs = self._create_netcdfarray(
             ncvar,
             return_kwargs_only=True,
         )
+
+        # REVIEW: h5: `_create_cfanetcdfarray_term`: fix unknown fragment shape
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the CFANetCDFArray instance.
+        kwargs.pop("shape", None)
 
         instructions = []
         aggregation_instructions = {}
@@ -754,8 +772,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["x"] = aggregation_instructions
         kwargs["instructions"] = " ".join(sorted(instructions))
 
-        # Use the kwargs to create a CFANetCDFArray instance
-        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+        # REVIEW: h5: `_create_cfanetcdfarray_term`: choose the correct netCDF backend
+        if g["original_netCDF4"]:
+            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
+        else:
+            # h5netcdf
+            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         return array, kwargs
 
@@ -940,6 +962,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         aggregation_instructions = g["cfa_aggregation_instructions"]
         variable_attributes = g["variable_attributes"]
 
+        # REVIEW: h5: `_cfa_parse_aggregated_data`: use `cfdm.netcdf_indexer` to get data
+        # Loop round aggregation instruction terms
         out = {}
         for x in self._parse_x(
             ncvar,
@@ -954,10 +978,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # Already processed this term
                 continue
 
-            array = g["variables"][term_ncvar][...]
-            aggregation_instructions[term_ncvar] = self._cfa_conform_array(
-                array
+            variable = g["variables"][term_ncvar]
+            array = cfdm.netcdf_indexer(
+                variable,
+                mask=True,
+                unpack=True,
+                always_masked_array=False,
+                orthogonal_indexing=False,
+                copy=False,
             )
+            aggregation_instructions[term_ncvar] = array[...]
 
             if term == "file":
                 # Find URI substitutions that may be stored in the
@@ -981,43 +1011,3 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         g["cfa_aggregated_data"][ncvar] = out
         return out
-
-    def _cfa_conform_array(self, array):
-        """Conform an array so that it is suitable for CFA processing.
-
-        .. versionadded: 3.15.0
-
-        :Parameters:
-
-            array: `np.ndarray`
-                The array to conform.
-
-        :Returns:
-
-            array: `np.ndarray`
-                The conformed array.
-
-        """
-        if isinstance(array, str):
-            # string
-            return np.array(array, dtype=f"S{len(array)}").astype("U")
-
-        kind = array.dtype.kind
-        if kind == "O":
-            # string
-            return array.astype("U")
-
-        if kind in "SU":
-            # char
-            if kind == "U":
-                array = array.astype("S")
-
-            array = netCDF4.chartostring(array)
-            shape = array.shape
-            array = np.array([x.rstrip() for x in array.flat], dtype="S")
-            array = np.reshape(array, shape)
-            array = np.ma.masked_where(array == b"", array)
-            return array.astype("U")
-
-        # number
-        return array

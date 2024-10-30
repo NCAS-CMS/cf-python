@@ -411,7 +411,10 @@ NetCDF
    ~cf.Count.nc_get_sample_dimension
    ~cf.Count.nc_has_sample_dimension
    ~cf.Count.nc_set_sample_dimension
-
+   ~cf.Count.nc_clear_hdf5_chunksizes
+   ~cf.Count.nc_hdf5_chunksizes
+   ~cf.Count.nc_set_hdf5_chunksizes
+   
 CFA
 ---
 

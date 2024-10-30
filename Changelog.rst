@@ -1,3 +1,22 @@
+version NEXTVERSION + 1
+-----------------------
+
+**2024-??-??**
+
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cf-python/issues/712)
+* New class `cf.H5netcdfArray`
+* New class `cf.NetCDF4Array`
+* New class `cf.CFAH5netcdfArray`
+* New class `cf.CFANetCDF4Array`
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.2.0``
+* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
+* Changed dependency: ``cfunits>=3.3.7``
+
+----
+
 version NEXTVERSION
 -------------------
 
@@ -141,6 +160,8 @@ version 3.16.0
 * Changed dependency: ``1.11.0.0<=cfdm<1.11.1.0``
 * New dependency: ``scipy>=1.10.0``
 
+----
+
 version 3.15.4
 --------------
 
@@ -279,7 +300,7 @@ version 3.14.1
 
 ----
 
-version 3.14.0 (*first Dask release*)
+version 3.14.0 (*first Dask version*)
 -------------------------------------
 
 **2023-01-31**
@@ -314,7 +335,7 @@ version 3.14.0 (*first Dask release*)
 
 ----
 
-version 3.13.1 (*last LAMA release*)
+version 3.13.1 (*last LAMA version*)
 ------------------------------------
 
 **2022-10-17**

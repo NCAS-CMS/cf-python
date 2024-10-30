@@ -727,9 +727,10 @@ class RegridOperator(mixin_Container, Container):
                 # Read the weights from the weights file
                 from netCDF4 import Dataset
 
-                from ..data.array.netcdfarray import _lock
+                # REVIEW: h5: new name and location of file lock
+                from ..data.array.locks import netcdf_lock
 
-                _lock.acquire()
+                netcdf_lock.acquire()
                 nc = Dataset(weights_file, "r")
                 weights = nc.variables["S"][...]
                 row = nc.variables["row"][...]
@@ -746,7 +747,7 @@ class RegridOperator(mixin_Container, Container):
                     row_start_index = 1
 
                 nc.close()
-                _lock.release()
+                netcdf_lock.release()
             else:
                 raise ValueError(
                     "Conversion to sparse array format requires at least "

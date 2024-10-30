@@ -113,7 +113,7 @@ def cf_contains(a, value):
 
     :Parameters:
 
-        a: `numpy.ndarray`
+        a: array_like
             The array.
 
         value: array_like
@@ -127,6 +127,9 @@ def cf_contains(a, value):
             value.
 
     """
+    # REVIEW: getitem: `cf_contains`: convert a to a usable array
+    a = cf_asanyarray(a)
+    value = cf_asanyarray(value)
     return np.array(value in a).reshape((1,) * a.ndim)
 
 
@@ -160,6 +163,13 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
+    # REVIEW: getitem: `cf_convolve1d`: convert a to a usable array
+    a = cf_asanyarray(a)
+
+    # Cast to float to ensure that NaNs can be stored
+    if a.dtype != float:
+        a = a.astype(float, copy=False)
+
     masked = np.ma.is_masked(a)
     if masked:
         # convolve1d does not deal with masked arrays, so uses NaNs
@@ -197,6 +207,8 @@ def cf_harden_mask(a):
             The array with hardened mask.
 
     """
+    # REVIEW: getitem: `cf_harden_mask`: convert a to a usable array
+    a = cf_asanyarray(a)
     if np.ma.isMA(a):
         try:
             a.harden_mask()
@@ -222,7 +234,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
 
     :Parameters:
 
-        a: `numpy.ndarray`
+        a: array_like
             Input array.
 
         q: `numpy.ndarray`
@@ -266,6 +278,9 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
 
     """
     from math import prod
+
+    # REVIEW: getitem: `cf_percentile`: convert a to a usable array
+    a = cf_asanyarray(a)
 
     if np.ma.isMA(a) and not np.ma.is_masked(a):
         # Masked array with no masked elements
@@ -360,6 +375,9 @@ def cf_soften_mask(a):
             The array with softened mask.
 
     """
+    # REVIEW: getitem: `cf_soften_mask`: convert a to a usable array
+    a = cf_asanyarray(a)
+
     if np.ma.isMA(a):
         try:
             a.soften_mask()
@@ -415,6 +433,15 @@ def cf_where(array, condition, x, y, hardmask):
             elsewhere.
 
     """
+    # REVIEW: getitem: `cf_where`: convert array, condition, x, y to usable arrays
+    array = cf_asanyarray(array)
+    condition = cf_asanyarray(condition)
+    if x is not None:
+        x = cf_asanyarray(x)
+
+    if y is not None:
+        y = cf_asanyarray(y)
+
     mask = None
 
     if np.ma.isMA(array):
@@ -510,6 +537,7 @@ def cf_YMDhms(a, attr):
     array([1, 2])
 
     """
+    a = cf_asanyarray(a)
     return _array_getattr(a, attr=attr)
 
 
@@ -542,6 +570,8 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
+    # REVIEW: getitem: `cf_rt2dt`: convert a to a usable array
+    a = cf_asanyarray(a)
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
 
@@ -596,6 +626,8 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
+    # REVIEW: getitem: `cf_dt2rt`: convert a to a usable array
+    a = cf_asanyarray(a)
     return dt2rt(a, units_out=units, units_in=None)
 
 
@@ -636,6 +668,92 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
+    # REVIEW: getitem: `cf_units`: convert a to a usable array
+    a = cf_asanyarray(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
+
+
+def cf_is_masked(a):
+    """Determine whether an array has masked values.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: array_like
+            The array.
+
+    :Returns:
+
+        `numpy.ndarray`
+            A size 1 Boolean array with the same number of dimensions
+            as *a*, for which `True` indicates that there are masked
+            values.
+
+    """
+    # REVIEW: getitem: `cf_is_masked`: convert a to a usable array
+    a = cf_asanyarray(a)
+    out = np.ma.is_masked(a)
+    return np.array(out).reshape((1,) * a.ndim)
+
+
+def cf_filled(a, fill_value=None):
+    """Replace masked elements with a fill value.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: array_like
+            The array.
+
+        fill_value: scalar
+            The fill value.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The filled array.
+
+    **Examples**
+
+    >>> a = np.array([[1, 2, 3]])
+    >>> print(cf.data.dask_utils.cf_filled(a, -999))
+    [[1 2 3]]
+    >>> a = np.ma.array([[1, 2, 3]], mask=[[True, False, False]])
+    >>> print(cf.data.dask_utils.cf_filled(a, -999))
+    [[-999    2    3]]
+
+    """
+    # REVIEW: getitem: `cf_filled`: convert a to a usable array
+    a = cf_asanyarray(a)
+    return np.ma.filled(a, fill_value=fill_value)
+
+
+# REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
+def cf_asanyarray(a):
+    """Convert to a `numpy` array.
+
+    Only do this if the input *a* has an `__asanyarray__` attribute
+    with value True.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: array_like
+            The array.
+
+    :Returns:
+
+            The array converted to a `numpy` array, or the input array
+            unchanged if ``a.__asanyarray__`` False.
+
+    """
+    # REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
+    if getattr(a, "__asanyarray__", False):
+        return np.asanyarray(a)
+
+    return a

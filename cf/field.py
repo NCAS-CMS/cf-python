@@ -547,8 +547,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         autocyclic={"no-op": True},
                     )
 
-        new.set_data(new_data, axes=data_axes, copy=False)
-
         return new
 
     def __setitem__(self, indices, value):
@@ -5222,6 +5220,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
+    # REVIEW: active: active storage docstring
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def collapse(
@@ -5397,18 +5396,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Collapse weights**
 
-        The calculations of means, standard deviations and variances are,
-        by default, **not weighted**. For weights to be incorporated in
-        the collapse, the axes to be weighted must be identified with the
-        *weights* keyword.
+        .. warning:: By default, the collapse calculations are **not**
+                     weighted.
+
+                     For weights to be incorporated in the collapse,
+                     the *weights* keyword must be set.
 
         Weights are either derived from the field construct's metadata
-        (such as cell sizes), or may be provided explicitly in the form of
-        other field constructs containing data of weights values. In
-        either case, the weights actually used are those derived by the
-        `weights` method of the field construct with the same weights
-        keyword value. Collapsed axes that are not identified by the
-        *weights* keyword are unweighted during the collapse operation.
+        (such as cell sizes), or may be provided explicitly in the
+        form of other field constructs containing data of weights
+        values. In either case, the weights actually used are those
+        derived by the `weights` method of the field construct with
+        the same *weights* keyword value. Collapsed axes that are not
+        identified by the *weights* keyword are unweighted during the
+        collapse operation.
 
         *Example:*
           Create a weighted time average:
@@ -5597,6 +5598,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           >>> b = a.collapse('T: standard_deviation within years',
           ...                within_years=cf.seasons(), weights=True)
 
+
+        **Active storage collapses**
+
+        When the data being collapsed are stored remotely, the
+        collapse calculations may be carried out on a server (ideally
+        one that is close in a network distance sense) to the data,
+        thereby removing the time and energy costs of transferring the
+        entire un-collapsed data to the local client. Whether or not
+        this will occur is determined on a case-by-case basis, and
+        will only be done if all of the following criteria are met:
+
+        * the collapse method is one of ``'mean'``, ``'maximum'``,
+          ``'minimum'``, or ``'sum'``;
+
+        * the collapse is over all axes;
+
+        * the collapse is unweighted;
+
+        * ``cf.active_storage()`` is `True`;
+
+        * a URL of the active storage server has been set with
+          `cf.active_storage_url`;
+
+        * the data values are in netCDF-4 files on disk (rather than
+          in any other file format, or in memory) and are not
+          numerically packed;
+
+        * the `!active_storage` attribute of the field's `Data` object
+          is `True`, indicating that active storage operations may be
+          possible. In general, it will only be `True` for data that
+          are in files on disk, are not compressed by convention and
+          have not had any other operations applied, apart from
+          subspacing;
+
+        * it is possible to import the external `activestorage.Active`
+          class.
+
+        The performance improvements from using active storage
+        operations will increase the closer the active storage server
+        is to the data storage. If the active storage server is
+        sufficiently far away from the data then it may be faster to
+        do a normal, non-active operation.
 
         .. versionadded:: 1.0
 
@@ -7058,10 +7101,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
+            # REVIEW: active: `collapse`: include size 1 axes in collapse
+            # Note: It is important that size 1 axes are also passed
+            #       on to the Data collapse, because active storage
+            #       collapses get confused if they're not there.
             data_axes = f.get_data_axes()
             iaxes = [
                 data_axes.index(axis)
-                for axis in collapse_axes
+                for axis in collapse_axes_all_sizes
                 if axis in data_axes
             ]
 
@@ -7367,7 +7414,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group=None,
         group_span=None,
         group_contiguous=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         regroup=None,
         coordinate=None,

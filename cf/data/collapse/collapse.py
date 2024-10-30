@@ -11,6 +11,47 @@ from .collapse_utils import check_input_dtype, double_precision_dtype
 class Collapse(metaclass=DocstringRewriteMeta):
     """Container for functions that collapse dask arrays.
 
+    **Active storage reductions**
+
+    A collapse method (such as `max`, `var`, etc.) will attempt to
+    make use of active storage reduction on an individual `dask` chunk
+    when all of the following conditions are met:
+
+      * `cf.active_storage()` is True;
+
+      * ``cf.active_storage_url()`` returns the URL of a valid active
+        storage server;
+
+      * the `dask` chunk's data are defined by a netCDF-4 file on disk
+        (rather than in any other file format, or in memory);
+
+      * it is possible to import the `activestorage.Active` class;
+
+      * the method is one of those specified by
+        `cf.data.collapse.active_reduction_methods`;
+
+      * the collapse is over all axes;
+
+      * the collapse is unweighted;
+
+      * the data are not numerically packed.
+
+    If any of these conditions are not met then the `dask` chunk will
+    be collapsed "as usual", i.e. by retrieving the data to memory (if
+    it is not already there) and using the local client to perform the
+    collapse calculations.
+
+    .. note:: The performance improvements from using active storage
+              operations will increase the closer, in a network sense,
+              the active storage server is to the data storage. If the
+              active storage server is sufficiently far away from the
+              data then it could even be faster and require less
+              energy to do non-active operation of the local client.
+
+    See `cf.data.collapse.collapse_active.actify` and
+    `cf.data.collapse.collapse_active.active_chunk_function` for
+    further details.
+
     .. versionadded:: 3.14.0
 
     """
@@ -52,7 +93,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -80,7 +121,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -91,6 +132,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_max_agg, cf_max_chunk, cf_max_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_max_chunk
 
         check_input_dtype(a)
@@ -113,7 +155,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -141,7 +183,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
+
 
         :Returns:
 
@@ -163,7 +206,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -193,7 +236,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -204,6 +247,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_mean_chunk
 
         check_input_dtype(a)
@@ -228,7 +272,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         weights=None,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -258,7 +302,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -281,7 +325,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         dtype=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -309,7 +353,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -324,6 +368,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_range_chunk
 
         check_input_dtype(a, allowed="fi")
@@ -346,7 +391,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -374,7 +419,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -385,6 +430,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_min_chunk
 
         check_input_dtype(a)
@@ -407,7 +453,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -435,7 +481,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -456,7 +502,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -484,7 +530,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -499,6 +545,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_range_chunk
 
         check_input_dtype(a, allowed="fi")
@@ -522,7 +569,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -552,7 +599,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
+
 
         :Returns:
 
@@ -563,6 +611,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_mean_combine, cf_rms_agg, cf_rms_chunk
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_rms_chunk
 
         check_input_dtype(a)
@@ -586,7 +635,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -614,7 +663,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -629,6 +678,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sample_size_chunk
 
         check_input_dtype(a)
@@ -652,7 +702,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -682,7 +732,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -693,6 +743,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_sum_agg, cf_sum_chunk, cf_sum_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sum_chunk
 
         check_input_dtype(a)
@@ -720,7 +771,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -750,7 +801,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -765,6 +816,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_sum_of_weights_chunk
 
         check_input_dtype(a)
@@ -789,7 +841,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         chunk_function=None,
     ):
@@ -819,7 +871,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -830,17 +882,18 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import (
             cf_sum_agg,
             cf_sum_combine,
-            cf_sum_of_weights_chunk,
+            cf_sum_of_weights2_chunk,
         )
 
         if chunk_function is None:
-            chunk_function = cf_sum_of_weights_chunk
+            # Default function for chunk calculations
+            chunk_function = cf_sum_of_weights2_chunk
 
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
-            partial(chunk_function, square=True),
+            chunk_function,
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -864,7 +917,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
 
         :Returns:
 
@@ -875,6 +928,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_unique_agg, cf_unique_chunk
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_unique_chunk
 
         check_input_dtype(a, "fibUS")
@@ -905,7 +959,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         split_every=None,
         chunk_function=None,
@@ -938,7 +992,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{chunk_function: callable, optional}}
+            {{chunk_function: callable or `None`, optional}}
+
+                A callable function must accept a *ddof* keyword
+                parameter that sets the delta degrees of freedom. See
+                `cf.data.collapse.dask_collapse.cf_var_chunk` for
+                details.
 
         :Returns:
 
@@ -949,6 +1008,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         from .dask_collapse import cf_var_agg, cf_var_chunk, cf_var_combine
 
         if chunk_function is None:
+            # Default function for chunk calculations
             chunk_function = cf_var_chunk
 
         check_input_dtype(a)

@@ -20,12 +20,10 @@
    :maxdepth: 1
 
    introduction
-   cf_data_model
    installation
    cheat_sheet
    recipes/index
    tutorial
-   analysis
    api_reference
    aggregation_rules
    performance

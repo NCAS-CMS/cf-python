@@ -2,6 +2,9 @@
 
 import numpy as np
 
+# REVIEW: getitem: `regrid.py`: import `cf_asanyarray`
+from .dask_utils import cf_asanyarray
+
 
 def regrid(
     a,
@@ -173,6 +176,14 @@ def regrid(
 
     """
     weights, dst_mask = weights_dst_mask
+
+    # REVIEW: getitem: `regrid`: convert a to a usable array
+    a = cf_asanyarray(a)
+    if dst_mask is not None:
+        dst_mask = cf_asanyarray(dst_mask)
+
+    if ref_src_mask is not None:
+        ref_src_mask = cf_asanyarray(ref_src_mask)
 
     # ----------------------------------------------------------------
     # Reshape the array into a form suitable for the regridding dot

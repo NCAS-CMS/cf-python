@@ -591,6 +591,18 @@ Compression by convention
 
    ~cf.Data.compressed_array
 
+Active storage
+--------------
+  
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.active_storage
+
 Miscellaneous
 -------------
    

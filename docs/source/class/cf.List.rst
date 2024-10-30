@@ -404,6 +404,9 @@ NetCDF
    ~cf.List.nc_get_variable
    ~cf.List.nc_has_variable
    ~cf.List.nc_set_variable
+   ~cf.List.nc_clear_hdf5_chunksizes
+   ~cf.List.nc_hdf5_chunksizes
+   ~cf.List.nc_set_hdf5_chunksizes
 
 CFA
 ---
