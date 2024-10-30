@@ -5220,7 +5220,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
-    # REVIEW: active: active storage docstring
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def collapse(
@@ -7101,7 +7100,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
-            # REVIEW: active: `collapse`: include size 1 axes in collapse
             # Note: It is important that size 1 axes are also passed
             #       on to the Data collapse, because active storage
             #       collapses get confused if they're not there.

@@ -12,7 +12,6 @@ class UMArray(
 ):
     """A sub-array stored in a PP or UM fields file."""
 
-    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         filename=None,
@@ -171,7 +170,6 @@ class UMArray(
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -272,7 +270,6 @@ class UMArray(
         #         if r.hdr_offset == header_offset:
         #             return r
 
-    # REVIEW: getitem: `_set_FillValue`: record _FillValue in attributes
     def _set_FillValue(self, int_hdr, real_hdr, attributes):
         """Set the ``_FillValue`` attribute.
 
@@ -367,10 +364,8 @@ class UMArray(
                 units = units0
                 break
 
-        # REVIEW: getitem: `_set_units`: record units in attributes
         attributes["units"] = units
 
-    # REVIEW: getitem: `_set_unpack`: record unpack in attributes
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.
 

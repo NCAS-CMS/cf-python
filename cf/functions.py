@@ -163,7 +163,6 @@ else:
         return float(virtual_memory().available)
 
 
-# REVIEW: active: `configuration`: new keywords 'active_storage', 'active_storage_url', 'active_storage_max_requests'
 def configuration(
     atol=None,
     rtol=None,
@@ -425,7 +424,6 @@ def configuration(
     )
 
 
-# REVIEW: active: `_configuration`: new keywords 'active_storage', 'active_storage_url', 'active_storage_max_requests'
 def _configuration(_Configuration, **kwargs):
     """Internal helper function to provide the logic for
     `cf.configuration`.
@@ -584,7 +582,6 @@ class log_level(ConstantAccess, cfdm.log_level):
     _reset_log_emergence_level = _reset_log_emergence_level
 
 
-# REVIEW: active: `regrid_logging`: new examples
 class regrid_logging(ConstantAccess):
     """Whether or not to enable `esmpy` regridding logging.
 
@@ -716,7 +713,6 @@ class collapse_parallel_mode(ConstantAccess):
         )  # pragma: no cover
 
 
-# REVIEW: active: `relaxed_identities`: new examples
 class relaxed_identities(ConstantAccess):
     """Use 'relaxed' mode when getting a construct identity.
 
@@ -850,7 +846,6 @@ class chunksize(ConstantAccess):
         return parse_bytes(arg)
 
 
-# REVIEW: active: `tempdir`: new examples
 class tempdir(ConstantAccess):
     """The directory for internally generated temporary files.
 
@@ -1202,7 +1197,6 @@ class bounds_combination_mode(ConstantAccess):
         return arg
 
 
-# REVIEW: active: `active_storage`: new function
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
@@ -1272,7 +1266,6 @@ class active_storage(ConstantAccess):
         return bool(arg)
 
 
-# REVIEW: active: `active_storage_url`: new function
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
@@ -1337,7 +1330,6 @@ class active_storage_url(ConstantAccess):
         return str(arg)
 
 
-# REVIEW: active: `active_storage_max_requests`: new function
 class active_storage_max_requests(ConstantAccess):
     """Concurrent active storage server requests per `dask` chunk.
 
@@ -2446,9 +2438,6 @@ def normalize_slice(index, size, cyclic=False):
     return slice(start, stop, step)
 
 
-# REVIEW: getitem: `get_subspace`: remove deprecated function
-
-
 _equals = cfdm.Data()._equals
 
 
@@ -2897,7 +2886,6 @@ def relpath(filename, start=None):
     'http://data/archive/file.nc'
 
     """
-    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(filename)
     if u.scheme != "":
         return filename
@@ -2936,7 +2924,6 @@ def dirname(filename):
     'http://data/archive'
 
     """
-    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(filename)
     if u.scheme != "":
         return filename.rpartition("/")[0]
@@ -2976,7 +2963,6 @@ def pathjoin(path1, path2):
     'http://data/archive/file.nc'
 
     """
-    # REVIEW: h5: `relpath`: minor refactor
     u = urlparse(path1)
     if u.scheme != "":
         return urljoin(path1, path2)
@@ -3347,7 +3333,6 @@ def _get_module_info(module, alternative_name=False, try_except=False):
     )
 
 
-# REVIEW: h5: `environment`: new dependencies
 def environment(display=True, paths=True):
     """Return the names and versions of the cf package and its
     dependencies.

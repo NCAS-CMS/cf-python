@@ -7,7 +7,6 @@ from dask.base import is_dask_collection
 from ....functions import indices_shape, parse_indices
 
 
-# REVIEW: getitem: `IndexMixin`: new mixin class `IndexMixin`
 class IndexMixin:
     """Mixin class for lazy indexing of a data array.
 

@@ -58,17 +58,13 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
-    # REVIEW: h5: `read`: new 'unpack' parameter to control auto-unpacking (previously always True)
     unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
     cfa=None,
-    # REVIEW: h5: `read`: new 'netcdf_backend' parameter to control how to read files
     netcdf_backend=None,
-    # REVIEW: h5: `read`: new 'storage_options' parameter to control access to S3
     storage_options=None,
-    # REVIEW: h5: `read`: 'cache' parameter to control whether or not to get to cache selected data elements
     cache=True,
 ):
     """Read field or domain constructs from files.

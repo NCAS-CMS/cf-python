@@ -1,4 +1,3 @@
-# REVIEW: active: `collapse_active.py`: new module for active storage functionality
 import datetime
 import logging
 import time

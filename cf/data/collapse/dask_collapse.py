@@ -1,4 +1,3 @@
-# REVIEW: active: `dask_collapse.py`: all unlabelled changes in this module are general tidying, and should be reviewed at the same time as active storage
 """Reduction functions intended to be passed to be dask.
 
 Most of these functions are expected to be passed to
@@ -231,7 +230,6 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # mean
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_mean_chunk`: active storage decoration
 @actify("mean")
 def cf_mean_chunk(
     x,
@@ -378,7 +376,6 @@ def cf_mean_agg(
 # --------------------------------------------------------------------
 # maximum
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_max_chunk`: active storage decoration
 @actify("max")
 def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the maximum.
@@ -533,7 +530,6 @@ def cf_mid_range_agg(
 # --------------------------------------------------------------------
 # minimum
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_min_chunk`: active storage decoration
 @actify("min")
 def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the minimum.
@@ -640,7 +636,6 @@ def cf_min_agg(
 # --------------------------------------------------------------------
 # range
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_range_chunk`: active storage decoration
 @actify("range")
 def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the range.
@@ -754,7 +749,6 @@ def cf_range_agg(
 # --------------------------------------------------------------------
 # root mean square
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_rms_chunk`: active storage decoration
 @actify("rms")
 def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the root mean square (RMS).
@@ -839,7 +833,6 @@ def cf_rms_agg(
 # --------------------------------------------------------------------
 # sample size
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_sample_size_chunk`: active storage decoration
 @actify("sample_size")
 def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     """Chunk calculations for the sample size.
@@ -953,7 +946,6 @@ def cf_sample_size_agg(
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_sum_chunk`: active storage decoration
 @actify("sum")
 def cf_sum_chunk(
     x,
@@ -1089,7 +1081,6 @@ def cf_sum_agg(
 # --------------------------------------------------------------------
 # sum of weights
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_sum_of_weights_chunk`: active storage decoration
 @actify("sum_of_weights")
 def cf_sum_of_weights_chunk(
     x, weights=None, dtype="f8", computing_meta=False, **kwargs
@@ -1133,7 +1124,6 @@ def cf_sum_of_weights_chunk(
 # --------------------------------------------------------------------
 # sum of squares of weights
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_sum_of_weights2_chunk`: active storage decoration
 @actify("sum_of_weights2")
 def cf_sum_of_weights2_chunk(
     x, weights=None, dtype="f8", computing_meta=False, **kwargs
@@ -1179,7 +1169,6 @@ def cf_sum_of_weights2_chunk(
 # --------------------------------------------------------------------
 # unique
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_unique_chunk`: active storage decoration
 @actify("unique")
 def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the unique values.
@@ -1244,7 +1233,6 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # variance
 # --------------------------------------------------------------------
-# REVIEW: active: `cf_var_chunk`: active storage decoration
 @actify("var")
 def cf_var_chunk(
     x, weights=None, dtype="f8", computing_meta=False, ddof=None, **kwargs

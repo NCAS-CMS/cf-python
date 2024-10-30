@@ -16,7 +16,6 @@ class FullArray(IndexMixin, Array):
 
     """
 
-    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         fill_value=None,
@@ -121,7 +120,6 @@ class FullArray(IndexMixin, Array):
 
         return f"Filled with {fill_value!r}"
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns the full array.
 
@@ -156,7 +154,6 @@ class FullArray(IndexMixin, Array):
 
         return array
 
-    # REVIEW: getitem: `array`: New property to convert subspace to numpy array
     @property
     def array(self):
         """Return an independent numpy array containing the data.

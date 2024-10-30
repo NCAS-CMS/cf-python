@@ -127,7 +127,6 @@ def cf_contains(a, value):
             value.
 
     """
-    # REVIEW: getitem: `cf_contains`: convert a to a usable array
     a = cf_asanyarray(a)
     value = cf_asanyarray(value)
     return np.array(value in a).reshape((1,) * a.ndim)
@@ -163,7 +162,6 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
-    # REVIEW: getitem: `cf_convolve1d`: convert a to a usable array
     a = cf_asanyarray(a)
 
     # Cast to float to ensure that NaNs can be stored
@@ -207,7 +205,6 @@ def cf_harden_mask(a):
             The array with hardened mask.
 
     """
-    # REVIEW: getitem: `cf_harden_mask`: convert a to a usable array
     a = cf_asanyarray(a)
     if np.ma.isMA(a):
         try:
@@ -279,7 +276,6 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    # REVIEW: getitem: `cf_percentile`: convert a to a usable array
     a = cf_asanyarray(a)
 
     if np.ma.isMA(a) and not np.ma.is_masked(a):
@@ -375,7 +371,6 @@ def cf_soften_mask(a):
             The array with softened mask.
 
     """
-    # REVIEW: getitem: `cf_soften_mask`: convert a to a usable array
     a = cf_asanyarray(a)
 
     if np.ma.isMA(a):
@@ -433,7 +428,6 @@ def cf_where(array, condition, x, y, hardmask):
             elsewhere.
 
     """
-    # REVIEW: getitem: `cf_where`: convert array, condition, x, y to usable arrays
     array = cf_asanyarray(array)
     condition = cf_asanyarray(condition)
     if x is not None:
@@ -570,7 +564,6 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    # REVIEW: getitem: `cf_rt2dt`: convert a to a usable array
     a = cf_asanyarray(a)
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
@@ -626,7 +619,6 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
-    # REVIEW: getitem: `cf_dt2rt`: convert a to a usable array
     a = cf_asanyarray(a)
     return dt2rt(a, units_out=units, units_in=None)
 
@@ -668,7 +660,6 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
-    # REVIEW: getitem: `cf_units`: convert a to a usable array
     a = cf_asanyarray(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
@@ -693,7 +684,6 @@ def cf_is_masked(a):
             values.
 
     """
-    # REVIEW: getitem: `cf_is_masked`: convert a to a usable array
     a = cf_asanyarray(a)
     out = np.ma.is_masked(a)
     return np.array(out).reshape((1,) * a.ndim)
@@ -727,12 +717,10 @@ def cf_filled(a, fill_value=None):
     [[-999    2    3]]
 
     """
-    # REVIEW: getitem: `cf_filled`: convert a to a usable array
     a = cf_asanyarray(a)
     return np.ma.filled(a, fill_value=fill_value)
 
 
-# REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
 def cf_asanyarray(a):
     """Convert to a `numpy` array.
 
@@ -752,7 +740,6 @@ def cf_asanyarray(a):
             unchanged if ``a.__asanyarray__`` False.
 
     """
-    # REVIEW: getitem: `cf_asanyarray`: convert a to a usable array
     if getattr(a, "__asanyarray__", False):
         return np.asanyarray(a)
 
