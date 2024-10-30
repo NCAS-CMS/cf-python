@@ -475,9 +475,15 @@ class FieldDomain:
                             raise ValueError(
                                 f"No indices found from: {identity}={value!r}"
                             )
-                    
-                        start = n[-1] + 1
-                        stop = start - n.size
+
+                        if n.size:
+                            start = n[-1] + 1
+                            stop = start - n.size
+                        else:
+                            start = item.size -offset
+                            stop = start
+
+
                     print(n)
                     print ('start, stop=',start, stop)
              
