@@ -44,7 +44,6 @@ from ..units import Units
 from .collapse import Collapse
 from .creation import generate_axis_identifiers, to_dask
 
-# REVIEW: getitem: `data.py`: import cf_asanyarray, cf_filled, cf_is_masked
 from .dask_utils import (
     _da_ma_allclose,
     cf_asanyarray,
@@ -375,7 +374,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 source=source, _use_array=_use_array and array is not None
             )
             if _use_array:
-                # REVIEW: getitem: `__init__`: set 'asanyarray'
                 try:
                     array = source.to_dask_array(_asanyarray=False)
                 except (AttributeError, TypeError):
@@ -479,7 +477,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         is_dask = is_dask_collection(array)
         custom["deterministic"] = not is_dask
 
-        # REVIEW: getitem: `__init__`: Set whether or not to call `np.asanyarray` on chunks to convert them to numpy arrays.
         # Set whether or not to call `np.asanyarray` on chunks to
         # convert them to numpy arrays.
         if is_dask:
@@ -513,7 +510,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Reset the units
             self._Units = units
 
-        # REVIEW: getitem: `__init__`: set 'asanyarray'
         # Store the dask array
         self._set_dask(dx, clear=_NONE, asanyarray=None)
 
@@ -636,7 +632,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 f"not {value!r}"
             )
 
-        # REVIEW: getitem: `cf_contains`: set 'asanyarray'
         # If value is a scalar Data object then conform its units
         if isinstance(value, self.__class__):
             self_units = self.Units
@@ -789,7 +784,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         TypeError: len() of unsized object
 
         """
-        # REVIEW: getitem: `__len__`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -898,7 +892,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # ------------------------------------------------------------
         # Roll axes with cyclic slices
         # ------------------------------------------------------------
-        # REVIEW: getitem: `__getitem__`: set 'asanyarray'
         if roll:
             # For example, if slice(-2, 3) has been requested on a
             # cyclic axis, then we roll that axis by two points and
@@ -958,7 +951,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "Non-orthogonal indexing has not yet been implemented"
             )
 
-        # REVIEW: getitem: `__getitem__`: set 'asanyarray=True' because subspaced chunks might not be in memory
         # ------------------------------------------------------------
         # Set the subspaced dask array
         #
@@ -1181,7 +1173,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return
 
-    # REVIEW: getitem: `__asanyarray__`: new property `__asanyarray__`
     @property
     def __asanyarray__(self):
         """Whether or not chunks need conversion to `numpy` arrays.
@@ -1410,7 +1401,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-    # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
     def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
         """Set the dask array.
 
@@ -1469,7 +1459,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         custom = self._custom
         custom["dask"] = dx
-        # REVIEW: getitem: `_set_dask`: set '__asanyarray__'
         if asanyarray is not None:
             custom["__asanyarray__"] = bool(asanyarray)
 
@@ -2545,7 +2534,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         else:
             axes = tuple(sorted(d._parse_axes(axes)))
 
-        # REVIEW: getitem: `percentile`: set 'asanyarray'
         # 'cf_percentile' has its own call to 'cf_asanyarray', so we
         # can set '_asanyarray=False'.
         dx = d.to_dask_array(_asanyarray=False)
@@ -3045,7 +3033,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = d.to_dask_array()
 
-        # REVIEW: getitem: `percentile`: rectify comment
         # Cast to float to ensure that NaNs can be stored (so
         # map_overlap can correctly assign the halos)
         if dx.dtype != float:
@@ -3233,7 +3220,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # REVIEW: getitem: `rechunk`: set 'asanyarray'
         dx = d.to_dask_array(_asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         # Dask rechunking is essentially a wrapper for __getitem__
@@ -3291,7 +3277,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         if not d._isdatetime():
-            # REVIEW: getitem: `_asdatetime`: set 'asanyarray'
             # 'cf_rt2dt' has its own call to 'cf_asanyarray', so we
             # can set '_asanyarray=False'.
             dx = d.to_dask_array(_asanyarray=False)
@@ -3349,7 +3334,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         if d._isdatetime():
-            # REVIEW: getitem: `_asreftime`: set 'asanyarray'
             # 'cf_dt2rt' has its own call to 'cf_asanyarray', so we
             # can set '_asanyarray=False'.
             dx = d.to_dask_array(_asanyarray=False)
@@ -3962,7 +3946,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 f"the shape of the regrid operator: {operator.src_shape}"
             )
 
-        # REVIEW: getitem: `_regrid`: set 'asanyarray'
         # 'regrid' has its own calls to 'cf_asanyarray', so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -4207,7 +4190,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             processed_data.append(data1)
             copied = not copy  # to avoid making two copies in a given case
 
-        # REVIEW: getitem: `concatenate`: set 'asanyarray'
         # Get data as dask arrays and apply concatenation
         # operation. We can set '_asanyarray=False' because at compute
         # time the concatenation operation does not need to access the
@@ -4240,7 +4222,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                     cfa = _NONE
                     break
 
-        # REVIEW: getitem: `concatenate`: define the asanyarray status
         # Define the __asanyarray__ status
         asanyarray = processed_data[0].__asanyarray__
         for d in processed_data[1:]:
@@ -4251,7 +4232,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 asanyarray = True
                 break
 
-        # REVIEW: getitem: `concatenate`: set 'asanyarray'
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
 
@@ -4897,7 +4877,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         6
 
         """
-        # REVIEW: getitem: `chunks`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         return self.to_dask_array(_asanyarray=False).chunks
@@ -4955,7 +4934,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         cf_func = partial(cf_units, from_units=old_units, to_units=value)
 
-        # REVIEW: getitem: `Units`: set 'asanyarray'
         # 'cf_units' has its own call to 'cf_asanyarray', so we can
         # set '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5025,7 +5003,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         [1 2 3]
 
         """
-        # REVIEW: getitem: `dtype`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5141,7 +5118,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         True
 
         """
-        # REVIEW: getitem: `is_masked`: set 'asanyarray'
         # 'cf_is_masked' has its own call to 'cf_asanyarray', so we
         # can set '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5187,7 +5163,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         24
 
         """
-        # REVIEW: getitem: `nbytes`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5224,7 +5199,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         0
 
         """
-        # REVIEW: getitem: `ndim`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5249,7 +5223,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         6
 
         """
-        # REVIEW: getitem: `npartitions`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         return self.to_dask_array(_asanyarray=False).npartitions
@@ -5273,7 +5246,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         6
 
         """
-        # REVIEW: getitem: `numblocks` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         return self.to_dask_array(_asanyarray=False).numblocks
@@ -5306,7 +5278,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         ()
 
         """
-        # REVIEW: getitem: `shape`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -5348,7 +5319,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         1
 
         """
-        # REVIEW: getitem: `size` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -6547,7 +6517,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 )
                 d.Units = units0
 
-        # REVIEW: getitem: `convert_reference_time`: set 'asanyarray'
         # 'cf_rt2dt' its own call to 'cf_asanyarray', so we can set
         # '_asanyarray=False'.
         dx = d.to_dask_array(_asanyarray=False)
@@ -6628,7 +6597,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         units = self._Units
 
-        # REVIEW: getitem: `get_deterministic_name`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         return tokenize(
@@ -6698,7 +6666,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         out = set()
 
-        # REVIEW: getitem: `get_filenames`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         for a in self.todict(_asanyarray=False).values():
@@ -6835,7 +6802,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         updated = False
 
-        # REVIEW: getitem: `add_file_location`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dsk = self.todict(_asanyarray=False)
@@ -8279,7 +8245,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # in the result.
         d.soften_mask()
 
-        # REVIEW: getitem: `unique`: set 'asanyarray'
         # The applicable chunk function will have its own call to
         # 'cf_asanyarray', so we can set '_asanyarray=False'.
         dx = d.to_dask_array(_asanyarray=False)
@@ -9028,7 +8993,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         [1 -- 3]
 
         """
-        # REVIEW: getitem: `hardmask`: set 'asanyarray'
         # 'cf_harden_mask' has its own call to 'cf_asanyarray', so we
         # can set '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -9151,7 +9115,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         [  1 999   3]
 
         """
-        # REVIEW: getitem: `soften_mask`: set 'asanyarray'
         # 'cf_soften_mask' has its own call to 'cf_asanyarray', so we
         # can set '_asanyarray=False'.
         dx = self.to_dask_array(_asanyarray=False)
@@ -9183,7 +9146,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         out = set()
 
-        # REVIEW: getitem: `file_locations`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         for key, a in self.todict(_asanyarray=False).items():
@@ -9244,7 +9206,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                         f"data type {d.dtype.str!r}"
                     )
 
-        # REVIEW: getitem: `filled`: set 'asanyarray'
         # 'cf_filled' has its own call to 'cf_asanyarray', so we can
         # set '_asanyarray=False'.
         dx = d.to_dask_array(_asanyarray=False)
@@ -9876,7 +9837,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._Units = Units(d.Units._units, calendar)
         return d
 
-    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
     def to_dask_array(self, apply_mask_hardness=False, _asanyarray=True):
         """Convert the data to a `dask` array.
 
@@ -10216,7 +10176,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         updated = False
 
-        # REVIEW: getitem: `del_file_location`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # '_asanyarray=False'.
         dsk = self.todict(_asanyarray=False)
@@ -11401,7 +11360,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
         #
-        # REVIEW: getitem: `where`: set 'asanyarray'
         # 'cf_where' has its own calls to 'cf_asanyarray', so we can
         # set '_asanyarray=False'.
         dx = d.to_dask_array(apply_mask_hardness=True, _asanyarray=False)
@@ -11419,7 +11377,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         condition = type(self).asdata(condition)
         condition = where_broadcastable(d, condition, "condition")
-        # REVIEW: getitem: `where`: set 'asanyarray'
         # 'cf_where' has its own calls to 'cf_asanyarray', so we can
         # set '_asanyarray=False'.
         condition = condition.to_dask_array(_asanyarray=False)
@@ -11465,7 +11422,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         x, y = xy
 
-        # REVIEW: getitem: `where`: 'da.asanyarray' is no longer required
         # Apply the where operation
         dx = da.core.elemwise(cf_where, dx, condition, x, y, d.hardmask)
         d._set_dask(dx)
@@ -11692,7 +11648,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
-        # REVIEW: getitem: `cull_graph`: set 'asanyarray'
         dx = self.to_dask_array(_asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
@@ -11972,7 +11927,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    # REVIEW: getitem: `todict`: new keywords 'apply_mask_hardness', 'asanyarray'
     def todict(
         self, optimize_graph=True, apply_mask_hardness=False, _asanyarray=True
     ):

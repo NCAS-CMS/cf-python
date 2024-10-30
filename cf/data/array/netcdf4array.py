@@ -1,4 +1,3 @@
-# REVIEW: h5: `NetCDF4Array`: New class to access netCDF with `netCDF4`, replaces `NetCDFArray`
 import cfdm
 
 from ...mixin_container import Container
@@ -47,8 +46,6 @@ class NetCDF4Array(
         """
         return netcdf_lock
 
-    # REVIEW: getitem: `_get_array`: Ignore this for h5 review
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 

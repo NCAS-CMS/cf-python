@@ -1,6 +1,3 @@
-# REVIEW: active: `ActiveStorageMixin`: new mixin class `ActiveStorageMixin`
-
-
 class ActiveStorageMixin:
     """Mixin class for enabling active storage operations.
 

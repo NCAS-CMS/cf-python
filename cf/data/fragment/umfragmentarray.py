@@ -9,8 +9,6 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
 
     """
 
-    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
-    # REVIEW: h5: `__init__`: new keyword 'storage_options'
     def __init__(
         self,
         filename=None,

@@ -579,8 +579,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             },
         )
 
-    # REVIEW: h5: Deleted function _convert_to_builtin_type was a CFA-0.4 thing
-
     def _check_valid(self, array, cfvar=None, attributes=None):
         """Checks for array values outside of the valid range.
 
@@ -749,7 +747,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
-            # REVIEW: getitem: `_cfa_write_non_standard_terms`: set '_asanyarray'
             # '_cfa_unique' has its own call to 'cf_asanyarray', so
             # we can set '_asanyarray=False'.
             dx = data.to_dask_array(_asanyarray=False)
@@ -810,7 +807,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
-        # REVIEW: getitem: `_cfa_unique`: convert a to a usable array
         a = cf_asanyarray(a)
 
         out_shape = (1,) * a.ndim
@@ -966,7 +962,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Create the location array
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
-        # REVIEW: getitem: `_cfa_aggregation_instructions`: set 'asanyarray'
         if (
             max(data.to_dask_array(_asanyarray=False).chunksize)
             > np.iinfo(dtype).max
