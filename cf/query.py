@@ -166,10 +166,11 @@ class Query:
                             evaluated.
     ======================  ==============================================
 
-    In general, each method must have the query value as it's only
-    parameter. The only exception is for `__query_isclose__`, which
+    In general, each method must have the query value as its only
+    parameter. The only exceptions are for `__query_isclose__`, which
     also requires the absolute and relative numerical tolerances to be
-    provided.
+    provided, and for `__query_wi__`, which also requires upper and
+    lower interval openness Booleans to be provided.
 
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
