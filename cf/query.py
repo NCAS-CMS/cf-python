@@ -972,7 +972,7 @@ class Query:
         if operator == "wi":
             _wi = getattr(x, "__query_wi__", None)
             if _wi is not None:
-                return _wi(value)
+                return _wi(value, self.open_lower, self.open_upper)
 
             if self.open_lower:
                 lower_bound = x > value[0]
