@@ -8,7 +8,11 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
 )
-from .functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
+from .functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
+    bounds_combination_mode,
+)
 from .timeduration import TimeDuration
 from .units import Units
 
@@ -247,57 +251,58 @@ class DimensionCoordinate(
         return self.direction()
 
     @_inplace_enabled(default=False)
-    def anchor(self, value, parameters=None, inplace=False):
+    def anchor(self, value, cell=False, parameters=None, inplace=False):
         """Anchor the coordinate values.
 
+        By default, the coordinate values are transformed so that the
+        first coordinate is the closet to *value* from above (below)
+        for increasing (decreasing) coordinates.
 
-
-        axis to the *value*.Roll cyclic coordinates so that a value lies in the first cell (REALLY?)
-        coordinate cell.
-
-        A unique axis is selected with the *axes* and *kwargs*
-        parameters.
-
+        If the *cell* parameter is True, then the coordinate values
+        are transformed so that the first cell either contains
+        *value*; or is the closet to cell to *value* from above
+        (below) for increasing (decreasing) coordinates.
+    
         .. versionadded:: NEXTVERSION
-
-TODO provide a bounds treament: bounds=False|True
 
         .. seealso:: `period`, `roll`
 
         :Parameters:
-
+    
             axis:
                 The cyclic axis to be anchored.
-
+    
                 domain axis selection TODO.
-
-            value:
-
+    
+            value: scalar array_like
+    
                 Anchor the coordinate values for the selected cyclic
                 axis to the *value*. May be any numeric scalar object
                 that can be converted to a `Data` object (which
                 includes `numpy` and `Data` objects). If *value* has
                 units then they must be compatible with those of the
                 coordinates, otherwise it is assumed to have the same
-                units as the coordinates. The coordinate values are
-                transformed so that *value* is "equal to or just
-                before" the new first coordinate value. More
-                specifically:
-
+                units as the coordinates.
+        
+                The coordinate values are transformed so the first
+                corodinate is the closet to *value* from above (for
+                increasing coordinates), or the closet to *value* from
+                above (for idereasing coordinates)
+    
                   * Increasing coordinates with positive period, P,
                     are transformed so that *value* lies in the
                     half-open range (L-P, F], where F and L are the
                     transformed first and last coordinate values,
                     respectively.
-
+    
             ..
-
+    
                   * Decreasing coordinates with positive period, P,
                     are transformed so that *value* lies in the
                     half-open range (L+P, F], where F and L are the
                     transformed first and last coordinate values,
                     respectively.
-
+    
                 *Parameter example:*
                   If the original coordinates are ``0, 5, ..., 355``
                   (evenly spaced) and the period is ``360`` then
@@ -306,7 +311,7 @@ TODO provide a bounds treament: bounds=False|True
                   coordinates of ``-10, -5, ..., 345``; ``value=380``
                   implies transformed coordinates of ``380, 385, ...,
                   715``.
-
+    
                 *Parameter example:*
                   If the original coordinates are ``355, 350, ..., 0``
                   (evenly spaced) and the period is ``360`` then
@@ -315,51 +320,66 @@ TODO provide a bounds treament: bounds=False|True
                   transformed coordinates of ``0, -5, ..., -355``;
                   ``value=392`` implies transformed coordinates of
                   ``390, 385, ..., 30``.
+    
+            cell: `bool`, optional
+                TODO
 
             parameters: `dict`, optional
                 TODO Return a dictionary of parameters which describe the
                 anchoring process. The construct is not changed, even
                 if *inplace* is True.
-
+    
             {{inplace: `bool`, optional}}
-
+    
         :Returns:
 
         """
-        
         d = _inplace_enabled_define_and_cleanup(self)
 
         period = d.period()
         if period is None:
             raise ValueError(f"Cyclic {d!r} has no period")
 
-        axis_size = d.size
-        if axis_size <= 1:
-            # Don't need to roll a size one axis
-            if parameters is not None:
-                parameters.update({"shift": 0, "nperiod": 0})
+        value = d._Data.asdata(value)
+        if not value.Units:
+            value = value.override_units(d.Units)
+        elif not value.Units.equivalent(d.Units):
+            raise ValueError(
+                f"Anchor value has incompatible units: {value.Units!r}"
+            )
 
-            return d
-
-        c = d.get_data(_fill_value=False)
-        if not inplace:
-            c.persist(inplace=True)
-
-        if d.increasing:
+        if cell:
+            c = d.upper_bounds.persist()
+        else:
+            d.persist(inplace=True)
+            c = d.get_data(_fill_value=False)
+      
+        if d.increasing: 
             # Adjust value so it's in the range [c[0], c[0]+period)
             n = ((c[0] - value) / period).ceil()
             value1 = value + n * period
-            shift = axis_size - np.argmax((c - value1 >= 0).array)
+            shift = c.size - np.argmax((c - value1 >= 0).array)
             d.roll(0, shift, inplace=True)
-            n = ((value - d.data[0]) / period).ceil().persist()
+            if cell:
+                d0 = d[0].upper_bounds
+            else:
+                d0 = d.get_data(_fill_value=False)[0]
+    
+            n = ((value - d0) / period).ceil()
         else:
             # Adjust value so it's in the range (c[0]-period, c[0]]
             n = ((c[0] - value) / period).floor()
             value1 = value + n * period
-            shift = axis_size - np.argmax((value1 - c >= 0).array)
+            shift = c.size - np.argmax((value1 - c >= 0).array)
             d.roll(0, shift, inplace=True)
-            n = ((value - d.data[0]) / period).floor().persist()
+            if cell:
+                d0 = d[0].upper_bounds
+            else:
+                d0 = d.get_data(_fill_value=False)[0]
 
+            n = ((value - d0) / period).floor()
+
+        n.persist(inplace=True)
         if n:
             nperiod = n * period
             with bounds_combination_mode("OR"):
@@ -368,7 +388,7 @@ TODO provide a bounds treament: bounds=False|True
             nperiod = 0
 
         if parameters is not None:
-            parameters.update( {"shift": shift, "nperiod": nperiod})
+            parameters.update({"shift": shift, "nperiod": nperiod})
 
         return d
 

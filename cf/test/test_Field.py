@@ -1298,7 +1298,7 @@ class FieldTest(unittest.TestCase):
 
         # wi (decreasing)
         f.flip("X", inplace=True)
-       
+
         indices = f.indices(grid_longitude=cf.wi(50, 130))
         self.assertTrue(indices[0], "mask")
         g = f[indices]

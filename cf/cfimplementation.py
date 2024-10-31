@@ -26,7 +26,6 @@ from . import (
     TiePointIndex,
 )
 from .data import Data
-
 from .data.array import (
     BoundsFromNodesArray,
     CellConnectivityArray,
