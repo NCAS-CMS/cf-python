@@ -8,7 +8,7 @@ from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
 )
-from .functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_KWARGS
+from .functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
 from .timeduration import TimeDuration
 from .units import Units
 
@@ -245,6 +245,55 @@ class DimensionCoordinate(
 
         """
         return self.direction()
+
+    @_inplace_enabled(default=False)
+    def anchor(self, value, parameters=None, inplace=False):
+        """TODO"""
+        
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        period = d.period()
+        if period is None:
+            raise ValueError(f"Cyclic {d!r} has no period")
+
+        axis_size = d.size
+        if axis_size <= 1:
+            # Don't need to roll a size one axis
+            if parameters is not None:
+                parameters.update({"shift": 0, "nperiod": 0})
+
+            return d
+
+        c = d.get_data(_fill_value=False)
+        if not inplace:
+            c.persist(inplace=True)
+
+        if d.increasing:
+            # Adjust value so it's in the range [c[0], c[0]+period)
+            n = ((c[0] - value) / period).ceil()
+            value1 = value + n * period
+            shift = axis_size - np.argmax((c - value1 >= 0).array)
+            d.roll(0, shift, inplace=True)
+            n = ((value - d.data[0]) / period).ceil().persist()
+        else:
+            # Adjust value so it's in the range (c[0]-period, c[0]]
+            n = ((c[0] - value) / period).floor()
+            value1 = value + n * period
+            shift = axis_size - np.argmax((value1 - c >= 0).array)
+            d.roll(0, shift, inplace=True)
+            n = ((value - d.data[0]) / period).floor().persist()
+
+        if n:
+            nperiod = n * period
+            with bounds_combination_mode("OR"):
+                d += nperiod
+        else:
+            nperiod = 0
+
+        if parameters is not None:
+            parameters.update( {"shift": shift, "nperiod": nperiod})
+
+        return d
 
     def direction(self):
         """Return True if the dimension coordinate values are

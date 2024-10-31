@@ -1163,7 +1163,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
-    def test_Field__aaa__indices(self):
+    def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 
         array = np.ma.array(f.array, copy=False)
@@ -1214,8 +1214,30 @@ class FieldTest(unittest.TestCase):
             (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
         )
 
-        print(f)
-        print(f.dimension_coordinate('X').array, f.cyclic())
+        indices = f.indices(grid_longitude=cf.wi(-90, 270))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wi(-180, 180))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wi(-170, 170))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
+        )
+
         with self.assertRaises(ValueError):
             # No X coordinate values lie inside the range [90, 100]
             f.indices(grid_longitude=cf.wi(90, 100))
@@ -1276,7 +1298,7 @@ class FieldTest(unittest.TestCase):
 
         # wi (decreasing)
         f.flip("X", inplace=True)
-
+       
         indices = f.indices(grid_longitude=cf.wi(50, 130))
         self.assertTrue(indices[0], "mask")
         g = f[indices]
