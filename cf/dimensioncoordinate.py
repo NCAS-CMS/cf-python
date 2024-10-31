@@ -248,7 +248,84 @@ class DimensionCoordinate(
 
     @_inplace_enabled(default=False)
     def anchor(self, value, parameters=None, inplace=False):
-        """TODO"""
+        """Anchor the coordinate values.
+
+
+
+        axis to the *value*.Roll cyclic coordinates so that a value lies in the first cell (REALLY?)
+        coordinate cell.
+
+        A unique axis is selected with the *axes* and *kwargs*
+        parameters.
+
+        .. versionadded:: NEXTVERSION
+
+TODO provide a bounds treament: bounds=False|True
+
+        .. seealso:: `period`, `roll`
+
+        :Parameters:
+
+            axis:
+                The cyclic axis to be anchored.
+
+                domain axis selection TODO.
+
+            value:
+
+                Anchor the coordinate values for the selected cyclic
+                axis to the *value*. May be any numeric scalar object
+                that can be converted to a `Data` object (which
+                includes `numpy` and `Data` objects). If *value* has
+                units then they must be compatible with those of the
+                coordinates, otherwise it is assumed to have the same
+                units as the coordinates. The coordinate values are
+                transformed so that *value* is "equal to or just
+                before" the new first coordinate value. More
+                specifically:
+
+                  * Increasing coordinates with positive period, P,
+                    are transformed so that *value* lies in the
+                    half-open range (L-P, F], where F and L are the
+                    transformed first and last coordinate values,
+                    respectively.
+
+            ..
+
+                  * Decreasing coordinates with positive period, P,
+                    are transformed so that *value* lies in the
+                    half-open range (L+P, F], where F and L are the
+                    transformed first and last coordinate values,
+                    respectively.
+
+                *Parameter example:*
+                  If the original coordinates are ``0, 5, ..., 355``
+                  (evenly spaced) and the period is ``360`` then
+                  ``value=0`` implies transformed coordinates of ``0,
+                  5, ..., 355``; ``value=-12`` implies transformed
+                  coordinates of ``-10, -5, ..., 345``; ``value=380``
+                  implies transformed coordinates of ``380, 385, ...,
+                  715``.
+
+                *Parameter example:*
+                  If the original coordinates are ``355, 350, ..., 0``
+                  (evenly spaced) and the period is ``360`` then
+                  ``value=355`` implies transformed coordinates of
+                  ``355, 350, ..., 0``; ``value=0`` implies
+                  transformed coordinates of ``0, -5, ..., -355``;
+                  ``value=392`` implies transformed coordinates of
+                  ``390, 385, ..., 30``.
+
+            parameters: `dict`, optional
+                TODO Return a dictionary of parameters which describe the
+                anchoring process. The construct is not changed, even
+                if *inplace* is True.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+        """
         
         d = _inplace_enabled_define_and_cleanup(self)
 
