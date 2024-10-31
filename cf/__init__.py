@@ -328,6 +328,7 @@ from .query import (
     cellgt,
     cellle,
     celllt,
+    cell_overlaps,
     cellwi,
     cellwo,
     djf,
