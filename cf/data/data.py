@@ -6349,6 +6349,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
+        shape = d.shape
+        chunksizes0 = d.nc_hdf5_chunksizes()
+
         # Cast 'a' as a Data object so that it definitely has sensible
         # Units. We don't mind if the units of 'a' are incompatible
         # with those of 'self', but if they are then it's nice if the
@@ -6377,6 +6380,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Make sure that cyclic axes in 'a' are still cyclic in 'd'
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
+
+        # Update the HDF5 chunking strategy
+        chunksizes1 = a.nc_hdf5_chunksizes()
+        if chunksizes0 or chunksizes1:
+            if isinstance(chunksizes0, tuple):
+                if isinstance(chunksizes1, tuple):
+                    chunksizes = chunksizes0 + chunksizes1
+                else:
+                    chunksizes = chunksizes0 + a.shape
+
+                d.nc_set_hdf5_chunksizes(chunksizes)
+            elif isinstance(chunksizes1, tuple):
+                chunksizes = shape + chunksizes1
+                d.nc_set_hdf5_chunksizes(chunksizes)
 
         d._update_deterministic(a)
         return d

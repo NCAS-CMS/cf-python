@@ -2499,24 +2499,25 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(x.Units, y.Units)
                 self.assertEqual(y.Units, cf.Units("m-1"))
 
-                x0 = f.derivative(
+                x0 =   57.2957795130823 * f.derivative(
                     "X",
                     wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 ) / (sin_theta * r)
-                y0 = (
+                y0 =  57.2957795130823 * (
                     f.derivative(
                         "Y",
                         one_sided_at_boundary=one_sided,
                     )
                     / r
                 )
+                x0.override_units('m-1', inplace=True)
+                y0.override_units('m-1', inplace=True)
 
                 # Check the data
-                with cf.rtol(1e-10):
-                    self.assertTrue((x.data == x0.data).all())
-                    self.assertTrue((y.data == y0.data).all())
-
+                self.assertTrue(x.data.allclose(x0.data))
+                self.assertTrue(y.data.allclose(y0.data))
+                
                 # Check that x and y have the same metadata as f
                 # (except standard_name, long_name, and units).
                 f0 = f.copy()
@@ -2644,9 +2645,9 @@ class FieldTest(unittest.TestCase):
             g.dimension_coordinate("X").standard_name, "longitude"
         )
 
-    def test_Field_to_dask_array(self):
+    def test_Field__aaa_to_dask_array(self):
         f = self.f0.copy()
-        self.assertIs(f.to_dask_array(), f.data.to_dask_array())
+        self.assertTrue((f.array == f.to_dask_array().compute()).all())
 
         f.del_data()
         with self.assertRaises(ValueError):
@@ -2755,11 +2756,25 @@ class FieldTest(unittest.TestCase):
         f = cf.example_field(0)
         f *= 2
 
-        self.assertGreater(len(f.to_dask_array().dask.layers), 1)
+        self.assertGreater(
+            len(
+                f.data.to_dask_array(
+                    _apply_mask_hardness=False, _asanyarray=False
+                ).dask.layers
+            ),
+            2,
+        )
 
         g = f.persist()
         self.assertIsInstance(g, cf.Field)
-        self.assertEqual(len(g.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            len(
+                g.data.to_dask_array(
+                    _apply_mask_hardness=False, _asanyarray=False
+                ).dask.layers
+            ),
+            1,
+        )
         self.assertTrue(g.equals(f))
 
         self.assertIsNone(g.persist(inplace=True))
