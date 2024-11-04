@@ -46,6 +46,9 @@ version NEXTVERSION
 * Fix bug where `cf.normalize_slice` doesn't correctly
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
+* Fix bug where `cf.Field.subspace` doesn't also correctly
+  handle some global cyclic subspaces
+  (https://github.com/NCAS-CMS/cf-python/issues/828)
 
 ----
 

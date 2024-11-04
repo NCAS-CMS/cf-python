@@ -1396,14 +1396,34 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertTrue((x == [80, 120, 160, 200, 240, 280, 320]).all())
 
-        indices = f.indices(grid_longitude=cf.wi(-45, 45))
+        indices = f.indices(grid_longitude=cf.wo(-45, 45))
         g = f[indices]
-        self.assertEqual(g.shape, (1, 10, 9))
+        self.assertEqual(g.shape, (1, 10, 6))
         x = g.dimension_coordinate("X").array
-        print(x)
-        self.assertTrue(
-            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
-        )
+        self.assertTrue((x == [80, 120, 160, 200, 240, 280]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(35, 85))
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 7))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(35, 85))
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 7))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(0, 360))
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(-90, 270))
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(-180, 180))
 
         # 2-d
         lon = f.construct("longitude").array
