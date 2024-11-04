@@ -1,4 +1,3 @@
-# REVIEW: h5: `NetCDF4Array`: New class to access netCDF with `netCDF4`, replaces `NetCDFArray`
 import cfdm
 
 from ...mixin_container import Container

@@ -2465,8 +2465,6 @@ def create_esmpy_weights(
             from netCDF4 import Dataset
 
             from .. import __version__
-
-            # REVIEW: h5: new name and location of file lock
             from ..data.array.locks import netcdf_lock
 
             if (

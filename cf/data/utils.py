@@ -542,7 +542,6 @@ def parse_weights(d, weights, axis=None):
     w = []
     shape = d.shape
     axes = d._axes
-
     Data = type(d)
     for key, value in weights.items():
         value = Data.asdata(value)

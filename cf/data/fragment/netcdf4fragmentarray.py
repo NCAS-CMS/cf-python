@@ -2,7 +2,6 @@ from ..array.netcdf4array import NetCDF4Array
 from .mixin import FragmentArrayMixin
 
 
-# REVIEW: h5: `NetCDF4FragmentArray`: New class to access netCDF fragment with `netCDF4`
 class NetCDF4FragmentArray(FragmentArrayMixin, NetCDF4Array):
     """A netCDF fragment array accessed with `netCDF4`.
 

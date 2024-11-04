@@ -7,7 +7,6 @@ from .mixin import FragmentArrayMixin
 from .netcdf4fragmentarray import NetCDF4FragmentArray
 
 
-# REVIEW: getitem: `NetCDFFragmentArray`: new inheritance to allow for different netCDF backends
 class NetCDFFragmentArray(
     FragmentArrayMixin,
     IndexMixin,
@@ -24,7 +23,6 @@ class NetCDFFragmentArray(
 
     """
 
-    # REVIEW: h5: `__init__`: replace units/calendar API with attributes
     def __init__(
         self,
         filename=None,
@@ -176,7 +174,6 @@ class NetCDFFragmentArray(
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 

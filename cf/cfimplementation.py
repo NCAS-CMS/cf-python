@@ -26,8 +26,6 @@ from . import (
     TiePointIndex,
 )
 from .data import Data
-
-# REVIEW: h5: `cfimplementation.py`: import `CFAH5netcdfArray`, `CFANetCDF4Array`, `H5netcdfArray`,`NetCDF4Array`
 from .data.array import (
     BoundsFromNodesArray,
     CellConnectivityArray,
@@ -116,7 +114,6 @@ class CFImplementation(cfdm.CFDMImplementation):
             parent, construct, axes=axes, copy=copy, **kwargs
         )
 
-    # REVIEW: h5: `initialise_CFANetCDF4Array`: new method to initialise `CFANetCDF4Array`
     def initialise_CFANetCDF4Array(self, **kwargs):
         """Return a `CFANetCDF4Array` instance.
 
@@ -133,7 +130,6 @@ class CFImplementation(cfdm.CFDMImplementation):
         cls = self.get_class("CFANetCDF4Array")
         return cls(**kwargs)
 
-    # REVIEW: h5: `initialise_CFAH5netcdfArray`: new method to initialise `CFAH5netcdfArray`
     def initialise_CFAH5netcdfArray(self, **kwargs):
         """Return a `CFAH5netcdfArray` instance.
 

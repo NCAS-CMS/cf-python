@@ -209,7 +209,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if data.npartitions == 1:
                 data._cfa_set_write(True)
 
-            #            # REVIEW: h5: `_create_data`: control caching
             #            if (
             #                not compression_index
             #                and self.read_vars.get("cache")

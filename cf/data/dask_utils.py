@@ -398,6 +398,7 @@ def cf_rt2dt(a, units):
 
     """
     a = cfdm_asanyarray(a)
+
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
 

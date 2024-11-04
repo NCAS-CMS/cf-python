@@ -1,4 +1,3 @@
-# REVIEW: getitem: `test_FullArray`: new test module
 import datetime
 import faulthandler
 import unittest

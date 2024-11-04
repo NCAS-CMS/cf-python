@@ -1,4 +1,3 @@
-# REVIEW: h5: `H5netcdfArray`: New class to access netCDF with `h5netcdf`
 import cfdm
 
 from ...mixin_container import Container

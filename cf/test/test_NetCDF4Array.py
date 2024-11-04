@@ -12,7 +12,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-# REVIEW: h5: `test_NetCDF4Array.py`: renamed 'NetCDFArray' to 'NetCDF4Array'
 n_tmpfiles = 1
 tmpfiles = [
     tempfile.mkstemp("_test_NetCDF4Array.nc", dir=os.getcwd())[1]
@@ -41,7 +40,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         dtype=np.dtype(float),
     )
 
-    # REVIEW: h5: `test_NetCDF4Array`: renamed 'NetCDFArray' to 'NetCDF4Array'
     def test_NetCDF4Array_del_file_location(self):
         a = cf.NetCDF4Array(("/data1/file1", "/data2/file2"), ("tas1", "tas2"))
         b = a.del_file_location("/data1")
@@ -62,7 +60,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             b.del_file_location("/data1/")
 
-    # REVIEW: h5: `test_NetCDF4Array`: renamed 'NetCDFArray' to 'NetCDF4Array'
     def test_NetCDF4Array_file_locations(self):
         a = cf.NetCDF4Array("/data1/file1")
         self.assertEqual(a.file_locations(), ("/data1",))
@@ -73,7 +70,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         a = cf.NetCDF4Array(("/data1/file1", "/data2/file2", "/data1/file2"))
         self.assertEqual(a.file_locations(), ("/data1", "/data2", "/data1"))
 
-    # REVIEW: h5: `test_NetCDF4Array`: renamed 'NetCDFArray' to 'NetCDF4Array'
     def test_NetCDF4Array_add_file_location(self):
         a = cf.NetCDF4Array("/data1/file1", "tas")
         b = a.add_file_location("/home/user")
@@ -109,7 +105,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(b.get_filenames(), a.get_filenames())
         self.assertEqual(b.get_addresses(), a.get_addresses())
 
-    # REVIEW: h5: `test_NetCDF4Array`: renamed 'NetCDFArray' to 'NetCDF4Array'
     def test_NetCDF4Array__dask_tokenize__(self):
         a = cf.NetCDF4Array("/data1/file1", "tas", shape=(12, 2), mask=False)
         self.assertEqual(tokenize(a), tokenize(a.copy()))
@@ -117,7 +112,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         b = cf.NetCDF4Array("/home/file2", "tas", shape=(12, 2))
         self.assertNotEqual(tokenize(a), tokenize(b))
 
-    # REVIEW: h5: `test_NetCDF4Array`: renamed 'NetCDFArray' to 'NetCDF4Array'
     def test_NetCDF4Array_multiple_files(self):
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
@@ -135,7 +129,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(len(n.get_filenames()), 2)
         self.assertTrue((n[...] == f.array).all())
 
-    # REVIEW: getitem: `test_NetCDF4Array`: test `NetCDF4Array.shape`
     def test_NetCDF4Array_shape(self):
         shape = (12, 73, 96)
         a = cf.NetCDF4Array("/home/file2", "tas", shape=shape)
@@ -145,7 +138,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(a.shape, (shape[0] // 2,) + shape[1:])
         self.assertEqual(a.original_shape, shape)
 
-    # REVIEW: getitem: `test_NetCDF4Array`: test `NetCDF4Array.index`
     def test_NetCDF4Array_index(self):
         shape = (12, 73, 96)
         a = cf.NetCDF4Array("/home/file2", "tas", shape=shape)
