@@ -31,12 +31,10 @@ class functionTest(unittest.TestCase):
     def test_keyword_deprecation(self):
         # Use as test case 'i' kwarg, the deprecated old name for
         # 'inplace':
-        a = cf.Data([list(range(100))])
-        a.squeeze(inplace=True)  # new way to specify operation tested below
-
-        b = cf.Data([list(range(100))])
+        f = cf.example_field(0)
+        f.squeeze(inplace=True)  # new way to specify operation tested below
         with self.assertRaises(cf.functions.DeprecationError):
-            b.squeeze(i=True)
+            f.squeeze(i=True)
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())

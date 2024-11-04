@@ -2483,12 +2483,18 @@ class FieldTest(unittest.TestCase):
     def test_Field_grad_xy(self):
         f = cf.example_field(0)
 
-        # Spherical polar coordinates
+        # theta=0 is at the north pole
         theta = 90 - f.convert("Y", full_domain=True)
         sin_theta = theta.sin()
 
         radius = 2
         r = f.radius(radius)
+
+        g = f.copy()
+        lon = g.dimension_coordinate("latitude")
+        lat = g.dimension_coordinate("longitude")
+        lon.Units = cf.Units("radians")
+        lat.Units = cf.Units("radians")
 
         for wrap in (False, True, None):
             for one_sided in (True, False):
@@ -2499,25 +2505,25 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(x.Units, y.Units)
                 self.assertEqual(y.Units, cf.Units("m-1"))
 
-                x0 =   57.2957795130823 * f.derivative(
+                x0 = g.derivative(
                     "X",
                     wrap=wrap,
                     one_sided_at_boundary=one_sided,
+                    ignore_coordinate_units=True,
                 ) / (sin_theta * r)
-                y0 =  57.2957795130823 * (
-                    f.derivative(
+                y0 = (
+                    g.derivative(
                         "Y",
                         one_sided_at_boundary=one_sided,
+                        ignore_coordinate_units=True,
                     )
                     / r
                 )
-                x0.override_units('m-1', inplace=True)
-                y0.override_units('m-1', inplace=True)
 
                 # Check the data
                 self.assertTrue(x.data.allclose(x0.data))
                 self.assertTrue(y.data.allclose(y0.data))
-                
+
                 # Check that x and y have the same metadata as f
                 # (except standard_name, long_name, and units).
                 f0 = f.copy()
@@ -2548,7 +2554,9 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(y.Units, cf.Units("m-1"))
 
                 x0 = f.derivative(
-                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                    "X",
+                    wrap=wrap,
+                    one_sided_at_boundary=one_sided,
                 )
                 y0 = f.derivative("Y", one_sided_at_boundary=one_sided)
 
@@ -2645,7 +2653,7 @@ class FieldTest(unittest.TestCase):
             g.dimension_coordinate("X").standard_name, "longitude"
         )
 
-    def test_Field__aaa_to_dask_array(self):
+    def test_Field_to_dask_array(self):
         f = self.f0.copy()
         self.assertTrue((f.array == f.to_dask_array().compute()).all())
 

@@ -394,7 +394,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     #                array = np.ma.where(array == "", np.ma.masked, array)
     #
     #        # Parse dask chunks
-    ##        chunks = self._parse_chunks(ncvar)
     #        chunks = self._dask_chunks(array, ncvar, compressed)
     #
     #        data = super()._create_Data(

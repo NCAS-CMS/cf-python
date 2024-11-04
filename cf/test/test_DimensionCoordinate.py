@@ -611,7 +611,14 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         e = d.persist()
         self.assertIsInstance(e, cf.DimensionCoordinate)
-        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            len(
+                e.data.to_dask_array(
+                    _apply_mask_hardness=False, _asanyarray=False
+                ).dask.layers
+            ),
+            1,
+        )
         self.assertTrue(e.equals(d))
 
         self.assertIsNone(d.persist(inplace=True))
