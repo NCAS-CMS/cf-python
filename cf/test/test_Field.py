@@ -1396,6 +1396,15 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertTrue((x == [80, 120, 160, 200, 240, 280, 320]).all())
 
+        indices = f.indices(grid_longitude=cf.wi(-45, 45))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        print(x)
+        self.assertTrue(
+            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
+        )
+
         # 2-d
         lon = f.construct("longitude").array
         lon = np.transpose(lon)
@@ -1490,7 +1499,6 @@ class FieldTest(unittest.TestCase):
                 shape = (1, 1, 1)
 
             self.assertEqual(g.shape, shape)
-            # REVIEW: getitem: `test_Field_indices`: make sure works when 'g.array' is not masked
             self.assertEqual(np.ma.compressed(g.array), 29)
             if mode != "full":
                 self.assertEqual(g.construct("longitude").array, 83)
@@ -1509,7 +1517,6 @@ class FieldTest(unittest.TestCase):
                 shape = (1, 2, 2)
 
             self.assertEqual(g.shape, shape)
-            # REVIEW: getitem: `test_Field_indices`: make sure works when 'g.array' is not masked
             self.assertTrue((np.ma.compressed(g.array) == [4, 29]).all())
 
         # Add 2-d auxiliary coordinates with bounds, so we can

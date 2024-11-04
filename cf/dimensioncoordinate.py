@@ -262,20 +262,14 @@ class DimensionCoordinate(
         are transformed so that the first cell either contains
         *value*; or is the closet to cell to *value* from above
         (below) for increasing (decreasing) coordinates.
-    
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `period`, `roll`
 
         :Parameters:
-    
-            axis:
-                The cyclic axis to be anchored.
-    
-                domain axis selection TODO.
-    
+
             value: scalar array_like
-    
                 Anchor the coordinate values for the selected cyclic
                 axis to the *value*. May be any numeric scalar object
                 that can be converted to a `Data` object (which
@@ -283,26 +277,26 @@ class DimensionCoordinate(
                 units then they must be compatible with those of the
                 coordinates, otherwise it is assumed to have the same
                 units as the coordinates.
-        
+
                 The coordinate values are transformed so the first
                 corodinate is the closet to *value* from above (for
                 increasing coordinates), or the closet to *value* from
                 above (for idereasing coordinates)
-    
+
                   * Increasing coordinates with positive period, P,
                     are transformed so that *value* lies in the
                     half-open range (L-P, F], where F and L are the
                     transformed first and last coordinate values,
                     respectively.
-    
+
             ..
-    
+
                   * Decreasing coordinates with positive period, P,
                     are transformed so that *value* lies in the
                     half-open range (L+P, F], where F and L are the
                     transformed first and last coordinate values,
                     respectively.
-    
+
                 *Parameter example:*
                   If the original coordinates are ``0, 5, ..., 355``
                   (evenly spaced) and the period is ``360`` then
@@ -311,7 +305,7 @@ class DimensionCoordinate(
                   coordinates of ``-10, -5, ..., 345``; ``value=380``
                   implies transformed coordinates of ``380, 385, ...,
                   715``.
-    
+
                 *Parameter example:*
                   If the original coordinates are ``355, 350, ..., 0``
                   (evenly spaced) and the period is ``360`` then
@@ -320,17 +314,25 @@ class DimensionCoordinate(
                   transformed coordinates of ``0, -5, ..., -355``;
                   ``value=392`` implies transformed coordinates of
                   ``390, 385, ..., 30``.
-    
+
             cell: `bool`, optional
-                TODO
+                If True, then the coordinate values are transformed so
+                that the first cell either contains *value*, or is the
+                closet to cell to *value* from above (below) for
+                increasing (decreasing) coordinates.
+
+                If False (the default) then the coordinate values are
+                transformed so that the first coordinate is the closet
+                to *value* from above (below) for increasing
+                (decreasing) coordinates.
 
             parameters: `dict`, optional
                 TODO Return a dictionary of parameters which describe the
                 anchoring process. The construct is not changed, even
                 if *inplace* is True.
-    
+
             {{inplace: `bool`, optional}}
-    
+
         :Returns:
 
         """
@@ -353,8 +355,8 @@ class DimensionCoordinate(
         else:
             d.persist(inplace=True)
             c = d.get_data(_fill_value=False)
-      
-        if d.increasing: 
+
+        if d.increasing:
             # Adjust value so it's in the range [c[0], c[0]+period)
             n = ((c[0] - value) / period).ceil()
             value1 = value + n * period
@@ -364,7 +366,7 @@ class DimensionCoordinate(
                 d0 = d[0].upper_bounds
             else:
                 d0 = d.get_data(_fill_value=False)[0]
-    
+
             n = ((value - d0) / period).ceil()
         else:
             # Adjust value so it's in the range (c[0]-period, c[0]]
