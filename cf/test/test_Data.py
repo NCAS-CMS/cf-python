@@ -1479,7 +1479,6 @@ class DataTest(unittest.TestCase):
         f = cf.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
-        # REVIEW: getitem: `test_Data__getitem__`: Chained subspaces reading from disk
         # Chained subspaces reading from disk
         f = cf.read(self.filename)[0]
         d = f.data
@@ -3290,7 +3289,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
-        # REVIEW: getitem: `test_Data_rechunk`: rechunking after a __getitem__
         # Test rechunking after a __getitem__
         e = d[:2].rechunk((2, 5))
         self.assertTrue(e.equals(d[:2]))
@@ -4520,7 +4518,6 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._get_cached_elements())
 
-    # REVIEW: getitem: `test_Data_cull_graph`: prevent new asanyarray layer
     def test_Data_cull_graph(self):
         """Test `Data.cull`"""
         # Note: The number of layers in the culled graphs include a
@@ -4779,7 +4776,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.pad_missing(99, to_size=99)
 
-    # REVIEW: getitem: `test_Data_is_masked`: test `Data.is_masked`
     def test_Data_is_masked(self):
         """Test Data.is_masked."""
         d = cf.Data(np.arange(6).reshape(2, 3))

@@ -1,4 +1,3 @@
-# REVIEW: h5: `test_active_storage.py`: new test module
 import atexit
 import datetime
 import faulthandler

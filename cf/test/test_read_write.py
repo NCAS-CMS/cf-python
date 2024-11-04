@@ -79,7 +79,6 @@ class read_writeTest(unittest.TestCase):
 
         self.assertTrue((a == g[0].array).all())
 
-    # REVIEW: h5: `test_read_mask`: rename numpy to np
     def test_read_mask(self):
         f = self.f0.copy()
 
@@ -561,7 +560,6 @@ class read_writeTest(unittest.TestCase):
                 f"Bad read/write with lossless compression: {fmt}",
             )
 
-    # REVIEW: h5: `test_write_datatype`: rename numpy to np
     def test_write_datatype(self):
         f = cf.read(self.filename)[0]
         self.assertEqual(f.dtype, np.dtype(float))
