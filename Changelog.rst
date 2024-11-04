@@ -1,22 +1,3 @@
-version NEXTVERSION + 1
------------------------
-
-**2024-??-??**
-
-* Allow access to netCDF-4 files in S3 object stores
-  (https://github.com/NCAS-CMS/cf-python/issues/712)
-* New class `cf.H5netcdfArray`
-* New class `cf.NetCDF4Array`
-* New class `cf.CFAH5netcdfArray`
-* New class `cf.CFANetCDF4Array`
-* New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
-* New dependency: ``s3fs>=2024.2.0``
-* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
-* Changed dependency: ``cfunits>=3.3.7``
-
-----
-
 version NEXTVERSION
 -------------------
 
@@ -33,6 +14,12 @@ version NEXTVERSION
 * New keyword parameter to `cf.Field.derivative`:
   ``ignore_coordinate_units``
   (https://github.com/NCAS-CMS/cf-python/issues/807)
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cf-python/issues/712)
+* New class `cf.H5netcdfArray`
+* New class `cf.NetCDF4Array`
+* New class `cf.CFAH5netcdfArray`
+* New class `cf.CFANetCDF4Array`
 * Fix bug that sometimes puts an incorrect ``radian-1`` or
   ``radian-2`` in the returned units of the differential operator
   methods and functions
@@ -46,6 +33,12 @@ version NEXTVERSION
 * Fix bug where `cf.normalize_slice` doesn't correctly
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.2.0``
+* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
+* Changed dependency: ``cfunits>=3.3.7``
+
 
 ----
 
