@@ -25,12 +25,6 @@ except ImportError:
     except ImportError:
         pass
 
-disallowed_methods = (
-    "conservative",
-    "conservative_2nd",
-    #    "nearest_dtos",
-)
-
 methods = (
     "linear",
     "nearest_stod",
@@ -162,7 +156,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
                     y = esmpy_regrid(coord_sys, method, src, dst, **kwargs)
 
                     self.assertEqual(y.size, a.size)
-                    self.assertTrue(np.allclose(y, a, atol=4e-3, rtol=rtol))
+                    self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
                     if isinstance(a, np.ma.MaskedArray):
                         self.assertTrue((y.mask == a.mask).all())
@@ -173,6 +167,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
     def test_Field_regrid_featureType_to_grid_2d(self):
         self.assertFalse(cf.regrid_logging())
 
+        # Create some nice data
         src = self.dst_featureType
         src.del_construct("cellmethod0")
         src = src[:12]
@@ -191,6 +186,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
         # Mask some destination grid points
         dst[0, 0, 1, 2] = cf.masked
 
+        # Expected destination regridded values
         y0 = np.ma.array(
             [[0, 0, 0, 0], [0, 0, 1122, 0], [0, 1114, 0, 0], [1106, 0, 0, 0]],
             mask=[
@@ -201,13 +197,14 @@ class RegridFeatureTypeTest(unittest.TestCase):
             ],
         )
 
-        coord_sys = "spherical"
-
         for src_masked in (False, True):
             y = y0.copy()
             if src_masked:
                 src = src.copy()
                 src[6:8] = cf.masked
+                # This following element should be smaller, because it
+                # now only has two source cells conrtibuting to it,
+                # rather than four.
                 y[3, 0] = 547
 
             # Loop over whether or not to use the destination grid
@@ -327,7 +324,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
         dst = self.dst_featureType.copy()
         src = self.src_grid.copy()
 
-        for method in disallowed_methods:
+        for method in ("conservative", "conservative_2nd"):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method)
 

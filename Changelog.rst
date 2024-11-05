@@ -3,9 +3,9 @@ version NEXTVERSION
 
 **2024-??-??**
 
-* Allowed ``'nearest_dtos'`` 2-d regridding to work with discrete
-  sampling geometry source grids ()
-  (https://github.com/NCAS-CMS/cf-python/issues/811)
+* Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
+  sampling geometry source grids
+  (https://github.com/NCAS-CMS/cf-python/issues/832)
 * New method: `cf.Field.filled`
   (https://github.com/NCAS-CMS/cf-python/issues/811)
 * New method: `cf.Field.is_discrete_axis`

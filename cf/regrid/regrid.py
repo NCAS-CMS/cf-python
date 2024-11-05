@@ -674,6 +674,9 @@ def regrid(
         )
 
     if return_operator:
+        # Note: The `RegridOperator.tosparse` method will also set
+        #       'dst_mask' to False for destination points with all
+        #       zero weights.
         regrid_operator.tosparse()
         return regrid_operator
 
