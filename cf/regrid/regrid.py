@@ -523,11 +523,10 @@ def regrid(
                     "are a UGRID mesh"
                 )
 
-            if src_grid.is_locstream or dst_grid.is_locstream:
+            if dst_grid.is_locstream:
                 raise ValueError(
-                    f"{method!r} regridding is (at the moment) only available "
-                    "when neither the source and destination grids are "
-                    "DSG featureTypes."
+                    f"{method!r} regridding is (at the moment) not available "
+                    "when the destination grid is a DSG featureType."
                 )
 
     elif cartesian and (src_grid.is_mesh or dst_grid.is_mesh):
@@ -656,6 +655,7 @@ def regrid(
             dst=dst,
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
+            src_featureType=src_grid.featureType,
             dst_featureType=dst_grid.featureType,
             src_z=src_grid.z,
             dst_z=dst_grid.z,
@@ -1279,7 +1279,7 @@ def spherical_grid(
 
     # Set cyclicity of X axis
     if mesh_location or featureType:
-        cyclic = None
+        cyclic = False
     elif cyclic is None:
         cyclic = f.iscyclic(x_axis)
     else:
@@ -2281,6 +2281,11 @@ def create_esmpy_locstream(grid, mask=None):
         #       but the esmpy mask requires 0/1 for masked/unmasked
         #       elements.
         mask = np.invert(mask).astype("int32")
+        if mask.size == 1:
+            # Make sure that there's a mask element for each point in
+            # the locstream (rather than a scalar that applies to all
+            # elements).
+            mask = np.full((location_count,), mask, dtype="int32")
     else:
         # No masked points
         mask = np.full((location_count,), 1, dtype="int32")
@@ -2465,7 +2470,6 @@ def create_esmpy_weights(
             from netCDF4 import Dataset
 
             from .. import __version__
-
             from ..data.array.locks import netcdf_lock
 
             if (

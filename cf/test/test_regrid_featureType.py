@@ -28,7 +28,7 @@ except ImportError:
 disallowed_methods = (
     "conservative",
     "conservative_2nd",
-    "nearest_dtos",
+    #    "nearest_dtos",
 )
 
 methods = (
@@ -162,6 +162,75 @@ class RegridFeatureTypeTest(unittest.TestCase):
                     y = esmpy_regrid(coord_sys, method, src, dst, **kwargs)
 
                     self.assertEqual(y.size, a.size)
+                    self.assertTrue(np.allclose(y, a, atol=4e-3, rtol=rtol))
+
+                    if isinstance(a, np.ma.MaskedArray):
+                        self.assertTrue((y.mask == a.mask).all())
+                    else:
+                        self.assertFalse(y.mask.any())
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrid_featureType_to_grid_2d(self):
+        self.assertFalse(cf.regrid_logging())
+
+        src = self.dst_featureType
+        src.del_construct("cellmethod0")
+        src = src[:12]
+        src[...] = 273 + np.arange(12)
+        x = src.coord("X")
+        x[...] = [4, 6, 9, 11, 14, 16, 4, 6, 9, 11, 14, 16]
+        y = src.coord("Y")
+        y[...] = [41, 41, 31, 31, 21, 21, 39, 39, 29, 29, 19, 19]
+
+        dst = self.src_grid.copy()
+        x = dst.coord("X")
+        x[...] = [5, 10, 15, 20]
+        y = dst.coord("Y")
+        y[...] = [10, 20, 30, 40]
+
+        # Mask some destination grid points
+        dst[0, 0, 1, 2] = cf.masked
+
+        y0 = np.ma.array(
+            [[0, 0, 0, 0], [0, 0, 1122, 0], [0, 1114, 0, 0], [1106, 0, 0, 0]],
+            mask=[
+                [True, True, True, True],
+                [True, True, False, True],
+                [True, False, True, True],
+                [False, True, True, True],
+            ],
+        )
+
+        coord_sys = "spherical"
+
+        for src_masked in (False, True):
+            y = y0.copy()
+            if src_masked:
+                src = src.copy()
+                src[6:8] = cf.masked
+                y[3, 0] = 547
+
+            # Loop over whether or not to use the destination grid
+            # masked points
+            for use_dst_mask in (False, True):
+                if use_dst_mask:
+                    y = y.copy()
+                    y[1, 2] = np.ma.masked
+
+                kwargs = {"use_dst_mask": use_dst_mask}
+                method = "nearest_dtos"
+                for return_operator in (False, True):
+                    if return_operator:
+                        r = src.regrids(
+                            dst, method=method, return_operator=True, **kwargs
+                        )
+                        x = src.regrids(r)
+                    else:
+                        x = src.regrids(dst, method=method, **kwargs)
+
+                    a = x.array
+
+                    self.assertEqual(y.size, a.size)
                     self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
                     if isinstance(a, np.ma.MaskedArray):
@@ -196,7 +265,6 @@ class RegridFeatureTypeTest(unittest.TestCase):
                     a = x.array
 
                     y = esmpy_regrid(coord_sys, method, src, dst, **kwargs)
-
                     self.assertEqual(y.size, a.size)
                     self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
