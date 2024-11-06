@@ -1,14 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-
-# from .locks import netcdf_lock
-from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin, IndexMixin
+from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
 
 
 class NetCDF4Array(
     ActiveStorageMixin,
-    #    IndexMixin,
     FileArrayMixin,
     ArrayMixin,
     Container,

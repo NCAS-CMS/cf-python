@@ -195,6 +195,10 @@ class functionTest(unittest.TestCase):
         # messages:
         cf.log_level("DISABLE")
 
+        # Reset configuration
+        cf.configuration(**org)
+        self.assertEqual(cf.configuration(), org)
+
     def test_context_managers(self):
         # rtol, atol
         for func in (cf.atol, cf.rtol):

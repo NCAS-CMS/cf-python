@@ -1,20 +1,11 @@
 """General functions useful for `Data` functionality."""
 
-from functools import lru_cache, partial, reduce
-from itertools import product
+from functools import partial, reduce
 from operator import mul
 
-import dask.array as da
 import numpy as np
 
-from ..cfdatetime import (
-    canonical_calendar,
-    default_calendar,
-    dt,
-    dt2rt,
-    rt2dt,
-    st2rt,
-)
+from ..cfdatetime import canonical_calendar, default_calendar
 from ..units import Units
 from .dask_utils import cf_YMDhms
 

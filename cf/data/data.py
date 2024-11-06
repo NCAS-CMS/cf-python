@@ -1,9 +1,7 @@
 import logging
 import math
-import operator
 from functools import partial, reduce
 from itertools import product
-from numbers import Integral
 from operator import mul
 from os import sep
 
@@ -29,10 +27,8 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _numpy_allclose,
     _section,
     abspath,
-    default_netCDF_fillvals,
     free_memory,
     parse_indices,
 )
@@ -70,16 +66,6 @@ _year_units = ("year", "years", "yr")
 _dtype_float32 = np.dtype("float32")
 _dtype_float = np.dtype(float)
 _dtype_bool = np.dtype(bool)
-
-
-# Contstants used to specify which `Data` components should be cleared
-# when a new dask array is set. See `Data._clear_after_dask_update`
-# for details.
-_NONE = 0  # =  0b0000
-_ARRAY = 1  # = 0b0001
-_CACHE = 2  # = 0b0010
-_CFA = 4  # =   0b0100
-_ALL = 15  # =  0b1111
 
 
 class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
@@ -145,6 +131,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     **Cyclic axes**
 
     """
+
+    # Constants used to specify which components should be cleared
+    # when a new dask array is set. See `_clear_after_dask_update` for
+    # details.
+    #
+    # These must constants must have values 2**N (N>=1), except for
+    # `_NONE` which must be 0, and `_ALL` which must be the sum of
+    # other constants. It is therefore convenient to define these
+    # constants in binary.
+    _NONE = 0b000
+    _ARRAY = 0b001
+    _CACHE = 0b010
+    _CFA = 0b100
+    _ALL = 0b111
 
     def __new__(cls, *args, **kwargs):
         """Store component classes."""
@@ -2193,6 +2193,47 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
+    def _clear_after_dask_update(self, clear=None):
+        """Remove components invalidated by updating the `dask` array.
+
+        Removes or modifies components that can't be guaranteed to be
+        consistent with an updated `dask` array. See the *clear*
+        parameter for details.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `_del_Array`, `_del_cached_elements`,
+                     `_set_dask`, `_cfa_del_write`
+
+        :Parameters:
+
+            clear: `int` or `None`, optional
+                Specify which components to remove, determined by
+                sequentially combining an integer value of *clear*
+                with the relevant class-level constants (such as
+                ``{{class}}._ARRAY``), using the bitwise AND (&)
+                operator. If ``clear & <class-level constant>`` is
+                True then the corresponding component is cleared. The
+                default value of `None` is equivalent to *clear* being
+                set to ``{{class}}._ALL``.
+
+                The bitwise OR (^) operator can be used to retain a
+                component (or components) but remove all others. For
+                instance, if *clear* is ``{{class}}._ALL ^
+                {{class}}._CACHE`` then all components except the
+                cached array values will be removed.
+
+        :Returns:
+
+            `int` TODODASK
+
+        """
+        clear = super()._clear_after_dask_update(clear)
+
+        if clear & self._CFA:
+            # Set the CFA write status to False
+            self._cfa_del_write()
+
     def _combined_units(self, data1, method, inplace):
         """Combines by given method the data's units with other units.
 
@@ -2998,15 +3039,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         #
         # Assume at first that all input data instances have True
         # status, but ...
-        cfa = _CFA
+        cfa = cls._CFA
         for d in processed_data:
             if not d.cfa_get_write():
                 # ... the CFA write status is False when any input
                 # data instance has False status ...
-                cfa = _NONE
+                cfa = cls._NONE
                 break
 
-        if cfa != _NONE:
+        if cfa != cls._NONE:
             non_concat_axis_chunks0 = list(processed_data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
@@ -3016,7 +3057,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                     # ... the CFA write status is False when any two
                     # input data instances have different chunk
                     # patterns for the non-concatenated axes.
-                    cfa = _NONE
+                    cfa = cls._NONE
                     break
 
         # Define the __asanyarray__ status
@@ -3030,7 +3071,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 break
 
         # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
+        data0._set_dask(dx, clear=cls._ALL ^ cfa, asanyarray=asanyarray)
 
         # Set appropriate cached elements
         cached_elements = {}
@@ -3431,7 +3472,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Setting equivalent units doesn't affect the CFA write
             # status. Nor does it invalidate any cached values, but
             # only because we'll adjust those, too.
-            self._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+            self._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
 
             # Adjust cached values for the new units
             cache = self._get_cached_elements()
@@ -4300,7 +4341,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = self.to_dask_array(_asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+            self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
         return location
 
@@ -6777,7 +6818,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = self.to_dask_array(_asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+            self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
         return location
 

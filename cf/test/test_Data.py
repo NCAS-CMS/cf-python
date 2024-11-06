@@ -4256,15 +4256,15 @@ class DataTest(unittest.TestCase):
         """Test the `_atol` Data property."""
         d = cf.Data(1)
         self.assertEqual(d._atol, cf.atol())
-        cf.atol(0.001)
-        self.assertEqual(d._atol, 0.001)
+        with cf.atol(0.001):
+            self.assertEqual(d._atol, 0.001)
 
     def test_Data_rtol(self):
         """Test the `_rtol` Data property."""
         d = cf.Data(1)
         self.assertEqual(d._rtol, cf.rtol())
-        cf.rtol(0.001)
-        self.assertEqual(d._rtol, 0.001)
+        with cf.rtol(0.001):
+            self.assertEqual(d._rtol, 0.001)
 
     def test_Data_hardmask(self):
         """Test Data.hardmask."""
@@ -4589,7 +4589,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
     def test_Data_clear_after_dask_update(self):
-        """Test Data._clear_after_dask_update"""
+        """Test Data._clear_after_dask_update."""
         d = cf.Data([1, 2, 3], "m")
         dx = d.to_dask_array()
 
@@ -4599,8 +4599,8 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue(d._get_cached_elements())
 
-        _ALL = cf.data.data._ALL
-        _CACHE = cf.data.data._CACHE
+        _ALL = cf.Data._ALL
+        _CACHE = cf.Data._CACHE
 
         d._set_dask(dx, clear=_ALL ^ _CACHE)
         self.assertTrue(d._get_cached_elements())

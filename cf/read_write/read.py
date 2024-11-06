@@ -2,7 +2,6 @@ import logging
 import os
 import tempfile
 from glob import glob
-from numbers import Integral
 from os.path import isdir
 from re import Pattern
 from urllib.parse import urlparse
@@ -979,7 +978,7 @@ def read(
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    if chunks is not "auto":
+    if chunks != "auto":
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "cf.read",
             {"chunk": chunk},

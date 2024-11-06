@@ -1,7 +1,7 @@
 import cfdm
 
 from ..array.abstract import Array
-from ..array.mixin import FileArrayMixin, IndexMixin
+from ..array.mixin import FileArrayMixin
 from .h5netcdffragmentarray import H5netcdfFragmentArray
 from .mixin import FragmentArrayMixin
 from .netcdf4fragmentarray import NetCDF4FragmentArray
@@ -9,9 +9,9 @@ from .netcdf4fragmentarray import NetCDF4FragmentArray
 
 class NetCDFFragmentArray(
     FragmentArrayMixin,
-    IndexMixin,
     cfdm.data.mixin.NetCDFFileMixin,
     FileArrayMixin,
+    cfdm.data.mixin.IndexMixin,
     cfdm.data.mixin.FileArrayMixin,
     Array,
 ):

@@ -1,6 +1,4 @@
 import cfdm
-import netCDF4
-import numpy as np
 from packaging.version import Version
 
 

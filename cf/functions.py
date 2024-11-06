@@ -24,9 +24,7 @@ from urllib.parse import urljoin, urlparse
 import cfdm
 import netCDF4
 import numpy as np
-from dask import config as _config
 from dask.base import is_dask_collection
-from dask.utils import parse_bytes
 from psutil import virtual_memory
 
 from . import __cfa_version__, __file__, __version__
@@ -548,7 +546,7 @@ _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level()
 # function as contained in _log_level, but can't inherit the
 # user-facing log_level() from cfdm as it operates on cfdm's CONSTANTS
-# dict. Define cf-python's own.  This also means the log_level
+# dict. Define cf-python's own. This also means the log_level
 # dostrings are independent which is important for providing
 # module-specific documentation links and directives, etc.
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
@@ -570,6 +568,10 @@ class ConstantAccess(cfdm.ConstantAccess):
 
 
 class atol(ConstantAccess, cfdm.atol):
+    pass
+
+
+class chunksize(ConstantAccess, cfdm.chunksize):
     pass
 
 
@@ -776,74 +778,6 @@ class relaxed_identities(ConstantAccess):
 
         """
         return bool(arg)
-
-
-class chunksize(ConstantAccess):
-    """Set the default chunksize used by `dask` arrays.
-
-    If called without any arguments then the existing chunksize is
-    returned.
-
-    .. note:: Setting the chunk size will also change the `dask`
-              global configuration value ``'array.chunk-size'``. If
-              `chunksize` is used in a context manager then the `dask`
-              configuration value is only altered within that context.
-              Setting the chunk size directly from the `dask`
-              configuration API will affect subsequent data creation,
-              but will *not* change the value of `chunksize`.
-
-    :Parameters:
-
-        arg: number or `str` or `Constant`, optional
-            The chunksize in bytes. Any size accepted by
-            `dask.utils.parse_bytes` is accepted, for instance
-            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
-            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
-            ``'MB'`` are all valid sizes.
-
-            Note that if *arg* is a `float`, or a string that implies
-            a non-integral amount of bytes, then the integer part
-            (rounded down) will be used.
-
-            *Parameter example:*
-               A chunksize of 2 MiB may be specified as ``'2097152'``
-               or ``'2 MiB'``
-
-            *Parameter example:*
-               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
-               equivalent to ``2678``.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    """
-
-    _name = "CHUNKSIZE"
-
-    def _parse(cls, arg):
-        """Parse a new constant value.
-
-        .. versionaddedd:: 3.8.0
-
-        :Parameters:
-
-            cls:
-                This class.
-
-            arg:
-                The given new constant value.
-
-        :Returns:
-
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
-
-        """
-        _config.set({"array.chunk-size": arg})
-        return parse_bytes(arg)
 
 
 class tempdir(ConstantAccess):
