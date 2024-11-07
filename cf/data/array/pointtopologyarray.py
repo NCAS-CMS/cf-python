@@ -1,12 +1,13 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import ArrayMixin, CompressedArrayMixin
 
 
 class PointTopologyArray(
-    CompressedArrayMixin,
-    ArrayMixin,
+    #    CompressedArrayMixin,
+    #    ArrayMixin,
     Container,
     cfdm.PointTopologyArray,
 ):

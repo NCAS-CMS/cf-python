@@ -4,13 +4,14 @@ from ...constants import _stash2standard_name
 from ...functions import _DEPRECATION_ERROR_ATTRIBUTE, load_stash2standard_name
 from ...umread_lib.umfile import File, Rec
 from .abstract import Array
-from .mixin import FileArrayMixin
+
+# from .mixin import FileArrayMixin
 
 
 class UMArray(
-    FileArrayMixin,
+    #    FileArrayMixin,
     cfdm.data.mixin.IndexMixin,
-    cfdm.data.mixin.FileArrayMixin,
+    #    cfdm.data.mixin.FileArrayMixin,
     cfdm.data.abstract.FileArray,
     Array,
 ):

@@ -1,2 +1,3 @@
 from .array import Array
-from .filearray import FileArray
+
+# from .filearray import FileArray

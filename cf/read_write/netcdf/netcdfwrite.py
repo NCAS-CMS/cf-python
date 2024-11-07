@@ -1,11 +1,12 @@
-from os import remove
-
+# from os import remove
+#
 import cfdm
-import dask.array as da
-import numpy as np
-from cfdm.data.dask_utils import cfdm_asanyarray
 
 from .netcdfread import NetCDFRead
+
+# import dask.array as da
+# import numpy as np
+# from cfdm.data.dask_utils import cfdm_asanyarray
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):

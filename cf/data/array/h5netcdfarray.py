@@ -3,18 +3,16 @@ import cfdm
 from ...mixin_container import Container
 
 # from .locks import netcdf_lock
-from .mixin import (  # , IndexMixin
+from .mixin import (  # , IndexMixin; ArrayMixin,; FileArrayMixin,
     ActiveStorageMixin,
-    ArrayMixin,
-    FileArrayMixin,
 )
 
 
 class H5netcdfArray(
     ActiveStorageMixin,
     #    IndexMixin,
-    FileArrayMixin,
-    ArrayMixin,
+    #    FileArrayMixin,
+    #    ArrayMixin,
     Container,
     cfdm.H5netcdfArray,
 ):

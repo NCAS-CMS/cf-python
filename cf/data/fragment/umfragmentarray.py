@@ -1,8 +1,11 @@
+import cfdm
+
 from ..array.umarray import UMArray
-from .mixin import FragmentArrayMixin
+
+# from .mixin import FragmentArrayMixin
 
 
-class UMFragmentArray(FragmentArrayMixin, UMArray):
+class UMFragmentArray(cfdm.data.fragment.mixin.FragmentArrayMixin, UMArray):
     """A CFA fragment array stored in a UM or PP file.
 
     .. versionadded:: 3.14.0

@@ -1,12 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import  CompressedArrayMixin
 
 
-class GatheredArray(
-    CompressedArrayMixin, ArrayMixin, Container, cfdm.GatheredArray
-):
+class GatheredArray(Container, cfdm.GatheredArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array

@@ -1,5 +1,6 @@
 import cfdm
-from packaging.version import Version
+
+# from packaging.version import Version
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):

@@ -1386,6 +1386,7 @@ def CFA():
         "CFA", version="NEXTVERSION", removed_at="5.0.0"
     )  # pragma: no cover
 
+
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other
 # modules)

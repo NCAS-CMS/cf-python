@@ -1,12 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class SubsampledArray(
-    CompressedArrayMixin, ArrayMixin, Container, cfdm.SubsampledArray
-):
+class SubsampledArray(Container, cfdm.SubsampledArray):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing

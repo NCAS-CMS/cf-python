@@ -1,12 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class RaggedIndexedArray(
-    CompressedArrayMixin, ArrayMixin, Container, cfdm.RaggedIndexedArray
-):
+class RaggedIndexedArray(Container, cfdm.RaggedIndexedArray):
     """An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

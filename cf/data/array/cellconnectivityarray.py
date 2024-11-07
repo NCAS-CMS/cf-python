@@ -1,12 +1,13 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import ArrayMixin, CompressedArrayMixin
 
 
 class CellConnectivityArray(
-    CompressedArrayMixin,
-    ArrayMixin,
+    #    CompressedArrayMixin,
+    #    ArrayMixin,
     Container,
     cfdm.CellConnectivityArray,
 ):

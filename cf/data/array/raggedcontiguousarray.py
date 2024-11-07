@@ -1,12 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ArrayMixin, CompressedArrayMixin
+
+# from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class RaggedContiguousArray(
-    CompressedArrayMixin, ArrayMixin, Container, cfdm.RaggedContiguousArray
-):
+class RaggedContiguousArray(Container, cfdm.RaggedContiguousArray):
     """An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array
