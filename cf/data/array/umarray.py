@@ -11,6 +11,7 @@ class UMArray(
     FileArrayMixin,
     cfdm.data.mixin.IndexMixin,
     cfdm.data.mixin.FileArrayMixin,
+    cfdm.data.abstract.FileArray,
     Array,
 ):
     """A sub-array stored in a PP or UM fields file."""

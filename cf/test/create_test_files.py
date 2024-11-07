@@ -2222,6 +2222,86 @@ def _make_ugrid_2(filename):
     return filename
 
 
+def _make_aggregation_value(filename):
+    """Create an aggregation variable with a 'value' fragment array."""
+    n = netCDF4.Dataset(filename, "w")
+
+    n.Conventions = f"CF-{VN}"
+    n.comment = "A netCDF file with a 'value' aggregation variable."
+
+    n.createDimension("time", 12)
+    n.createDimension("level", 1)
+    n.createDimension("latitude", 73)
+    n.createDimension("longitude", 144)
+    n.createDimension("f_time", 2)
+    n.createDimension("f_level", 1)
+    n.createDimension("f_latitude", 1)
+    n.createDimension("f_longitude", 1)
+    n.createDimension("i", 2)
+    n.createDimension("j", 4)
+    n.createDimension("j_uid", 1)
+
+    temperature = n.createVariable("temperature", "f8", ())
+    temperature.standard_name = "air_temperature"
+    temperature.units = "K"
+    temperature.cell_methods = "time: mean"
+    temperature.ancillary_variables = "uid"
+    temperature.aggregated_dimensions = "time level latitude longitude"
+    temperature.aggregated_data = "location: fragment_location address: fragment_address shape: fragment_shape"
+
+    uid = n.createVariable("uid", str, ())
+    uid.long_name = "Fragment dataset unique identifiers"
+    uid.aggregated_dimensions = "time"
+    uid.aggregated_data = "value: fragment_value_uid shape: fragment_shape_uid"
+
+    time = n.createVariable("time", "f4", ("time",))
+    time.standard_name = "time"
+    time.units = "days since 2001-01-01"
+    time[...] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+
+    level = n.createVariable("level", "f4", ("level",))
+    level.standard_name = "height_above_mean_sea_level"
+    level.units = "m"
+
+    latitude = n.createVariable("latitude", "f4", ("latitude",))
+    latitude.standard_name = "latitude"
+    latitude.units = "degrees_north"
+
+    longitude = n.createVariable("longitude", "f4", ("longitude",))
+    longitude.standard_name = "longitude"
+    longitude.units = "degrees_east"
+
+    # Fragment array variables
+    fragment_location = n.createVariable(
+        "fragment_location",
+        str,
+        ("f_time", "f_level", "f_latitude", "f_longitude"),
+    )
+    fragment_location[0, 0, 0, 0] = "January-March.nc"
+    fragment_location[1, 0, 0, 0] = "April-December.nc"
+
+    fragment_address = n.createVariable("fragment_address", str, ())
+    fragment_address[...] = "temperature"
+
+    fragment_shape = n.createVariable("fragment_shape", "i4", ("j", "i"))
+    fragment_shape[...] = [[3, 9], [1, -1], [73, -1], [144, -1]]
+    fragment_shape[1:, 1] = np.ma.masked
+
+    fragment_value_uid = n.createVariable(
+        "fragment_value_uid", str, ("f_time",)
+    )
+    fragment_value_uid[0] = "04b9-7eb5-4046-97b-0bf8"
+    fragment_value_uid[1] = "05ee0-a183-43b3-a67-1eca"
+
+    fragment_shape_uid = n.createVariable(
+        "fragment_shape_uid", "i4", ("j_uid", "i")
+    )
+    fragment_shape_uid[...] = [3, 9]
+
+    n.close()
+    return filename
+
+
 contiguous_file = _make_contiguous_file("DSG_timeSeries_contiguous.nc")
 indexed_file = _make_indexed_file("DSG_timeSeries_indexed.nc")
 indexed_contiguous_file = _make_indexed_contiguous_file(
@@ -2251,6 +2331,8 @@ subsampled_file_1 = _make_subsampled_2("subsampled_2.nc")
 
 ugrid_1 = _make_ugrid_1("ugrid_1.nc")
 ugrid_2 = _make_ugrid_2("ugrid_2.nc")
+
+aggregation_value = _make_aggregation_value("aggregation_value.nc")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

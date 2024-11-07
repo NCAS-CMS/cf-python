@@ -2604,164 +2604,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
-    def cfa_clear_file_substitutions(
-        self,
-    ):
-        """Remove all of the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_clear_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_clear_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_clear_file_substitution()
-
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.cfa_clear_file_substitutions())
-
-        return out
-
-    def cfa_del_file_substitution(
-        self,
-        base,
-        constructs=True,
-    ):
-        """Remove a CFA-netCDF file name substitution.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa base: `str`}}
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the file substitutions removed from them.
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_del_file_substitution}}
-
-        **Examples**
-
-        >>> f.cfa_del_file_substitution('base')
-
-        """
-        super().cfa_del_file_substitution(base)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_del_file_substitution(base)
-
-    def cfa_file_substitutions(self, constructs=True):
-        """Return the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_file_substitutions()
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                out.update(c.cfa_file_substitutions())
-
-        return out
-
-    def del_file_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the new file location removed from them.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-        super().del_file_location(location)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.del_file_location(location)
-
-        return location
-
-    def cfa_update_file_substitutions(
-        self,
-        substitutions,
-        constructs=True,
-    ):
-        """Set CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the file substitutions set on them.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f.cfa_update_file_substitutions({'base': '/data/model'})
-
-        """
-        super().cfa_update_file_substitutions(substitutions)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_update_file_substitutions(substitutions)
-
     def get_domain(self):
         """Return the domain.
 
@@ -10855,40 +10697,40 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def file_locations(self, constructs=True):
-        """The locations of files containing parts of the data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Parameters:
-
-            constructs: `bool`, optional
-                If True (the default) then the file locations from
-                metadata constructs are also returned.
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> f.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        out = super().file_locations()
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                out.update(c.file_locations())
-
-        return out
+    #    def file_locations(self, constructs=True):
+    #        """The locations of files containing parts of the data.
+    #
+    #        Returns the locations of any files that may be required to
+    #        deliver the computed data array.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        .. seealso:: `add_file_location`, `del_file_location`
+    #
+    #        :Parameters:
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then the file locations from
+    #                metadata constructs are also returned.
+    #
+    #        :Returns:
+    #
+    #            `set`
+    #                The unique file locations as absolute paths with no
+    #                trailing path name component separator.
+    #
+    #        **Examples**
+    #
+    #        >>> f.file_locations()
+    #        {'/home/data1', 'file:///data2'}
+    #
+    #        """
+    #        out = super().file_locations()
+    #        if constructs:
+    #            for c in self.constructs.filter_by_data(todict=True).values():
+    #                out.update(c.file_locations())
+    #
+    #        return out
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -13505,47 +13347,47 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
-    def add_file_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the new file location added to them.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> f.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = super().add_file_location(location)
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.add_file_location(location)
-
-        return location
+    #    def add_file_location(
+    #        self,
+    #        location,
+    #        constructs=True,
+    #    ):
+    #        """Add a new file location in-place.
+    #
+    #        All data definitions that reference files are additionally
+    #        referenced from the given location.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        .. seealso:: `del_file_location`, `file_locations`
+    #
+    #        :Parameters:
+    #
+    #            location: `str`
+    #                The new location.
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then metadata constructs also
+    #                have the new file location added to them.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The new location as an absolute path with no trailing
+    #                path name component separator.
+    #
+    #        **Examples**
+    #
+    #        >>> f.add_file_location('/data/model/')
+    #        '/data/model'
+    #
+    #        """
+    #        location = super().add_file_location(location)
+    #        if constructs:
+    #            for c in self.constructs.filter_by_data(todict=True).values():
+    #                c.add_file_location(location)
+    #
+    #        return location
 
     def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n

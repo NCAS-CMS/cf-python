@@ -27,7 +27,7 @@ import numpy as np
 from dask.base import is_dask_collection
 from psutil import virtual_memory
 
-from . import __cfa_version__, __file__, __version__
+from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -1360,6 +1360,8 @@ CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
 def CFA():
     """The version of the CFA conventions.
 
+    Deprecated at version NEXTVERSION and is no longer available.
+
     This indicates which version of the CFA conventions are
     represented by this release of the cf package, and therefore the
     version can not be changed.
@@ -1380,8 +1382,9 @@ def CFA():
     '0.6.2'
 
     """
-    return __cfa_version__
-
+    _DEPRECATION_ERROR_FUNCTION(
+        "CFA", version="NEXTVERSION", removed_at="5.0.0"
+    )  # pragma: no cover
 
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other

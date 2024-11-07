@@ -133,8 +133,11 @@ class create_fieldTest(unittest.TestCase):
                 "grid_north_pole_longitude": 190.0,
             }
         )
+        datum = cf.Datum(parameters={"earth_radius": 6371007})
+
         ref0 = cf.CoordinateReference(
             coordinate_conversion=coordinate_conversion,
+            datum=datum,
             coordinates=[x, y, lat, lon],
         )
 
@@ -156,10 +159,12 @@ class create_fieldTest(unittest.TestCase):
             domain_ancillaries={"orog": orog_key, "a": ak, "b": bk},
         )
         ref1 = cf.CoordinateReference(
-            coordinate_conversion=coordinate_conversion, coordinates=[z]
+            coordinates=[z],
+            datum=datum,
+            coordinate_conversion=coordinate_conversion,
         )
 
-        f.set_construct(ref1)
+        ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
         g = cf.FieldAncillary()
@@ -193,7 +198,7 @@ class create_fieldTest(unittest.TestCase):
         f.flag_meanings = ["a", "bb", "ccc"]
 
         for cm in cf.CellMethod.create(
-            "grid_longitude: mean grid_latitude: max"
+            "grid_longitude: mean grid_latitude: maximum"
         ):
             f.set_construct(cm)
 

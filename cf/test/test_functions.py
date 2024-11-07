@@ -367,9 +367,6 @@ class functionTest(unittest.TestCase):
         x = da.arange(9)
         self.assertEqual(cf.size(x), x.size)
 
-    def test_CFA(self):
-        self.assertEqual(cf.CFA(), cf.__cfa_version__)
-
     def test_normalize_slice(self):
         self.assertEqual(cf.normalize_slice(slice(1, 4), 8), slice(1, 4, 1))
         self.assertEqual(cf.normalize_slice(slice(None), 8), slice(0, 8, 1))

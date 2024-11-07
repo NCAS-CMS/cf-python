@@ -105,7 +105,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 __cf_version__ = cfdm.core.__cf_version__
-__cfa_version__ = "0.6.2"
+#__cfa_version__ = "0.6.2"
 
 from packaging.version import Version
 import importlib.util
@@ -206,8 +206,8 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.11.2.0"
-_maximum_vn = "1.11.3.0"
+_minimum_vn = "1.12.0.0"
+_maximum_vn = "1.12.1.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
@@ -273,10 +273,11 @@ from .fieldancillary import FieldAncillary
 from .field import Field
 from .data import Data
 from .data.array import (
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFAH5netcdfArray,
-    CFANetCDF4Array,
+#    CFAH5netcdfArray,
+#    CFANetCDF4Array,
     FullArray,
     GatheredArray,
     H5netcdfArray,
@@ -290,11 +291,11 @@ from .data.array import (
     UMArray,
 )
 
-from .data.fragment import (
-    FullFragmentArray,
-    NetCDFFragmentArray,
-    UMFragmentArray,
-)
+#from .data.fragment import (
+#    FullFragmentArray,
+#    NetCDFFragmentArray,
+#    UMFragmentArray,
+#)
 
 from .aggregate import aggregate, climatology_cells
 from .query import (

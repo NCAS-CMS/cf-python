@@ -2150,7 +2150,7 @@ class UMField:
 
         # Create the Data object
         data = Data(dx, units=um_Units, fill_value=fill_value)
-        data._cfa_set_write(True)
+        data._nc_set_aggregation_write_status(True)
 
         self.data = data
         self.data_axes = data_axes

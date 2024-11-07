@@ -2088,13 +2088,6 @@ class _Meta:
         ancillary construct that spans the entire domain, with the
         constant value of the property.
 
-        The `Data` of any new field ancillary construct is marked
-        as a CFA term, meaning that it will only be written to disk if
-        the parent field construct is written as a CFA aggregation
-        variable, and in that case the field ancillary is written as a
-        non-standard CFA aggregation instruction variable, rather than
-        a CF-netCDF ancillary variable.
-
         If a domain construct is being aggregated then it is always
         returned unchanged.
 
@@ -2125,7 +2118,6 @@ class _Meta:
             data = Data(
                 FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
             )
-            data._cfa_set_term(True)
 
             field_anc = FieldAncillary(
                 data=data, properties={"long_name": prop}, copy=False

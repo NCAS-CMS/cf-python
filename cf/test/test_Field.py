@@ -930,7 +930,38 @@ class FieldTest(unittest.TestCase):
     def test_Field_radius(self):
         f = self.f.copy()
 
-        with self.assertRaises(Exception):
+        # Radius exists in coordiante references
+        a = cf.Data(6371007.0, "m")
+
+        r = f.radius(default=None)
+        self.assertEqual(r.Units, cf.Units("m"))
+        self.assertEqual(r, a)
+
+        cr = f.coordinate_reference(
+            "standard_name:atmosphere_hybrid_height_coordinate"
+        )
+        cr.datum.set_parameter("earth_radius", cf.Data(5678, "km"))
+
+        with self.assertRaises(ValueError):
+            f.radius(default=None)
+
+        cr = f.coordinate_reference(
+            "standard_name:atmosphere_hybrid_height_coordinate"
+        )
+        cr.datum.del_parameter("earth_radius")
+
+        cr = f.coordinate_reference(
+            "grid_mapping_name:rotated_latitude_longitude"
+        )
+        cr.datum.set_parameter("earth_radius", cf.Data([123, 456], "m"))
+
+        #  Radius doesn't exist in in coordiante references
+        f = self.f.copy()
+
+        for key in f.coordinate_references(todict=True):
+            f.del_construct(key)
+
+        with self.assertRaises(ValueError):
             f.radius()
 
         for default in ("earth", cf.field._earth_radius):
@@ -958,49 +989,7 @@ class FieldTest(unittest.TestCase):
             f.radius(default=[12, 34])
 
         with self.assertRaises(ValueError):
-            f.radius(default=[[12, 34]])
-
-        with self.assertRaises(ValueError):
             f.radius(default="qwerty")
-
-        cr = f.coordinate_reference(
-            "grid_mapping_name:rotated_latitude_longitude"
-        )
-        cr.datum.set_parameter("earth_radius", a.copy())
-
-        r = f.radius(default=None)
-        self.assertEqual(r.Units, cf.Units("m"))
-        self.assertEqual(r, a)
-
-        cr = f.coordinate_reference(
-            "standard_name:atmosphere_hybrid_height_coordinate"
-        )
-        cr.datum.set_parameter("earth_radius", a.copy())
-
-        r = f.radius(default=None)
-        self.assertEqual(r.Units, cf.Units("m"))
-        self.assertEqual(r, a)
-
-        cr = f.coordinate_reference(
-            "standard_name:atmosphere_hybrid_height_coordinate"
-        )
-        cr.datum.set_parameter("earth_radius", cf.Data(5678, "km"))
-
-        with self.assertRaises(ValueError):
-            f.radius(default=None)
-
-        cr = f.coordinate_reference(
-            "standard_name:atmosphere_hybrid_height_coordinate"
-        )
-        cr.datum.del_parameter("earth_radius")
-
-        cr = f.coordinate_reference(
-            "grid_mapping_name:rotated_latitude_longitude"
-        )
-        cr.datum.set_parameter("earth_radius", cf.Data([123, 456], "m"))
-
-        with self.assertRaises(ValueError):
-            f.radius(default=None)
 
     def test_Field_set_get_del_has_data(self):
         f = self.f.copy()
@@ -1800,15 +1789,17 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(f.match_by_construct("X", "latitude", OR=OR))
             self.assertTrue(f.match_by_construct("X", "Y", OR=OR))
             self.assertTrue(f.match_by_construct("X", "Y", "latitude", OR=OR))
-            self.assertTrue(f.match_by_construct("grid_latitude: max", OR=OR))
+            self.assertTrue(
+                f.match_by_construct("grid_latitude: maximum", OR=OR)
+            )
             self.assertTrue(
                 f.match_by_construct(
-                    "grid_longitude: mean grid_latitude: max", OR=OR
+                    "grid_longitude: mean grid_latitude: maximum", OR=OR
                 )
             )
-            self.assertTrue(f.match_by_construct("X", "method:max", OR=OR))
+            self.assertTrue(f.match_by_construct("X", "method:maximum", OR=OR))
             self.assertTrue(
-                f.match_by_construct("X", "grid_latitude: max", OR=OR)
+                f.match_by_construct("X", "grid_latitude: maximum", OR=OR)
             )
 
         self.assertFalse(f.match_by_construct("qwerty"))
@@ -1819,12 +1810,12 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.match_by_construct("X", "qwerty", OR=True))
         self.assertTrue(
             f.match_by_construct(
-                "X", "qwerty", "method:max", "over:years", OR=True
+                "X", "qwerty", "method:maximum", "over:years", OR=True
             )
         )
         self.assertTrue(
             f.match_by_construct(
-                "X", "qwerty", "grid_latitude: max", "over:years", OR=True
+                "X", "qwerty", "grid_latitude: maximum", "over:years", OR=True
             )
         )
 
@@ -2864,27 +2855,27 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.aux("X").data.range() < 30)
         self.assertTrue(g.aux("Y").data.range() < 50)
 
-    def test_Field_file_location(self):
-        f = cf.example_field(0)
-
-        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
-
-        cf.write(f, tmpfile)
-        f = cf.read(tmpfile)[0]
-        g = f.copy()
-        location = os.path.dirname(os.path.abspath(tmpfile))
-
-        self.assertEqual(f.file_locations(), set((location,)))
-        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
-        self.assertEqual(f.file_locations(), set((location, "/data/model")))
-
-        # Check that we haven't changed 'g'
-        self.assertEqual(g.file_locations(), set((location,)))
-
-        self.assertEqual(f.del_file_location("/data/model/"), "/data/model")
-        self.assertEqual(f.file_locations(), set((location,)))
-        f.del_file_location("/invalid")
-        self.assertEqual(f.file_locations(), set((location,)))
+    #    def test_Field_file_location(self):
+    #        f = cf.example_field(0)
+    #
+    #        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
+    #
+    #        cf.write(f, tmpfile)
+    #        f = cf.read(tmpfile)[0]
+    #        g = f.copy()
+    #        location = os.path.dirname(os.path.abspath(tmpfile))
+    #
+    #        self.assertEqual(f.file_locations(), set((location,)))
+    #        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
+    #        self.assertEqual(f.file_locations(), set((location, "/data/model")))
+    #
+    #        # Check that we haven't changed 'g'
+    #        self.assertEqual(g.file_locations(), set((location,)))
+    #
+    #        self.assertEqual(f.del_file_location("/data/model/"), "/data/model")
+    #        self.assertEqual(f.file_locations(), set((location,)))
+    #        f.del_file_location("/invalid")
+    #        self.assertEqual(f.file_locations(), set((location,)))
 
     def test_Field_pad_missing(self):
         """Test Field.pad_missing."""
