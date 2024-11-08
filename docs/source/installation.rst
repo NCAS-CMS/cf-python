@@ -201,10 +201,17 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
   (note that this package may be installed with netCDF4).
 
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
+  newer.
+
+* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+
+* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.2.0 or newer.
+
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.1.0 or up to,
-  but not including, 1.11.2.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.2.0 or up to,
+  but not including, 1.11.3.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 
@@ -260,6 +267,13 @@ environments for which these features are not required.
 
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
   or newer.
+
+.. rubric:: Active storage collapses
+
+* `activestorage <https://github.com/NCAS-CMS/PyActiveStorage>`_. This
+  library is not yet in PyPi (it will be soon), so in the interim you
+  must use a copy of the ``pyfive`` branch of the
+  https://github.com/NCAS-CMS/PyActiveStorage repository.
 
 ----
 

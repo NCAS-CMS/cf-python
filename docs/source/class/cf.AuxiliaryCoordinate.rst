@@ -502,6 +502,9 @@ NetCDF
    ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable
    ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
    ~cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups
+   ~cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
    
 Groups
 ^^^^^^

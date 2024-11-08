@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -93,26 +93,26 @@ class read_writeTest(unittest.TestCase):
         cf.write(f, tmpfile)
 
         g = cf.read(tmpfile)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         g = cf.read(tmpfile, mask=False)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N)
+        self.assertEqual(np.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         f.set_property("_FillValue", 999)
         f.set_property("missing_value", -111)
         cf.write(f, tmpfile)
 
         g = cf.read(tmpfile)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         g = cf.read(tmpfile, mask=False)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N)
+        self.assertEqual(np.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
     def test_read_directory(self):
         pwd = os.getcwd() + "/"
@@ -562,38 +562,38 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_datatype(self):
         f = cf.read(self.filename)[0]
-        self.assertEqual(f.dtype, numpy.dtype(float))
+        self.assertEqual(f.dtype, np.dtype(float))
         cf.write(
             f,
             tmpfile,
             fmt="NETCDF4",
-            datatype={numpy.dtype(float): numpy.dtype("float32")},
+            datatype={np.dtype(float): np.dtype("float32")},
         )
         g = cf.read(tmpfile)[0]
         self.assertEqual(
             g.dtype,
-            numpy.dtype("float32"),
+            np.dtype("float32"),
             "datatype read in is " + str(g.dtype),
         )
 
         # Keyword single
         f = cf.read(self.filename)[0]
-        self.assertEqual(f.dtype, numpy.dtype(float))
+        self.assertEqual(f.dtype, np.dtype(float))
         cf.write(f, tmpfile, fmt="NETCDF4", single=True)
         g = cf.read(tmpfile)[0]
         self.assertEqual(
             g.dtype,
-            numpy.dtype("float32"),
+            np.dtype("float32"),
             "datatype read in is " + str(g.dtype),
         )
 
         # Keyword double
         f = g
-        self.assertEqual(f.dtype, numpy.dtype("float32"))
+        self.assertEqual(f.dtype, np.dtype("float32"))
         cf.write(f, tmpfile2, fmt="NETCDF4", double=True)
         g = cf.read(tmpfile2)[0]
         self.assertEqual(
-            g.dtype, numpy.dtype(float), "datatype read in is " + str(g.dtype)
+            g.dtype, np.dtype(float), "datatype read in is " + str(g.dtype)
         )
 
         for single in (True, False):
@@ -601,7 +601,7 @@ class read_writeTest(unittest.TestCase):
                 with self.assertRaises(Exception):
                     cf.write(g, double=double, single=single)
 
-        datatype = {numpy.dtype(float): numpy.dtype("float32")}
+        datatype = {np.dtype(float): np.dtype("float32")}
         with self.assertRaises(Exception):
             cf.write(g, datatype=datatype, single=True)
 
@@ -898,8 +898,8 @@ class read_writeTest(unittest.TestCase):
         g = g[0]
 
         # Check that the data are missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
 
         # Check that a dump works
         g.dump(display=False)
@@ -909,16 +909,16 @@ class read_writeTest(unittest.TestCase):
 
         # Check that only the field and dimension coordinate data are
         # missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
-        self.assertTrue(g.construct("latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
+        self.assertTrue(np.ma.count(g.construct("latitude").array))
 
         cf.write(f, tmpfile, omit_data="field")
         g = cf.read(tmpfile)[0]
 
         # Check that only the field data are missing
-        self.assertFalse(g.array.count())
-        self.assertTrue(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertTrue(np.ma.count(g.construct("grid_latitude").array))
 
     @unittest.skipUnless(
         False, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
