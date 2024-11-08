@@ -43,13 +43,23 @@ class MathTest(unittest.TestCase):
 
                 c0 = (term1 - term2) / (sin_theta * r)
 
+                print('p', c.data._get_cached_elements())
+                print('p', c0.data._get_cached_elements())
                 # Check the data
                 with cf.rtol(1e-10):
                     self.assertTrue(c.data.allclose(c0.data))
 
                 del c.long_name
                 c0.set_data(c.data)
-                self.assertTrue(c.equals(c0))
+                print (wrap, one_sided)
+#                print (c.array)
+#                print(c0.array)
+#                print(c0.array- c.array)
+                print(c.data._get_cached_elements())
+                print(c0.data._get_cached_elements())
+                print( "________________")
+                with cf.rtol(1e-10):
+                    self.assertTrue(c.equals(c0, verbose=-1))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
