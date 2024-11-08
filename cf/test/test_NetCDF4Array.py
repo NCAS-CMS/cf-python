@@ -1,26 +1,26 @@
-#import atexit
-#import datetime
-#import faulthandler
-#import os
-#import tempfile
-#import unittest
+# import atexit
+# import datetime
+# import faulthandler
+# import os
+# import tempfile
+# import unittest
 #
-#import numpy as np
-#from dask.base import tokenize
+# import numpy as np
+# from dask.base import tokenize
 #
-#faulthandler.enable()  # to debug seg faults and timeouts
+# faulthandler.enable()  # to debug seg faults and timeouts
 #
-#import cf
+# import cf
 #
-#n_tmpfiles = 1
-#tmpfiles = [
+# n_tmpfiles = 1
+# tmpfiles = [
 #    tempfile.mkstemp("_test_NetCDF4Array.nc", dir=os.getcwd())[1]
 #    for i in range(n_tmpfiles)
-#]
-#(tmpfile1,) = tmpfiles
+# ]
+# (tmpfile1,) = tmpfiles
 #
 #
-#def _remove_tmpfiles():
+# def _remove_tmpfiles():
 #    """Try to remove defined temporary files by deleting their paths."""
 #    for f in tmpfiles:
 #        try:
@@ -29,10 +29,10 @@
 #            pass
 #
 #
-#atexit.register(_remove_tmpfiles)
+# atexit.register(_remove_tmpfiles)
 #
 #
-#class NetCDF4ArrayTest(unittest.TestCase):
+# class NetCDF4ArrayTest(unittest.TestCase):
 #    n = cf.NetCDF4Array(
 #        filename="filename.nc",
 #        address="x",
@@ -164,7 +164,7 @@
 #        self.assertTrue((index[2] == [12, 1]).all())
 #
 #
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    print("Run date:", datetime.datetime.now())
 #    cf.environment()
 #    print()
