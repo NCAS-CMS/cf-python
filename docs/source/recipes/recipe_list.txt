@@ -34,3 +34,5 @@ plot_17_recipe.html#sphx-glr-recipes-plot-17-recipe-py
 <div class="sphx-glr-thumbcontainer contourmap subspace subplot" tooltip="Contourmap, Subspace, Subplot">
 plot_18_recipe.html#sphx-glr-recipes-plot-18-recipe-py
 <div class="sphx-glr-thumbcontainer regrid stats" tooltip="Regrid, Statistical Operations">
+plot_19_recipe.html#sphx-glr-recipes-plot-19-recipe-py
+<div class="sphx-glr-thumbcontainer collapse subspace subplot lineplot" tooltip="Collapse, Subspace, Subplot, Lineplot">
