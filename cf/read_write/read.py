@@ -58,21 +58,26 @@ def read(
     select_options=None,
     follow_symlinks=False,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     domain=False,
     cfa=None,
+    netcdf_backend=None,
+    storage_options=None,
+    cache=True,
 ):
     """Read field or domain constructs from files.
 
-    The following file formats are supported: CF-netCDF, CFA-netCDF,
-    CDL, PP and UM fields datasets.
+    The following file formats are supported: netCDF, CFA-netCDF, CDL,
+    UM fields file, and PP.
 
     Input datasets are mapped to constructs in memory which are
     returned as elements of a `FieldList` or if the *domain* parameter
     is True, a `DomainList`.
 
-    NetCDF files may be on disk or on an OPeNDAP server.
+    NetCDF files may be on disk, on an OPeNDAP server, or in an S3
+    object store.
 
     Any amount of files of any combination of file types may be read.
 
@@ -408,14 +413,13 @@ def read(
             parameter.
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
+            If True (the default) then mask by convention the data of
+            field and metadata constructs.
 
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.
 
             The masking by convention of a PP or UM array depends on
             the value of BMDI in the lookup header. A value other than
@@ -426,6 +430,16 @@ def read(
             for details.
 
             .. versionadded:: 3.4.0
+
+        unpack: `bool`, optional
+            If True, the default, then unpack arrays by convention
+            when the data is read from disk.
+
+            Unpacking is determined by netCDF conventions for the
+            following variable attributes: ``add_offset``,
+            ``scale_factor``, and ``_Unsigned``.
+
+            .. versionadded:: NEXTVERSION
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -652,17 +666,90 @@ def read(
               A dictionary whose key/value pairs define text
               substitutions to be applied to the fragment file
               names. Each key may be specified with or without the
-              ``${...}`` syntax. For instance, the following are
-              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
-              The substitutions are used in conjunction with, and take
-              precedence over, any that are stored in the CFA-netCDF
-              file by the ``substitutions`` attribute of the ``file``
-              CFA aggregation instruction variable.
+              ``${*}`` syntax (where `*` represents any amount of any
+              characters). For instance, ``{'substitution':
+              'replacement'}`` and ``{'${substitution}': 'replacement'}``'
+              are equivalent. The substitutions are used in
+              conjunction with, and take precedence over, any that are
+              stored in the CFA-netCDF file by the ``substitutions``
+              attribute of the ``file`` fragement array variable.
 
               *Example:*
-                ``{'base': 'file:///data/'}``
+                ``{'replacement': 'file:///data/'}``
 
             .. versionadded:: 3.15.0
+
+        netcdf_backend: `None` or `str`, optional
+            Specify which library to use for reading netCDF files. By
+            default, or if `None`, then the first one of `netCDF4` and
+            `h5netcdf` to successfully open the file netCDF file is
+            used. Setting *netcdf_backend* to one of ``'netCDF4'`` and
+            ``'h5netcdf'`` will force the use of that library.
+
+            .. note:: The *netcdf_backend* parameter does not affect
+                      the opening of netCDF fragment files that define
+                      the data of aggregation variables. For these, it
+                      is always the case that the first one of
+                      `netCDF4` and `h5netcdf` to successfully open
+                      the file is used.
+
+            .. versionadded:: NEXTVERSION
+
+        storage_options: `dict` or `None`, optional
+            Pass parameters to the backend file system driver, such as
+            username, password, server, port, etc. How the storage
+            options are interpreted depends on the location of the
+            file:
+
+            **Local File System**
+
+            Storage options are ignored for local files.
+
+            **HTTP(S)**
+
+            Storage options are ignored for files available across the
+            network via OPeNDAP.
+
+            **S3-compatible services**
+
+            The backend used is `s3fs`, and the storage options are
+            used to initialise an `s3fs.S3FileSystem` file system
+            object. By default, or if `None`, then *storage_options*
+            is taken as ``{}``.
+
+            If the ``'endpoint_url'`` key is not in *storage_options*,
+            nor in a dictionary defined by the ``'client_kwargs'`` key
+            (both of which are the case when *storage_options* is
+            `None`), then one will be automatically inserted for
+            accessing an S3 file. For example, for a file name of
+            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+            with value ``'https://store'`` would be created. To
+            disable this, set ``'endpoint_url'`` to `None`.
+
+            *Parameter example:*
+              For a file name of ``'s3://store/data/file.nc'``, the
+              following are equivalent: ``None``, ``{}``,
+              ``{'endpoint_url': 'https://store'}``, and
+              ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
+
+            *Parameter example:*
+              ``{'key': 'scaleway-api-key...', 'secret':
+              'scaleway-secretkey...', 'endpoint_url':
+              'https://s3.fr-par.scw.cloud', 'client_kwargs':
+              {'region_name': 'fr-par'}}``
+
+            .. versionadded:: NEXTVERSION
+
+        cache: `bool`, optional
+            If True, the default, then cache the first and last array
+            elements of metadata constructs (not field constructs) for
+            fast future access. In addition, the second and
+            penultimate array elements will be cached from coordinate
+            bounds when there are two bounds per cell. For remote
+            data, setting *cache* to False may speed up the parsing of
+            the file.
+
+            .. versionadded:: NEXTVERSION
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -823,6 +910,8 @@ def read(
 
     cfa_options["substitutions"] = substitutions
 
+    cache = bool(cache)
+
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -885,8 +974,8 @@ def read(
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
         scheme = urlparse(file_glob).scheme
-        if scheme in ("https", "http"):
-            # Do not glob a URL
+        if scheme in ("https", "http", "s3"):
+            # Do not glob a remote URL
             files2 = (file_glob,)
         else:
             # Glob files on disk
@@ -951,10 +1040,14 @@ def read(
                 height_at_top_of_model=height_at_top_of_model,
                 chunks=chunks,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
                 cfa_options=cfa_options,
+                netcdf_backend=netcdf_backend,
+                storage_options=storage_options,
+                cache=cache,
             )
 
             # --------------------------------------------------------
@@ -1064,11 +1157,15 @@ def _read_a_file(
     extra=None,
     height_at_top_of_model=None,
     mask=True,
+    unpack=True,
     warn_valid=False,
     chunks="auto",
     select=None,
     domain=False,
     cfa_options=None,
+    netcdf_backend=None,
+    storage_options=None,
+    cache=True,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1090,6 +1187,9 @@ def _read_a_file(
         mask: `bool`, optional
             See `cf.read` for details.
 
+        unpack: `bool`, optional
+            See `cf.read` for details.
+
         verbose: `int` or `str` or `None`, optional
             See `cf.read` for details.
 
@@ -1103,6 +1203,21 @@ def _read_a_file(
             See `cf.read` for details.
 
             .. versionadded:: 3.15.0
+
+        storage_options: `dict` or `None`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
+        netcdf_backend: `str` or `None`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
+
+        cache: `bool`, optional
+            See `cf.read` for details.
+
+            .. versionadded:: NEXTVERSION
 
     :Returns:
 
@@ -1138,6 +1253,7 @@ def _read_a_file(
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
         "cfa_options": cfa_options,
+        "cache": cache,
     }
 
     # ----------------------------------------------------------------
@@ -1175,8 +1291,11 @@ def _read_a_file(
                 warnings=warnings,
                 extra_read_vars=extra_read_vars,
                 mask=mask,
+                unpack=unpack,
                 warn_valid=warn_valid,
                 domain=domain,
+                storage_options=storage_options,
+                netcdf_backend=netcdf_backend,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

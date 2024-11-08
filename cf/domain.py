@@ -707,7 +707,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           equals e.g. ``'foo=bar'``.
         * The netCDF variable name, preceded by ``'ncvar%'``.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: 3.8.0
 
         .. seealso:: `identity`
 

@@ -2,11 +2,11 @@ import atexit
 import csv
 import ctypes.util
 import importlib
+import logging
 import os
 import platform
 import re
 import sys
-import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
@@ -19,7 +19,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import cfdm
 import netCDF4
@@ -172,6 +172,9 @@ def configuration(
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
+    active_storage=None,
+    active_storage_url=None,
+    active_storage_max_requests=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -190,6 +193,9 @@ def configuration(
     * `regrid_logging`
     * `relaxed_identities`
     * `bounds_combination_mode`
+    * `active_storage`
+    * `active_storage_url`
+    * `active_storage_max_requests`
 
     These are all constants that apply throughout cf, except for in
     specific functions only if overridden by the corresponding keyword
@@ -208,7 +214,9 @@ def configuration(
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`, `bounds_combination_mode`
+                 `relaxed_identities`, `bounds_combination_mode`,
+                 `active_storage`, `active_storage_url`,
+                 `active_storage_max_requests`
 
     :Parameters:
 
@@ -260,6 +268,24 @@ def configuration(
             construct identity. The default is to not change the
             current value.
 
+        active_storage: `bool` or `Constant`, optional
+            The new value (either True to enable active storage
+            reductions or False to disable them). The default is to
+            not change the current behaviour.
+
+            .. versionadded:: NEXTVERSION
+
+        active_storage_url: `str` or `None` or `Constant`, optional
+            The new value (either a new URL string or `None` to remove
+            the URL). The default is to not change the value.
+
+            .. versionadded:: NEXTVERSION
+
+        active_storage_max_requests: `int` or `Constant`, optional
+            The new value. The default is to not change the value.
+
+            .. versionadded:: NEXTVERSION
+
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
             available.
@@ -289,7 +315,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 82873466.88000001}
+     'chunksize': 82873466.88000001,
+     'active_storage': False,
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> cf.chunksize(7.5e7)  # any change to one constant...
     82873466.88000001
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
@@ -303,7 +332,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> cf.configuration()  # the items set have been updated accordingly
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -312,7 +344,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
 
     Use as a context manager:
 
@@ -324,7 +359,9 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None}
     >>> with cf.configuration(atol=9, rtol=10):
     ...     print(cf.configuration())
     ...
@@ -335,7 +372,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
     >>> print(cf.configuration())
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
@@ -344,7 +384,10 @@ def configuration(
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
-     'chunksize': 75000000.0}
+     'chunksize': 75000000.0,
+     'active_storage': False,
+     'active_storage_url': None,
+     'active_storage_max_requests': 100}
 
     """
     if of_fraction is not None:
@@ -375,6 +418,9 @@ def configuration(
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
+        active_storage=active_storage,
+        active_storage_url=active_storage_url,
+        active_storage_max_requests=active_storage_max_requests,
     )
 
 
@@ -424,6 +470,9 @@ def _configuration(_Configuration, **kwargs):
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
+        "active_storage": active_storage,
+        "active_storage_url": active_storage_url,
+        "active_storage_max_requests": active_storage_max_requests,
     }
 
     old_values = {}
@@ -553,11 +602,17 @@ class regrid_logging(ConstantAccess):
 
     **Examples**
 
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
     False
-    >>> cf.regrid_logging(True)
+    >>> print(cf.regrid_logging(True))
     False
-    >>> cf.regrid_logging()
+    >>> print(cf.regrid_logging())
+    True
+    >>> with cf.regrid_logging(False):
+    ...     print(cf.regrid_logging())
+    ...
+    False
+    >>> print(cf.regrid_logging())
     True
 
     """
@@ -682,13 +737,19 @@ class relaxed_identities(ConstantAccess):
     >>> org = cf.relaxed_identities()
     >>> org
     False
-    >>> cf.relaxed_identities(True)
+    >>> print(cf.relaxed_identities(True))
     False
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
     True
-    >>> cf.relaxed_identities(org)
+    >>> print(cf.relaxed_identities(org))
     True
-    >>> cf.relaxed_identities()
+    >>> print(cf.relaxed_identities())
+    False
+    >>> with cf.relaxed_identities(True):
+    ...     print(cf.relaxed_identities())
+    ...
+    True
+    >>> print(cf.relaxed_identities())
     False
 
     """
@@ -805,18 +866,24 @@ class tempdir(ConstantAccess):
 
     :Returns:
 
-        `str`
-            The directory prior to the change, or the current
-            directory if no new value was specified.
+        `Constant`
+            The directory name prior to the change, or the name of the
+            current directory if no new value was specified.
 
     **Examples**
 
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
     '/tmp'
     >>> old = cf.tempdir('/home/me/tmp')
-    >>> cf.tempdir(old)
+    >>> print(cf.tempdir(old))
     '/home/me/tmp'
-    >>> cf.tempdir()
+    >>> print(cf.tempdir())
+    '/tmp'
+    >>> with cf.tempdir('~/NEW_TMP'):
+    ...     print(cf.tempdir())
+    ...
+    /home/me/NEW_TMP
+    >>> print(cf.tempdir())
     '/tmp'
 
     """
@@ -1084,11 +1151,6 @@ class bounds_combination_mode(ConstantAccess):
     OR
     >>> print(cf.bounds_combination_mode())
     AND
-
-    Use as a context manager:
-
-    >>> print(cf.bounds_combination_mode())
-    AND
     >>> with cf.bounds_combination_mode('XOR'):
     ...     print(cf.bounds_combination_mode())
     ...
@@ -1133,6 +1195,218 @@ class bounds_combination_mode(ConstantAccess):
             )
 
         return arg
+
+
+class active_storage(ConstantAccess):
+    """Whether or not to attempt active storage reductions.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `active_storage_max_requests`, `active_storage_url`,
+                 `configuration`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> cf.active_storage()
+    False
+    >>> with cf.active_storage(True):
+    ...     print(cf.active_storage())
+    ...
+    True
+    >>> cf.active_storage()
+    False
+    >>> cf.active_storage(True)
+    False
+    >>> cf.active_storage()
+    True
+
+    """
+
+    _name = "active_storage"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        try:
+            from activestorage import Active  # noqa: F401
+        except ModuleNotFoundError as error:
+            if arg:
+                raise ModuleNotFoundError(
+                    f"Can't enable active storage operations: {error}"
+                )
+
+        return bool(arg)
+
+
+class active_storage_url(ConstantAccess):
+    """The URL location of the active storage reducer.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `active_storage`, `active_storage_max_requests`,
+                 `configuration`
+
+    :Parameters:
+
+        arg: `str` or `None` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cf.active_storage_url())
+    None
+    >>> with cf.active_storage_url('http://active/storage/location'):
+    ...     print(cf.active_storage_url())
+    ...
+    'http://active/storage/location'
+    >>> print(cf.active_storage_url())
+    None
+    >>> print(cf.active_storage_url('http://other/location'))
+    None
+    >>> cf.active_storage_url()
+    'http://other/location'
+
+    """
+
+    _name = "active_storage_url"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        if arg is None:
+            return arg
+
+        return str(arg)
+
+
+class active_storage_max_requests(ConstantAccess):
+    """Concurrent active storage server requests per `dask` chunk.
+
+    This is the maximum number of concurrent requests per `dask` chunk
+    that are sent to the active storage server by an `Active`
+    instance. The default is ``100``. The optimum number may be
+    estimated by :math:`N = N_{max} / min(N_{PE}, N_{chunk})`, where
+
+    * :math:`N_{max}` is the maximum number of requests that the
+      active storage server can process concurrently before its
+      performance is degraded;
+
+    * :math:`N_{PE}` the number of available PEs on the local client;
+
+    * :math:`N_{chunk}` the number of `dask` chunks being reduced with
+      active storage.
+
+    This formula only applies to cases where all `dask` chunks for the
+    collapse operation are utilising active storage. If some are not
+    then :math:`N` will likely be underestimated.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `active_storage`, `active_storage_url`,
+                 `configuration`
+
+    :Parameters:
+
+        arg: `int` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cf.active_storage_max_requests())
+    100
+    >>> with cf.active_storage_max_requests(25):
+    ...     print(cf.active_storage_max_requests())
+    ...
+    25
+    >>> print(cf.active_storage_max_requests())
+    None
+    >>> print(cf.active_storage_max_requests(12)
+    None
+    >>> cf.active_storage_max_requests()
+    12
+
+    """
+
+    _name = "active_storage_max_requests"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return int(arg)
 
 
 def CF():
@@ -1273,6 +1547,27 @@ def min_total_memory():
 def total_memory():
     """The total amount of physical memory (in bytes)."""
     return CONSTANTS["TOTAL_MEMORY"]
+
+
+def is_log_level_info(logger):
+    """Return True if and only if log level is at least as verbose as INFO.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `log_level`
+
+    :Parameters:
+
+        logger: `logging.Logger`
+           The logger in use.
+
+    :Returns:
+
+        `bool`
+            Whether or not the log level is at least INFO.
+
+    """
+    return logger.parent.level <= logging.INFO
 
 
 # --------------------------------------------------------------------
@@ -2143,61 +2438,6 @@ def normalize_slice(index, size, cyclic=False):
     return slice(start, stop, step)
 
 
-def get_subspace(array, indices):
-    """Return a subspace defined by the given indices of an array.
-
-    Subset the input numpy array with the given indices. Indexing is
-    similar to that of a numpy array. The differences to numpy array
-    indexing are:
-
-    1. An integer index i takes the i-th element but does not reduce
-       the rank of the output array by one.
-
-    2. When more than one dimension's slice is a 1-d boolean array or
-       1-d sequence of integers then these indices work independently
-       along each dimension (similar to the way vector subscripts work
-       in Fortran).
-
-    Indices must contain an index for each dimension of the input array.
-
-    :Parameters:
-
-        array: `numpy.ndarray`
-
-        indices: `list`
-
-    """
-    gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-    len_gg = len(gg)
-
-    if len_gg < 2:
-        # ------------------------------------------------------------
-        # At most one axis has a list-of-integers index so we can do a
-        # normal numpy subspace
-        # ------------------------------------------------------------
-        return array[tuple(indices)]
-
-    else:
-        # ------------------------------------------------------------
-        # At least two axes have list-of-integers indices so we can't
-        # do a normal numpy subspace
-        # ------------------------------------------------------------
-        if np.ma.isMA(array):
-            take = np.ma.take
-        else:
-            take = np.take
-
-        indices = indices[:]
-        for axis in gg:
-            array = take(array, indices[axis], axis=axis)
-            indices[axis] = slice(None)
-
-        if len_gg < len(indices):
-            array = array[tuple(indices)]
-
-        return array
-
-
 _equals = cfdm.Data()._equals
 
 
@@ -2646,7 +2886,7 @@ def relpath(filename, start=None):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename
 
@@ -2684,7 +2924,7 @@ def dirname(filename):
     'http://data/archive'
 
     """
-    u = urllib.parse.urlparse(filename)
+    u = urlparse(filename)
     if u.scheme != "":
         return filename.rpartition("/")[0]
 
@@ -2723,9 +2963,9 @@ def pathjoin(path1, path2):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(path1)
+    u = urlparse(path1)
     if u.scheme != "":
-        return urllib.parse.urljoin(path1, path2)
+        return urljoin(path1, path2)
 
     return _os_path_join(path1, path2)
 
@@ -3118,44 +3358,50 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
-    HDF5 library: 1.10.6
-    netcdf library: 4.8.0
-    udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
-    esmpy/ESMF: 8.4.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/esmpy/__init__.py
-    Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
-    dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
-    netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
-    psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py
-    packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py
-    numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py
-    scipy: 1.10.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
-    matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
-    cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
-    cfunits: 3.3.6 /home/username/cfunits/cfunits/__init__.py
-    cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
-    cfdm: 1.10.1.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
-    cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
+    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
+    HDF5 library: 1.12.2
+    netcdf library: 4.9.3-development
+    udunits2 library: /home/user/lib/libudunits2.so.0
+    esmpy/ESMF: 8.6.1 /home/user/lib/python3.12/site-packages/esmpy/__init__.py
+    Python: 3.12.2 /home/user/bin/python
+    dask: 2024.6.0 /home/user/lib/python3.12/site-packages/dask/__init__.py
+    netCDF4: 1.6.5 /home/user/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/user/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.11.0 /home/user/lib/python3.12/site-packages/h5py/__init__.py
+    s3fs: 2024.6.0 /home/user/lib/python3.12/site-packages/s3fs/__init__.py
+    psutil: 5.9.8 /home/user/lib/python3.12/site-packages/psutil/__init__.py
+    packaging: 23.2 /home/user/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 1.26.4 /home/user/lib/python3.12/site-packages/numpy/__init__.py
+    scipy: 1.13.0 /home/user/lib/python3.12/site-packages/scipy/__init__.py
+    matplotlib: 3.8.4 /home/user/lib/python3.12/site-packages/matplotlib/__init__.py
+    cftime: 1.6.3 /home/user/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/user/lib/python3.12/site-packages/cfunits/__init__.py
+    cfplot: 3.3.0 /home/user/lib/python3.12/site-packages/cfplot/__init__.py
+    cfdm: 1.11.2.0 /home/user/cfdm/cfdm/__init__.py
+    cf: NEXTVERSION /home/user/cf-python/cf/__init__.py
 
     >>> cf.environment(paths=False)
-    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
-    HDF5 library: 1.10.6
-    netcdf library: 4.8.0
-    udunits2 library: libudunits2.so.0
-    esmpy/ESMF: 8.4.1
-    Python: 3.8.10
-    dask: 2022.6.0
-    netCDF4: 1.5.6
-    psutil: 5.9.0
-    packaging: 21.3
-    numpy: 1.22.2
-    scipy: 1.10.0
-    matplotlib: 3.4.3
-    cftime: 1.6.0
-    cfunits: 3.3.6
-    cfplot: 3.1.18
-    cfdm: 1.10.1.0
-    cf: 3.14.0
+    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
+    HDF5 library: 1.12.2
+    netcdf library: 4.9.3-development
+    udunits2 library: /home/user/lib/libudunits2.so.0
+    esmpy/ESMF: 8.6.1
+    Python: 3.12.2
+    dask: 2024.6.0
+    netCDF4: 1.6.5
+    h5netcdf: 1.3.0
+    h5py: 3.11.0
+    s3fs: 2024.6.0
+    psutil: 5.9.8
+    packaging: 23.2
+    numpy: 1.26.4
+    scipy: 1.13.0
+    matplotlib: 3.8.4
+    cftime: 1.6.3
+    cfunits: 3.3.7
+    cfplot: 3.3.0
+    cfdm: 1.11.2.0
+    cf: NEXTVERSION
 
     """
     dependency_version_paths_mapping = {
@@ -3174,6 +3420,9 @@ def environment(display=True, paths=True):
         "dask": _get_module_info("dask"),
         # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "s3fs": _get_module_info("s3fs"),
         "psutil": _get_module_info("psutil"),
         "packaging": _get_module_info("packaging"),
         "numpy": _get_module_info("numpy"),

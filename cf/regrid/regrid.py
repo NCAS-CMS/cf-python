@@ -2465,7 +2465,8 @@ def create_esmpy_weights(
             from netCDF4 import Dataset
 
             from .. import __version__
-            from ..data.array.netcdfarray import _lock
+
+            from ..data.array.locks import netcdf_lock
 
             if (
                 max(dst_esmpy_field.data.size, src_esmpy_field.data.size)
@@ -2491,7 +2492,7 @@ def create_esmpy_weights(
             if src_grid.ln_z:
                 regrid_method += f", ln {src_grid.method} in vertical"
 
-            _lock.acquire()
+            netcdf_lock.acquire()
             nc = Dataset(weights_file, "w", format="NETCDF4")
 
             nc.title = (
@@ -2532,7 +2533,7 @@ def create_esmpy_weights(
             v[...] = col
 
             nc.close()
-            _lock.release()
+            netcdf_lock.release()
 
     if esmpy_regrid_operator is None:
         # Destroy esmpy objects (the esmpy.Grid objects exist even if
