@@ -1,8 +1,6 @@
 from os import sep
 from os.path import basename, dirname, join
 
-import numpy as np
-
 from ....functions import _DEPRECATION_ERROR_ATTRIBUTE, abspath
 
 
@@ -25,20 +23,6 @@ class FileArrayMixin:
             self.get_filenames(),
             self.get_addresses(),
         )
-
-    @property
-    def _dask_meta(self):
-        """The metadata for the containing dask array.
-
-        This is the kind of array that will result from slicing the
-        file array.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `dask.array.from_array`
-
-        """
-        return np.array((), dtype=self.dtype)
 
     @property
     def filename(self):

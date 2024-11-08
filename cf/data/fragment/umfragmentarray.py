@@ -17,8 +17,8 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        units=False,
-        calendar=False,
+        attributes=None,
+        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -45,24 +45,33 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            units: `str` or `None`, optional
-                The units of the fragment data. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
+            {{init attributes: `dict` or `None`, optional}}
 
-            calendar: `str` or `None`, optional
-                The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
+                During the first `__getitem__` call, any of the
+                ``_FillValue``, ``add_offset``, ``scale_factor``,
+                ``units``, and ``calendar`` attributes which haven't
+                already been set will be inferred from the lookup
+                header and cached for future use.
+
+                .. versionadded:: NEXTVERSION
 
             {{aggregated_units: `str` or `None`, optional}}
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
+            {{init storage_options: `dict` or `None`, optional}}
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTVERSION. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTVERSION. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(
@@ -70,8 +79,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             address=address,
             dtype=dtype,
             shape=shape,
-            units=units,
-            calendar=calendar,
+            attributes=attributes,
             source=source,
             copy=False,
         )
