@@ -21,12 +21,13 @@ cf.RaggedContiguousArray
    ~cf.RaggedContiguousArray.compressed_dimensions
    ~cf.RaggedContiguousArray.conformed_data
    ~cf.RaggedContiguousArray.copy
+   ~cf.RaggedContiguousArray.get_attributes
    ~cf.RaggedContiguousArray.get_calendar
    ~cf.RaggedContiguousArray.get_compressed_axes
    ~cf.RaggedContiguousArray.get_compressed_dimension
    ~cf.RaggedContiguousArray.get_compression_type
    ~cf.RaggedContiguousArray.get_count
-   ~cf.RaggedContiguousArray.get_filename'
+   ~cf.RaggedContiguousArray.get_filename
    ~cf.RaggedContiguousArray.get_filenames
    ~cf.RaggedContiguousArray.get_index
    ~cf.RaggedContiguousArray.get_Subarray

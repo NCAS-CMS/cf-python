@@ -77,24 +77,11 @@ Data classes
    :toctree: class/
 
    cf.Data
-   cf.NetCDFArray
-
-Miscellaneous classes
----------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: class/
-
-   cf.Flags
-   cf.Query
-   cf.TimeDuration
-   cf.Units
-   cf.RegridOperator
-   cf.Constant
-   cf.Configuration
-  
-
+   cf.H5netcdfArray
+   cf.NetCDF4Array
+   cf.FullArray
+   cf.UMArray
+   
 Data compression classes
 ------------------------
 
@@ -111,3 +98,33 @@ Classes that support the creation and storage of compressed arrays.
    cf.RaggedContiguousArray
    cf.RaggedIndexedArray
    cf.RaggedIndexedContiguousArray
+   cf.SubsampledArray
+
+Data UGRID classes
+------------------
+
+Classes that support the creation and storage of UGRID-related arrays.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.BoundsFromNodesArray
+   cf.CellConnectivityArray
+   cf.PointTopologyArray
+   
+Miscellaneous classes
+---------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.Flags
+   cf.Query
+   cf.TimeDuration
+   cf.Units
+   cf.RegridOperator
+   cf.Constant
+   cf.Configuration
+  

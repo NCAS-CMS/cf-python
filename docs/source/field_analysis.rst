@@ -342,15 +342,14 @@ construct.
 Collapse weights
 ^^^^^^^^^^^^^^^^
 
-.. The calculations of means, standard deviations and variances are,
-   by default, not weighted. For weights to be incorporated in the
-   collapse, the axes to be weighted must be identified with the
-   *weights* keyword.
+.. warning:: By default, the collapse calculations are **not**
+             weighted.
 
-For weights to be incorporated in the collapse, the axes to be
-weighted must be identified with the *weights* keyword. A collapse by
-a particular method is either never weighted, or may be weighted, or
-is always weighted, as described in the following table:
+             For weights to be incorporated in the collapse, the
+             *weights* keyword must be set.
+
+A collapse by a particular method is either never weighted, or may be
+weighted, or is always weighted, as described in the following table:
 
 ============================  ============================  ========
 Method                        Description                   Weighted  
@@ -852,6 +851,51 @@ method constructs.
                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
+
+.. _Active-storage-collapses:
+
+Active storage collapses
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+When the data being collapsed are stored remotely, the collapse
+calculations may be carried out on a server that is close (in a
+network distance sense) to the data, thereby removing the time and
+power costs of transferring the entire un-collapsed data to the local
+client.
+
+Whether or not this will occur for an individual `dask` chunk is
+determined on a case-by-case basis, and will only be done if all of
+the following criteria are met:
+
+* ``cf.active_storage()`` is `True`;
+
+* ``cf.active_storage_url()`` returns the URL of a valid active
+  storage server;
+
+* the `dask` chunk's data are defined by a netCDF-4 file on disk
+  (rather than in any other file format, or in memory);
+
+* it is possible to import the `activestorage.Active` class;
+
+* the method is one of those specified by
+  `cf.data.collapse.active_reduction_methods`;
+
+* the collapse is over all axes;
+
+* the collapse is unweighted;
+
+* the data are not numerically packed.
+
+If any of these conditions are not met then the `dask` chunk will be
+collapsed "as usual", i.e. by retrieving the data to memory (if it is
+not already there) and using the local client to perform the collapse
+calculations.
+
+The performance improvements from using active storage operations will
+increase the closer, in a network sense, the active storage server is
+to the data storage. If the active storage server is sufficiently far
+away from the data then it could even be faster and require less
+energy to do non-active operation of the local client.
 
 ----
    

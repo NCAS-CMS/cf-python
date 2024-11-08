@@ -1466,7 +1466,7 @@ class FieldTest(unittest.TestCase):
                 shape = (1, 1, 1)
 
             self.assertEqual(g.shape, shape)
-            self.assertEqual(g.array.compressed(), 29)
+            self.assertEqual(np.ma.compressed(g.array), 29)
             if mode != "full":
                 self.assertEqual(g.construct("longitude").array, 83)
 
@@ -1484,7 +1484,7 @@ class FieldTest(unittest.TestCase):
                 shape = (1, 2, 2)
 
             self.assertEqual(g.shape, shape)
-            self.assertTrue((g.array.compressed() == [4, 29]).all())
+            self.assertTrue((np.ma.compressed(g.array) == [4, 29]).all())
 
         # Add 2-d auxiliary coordinates with bounds, so we can
         # properly test cf.contains values

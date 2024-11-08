@@ -13,9 +13,16 @@ can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 
+* read field constructs and domain constructs from netCDF, CDL, PP and
+  UM datasets with a choice of netCDF backends,
+
+* read files from OPeNDAP servers and S3 object stores,
+
 * create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
+
+* read, write, and manipulate UGRID mesh topologies,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -74,8 +81,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.11"
-__date__ = "2024-04-26"
-__version__ = "3.16.2"
+__date__ = "2024-??-??"
+__version__ = "3.17.0"
 
 _requires = (
     "numpy",
@@ -199,8 +206,8 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.11.1.0"
-_maximum_vn = "1.11.2.0"
+_minimum_vn = "1.11.2.0"
+_maximum_vn = "1.11.3.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
@@ -209,12 +216,6 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2022.12.1"
-if Version(dask.__version__) < Version(_minimum_vn):
-    raise RuntimeError(
-        f"Bad dask version: cf requires dask>={_minimum_vn}. "
-        f"Got {dask.__version__} at {dask.__file__}"
-    )
 
 # Check the version of Python
 _minimum_vn = "3.8.0"
@@ -274,15 +275,19 @@ from .data import Data
 from .data.array import (
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFANetCDFArray,
+    CFAH5netcdfArray,
+    CFANetCDF4Array,
     FullArray,
     GatheredArray,
+    H5netcdfArray,
     NetCDFArray,
+    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    UMArray,
 )
 
 from .data.fragment import (
