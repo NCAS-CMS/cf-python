@@ -26,10 +26,10 @@
 #        """x.__str__() <==> str(x)"""
 #        return f"{self.get_filename()}, {self.get_address()}"
 #
-##    @property
-##    def dtype(self):
-##        """Data-type of the array."""
-##        return self._get_component("dtype")
+#    @property
+#    def dtype(self):
+#        """Data-type of the array."""
+#        return self._get_component("dtype")
 #
 #    @property
 #    def filename(self):
