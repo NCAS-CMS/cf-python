@@ -327,13 +327,17 @@ class DimensionCoordinate(
                 (decreasing) coordinates.
 
             parameters: `dict`, optional
-                TODO Return a dictionary of parameters which describe the
-                anchoring process. The construct is not changed, even
-                if *inplace* is True.
+                If a `dict` is provided then it will be updated
+                in-place with parameters which describe thethe
+                anchoring process.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
+
+            `{{class}}` or `None`
+                The anchored dimension coordinates, or `None` if the
+                operation was in-place.
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
