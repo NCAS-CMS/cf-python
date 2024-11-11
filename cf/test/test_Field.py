@@ -1361,6 +1361,34 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertTrue((x == [-200, -160, -120, -80, -40, 0, 40]).all())
 
+        indices = f.indices(grid_longitude=cf.wo(1, 5))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-320, -280, -240, -200, -160, -120, -80, -40, 0]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wo(41, 45))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-280, -240, -200, -160, -120, -80, -40, 0, 40]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wo(-5, -1))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(-45, -41))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [-40, 0, 40, 80, 120, 160, 200, 240, 280]).all())
+
         with self.assertRaises(ValueError):
             # No X coordinate values lie outside the range [-90, 370]
             f.indices(grid_longitude=cf.wo(-90, 370))

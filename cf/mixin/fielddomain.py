@@ -472,7 +472,9 @@ class FieldDomain:
                             stop = start - n.size
                         else:
                             start = size - parameters["shift"]
-                            stop = start
+                            stop = start + size
+                            if stop > size:
+                                stop -= size
 
                     index = slice(start, stop, 1)
 
