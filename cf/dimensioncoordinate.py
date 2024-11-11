@@ -304,7 +304,7 @@ class DimensionCoordinate(
                   5, ..., 355``; ``value=-12`` implies transformed
                   coordinates of ``-10, -5, ..., 345``; ``value=380``
                   implies transformed coordinates of ``380, 385, ...,
-                  715``.
+                  735``.
 
                 *Parameter example:*
                   If the original coordinates are ``355, 350, ..., 0``
@@ -313,7 +313,7 @@ class DimensionCoordinate(
                   ``355, 350, ..., 0``; ``value=0`` implies
                   transformed coordinates of ``0, -5, ..., -355``;
                   ``value=392`` implies transformed coordinates of
-                  ``390, 385, ..., 30``.
+                  ``390, 385, ..., 35``.
 
             cell: `bool`, optional
                 If True, then the coordinate values are transformed so
