@@ -11,7 +11,6 @@ import warnings
 from collections.abc import Iterable
 from itertools import product
 from math import isnan
-from numbers import Integral
 from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import dirname as _os_path_dirname
@@ -2129,6 +2128,10 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
         indices: `tuple`
             The indices to be applied.
 
+        cyclic: `bool`, optional
+            If True then allow cyclic slices (such as ``slice(-4, 3,
+            1)``).
+
         keepdims: `bool`, optional
             If True then an integral index is converted to a
             slice. For instance, ``3`` would become ``slice(3, 4)``.
@@ -2157,108 +2160,55 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
     [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
 
-
     """
-    parsed_indices = []
-    roll = {}
-
-    if not isinstance(indices, tuple):
-        indices = (indices,)
-
-    # Initialise the list of parsed indices as the input indices with any
-    # Ellipsis objects expanded
-    length = len(indices)
-    n = len(shape)
-    ndim = n
-    for index in indices:
-        if index is Ellipsis:
-            m = n - length + 1
-            parsed_indices.extend([slice(None)] * m)
-            n -= m
-        else:
-            parsed_indices.append(index)
-            n -= 1
-
-        length -= 1
-
-    len_parsed_indices = len(parsed_indices)
-
-    if ndim and len_parsed_indices > ndim:
-        raise IndexError(
-            f"Invalid indices {parsed_indices} for array with shape {shape}"
-        )
-
-    if len_parsed_indices < ndim:
-        parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
-
-    if not ndim and parsed_indices:
-        raise IndexError(
-            "Scalar array can only be indexed with () or Ellipsis"
-        )
-
-    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-        if cyclic and isinstance(index, slice):
-            # Check for a cyclic slice
-            try:
-                index = normalize_slice(index, size, cyclic=True)
-            except IndexError:
-                # Non-cyclic slice
-                pass
-            else:
-                # Cyclic slice
-                start = index.start
-                stop = index.stop
-                step = index.step
-                if (
-                    step > 0
-                    and -size <= start < 0
-                    and 0 <= stop <= size + start
-                ):
-                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[ -1:0:1] => [9]
-                    # x[ -1:1:1] => [9, 0]
-                    # x[ -1:3:1] => [9, 0, 1, 2]
-                    # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                    # x[ -4:0:1] => [6, 7, 8, 9]
-                    # x[ -4:1:1] => [6, 7, 8, 9, 0]
-                    # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
-                    # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                    # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                    # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    index = slice(0, stop - start, step)
-                    roll[i] = -start
-
-                elif (
-                    step < 0 and 0 <= start < size and start - size <= stop < 0
-                ):
-                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[0: -4:-1] => [0, 9, 8, 7]
-                    # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
-                    # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
-                    # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                    # x[0: -2:-1] => [0, 9]
-                    # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                    index = slice(start - stop - 1, None, step)
-                    roll[i] = -1 - stop
-
-        elif keepdims and isinstance(index, Integral):
-            # Convert an integral index to a slice
-            if index == -1:
-                index = slice(-1, None, None)
-            else:
-                index = slice(index, index + 1, 1)
-
-        elif hasattr(index, "to_dask_array"):
-            to_dask_array = index.to_dask_array
-            if callable(to_dask_array):
-                # Replace index with its Dask array
-                index = to_dask_array()
-
-        parsed_indices[i] = index
+    parsed_indices = cfdm.parse_indices(shape, indices, keepdims=keepdims)
 
     if not cyclic:
         return parsed_indices
+
+    roll = {}
+    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        if not isinstance(index, slice):
+            continue
+
+        try:
+            index = normalize_slice(index, size, cyclic=True)
+        except IndexError:
+            # Non-cyclic slice
+            pass
+        else:
+            # Cyclic slice
+            start = index.start
+            stop = index.stop
+            step = index.step
+            if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -1:0:1] => [9]
+                # x[ -1:1:1] => [9, 0]
+                # x[ -1:3:1] => [9, 0, 1, 2]
+                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                # x[ -4:0:1] => [6, 7, 8, 9]
+                # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                index = slice(0, stop - start, step)
+                roll[i] = -start
+
+            elif step < 0 and 0 <= start < size and start - size <= stop < 0:
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[0: -4:-1] => [0, 9, 8, 7]
+                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                # x[0: -2:-1] => [0, 9]
+                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                index = slice(start - stop - 1, None, step)
+                roll[i] = -1 - stop
+
+            parsed_indices[i] = index
 
     return parsed_indices, roll
 

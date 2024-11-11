@@ -1,23 +1,23 @@
-"""This class is not in the cf.mixin package because it needs to be
-imported by cf.Data, and some of the other mixin classes in cf.mixin
-themsleves import cf.Data, which would lead to a circular import
-situation.
-
-"""
-
-from re import split
-
-from cfdm.mixin import NetCDFMixin
-
-
-class CFANetCDF(NetCDFMixin):
-    """Mixin class for CFA-netCDF.
-
-    .. versionadded:: 3.15.0
-
-    """
-
-
+# """This class is not in the cf.mixin package because it needs to be
+# imported by cf.Data, and some of the other mixin classes in cf.mixin
+# themsleves import cf.Data, which would lead to a circular import
+# situation.
+#
+# """
+#
+# from re import split
+#
+# from cfdm.mixin import NetCDFMixin
+#
+#
+# class CFANetCDF(NetCDFMixin):
+#    """Mixin class for CFA-netCDF.
+#
+#    .. versionadded:: 3.15.0
+#
+#    """
+#
+#
 #
 #    def cfa_del_aggregated_data(self):
 #        """Remove the CFA-netCDF aggregation instruction terms.

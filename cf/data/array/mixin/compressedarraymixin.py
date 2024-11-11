@@ -1,14 +1,14 @@
-import dask.array as da
-
-
-class CompressedArrayMixin:
-    """Mixin class for compressed arrays.
-
-    .. versionadded:: 3.14.0
-
-    """
-
-
+# import dask.array as da
+#
+#
+# class CompressedArrayMixin:
+#    """Mixin class for compressed arrays.
+#
+#    .. versionadded:: 3.14.0
+#
+#    """
+#
+#
 #    def _lock_file_read(self, array):
 #        """Try to return a dask array that does not support concurrent
 #        reads.

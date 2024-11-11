@@ -3,7 +3,6 @@ import math
 from functools import partial, reduce
 from itertools import product
 from operator import mul
-from os import sep
 
 import cfdm
 import cftime
@@ -28,7 +27,6 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
-    abspath,
     free_memory,
     parse_indices,
 )

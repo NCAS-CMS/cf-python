@@ -2,7 +2,6 @@ import logging
 from dataclasses import dataclass
 from functools import reduce
 from operator import mul as operator_mul
-from os import sep
 
 import cfdm
 import numpy as np
@@ -49,7 +48,6 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
-    abspath,
     flat,
     parse_indices,
 )

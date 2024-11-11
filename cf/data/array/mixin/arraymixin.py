@@ -1,16 +1,16 @@
-import numpy as np
-
-from ....units import Units
-
-
-class ArrayMixin:
-    """Mixin class for a container of an array.
-
-    .. versionadded:: 3.14.0
-
-    """
-
-
+# import numpy as np
+#
+# from ....units import Units
+#
+#
+# class ArrayMixin:
+#    """Mixin class for a container of an array.
+#
+#    .. versionadded:: 3.14.0
+#
+#    """
+#
+#
 #    def __array_function__(self, func, types, args, kwargs):
 #        """Implement the `numpy` ``__array_function__`` protocol.
 #
