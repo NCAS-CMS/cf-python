@@ -255,7 +255,7 @@ class DimensionCoordinate(
         """Anchor the coordinate values.
 
         By default, the coordinate values are transformed so that the
-        first coordinate is the closet to *value* from above (below)
+        first coordinate is the closest to *value* from above (below)
         for increasing (decreasing) coordinates.
 
         If the *cell* parameter is True, then the coordinate values
