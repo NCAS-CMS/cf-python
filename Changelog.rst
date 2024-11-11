@@ -34,7 +34,7 @@ version NEXTVERSION
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
 * Fix bug where `cf.Field.subspace` doesn't always correctly handle
-  global cyclic subspaces
+  global or near-global cyclic subspaces
   (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
