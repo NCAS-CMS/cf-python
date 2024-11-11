@@ -260,7 +260,7 @@ class DimensionCoordinate(
 
         If the *cell* parameter is True, then the coordinate values
         are transformed so that the first cell either contains
-        *value*; or is the closet to cell to *value* from above
+        *value*; or is the closest to cell to *value* from above
         (below) for increasing (decreasing) coordinates.
 
         .. versionadded:: NEXTVERSION
@@ -279,9 +279,9 @@ class DimensionCoordinate(
                 units as the coordinates.
 
                 The coordinate values are transformed so the first
-                corodinate is the closet to *value* from above (for
-                increasing coordinates), or the closet to *value* from
-                above (for idereasing coordinates)
+                corodinate is the closest to *value* from above (for
+                increasing coordinates), or the closest to *value* from
+                above (for decreasing coordinates)
 
                   * Increasing coordinates with positive period, P,
                     are transformed so that *value* lies in the
@@ -318,11 +318,11 @@ class DimensionCoordinate(
             cell: `bool`, optional
                 If True, then the coordinate values are transformed so
                 that the first cell either contains *value*, or is the
-                closet to cell to *value* from above (below) for
+                closest to cell to *value* from above (below) for
                 increasing (decreasing) coordinates.
 
                 If False (the default) then the coordinate values are
-                transformed so that the first coordinate is the closet
+                transformed so that the first coordinate is the closest
                 to *value* from above (below) for increasing
                 (decreasing) coordinates.
 
