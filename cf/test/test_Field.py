@@ -1406,14 +1406,12 @@ class FieldTest(unittest.TestCase):
         g = f[indices]
         x = g.dimension_coordinate("X").array
         self.assertEqual(g.shape, (1, 10, 7))
-        x = g.dimension_coordinate("X").array
         self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
 
         indices = f.indices(grid_longitude=cf.wo(35, 85))
         g = f[indices]
         x = g.dimension_coordinate("X").array
         self.assertEqual(g.shape, (1, 10, 7))
-        x = g.dimension_coordinate("X").array
         self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
 
         with self.assertRaises(ValueError):
