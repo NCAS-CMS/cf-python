@@ -2784,39 +2784,12 @@ def relpath(filename, start=None):
     return _os_path_relpath(filename)
 
 
-def dirname(filename):
-    """Return the directory name of a file.
+def dirname(path, isdir=False):
+    return cfdm.dirname(path, isdir=isdir)
 
-    If a string containing URL is provided then everything up to, but
-    not including, the last slash (/) is returned.
 
-    .. seealso:: `cf.abspath`, `cf.pathjoin`, `cf.relpath`
+dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
 
-    :Parameters:
-
-        filename: `str`
-            The name of the file.
-
-    :Returns:
-
-        `str`
-            The directory name.
-
-    **Examples**
-
-    >>> cf.dirname('/data/archive/file.nc')
-    '/data/archive'
-    >>> cf.dirname('..//file.nc')
-    '..'
-    >>> cf.dirname('http://data/archive/file.nc')
-    'http://data/archive'
-
-    """
-    u = urlparse(filename)
-    if u.scheme != "":
-        return filename.rpartition("/")[0]
-
-    return _os_path_dirname(filename)
 
 
 def pathjoin(path1, path2):
