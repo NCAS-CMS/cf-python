@@ -1214,6 +1214,30 @@ class FieldTest(unittest.TestCase):
             (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
         )
 
+        indices = f.indices(grid_longitude=cf.wi(-90, 270))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wi(-180, 180))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wi(-170, 170))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-160, -120, -80, -40, 0, 40, 80, 120, 160]).all()
+        )
+
         with self.assertRaises(ValueError):
             # No X coordinate values lie inside the range [90, 100]
             f.indices(grid_longitude=cf.wi(90, 100))
@@ -1337,6 +1361,34 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertTrue((x == [-200, -160, -120, -80, -40, 0, 40]).all())
 
+        indices = f.indices(grid_longitude=cf.wo(1, 5))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-320, -280, -240, -200, -160, -120, -80, -40, 0]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wo(41, 45))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue(
+            (x == [-280, -240, -200, -160, -120, -80, -40, 0, 40]).all()
+        )
+
+        indices = f.indices(grid_longitude=cf.wo(-5, -1))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(-45, -41))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 9))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [-40, 0, 40, 80, 120, 160, 200, 240, 280]).all())
+
         with self.assertRaises(ValueError):
             # No X coordinate values lie outside the range [-90, 370]
             f.indices(grid_longitude=cf.wo(-90, 370))
@@ -1371,6 +1423,33 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.shape, (1, 10, 7))
         x = g.dimension_coordinate("X").array
         self.assertTrue((x == [80, 120, 160, 200, 240, 280, 320]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(-45, 45))
+        g = f[indices]
+        self.assertEqual(g.shape, (1, 10, 6))
+        x = g.dimension_coordinate("X").array
+        self.assertTrue((x == [80, 120, 160, 200, 240, 280]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(35, 85))
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 7))
+        self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
+
+        indices = f.indices(grid_longitude=cf.wo(35, 85))
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 7))
+        self.assertTrue((x == [-240, -200, -160, -120, -80, -40, 0]).all())
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(0, 360))
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(-90, 270))
+
+        with self.assertRaises(ValueError):
+            f.indices(grid_longitude=cf.wo(-180, 180))
 
         # 2-d
         lon = f.construct("longitude").array

@@ -33,12 +33,14 @@ version NEXTVERSION
 * Fix bug where `cf.normalize_slice` doesn't correctly
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
+* Fix bug where `cf.Field.subspace` doesn't always correctly handle
+  global or near-global cyclic subspaces
+  (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
 * Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
 * Changed dependency: ``cfunits>=3.3.7``
-
 
 ----
 
