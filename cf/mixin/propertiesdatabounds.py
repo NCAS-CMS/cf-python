@@ -1236,120 +1236,120 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-#    def cfa_clear_file_substitutions(
-#        self,
-#    ):
-#        """Remove all of the CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns cfa_clear_file_substitutions}}
-#
-#        **Examples**
-#
-#        >>> f.cfa_clear_file_substitutions()
-#        {}
-#
-#        """
-#        out = super().cfa_clear_file_substitutions()
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            out.update(bounds.cfa_clear_file_substitutions())
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if interior_ring is not None:
-#            out.update(interior_ring.cfa_clear_file_substitutions())
-#
-#        return out
-#
-#    def cfa_del_file_substitution(self, base):
-#        """Remove a CFA-netCDF file name substitution.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Parameters:
-#
-#            {{cfa base: `str`}}
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns cfa_del_file_substitution}}
-#
-#        **Examples**
-#
-#        >>> c.cfa_del_file_substitution('base')
-#
-#        """
-#        super().cfa_del_file_substitution(base)
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            bounds.cfa_del_file_substitution(base)
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if interior_ring is not None:
-#            interior_ring.cfa_del_file_substitution(base)
-#
-#    def cfa_file_substitutions(self):
-#        """Return the CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns cfa_file_substitutions}}
-#
-#        **Examples**
-#
-#        >>> c.cfa_file_substitutions()
-#        {}
-#
-#        """
-#        out = super().cfa_file_substitutions()
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            out.update(bounds.cfa_file_substitutions({}))
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if interior_ring is not None:
-#            out.update(interior_ring.cfa_file_substitutions({}))
-#
-#        return out
-#
-#    def cfa_update_file_substitutions(self, substitutions):
-#        """Set CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Parameters:
-#
-#            {{cfa substitutions: `dict`}}
-#
-#        :Returns:
-#
-#            `None`
-#
-#        **Examples**
-#
-#        >>> c.cfa_add_file_substitutions({'base', '/data/model'})
-#
-#        """
-#        super().cfa_update_file_substitutions(substitutions)
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            bounds.cfa_update_file_substitutions(substitutions)
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if interior_ring is not None:
-#            interior_ring.cfa_update_file_substitutions(substitutions)
+    #    def cfa_clear_file_substitutions(
+    #        self,
+    #    ):
+    #        """Remove all of the CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns cfa_clear_file_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.cfa_clear_file_substitutions()
+    #        {}
+    #
+    #        """
+    #        out = super().cfa_clear_file_substitutions()
+    #
+    #        bounds = self.get_bounds(None)
+    #        if bounds is not None:
+    #            out.update(bounds.cfa_clear_file_substitutions())
+    #
+    #        interior_ring = self.get_interior_ring(None)
+    #        if interior_ring is not None:
+    #            out.update(interior_ring.cfa_clear_file_substitutions())
+    #
+    #        return out
+    #
+    #    def cfa_del_file_substitution(self, base):
+    #        """Remove a CFA-netCDF file name substitution.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Parameters:
+    #
+    #            {{cfa base: `str`}}
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns cfa_del_file_substitution}}
+    #
+    #        **Examples**
+    #
+    #        >>> c.cfa_del_file_substitution('base')
+    #
+    #        """
+    #        super().cfa_del_file_substitution(base)
+    #
+    #        bounds = self.get_bounds(None)
+    #        if bounds is not None:
+    #            bounds.cfa_del_file_substitution(base)
+    #
+    #        interior_ring = self.get_interior_ring(None)
+    #        if interior_ring is not None:
+    #            interior_ring.cfa_del_file_substitution(base)
+    #
+    #    def cfa_file_substitutions(self):
+    #        """Return the CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns cfa_file_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> c.cfa_file_substitutions()
+    #        {}
+    #
+    #        """
+    #        out = super().cfa_file_substitutions()
+    #
+    #        bounds = self.get_bounds(None)
+    #        if bounds is not None:
+    #            out.update(bounds.cfa_file_substitutions({}))
+    #
+    #        interior_ring = self.get_interior_ring(None)
+    #        if interior_ring is not None:
+    #            out.update(interior_ring.cfa_file_substitutions({}))
+    #
+    #        return out
+    #
+    #    def cfa_update_file_substitutions(self, substitutions):
+    #        """Set CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Parameters:
+    #
+    #            {{cfa substitutions: `dict`}}
+    #
+    #        :Returns:
+    #
+    #            `None`
+    #
+    #        **Examples**
+    #
+    #        >>> c.cfa_add_file_substitutions({'base', '/data/model'})
+    #
+    #        """
+    #        super().cfa_update_file_substitutions(substitutions)
+    #
+    #        bounds = self.get_bounds(None)
+    #        if bounds is not None:
+    #            bounds.cfa_update_file_substitutions(substitutions)
+    #
+    #        interior_ring = self.get_interior_ring(None)
+    #        if interior_ring is not None:
+    #            interior_ring.cfa_update_file_substitutions(substitutions)
 
     def chunk(self, chunksize=None):
         """Partition the data array.

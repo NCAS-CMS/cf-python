@@ -1,32 +1,32 @@
-#import atexit
-#import datetime
-#import faulthandler
-#import os
-#import tempfile
-#import unittest
-#from pathlib import PurePath
+# import atexit
+# import datetime
+# import faulthandler
+# import os
+# import tempfile
+# import unittest
+# from pathlib import PurePath
 #
-#import netCDF4
+# import netCDF4
 #
-#faulthandler.enable()  # to debug seg faults and timeouts
+# faulthandler.enable()  # to debug seg faults and timeouts
 #
-#import cf
+# import cf
 #
-#n_tmpfiles = 5
-#tmpfiles = [
+# n_tmpfiles = 5
+# tmpfiles = [
 #    tempfile.mkstemp("_test_CFA.nc", dir=os.getcwd())[1]
 #    for i in range(n_tmpfiles)
-#]
-#(
+# ]
+# (
 #    tmpfile1,
 #    tmpfile2,
 #    nc_file,
 #    cfa_file,
 #    cfa_file2,
-#) = tmpfiles
+# ) = tmpfiles
 #
 #
-#def _remove_tmpfiles():
+# def _remove_tmpfiles():
 #    """Try to remove defined temporary files by deleting their paths."""
 #    for f in tmpfiles:
 #        try:
@@ -35,10 +35,10 @@
 #            pass
 #
 #
-#atexit.register(_remove_tmpfiles)
+# atexit.register(_remove_tmpfiles)
 #
 #
-#class CFATest(unittest.TestCase):
+# class CFATest(unittest.TestCase):
 #    """Unit test for aggregation variables."""
 #
 #    netcdf3_fmts = [
@@ -626,7 +626,7 @@
 #                cf.write(g, cfa_file, cfa=cfa)
 #
 #
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    print("Run date:", datetime.datetime.now())
 #    cf.environment()
 #    print()

@@ -2577,99 +2577,99 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-#    def cfa_update_file_substitutions(self, substitutions):
-#        """Set CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Parameters:
-#
-#            {{cfa substitutions: `dict`}}
-#
-#        :Returns:
-#
-#            `None`
-#
-#        **Examples**
-#
-#        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
-#
-#        """
-#        data = self.get_data(None, _fill_value=False, _units=False)
-#        if data is not None:
-#            data.cfa_update_file_substitutions(substitutions)
-#
-#    @_inplace_enabled(default=False)
-#    def cfa_clear_file_substitutions(self, inplace=False):
-#        """Remove all of the CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Parameters:
-#
-#            {{inplace: `bool`, optional}}
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns cfa_clear_file_substitutions}}
-#
-#        **Examples**
-#
-#        >>> f.cfa_clear_file_substitutions()
-#        {}
-#
-#        """
-#        data = self.get_data(None)
-#        if data is None:
-#            return {}
-#
-#        return data.cfa_clear_file_substitutions({})
-#
-#    def cfa_del_file_substitution(
-#        self,
-#        base,
-#    ):
-#        """Remove a CFA-netCDF file name substitution.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Parameters:
-#
-#            `dict`
-#                {{Returns cfa_del_file_substitution}}
-#
-#        **Examples**
-#
-#        >>> f.cfa_del_file_substitution('base')
-#
-#        """
-#        data = self.get_data(None, _fill_value=False, _units=False)
-#        if data is not None:
-#            data.cfa_del_file_substitution(base)
-#
-#    def cfa_file_substitutions(
-#        self,
-#    ):
-#        """Return the CFA-netCDF file name substitutions.
-#
-#        .. versionadded:: 3.15.0
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns cfa_file_substitutions}}
-#
-#        **Examples**
-#
-#        >>> g = f.cfa_file_substitutions()
-#
-#        """
-#        data = self.get_data(None)
-#        if data is None:
-#            return {}
-#
-#        return data.cfa_file_substitutions({})
+    #    def cfa_update_file_substitutions(self, substitutions):
+    #        """Set CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Parameters:
+    #
+    #            {{cfa substitutions: `dict`}}
+    #
+    #        :Returns:
+    #
+    #            `None`
+    #
+    #        **Examples**
+    #
+    #        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
+    #
+    #        """
+    #        data = self.get_data(None, _fill_value=False, _units=False)
+    #        if data is not None:
+    #            data.cfa_update_file_substitutions(substitutions)
+    #
+    #    @_inplace_enabled(default=False)
+    #    def cfa_clear_file_substitutions(self, inplace=False):
+    #        """Remove all of the CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Parameters:
+    #
+    #            {{inplace: `bool`, optional}}
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns cfa_clear_file_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.cfa_clear_file_substitutions()
+    #        {}
+    #
+    #        """
+    #        data = self.get_data(None)
+    #        if data is None:
+    #            return {}
+    #
+    #        return data.cfa_clear_file_substitutions({})
+    #
+    #    def cfa_del_file_substitution(
+    #        self,
+    #        base,
+    #    ):
+    #        """Remove a CFA-netCDF file name substitution.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Parameters:
+    #
+    #            `dict`
+    #                {{Returns cfa_del_file_substitution}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.cfa_del_file_substitution('base')
+    #
+    #        """
+    #        data = self.get_data(None, _fill_value=False, _units=False)
+    #        if data is not None:
+    #            data.cfa_del_file_substitution(base)
+    #
+    #    def cfa_file_substitutions(
+    #        self,
+    #    ):
+    #        """Return the CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: 3.15.0
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns cfa_file_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> g = f.cfa_file_substitutions()
+    #
+    #        """
+    #        data = self.get_data(None)
+    #        if data is None:
+    #            return {}
+    #
+    #        return data.cfa_file_substitutions({})
 
     def chunk(self, chunksize=None):
         """Partition the data array.

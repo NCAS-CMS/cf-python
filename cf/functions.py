@@ -2791,7 +2791,6 @@ def dirname(path, isdir=False):
 dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
 
 
-
 def pathjoin(path1, path2):
     """Join two file path components intelligently.
 
