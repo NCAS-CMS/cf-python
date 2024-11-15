@@ -2,8 +2,6 @@ import cfdm
 
 from ....mixin_container import Container
 
-# from ..mixin import ArrayMixin
-
 
 class Array(Container, cfdm.Array):
     """Abstract base class for a container of an underlying array.

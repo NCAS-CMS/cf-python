@@ -1626,38 +1626,38 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
-    def add_file_location(self, location):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> d.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.add_file_location(location)
-
-        return abspath(location).rstrip(sep)
+#    def add_file_location(self, location):
+#        """Add a new file location in-place.
+#
+#        All data definitions that reference files are additionally
+#        referenced from the given location.
+#
+#        .. versionadded:: 3.15.0
+#
+#        .. seealso:: `del_file_location`, `file_locations`
+#
+#        :Parameters:
+#
+#            location: `str`
+#                The new location.
+#
+#        :Returns:
+#
+#            `str`
+#                The new location as an absolute path with no trailing
+#                path name component separator.
+#
+#        **Examples**
+#
+#        >>> d.add_file_location('/data/model/')
+#        '/data/model'
+#
+#        """
+#        data = self.get_data(None, _fill_value=False, _units=False)
+#        if data is not None:
+#            return data.add_file_location(location)
+#
+#        return abspath(location).rstrip(sep)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -3066,38 +3066,38 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
-    def del_file_location(self, location):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> f.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.del_file_location(location)
-
-        return abspath(location).rstrip(sep)
+#    def del_file_location(self, location):
+#        """Remove a file location in-place.
+#
+#        All data definitions that reference files will have references
+#        to files in the given location removed from them.
+#
+#        .. versionadded:: 3.15.0
+#
+#        .. seealso:: `add_file_location`, `file_locations`
+#
+#        :Parameters:
+#
+#            location: `str`
+#                 The file location to remove.
+#
+#        :Returns:
+#
+#            `str`
+#                The removed location as an absolute path with no
+#                trailing path name component separator.
+#
+#        **Examples**
+#
+#        >>> f.del_file_location('/data/model/')
+#        '/data/model'
+#
+#        """
+#        data = self.get_data(None, _fill_value=False, _units=False)
+#        if data is not None:
+#            return data.del_file_location(location)
+#
+#        return abspath(location).rstrip(sep)
 
     @_manage_log_level_via_verbosity
     def equals(
@@ -3429,7 +3429,7 @@ class PropertiesData(Properties):
         )
 
     def file_locations(self):
-        """The locations of files containing parts of the data.
+        """TODOCFA The locations of files containing parts of the data.
 
         Returns the locations of any files that may be required to
         deliver the computed data array.
@@ -3450,9 +3450,39 @@ class PropertiesData(Properties):
         {'/home/data1', 'file:///data2'}
 
         """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "file_locations",
+            "Use method 'file_directories' instead",
+            version="NEXTVERSION",
+            removed_at="4.0.0",
+        )  # pragma: no cover
+
+    def file_directories(self):
+        """TODOCFA The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing path name component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
         data = self.get_data(None, _fill_value=False, _units=False)
         if data is not None:
-            return data.file_locations()
+            return data.file_directories()
 
         return set()
 

@@ -1,16 +1,16 @@
-import cfdm
-
-# from packaging.version import Version
-
-
-class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
-    """A container for instantiating Fields from a netCDF dataset.
-
-    .. versionadded:: 3.0.0
-
-    """
-
-
+#import cfdm
+#
+## from packaging.version import Version
+#
+#
+#class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
+#    """A container for instantiating Fields from a netCDF dataset.
+#
+#    .. versionadded:: 3.0.0
+#
+#    """
+#
+#
 #    def _ncdimensions(self, ncvar, ncdimensions=None, parent_ncvar=None):
 #        """Return a list of the netCDF dimensions corresponding to a
 #        netCDF variable.

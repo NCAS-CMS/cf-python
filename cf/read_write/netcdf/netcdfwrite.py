@@ -1,28 +1,22 @@
-# from os import remove
-#
 import cfdm
 
-from .netcdfread import NetCDFRead
-
-# import dask.array as da
-# import numpy as np
-# from cfdm.data.dask_utils import cfdm_asanyarray
+#from .netcdfread import NetCDFRead
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     """A container for writing Fields to a netCDF dataset."""
 
-    def __new__(cls, *args, **kwargs):
-        """Store the NetCDFRead class.
-
-        .. note:: If a child class requires a different NetCDFRead class
-        than the one defined here, then it must be redefined in the
-        child class.
-
-        """
-        instance = super().__new__(cls)
-        instance._NetCDFRead = NetCDFRead
-        return instance
+    #def __new__(cls, *args, **kwargs):
+    #    """Store the NetCDFRead class.
+    #
+    #    .. note:: If a child class requires a different NetCDFRead class
+    #    than the one defined here, then it must be redefined in the
+    #    child class.
+    #
+    #    """
+    #    instance = super().__new__(cls)
+    #    instance._NetCDFRead = NetCDFRead
+    #    return instance
 
     #    def _unlimited(self, field, axis):
     #        """Whether an axis is unlimited.
