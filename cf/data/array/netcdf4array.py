@@ -17,4 +17,5 @@ class NetCDF4Array(
     method. See `cf.data.collapse.Collapse` for details.
 
     """
+
     pass

@@ -752,58 +752,6 @@ def write(
         # Extra write variables
         extra_write_vars = {"reference_datetime": reference_datetime}
 
-        #        # ------------------------------------------------------------
-        #        # CFA
-        #        # ------------------------------------------------------------
-        #        if isinstance(cfa, dict):
-        #            cfa_options = cfa.copy()
-        #            cfa = True
-        #        else:
-        #            cfa_options = {}
-        #            cfa = bool(cfa)
-        #
-        #        if cfa:
-        #            # Add CFA to the Conventions
-        #            cfa_conventions = f"CFA-{CFA()}"
-        #            if not Conventions:
-        #                Conventions = cfa_conventions
-        #            elif isinstance(Conventions, str):
-        #                Conventions = (Conventions, cfa_conventions)
-        #            else:
-        #                Conventions = tuple(Conventions) + (cfa_conventions,)
-        #
-        #            keys = ("constructs", "absolute_paths", "strict", "substitutions")
-        #            if not set(cfa_options).issubset(keys):
-        #                raise ValueError(
-        #                    "Invalid dictionary key to the 'cfa_options' "
-        #                    f"parameter. Valid keys are {keys}. Got: {cfa_options}"
-        #                )
-        #
-        #            cfa_options.setdefault("constructs", "field")
-        #            cfa_options.setdefault("absolute_paths", True)
-        #            cfa_options.setdefault("strict", True)
-        #            cfa_options.setdefault("substitutions", {})
-        #
-        #            constructs = cfa_options["constructs"]
-        #            if isinstance(constructs, dict):
-        #                cfa_options["constructs"] = constructs.copy()
-        #            else:
-        #                if isinstance(constructs, str):
-        #                    constructs = (constructs,)
-        #
-        #                cfa_options["constructs"] = {c: None for c in constructs}
-        #
-        #            substitutions = cfa_options["substitutions"].copy()
-        #            for base, sub in tuple(substitutions.items()):
-        #                if not (base.startswith("${") and base.endswith("}")):
-        #                    # Add missing ${...}
-        #                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
-        #
-        #            cfa_options["substitutions"] = substitutions
-        #
-        #        extra_write_vars["cfa"] = cfa
-        #        extra_write_vars["cfa_options"] = cfa_options
-
         netcdf.write(
             fields,
             filename,

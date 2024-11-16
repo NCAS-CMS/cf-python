@@ -7,4 +7,4 @@ class PointTopologyArray(
     Container,
     cfdm.PointTopologyArray,
 ):
-   pass
+    pass

@@ -686,43 +686,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return
 
-    #    def _cfa_del_write(self):
-    #        """Set the CFA write status of the data to `False`.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_get_write`, `_cfa_set_write`
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #                The CFA status prior to deletion.
-    #
-    #        """
-    #        return self._custom.pop("cfa_write", False)
-    #
-    #    def _cfa_set_term(self, value):
-    #        """Set the CFA aggregation instruction term status.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_get_term`, `cfa_set_term`
-    #
-    #        :Parameters:
-    #
-    #            status: `bool`
-    #                The new CFA aggregation instruction term status.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        if not value:
-    #            self._custom.pop("cfa_term", None)
-    #
-    #        self._custom["cfa_term"] = bool(value)
-
     def _is_abstract_Array_subclass(self, array):
         """Whether or not an array is a type of Array.
 
@@ -736,30 +699,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return isinstance(array, cfdm.Array)
-
-    #    def _cfa_set_write(self, status):
-    #        """Set the CFA write status of the data.
-    #
-    #        If and only if the CFA write status is True then it may be
-    #        possible to write the data as an aggregation variable to a
-    #        CFA-netCDF file.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_get_write`, `cfa_set_write`,
-    #                     `_cfa_del_write`, `cf.read`, `cf.write`,
-    #
-    #        :Parameters:
-    #
-    #            status: `bool`
-    #                The new CFA write status.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        self._custom["cfa_write"] = bool(status)
 
     def _update_deterministic(self, other):
         """Update the deterministic name status.
@@ -1669,110 +1608,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         return d
 
-    #    def cfa_get_term(self):
-    #        """The CFA aggregation instruction term status.
-    #
-    #        If True then the data represents that of a non-standard CFA
-    #        aggregation instruction variable.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_set_term`
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #
-    #        **Examples**
-    #
-    #        >>> d = cf.Data([1, 2])
-    #        >>> d.cfa_get_term()
-    #        False
-    #
-    #        """
-    #        return bool(self._custom.get("cfa_term", False))
-    #
-    #    def cfa_get_write(self):
-    #        """The CFA write status of the data.
-    #
-    #        If and only if the CFA write status is True then it may be
-    #        possible to write the data as an aggregation variable to a
-    #        CFA-netCDF file.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #
-    #        **Examples**
-    #
-    #        >>> d = cf.Data([1, 2])
-    #        >>> d.cfa_get_write()
-    #        False
-    #
-    #        """
-    #        return bool(self._custom.get("cfa_write", False))
-    #
-    #    def cfa_set_term(self, status):
-    #        """Set the CFA aggregation instruction term status.
-    #
-    #        If True then the data represents that of a non-standard CFA
-    #        aggregation instruction variable.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_get_term`
-    #
-    #        :Parameters:
-    #
-    #            status: `bool`
-    #                The new CFA aggregation instruction term status.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        if status:
-    #            raise ValueError(
-    #                "'cfa_set_term' only allows the CFA aggregation instruction "
-    #                "term write status to be set to False"
-    #            )
-    #
-    #        self._custom.pop("cfa_term", False)
-    #
-    #    def cfa_set_write(self, status):
-    #        """Set the CFA write status of the data.
-    #
-    #        If and only if the CFA write status is True then it may be
-    #        possible to write the data as an aggregation variable to a
-    #        CFA-netCDF file.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `cfa_get_write`, `cf.read`, `cf.write`
-    #
-    #        :Parameters:
-    #
-    #            status: `bool`
-    #                The new CFA write status.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        if status:
-    #            raise ValueError(
-    #                "'cfa_set_write' only allows the CFA write status to be "
-    #                "set to False"
-    #            )
-    #
-    #        self._cfa_del_write()
-
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -2176,47 +2011,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             d._set_dask(dx)
 
         return d
-
-    #    def _clear_after_dask_update(self, clear=None):
-    #        """Remove components invalidated by updating the `dask` array.
-    #
-    #        Removes or modifies components that can't be guaranteed to be
-    #        consistent with an updated `dask` array. See the *clear*
-    #        parameter for details.
-    #
-    #        .. versionadded:: NEXTVERSION
-    #
-    #        .. seealso:: `_del_Array`, `_del_cached_elements`,
-    #                     `_set_dask`, `_cfa_del_write`
-    #
-    #        :Parameters:
-    #
-    #            clear: `int` or `None`, optional
-    #                Specify which components to remove, determined by
-    #                sequentially combining an integer value of *clear*
-    #                with the relevant class-level constants (such as
-    #                ``{{class}}._ARRAY``), using the bitwise AND (&)
-    #                operator. If ``clear & <class-level constant>`` is
-    #                True then the corresponding component is cleared. The
-    #                default value of `None` is equivalent to *clear* being
-    #                set to ``{{class}}._ALL``.
-    #
-    #                The bitwise OR (^) operator can be used to retain a
-    #                component (or components) but remove all others. For
-    #                instance, if *clear* is ``{{class}}._ALL ^
-    #                {{class}}._CACHE`` then all components except the
-    #                cached array values will be removed.
-    #
-    #        :Returns:
-    #
-    #            `int` TODODASK
-    #
-    #        """
-    #        clear = super()._clear_after_dask_update(clear)
-    #
-    #        if clear & self._CFA:
-    #            # Set the CFA write status to False
-    #            self._cfa_del_write()
 
     def _combined_units(self, data1, method, inplace):
         """Combines by given method the data's units with other units.
@@ -4153,58 +3947,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             units._canonical_calendar,
         )
 
-    #    def add_file_location(self, location):
-    #        """Add a new file location in-place.
-    #
-    #        All data definitions that reference files are additionally
-    #        referenced from the given location.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `del_file_location`, `file_locations`
-    #
-    #        :Parameters:
-    #
-    #            location: `str`
-    #                The new location.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The new location as an absolute path with no trailing
-    #                path name component separator.
-    #
-    #        **Examples**
-    #
-    #        >>> d.add_file_location('/data/model/')
-    #        '/data/model'
-    #
-    #        """
-    #        location = abspath(location).rstrip(sep)
-    #
-    #        updated = False
-    #
-    #        # The dask graph is never going to be computed, so we can set
-    #        # '_asanyarray=False'.
-    #        dsk = self.todict(_asanyarray=False)
-    #        for key, a in dsk.items():
-    #            try:
-    #                dsk[key] = a.add_file_location(location)
-    #            except AttributeError:
-    #                # This chunk doesn't contain a file array
-    #                continue
-    #
-    #            # This chunk contains a file array and the dask graph has
-    #            # been updated
-    #            updated = True
-    #
-    #        if updated:
-    #            dx = self.to_dask_array(_asanyarray=False)
-    #            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-    #            self._set_dask(dx, clear=self._NONE, asanyarray=None)
-    #
-    #        return location
-
     def set_units(self, value):
         """Set the units.
 
@@ -6076,41 +5818,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._custom.get("has_deterministic_name", False)
 
-    #    def file_locations(self):
-    #        """The locations of files containing parts of the data.
-    #
-    #        Returns the locations of any files that may be required to
-    #        deliver the computed data array.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `add_file_location`, `del_file_location`
-    #
-    #        :Returns:
-    #
-    #            `set`
-    #                The unique file locations as absolute paths with no
-    #                trailing path name component separator.
-    #
-    #        **Examples**
-    #
-    #        >>> d.file_locations()
-    #        {'/home/data1', 'file:///data2'}
-    #
-    #        """
-    #        out = set()
-    #
-    #        # The dask graph is never going to be computed, so we can set
-    #        # '_asanyarray=False'.
-    #        for key, a in self.todict(_asanyarray=False).items():
-    #            try:
-    #                out.update(a.file_locations())
-    #            except AttributeError:
-    #                # This chunk doesn't contain a file array
-    #                pass
-    #
-    #        return out
-
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
 
@@ -6629,58 +6336,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.ma.masked_invalid(dx)
         d._set_dask(dx)
         return d
-
-    #    def del_file_location(self, location):
-    #        """Remove a file location in-place.
-    #
-    #        All data definitions that reference files will have references
-    #        to files in the given location removed from them.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `add_file_location`, `file_locations`
-    #
-    #        :Parameters:
-    #
-    #            location: `str`
-    #                 The file location to remove.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The removed location as an absolute path with no
-    #                trailing path name component separator.
-    #
-    #        **Examples**
-    #
-    #        >>> d.del_file_location('/data/model/')
-    #        '/data/model'
-    #
-    #        """
-    #        location = abspath(location).rstrip(sep)
-    #
-    #        updated = False
-    #
-    #        # The dask graph is never going to be computed, so we can set
-    #        # '_asanyarray=False'.
-    #        dsk = self.todict(_asanyarray=False)
-    #        for key, a in dsk.items():
-    #            try:
-    #                dsk[key] = a.del_file_location(location)
-    #            except AttributeError:
-    #                # This chunk doesn't contain a file array
-    #                continue
-    #
-    #            # This chunk contains a file array and the dask graph has
-    #            # been updated
-    #            updated = True
-    #
-    #        if updated:
-    #            dx = self.to_dask_array(_asanyarray=False)
-    #            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-    #            self._set_dask(dx, clear=self._NONE, asanyarray=None)
-    #
-    #        return location
 
     @classmethod
     def masked_all(

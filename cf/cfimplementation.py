@@ -26,7 +26,7 @@ from . import (
     TiePointIndex,
 )
 from .data import Data
-from .data.array import (  # CFAH5netcdfArray,; CFANetCDF4Array,
+from .data.array import (
     AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
@@ -114,41 +114,6 @@ class CFImplementation(cfdm.CFDMImplementation):
         )
 
 
-#    def initialise_CFANetCDF4Array(self, **kwargs):
-#        """Return a `CFANetCDF4Array` instance.
-#
-#        :Parameters:
-#
-#            kwargs: optional
-#                Initialisation parameters to pass to the new instance.
-#
-#        :Returns:
-#
-#            `CFANetCDF4Array`
-#
-#        """
-#        cls = self.get_class("CFANetCDF4Array")
-#        return cls(**kwargs)
-#
-#    def initialise_CFAH5netcdfArray(self, **kwargs):
-#        """Return a `CFAH5netcdfArray` instance.
-#
-#        .. versionadded:: NEXTVERSION
-#
-#        :Parameters:
-#
-#            kwargs: optional
-#                Initialisation parameters to pass to the new instance.
-#
-#        :Returns:
-#
-#            `CFAH5netcdfArray`
-#
-#        """
-#        cls = self.get_class("CFAH5netcdfArray")
-#        return cls(**kwargs)
-
-
 _implementation = CFImplementation(
     cf_version=CF(),
     AggregatedArray=AggregatedArray,
@@ -156,8 +121,6 @@ _implementation = CFImplementation(
     CellConnectivity=CellConnectivity,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
-    #    CFAH5netcdfArray=CFAH5netcdfArray,
-    #    CFANetCDF4Array=CFANetCDF4Array,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,

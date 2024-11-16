@@ -1604,14 +1604,6 @@ class PropertiesData(Properties):
                 f"{self.__class__.__name__} doesn't have CF property 'units'"
             )
 
-    #        value = getattr(self.Units, "units", None)
-    #        if value is None:
-    #            raise AttributeError(
-    #                f"{self.__class__.__name__} doesn't have CF property 'units'"
-    #            )
-    #
-    #        return value
-
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, "calendar", None))
@@ -1625,39 +1617,6 @@ class PropertiesData(Properties):
             )
 
         self.Units = Units(None, getattr(self, "calendar", None))
-
-#    def add_file_location(self, location):
-#        """Add a new file location in-place.
-#
-#        All data definitions that reference files are additionally
-#        referenced from the given location.
-#
-#        .. versionadded:: 3.15.0
-#
-#        .. seealso:: `del_file_location`, `file_locations`
-#
-#        :Parameters:
-#
-#            location: `str`
-#                The new location.
-#
-#        :Returns:
-#
-#            `str`
-#                The new location as an absolute path with no trailing
-#                path name component separator.
-#
-#        **Examples**
-#
-#        >>> d.add_file_location('/data/model/')
-#        '/data/model'
-#
-#        """
-#        data = self.get_data(None, _fill_value=False, _units=False)
-#        if data is not None:
-#            return data.add_file_location(location)
-#
-#        return abspath(location).rstrip(sep)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -2577,100 +2536,6 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    #    def cfa_update_file_substitutions(self, substitutions):
-    #        """Set CFA-netCDF file name substitutions.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        :Parameters:
-    #
-    #            {{cfa substitutions: `dict`}}
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        **Examples**
-    #
-    #        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
-    #
-    #        """
-    #        data = self.get_data(None, _fill_value=False, _units=False)
-    #        if data is not None:
-    #            data.cfa_update_file_substitutions(substitutions)
-    #
-    #    @_inplace_enabled(default=False)
-    #    def cfa_clear_file_substitutions(self, inplace=False):
-    #        """Remove all of the CFA-netCDF file name substitutions.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        :Parameters:
-    #
-    #            {{inplace: `bool`, optional}}
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns cfa_clear_file_substitutions}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.cfa_clear_file_substitutions()
-    #        {}
-    #
-    #        """
-    #        data = self.get_data(None)
-    #        if data is None:
-    #            return {}
-    #
-    #        return data.cfa_clear_file_substitutions({})
-    #
-    #    def cfa_del_file_substitution(
-    #        self,
-    #        base,
-    #    ):
-    #        """Remove a CFA-netCDF file name substitution.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        :Parameters:
-    #
-    #            `dict`
-    #                {{Returns cfa_del_file_substitution}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.cfa_del_file_substitution('base')
-    #
-    #        """
-    #        data = self.get_data(None, _fill_value=False, _units=False)
-    #        if data is not None:
-    #            data.cfa_del_file_substitution(base)
-    #
-    #    def cfa_file_substitutions(
-    #        self,
-    #    ):
-    #        """Return the CFA-netCDF file name substitutions.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns cfa_file_substitutions}}
-    #
-    #        **Examples**
-    #
-    #        >>> g = f.cfa_file_substitutions()
-    #
-    #        """
-    #        data = self.get_data(None)
-    #        if data is None:
-    #            return {}
-    #
-    #        return data.cfa_file_substitutions({})
-
     def chunk(self, chunksize=None):
         """Partition the data array.
 
@@ -3066,39 +2931,6 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
-#    def del_file_location(self, location):
-#        """Remove a file location in-place.
-#
-#        All data definitions that reference files will have references
-#        to files in the given location removed from them.
-#
-#        .. versionadded:: 3.15.0
-#
-#        .. seealso:: `add_file_location`, `file_locations`
-#
-#        :Parameters:
-#
-#            location: `str`
-#                 The file location to remove.
-#
-#        :Returns:
-#
-#            `str`
-#                The removed location as an absolute path with no
-#                trailing path name component separator.
-#
-#        **Examples**
-#
-#        >>> f.del_file_location('/data/model/')
-#        '/data/model'
-#
-#        """
-#        data = self.get_data(None, _fill_value=False, _units=False)
-#        if data is not None:
-#            return data.del_file_location(location)
-#
-#        return abspath(location).rstrip(sep)
-
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -3427,64 +3259,6 @@ class PropertiesData(Properties):
             calendar_months=calendar_months,
             calendar_years=calendar_years,
         )
-
-    def file_locations(self):
-        """TODOCFA The locations of files containing parts of the data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "file_locations",
-            "Use method 'file_directories' instead",
-            version="NEXTVERSION",
-            removed_at="4.0.0",
-        )  # pragma: no cover
-
-    def file_directories(self):
-        """TODOCFA The locations of files containing parts of the data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.file_directories()
-
-        return set()
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):

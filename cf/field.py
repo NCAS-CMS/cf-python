@@ -10695,41 +10695,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    #    def file_locations(self, constructs=True):
-    #        """The locations of files containing parts of the data.
-    #
-    #        Returns the locations of any files that may be required to
-    #        deliver the computed data array.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `add_file_location`, `del_file_location`
-    #
-    #        :Parameters:
-    #
-    #            constructs: `bool`, optional
-    #                If True (the default) then the file locations from
-    #                metadata constructs are also returned.
-    #
-    #        :Returns:
-    #
-    #            `set`
-    #                The unique file locations as absolute paths with no
-    #                trailing path name component separator.
-    #
-    #        **Examples**
-    #
-    #        >>> f.file_locations()
-    #        {'/home/data1', 'file:///data2'}
-    #
-    #        """
-    #        out = super().file_locations()
-    #        if constructs:
-    #            for c in self.constructs.filter_by_data(todict=True).values():
-    #                out.update(c.file_locations())
-    #
-    #        return out
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
@@ -13344,48 +13309,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         return SubspaceField(self)
-
-    #    def add_file_location(
-    #        self,
-    #        location,
-    #        constructs=True,
-    #    ):
-    #        """Add a new file location in-place.
-    #
-    #        All data definitions that reference files are additionally
-    #        referenced from the given location.
-    #
-    #        .. versionadded:: 3.15.0
-    #
-    #        .. seealso:: `del_file_location`, `file_locations`
-    #
-    #        :Parameters:
-    #
-    #            location: `str`
-    #                The new location.
-    #
-    #            constructs: `bool`, optional
-    #                If True (the default) then metadata constructs also
-    #                have the new file location added to them.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The new location as an absolute path with no trailing
-    #                path name component separator.
-    #
-    #        **Examples**
-    #
-    #        >>> f.add_file_location('/data/model/')
-    #        '/data/model'
-    #
-    #        """
-    #        location = super().add_file_location(location)
-    #        if constructs:
-    #            for c in self.constructs.filter_by_data(todict=True).values():
-    #                c.add_file_location(location)
-    #
-    #        return location
 
     def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n

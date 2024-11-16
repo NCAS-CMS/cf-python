@@ -18,7 +18,6 @@ from ..fieldlist import FieldList
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from ..query import Query
 
-# from .netcdf import NetCDFRead
 from .um import UMRead
 
 _cached_temporary_files = {}
@@ -64,7 +63,7 @@ def read(
     dask_chunks="storage-aligned",
     store_hdf5_chunks=True,
     domain=False,
-        cfa=None,
+    cfa=None,
     cfa_write=None,
     netcdf_backend=None,
     storage_options=None,
@@ -1017,29 +1016,6 @@ def read(
 
     info = is_log_level_info(logger)
 
-    #    # Parse the 'cfa' parameter
-    #    if cfa is None:
-    #        cfa_options = {}
-    #    else:
-    #        cfa_options = cfa.copy()
-    #        keys = ("substitutions",)
-    #        if not set(cfa_options).issubset(keys):
-    #            raise ValueError(
-    #                "Invalid dictionary key to the 'cfa' parameter."
-    #                f"Valid keys are {keys}. Got: {cfa_options}"
-    #            )
-    #
-    #    if "substitutions" in cfa_options:
-    #        substitutions = cfa_options["substitutions"].copy()
-    #        for base, sub in tuple(substitutions.items()):
-    #            if not (base.startswith("${") and base.endswith("}")):
-    #                # Add missing ${...}
-    #                substitutions[f"${{{base}}}"] = substitutions.pop(base)
-    #    else:
-    #        substitutions = {}
-    #
-    #    cfa_options["substitutions"] = substitutions
-
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -1173,7 +1149,7 @@ def read(
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
-                                cfa=cfa,
+                cfa=cfa,
                 cfa_write=cfa_write,
                 netcdf_backend=netcdf_backend,
                 storage_options=storage_options,
@@ -1293,7 +1269,7 @@ def _read_a_file(
     store_hdf5_chunks=True,
     select=None,
     domain=False,
-        cfa=None,
+    cfa=None,
     cfa_write=None,
     netcdf_backend=None,
     storage_options=None,
@@ -1383,7 +1359,6 @@ def _read_a_file(
     extra_read_vars = {
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
-        #        "cfa_options": cfa_options,
     }
 
     # ----------------------------------------------------------------
@@ -1429,7 +1404,7 @@ def _read_a_file(
                 dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 cache=cache,
-                                cfa=cfa,
+                cfa=cfa,
                 cfa_write=cfa_write,
             )
         except MaskError:
