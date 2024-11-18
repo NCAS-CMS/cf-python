@@ -570,36 +570,24 @@ class read_writeTest(unittest.TestCase):
             datatype={np.dtype(float): np.dtype("float32")},
         )
         g = cf.read(tmpfile)[0]
-        self.assertEqual(
-            g.dtype,
-            np.dtype("float32"),
-            "datatype read in is " + str(g.dtype),
-        )
+        self.assertEqual(g.dtype, np.dtype("float32"))
 
         # Keyword single
         f = cf.read(self.filename)[0]
         self.assertEqual(f.dtype, np.dtype(float))
         cf.write(f, tmpfile, fmt="NETCDF4", single=True)
         g = cf.read(tmpfile)[0]
-        self.assertEqual(
-            g.dtype,
-            np.dtype("float32"),
-            "datatype read in is " + str(g.dtype),
-        )
+        self.assertEqual(g.dtype, np.dtype("float32"))
 
         # Keyword double
         f = g
         self.assertEqual(f.dtype, np.dtype("float32"))
-        cf.write(f, tmpfile2, fmt="NETCDF4", double=True)
-        g = cf.read(tmpfile2)[0]
-        self.assertEqual(
-            g.dtype, np.dtype(float), "datatype read in is " + str(g.dtype)
-        )
+        cf.write(f, tmpfile1, fmt="NETCDF4", double=True)
+        g = cf.read(tmpfile1)[0]
+        self.assertEqual(g.dtype, np.dtype(float))
 
-        for single in (True, False):
-            for double in (True, False):
-                with self.assertRaises(Exception):
-                    cf.write(g, double=double, single=single)
+        with self.assertRaises(Exception):
+            cf.write(g, double=True, single=True)
 
         datatype = {np.dtype(float): np.dtype("float32")}
         with self.assertRaises(Exception):
