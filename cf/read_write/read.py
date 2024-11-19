@@ -410,6 +410,10 @@ class read(cfdm.read):
 
             .. versionadded:: NEXTVERSION
 
+        {{read to_memory: (sequence of) `str`, optional}}
+
+            .. versionadded:: NEXTVERSION
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -511,6 +515,7 @@ class read(cfdm.read):
         domain=False,
         cfa=None,
         cfa_write=None,
+            to_memory=None,
         netcdf_backend=None,
         storage_options=None,
         cache=True,
@@ -734,6 +739,7 @@ class read(cfdm.read):
                     domain=domain,
                     cfa=cfa,
                     cfa_write=cfa_write,
+                    to_memory=to_memory,
                     netcdf_backend=netcdf_backend,
                     storage_options=storage_options,
                     cache=cache,
@@ -855,6 +861,7 @@ class read(cfdm.read):
         domain=False,
         cfa=None,
         cfa_write=None,
+            to_memory=None,
         netcdf_backend=None,
         storage_options=None,
         cache=True,
@@ -990,7 +997,7 @@ class read(cfdm.read):
                 store_hdf5_chunks=store_hdf5_chunks,
                 cache=cache,
                 cfa=cfa,
-                cfa_write=cfa_write,
+                cfa_write=cfa_write,to_memory=to_memory
             )
         elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
             if domain:
