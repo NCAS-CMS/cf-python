@@ -2225,7 +2225,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `int` TODODASK
+            `None`
 
         """
         clear = super()._clear_after_dask_update(clear)
@@ -2711,8 +2711,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         else:
             data = d
 
-        # Inplace?
-        return d
+        return data
 
     def _parse_indices(self, *args, **kwargs):
         """'cf.Data._parse_indices' is not available.
@@ -7167,7 +7166,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         super(Data, d).reshape(
             *shape, merge_chunks=merge_chunks, limit=limit, inplace=True
         )
-        # TODODASK: reshape: Need to clear cyclic axes, as we can't help but lose them in this operation
+
+        # Clear cyclic axes, as we can't help but lose them in this
+        # operation
+        d._cyclic = _empty_set
+
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
