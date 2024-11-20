@@ -515,7 +515,7 @@ class read(cfdm.read):
         domain=False,
         cfa=None,
         cfa_write=None,
-            to_memory=None,
+        to_memory=None,
         netcdf_backend=None,
         storage_options=None,
         cache=True,
@@ -861,7 +861,7 @@ class read(cfdm.read):
         domain=False,
         cfa=None,
         cfa_write=None,
-            to_memory=None,
+        to_memory=None,
         netcdf_backend=None,
         storage_options=None,
         cache=True,
@@ -997,7 +997,8 @@ class read(cfdm.read):
                 store_hdf5_chunks=store_hdf5_chunks,
                 cache=cache,
                 cfa=cfa,
-                cfa_write=cfa_write,to_memory=to_memory
+                cfa_write=cfa_write,
+                to_memory=to_memory,
             )
         elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
             if domain:

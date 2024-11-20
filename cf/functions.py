@@ -13,7 +13,6 @@ from itertools import product
 from math import isnan
 from os import mkdir
 from os.path import abspath as _os_path_abspath
-from os.path import dirname as _os_path_dirname
 from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join

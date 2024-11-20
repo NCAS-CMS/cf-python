@@ -1,6 +1,5 @@
 import logging
 from itertools import chain
-from os import sep
 
 import numpy as np
 from cfdm import is_log_level_info
@@ -17,7 +16,6 @@ from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
-    abspath,
     default_netCDF_fillvals,
 )
 from ..functions import equivalent as cf_equivalent
@@ -1970,48 +1968,6 @@ class PropertiesData(Properties):
         custom["period"] = value
 
         return old
-
-#    @_inplace_enabled(default=False)
-#    def persist(self, inplace=False):
-#        """Persist the underlying dask array into memory.
-#
-#        This turns an underlying lazy dask array into a equivalent
-#        chunked dask array, but now with the results fully computed.
-#
-#        `persist` is particularly useful when using distributed
-#        systems, because the results will be kept in distributed
-#        memory, rather than returned to the local process.
-#
-#        **Performance**
-#
-#        `persist` causes all delayed operations to be computed.
-#
-#        .. versionadded:: 3.14.0
-#
-#        .. seealso:: `array`, `datetime_array`,
-#                     `dask.array.Array.persist`
-#
-#        :Parameters:
-#
-#            {{inplace: `bool`, optional}}
-#
-#        :Returns:
-#
-#            `{{class}}` or `None`
-#                The construct with persisted data. If the operation
-#                was in-place then `None` is returned.
-#
-#        **Examples**
-#
-#        >>> g = f.persist()
-#
-#        """
-#        return self._apply_data_oper(
-#            _inplace_enabled_define_and_cleanup(self),
-#            "persist",
-#            inplace=inplace,
-#            delete_props=False,
-#        )
 
     def range(self):
         """The absolute difference between the maximum and minimum of
