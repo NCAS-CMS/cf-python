@@ -314,7 +314,6 @@ setup(
         "cf.docstring",
         "cf.read_write",
         "cf.read_write.um",
-        "cf.read_write.netcdf",
         "cf.regrid",
         "cf.umread_lib",
         "cf.test",
