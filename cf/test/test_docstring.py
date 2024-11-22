@@ -87,7 +87,7 @@ class DocstringTest(unittest.TestCase):
                     if name.startswith("__") and not inspect.isfunction(f):
                         continue
 
-                    if f.__doc__ is not None:                        
+                    if f.__doc__ is not None:
                         self.assertNotIn(
                             "{{",
                             f.__doc__,

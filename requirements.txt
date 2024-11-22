@@ -1,7 +1,7 @@
 netCDF4>=1.6.5
 cftime>=1.6.2
 numpy>=1.22
-cfdm>=1.11.2.0, <1.11.3.0
+cfdm @ git+https://github.com/davidhassell/cfdm@cfa-for-cfs
 psutil>=0.6.0
 cfunits>=3.3.7
 dask>=2024.4.0

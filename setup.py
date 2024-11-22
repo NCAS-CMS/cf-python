@@ -310,7 +310,6 @@ setup(
         "cf.data.array.mixin",
         "cf.data.collapse",
         "cf.data.fragment",
-        "cf.data.fragment.mixin",
         "cf.data.mixin",
         "cf.docstring",
         "cf.read_write",
