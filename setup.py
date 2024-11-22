@@ -4,7 +4,7 @@ import re
 import subprocess
 from distutils.command.build import build
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def find_package_data_files(directory):
@@ -301,23 +301,6 @@ setup(
         "Programming Language :: Python :: 3.12",
     ],
     packages=find_packages(),
-#        "cf",
-#        "cf.mixin",
-#        "cf.mixin2",
-#        "cf.data",
-#        "cf.data.array",
-#        "cf.data.array.abstract",
-#        "cf.data.array.mixin",
-#        "cf.data.collapse",
-#        "cf.data.fragment",
-#        "cf.data.mixin",
-#        "cf.docstring",
-#        "cf.read_write",
-#        "cf.read_write.um",
-#        "cf.regrid",
-#        "cf.umread_lib",
-#        "cf.test",
-#    ],
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],
     python_requires=">=3.8",
