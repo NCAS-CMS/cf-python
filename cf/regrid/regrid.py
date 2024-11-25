@@ -2462,10 +2462,10 @@ def create_esmpy_weights(
             # Write the weights to a netCDF file (copying the
             # dimension and variable names and structure of a weights
             # file created by ESMF).
+            from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
 
             from .. import __version__
-            from ..data.array.locks import netcdf_lock
 
             if (
                 max(dst_esmpy_field.data.size, src_esmpy_field.data.size)
@@ -2491,48 +2491,51 @@ def create_esmpy_weights(
             if src_grid.ln_z:
                 regrid_method += f", ln {src_grid.method} in vertical"
 
-            netcdf_lock.acquire()
-            nc = Dataset(weights_file, "w", format="NETCDF4")
+            with netcdf_lock:
+                nc = Dataset(weights_file, "w", format="NETCDF4")
 
-            nc.title = (
-                f"Regridding weights from source {src_grid.type} "
-                f"with shape {src_shape} to destination "
-                f"{dst_grid.type} with shape {dst_shape}"
-            )
-            nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
-            nc.history = f"Created at {datetime.now()}"
-            nc.regrid_method = regrid_method
-            nc.ESMF_unmapped_action = r.unmapped_action
-            nc.ESMF_ignore_degenerate = int(r.ignore_degenerate)
+                nc.title = (
+                    f"Regridding weights from source {src_grid.type} "
+                    f"with shape {src_shape} to destination "
+                    f"{dst_grid.type} with shape {dst_shape}"
+                )
+                nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
+                nc.history = f"Created at {datetime.now()}"
+                nc.regrid_method = regrid_method
+                nc.ESMF_unmapped_action = r.unmapped_action
+                nc.ESMF_ignore_degenerate = int(r.ignore_degenerate)
 
-            nc.createDimension("n_s", weights.size)
-            nc.createDimension("src_grid_rank", src_esmpy_grid.rank)
-            nc.createDimension("dst_grid_rank", dst_esmpy_grid.rank)
+                nc.createDimension("n_s", weights.size)
+                nc.createDimension("src_grid_rank", src_esmpy_grid.rank)
+                nc.createDimension("dst_grid_rank", dst_esmpy_grid.rank)
 
-            v = nc.createVariable("src_grid_dims", i_dtype, ("src_grid_rank",))
-            v.long_name = "Source grid shape"
-            v[...] = src_shape
+                v = nc.createVariable(
+                    "src_grid_dims", i_dtype, ("src_grid_rank",)
+                )
+                v.long_name = "Source grid shape"
+                v[...] = src_shape
 
-            v = nc.createVariable("dst_grid_dims", i_dtype, ("dst_grid_rank",))
-            v.long_name = "Destination grid shape"
-            v[...] = dst_shape
+                v = nc.createVariable(
+                    "dst_grid_dims", i_dtype, ("dst_grid_rank",)
+                )
+                v.long_name = "Destination grid shape"
+                v[...] = dst_shape
 
-            v = nc.createVariable("S", weights.dtype, ("n_s",))
-            v.long_name = "Weights values"
-            v[...] = weights
+                v = nc.createVariable("S", weights.dtype, ("n_s",))
+                v.long_name = "Weights values"
+                v[...] = weights
 
-            v = nc.createVariable("row", i_dtype, ("n_s",), zlib=True)
-            v.long_name = "Destination/row indices"
-            v.start_index = start_index
-            v[...] = row
+                v = nc.createVariable("row", i_dtype, ("n_s",), zlib=True)
+                v.long_name = "Destination/row indices"
+                v.start_index = start_index
+                v[...] = row
 
-            v = nc.createVariable("col", i_dtype, ("n_s",), zlib=True)
-            v.long_name = "Source/col indices"
-            v.start_index = start_index
-            v[...] = col
+                v = nc.createVariable("col", i_dtype, ("n_s",), zlib=True)
+                v.long_name = "Source/col indices"
+                v.start_index = start_index
+                v[...] = col
 
-            nc.close()
-            netcdf_lock.release()
+                nc.close()
 
     if esmpy_regrid_operator is None:
         # Destroy esmpy objects (the esmpy.Grid objects exist even if
