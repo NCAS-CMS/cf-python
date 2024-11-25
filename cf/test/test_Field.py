@@ -2855,28 +2855,6 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.aux("X").data.range() < 30)
         self.assertTrue(g.aux("Y").data.range() < 50)
 
-    #    def test_Field_file_location(self):
-    #        f = cf.example_field(0)
-    #
-    #        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
-    #
-    #        cf.write(f, tmpfile)
-    #        f = cf.read(tmpfile)[0]
-    #        g = f.copy()
-    #        location = os.path.dirname(os.path.abspath(tmpfile))
-    #
-    #        self.assertEqual(f.file_locations(), set((location,)))
-    #        self.assertEqual(f.add_file_location("/data/model/"), "/data/model")
-    #        self.assertEqual(f.file_locations(), set((location, "/data/model")))
-    #
-    #        # Check that we haven't changed 'g'
-    #        self.assertEqual(g.file_locations(), set((location,)))
-    #
-    #        self.assertEqual(f.del_file_location("/data/model/"), "/data/model")
-    #        self.assertEqual(f.file_locations(), set((location,)))
-    #        f.del_file_location("/invalid")
-    #        self.assertEqual(f.file_locations(), set((location,)))
-
     def test_Field_pad_missing(self):
         """Test Field.pad_missing."""
         f = cf.example_field(0)
