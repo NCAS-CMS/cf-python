@@ -521,7 +521,7 @@ class read(cfdm.read):
         cache=True,
         chunks="auto",
     ):
-        """TODOCFA"""
+        """Read field or domain constructs from a dataset."""
         if field:
             _DEPRECATION_ERROR_FUNCTION_KWARGS(
                 "cf.read",

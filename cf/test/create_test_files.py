@@ -7,9 +7,8 @@ import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import netCDF4
-
 import cfdm
+import netCDF4
 
 VN = cfdm.CF()
 
