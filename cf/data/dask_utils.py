@@ -7,102 +7,12 @@ instance, as would be passed to `dask.array.map_blocks`.
 
 from functools import partial
 
-import dask.array as da
 import numpy as np
 from cfdm.data.dask_utils import cfdm_asanyarray
-from dask.core import flatten
 from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
-from ..functions import atol as cf_atol
-from ..functions import rtol as cf_rtol
 from ..units import Units
-
-
-def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
-    """An effective dask.array.ma.allclose method.
-
-    True if two dask arrays are element-wise equal within a tolerance.
-
-    Equivalent to allclose except that masked values are treated as
-    equal (default) or unequal, depending on the masked_equal
-    argument.
-
-    Define an effective da.ma.allclose method here because one is
-    currently missing in the Dask codebase.
-
-    Note that all default arguments are the same as those provided to
-    the corresponding NumPy method (see the `numpy.ma.allclose` API
-    reference).
-
-    .. versionadded:: 3.14.0
-
-    :Parameters:
-
-        x: a dask array to compare with y
-
-        y: a dask array to compare with x
-
-        masked_equal: `bool`, optional
-            Whether masked values in a and b are considered equal
-            (True) or not (False). They are considered equal by
-            default.
-
-        {{rtol: number, optional}}
-
-        {{atol: number, optional}}
-
-    :Returns:
-
-        `bool`
-            A Boolean value indicating whether or not the two dask
-            arrays are element-wise equal to the given *rtol* and
-            *atol* tolerance.
-
-    """
-    # TODODASK: put in a PR to Dask to request to add as genuine method.
-
-    if rtol is None:
-        rtol = cf_rtol()
-    if atol is None:
-        atol = cf_atol()
-
-    # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
-    # using those in local scope from the outer function arguments, because
-    # Dask's internal algorithms require these to be set as parameters.
-    def allclose(a_blocks, b_blocks, rtol=rtol, atol=atol):
-        """Run `ma.allclose` across multiple blocks over two arrays."""
-        result = True
-        # Handle scalars, including 0-d arrays, for which a_blocks and
-        # b_blocks will have the corresponding type and hence not be iterable.
-        # With this approach, we avoid inspecting sizes or lengths, and for
-        # the 0-d array blocks the following iteration can be used unchanged
-        # and will only execute once with block sizes as desired of:
-        # (np.array(<int size>),)[0] = array(<int size>). Note
-        # can't check against more general case of collections.abc.Iterable
-        # because a 0-d array is also iterable, but in practice always a list.
-        if not isinstance(a_blocks, list):
-            a_blocks = (a_blocks,)
-        if not isinstance(b_blocks, list):
-            b_blocks = (b_blocks,)
-
-        # Note: If a_blocks or b_blocks has more than one chunk in
-        #       more than one dimension they will comprise a nested
-        #       sequence of sequences, that needs to be flattened so
-        #       that we can safely iterate through the actual numpy
-        #       array elements.
-
-        for a, b in zip(flatten(a_blocks), flatten(b_blocks)):
-            result &= np.ma.allclose(
-                a, b, masked_equal=masked_equal, rtol=rtol, atol=atol
-            )
-
-        return result
-
-    axes = tuple(range(x.ndim))
-    return da.blockwise(
-        allclose, "", x, axes, y, axes, dtype=bool, rtol=rtol, atol=atol
-    )
 
 
 def cf_contains(a, value):
