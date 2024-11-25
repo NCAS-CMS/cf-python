@@ -326,7 +326,7 @@ class aggregateTest(unittest.TestCase):
         self.assertEqual(i.Units.__dict__, bad_units.__dict__)
         self.assertTrue((i.array == f.array).all())
 
-    def test_aggregate_field_ancillaries(self):
+    def test_aggregate_promote_field_ancillaries(self):
         f = cf.example_field(0)
         self.assertFalse(f.field_ancillaries())
 
@@ -341,7 +341,7 @@ class aggregateTest(unittest.TestCase):
         self.assertEqual(len(c.field_ancillaries()), 1)
 
         anc = c.field_ancillary()
-        self.assertEqual(anc.shape, c.shape)
+        self.assertEqual(anc.shape, f.shape[:1])
         self.assertTrue((anc[:2] == "bar_a").all())
         self.assertTrue((anc[2:] == "bar_b").all())
 

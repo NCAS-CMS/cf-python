@@ -7,15 +7,11 @@ instance, as would be passed to `dask.array.map_blocks`.
 
 from functools import partial
 
-import dask.array as da
 import numpy as np
 from cfdm.data.dask_utils import cfdm_asanyarray
-from dask.core import flatten
 from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
-from ..functions import atol as cf_atol
-from ..functions import rtol as cf_rtol
 from ..units import Units
 
 
