@@ -203,7 +203,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
                 src = src.copy()
                 src[6:8] = cf.masked
                 # This following element should be smaller, because it
-                # now only has two source cells conrtibuting to it,
+                # now only has two source cells contributing to it,
                 # rather than four.
                 y[3, 0] = 547
 
