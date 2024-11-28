@@ -7,10 +7,11 @@ import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import cfdm
 import netCDF4
 
-VN = cfdm.CF()
+import cf
+
+VN = cf.CF()
 
 # Load large arrays
 filename = os.path.join(
@@ -2258,7 +2259,9 @@ def _make_aggregation_value(filename):
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
     uid.aggregated_dimensions = "time"
-    uid.aggregated_data = "value: fragment_value_uid map: fragment_map_uid"
+    uid.aggregated_data = (
+        "unique_value: fragment_value_uid map: fragment_map_uid"
+    )
 
     time = n.createVariable("time", "f4", ("time",))
     time.standard_name = "time"
@@ -2342,6 +2345,6 @@ aggregation_value = _make_aggregation_value("aggregation_value.nc")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    cfdm.environment()
+    cf.environment()
     print()
     unittest.main(verbosity=2)

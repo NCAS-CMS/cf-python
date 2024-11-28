@@ -283,11 +283,14 @@ class CFATest(unittest.TestCase):
             self.assertEqual(fa.shape, (12,))
             self.assertEqual(fa.data.chunks, ((3, 9),))
             self.assertEqual(
-                fa.data.nc_get_aggregation_fragment_type(), "value"
+                fa.data.nc_get_aggregation_fragment_type(), "unique_value"
             )
             self.assertEqual(
                 fa.data.nc_get_aggregated_data(),
-                {"map": "fragment_map_uid", "value": "fragment_value_uid"},
+                {
+                    "map": "fragment_map_uid",
+                    "unique_value": "fragment_value_uid",
+                },
             )
 
             nc = netCDF4.Dataset(aggregation_value_file, "r")
