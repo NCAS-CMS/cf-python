@@ -32,9 +32,9 @@ class functionTest(unittest.TestCase):
         # Use as test case 'i' kwarg, the deprecated old name for
         # 'inplace':
         f = cf.example_field(0)
-        f.squeeze(inplace=True)  # new way to specify operation tested below
+        f.flip(inplace=True)  # new way to specify operation tested below
         with self.assertRaises(cf.functions.DeprecationError):
-            f.squeeze(i=True)
+            f.flip(i=True)
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())

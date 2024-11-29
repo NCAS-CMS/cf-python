@@ -9,9 +9,9 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
 
-import cf
+import cfdm
 
-VN = cf.CF()
+VN = cfdm.CF()
 
 # Load large arrays
 filename = os.path.join(
@@ -2240,13 +2240,13 @@ def _make_aggregation_value(filename):
     n.createDimension("level", 1)
     n.createDimension("latitude", 73)
     n.createDimension("longitude", 144)
-    n.createDimension("f_time", 2)
-    n.createDimension("f_level", 1)
-    n.createDimension("f_latitude", 1)
-    n.createDimension("f_longitude", 1)
-    n.createDimension("i", 2)
-    n.createDimension("j", 4)
-    n.createDimension("j_uid", 1)
+    n.createDimension("a_time", 2)
+    n.createDimension("a_level", 1)
+    n.createDimension("a_latitude", 1)
+    n.createDimension("a_longitude", 1)
+    n.createDimension("a_map_i2", 2)
+    n.createDimension("a_map_j4", 4)
+    n.createDimension("a_map_j1", 1)
 
     temperature = n.createVariable("temperature", "f8", ())
     temperature.standard_name = "air_temperature"
@@ -2254,7 +2254,7 @@ def _make_aggregation_value(filename):
     temperature.cell_methods = "time: mean"
     temperature.ancillary_variables = "uid"
     temperature.aggregated_dimensions = "time level latitude longitude"
-    temperature.aggregated_data = "location: fragment_location identifier: fragment_identifier map: fragment_map"
+    temperature.aggregated_data = "location: fragment_location variable: fragment_variable map: fragment_map"
 
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
@@ -2284,26 +2284,28 @@ def _make_aggregation_value(filename):
     fragment_location = n.createVariable(
         "fragment_location",
         str,
-        ("f_time", "f_level", "f_latitude", "f_longitude"),
+        ("a_time", "a_level", "a_latitude", "a_longitude"),
     )
     fragment_location[0, 0, 0, 0] = "January-March.nc"
     fragment_location[1, 0, 0, 0] = "April-December.nc"
 
-    fragment_identifier = n.createVariable("fragment_identifier", str, ())
-    fragment_identifier[...] = "temperature"
+    fragment_variable = n.createVariable("fragment_variable", str, ())
+    fragment_variable[...] = "temperature"
 
-    fragment_map = n.createVariable("fragment_map", "i4", ("j", "i"))
+    fragment_map = n.createVariable(
+        "fragment_map", "i4", ("a_map_j4", "a_map_i2")
+    )
     fragment_map[...] = [[3, 9], [1, -1], [73, -1], [144, -1]]
     fragment_map[1:, 1] = np.ma.masked
 
     fragment_value_uid = n.createVariable(
-        "fragment_value_uid", str, ("f_time",)
+        "fragment_value_uid", str, ("a_time",)
     )
     fragment_value_uid[0] = "04b9-7eb5-4046-97b-0bf8"
     fragment_value_uid[1] = "05ee0-a183-43b3-a67-1eca"
 
     fragment_map_uid = n.createVariable(
-        "fragment_map_uid", "i4", ("j_uid", "i")
+        "fragment_map_uid", "i4", ("a_map_j1", "a_map_i2")
     )
     fragment_map_uid[...] = [3, 9]
 
@@ -2345,6 +2347,6 @@ aggregation_value = _make_aggregation_value("aggregation_value.nc")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
-    cf.environment()
+    cfdm.environment()
     print()
     unittest.main(verbosity=2)

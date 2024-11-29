@@ -1313,86 +1313,86 @@ class PropertiesDataBounds(PropertiesData):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    @classmethod
-    def concatenate(
-        cls,
-        variables,
-        axis=0,
-        cull_graph=False,
-        relaxed_units=False,
-        copy=True,
-    ):
-        """Join a sequence of variables together.
-
-        .. seealso:: `Data.cull_graph`
-
-        :Parameters:
-
-            variables: sequence of constructs
-
-            axis: `int`, optional
-
-            {{cull_graph: `bool`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{relaxed_units: `bool`, optional}}
-
-                .. versionadded:: 3.15.1
-
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                {{class}} objects, prior to the concatenation, thereby
-                ensuring that the input constructs are not changed by
-                the concatenation process. If False then some or all
-                input constructs might be changed in-place, but the
-                concatenation process will be faster.
-
-                .. versionadded:: 3.15.1
-
-        :Returns:
-
-            TODO
-
-        """
-        variable0 = variables[0]
-        if copy:
-            variable0 = variable0.copy()
-
-        if len(variables) == 1:
-            return variable0
-
-        out = super().concatenate(
-            variables,
-            axis=axis,
-            cull_graph=cull_graph,
-            relaxed_units=relaxed_units,
-            copy=copy,
-        )
-
-        bounds = variable0.get_bounds(None)
-        if bounds is not None:
-            bounds = bounds.concatenate(
-                [v.get_bounds() for v in variables],
-                axis=axis,
-                cull_graph=cull_graph,
-                relaxed_units=relaxed_units,
-                copy=copy,
-            )
-            out.set_bounds(bounds, copy=False)
-
-        interior_ring = variable0.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring = interior_ring.concatenate(
-                [v.get_interior_ring() for v in variables],
-                axis=axis,
-                cull_graph=cull_graph,
-                relaxed_units=relaxed_units,
-                copy=copy,
-            )
-            out.set_interior_ring(interior_ring, copy=False)
-
-        return out
+#    @classmethod
+#    def concatenate(
+#        cls,
+#        variables,
+#        axis=0,
+#        cull_graph=False,
+#        relaxed_units=False,
+#        copy=True,
+#    ):
+#        """Join a sequence of variables together.
+#
+#        .. seealso:: `Data.cull_graph`
+#
+#        :Parameters:
+#
+#            variables: sequence of constructs
+#
+#            axis: `int`, optional
+#
+#            {{cull_graph: `bool`, optional}}
+#
+#                .. versionadded:: 3.14.0
+#
+#            {{relaxed_units: `bool`, optional}}
+#
+#                .. versionadded:: 3.15.1
+#
+#            copy: `bool`, optional
+#                If True (the default) then make copies of the
+#                {{class}} objects, prior to the concatenation, thereby
+#                ensuring that the input constructs are not changed by
+#                the concatenation process. If False then some or all
+#                input constructs might be changed in-place, but the
+#                concatenation process will be faster.
+#
+#                .. versionadded:: 3.15.1
+#
+#        :Returns:
+#
+#            TODO
+#
+#        """
+#        variable0 = variables[0]
+#        if copy:
+#            variable0 = variable0.copy()
+#
+#        if len(variables) == 1:
+#            return variable0
+#
+#        out = super().concatenate(
+#            variables,
+#            axis=axis,
+#            cull_graph=cull_graph,
+#            relaxed_units=relaxed_units,
+#            copy=copy,
+#        )
+#
+#        bounds = variable0.get_bounds(None)
+#        if bounds is not None:
+#            bounds = bounds.concatenate(
+#                [v.get_bounds() for v in variables],
+#                axis=axis,
+#                cull_graph=cull_graph,
+#                relaxed_units=relaxed_units,
+#                copy=copy,
+#            )
+#            out.set_bounds(bounds, copy=False)
+#
+#        interior_ring = variable0.get_interior_ring(None)
+#        if interior_ring is not None:
+#            interior_ring = interior_ring.concatenate(
+#                [v.get_interior_ring() for v in variables],
+#                axis=axis,
+#                cull_graph=cull_graph,
+#                relaxed_units=relaxed_units,
+#                copy=copy,
+#            )
+#            out.set_interior_ring(interior_ring, copy=False)
+#
+#        return out
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

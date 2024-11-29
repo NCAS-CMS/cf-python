@@ -10,9 +10,8 @@ import netCDF4
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-from cfdm.read_write.netcdf.netcdfwrite import AggregationError
-
 import cf
+from cfdm.read_write.netcdf.netcdfwrite import AggregationError
 
 n_tmpfiles = 5
 tmpfiles = [
@@ -93,7 +92,6 @@ class CFATest(unittest.TestCase):
         """Test 'strict' option to the cf.write 'cfa' keyword."""
         f = cf.example_field(0)
 
-        cfa_file = "cfa_file.nc"
         # By default, can't write in-memory arrays as aggregation
         # variables
         with self.assertRaises(AggregationError):
@@ -349,6 +347,32 @@ class CFATest(unittest.TestCase):
         for cfa in (False, True, (), []):
             with self.assertRaises(ValueError):
                 cf.write(g, cfa_file, cfa=cfa)
+
+    def test_CFA_subspace(self):
+        """Test the writing subspaces of aggregations."""
+        f = cf.example_field(0)
+
+        cf.write(f[:2], tmpfile1)
+        cf.write(f[2:], tmpfile2)
+
+        a = cf.read(tmpfile1, cfa_write="field")[0]
+        b = cf.read(tmpfile2, cfa_write="field")[0]
+        c = cf.Field.concatenate([a, b], axis=0)
+
+        cf.write(c, cfa_file, cfa="field")
+
+        f = cf.read(cfa_file, cfa_write="field")[0]
+        cf.write(f[:2], cfa_file2, cfa="field")
+        g = cf.read(cfa_file2)[0]
+        self.assertTrue(g.equals(a))
+
+        cf.write(f[2:], cfa_file2, cfa="field")
+        g = cf.read(cfa_file2)[0]
+        self.assertTrue(g.equals(b))
+
+        # Can't straddle Dask chunks
+        with self.assertRaises(AggregationError):
+            cf.write(f[1:3], cfa_file2, cfa="field")
 
 
 if __name__ == "__main__":
