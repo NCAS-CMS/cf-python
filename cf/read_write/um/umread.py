@@ -491,6 +491,8 @@ class UMField:
         implementation=None,
         select=None,
         info=False,
+        squeeze=False,
+        unsqueeze=False,
         **kwargs,
     ):
         """**Initialisation**
@@ -545,6 +547,9 @@ class UMField:
                 return field construct.
 
         """
+        if squeeze and unsqueeze:
+            raise ValueError("'squeeze' and 'unsqueeze' can not both be True")
+
         self._bool = False
 
         self.info = info
@@ -1113,6 +1118,16 @@ class UMField:
                 )
 
             self.fields.append(field)
+
+        # ------------------------------------------------------------
+        # Squeeze/unsqueeze size 1 axes in field constructs
+        # ------------------------------------------------------------
+        if unsqueeze:
+            for f in self.fields:
+                f.unsqueeze(inplace=True)
+        elif squeeze:
+            for f in self.fields:
+                f.squeeze(inplace=True)
 
         self._bool = True
 
@@ -3355,6 +3370,8 @@ class UMRead(cfdm.read_write.IORead):
         chunk=True,
         verbose=None,
         select=None,
+        squeeze=False,
+        unsqueeze=False,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3404,18 +3421,21 @@ class UMRead(cfdm.read_write.IORead):
 
             set_standard_name: `bool`, optional
 
-        select: (sequence of) `str` or `Query` or `re.Pattern`, optional
-            Only return field constructs whose identities match the
-            given values(s), i.e. those fields ``f`` for which
-            ``f.match_by_identity(*select)`` is `True`. See
-            `cf.Field.match_by_identity` for details.
+            select: (sequence of) `str` or `Query` or `re.Pattern`, optional
+                Only return field constructs whose identities match
+                the given values(s), i.e. those fields ``f`` for which
+                ``f.match_by_identity(*select)`` is `True`. See
+                `cf.Field.match_by_identity` for details.
 
-            This is equivalent to, but faster than, not using the
-            *select* parameter but applying its value to the returned
-            field list with its `cf.FieldList.select_by_identity`
-            method. For example, ``fl = cf.read(file,
-            select='stash_code=3236')`` is equivalent to ``fl =
-            cf.read(file).select_by_identity('stash_code=3236')``.
+                This is equivalent to, but faster than, not using the
+                *select* parameter but applying its value to the
+                returned field list with its
+                `cf.FieldList.select_by_identity` method. For example,
+                ``fl = cf.read(file, select='stash_code=3236')`` is
+                equivalent to ``fl =
+                cf.read(file).select_by_identity('stash_code=3236')``.
+
+            TODOCFA (squeeuze)
 
         :Returns:
 

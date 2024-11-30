@@ -20,14 +20,6 @@ from .um import UMRead
 
 _cached_temporary_files = {}
 
-# --------------------------------------------------------------------
-# Create an implementation container and initialise a read object for
-# each format
-# --------------------------------------------------------------------
-# _implementation = implementation()
-# netcdf = NetCDFRead(_implementation)
-# UM = UMRead(_implementation)
-
 
 logger = logging.getLogger(__name__)
 
@@ -327,13 +319,9 @@ class read(cfdm.read):
             If *aggregate* is False then the field constructs are not
             aggregated.
 
-        squeeze: `bool`, optional
-            If True then remove size 1 axes from each field construct's
-            data array.
+        {{read squeeze: `bool`, optional}}
 
-        unsqueeze: `bool`, optional
-            If True then insert size 1 axes from each field
-            construct's domain into its data array.
+        {{read unsqueeze: `bool`, optional}}
 
         select: (sequence of) `str` or `Query` or `re.Pattern`, optional
             Only return field constructs whose identities match the
@@ -593,8 +581,9 @@ class read(cfdm.read):
                     "cdl_string can only be True when the format is CDL, though "
                     "fmt is ignored in that case so there is no need to set it."
                 )
-        if squeeze and unsqueeze:
-            raise ValueError("squeeze and unsqueeze can not both be True")
+
+        #        if squeeze and unsqueeze:
+        #            raise ValueError("squeeze and unsqueeze can not both be True")
         if follow_symlinks and not recursive:
             raise ValueError(
                 f"Can't set follow_symlinks={follow_symlinks!r} "
@@ -743,6 +732,8 @@ class read(cfdm.read):
                     netcdf_backend=netcdf_backend,
                     storage_options=storage_options,
                     cache=cache,
+                    squeeze=squeeze,
+                    unsqueeze=unsqueeze,
                 )
 
                 # --------------------------------------------------------
@@ -803,25 +794,6 @@ class read(cfdm.read):
         if select and "UM" in ftypes:
             out = out.select_by_identity(*select)
 
-        # ----------------------------------------------------------------
-        # Squeeze size one dimensions from the data arrays. Do one of:
-        #
-        # 1) Squeeze the fields, i.e. remove all size one dimensions from
-        #    all field data arrays
-        #
-        # 2) Unsqueeze the fields, i.e. Include all size 1 domain
-        #    dimensions in the data array.
-        #
-        # 3) Nothing
-        # ----------------------------------------------------------------
-        if not domain:
-            if squeeze:
-                for f in out:
-                    f.squeeze(inplace=True)
-            elif unsqueeze:
-                for f in out:
-                    f.unsqueeze(inplace=True)
-
         if nfields is not None and len(out) != nfields:
             raise ValueError(
                 f"{nfields} field{cls._plural(nfields)} requested but "
@@ -865,6 +837,8 @@ class read(cfdm.read):
         netcdf_backend=None,
         storage_options=None,
         cache=True,
+        squeeze=False,
+        unsqueeze=False,
     ):
         """Read the contents of a single file into a field list.
 
@@ -915,6 +889,19 @@ class read(cfdm.read):
 
             cache: `bool`, optional
                 See `cf.read` for details.
+
+                .. versionadded:: NEXTVERSION
+
+            squeeze: `bool`, optional
+                Whether or not to remove all size 1 axes from field
+                construct data arrays. See `cf.read` for details.
+
+                .. versionadded:: NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                Whether or not to ensure that all size 1 axes are
+                spanned by field construct data arrays. See
+                `cf.read` for details.
 
                 .. versionadded:: NEXTVERSION
 
@@ -999,6 +986,8 @@ class read(cfdm.read):
                 cfa=cfa,
                 cfa_write=cfa_write,
                 to_memory=to_memory,
+                squeeze=squeeze,
+                unsqueeze=unsqueeze,
             )
         elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
             if domain:
@@ -1016,6 +1005,8 @@ class read(cfdm.read):
                 word_size=word_size,
                 endian=endian,
                 select=select,
+                squeeze=squeeze,
+                unsqueeze=unsqueeze,
             )
 
             # PP fields are aggregated intrafile prior to interfile

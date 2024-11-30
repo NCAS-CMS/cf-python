@@ -1313,87 +1313,6 @@ class PropertiesDataBounds(PropertiesData):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-#    @classmethod
-#    def concatenate(
-#        cls,
-#        variables,
-#        axis=0,
-#        cull_graph=False,
-#        relaxed_units=False,
-#        copy=True,
-#    ):
-#        """Join a sequence of variables together.
-#
-#        .. seealso:: `Data.cull_graph`
-#
-#        :Parameters:
-#
-#            variables: sequence of constructs
-#
-#            axis: `int`, optional
-#
-#            {{cull_graph: `bool`, optional}}
-#
-#                .. versionadded:: 3.14.0
-#
-#            {{relaxed_units: `bool`, optional}}
-#
-#                .. versionadded:: 3.15.1
-#
-#            copy: `bool`, optional
-#                If True (the default) then make copies of the
-#                {{class}} objects, prior to the concatenation, thereby
-#                ensuring that the input constructs are not changed by
-#                the concatenation process. If False then some or all
-#                input constructs might be changed in-place, but the
-#                concatenation process will be faster.
-#
-#                .. versionadded:: 3.15.1
-#
-#        :Returns:
-#
-#            TODO
-#
-#        """
-#        variable0 = variables[0]
-#        if copy:
-#            variable0 = variable0.copy()
-#
-#        if len(variables) == 1:
-#            return variable0
-#
-#        out = super().concatenate(
-#            variables,
-#            axis=axis,
-#            cull_graph=cull_graph,
-#            relaxed_units=relaxed_units,
-#            copy=copy,
-#        )
-#
-#        bounds = variable0.get_bounds(None)
-#        if bounds is not None:
-#            bounds = bounds.concatenate(
-#                [v.get_bounds() for v in variables],
-#                axis=axis,
-#                cull_graph=cull_graph,
-#                relaxed_units=relaxed_units,
-#                copy=copy,
-#            )
-#            out.set_bounds(bounds, copy=False)
-#
-#        interior_ring = variable0.get_interior_ring(None)
-#        if interior_ring is not None:
-#            interior_ring = interior_ring.concatenate(
-#                [v.get_interior_ring() for v in variables],
-#                axis=axis,
-#                cull_graph=cull_graph,
-#                relaxed_units=relaxed_units,
-#                copy=copy,
-#            )
-#            out.set_interior_ring(interior_ring, copy=False)
-#
-#        return out
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, bounds=True, inplace=False, i=False):
@@ -2508,8 +2427,7 @@ class PropertiesDataBounds(PropertiesData):
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
 
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`,
-        `unsqueeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
         :Parameters:
 
@@ -3389,62 +3307,6 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    def squeeze(self, axes=None, inplace=False, i=False):
-        """Remove size one axes from the data array.
-
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal. Corresponding axes are also
-        removed from the bounds data array, if present.
-
-        .. seealso:: `flip`, `insert_dimension`, `transpose`
-
-        :Parameters:
-
-            axes: (sequence of) `int`
-                The positions of the size one axes to be removed. By
-                default all size one axes are removed. Each axis is
-                identified by its original integer position. Negative
-                integers counting from the last position are allowed.
-
-                *Parameter example:*
-                  ``axes=0``
-
-                *Parameter example:*
-                  ``axes=-2``
-
-                *Parameter example:*
-                  ``axes=[2, 0]``
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The new construct with removed data axes. If the operation
-                was in-place then `None` is returned.
-
-        **Examples**
-
-        >>> f.shape
-        (1, 73, 1, 96)
-        >>> f.squeeze().shape
-        (73, 96)
-        >>> f.squeeze(0).shape
-        (73, 1, 96)
-        >>> g = f.squeeze([-3, 2])
-        >>> g.shape
-        (73, 96)
-        >>> f.bounds.shape
-        (1, 73, 1, 96, 4)
-        >>> g.shape
-        (73, 96, 4)
-
-        """
-        return super().squeeze(axes=axes, inplace=inplace)
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, bounds=True, inplace=False, i=False):
         """Truncate the data, element-wise.
@@ -3491,68 +3353,6 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
             i=i,
         )
-
-    #   def identities(self, generator=False):
-    #       """Return all possible identities.
-    #
-    #       The identities comprise:
-    #
-    #       * The "standard_name" property.
-    #       * The "id" attribute, preceded by ``'id%'``.
-    #       * The "cf_role" property, preceded by ``'cf_role='``.
-    #       * The "axis" property, preceded by ``'axis='``.
-    #       * The "long_name" property, preceded by ``'long_name='``.
-    #       * All other properties (including "standard_name"), preceded by
-    #         the property name and an ``'='``.
-    #       * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-    #       * The netCDF variable name, preceded by ``'ncvar%'``.
-    #
-    #       The identities of the bounds, if present, are included (with the
-    #       exception of the bounds netCDF variable name).
-    #
-    #       .. versionadded:: 3.0.0
-    #
-    #       .. seealso:: `id`, `identity`
-    # ODO
-    #       :Returns:
-    #
-    #           `list`
-    #               The identities.
-    #
-    #       **Examples**
-    #
-    #       >>> f.properties()
-    #       {'foo': 'bar',
-    #        'long_name': 'Air Temperature',
-    #        'standard_name': 'air_temperature'}
-    #       >>> f.nc_get_variable()
-    #       'tas'
-    #       >>> f.identities()
-    #       ['air_temperature',
-    #        'long_name=Air Temperature',
-    #        'foo=bar',
-    #        'standard_name=air_temperature',
-    #        'ncvar%tas']
-    #
-    #       >>> f.properties()
-    #       {}
-    #       >>> f.bounds.properties()
-    #       {'axis': 'Z',
-    #        'units': 'm'}
-    #       >>> f.identities()
-    #       ['axis=Z', 'units=m', 'ncvar%z']
-    #
-    #       """
-    #       identities = super().identities()
-    #
-    #       bounds = self.get_bounds(None)
-    #       if bounds is not None:
-    #           identities.extend(
-    #               [i for i in bounds.identities() if i not in identities]
-    #           )
-    #       # TODO ncvar AND?
-    #
-    #       return identities
 
     @_deprecated_kwarg_check(
         "relaxed_identity", version="3.0.0", removed_at="4.0.0"
@@ -3947,7 +3747,8 @@ class PropertiesDataBounds(PropertiesData):
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
 
-        .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+        .. seealso:: `insert_dimension`, `flip`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 

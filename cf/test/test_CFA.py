@@ -10,8 +10,9 @@ import netCDF4
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
-import cf
 from cfdm.read_write.netcdf.netcdfwrite import AggregationError
+
+import cf
 
 n_tmpfiles = 5
 tmpfiles = [
