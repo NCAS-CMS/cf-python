@@ -2695,48 +2695,11 @@ def flat(x):
             yield a
 
 
-def abspath(filename):
-    """Return a normalized absolute version of a file name.
+def abspath(path, uri=None):
+    return cfdm.abspath(path, uri=uri)
 
-    If `None` or a string containing URL is provided then it is
-    returned unchanged.
 
-    .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
-
-    :Parameters:
-
-        filename: `str` or `None`
-            The name of the file, or `None`
-
-    :Returns:
-
-        `str`
-
-            The normalized absolutised version of *filename*, or
-            `None`.
-
-    **Examples**
-
-    >>> import os
-    >>> os.getcwd()
-    '/data/archive'
-    >>> cf.abspath('file.nc')
-    '/data/archive/file.nc'
-    >>> cf.abspath('..//archive///file.nc')
-    '/data/archive/file.nc'
-    >>> cf.abspath('http://data/archive/file.nc')
-    'http://data/archive/file.nc'
-
-    """
-    u = urlparse(filename)
-    scheme = u.scheme
-    if not scheme:
-        return _os_path_abspath(filename)
-
-    if scheme == "file":
-        return u.path
-
-    return filename
+abspath.__doc__ = cfdm.abspath.__doc__.replace("cfdm.", "cf.")
 
 
 def relpath(filename, start=None):
@@ -2783,8 +2746,10 @@ def relpath(filename, start=None):
     return _os_path_relpath(filename)
 
 
-def dirname(path, isdir=False):
-    return cfdm.dirname(path, isdir=isdir)
+def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
+    return cfdm.dirname(
+        path, normalise=normalise, uri=uri, isdir=isdir, sep=sep
+    )
 
 
 dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
