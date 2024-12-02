@@ -1,4 +1,4 @@
-Importre logging
+import logging
 import math
 from functools import partial, reduce
 from itertools import product
@@ -456,12 +456,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 return False
 
             # 'cf_contains' has its own calls to 'cfdm_to_memory', so
-            # we can set '_force_in_memory=False'.
-            value = value.to_dask_array(_force_in_memory=False)
+            # we can set '_force_to_memory=False'.
+            value = value.to_dask_array(_force_to_memory=False)
 
         # 'cf_contains' has its own calls to 'cfdm_to_memory', so we
-        # can set '_force_in_memory=False'.
-        dx = self.to_dask_array(_force_in_memory=False)
+        # can set '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -1567,8 +1567,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             axes = tuple(sorted(d._parse_axes(axes)))
 
         # 'cf_percentile' has its own call to 'cfdm_to_memory', so we
-        # can set '_force_in_memory=False'.
-        dx = d.to_dask_array(_force_in_memory=False)
+        # can set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
         dtype = dx.dtype
         shape = dx.shape
 
@@ -2129,8 +2129,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         if not d._isdatetime():
             # 'cf_rt2dt' has its own call to 'cfdm_to_memory', so we
-            # can set '_force_in_memory=False'.
-            dx = d.to_dask_array(_force_in_memory=False)
+            # can set '_force_to_memory=False'.
+            dx = d.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_rt2dt, units=units, dtype=object)
             d._set_dask(dx)
 
@@ -2186,8 +2186,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         if d._isdatetime():
             # 'cf_dt2rt' has its own call to 'cfdm_to_memory', so we
-            # can set '_force_in_memory=False'.
-            dx = d.to_dask_array(_force_in_memory=False)
+            # can set '_force_to_memory=False'.
+            dx = d.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
             d._set_dask(dx)
 
@@ -2784,8 +2784,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             )
 
         # 'regrid' has its own calls to 'cfdm_to_memory', so we can set
-        # '_force_in_memory=False'.
-        dx = self.to_dask_array(_force_in_memory=False)
+        # '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         # Rechunk so that each chunk contains data in the form
         # expected by the regrid operator, i.e. the regrid axes all
@@ -3028,10 +3028,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             copied = not copy  # to avoid making two copies in a given case
 
         # Get data as dask arrays and apply concatenation
-        # operation. We can set '_force_in_memory=False' because at compute
+        # operation. We can set '_force_to_memory=False' because at compute
         # time the concatenation operation does not need to access the
         # actual data.
-        dxs = [d.to_dask_array(_force_in_memory=False) for d in processed_data]
+        dxs = [d.to_dask_array(_force_to_memory=False) for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the CFA write status
@@ -3066,7 +3066,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 # If and only if any two input Data objects have
                 # different __in_memory__ values, then set
                 # in_memory=False on the concatenation.
-                in_memory= False
+                in_memory = False
                 break
 
         # Set the new dask array
@@ -3464,8 +3464,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             cf_func = partial(cf_units, from_units=old_units, to_units=value)
 
             # 'cf_units' has its own call to 'cfdm_to_memory', so we
-            # can set '_force_in_memory=False'.
-            dx = self.to_dask_array(_force_in_memory=False)
+            # can set '_force_to_memory=False'.
+            dx = self.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_func, dtype=dtype)
 
             # Setting equivalent units doesn't affect the CFA write
@@ -3508,8 +3508,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         # 'cf_is_masked' has its own call to 'cfdm_to_memory', so we
-        # can set '_force_in_memory=False'.
-        dx = self.to_dask_array(_force_in_memory=False)
+        # can set '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -4215,8 +4215,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 d.Units = units0
 
         # 'cf_rt2dt' its own call to 'cfdm_to_memory', so we can set
-        # '_force_in_memory=False'.
-        dx = d.to_dask_array(_force_in_memory=False)
+        # '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
 
         # Convert to the correct date-time objects
         dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
@@ -4283,10 +4283,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         units = self._Units
 
         # The dask graph is never going to be computed, so we can set
-        # '_force_in_memory=False'.
+        # '_force_to_memory=False'.
         return tokenize(
             self.to_dask_array(
-                _apply_mask_hardness=False, _force_in_memory=False
+                _force_mask_hardness=False, _force_to_memory=False
             ).name,
             units.formatted(definition=True, names=True),
             units._canonical_calendar,
@@ -4324,8 +4324,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         updated = False
 
         # The dask graph is never going to be computed, so we can set
-        # '_force_in_memory=False'.
-        dsk = self.todict(_force_in_memory=False)
+        # '_force_to_memory=False'.
+        dsk = self.todict(_force_to_memory=False)
         for key, a in dsk.items():
             try:
                 dsk[key] = a.add_file_location(location)
@@ -4338,7 +4338,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             updated = True
 
         if updated:
-            dx = self.to_dask_array(_force_in_memory=False)
+            dx = self.to_dask_array(_force_to_memory=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, in_memory=None)
 
@@ -5725,8 +5725,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d.soften_mask()
 
         # The applicable chunk function will have its own call to
-        # 'cfdm_to_memory', so we can set '_force_in_memory=False'.
-        dx = d.to_dask_array(_force_in_memory=False)
+        # 'cfdm_to_memory', so we can set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
         dx = Collapse().unique(dx, split_every=split_every)
 
         d._set_dask(dx)
@@ -6240,8 +6240,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         out = set()
 
         # The dask graph is never going to be computed, so we can set
-        # '_force_in_memory=False'.
-        for key, a in self.todict(_force_in_memory=False).items():
+        # '_force_to_memory=False'.
+        for key, a in self.todict(_force_to_memory=False).items():
             try:
                 out.update(a.file_locations())
             except AttributeError:
@@ -6801,8 +6801,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         updated = False
 
         # The dask graph is never going to be computed, so we can set
-        # '_force_in_memory=False'.
-        dsk = self.todict(_force_in_memory=False)
+        # '_force_to_memory=False'.
+        dsk = self.todict(_force_to_memory=False)
         for key, a in dsk.items():
             try:
                 dsk[key] = a.del_file_location(location)
@@ -6815,7 +6815,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             updated = True
 
         if updated:
-            dx = self.to_dask_array(_force_in_memory=False)
+            dx = self.to_dask_array(_force_to_memory=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, in_memory=None)
 
@@ -7852,8 +7852,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # hardness has been applied.
         #
         # 'cf_where' has its own calls to 'cfdm_to_memory', so we can
-        # set '_force_in_memory=False'.
-        dx = d.to_dask_array(_force_in_memory=False)
+        # set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
 
         units = d.Units
 
@@ -7869,8 +7869,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         condition = type(self).asdata(condition)
         condition = where_broadcastable(d, condition, "condition")
         # 'cf_where' has its own calls to 'cfdm_to_memory', so we can
-        # set '_force_in_memory=False'.
-        condition = condition.to_dask_array(_force_in_memory=False)
+        # set '_force_to_memory=False'.
+        condition = condition.to_dask_array(_force_to_memory=False)
 
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy

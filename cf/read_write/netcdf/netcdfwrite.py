@@ -748,8 +748,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # missing data.
             #
             # '_cfa_unique' has its own call to 'cfdm_to_memory', so
-            # we can set '_asanyarray=False'.
-            dx = data.to_dask_array(_asanyarray=False)
+            # we can set '_force_to_memory=False'.
+            dx = data.to_dask_array(_force_to_memory=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
@@ -963,7 +963,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
         if (
-            max(data.to_dask_array(_asanyarray=False).chunksize)
+            max(data.to_dask_array(_force_to_memory=False).chunksize)
             > np.iinfo(dtype).max
         ):
             dtype = np.dtype(np.int64)

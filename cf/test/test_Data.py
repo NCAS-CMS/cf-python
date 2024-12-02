@@ -4540,7 +4540,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),
@@ -4553,7 +4553,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),
@@ -4725,7 +4725,7 @@ class DataTest(unittest.TestCase):
     def test_Data_todict(self):
         """Test Data.todict."""
         d = cf.Data([1, 2, 3, 4], chunks=2)
-        key = d.to_dask_array(_apply_mask_hardness=False).name
+        key = d.to_dask_array(_force_mask_hardness=False).name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
