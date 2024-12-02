@@ -417,10 +417,10 @@ def collapse(
         kwargs["ddof"] = ddof
 
     # The applicable chunk function will have its own call to
-    # 'cfdm_asanyarray', so we can set '_asanyarray=False'. Also, setting
-    # _asanyarray=False will ensure that any active storage operations
-    # are not compromised.
-    dx = d.to_dask_array(_asanyarray=False)
+    # 'cfdm_to_memory', so we can set '_force_in_memory=False'. Also,
+    # setting _force_in_memory=False will ensure that any active
+    # storage operations are not compromised.
+    dx = d.to_dask_array(_force_in_memory=False)
     dx = func(dx, **kwargs)
     d._set_dask(dx)
 

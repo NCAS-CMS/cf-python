@@ -3,7 +3,7 @@ from os import remove
 import cfdm
 import dask.array as da
 import numpy as np
-from cfdm.data.dask_utils import cfdm_asanyarray
+from cfdm.data.dask_utils import cfdm_to_memory
 
 from .netcdfread import NetCDFRead
 
@@ -747,7 +747,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
-            # '_cfa_unique' has its own call to 'cfdm_asanyarray', so
+            # '_cfa_unique' has its own call to 'cfdm_to_memory', so
             # we can set '_asanyarray=False'.
             dx = data.to_dask_array(_asanyarray=False)
             dx_ind = tuple(range(dx.ndim))
@@ -807,7 +807,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
-        a = cfdm_asanyarray(a)
+        a = cfdm_to_memory(a)
 
         out_shape = (1,) * a.ndim
         a = np.unique(a)
