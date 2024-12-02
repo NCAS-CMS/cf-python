@@ -1190,14 +1190,6 @@ class PropertiesData(Properties):
 
         self._custom["direction"] = None
 
-    #        units = getattr(value, 'units', None)
-    #        if units is not None:
-    #            self.set_property('units', units)
-    #
-    #        calendar = getattr(value, 'calendar', None)
-    #        if calendar is not None:
-    #            self.set_property('calendar', calendar)
-
     @Units.deleter
     def Units(self):
         raise AttributeError(

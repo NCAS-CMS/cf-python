@@ -8,7 +8,7 @@ instance, as would be passed to `dask.array.map_blocks`.
 from functools import partial
 
 import numpy as np
-from cfdm.data.dask_utils import cfdm_asanyarray
+from cfdm.data.dask_utils import cfdm_to_memory
 from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
@@ -38,8 +38,8 @@ def cf_contains(a, value):
             value.
 
     """
-    a = cfdm_asanyarray(a)
-    value = cfdm_asanyarray(value)
+    a = cfdm_to_memory(a)
+    value = cfdm_to_memory(value)
     return np.array(value in a).reshape((1,) * a.ndim)
 
 
@@ -73,7 +73,7 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
 
     # Cast to float to ensure that NaNs can be stored
     if a.dtype != float:
@@ -155,7 +155,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
 
     if np.ma.isMA(a) and not np.ma.is_masked(a):
         # Masked array with no masked elements
@@ -274,7 +274,7 @@ def cf_YMDhms(a, attr):
     array([1, 2])
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     return _array_getattr(a, attr=attr)
 
 
@@ -307,7 +307,7 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
 
     if not units.iscalendartime:
         return rt2dt(a, units_in=units)
@@ -363,7 +363,7 @@ def cf_dt2rt(a, units):
     [365 366]
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     return dt2rt(a, units_out=units, units_in=None)
 
 
@@ -404,7 +404,7 @@ def cf_units(a, from_units, to_units):
     [1000. 2000.]
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     return Units.conform(
         a, from_units=from_units, to_units=to_units, inplace=False
     )
@@ -428,7 +428,7 @@ def cf_is_masked(a):
             values.
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     out = np.ma.is_masked(a)
     return np.array(out).reshape((1,) * a.ndim)
 
@@ -461,5 +461,5 @@ def cf_filled(a, fill_value=None):
     [[-999    2    3]]
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     return np.ma.filled(a, fill_value=fill_value)

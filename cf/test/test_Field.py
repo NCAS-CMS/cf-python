@@ -2758,7 +2758,7 @@ class FieldTest(unittest.TestCase):
         self.assertGreater(
             len(
                 f.data.to_dask_array(
-                    _apply_mask_hardness=False, _asanyarray=False
+                    _force_mask_hardness=False, _force_to_memory=False
                 ).dask.layers
             ),
             2,
@@ -2769,7 +2769,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(
             len(
                 g.data.to_dask_array(
-                    _apply_mask_hardness=False, _asanyarray=False
+                    _force_mask_hardness=False, _force_to_memory=False
                 ).dask.layers
             ),
             1,

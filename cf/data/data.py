@@ -439,13 +439,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 # are incompatible
                 return False
 
-            # 'cf_contains' has its own calls to 'cfdm_asanyarray', so
-            # we can set '_asanyarray=False'.
-            value = value.to_dask_array(_asanyarray=False)
+            # 'cf_contains' has its own calls to 'cfdm_to_memory', so
+            # we can set '_force_to_memory=False'.
+            value = value.to_dask_array(_force_to_memory=False)
 
-        # 'cf_contains' has its own calls to 'cfdm_asanyarray', so we
-        # can set '_asanyarray=False'.
-        dx = self.to_dask_array(_asanyarray=False)
+        # 'cf_contains' has its own calls to 'cfdm_to_memory', so we
+        # can set '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -1489,9 +1489,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             axes = tuple(sorted(d._parse_axes(axes)))
 
-        # 'cf_percentile' has its own call to 'cfdm_asanyarray', so we
-        # can set '_asanyarray=False'.
-        dx = d.to_dask_array(_asanyarray=False)
+        # 'cf_percentile' has its own call to 'cfdm_to_memory', so we
+        # can set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
         dtype = dx.dtype
         shape = dx.shape
 
@@ -1947,9 +1947,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
 
         if not d._isdatetime():
-            # 'cf_rt2dt' has its own call to 'cfdm_asanyarray', so we
-            # can set '_asanyarray=False'.
-            dx = d.to_dask_array(_asanyarray=False)
+            # 'cf_rt2dt' has its own call to 'cfdm_to_memory', so we
+            # can set '_force_to_memory=False'.
+            dx = d.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_rt2dt, units=units, dtype=object)
             d._set_dask(dx)
 
@@ -2004,9 +2004,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
 
         if d._isdatetime():
-            # 'cf_dt2rt' has its own call to 'cfdm_asanyarray', so we
-            # can set '_asanyarray=False'.
-            dx = d.to_dask_array(_asanyarray=False)
+            # 'cf_dt2rt' has its own call to 'cfdm_to_memory', so we
+            # can set '_force_to_memory=False'.
+            dx = d.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
             d._set_dask(dx)
 
@@ -2561,9 +2561,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 f"the shape of the regrid operator: {operator.src_shape}"
             )
 
-        # 'regrid' has its own calls to 'cfdm_asanyarray', so we can set
-        # '_asanyarray=False'.
-        dx = self.to_dask_array(_asanyarray=False)
+        # 'regrid' has its own calls to 'cfdm_to_memory', so we can set
+        # '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         # Rechunk so that each chunk contains data in the form
         # expected by the regrid operator, i.e. the regrid axes all
@@ -3004,9 +3004,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             cf_func = partial(cf_units, from_units=old_units, to_units=value)
 
-            # 'cf_units' has its own call to 'cfdm_asanyarray', so we
-            # can set '_asanyarray=False'.
-            dx = self.to_dask_array(_asanyarray=False)
+            # 'cf_units' has its own call to 'cfdm_to_memory', so we
+            # can set '_force_to_memory=False'.
+            dx = self.to_dask_array(_force_to_memory=False)
             dx = dx.map_blocks(cf_func, dtype=dtype)
 
             # Setting equivalent units doesn't affect the CFA write
@@ -3048,9 +3048,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         True
 
         """
-        # 'cf_is_masked' has its own call to 'cfdm_asanyarray', so we
-        # can set '_asanyarray=False'.
-        dx = self.to_dask_array(_asanyarray=False)
+        # 'cf_is_masked' has its own call to 'cfdm_to_memory', so we
+        # can set '_force_to_memory=False'.
+        dx = self.to_dask_array(_force_to_memory=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -3868,9 +3868,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 )
                 d.Units = units0
 
-        # 'cf_rt2dt' its own call to 'cfdm_asanyarray', so we can set
-        # '_asanyarray=False'.
-        dx = d.to_dask_array(_asanyarray=False)
+        # 'cf_rt2dt' its own call to 'cfdm_to_memory', so we can set
+        # '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
 
         # Convert to the correct date-time objects
         dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
@@ -3937,10 +3937,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         units = self._Units
 
         # The dask graph is never going to be computed, so we can set
-        # '_asanyarray=False'.
+        # '_force_to_memory=False'.
         return tokenize(
             self.to_dask_array(
-                _apply_mask_hardness=False, _asanyarray=False
+                _force_mask_hardness=False, _force_to_memory=False
             ).name,
             units.formatted(definition=True, names=True),
             units._canonical_calendar,
@@ -5327,8 +5327,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.soften_mask()
 
         # The applicable chunk function will have its own call to
-        # 'cfdm_asanyarray', so we can set '_asanyarray=False'.
-        dx = d.to_dask_array(_asanyarray=False)
+        # 'cfdm_to_memory', so we can set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
         dx = Collapse().unique(dx, split_every=split_every)
 
         d._set_dask(dx)
@@ -7366,9 +7366,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
         #
-        # 'cf_where' has its own calls to 'cfdm_asanyarray', so we can
-        # set '_asanyarray=False'.
-        dx = d.to_dask_array(_asanyarray=False)
+        # 'cf_where' has its own calls to 'cfdm_to_memory', so we can
+        # set '_force_to_memory=False'.
+        dx = d.to_dask_array(_force_to_memory=False)
 
         units = d.Units
 
@@ -7383,9 +7383,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         condition = type(self).asdata(condition)
         condition = where_broadcastable(d, condition, "condition")
-        # 'cf_where' has its own calls to 'cfdm_asanyarray', so we can
-        # set '_asanyarray=False'.
-        condition = condition.to_dask_array(_asanyarray=False)
+        # 'cf_where' has its own calls to 'cfdm_to_memory', so we can
+        # set '_force_to_memory=False'.
+        condition = condition.to_dask_array(_force_to_memory=False)
 
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy

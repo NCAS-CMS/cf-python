@@ -4504,7 +4504,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),
@@ -4517,7 +4517,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),

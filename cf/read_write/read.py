@@ -582,15 +582,11 @@ class read(cfdm.read):
                     "fmt is ignored in that case so there is no need to set it."
                 )
 
-        #        if squeeze and unsqueeze:
-        #            raise ValueError("squeeze and unsqueeze can not both be True")
         if follow_symlinks and not recursive:
             raise ValueError(
                 f"Can't set follow_symlinks={follow_symlinks!r} "
                 f"when recursive={recursive!r}"
             )
-
-        #        netcdf = NetCDFRead(cls.implementation)
 
         # Initialise the output list of fields/domains
         if domain:
