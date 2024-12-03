@@ -242,8 +242,7 @@ class read_writeTest(unittest.TestCase):
         cf.write(self.f1, tmpfile)
         f = cf.read(tmpfile)[0]
 
-        # TODO: reinstate "CFA" at version > 3.14
-        for fmt in self.netcdf_fmts:  # + ["CFA"]:
+        for fmt in self.netcdf_fmts:
             cf.write(f, tmpfile2, fmt=fmt)
             g = cf.read(tmpfile2, verbose=0)
             self.assertEqual(len(g), 1)
@@ -551,8 +550,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_netCDF4_compress_shuffle(self):
         f = cf.read(self.filename)[0]
-        # TODODASK: reinstate "CFA4" at version > 3.14
-        for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):  # , "CFA4"):
+        for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):
             cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
             g = cf.read(tmpfile)[0]
             self.assertTrue(
@@ -738,9 +736,9 @@ class read_writeTest(unittest.TestCase):
                 f0 = cf.read(cdl_string_1, cdl_string=True, fmt="NETCDF")
 
         # If the user forgets the cdl_string=True argument they will
-        # accidentally attempt to create a file with a very long name of
-        # the CDL string, which will in most, if not all, cases result in
-        # an "OSError: [Errno 36] File name too long" error:
+        # accidentally attempt to create a file with a very long name
+        # of the CDL string, which will in most, if not all, cases
+        # result in an "OSError: [Errno 36] File name too long" error:
         with self.assertRaises(OSError):
             cf.read(cdl_string_1)
 

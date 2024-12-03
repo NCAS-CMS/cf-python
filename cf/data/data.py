@@ -136,217 +136,217 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         instance._Units_class = Units
         return instance
 
-    def __init__(
-        self,
-        array=None,
-        units=None,
-        calendar=None,
-        fill_value=None,
-        hardmask=True,
-        chunks="auto",
-        dt=False,
-        source=None,
-        copy=True,
-        dtype=None,
-        mask=None,
-        mask_value=None,
-        to_memory=False,
-        init_options=None,
-        _use_array=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            array: optional
-                The array of values. May be a scalar or array-like
-                object, including another `{{class}}` instance, anything
-                with a `!to_dask_array` method, `numpy` array, `dask`
-                array, `xarray` array, `cf.Array` subclass, `list`,
-                `tuple`, scalar.
-
-                *Parameter example:*
-                  ``array=34.6``
-
-                *Parameter example:*
-                  ``array=[[1, 2], [3, 4]]``
-
-                *Parameter example:*
-                  ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
-
-            units: `str` or `Units`, optional
-                The physical units of the data. if a `Units` object is
-                provided then this an also set the calendar.
-
-                The units (without the calendar) may also be set after
-                initialisation with the `set_units` method.
-
-                *Parameter example:*
-                  ``units='km hr-1'``
-
-                *Parameter example:*
-                  ``units='days since 2018-12-01'``
-
-            calendar: `str`, optional
-                The calendar for reference time units.
-
-                The calendar may also be set after initialisation with the
-                `set_calendar` method.
-
-                *Parameter example:*
-                  ``calendar='360_day'``
-
-            fill_value: optional
-                The fill value of the data. By default, or if set to
-                `None`, the `numpy` fill value appropriate to the array's
-                data-type will be used (see
-                `numpy.ma.default_fill_value`).
-
-                The fill value may also be set after initialisation with
-                the `set_fill_value` method.
-
-                *Parameter example:*
-                  ``fill_value=-999.``
-
-            dtype: data-type, optional
-                The desired data-type for the data. By default the
-                data-type will be inferred form the *array*
-                parameter.
-
-                The data-type may also be set after initialisation with
-                the `dtype` attribute.
-
-                *Parameter example:*
-                    ``dtype=float``
-
-                *Parameter example:*
-                    ``dtype='float32'``
-
-                *Parameter example:*
-                    ``dtype=numpy.dtype('i2')``
-
-                .. versionadded:: 3.0.4
-
-            mask: optional
-                Apply this mask to the data given by the *array*
-                parameter. By default, or if *mask* is `None`, no mask
-                is applied. May be any scalar or array-like object
-                (such as a `list`, `numpy` array or `{{class}}` instance)
-                that is broadcastable to the shape of *array*. Masking
-                will be carried out where the mask elements evaluate
-                to `True`.
-
-                This mask will applied in addition to any mask already
-                defined by the *array* parameter.
-
-            mask_value: scalar array_like
-                Mask *array* where it is equal to *mask_value*, using
-                numerically tolerant floating point equality.
-
-                .. versionadded:: (cfdm) 1.11.0.0
-
-            hardmask: `bool`, optional
-                If True (the default) then the mask is hard. If False
-                then the mask is soft.
-
-            dt: `bool`, optional
-                If True then strings (such as ``'1990-12-01 12:00'``)
-                given by the *array* parameter are re-interpreted as
-                date-time objects. By default they are not.
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            to_memory: `bool`, optional
-                If True then ensure that the original data are in
-                memory, rather than on disk.
-
-                If the original data are on disk, then reading data
-                into memory during initialisation will slow down the
-                initialisation process, but can considerably improve
-                downstream performance by avoiding the need for
-                independent reads for every dask chunk, each time the
-                data are computed.
-
-                In general, setting *to_memory* to True is not the same
-                as calling the `persist` of the newly created `{{class}}`
-                object, which also decompresses data compressed by
-                convention and computes any data type, mask and
-                date-time modifications.
-
-                If the input *array* is a `dask.array.Array` object
-                then *to_memory* is ignored.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            init_options: `dict`, optional
-                Provide optional keyword arguments to methods and
-                functions called during the initialisation process. A
-                dictionary key identifies a method or function. The
-                corresponding value is another dictionary whose
-                key/value pairs are the keyword parameter names and
-                values to be applied.
-
-                Supported keys are:
-
-                * ``'from_array'``: Provide keyword arguments to
-                  the `dask.array.from_array` function. This is used
-                  when initialising data that is not already a dask
-                  array and is not compressed by convention.
-
-                * ``'first_non_missing_value'``: Provide keyword
-                  arguments to the
-                  `cfdm.data.utils.first_non_missing_value`
-                  function. This is used when the input array contains
-                  date-time strings or objects, and may affect
-                  performance.
-
-                 *Parameter example:*
-                   ``{'from_array': {'inline_array': True}}``
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}(5)
-        >>> d = {{package}}.{{class}}([1,2,3], units='K')
-        >>> import numpy
-        >>> d = {{package}}.{{class}}(numpy.arange(10).reshape(2,5),
-        ...             units='m/s', fill_value=-999)
-        >>> d = {{package}}.{{class}}('fly')
-        >>> d = {{package}}.{{class}}(tuple('fly'))
-
-        """
-        super().__init__(
-            array=array,
-            units=units,
-            calendar=calendar,
-            fill_value=fill_value,
-            hardmask=hardmask,
-            chunks=chunks,
-            dt=dt,
-            source=source,
-            copy=copy,
-            dtype=dtype,
-            mask=mask,
-            mask_value=mask_value,
-            to_memory=to_memory,
-            init_options=init_options,
-            _use_array=_use_array,
-        )
-
-        if source is not None:
-            try:
-                deterministic = source.has_deterministic_name()
-            except AttributeError:
-                deterministic = False
-        else:
-            deterministic = not is_dask_collection(array)
-
-        self._custom["has_deterministic_name"] = deterministic
+    #    def __init__(
+    #        self,
+    #        array=None,
+    #        units=None,
+    #        calendar=None,
+    #        fill_value=None,
+    #        hardmask=True,
+    #        chunks="auto",
+    #        dt=False,
+    #        source=None,
+    #        copy=True,
+    #        dtype=None,
+    #        mask=None,
+    #        mask_value=None,
+    #        to_memory=False,
+    #        init_options=None,
+    #        _use_array=True,
+    #    ):
+    #        """**Initialisation**
+    #
+    #        :Parameters:
+    #
+    #            array: optional
+    #                The array of values. May be a scalar or array-like
+    #                object, including another `{{class}}` instance, anything
+    #                with a `!to_dask_array` method, `numpy` array, `dask`
+    #                array, `xarray` array, `cf.Array` subclass, `list`,
+    #                `tuple`, scalar.
+    #
+    #                *Parameter example:*
+    #                  ``array=34.6``
+    #
+    #                *Parameter example:*
+    #                  ``array=[[1, 2], [3, 4]]``
+    #
+    #                *Parameter example:*
+    #                  ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
+    #
+    #            units: `str` or `Units`, optional
+    #                The physical units of the data. if a `Units` object is
+    #                provided then this an also set the calendar.
+    #
+    #                The units (without the calendar) may also be set after
+    #                initialisation with the `set_units` method.
+    #
+    #                *Parameter example:*
+    #                  ``units='km hr-1'``
+    #
+    #                *Parameter example:*
+    #                  ``units='days since 2018-12-01'``
+    #
+    #            calendar: `str`, optional
+    #                The calendar for reference time units.
+    #
+    #                The calendar may also be set after initialisation with the
+    #                `set_calendar` method.
+    #
+    #                *Parameter example:*
+    #                  ``calendar='360_day'``
+    #
+    #            fill_value: optional
+    #                The fill value of the data. By default, or if set to
+    #                `None`, the `numpy` fill value appropriate to the array's
+    #                data-type will be used (see
+    #                `numpy.ma.default_fill_value`).
+    #
+    #                The fill value may also be set after initialisation with
+    #                the `set_fill_value` method.
+    #
+    #                *Parameter example:*
+    #                  ``fill_value=-999.``
+    #
+    #            dtype: data-type, optional
+    #                The desired data-type for the data. By default the
+    #                data-type will be inferred form the *array*
+    #                parameter.
+    #
+    #                The data-type may also be set after initialisation with
+    #                the `dtype` attribute.
+    #
+    #                *Parameter example:*
+    #                    ``dtype=float``
+    #
+    #                *Parameter example:*
+    #                    ``dtype='float32'``
+    #
+    #                *Parameter example:*
+    #                    ``dtype=numpy.dtype('i2')``
+    #
+    #                .. versionadded:: 3.0.4
+    #
+    #            mask: optional
+    #                Apply this mask to the data given by the *array*
+    #                parameter. By default, or if *mask* is `None`, no mask
+    #                is applied. May be any scalar or array-like object
+    #                (such as a `list`, `numpy` array or `{{class}}` instance)
+    #                that is broadcastable to the shape of *array*. Masking
+    #                will be carried out where the mask elements evaluate
+    #                to `True`.
+    #
+    #                This mask will applied in addition to any mask already
+    #                defined by the *array* parameter.
+    #
+    #            mask_value: scalar array_like
+    #                Mask *array* where it is equal to *mask_value*, using
+    #                numerically tolerant floating point equality.
+    #
+    #                .. versionadded:: (cfdm) 1.11.0.0
+    #
+    #            hardmask: `bool`, optional
+    #                If True (the default) then the mask is hard. If False
+    #                then the mask is soft.
+    #
+    #            dt: `bool`, optional
+    #                If True then strings (such as ``'1990-12-01 12:00'``)
+    #                given by the *array* parameter are re-interpreted as
+    #                date-time objects. By default they are not.
+    #
+    #            {{init source: optional}}
+    #
+    #            {{init copy: `bool`, optional}}
+    #
+    #            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+    #
+    #                .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #            to_memory: `bool`, optional
+    #                If True then ensure that the original data are in
+    #                memory, rather than on disk.
+    #
+    #                If the original data are on disk, then reading data
+    #                into memory during initialisation will slow down the
+    #                initialisation process, but can considerably improve
+    #                downstream performance by avoiding the need for
+    #                independent reads for every dask chunk, each time the
+    #                data are computed.
+    #
+    #                In general, setting *to_memory* to True is not the same
+    #                as calling the `persist` of the newly created `{{class}}`
+    #                object, which also decompresses data compressed by
+    #                convention and computes any data type, mask and
+    #                date-time modifications.
+    #
+    #                If the input *array* is a `dask.array.Array` object
+    #                then *to_memory* is ignored.
+    #
+    #                .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #            init_options: `dict`, optional
+    #                Provide optional keyword arguments to methods and
+    #                functions called during the initialisation process. A
+    #                dictionary key identifies a method or function. The
+    #                corresponding value is another dictionary whose
+    #                key/value pairs are the keyword parameter names and
+    #                values to be applied.
+    #
+    #                Supported keys are:
+    #
+    #                * ``'from_array'``: Provide keyword arguments to
+    #                  the `dask.array.from_array` function. This is used
+    #                  when initialising data that is not already a dask
+    #                  array and is not compressed by convention.
+    #
+    #                * ``'first_non_missing_value'``: Provide keyword
+    #                  arguments to the
+    #                  `cfdm.data.utils.first_non_missing_value`
+    #                  function. This is used when the input array contains
+    #                  date-time strings or objects, and may affect
+    #                  performance.
+    #
+    #                 *Parameter example:*
+    #                   ``{'from_array': {'inline_array': True}}``
+    #
+    #        **Examples**
+    #
+    #        >>> d = {{package}}.{{class}}(5)
+    #        >>> d = {{package}}.{{class}}([1,2,3], units='K')
+    #        >>> import numpy
+    #        >>> d = {{package}}.{{class}}(numpy.arange(10).reshape(2,5),
+    #        ...             units='m/s', fill_value=-999)
+    #        >>> d = {{package}}.{{class}}('fly')
+    #        >>> d = {{package}}.{{class}}(tuple('fly'))
+    #
+    #        """
+    #        super().__init__(
+    #            array=array,
+    #            units=units,
+    #            calendar=calendar,
+    #            fill_value=fill_value,
+    #            hardmask=hardmask,
+    #            chunks=chunks,
+    #            dt=dt,
+    #            source=source,
+    #            copy=copy,
+    #            dtype=dtype,
+    #            mask=mask,
+    #            mask_value=mask_value,
+    #            to_memory=to_memory,
+    #            init_options=init_options,
+    #            _use_array=_use_array,
+    #        )
+    #
+    #        if source is not None:
+    #            try:
+    #                deterministic = source.has_deterministic_name()
+    #            except AttributeError:
+    #                deterministic = False
+    #        else:
+    #            deterministic = not is_dask_collection(array)
+    #
+    #        self._custom["has_deterministic_name"] = deterministic
 
     def __contains__(self, value):
         """Membership test operator ``in``
@@ -700,41 +700,41 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
-    def _update_deterministic(self, other):
-        """Update the deterministic name status.
-
-        .. versionadded:: 3.15.1
-
-        .. seealso:: `get_deterministic_name`,
-                     `has_deterministic_name`
-
-        :Parameters:
-
-            other: `bool` or `Data`
-                If `False` then set the deterministic name status to
-                `False`. If `True` then do not change the
-                deterministic name status. If `Data` then set the
-                deterministic name status to `False` if and only if
-                *other* has a False deterministic name status.
-
-        :Returns:
-
-            `None`
-
-        """
-        if other is False:
-            self._custom["has_deterministic_name"] = False
-            return
-
-        if other is True:
-            return
-
-        custom = self._custom
-        deterministic = custom["has_deterministic_name"]
-        if deterministic:
-            custom["has_deterministic_name"] = (
-                deterministic and other._custom["has_deterministic_name"]
-            )
+    #    def _update_deterministic(self, other):
+    #        """Update the deterministic name status.
+    #
+    #        .. versionadded:: 3.15.1
+    #
+    #        .. seealso:: `get_deterministic_name`,
+    #                     `has_deterministic_name`
+    #
+    #        :Parameters:
+    #
+    #            other: `bool` or `Data`
+    #                If `False` then set the deterministic name status to
+    #                `False`. If `True` then do not change the
+    #                deterministic name status. If `Data` then set the
+    #                deterministic name status to `False` if and only if
+    #                *other* has a False deterministic name status.
+    #
+    #        :Returns:
+    #
+    #            `None`
+    #
+    #        """
+    #        if other is False:
+    #            self._custom["has_deterministic_name"] = False
+    #            return
+    #
+    #        if other is True:
+    #            return
+    #
+    #        custom = self._custom
+    #        deterministic = custom["has_deterministic_name"]
+    #        if deterministic:
+    #            custom["has_deterministic_name"] = (
+    #                deterministic and other._custom["has_deterministic_name"]
+    #            )
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -1565,7 +1565,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
 
-        d._update_deterministic(not is_dask_collection(q))
+        d._update_deterministic(q)
 
         return d
 
@@ -2482,7 +2482,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = super()._binary_operation(data0, other, method)
 
         d.override_units(new_Units, inplace=True)
-        d._update_deterministic(other)
 
         if inplace:
             data.__dict__ = d.__dict__
@@ -2498,7 +2497,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         raise NotImplementedError(
-            "'cf.Data._parse_indices' is not available. "
+            "'cf.Data._parse_indices' is no longer available. "
             "Use function 'cf.parse_indices' instead."
         )
 
@@ -3158,6 +3157,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 in-place.
 
         """
+        concatenated_data = super()._concatenate_post_process(
+            concatenated_data, axis, conformed_data
+        )
+
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.
         axis = concatenated_data._parse_axes(axis)[0]
@@ -3168,14 +3171,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
             concatenated_data.cyclic(axes=axis, iscyclic=False)
 
-        # Set whether or not the concatenated name is deterministic
-        deterministic = True
-        for d in conformed_data:
-            if not d.has_deterministic_name():
-                deterministic = False
-                break
-
-        concatenated_data._update_deterministic(deterministic)
+        #        # Set whether or not the concatenated name is deterministic
+        #        deterministic = True
+        #        for d in conformed_data:
+        #            if not d.has_deterministic_name():
+        #                deterministic = False
+        #               break#
+        #
+        #        concatenated_data._update_deterministic(deterministic)
 
         return concatenated_data
 
@@ -3883,68 +3886,68 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def get_deterministic_name(self):
-        """Get the deterministic name for the data.
-
-        If there is a deterministic name then the data array may be
-        assumed to be 'equal' to that of another `Data` object with
-        the same deterministic name. This measure of equality is
-        different to that applied by the `equals` method in that NaN
-        and inf values are, in effect, always considered equal.
-
-        Note that the opposite is not always true. Two `Data` objects
-        that are considered equal by their `equals` methods might not
-        have the same deterministic name.
-
-        An exception is raised if there is no deterministic name.
-
-        .. versionadded:: 3.15.1
-
-        .. seealso:: `has_deterministic_name`
-
-        :Returns:
-
-            `str`
-                The deterministic name.
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2, 3], 'm')
-        >>> d.has_deterministic_name()
-        True
-        >>> d.get_deterministic_name()
-        '6380dd3674fbf10d30561484b084e9b3'
-        >>> d1 = cf.Data([1, 2, 3], 'metre')
-        >>> d1.get_deterministic_name()
-        '6380dd3674fbf10d30561484b084e9b3'
-        >>> d1.get_deterministic_name() == d.get_deterministic_name()
-        True
-        >>> d1.equals(d)
-        True
-
-        >>> e = d + 1 - 1
-        >>> e.get_deterministic_name()
-        '0b83ada62d4b014bae83c3de1c1d3a80'
-        >>> e.get_deterministic_name() == d.get_deterministic_name()
-        False
-        >>> e.equals(d)
-        True
-
-        """
-        if not self.has_deterministic_name():
-            raise ValueError()
-
-        units = self._Units
-
-        # The dask graph is never going to be computed, so we can set
-        # '_force_to_memory=False'.
-        return tokenize(
-            self.to_dask_array(
-                _force_mask_hardness=False, _force_to_memory=False
-            ).name,
-            units.formatted(definition=True, names=True),
-            units._canonical_calendar,
-        )
+    #    def get_deterministic_name(self):
+    #        """Get the deterministic name for the data.
+    #
+    #        If there is a deterministic name then the data array may be
+    #        assumed to be 'equal' to that of another `Data` object with
+    #        the same deterministic name. This measure of equality is
+    #        different to that applied by the `equals` method in that NaN
+    #        and inf values are, in effect, always considered equal.
+    #
+    #        Note that the opposite is not always true. Two `Data` objects
+    #        that are considered equal by their `equals` methods might not
+    #        have the same deterministic name.
+    #
+    #        An exception is raised if there is no deterministic name.
+    #
+    #        .. versionadded:: 3.15.1
+    #
+    #        .. seealso:: `has_deterministic_name`
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The deterministic name.
+    #
+    #        **Examples**
+    #
+    #        >>> d = cf.Data([1, 2, 3], 'm')
+    #        >>> d.has_deterministic_name()
+    #        True
+    #        >>> d.get_deterministic_name()
+    #        '6380dd3674fbf10d30561484b084e9b3'
+    #        >>> d1 = cf.Data([1, 2, 3], 'metre')
+    #        >>> d1.get_deterministic_name()
+    #        '6380dd3674fbf10d30561484b084e9b3'
+    #        >>> d1.get_deterministic_name() == d.get_deterministic_name()
+    #        True
+    #        >>> d1.equals(d)
+    #        True
+    #
+    #        >>> e = d + 1 - 1
+    #        >>> e.get_deterministic_name()
+    #        '0b83ada62d4b014bae83c3de1c1d3a80'
+    #        >>> e.get_deterministic_name() == d.get_deterministic_name()
+    #        False
+    #        >>> e.equals(d)
+    #        True
+    #
+    #        """
+    #        if not self.has_deterministic_name():
+    #            raise ValueError()
+    #
+    #        units = self._Units
+    #
+    #        # The dask graph is never going to be computed, so we can set
+    #        # '_force_to_memory=False'.
+    #        return tokenize(
+    #            self.to_dask_array(
+    #                _force_mask_hardness=False, _force_to_memory=False
+    #            ).name,
+    #            units.formatted(definition=True, names=True),
+    #            units._canonical_calendar,
+    #        )
 
     def set_units(self, value):
         """Set the units.
@@ -5794,28 +5797,28 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def has_deterministic_name(self):
-        """Whether there is a deterministic name for the data.
-
-        See `get_deterministic_name` for details.
-
-        .. versionadded:: 3.15.1
-
-        .. seealso:: `get_deterministic_name`
-
-        :Returns:
-
-            `bool`
-                Whether or not there is a deterministic name.
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2, 3], 'm')
-        >>> d.has_deterministic_name()
-        True
-
-        """
-        return self._custom.get("has_deterministic_name", False)
+    #    def has_deterministic_name(self):
+    #        """Whether there is a deterministic name for the data.
+    #
+    #        See `get_deterministic_name` for details.
+    #
+    #        .. versionadded:: 3.15.1
+    #
+    #        .. seealso:: `get_deterministic_name`
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #                Whether or not there is a deterministic name.
+    #
+    #        **Examples**
+    #
+    #        >>> d = cf.Data([1, 2, 3], 'm')
+    #        >>> d.has_deterministic_name()
+    #        True
+    #
+    #        """
+    #        return self._custom.get("has_deterministic_name", False)
 
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
@@ -6612,7 +6615,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             d._set_dask(dx)
             d.hardmask = self._DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
-            d._update_deterministic(not is_dask_collection(y))
+            d._update_deterministic(y)
 
             return d
 

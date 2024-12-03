@@ -370,7 +370,7 @@ class read(cfdm.read):
 
             .. versionadded:: 3.11.0
 
-        {{read netcdf_engine: `None` or `str`, optional}}
+        {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
             .. versionadded:: NEXTVERSION
 
@@ -573,13 +573,15 @@ class read(cfdm.read):
             if fmt == "CDL":
                 if info:
                     logger.info(
-                        "It is not necessary to set the cf.read fmt as 'CDL' when "
-                        "cdl_string is True, since that implies CDL is the format."
+                        "It is not necessary to set the cf.read fmt as "
+                        "'CDL' when cdl_string is True, since that implies "
+                        "CDL is the format."
                     )  # pragma: no cover
             else:
                 raise ValueError(
-                    "cdl_string can only be True when the format is CDL, though "
-                    "fmt is ignored in that case so there is no need to set it."
+                    "cdl_string can only be True when the format is CDL, "
+                    "though fmt is ignored in that case so there is no "
+                    "need to set it."
                 )
 
         if follow_symlinks and not recursive:
@@ -694,7 +696,8 @@ class read(cfdm.read):
 
                 if domain and ftype == "UM":
                     raise ValueError(
-                        f"Can't read PP/UM file {filename} into domain constructs"
+                        f"Can't read PP/UM file {filename} into domain "
+                        "constructs"
                     )
 
                 ftypes.add(ftype)
@@ -749,8 +752,8 @@ class read(cfdm.read):
 
         if info:
             logger.info(
-                f"Read {field_counter} field{cls._plural(field_counter)} from "
-                f"{file_counter} file{cls._plural(file_counter)}"
+                f"Read {field_counter} field{cls._plural(field_counter)} "
+                f"from {file_counter} file{cls._plural(file_counter)}"
             )  # pragma: no cover
 
         # ----------------------------------------------------------------
@@ -764,8 +767,8 @@ class read(cfdm.read):
             n = len(out)  # pragma: no cover
             if info:
                 logger.info(
-                    f"{org_len} input field{cls._plural(org_len)} aggregated into "
-                    f"{n} field{cls._plural(n)}"
+                    f"{org_len} input field{cls._plural(org_len)} "
+                    f"aggregated into {n} field{cls._plural(n)}"
                 )  # pragma: no cover
 
         # ----------------------------------------------------------------

@@ -542,6 +542,25 @@ class UMField:
                 increasing verbosity, the more description that is printed
                 about the read process.
 
+            squeeze: `bool`, optional
+                If True then remove all size 1 dimensions from field
+                construct data arrays, regardless of how the data are
+                stored in the dataset. If False (the default) then the
+                presence or not of size 1 dimensions is determined by
+                how the data are stored in its dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                If True then ensure that field construct data arrays
+                span all of the size 1 dimensions, regardless of how
+                the data are stored in the dataset. If False (the
+                default) then the presence or not of size 1 dimensions
+                is determined by how the data are stored in its
+                dataset.
+
+                .. versionadded:: NEXTVERSION
+
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
                 return field construct.
@@ -3435,7 +3454,24 @@ class UMRead(cfdm.read_write.IORead):
                 equivalent to ``fl =
                 cf.read(file).select_by_identity('stash_code=3236')``.
 
-            TODOCFA (squeeuze)
+            squeeze: `bool`, optional
+                If True then remove all size 1 dimensions from field
+                construct data arrays, regardless of how the data are
+                stored in the dataset. If False (the default) then the
+                presence or not of size 1 dimensions is determined by
+                how the data are stored in its dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                If True then ensure that field construct data arrays
+                span all of the size 1 dimensions, regardless of how
+                the data are stored in the dataset. If False (the
+                default) then the presence or not of size 1 dimensions
+                is determined by how the data are stored in its
+                dataset.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
