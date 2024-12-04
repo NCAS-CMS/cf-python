@@ -2813,7 +2813,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            data1: `{{class}}`
+            data1: `Data`
                 Data with units.
 
             units0: `Units`
@@ -2827,7 +2827,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Returns *data1*, possibly modified so that it conforms
                 to *units0*. If *copy* is False and *data1* is
                 modified, then it is done so in-place.
@@ -2874,19 +2874,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            concatenated_data: `{{class}}`
+            concatenated_data: `Data`
                 The concatenated data array.
 
             axis: `int`
                 The axis of concatenation.
 
-            conformed_data: sequence of `{{class}}`
+            conformed_data: sequence of `Data`
                 The ordered sequence of data arrays that were
                 concatenated.
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Returns *concatenated_data*, possibly modified
                 in-place.
 
