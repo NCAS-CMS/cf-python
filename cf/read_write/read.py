@@ -1,6 +1,5 @@
 import logging
 import os
-import tempfile
 from glob import glob
 from os.path import isdir
 from re import Pattern
@@ -17,9 +16,6 @@ from ..fieldlist import FieldList
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from ..query import Query
 from .um import UMRead
-
-_cached_temporary_files = {}
-
 
 logger = logging.getLogger(__name__)
 
@@ -618,33 +614,12 @@ class read(cfdm.read):
         file_counter = 0
 
         if cdl_string:
-            files2 = []
-
-            # 'files' input may be a single string or a sequence of
-            # them and to handle both cases it is easiest to convert
-            # former to a one-item seq.
             if isinstance(files, str):
-                files = [files]
+                files = (files,)
 
-            for cdl_file in files:
-                c = tempfile.NamedTemporaryFile(
-                    mode="w",
-                    dir=tempfile.gettempdir(),
-                    prefix="cf_",
-                    suffix=".cdl",
-                )
-
-                c_name = c.name
-                with open(c_name, "w") as f:
-                    f.write(cdl_file)
-
-                # Need to cache the TemporaryFile object so that it
-                # doesn't get deleted too soon
-                _cached_temporary_files[c_name] = c
-
-                files2.append(c.name)
-
-            files = files2
+            files = [
+                NetCDFRead.string_to_cdl(cdl_string) for cdl_string in files
+            ]
 
         for file_glob in flat(files):
             # Expand variables
