@@ -1000,7 +1000,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for axis in f.domain_axes(todict=True):
                 identity = None
 
-                if self.is_discrete_axis(axis):
+                if f.is_discrete_axis(axis):
                     # This is a discrete axis whose identity is
                     # inferred from all of its auxiliary coordinates
                     x = {}
