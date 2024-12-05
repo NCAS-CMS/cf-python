@@ -844,49 +844,6 @@ class read_writeTest(unittest.TestCase):
         self.assertIsInstance(e[1], cf.Domain)
         self.assertTrue(e[0].equals(e[1]))
 
-    def test_read_chunks(self):
-        f = cf.example_field(0)
-        f.construct("latitude").axis = "Y"
-        cf.write(f, tmpfile)
-
-        f = cf.read(tmpfile, chunks={})[0]
-        self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        f = cf.read(tmpfile, chunks=-1)[0]
-        self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        f = cf.read(tmpfile, chunks=None)[0]
-        self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        f = cf.read(tmpfile, chunks={"foo": 2, "bar": 3})[0]
-        self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        with cf.chunksize("200GB"):
-            f = cf.read(tmpfile)[0]
-            self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        with cf.chunksize("150B"):
-            f = cf.read(tmpfile)[0]
-            self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
-
-        f = cf.read(tmpfile, chunks="150B")[0]
-        self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
-
-        f = cf.read(tmpfile, chunks=3)[0]
-        self.assertEqual(f.data.chunks, ((3, 2), (3, 3, 2)))
-
-        y = f.construct("Y")
-        self.assertEqual(y.data.chunks, ((3, 2),))
-
-        f = cf.read(tmpfile, chunks={"ncdim%lon": 3})[0]
-        self.assertEqual(f.data.chunks, ((5,), (3, 3, 2)))
-
-        f = cf.read(tmpfile, chunks={"longitude": 5, "Y": "150B"})[0]
-        self.assertEqual(f.data.chunks, ((3, 2), (5, 3)))
-
-        y = f.construct("Y")
-        self.assertEqual(y.data.chunks, ((5,),))
-
     def test_write_omit_data(self):
         """Test the `omit_data` parameter to `write`."""
         f = cf.example_field(1)

@@ -86,6 +86,7 @@ Dask
    :template: attribute.rst
 
    ~cf.Data.chunks
+   ~cf.Data.chunksize
    ~cf.Data.npartitions
    ~cf.Data.numblocks
    
@@ -332,6 +333,7 @@ Mask support
    ~cf.Data.has_fill_value
    ~cf.Data.set_fill_value
    ~cf.Data.soften_mask
+   ~cf.Data.masked_where
    
 .. rubric:: Attributes
 

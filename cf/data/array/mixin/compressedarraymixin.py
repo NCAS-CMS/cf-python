@@ -76,11 +76,10 @@ class CompressedArrayMixin:
         from functools import partial
 
         import dask.array as da
+        from cfdm.data.utils import normalize_chunks
         from dask import config
         from dask.array.core import getter
         from dask.base import tokenize
-
-        from ...utils import normalize_chunks
 
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 

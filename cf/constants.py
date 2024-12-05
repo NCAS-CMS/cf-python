@@ -37,7 +37,7 @@ in cf.
       Find the total amount of physical memory (in bytes).
 
     CHUNKSIZE: `int`
-      The chunk size (in bytes) for data storage and processing.
+      The Dask chunk size (in bytes). See `cf.chunksize`.
 
     TEMPDIR: `str`
       The location to store temporary files. By default it is the

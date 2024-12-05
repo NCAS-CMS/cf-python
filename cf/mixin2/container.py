@@ -6,6 +6,7 @@ situation.
 """
 
 from ..docstring import _docstring_substitution_definitions
+from ..functions import atol, rtol
 
 
 class Container:
@@ -54,3 +55,23 @@ class Container:
 
         """
         return 0
+
+    @property
+    def _atol(self):
+        """Internal alias for `{{package}}.atol`.
+
+        An alias is necessary to avoid a name clash with the keyword
+        argument of identical name (`atol`) in calling functions.
+
+        """
+        return atol().value
+
+    @property
+    def _rtol(self):
+        """Internal alias for `{{package}}.rtol`.
+
+        An alias is necessary to avoid a name clash with the keyword
+        argument of identical name (`rtol`) in calling functions.
+
+        """
+        return rtol().value

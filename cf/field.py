@@ -1002,7 +1002,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for axis in f.domain_axes(todict=True):
                 identity = None
 
-                if self.is_discrete_axis(axis):
+                if f.is_discrete_axis(axis):
                     # This is a discrete axis whose identity is
                     # inferred from all of its auxiliary coordinates
                     x = {}
@@ -1320,7 +1320,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Operate on the data
         # ------------------------------------------------------------
-        new_data = field0.data._binary_operation(field1.data, method)
+        new_data = field0.data._binary_operation(
+            field0.data, field1.data, method
+        )
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
@@ -4087,7 +4089,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # ------------------------------------------------------------
         # Still here? Return a weights field which is the outer
-        # product of the component weights
+        # product of the component weights.
         # ------------------------------------------------------------
         pp = sorted(comp.items())
         waxes, wdata = pp.pop(0)

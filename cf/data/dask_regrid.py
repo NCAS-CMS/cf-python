@@ -1,8 +1,7 @@
 """Regridding functions used within a dask graph."""
 
 import numpy as np
-
-from .dask_utils import cf_asanyarray
+from cfdm.data.dask_utils import cfdm_to_memory
 
 
 def regrid(
@@ -176,12 +175,12 @@ def regrid(
     """
     weights, dst_mask = weights_dst_mask
 
-    a = cf_asanyarray(a)
+    a = cfdm_to_memory(a)
     if dst_mask is not None:
-        dst_mask = cf_asanyarray(dst_mask)
+        dst_mask = cfdm_to_memory(dst_mask)
 
     if ref_src_mask is not None:
-        ref_src_mask = cf_asanyarray(ref_src_mask)
+        ref_src_mask = cfdm_to_memory(ref_src_mask)
 
     # ----------------------------------------------------------------
     # Reshape the array into a form suitable for the regridding dot

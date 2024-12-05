@@ -7,7 +7,6 @@ from cfdm import is_log_level_info
 
 from ..cfdatetime import dt
 from ..data import Data
-from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -622,11 +621,11 @@ class PropertiesData(Properties):
 
         if not inplace:
             new = self.copy()  # data=False) TODO
-            new_data = data._binary_operation(y, method)
+            new_data = data._binary_operation(data, y, method)
             new.set_data(new_data, copy=False)
         else:
             new = self
-            new.data._binary_operation(y, method)
+            new.data._binary_operation(new.data, y, method)
 
         if method in _relational_methods:
             # Booleans have no units
@@ -5392,7 +5391,7 @@ class PropertiesData(Properties):
     @_inplace_enabled(default=False)
     def rechunk(
         self,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
         threshold=None,
         block_size_limit=None,
         balance=False,

@@ -756,7 +756,9 @@ class RegridTest(unittest.TestCase):
         filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
         )
-        dst, src = cf.read(filename, chunks={"latitude": 20, "longitude": 30})
+        dst, src = cf.read(
+            filename, dask_chunks={"latitude": 20, "longitude": 30}
+        )
         self.assertEqual(src.data.numblocks, (1, 2, 2))
         self.assertEqual(dst.data.numblocks, (1, 4, 4))
 

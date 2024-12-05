@@ -10,13 +10,13 @@ from functools import reduce
 from operator import mul
 
 import numpy as np
+from cfdm.data.dask_utils import cfdm_to_memory
 from dask.array import chunk
 from dask.array.core import _concatenate2
 from dask.array.reductions import divide, numel
 from dask.core import flatten
 from dask.utils import deepmap
 
-from ..dask_utils import cf_asanyarray
 from .collapse_active import actify
 from .collapse_utils import double_precision_dtype
 
@@ -276,9 +276,9 @@ def cf_mean_chunk(
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
     if weights is not None:
-        weights = cf_asanyarray(weights)
+        weights = cfdm_to_memory(weights)
 
     # N, sum
     d = cf_sum_chunk(x, weights=weights, dtype=dtype, **kwargs)
@@ -401,7 +401,7 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     return {
         "max": chunk.max(x, **kwargs),
@@ -555,7 +555,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     return {
         "min": chunk.min(x, **kwargs),
@@ -662,7 +662,7 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     # N, max
     d = cf_max_chunk(x, **kwargs)
@@ -779,7 +779,7 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     return cf_mean_chunk(
         np.multiply(x, x, dtype=dtype), weights=weights, dtype=dtype, **kwargs
@@ -857,7 +857,7 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     if np.ma.isMA(x):
         N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
@@ -985,10 +985,10 @@ def cf_sum_chunk(
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     if weights is not None:
-        weights = cf_asanyarray(weights)
+        weights = cfdm_to_memory(weights)
         if check_weights:
             w_min = weights.min()
             if w_min <= 0:
@@ -1107,9 +1107,9 @@ def cf_sum_of_weights_chunk(
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
     if weights is not None:
-        weights = cf_asanyarray(weights)
+        weights = cfdm_to_memory(weights)
 
     # N
     d = cf_sample_size_chunk(x, **kwargs)
@@ -1152,9 +1152,9 @@ def cf_sum_of_weights2_chunk(
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
     if weights is not None:
-        weights = cf_asanyarray(weights)
+        weights = cfdm_to_memory(weights)
 
     # N
     d = cf_sample_size_chunk(x, **kwargs)
@@ -1193,7 +1193,7 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     return {"unique": np.unique(x)}
 
@@ -1298,11 +1298,11 @@ def cf_var_chunk(
     if computing_meta:
         return x
 
-    x = cf_asanyarray(x)
+    x = cfdm_to_memory(x)
 
     weighted = weights is not None
     if weighted:
-        weights = cf_asanyarray(weights)
+        weights = cfdm_to_memory(weights)
 
     # N, V1, sum
     d = cf_mean_chunk(x, weights=weights, dtype=dtype, **kwargs)

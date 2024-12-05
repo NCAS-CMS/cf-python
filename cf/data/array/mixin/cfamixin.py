@@ -3,8 +3,7 @@ from functools import partial
 from itertools import accumulate, product
 
 import numpy as np
-
-from ...utils import chunk_locations, chunk_positions
+from cfdm.data.utils import chunk_locations, chunk_positions
 
 
 class CFAMixin:

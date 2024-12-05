@@ -1,8 +1,8 @@
 import numpy as np
+from cfdm.data.mixin import IndexMixin
 
 from ...functions import indices_shape, parse_indices
 from .abstract import Array
-from .mixin import IndexMixin
 
 _FULLARRAY_HANDLED_FUNCTIONS = {}
 
