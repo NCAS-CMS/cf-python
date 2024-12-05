@@ -744,6 +744,70 @@ class DimensionCoordinateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.get_cell_characteristics()
 
+    def test_DimensionCoordinate_anchor(self):
+        """Test the DimensionCoordinate.anchor"""
+        f = cf.example_field(0)
+        d = f.dimension_coordinate("X")
+
+        self.assertEqual(d.period(), 360)
+
+        e = d.anchor(-1)
+        self.assertIsInstance(e, cf.DimensionCoordinate)
+        self.assertTrue(e.equals(d))
+
+        # Increasing
+        e = d.anchor(15)
+        self.assertTrue(e[0].equals(d[0]))
+        self.assertEqual(e[0].array, d[0].array)
+
+        e = d.anchor(30)
+        self.assertEqual(e[0].array, d[1].array)
+
+        e = d.anchor(361)
+        self.assertEqual(e[0].array, d[0].array + 360)
+
+        e = d.anchor(721)
+        self.assertEqual(e[0].array, d[0].array + 720)
+
+        e = d.anchor(15, cell=True)
+        self.assertEqual(e[0].array, d[0].array)
+
+        e = d.anchor(30, cell=True)
+        self.assertEqual(e[0].array, d[0].array)
+
+        e = d.anchor(361, cell=True)
+        self.assertEqual(e[0].array, d[0].array + 360)
+
+        e = d.anchor(721, cell=True)
+        self.assertEqual(e[0].array, d[0].array + 720)
+
+        # Decreasing
+        d = d[::-1]
+
+        e = d.anchor(721)
+        self.assertEqual(e[0].array, d[0].array + 360)
+
+        e = d.anchor(361)
+        self.assertEqual(e[0].array, d[0].array)
+
+        e = d.anchor(30)
+        self.assertEqual(e[0].array, d[-1].array)
+
+        e = d.anchor(15)
+        self.assertEqual(e[0].array, d[0].array - 360)
+
+        e = d.anchor(721, cell=True)
+        self.assertEqual(e[0].array, d[0].array + 360)
+
+        e = d.anchor(361, cell=True)
+        self.assertEqual(e[0].array, d[0].array)
+
+        e = d.anchor(30, cell=True)
+        self.assertEqual(e[0].array, d[0].array - 360)
+
+        e = d.anchor(15, cell=True)
+        self.assertEqual(e[0].array, d[0].array - 360)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
