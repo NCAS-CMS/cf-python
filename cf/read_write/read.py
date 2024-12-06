@@ -661,7 +661,7 @@ class read(cfdm.read):
                     ftype = "UM"
                 else:
                     try:
-                        ftype = cls.file_type(filename)
+                        ftype = cls.file_format(filename)
                     except Exception as error:
                         if not ignore_read_error:
                             raise ValueError(error)
@@ -908,38 +908,39 @@ class read(cfdm.read):
             if umversion is not None:
                 umversion = float(str(umversion).replace(".", "0", 1))
 
-        extra_read_vars = {
-            "fmt": selected_fmt,
-            "ignore_read_error": ignore_read_error,
-        }
+#        extra_read_vars = {
+#            "fmt": selected_fmt,
+#            "ignore_read_error": ignore_read_error,
+#        }
 
         # ----------------------------------------------------------------
         # Still here? Read the file into fields or domains.
         # ----------------------------------------------------------------
-        originally_cdl = ftype == "CDL"
-        if originally_cdl:
-            # Create a temporary netCDF file from input CDL
-            ftype = "netCDF"
-            cdl_filename = filename
-            filename = cls.netcdf.cdl_to_netcdf(filename)
-            extra_read_vars["fmt"] = "NETCDF"
+        #        originally_cdl = ftype == "CDL"
+        # if originally_cdl:
+        #    # Create a temporary netCDF file from input CDL
+        #    ftype = "netCDF"
+        #    cdl_filename = filename
+        #    filename = cls.netcdf.cdl_to_netcdf(filename)
+        #    extra_read_vars["fmt"] = "NETCDF"
+        #
+        #    if not cls.netcdf.is_netcdf_file(filename):
+        #        error_msg = (
+        #            f"Can't determine format of file {filename} generated "
+        #            f"from CDL file {cdl_filename}"
+        #        )
+        #        if ignore_read_error:
+        #            logger.warning(error_msg)  # pragma: no cover
+        #            return FieldList()
+        #        else:
+        #            raise IOError(error_msg)
 
-            if not cls.netcdf.is_netcdf_file(filename):
-                error_msg = (
-                    f"Can't determine format of file {filename} generated "
-                    f"from CDL file {cdl_filename}"
-                )
-                if ignore_read_error:
-                    logger.warning(error_msg)  # pragma: no cover
-                    return FieldList()
-                else:
-                    raise IOError(error_msg)
-
-        if ftype == "netCDF" and extra_read_vars["fmt"] in (
-            None,
-            "NETCDF",
-            "CFA",
-        ):
+        if ftype in ("netCDF", "CDL"): # and extra_read_vars["fmt"] in (
+#            None,
+#            "NETCDF",
+#            "CDL",
+#            "CFA",
+#        ):
             out = super().__new__(
                 cls,
                 filename,
@@ -947,7 +948,7 @@ class read(cfdm.read):
                 extra=extra,
                 verbose=verbose,
                 warnings=warnings,
-                extra_read_vars=extra_read_vars,
+#                extra_read_vars=extra_read_vars,
                 mask=mask,
                 unpack=unpack,
                 warn_valid=warn_valid,
@@ -963,7 +964,7 @@ class read(cfdm.read):
                 squeeze=squeeze,
                 unsqueeze=unsqueeze,
             )
-        elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):
+        elif ftype == "UM": # and extra_read_vars["fmt"] in (None, "UM"):
             if domain:
                 raise ValueError(
                     "Can't set domain=True when reading UM or PP datasets"
@@ -997,7 +998,7 @@ class read(cfdm.read):
         return FieldList(out)
 
     @classmethod
-    def file_type(cls, filename):
+    def file_format(cls, filename):
         """Return the file format.
 
         :Parameters:
@@ -1013,15 +1014,16 @@ class read(cfdm.read):
 
         **Examples**
 
-        >>> file_type(filename)
+        >>> r.file_format(filename)
         'netCDF'
 
         """
         # ----------------------------------------------------------------
         # NetCDF
         # ----------------------------------------------------------------
-        if cls.netcdf.is_netcdf_file(filename):
-            return "netCDF"
+        fmt = cls.netcdf.file_format(filename)
+        if fmt:
+            return fmt
 
         # ----------------------------------------------------------------
         # PP or FF
@@ -1029,11 +1031,11 @@ class read(cfdm.read):
         if cls.um.is_um_file(filename):
             return "UM"
 
-        # ----------------------------------------------------------------
-        # CDL
-        # ----------------------------------------------------------------
-        if cls.netcdf.is_cdl_file(filename):
-            return "CDL"
+#        # ----------------------------------------------------------------
+#        # CDL
+#        # ----------------------------------------------------------------
+#        if cls.netcdf.is_cdl_file(filename):
+#            return "CDL"
 
         # Still here?
         raise IOError(f"Can't determine format of file {filename}")

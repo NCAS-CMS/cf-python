@@ -132,7 +132,9 @@ class File:
             file_type_obj = c.detect_file_type(self.fd)
         except Exception:
             self.close_fd()
-            raise IOError(f"File {self.path} has unsupported format")
+            raise IOError(
+                f"Could not interpret {self.path} as a PP or UM dataset"
+            )
 
         d = c.file_type_obj_to_dict(file_type_obj)
         self.fmt = d["fmt"]
