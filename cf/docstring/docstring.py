@@ -161,7 +161,9 @@ _docstring_substitution_definitions = {
                   mapped to the closest destination point. A
                   destination point can be mapped to multiple source
                   points. Some destination points may not be
-                  mapped. Useful for regridding of categorical data.
+                  mapped. Each regridded value is the sum of its
+                  contributing source elements. Useful for binning or
+                  for categorical data.
 
                 * `None`: This is the default and can only be used
                   when *dst* is a `RegridOperator`.""",

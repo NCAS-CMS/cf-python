@@ -18,7 +18,7 @@ from ..functions import (
     bounds_combination_mode,
     normalize_slice,
 )
-from ..query import Query
+from ..query import Query, wi
 from ..units import Units
 
 logger = logging.getLogger(__name__)
@@ -442,50 +442,41 @@ class FieldDomain:
                     if debug:
                         logger.debug("  1-d CASE 2:")  # pragma: no cover
 
-                    if item.increasing:
-                        anchor0 = value.value[0]
-                        anchor1 = value.value[1]
-                    else:
-                        anchor0 = value.value[1]
-                        anchor1 = value.value[0]
-
-                    a = self.anchor(axis, anchor0, dry_run=True)["roll"]
-                    b = self.flip(axis).anchor(axis, anchor1, dry_run=True)[
-                        "roll"
-                    ]
-
                     size = item.size
-                    if abs(anchor1 - anchor0) >= item.period():
-                        if value.operator == "wo":
-                            set_start_stop = 0
-                        else:
-                            set_start_stop = -a
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    elif a + b == size:
-                        b = self.anchor(axis, anchor1, dry_run=True)["roll"]
-                        if (b == a and value.operator == "wo") or not (
-                            b == a or value.operator == "wo"
-                        ):
-                            set_start_stop = -a
-                        else:
-                            set_start_stop = 0
-
-                        start = set_start_stop
-                        stop = set_start_stop
+                    if item.increasing:
+                        anchor = value.value[0]
                     else:
-                        if value.operator == "wo":
-                            start = b - size
-                            stop = -a + size
-                        else:
-                            start = -a
-                            stop = b - size
+                        anchor = value.value[1]
 
-                    if start == stop == 0:
-                        raise ValueError(
-                            f"No indices found from: {identity}={value!r}"
-                        )
+                    item = item.persist()
+                    parameters = {}
+                    item = item.anchor(anchor, parameters=parameters)
+                    n = np.roll(np.arange(size), parameters["shift"], 0)
+                    if value.operator == "wi":
+                        n = n[item == value]
+                        if not n.size:
+                            raise ValueError(
+                                f"No indices found from: {identity}={value!r}"
+                            )
+
+                        start = n[0]
+                        stop = n[-1] + 1
+                    else:
+                        # "wo" operator
+                        n = n[item == wi(*value.value)]
+                        if n.size == size:
+                            raise ValueError(
+                                f"No indices found from: {identity}={value!r}"
+                            )
+
+                        if n.size:
+                            start = n[-1] + 1
+                            stop = start - n.size
+                        else:
+                            start = size - parameters["shift"]
+                            stop = start + size
+                            if stop > size:
+                                stop -= size
 
                     index = slice(start, stop, 1)
 
@@ -1289,77 +1280,34 @@ class FieldDomain:
                 self, "anchor", kwargs
             )  # pragma: no cover
 
-        da_key, axis = self.domain_axis(axis, item=True)
+        axis = self.domain_axis(axis, key=True)
 
         if dry_run:
             f = self
         else:
             f = _inplace_enabled_define_and_cleanup(self)
 
-        dim = f.dimension_coordinate(filter_by_axis=(da_key,), default=None)
+        dim = f.dimension_coordinate(filter_by_axis=(axis,), default=None)
         if dim is None:
             raise ValueError(
                 "Can't shift non-cyclic "
-                f"{f.constructs.domain_axis_identity(da_key)!r} axis"
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
-        period = dim.period()
-        if period is None:
-            raise ValueError(f"Cyclic {dim.identity()!r} axis has no period")
-
-        value = f._Data.asdata(value)
-        if not value.Units:
-            value = value.override_units(dim.Units)
-        elif not value.Units.equivalent(dim.Units):
-            raise ValueError(
-                f"Anchor value has incompatible units: {value.Units!r}"
-            )
-
-        axis_size = axis.get_size()
-
-        if axis_size <= 1:
-            # Don't need to roll a size one axis
-            if dry_run:
-                return {"axis": da_key, "roll": 0, "nperiod": 0}
-
-            return f
-
-        c = dim.get_data(_fill_value=False)
-
-        if dim.increasing:
-            # Adjust value so it's in the range [c[0], c[0]+period)
-            n = ((c[0] - value) / period).ceil()
-            value1 = value + n * period
-
-            shift = axis_size - np.argmax((c - value1 >= 0).array)
-            if not dry_run:
-                f.roll(da_key, shift, inplace=True)
-
-            # Re-get dim
-            dim = f.dimension_coordinate(filter_by_axis=(da_key,))
-            # TODO CHECK n for dry run or not
-            n = ((value - dim.data[0]) / period).ceil()
-        else:
-            # Adjust value so it's in the range (c[0]-period, c[0]]
-            n = ((c[0] - value) / period).floor()
-            value1 = value + n * period
-
-            shift = axis_size - np.argmax((value1 - c >= 0).array)
-
-            if not dry_run:
-                f.roll(da_key, shift, inplace=True)
-
-            # Re-get dim
-            dim = f.dimension_coordinate(filter_by_axis=(da_key,))
-            # TODO CHECK n for dry run or not
-            n = ((value - dim.data[0]) / period).floor()
+        parameters = {"axis": axis}
+        dim = dim.anchor(value, parameters=parameters)
 
         if dry_run:
-            return {"axis": da_key, "roll": shift, "nperiod": n * period}
+            return parameters
 
-        if n:
+        f.roll(axis, parameters["shift"], inplace=True)
+
+        if parameters["nperiod"]:
+            # Get the rolled dimension coordinate and adjust the
+            # values by the non-zero integer multiple of 'period'
+            dim = f.dimension_coordinate(filter_by_axis=(axis,))
             with bounds_combination_mode("OR"):
-                dim += n * period
+                dim += parameters["nperiod"]
 
         return f
 

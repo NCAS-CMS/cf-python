@@ -1,8 +1,11 @@
 version NEXTVERSION
 -------------------
 
-**2024-??-??**
+**2024-12-??**
 
+* Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
+  sampling geometry source grids
+  (https://github.com/NCAS-CMS/cf-python/issues/832)
 * New method: `cf.Field.filled`
   (https://github.com/NCAS-CMS/cf-python/issues/811)
 * New method: `cf.Field.is_discrete_axis`
@@ -20,6 +23,8 @@ version NEXTVERSION
 * New class `cf.NetCDF4Array`
 * New class `cf.CFAH5netcdfArray`
 * New class `cf.CFANetCDF4Array`
+* Replace core `dask` functionality with that imported from `cfdm`.
+  https://github.com/NCAS-CMS/cf-python/pull/836)
 * Fix bug that sometimes puts an incorrect ``radian-1`` or
   ``radian-2`` in the returned units of the differential operator
   methods and functions
@@ -33,12 +38,14 @@ version NEXTVERSION
 * Fix bug where `cf.normalize_slice` doesn't correctly
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
+* Fix bug where `cf.Field.subspace` doesn't always correctly handle
+  global or near-global cyclic subspaces
+  (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
 * Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
 * Changed dependency: ``cfunits>=3.3.7``
-
 
 ----
 
