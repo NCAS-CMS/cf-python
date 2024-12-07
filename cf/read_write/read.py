@@ -601,6 +601,23 @@ class read(cfdm.read):
 
         aggregate_options["copy"] = False
 
+        # ------------------------------------------------------------
+        # Parse the 'fmt' keyword parameter
+        # ------------------------------------------------------------
+        if fmt:
+            if isinstance(fmt, str):
+                fmt = (fmt,)
+
+                fmt = set(fmt)
+        else:
+            fmt = set(("netCDF", "CDL", "UM"))
+
+        # ------------------------------------------------------------
+        # Parse the 'um' keyword parameter
+        # ------------------------------------------------------------
+        if not um:
+            um = {}
+
         # Count the number of fields (in all files) and the number of
         # files
         field_counter = -1
@@ -646,49 +663,97 @@ class read(cfdm.read):
 
                 files2 = files3
 
+            # How each file was read, as netCDF, or UM, etc.
+            ftypes = set()
+
             for filename in files2:
                 if info:
                     logger.info(f"File: {filename}")  # pragma: no cover
 
-                # --------------------------------------------------------
+                # ----------------------------------------------------
                 # Read the file
-                # --------------------------------------------------------
-                ftypes = [None]
-                file_contents = cls._read_a_file(
-                    filename,
-                    ftypes=ftypes,
-                    external=external,
-                    ignore_read_error=ignore_read_error,
-                    verbose=verbose,
-                    warnings=warnings,
-                    aggregate=aggregate,
-                    aggregate_options=aggregate_options,
-                    fmt=fmt,
-                    um=um,
-                    extra=extra,
-                    height_at_top_of_model=height_at_top_of_model,
-                    dask_chunks=dask_chunks,
-                    store_hdf5_chunks=store_hdf5_chunks,
-                    mask=mask,
-                    unpack=unpack,
-                    warn_valid=warn_valid,
-                    select=select,
-                    domain=domain,
-                    cfa=cfa,
-                    cfa_write=cfa_write,
-                    to_memory=to_memory,
-                    netcdf_backend=netcdf_backend,
-                    storage_options=storage_options,
-                    cache=cache,
-                    squeeze=squeeze,
-                    unsqueeze=unsqueeze,
-                )
+                # ----------------------------------------------------
+                fmts = fmt.copy()
+                file_format_errors = []
+
+                if fmts.intersection(("netCDF", "CDL")):
+                    try:
+                        file_contents = super().__new__(
+                            cls,
+                            filename,
+                            external=external,
+                            extra=extra,
+                            verbose=verbose,
+                            warnings=warnings,
+                            mask=mask,
+                            unpack=unpack,
+                            warn_valid=warn_valid,
+                            domain=domain,
+                            storage_options=storage_options,
+                            netcdf_backend=netcdf_backend,
+                            dask_chunks=dask_chunks,
+                            store_hdf5_chunks=store_hdf5_chunks,
+                            cache=cache,
+                            cfa=cfa,
+                            cfa_write=cfa_write,
+                            to_memory=to_memory,
+                            squeeze=squeeze,
+                            unsqueeze=unsqueeze,
+                            fmt=fmt,
+                            ignore_unknown_format=ignore_read_error,
+                        )
+                    except UnknownFileFormatError as error:
+                        fmts.difference_update(("netCDF", "CDL"))
+                        file_format_errors.append(error)
+                    else:
+                        file_format_errors = ()
+                        if file_contents or not ignore_read_error:
+                            # Zero or more fields/domains were
+                            # successfully read
+                            fmts = set()
+                            ftype = "netCDF"
+
+                if fmts.intersection(("UM",)):
+                    try:
+                        file_contents = cls.um.read(
+                            filename,
+                            um_version=um.get("version"),
+                            verbose=verbose,
+                            set_standard_name=False,
+                            height_at_top_of_model=height_at_top_of_model,
+                            fmt=um.get("fmt"),
+                            word_size=um.get("word_size"),
+                            endian=um.get("endian"),
+                            select=select,
+                            squeeze=squeeze,
+                            unsqueeze=unsqueeze,
+                            domain=domain,
+                        )
+                    except UnknownFileFormatError as error:
+                        fmts.difference_update(("UM",))
+                        file_format_errors.append(error)
+                    else:
+                        file_format_errors = ()
+                        if file_contents or not ignore_read_error:
+                            fmts = set()
+                            ftype = "UM"
+
+                if file_format_errors:
+                    error = "\n".join(map(str, file_format_errors))
+                    raise UnknownFileFormatError(f"\n{error}")
+
+                if domain:
+                    file_contents = DomainList(file_contents)
+
+                file_contents = FieldList(file_contents)
+
+                ftypes.add(ftype)
 
                 # --------------------------------------------------------
                 # Select matching fields (only from netCDF files at
                 # this stage - we'll do UM fields later)
                 # --------------------------------------------------------
-                if select and ftypes[-1] == "netCDF":
+                if select and ftype == "netCDF":
                     file_contents = file_contents.select_by_identity(*select)
 
                 # --------------------------------------------------------
@@ -711,6 +776,11 @@ class read(cfdm.read):
         # ----------------------------------------------------------------
         if aggregate and len(out) > 1:
             org_len = len(out)  # pragma: no cover
+
+            if "UM" in ftypes:
+                # Set defaults specific to UM fields
+                if "strict_units" not in aggregate_options:
+                    aggregate_options["relaxed_units"] = True
 
             out = cf_aggregate(out, **aggregate_options)
 
@@ -756,200 +826,3 @@ class read(cfdm.read):
     def _plural(n):  # pragma: no cover
         """Return a suffix which reflects a word's plural."""
         return "s" if n != 1 else ""  # pragma: no cover
-
-    @classmethod
-    @_manage_log_level_via_verbosity
-    def _read_a_file(
-        cls,
-        filename,
-        ftypes=None,
-        aggregate=True,
-        aggregate_options=None,
-        ignore_read_error=False,
-        verbose=None,
-        warnings=False,
-        external=None,
-        fmt=None,
-        um=None,
-        extra=None,
-        height_at_top_of_model=None,
-        mask=True,
-        unpack=True,
-        warn_valid=False,
-        dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
-        select=None,
-        domain=False,
-        cfa=None,
-        cfa_write=None,
-        to_memory=None,
-        netcdf_backend=None,
-        storage_options=None,
-        cache=True,
-        squeeze=False,
-        unsqueeze=False,
-    ):
-        """Read the contents of a single file into a field list.
-
-        :Parameters:
-
-            filename: `str`
-                See `cf.read` for details.
-
-            ftypes: `str` TODOCFA
-                The file format to interpret the file. Recognised formats are
-                ``'netCDF'``, ``'CDL'``, ``'UM'`` and ``'PP'``.
-
-            aggregate_options: `dict`, optional
-                See `cf.read` for details.
-
-            ignore_read_error: `bool`, optional
-                See `cf.read` for details.
-
-            mask: `bool`, optional
-                See `cf.read` for details.
-
-            unpack: `bool`, optional
-                See `cf.read` for details.
-
-            verbose: `int` or `str` or `None`, optional
-                See `cf.read` for details.
-
-            select: optional
-                For `read. Ignored for a netCDF file.
-
-            domain: `bool`, optional
-                See `cf.read` for details.
-
-            cfa: `dict`, optional
-                See `cf.read` for details.
-
-                .. versionadded:: 3.15.0
-
-            storage_options: `dict` or `None`, optional
-                See `cf.read` for details.
-
-                .. versionadded:: NEXTVERSION
-
-            netcdf_backend: `str` or `None`, optional
-                See `cf.read` for details.
-
-                .. versionadded:: NEXTVERSION
-
-            cache: `bool`, optional
-                See `cf.read` for details.
-
-                .. versionadded:: NEXTVERSION
-
-            squeeze: `bool`, optional
-                Whether or not to remove all size 1 axes from field
-                construct data arrays. See `cf.read` for details.
-
-                .. versionadded:: NEXTVERSION
-
-            unsqueeze: `bool`, optional
-                Whether or not to ensure that all size 1 axes are
-                spanned by field construct data arrays. See
-                `cf.read` for details.
-
-                .. versionadded:: NEXTVERSION
-
-        :Returns:
-
-            `FieldList` or `DomainList`
-                The field or domain constructs in the dataset.
-
-        """
-        if fmt:
-            if isinstance(fmt, str):
-                fmt = (fmt,)
-
-            fmt = set(fmt)
-        else:
-            fmt = set(("netCDF", "CDL", "UM"))
-
-        file_format_errors = []
-
-        out = None
-        if fmt.intersection(("netCDF", "CDL")):
-            try:
-                out = super().__new__(
-                    cls,
-                    filename,
-                    external=external,
-                    extra=extra,
-                    verbose=verbose,
-                    warnings=warnings,
-                    mask=mask,
-                    unpack=unpack,
-                    warn_valid=warn_valid,
-                    domain=domain,
-                    storage_options=storage_options,
-                    netcdf_backend=netcdf_backend,
-                    dask_chunks=dask_chunks,
-                    store_hdf5_chunks=store_hdf5_chunks,
-                    cache=cache,
-                    cfa=cfa,
-                    cfa_write=cfa_write,
-                    to_memory=to_memory,
-                    squeeze=squeeze,
-                    unsqueeze=unsqueeze,
-                    fmt=fmt,
-                    ignore_unknown_format=ignore_read_error,
-                )
-            except UnknownFileFormatError as error:
-                fmt.difference_update(("netCDF", "CDL"))
-                if fmt:
-                    file_format_errors.append(error)
-                else:
-                    raise
-            else:
-                if out or not ignore_read_error:
-                    # Zero or more fields/domains were successfully read
-                    fmt = set()
-                    file_format_errors = ()
-                    ftypes.append("netCDF")
-
-        if fmt.intersection(("UM",)):
-            if not um:
-                um = {}
-
-            try:
-                out = cls.um.read(
-                    filename,
-                    um_version=um.get("version"),
-                    verbose=verbose,
-                    set_standard_name=False,
-                    height_at_top_of_model=height_at_top_of_model,
-                    fmt=um.get("fmt"),
-                    word_size=um.get("word_size"),
-                    endian=um.get("endian"),
-                    select=select,
-                    squeeze=squeeze,
-                    unsqueeze=unsqueeze,
-                    domain=domain,
-                )
-            except UnknownFileFormatError as error:
-                fmt.difference_update(("UM",))
-                file_format_errors.append(error)
-            else:
-                if out or not ignore_read_error:
-                    file_format_errors = ()
-                    ftypes.append("UM")
-
-                    # UM fields are aggregated intrafile prior to
-                    # interfile aggregation
-                    if aggregate:
-                        # Set defaults specific to UM fields
-                        if "strict_units" not in aggregate_options:
-                            aggregate_options["relaxed_units"] = True
-
-        if file_format_errors:
-            file_format_errors = "\n".join(map(str, file_format_errors))
-            raise UnknownFileFormatError(f"\n{file_format_errors}")
-
-        # Return the fields/domains
-        if domain:
-            return DomainList(out)
-
-        return FieldList(out)
