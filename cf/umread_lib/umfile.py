@@ -133,7 +133,7 @@ class File:
         except Exception:
             self.close_fd()
             raise IOError(
-                f"Could not interpret {self.path} as a PP or UM dataset"
+                f"Can't open file {self.path} as a PP or UM dataset"
             )
 
         d = c.file_type_obj_to_dict(file_type_obj)

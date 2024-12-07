@@ -3379,7 +3379,7 @@ class UMRead(cfdm.read_write.IORead):
     def read(
         self,
         filename,
-        um_version=405,
+        um_version=None,
         aggregate=True,
         endian=None,
         word_size=None,
@@ -3391,6 +3391,7 @@ class UMRead(cfdm.read_write.IORead):
         select=None,
         squeeze=False,
         unsqueeze=False,
+        domain=False,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3484,6 +3485,12 @@ class UMRead(cfdm.read_write.IORead):
         >>> f = read('*/file[0-9].pp', um_version=708)
 
         """
+        if domain:
+            raise ValueError(
+                "Can't read Domain constructs from UM or PP datasets "
+                "(only Field constructs)"
+            )
+
         if not _stash2standard_name:
             # --------------------------------------------------------
             # Create the STASH code to standard_name conversion
@@ -3495,6 +3502,14 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering = endian + "_endian"
         else:
             byte_ordering = None
+
+        if fmt is not None:
+            fmt = fmt.upper()
+
+        if um_version is None:
+            um_version = 405
+        else:
+            um_version = float(str(um_version).replace(".", "0", 1))
 
         self.read_vars = {
             "filename": filename,

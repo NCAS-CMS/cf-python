@@ -600,14 +600,6 @@ class read(cfdm.read):
 
         aggregate_options["copy"] = False
 
-        # Parse the extra parameter
-        if extra is None:
-            extra = ()
-        elif isinstance(extra, str):
-            extra = (extra,)
-
-        ftypes = set()
-
         # Count the number of fields (in all files) and the number of
         # files
         field_counter = -1
@@ -657,39 +649,20 @@ class read(cfdm.read):
                 if info:
                     logger.info(f"File: {filename}")  # pragma: no cover
 
-                if um:
-                    ftype = "UM"
-                else:
-                    try:
-                        ftype = cls.file_format(filename)
-                    except Exception as error:
-                        if not ignore_read_error:
-                            raise ValueError(error)
-
-                        logger.warning(f"WARNING: {error}")  # pragma: no cover
-                        continue
-
-                if domain and ftype == "UM":
-                    raise ValueError(
-                        f"Can't read PP/UM file {filename} into domain "
-                        "constructs"
-                    )
-
-                ftypes.add(ftype)
-
                 # --------------------------------------------------------
                 # Read the file
                 # --------------------------------------------------------
+                ftypes = [None]
                 file_contents = cls._read_a_file(
                     filename,
-                    ftype=ftype,
+                    ftypes=ftypes,
                     external=external,
                     ignore_read_error=ignore_read_error,
                     verbose=verbose,
                     warnings=warnings,
                     aggregate=aggregate,
                     aggregate_options=aggregate_options,
-                    selected_fmt=fmt,
+                    fmt=fmt,
                     um=um,
                     extra=extra,
                     height_at_top_of_model=height_at_top_of_model,
@@ -711,9 +684,10 @@ class read(cfdm.read):
                 )
 
                 # --------------------------------------------------------
-                # Select matching fields (not from UM files, yet)
+                # Select matching fields (only from netCDF files at
+                # this stage - we'll do UM fields later)
                 # --------------------------------------------------------
-                if select and ftype != "UM":
+                if select and ftypes[-1] == "netCDF":
                     file_contents = file_contents.select_by_identity(*select)
 
                 # --------------------------------------------------------
@@ -787,14 +761,14 @@ class read(cfdm.read):
     def _read_a_file(
         cls,
         filename,
-        ftype=None,
+        ftypes=None,
         aggregate=True,
         aggregate_options=None,
         ignore_read_error=False,
         verbose=None,
         warnings=False,
         external=None,
-        selected_fmt=None,
+        fmt=None,
         um=None,
         extra=None,
         height_at_top_of_model=None,
@@ -821,7 +795,7 @@ class read(cfdm.read):
             filename: `str`
                 See `cf.read` for details.
 
-            ftype: `str`
+            ftypes: `str` TODOCFA
                 The file format to interpret the file. Recognised formats are
                 ``'netCDF'``, ``'CDL'``, ``'UM'`` and ``'PP'``.
 
@@ -885,62 +859,15 @@ class read(cfdm.read):
                 The field or domain constructs in the dataset.
 
         """
-        if aggregate_options is None:
-            aggregate_options = {}
+        if fmt:
+            if isinstance(fmt, str):
+                fmt = (fmt,)
 
-        # Find this file's type
-        fmt = None
-        word_size = None
-        endian = None
-        height_at_top_of_model = None
-        umversion = 405
+            fmt = set(fmt)
 
-        if um:
-            fmt = um.get("fmt")
-            word_size = um.get("word_size")
-            endian = um.get("endian")
-            umversion = um.get("version", umversion)
-            height_at_top_of_model = um.get("height_at_top_of_model")
-
-            if fmt is not None:
-                fmt = fmt.upper()
-
-            if umversion is not None:
-                umversion = float(str(umversion).replace(".", "0", 1))
-
-#        extra_read_vars = {
-#            "fmt": selected_fmt,
-#            "ignore_read_error": ignore_read_error,
-#        }
-
-        # ----------------------------------------------------------------
-        # Still here? Read the file into fields or domains.
-        # ----------------------------------------------------------------
-        #        originally_cdl = ftype == "CDL"
-        # if originally_cdl:
-        #    # Create a temporary netCDF file from input CDL
-        #    ftype = "netCDF"
-        #    cdl_filename = filename
-        #    filename = cls.netcdf.cdl_to_netcdf(filename)
-        #    extra_read_vars["fmt"] = "NETCDF"
-        #
-        #    if not cls.netcdf.is_netcdf_file(filename):
-        #        error_msg = (
-        #            f"Can't determine format of file {filename} generated "
-        #            f"from CDL file {cdl_filename}"
-        #        )
-        #        if ignore_read_error:
-        #            logger.warning(error_msg)  # pragma: no cover
-        #            return FieldList()
-        #        else:
-        #            raise IOError(error_msg)
-
-        if ftype in ("netCDF", "CDL"): # and extra_read_vars["fmt"] in (
-#            None,
-#            "NETCDF",
-#            "CDL",
-#            "CFA",
-#        ):
+        errors = []
+            
+        try:
             out = super().__new__(
                 cls,
                 filename,
@@ -948,7 +875,6 @@ class read(cfdm.read):
                 extra=extra,
                 verbose=verbose,
                 warnings=warnings,
-#                extra_read_vars=extra_read_vars,
                 mask=mask,
                 unpack=unpack,
                 warn_valid=warn_valid,
@@ -963,79 +889,61 @@ class read(cfdm.read):
                 to_memory=to_memory,
                 squeeze=squeeze,
                 unsqueeze=unsqueeze,
-            )
-        elif ftype == "UM": # and extra_read_vars["fmt"] in (None, "UM"):
-            if domain:
-                raise ValueError(
-                    "Can't set domain=True when reading UM or PP datasets"
-                )
-
-            out = cls.um.read(
-                filename,
-                um_version=umversion,
-                verbose=verbose,
-                set_standard_name=False,
-                height_at_top_of_model=height_at_top_of_model,
                 fmt=fmt,
-                word_size=word_size,
-                endian=endian,
-                select=select,
-                squeeze=squeeze,
-                unsqueeze=unsqueeze,
+                ignore_unknown_format=ignore_read_error,
             )
+        except RuntimeError as error:
+            if fmt is None or fmt.intersection(("UM",)):
+                # Set to None to indicate that we should try other
+                # file formats
+                errors.append(error)
+                out = None
+            else:
+                raise
+        else:
+            if out or not ignore_read_error:
+                ftypes.append("netCDF")
+            else:
+                # Set to None to indicate that we should try other
+                # file formats
+                out = None
 
-            # PP fields are aggregated intrafile prior to interfile
-            # aggregation
-            if aggregate:
-                # For PP fields, the default is strict_units=False
-                if "strict_units" not in aggregate_options:
-                    aggregate_options["relaxed_units"] = True
+        if out is None:
+            if not um:
+                um = {}
 
+            try:
+                out = cls.um.read(
+                    filename,
+                    um_version=um.get("version"),
+                    verbose=verbose,
+                    set_standard_name=False,
+                    height_at_top_of_model=height_at_top_of_model,
+                    fmt=um.get("fmt"),
+                    word_size=um.get("word_size"),
+                    endian=um.get("endian"),
+                    select=select,
+                    squeeze=squeeze,
+                    unsqueeze=unsqueeze,
+                    domain=domain,
+                )
+            except Exception as error:
+                errors.append(error)
+                errors = '\n'.join(map(str, errors))
+                raise RuntimeError(f"\n{errors}")
+            else:
+                if out or not ignore_read_error:
+                    ftypes.append("UM")
+                    
+                    # UM fields are aggregated intrafile prior to
+                    # interfile aggregation
+                    if aggregate:
+                        # Set defaults specific to UM fields
+                        if "strict_units" not in aggregate_options:
+                            aggregate_options["relaxed_units"] = True
+   
         # Return the fields/domains
         if domain:
             return DomainList(out)
 
         return FieldList(out)
-
-    @classmethod
-    def file_format(cls, filename):
-        """Return the file format.
-
-        :Parameters:
-
-            filename: `str`
-                The file name.
-
-        :Returns:
-
-            `str`
-                The format type of the file. One of ``'netCDF'``, ``'UM'``
-                or ``'CDL'``.
-
-        **Examples**
-
-        >>> r.file_format(filename)
-        'netCDF'
-
-        """
-        # ----------------------------------------------------------------
-        # NetCDF
-        # ----------------------------------------------------------------
-        fmt = cls.netcdf.file_format(filename)
-        if fmt:
-            return fmt
-
-        # ----------------------------------------------------------------
-        # PP or FF
-        # ----------------------------------------------------------------
-        if cls.um.is_um_file(filename):
-            return "UM"
-
-#        # ----------------------------------------------------------------
-#        # CDL
-#        # ----------------------------------------------------------------
-#        if cls.netcdf.is_cdl_file(filename):
-#            return "CDL"
-
-        # Still here?
-        raise IOError(f"Can't determine format of file {filename}")

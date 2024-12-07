@@ -10,6 +10,7 @@ fill plot underneath the vectors themselves in the form of a vector plot.
 # %%
 # 1. Import cf-python and cf-plot:
 import cfplot as cfp
+
 import cf
 
 # %%
@@ -81,7 +82,8 @@ div = cf.div_xy(u_2, v_2, radius="earth")
 cfp.mapset(resolution="10m")
 cfp.cscale("ncl_default")
 cfp.gopen(
-    file=f"irish-sea-currents-divergence-{chosen_time.replace(' ', '-')}.png")
+    file=f"irish-sea-currents-divergence-{chosen_time.replace(' ', '-')}.png"
+)
 cfp.vect(u=u_2, v=v_2, stride=6, scale=3, key_length=1)
 cfp.con(
     div,
@@ -89,6 +91,6 @@ cfp.con(
     title=(
         f"Depth-averaged Irish Sea currents at {chosen_time} with "
         "their divergence"
-    )
+    ),
 )
 cfp.gclose()
