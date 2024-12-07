@@ -9,6 +9,7 @@ import cftime
 import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
+from cfdm.read_write.exceptions import UnknownFileFormatError
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -3590,13 +3591,15 @@ class UMRead(cfdm.read_write.IORead):
                 fmt=fmt,
                 parse=parse,
             )
-        except Exception as error:
+        except Exception:
             try:
                 f.close_fd()
             except Exception:
                 pass
 
-            raise Exception(error)
+            raise UnknownFileFormatError(
+                f"Can't open {filename} as a PP or UM dataset"
+            )
 
         self._um_file = f
         return f

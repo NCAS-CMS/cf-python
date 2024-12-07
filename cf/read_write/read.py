@@ -6,6 +6,7 @@ from re import Pattern
 from urllib.parse import urlparse
 
 import cfdm
+from cfdm.read_write.exceptions import UnknownFileFormatError
 from cfdm.read_write.netcdf import NetCDFRead
 
 from ..aggregate import aggregate as cf_aggregate
@@ -864,51 +865,52 @@ class read(cfdm.read):
                 fmt = (fmt,)
 
             fmt = set(fmt)
-
-        errors = []
-            
-        try:
-            out = super().__new__(
-                cls,
-                filename,
-                external=external,
-                extra=extra,
-                verbose=verbose,
-                warnings=warnings,
-                mask=mask,
-                unpack=unpack,
-                warn_valid=warn_valid,
-                domain=domain,
-                storage_options=storage_options,
-                netcdf_backend=netcdf_backend,
-                dask_chunks=dask_chunks,
-                store_hdf5_chunks=store_hdf5_chunks,
-                cache=cache,
-                cfa=cfa,
-                cfa_write=cfa_write,
-                to_memory=to_memory,
-                squeeze=squeeze,
-                unsqueeze=unsqueeze,
-                fmt=fmt,
-                ignore_unknown_format=ignore_read_error,
-            )
-        except RuntimeError as error:
-            if fmt is None or fmt.intersection(("UM",)):
-                # Set to None to indicate that we should try other
-                # file formats
-                errors.append(error)
-                out = None
-            else:
-                raise
         else:
-            if out or not ignore_read_error:
-                ftypes.append("netCDF")
-            else:
-                # Set to None to indicate that we should try other
-                # file formats
-                out = None
+            fmt = set(("netCDF", "CDL", "UM"))
 
-        if out is None:
+        file_format_errors = []
+
+        out = None
+        if fmt.intersection(("netCDF", "CDL")):
+            try:
+                out = super().__new__(
+                    cls,
+                    filename,
+                    external=external,
+                    extra=extra,
+                    verbose=verbose,
+                    warnings=warnings,
+                    mask=mask,
+                    unpack=unpack,
+                    warn_valid=warn_valid,
+                    domain=domain,
+                    storage_options=storage_options,
+                    netcdf_backend=netcdf_backend,
+                    dask_chunks=dask_chunks,
+                    store_hdf5_chunks=store_hdf5_chunks,
+                    cache=cache,
+                    cfa=cfa,
+                    cfa_write=cfa_write,
+                    to_memory=to_memory,
+                    squeeze=squeeze,
+                    unsqueeze=unsqueeze,
+                    fmt=fmt,
+                    ignore_unknown_format=ignore_read_error,
+                )
+            except UnknownFileFormatError as error:
+                fmt.difference_update(("netCDF", "CDL"))
+                if fmt:
+                    file_format_errors.append(error)
+                else:
+                    raise
+            else:
+                if out or not ignore_read_error:
+                    # Zero or more fields/domains were successfully read
+                    fmt = set()
+                    file_format_errors = ()
+                    ftypes.append("netCDF")
+
+        if fmt.intersection(("UM",)):
             if not um:
                 um = {}
 
@@ -927,21 +929,25 @@ class read(cfdm.read):
                     unsqueeze=unsqueeze,
                     domain=domain,
                 )
-            except Exception as error:
-                errors.append(error)
-                errors = '\n'.join(map(str, errors))
-                raise RuntimeError(f"\n{errors}")
+            except UnknownFileFormatError as error:
+                fmt.difference_update(("UM",))
+                file_format_errors.append(error)
             else:
                 if out or not ignore_read_error:
+                    file_format_errors = ()
                     ftypes.append("UM")
-                    
+
                     # UM fields are aggregated intrafile prior to
                     # interfile aggregation
                     if aggregate:
                         # Set defaults specific to UM fields
                         if "strict_units" not in aggregate_options:
                             aggregate_options["relaxed_units"] = True
-   
+
+        if file_format_errors:
+            file_format_errors = "\n".join(map(str, file_format_errors))
+            raise UnknownFileFormatError(f"\n{file_format_errors}")
+
         # Return the fields/domains
         if domain:
             return DomainList(out)
