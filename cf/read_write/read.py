@@ -674,13 +674,15 @@ class read(cfdm.read):
                 # Read the file
                 # ----------------------------------------------------
                 fmts = fmt.copy()
+
+                # Record unknown file format errors
                 file_format_errors = []
 
                 if fmts.intersection(("netCDF", "CDL")):
                     try:
                         file_contents = super().__new__(
                             cls,
-                            filename,
+                            filename=filename,
                             external=external,
                             extra=extra,
                             verbose=verbose,
@@ -709,7 +711,9 @@ class read(cfdm.read):
                         file_format_errors = ()
                         if file_contents or not ignore_read_error:
                             # Zero or more fields/domains were
-                            # successfully read
+                            # successfully read. Set 'fmts' to an
+                            # empty set so that no other file formats
+                            # are attempted.
                             fmts = set()
                             ftype = "netCDF"
 
@@ -735,6 +739,10 @@ class read(cfdm.read):
                     else:
                         file_format_errors = ()
                         if file_contents or not ignore_read_error:
+                            # Zero or more fields/domains were
+                            # successfully read. Set 'fmts' to an
+                            # empty set so that no other file formats
+                            # are attempted.
                             fmts = set()
                             ftype = "UM"
 
