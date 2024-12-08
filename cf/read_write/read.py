@@ -701,7 +701,7 @@ class read(cfdm.read):
                             to_memory=to_memory,
                             squeeze=squeeze,
                             unsqueeze=unsqueeze,
-                            fmt=fmt,
+                            file_type=fmt,
                             ignore_unknown_format=ignore_read_error,
                         )
                     except UnknownFileFormatError as error:
