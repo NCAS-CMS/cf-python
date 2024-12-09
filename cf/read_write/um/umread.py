@@ -29,9 +29,6 @@ from ...functions import rtol as cf_rtol
 from ...umread_lib.umfile import File
 from ...units import Units
 
-# import numpy as np
-
-
 logger = logging.getLogger(__name__)
 
 _cached_runid = {}
@@ -3393,6 +3390,7 @@ class UMRead(cfdm.read_write.IORead):
         squeeze=False,
         unsqueeze=False,
         domain=False,
+        ignore_unknown_type=False,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3526,7 +3524,13 @@ class UMRead(cfdm.read_write.IORead):
         else:
             byte_ordering = None
 
+#        try:
         f = self.file_open(filename, parse=True)
+#        except UnknownFileFormatError:
+#            if not ignore_unknown_type:
+ #               raise
+#
+#            return []
 
         info = is_log_level_info(logger)
 
@@ -3598,7 +3602,7 @@ class UMRead(cfdm.read_write.IORead):
                 pass
 
             raise UnknownFileFormatError(
-                f"Can't open {filename} as a PP or UM dataset"
+                f"Can't interpret {filename} as a PP or UM dataset"
             )
 
         self._um_file = f

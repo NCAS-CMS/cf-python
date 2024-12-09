@@ -9,6 +9,7 @@ import tempfile
 import unittest
 
 import numpy as np
+from cfdm.read_write.exceptions import UnknownFileFormatError
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -725,7 +726,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(f_from_str[1], f_from_file[0])
 
             # Check compatibility with the `fmt` kwarg.
-            f0 = cf.read(cdl_string_1, cdl_string=True, fmt="CDL")  # fine
+            f0 = cf.read(cdl_string_1, cdl_string=True, file_type="CDL")
             self.assertEqual(len(f0), len(f_from_file))
             self.assertEqual(f0[0], f_from_file[0])
             # If the 'fmt' and 'cdl_string' values contradict each other,
@@ -733,7 +734,7 @@ class read_writeTest(unittest.TestCase):
             # it then gets interpreted as NETCDF, so default fmt is fine and
             # it is tested in f_from_str above where fmt is not set.
             with self.assertRaises(ValueError):
-                f0 = cf.read(cdl_string_1, cdl_string=True, fmt="NETCDF")
+                f0 = cf.read(cdl_string_1, cdl_string=True, file_type="netCDF")
 
         # If the user forgets the cdl_string=True argument they will
         # accidentally attempt to create a file with a very long name
@@ -873,6 +874,73 @@ class read_writeTest(unittest.TestCase):
             # Check that cf can access it
             f = cf.read(remote)
             self.assertEqual(len(f), 1)
+
+    def test_read_file_type(self):
+        """Test the cf.read 'file_type' keyword."""
+        # netCDF file
+        for file_type in (
+            None,
+            "netCDF",
+            ("netCDF",),
+            ("netCDF", "CDL"),
+            ("netCDF", "CDL", "bad value"),
+        ):
+            f = cf.read(self.filename, file_type=file_type)
+            self.assertEqual(len(f), 1)
+
+        for file_type in ("CDL", "bad value"):
+            f = cf.read(self.filename, file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+        # CDL file
+        subprocess.run(
+            " ".join(["ncdump", self.filename, ">", tmpfile]),
+            shell=True,
+            check=True,
+        )
+        for file_type in (
+            None,
+            "CDL",
+            ("netCDF", "CDL"),
+            ("netCDF", "CDL", "bad value"),
+        ):
+            f = cf.read(tmpfile, file_type=file_type)
+            self.assertEqual(len(f), 1)
+
+        for file_type in ("netCDF", "bad value"):
+            f = cf.read(tmpfile, file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+        # UM file
+        for file_type in (None, "UM"):
+            print ('file_type=', file_type)
+            f = cf.read("umfile.pp", file_type=file_type)
+            self.assertEqual(len(f), 1)
+
+        for file_type in ("netCDF", "bad value"):
+            print ('NNNNNNNNNNNNNNNNNN', file_type)
+            f = cf.read("umfile.pp", file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+        # Not a netCDF, CDL, or UM file
+        with self.assertRaises(UnknownFileFormatError):
+            f = cfdm.read("test_read_write.py")
+
+        for file_type in ("netCDF", "CDL", "bad value"):
+            f = cfdm.read("test_read_write.py", file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+#   def test_read_ignore_unknown_type(self):
+#       """Test the cf.read 'ignore_unknown_type' keyword."""
+#       # netCDF file
+#       f = cf.read(self.filename)
+#
+#       # Unresocgnised type
+#       f = cf.read("test_read_write.py", ignore_unknown_type=True)
+#       self.assertEqual(len(f), 0)
+#
+#       with self.assertRaises(UnknownFileFormatError):
+#           cf.read("test_read_write.py")
 
 
 if __name__ == "__main__":
