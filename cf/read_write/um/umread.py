@@ -9,7 +9,7 @@ import cftime
 import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
-from cfdm.read_write.exceptions import UnknownFileFormatError
+from cfdm.read_write.exceptions import FileTypeError
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -3390,6 +3390,7 @@ class UMRead(cfdm.read_write.IORead):
         squeeze=False,
         unsqueeze=False,
         domain=False,
+        file_type=None,
         ignore_unknown_type=False,
     ):
         """Read fields from a PP file or UM fields file.
@@ -3524,13 +3525,19 @@ class UMRead(cfdm.read_write.IORead):
         else:
             byte_ordering = None
 
-#        try:
+        # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        if file_type is not None:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            file_type = set(file_type)
+            if not file_type.intersection(("UM",)):
+                # Return now if there are valid file types
+                return []
+
         f = self.file_open(filename, parse=True)
-#        except UnknownFileFormatError:
-#            if not ignore_unknown_type:
- #               raise
-#
-#            return []
 
         info = is_log_level_info(logger)
 
@@ -3601,7 +3608,7 @@ class UMRead(cfdm.read_write.IORead):
             except Exception:
                 pass
 
-            raise UnknownFileFormatError(
+            raise FileTypeError(
                 f"Can't interpret {filename} as a PP or UM dataset"
             )
 

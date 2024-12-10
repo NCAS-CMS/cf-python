@@ -6,7 +6,7 @@ from re import Pattern
 from urllib.parse import urlparse
 
 import cfdm
-from cfdm.read_write.exceptions import UnknownFileFormatError as FileTypeError
+from cfdm.read_write.exceptions import FileTypeError
 from cfdm.read_write.netcdf import NetCDFRead
 
 from ..aggregate import aggregate as cf_aggregate
@@ -199,20 +199,16 @@ class read(cfdm.read):
 
         {{read warnings: `bool`, optional}}
 
-        {{read ignore_unknown_type: `bool`, optional}}
-
-            .. versionadded:: NEXTVERSION
-
         {{read file_type: (sequence of) `str`, optional}}
 
-            Valid files types are:
+            Valid file types are:
 
             ============  ============================================
-            *file_type*   Description
+            file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
-            ``'CDL'``     Text CDL representation of a netCDF file
-            ``'UM'``      UM fields file or PP file
+            ``'netCDF'``  Binary netCDF-3 or netCDF-4 files
+            ``'CDL'``     Text CDL representations of netCDF files
+            ``'UM'``      UM fields files or PP files
             ============  ============================================
 
             .. versionadded:: NEXTVERSION
@@ -429,7 +425,7 @@ class read(cfdm.read):
             Use the *file_type* parameter instead.
 
         ignore_read_error: deprecated at version NEXTVERSION
-            Use the *ignore_unknown_type* parameter instead.
+            Use the *file_type* parameter instead.
 
     :Returns:
 
@@ -486,7 +482,6 @@ class read(cfdm.read):
         external=None,
         verbose=None,
         warnings=False,
-        ignore_unknown_type=False,
         aggregate=True,
         nfields=None,
         squeeze=False,
@@ -582,36 +577,60 @@ class read(cfdm.read):
             _DEPRECATION_ERROR_FUNCTION_KWARGS(
                 "cf.read",
                 {"ignore_read_error": ignore_read_error},
-                "Use keyword 'ignore_unknown_type' instead.",
+                "Use keyword 'file_type' instead.",
                 version="NEXTVERSION",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
+        info = cfdm.is_log_level_info(logger)
+
         cls.netcdf = NetCDFRead(cls.implementation)
         cls.um = UMRead(cls.implementation)
 
-        # Parse select
+        # ------------------------------------------------------------
+        # Parse the 'select' keyword parameter
+        # ------------------------------------------------------------
         if isinstance(select, (str, Query, Pattern)):
             select = (select,)
 
-        info = cfdm.is_log_level_info(logger)
+        # ------------------------------------------------------------
+        # Parse the 'aggregate' keyword parameter
+        # ------------------------------------------------------------
+        if isinstance(aggregate, dict):
+            aggregate_options = aggregate.copy()
+            aggregate = True
+        else:
+            aggregate_options = {}
 
-        # Manage input parameters where contradictions are possible:
-        if cdl_string and file_type:
-            if file_type == "CDL":
-                if info:
-                    logger.info(
-                        "It is not necessary to set the cf.read fmt as "
-                        "'CDL' when cdl_string is True, since that implies "
-                        "CDL is the format."
-                    )  # pragma: no cover
-            else:
-                raise ValueError(
-                    "cdl_string can only be True when the format is CDL, "
-                    "though fmt is ignored in that case so there is no "
-                    "need to set it."
-                )
+        aggregate_options["copy"] = False
 
+        # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        netCDF_file_types = set(("netCDF", "CDL"))
+        UM_file_types = set(("UM",))
+        if file_type is not None:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            file_type = set(file_type)
+
+        # ------------------------------------------------------------
+        # Parse the 'um' keyword parameter
+        # ------------------------------------------------------------
+        if not um:
+            um = {}
+
+        # ------------------------------------------------------------
+        # Parse the 'cdl_string' keyword parameter
+        # ------------------------------------------------------------
+        if cdl_string and file_type is not None:
+            raise ValueError("Can't set file_type when cdl_string=True")
+
+        # ------------------------------------------------------------
+        # Parse the 'follow_symlinks' and 'recursive' keyword
+        # parameters
+        # ------------------------------------------------------------
         if follow_symlinks and not recursive:
             raise ValueError(
                 f"Can't set follow_symlinks={follow_symlinks!r} "
@@ -623,31 +642,6 @@ class read(cfdm.read):
             out = DomainList()
         else:
             out = FieldList()
-
-        if isinstance(aggregate, dict):
-            aggregate_options = aggregate.copy()
-            aggregate = True
-        else:
-            aggregate_options = {}
-
-        aggregate_options["copy"] = False
-
-        ## ------------------------------------------------------------
-        ## Parse the 'fmt' keyword parameter
-        ## ------------------------------------------------------------
-        #if file_type:
-        #    if isinstance(file_type, str):
-        #        file_type = (file_type,)
-        #
-        #    file_type = set(file_type)
-        #else:
-        #    file_type = set(("netCDF", "CDL", "UM"))
-
-        # ------------------------------------------------------------
-        # Parse the 'um' keyword parameter
-        # ------------------------------------------------------------
-        if not um:
-            um = {}
 
         # Count the number of fields (in all files) and the number of
         # files
@@ -661,6 +655,7 @@ class read(cfdm.read):
             files = [
                 NetCDFRead.string_to_cdl(cdl_string) for cdl_string in files
             ]
+            file_type = set(("CDL",))
 
         for file_glob in flat(files):
             # Expand variables
@@ -674,8 +669,9 @@ class read(cfdm.read):
                 # Glob files on disk
                 files2 = glob(file_glob)
 
-                if not files2 and not ignore_unknown_type:
-                    open(file_glob, "rb")
+                if not files2:
+                    # Trigger a FileNotFoundError error
+                    open(file_glob)
 
                 files3 = []
                 for x in files2:
@@ -694,7 +690,7 @@ class read(cfdm.read):
 
                 files2 = files3
 
-            # How each file was read, as netCDF, or UM, etc.
+            # The types of all of the input files
             ftypes = set()
 
             for filename in files2:
@@ -704,14 +700,19 @@ class read(cfdm.read):
                 # ----------------------------------------------------
                 # Read the file
                 # ----------------------------------------------------
-                file_types = file_type.copy()
-                ftype = None
-                file_contents = None
+                file_contents = []
 
-                # Record unknown file format errors
+                # The type of this file
+                ftype = None
+
+                # Record file type errors
                 file_format_errors = []
-                print ('---------', file_types)
-                if file_types.intersection(("netCDF", "CDL")):
+
+                if ftype is None and (
+                    file_type is None
+                    or file_type.intersection(netCDF_file_types)
+                ):
+                    # Try to read as netCDF
                     try:
                         file_contents = super().__new__(
                             cls,
@@ -735,28 +736,19 @@ class read(cfdm.read):
                             squeeze=squeeze,
                             unsqueeze=unsqueeze,
                             file_type=file_type,
-#                            ignore_unknown_type=ignore_unknown_type,
                         )
                     except FileTypeError as error:
                         if file_type is None:
                             file_format_errors.append(error)
-
-                        file_types.difference_update(("netCDF", "CDL"))
                     else:
                         file_format_errors = []
-#                        if file_contents or not ignore_unknown_type:
-                            # Zero or more fields/domains were
-                            # successfully read. Set 'file_types' to
-                            # an empty set so that no other file
-                            # formats are attempted.
-                        file_types = set()
                         ftype = "netCDF"
-                        
-                print ('here yyy',file_types, file_contents, file_format_errors)
-                if file_types.intersection(("UM",)):
-                    print ('UM', filename)
+
+                if ftype is None and (
+                    file_type is None or file_type.intersection(UM_file_types)
+                ):
+                    # Try to read as UM
                     try:
-                        print ('9999')
                         file_contents = cls.um.read(
                             filename,
                             um_version=um.get("version"),
@@ -770,30 +762,16 @@ class read(cfdm.read):
                             squeeze=squeeze,
                             unsqueeze=unsqueeze,
                             domain=domain,
-#                            ignore_unknown_type=ignore_unknown_type,
+                            file_type=file_type,
                         )
                     except FileTypeError as error:
                         if file_type is None:
                             file_format_errors.append(error)
-
-#                        print (1111111)
-                        file_types.difference_update(("UM",))
-#                        file_format_errors.append(error)
                     else:
-                        print (1111155511, file_contents)
-#                        file_format_errors = []
-#                        if file_contents or not ignore_unknown_type:
-#                            print ('bon')
-                            # Zero or more fields/domains were
-                            # successfully read. Set 'file_types' to
-                            # an empty set so that no other file
-                            # formats are attempted.
                         file_format_errors = []
-                        file_types = set()
                         ftype = "UM"
 
                 if file_format_errors:
-                    print ('rrrr',file_format_errors, file_contents)
                     error = "\n".join(map(str, file_format_errors))
                     raise FileTypeError(f"\n{error}")
 
@@ -805,27 +783,18 @@ class read(cfdm.read):
                 if ftype:
                     ftypes.add(ftype)
 
-                # --------------------------------------------------------
-                # Select matching fields (only from netCDF files at
-                # this stage - we'll do UM fields later)
-                # --------------------------------------------------------
+                # Select matching fields (only for netCDF files at
+                # this stage - we'll other it for other file types
+                # later)
                 if select and ftype == "netCDF":
                     file_contents = file_contents.select_by_identity(*select)
 
-                # --------------------------------------------------------
-                # Add this file's contents to that already read from other
-                # files
-                # --------------------------------------------------------
+                # Add this file's contents to that already read from
+                # other files
                 out.extend(file_contents)
 
                 field_counter = len(out)
                 file_counter += 1
-
-        if info:
-            logger.info(
-                f"Read {field_counter} field{cls._plural(field_counter)} "
-                f"from {file_counter} file{cls._plural(file_counter)}"
-            )  # pragma: no cover
 
         # ----------------------------------------------------------------
         # Aggregate the output fields/domains
@@ -863,11 +832,17 @@ class read(cfdm.read):
                 del f._custom["standard_name"]
 
         # ----------------------------------------------------------------
-        # Select matching fields from UM/PP fields (post setting of
+        # Select matching fields from UM files (post setting of their
         # standard names)
         # ----------------------------------------------------------------
         if select and "UM" in ftypes:
             out = out.select_by_identity(*select)
+
+        if info:
+            logger.info(
+                f"Read {field_counter} field{cls._plural(field_counter)} "
+                f"from {file_counter} file{cls._plural(file_counter)}"
+            )  # pragma: no cover
 
         if nfields is not None and len(out) != nfields:
             raise ValueError(
