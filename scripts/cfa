@@ -21,13 +21,13 @@ if __name__ == "__main__":
 .
 .
 .SH NAME
-cfa \- view or create aggregated CF datasets
+cfa \\- view or create aggregated CF datasets
 .
 .
 .
 .SH SYNOPSIS
 .
-cfa [\-1] [\-D] [\-d dir] [\-e file] [\-f format] [\-h] [\-i] [\-n] [\-o file] [\-s property] [\-u] [\-v mode] [\-x] [OPTIONS] INPUTS
+cfa [\\-1] [\\-D] [\\-d dir] [\\-e file] [\\-f format] [\\-h] [\\-i] [\\-n] [\\-o file] [\\-s property] [\\-u] [\\-v mode] [\\-x] [OPTIONS] INPUTS
 .
 .
 .SH DESCRIPTION
@@ -52,17 +52,17 @@ section).
 
 Sub-directories of given directories will also be read if the
 .ft B
-\-\-recursive
+\\-\\-recursive
 .ft P
 option is set.
 
-Accepts CF\-netCDF and CFA\-netCDF files (or URLs if DAP access is
+Accepts CF\\-netCDF and CFA\\-netCDF files (or URLs if DAP access is
 enabled), Met Office (UK) PP files and Met Office (UK) fields files as
 input. Multiple input files in a mixture of formats may be given and
 normal UNIX file globbing rules apply.
 
 By default the contents of an input file are aggregated
-(i.e. combined) into as few multi\-dimensional CF fields as
+(i.e. combined) into as few multi\\-dimensional CF fields as
 possible. Alternatively all of the input files may be treated
 collectively as a single CF dataset, in this case aggregation is
 attempted within and between the input files (see the
@@ -78,16 +78,16 @@ sections).
 Unaggregatable fields in the input files may be omitted from the
 output (see the
 .ft B
-\-x
+\\-x
 .ft P
 option). Information on which fields are unaggregatable, and why, may
 be displayed (see the
 .ft B
-\-\-info
+\\-\\-info
 .ft P
 option). All aggregation may be turned off with the
 .ft B
-\-n
+\\-n
 .ft P
 option, in which case all input fields are output without
 modification.
@@ -111,19 +111,19 @@ OUTPUT FILES
 .ft P
 section), or the
 .ft B
-\-v
+\\-v
 .ft P
 option is set, then text descriptions of the CF field constructs
 contained in the input files are displayed on standard out. Short,
 medium-length, and complete descriptions are available via the
 .ft B
-\-v
+\\-v
 .ft P
 option.
 
 If the
 .ft B
-\-1
+\\-1
 .ft P
 option is also set then all input files are treated collectively as a
 single CF dataset and aggregation is attempted within and between the
@@ -136,9 +136,9 @@ input files.
 .
 .
 .
-Output files are in CF\-netCDF or CFA\-netCDF format (see the
+Output files are in CF\\-netCDF or CFA\\-netCDF format (see the
 .ft B
-\-f
+\\-f
 .ft P
 option).
 
@@ -154,17 +154,17 @@ file, or 2) all of the input files are be treated collectively as a
 single CF dataset and written to a single output file.
 
 For mode 1) the contents of each file is aggregated independently of
-the others. Output file names are created by removing the suffix \.pp,
-\.nc or \.nca, if there is one, from each input file name and then
-adding a new suffix of \.nc or \.nca for CF\-netCDF and CFA\-netCDF
+the others. Output file names are created by removing the suffix \\.pp,
+\\.nc or \\.nca, if there is one, from each input file name and then
+adding a new suffix of \\.nc or \\.nca for CF\\-netCDF and CFA\\-netCDF
 output formats respectively. If the
 .ft B
-\-d
+\\-d
 .ft P
 option is set then all output files will be written to the specified
 directory. If the
 .ft B
-\-D
+\\-D
 .ft P
 option is set then each output file will be written to
 the same directory as its input file.
@@ -172,7 +172,7 @@ the same directory as its input file.
 For mode 2) aggregation is attempted within and between the input
 files(see the
 .ft B
-\-o
+\\-o
 .ft P
 option).
 
@@ -185,7 +185,7 @@ input files or any other output file..
 .
 .
 .
-Aggregation of input fields into as few multi\-dimensional CF fields
+Aggregation of input fields into as few multi\\-dimensional CF fields
 as possible is carried out according to the aggregation rules
 documented in CF ticket #78 (http://kitt.llnl.gov/trac/ticket/78). For
 each input field, the aggregation process creates a
@@ -223,7 +223,7 @@ Create a new netCDF file containing the aggregatable fields in all of
 the input files:
 
 .RS
-cfa \-o newfile.nc *.nc
+cfa \\-o newfile.nc *.nc
 .RE
 
 Create, in an existing directory and overwriting any existing files,
@@ -231,14 +231,14 @@ new netCDF files containing the aggregatable fields in each input
 file:
 
 .RS
-cfa \-d directory \-\-overwrite *.pp
+cfa \\-d directory \\-\\-overwrite *.pp
 .RE
 
 Create a new netCDF3 classic file containing all fields in all of the
 input files:
 
 .RS
-cfa \-f NETCDF3_CLASSIC \-o newfile.nc *.nc
+cfa \\-f NETCDF3_CLASSIC \\-o newfile.nc *.nc
 .RE
 
 Create a new CFA-netCDF4 file containing all fields in all of the
@@ -246,7 +246,7 @@ input files and allow long names or netCDF variable names to identify
 fields and their components:
 
 .RS
-cfa \-i \-f CFA4 \-o newfile.nc *.nc
+cfa \\-i \\-f CFA4 \\-o newfile.nc *.nc
 .RE
 .
 .
@@ -256,19 +256,19 @@ cfa \-i \-f CFA4 \-o newfile.nc *.nc
 .
 .
 .TP
-.B \-1, \-\-one
+.B \\-1, \\-\\-one
 Treat all input files collectively as a single CF dataset. In this
 case aggregation is attempted within and between the input
 files. Only applies if
 .ft B
-\-v
+\\-v
 .ft P
 is also set.
 .
 .
 .
 .TP
-.B \-\-axis=property
+.B \\-\\-axis=property
 Aggregation configuration: Create a new axis for each input field
 which has given property. If an input field has the property then,
 prior to aggregation, a new axis is created with an auxiliary
@@ -279,46 +279,46 @@ do not have the specified property.
 
 Multiple axes may be created by specifying more than one
 .ft B
-\-\-axis
+\\-\\-axis
 .ft P
 option.
 
 For example, if you wish to aggregate an ensemble of model
 experiments that are distinguished by the source property, you can use
 .ft B
-\-\-axis=source
+\\-\\-axis=source
 .ft P
 to create an ensemble axis which has an auxiliary coordinate variable
 containing the source property values.
 .
 .
 .TP
-.B \-\-cfa_base=[value]
-Deprecated. Use \-\-cfa_paths instead.
+.B \\-\\-cfa_base=[value]
+Deprecated. Use \\-\\-cfa_paths instead.
 .
 .
 .TP
-.B \-\-cfa_paths=value
-For output CFA\-netCDF files only. File names referenced by an output
-CFA\-netCDF file have relative, as opposed to absolute, paths or URL
-bases. This may be useful when relocating a CFA\-netCDF file together
+.B \\-\\-cfa_paths=value
+For output CFA\\-netCDF files only. File names referenced by an output
+CFA\\-netCDF file have relative, as opposed to absolute, paths or URL
+bases. This may be useful when relocating a CFA\\-netCDF file together
 with the datasets referenced by it.
 .PP
 .RS
-If set with no value (\-\-cfa_paths=) or the value is empty then file
+If set with no value (\\-\\-cfa_paths=) or the value is empty then file
 names are given relative to the directory or URL base containing the
-output CFA\-netCDF file. If set with a non\-empty value then file
+output CFA\\-netCDF file. If set with a non\\-empty value then file
 names are given relative to the directory or URL base described by the
 value.
 .PP
-By default, file names within CFA\-netCDF files are stored with
+By default, file names within CFA\\-netCDF files are stored with
 absolute paths. Ignored for output files of any other format.
 .RE
 .RE
 .
 .
 .TP
-.B \-\-compress=N
+.B \\-\\-compress=N
 Regulate the speed and efficiency of compression. Must be an integer
 between
 .ft B
@@ -347,7 +347,7 @@ best compression ratio.
 .
 .
 .TP
-.B \-\-contiguous
+.B \\-\\-contiguous
 Aggregation configuration: Requires that aggregated fields have
 adjacent dimension coordinate cells which partially overlap or share
 common boundary values. Ignored if the dimension coordinates do not
@@ -355,35 +355,35 @@ have bounds.
 ..
 .
 .TP
-.B \-D, \-\-Directory
+.B \\-D, \\-\\-Directory
 Each output file will be written to the same directory as its input file.
 .
 .
 .
 .TP
-.B \-d dir, \-\-directory=dir
+.B \\-d dir, \\-\\-directory=dir
 Specify the output directory for all output files.
 .
 .
 .TP
-.B \-\-double
+.B \\-\\-double
 Write 32-bit floats as 64-bit floats and 32-bit integers as 64-bit
 integers. By default, input data types are preserved.
 .
 .
 .TP
-.B \-e file, \-\-external=file
+.B \\-e file, \\-\\-external=file
 Read external variables from the given external file. Multiple
 external files may be provided by specifying more than one
 .ft B
-\-e
+\\-e
 .ft P
 option.
 .
 
 .
 .TP
-.B \-\-equal=property
+.B \\-\\-equal=property
 Aggregation configuration: Require that an input field may only be
 aggregated with other fields if they all have the given CF property
 (standard or non-standard) with equal values. Ignored for any input
@@ -393,19 +393,19 @@ accounted for in the structural signature.
 Supersedes the behaviour for the given property that may be implied by
 the
 .ft B
-\-\-exist_all
+\\-\\-exist_all
 .ft P
 option.
 
 Multiple properties may be set by specifying more than one
 .ft B
-\-\-equal
+\\-\\-equal
 .ft P
 option.
 .
 .
 .TP
-.B \-\-equal_all
+.B \\-\\-equal_all
 Aggregation configuration: Require that an input field may only be
 aggregated with other fields that have the same set of CF properties
 (excluding those already accounted for in the structural signature)
@@ -413,7 +413,7 @@ with equal sets of values.
 
 The behaviour for individual properties may be overridden by the
 .ft B
-\-\-exist \-\-ignore
+\\-\\-exist \\-\\-ignore
 .ft P
 options.
 
@@ -422,12 +422,12 @@ all have the same CF properties (other than those accounted for in the
 structural signature) with matching values, but allowing the long_name
 properties have unequal values, you can use
 .ft B
-\-\-equal_all \-\-exist=long_name
+\\-\\-equal_all \\-\\-exist=long_name
 .ft P
 .
 .
 .TP
-.B \-\-exist=property
+.B \\-\\-exist=property
 Aggregation configuration: Require that an input field may only be
 aggregated with other fields if they all have the given CF property
 (standard or non-standard), but not requiring the values to be the
@@ -438,19 +438,19 @@ signature.
 Supersedes the behaviour for the given property that may be implied by
 the
 .ft B
-\-\-equal_all
+\\-\\-equal_all
 .ft P
 option.
 
 Multiple properties may be set by specifying more than one
 .ft B
-\-\-exist
+\\-\\-exist
 .ft P
 option.
 .
 .
 .TP
-.B \-\-exist_all
+.B \\-\\-exist_all
 Aggregation configuration: Require that an input field may only be
 aggregated with other fields that have the same set of CF properties
 (excluding those already accounted for in the structural signature),
@@ -458,7 +458,7 @@ but not requiring the values to be the same.
 
 The behaviour for individual properties may be overridden by the
 .ft B
-\-\-equal \-\-ignore
+\\-\\-equal \\-\\-ignore
 .ft P
 options.
 
@@ -467,16 +467,16 @@ all have the same CF properties (other than those accounted for in the
 structural signature), regardless of their values, but also insisting
 that the long_name properties have equal values, you can use
 .ft B
-\-\-exist_all \-\-equal=long_name
+\\-\\-exist_all \\-\\-equal=long_name
 .ft P
 .
 .
 .TP
-.B \-f format, \-\-format=format
+.B \\-f format, \\-\\-format=format
 Set the format of the output file(s). Valid choices are
 NETCDF3_CLASSIC, NETCDF3_64BIT, NETCDF4, NETCDF4_CLASSIC and
-NETCDF3_64BIT for outputting CF\-netCDF files in those netCDF formats
-and CFA3 or CFA4 for outputting CFA\-netCDF files in NETCDF3_CLASSIC
+NETCDF3_64BIT for outputting CF\\-netCDF files in those netCDF formats
+and CFA3 or CFA4 for outputting CFA\\-netCDF files in NETCDF3_CLASSIC
 or NETCDF4 formats respectively. By default, NETCDF4 is assumed.
 .PP
 .RS
@@ -488,12 +488,12 @@ netCDF4, so it is advisable to check before writing in this format.
 .
 .
 .TP
-.B \-h, \-\-help
+.B \\-h, \\-\\-help
 Display this man page.
 .
 .
 .TP
-.B \-i, \-\-relaxed_identities
+.B \\-i, \\-\\-relaxed_identities
 Aggregation configuration: In the absence of standard names, allow
 fields and their components (such as coordinates) to be identified by
 their long_name CF properties or else their netCDF file variable
@@ -501,7 +501,7 @@ names.
 .
 .
 .TP
-.B \-\-ignore=property
+.B \\-\\-ignore=property
 Aggregation configuration: An input field may be aggregated with other
 fields regardless of whether or not they have the given CF property
 (standard or non-standard) and regardless of its values. Ignored for
@@ -510,14 +510,14 @@ is already accounted for in the structural signature.
 
 This is the default behaviour in the absence of all the
 .ft B
-\-\-exist \-\-equal \-\-exist_all \-\-equal_all
+\\-\\-exist \\-\\-equal \\-\\-exist_all \\-\\-equal_all
 .ft P
 options and supersedes the behaviour for the given property that may
 be implied if any of these options are set.
 
 Multiple properties may be set by specifying more than one
 .ft B
-\-\-ignore
+\\-\\-ignore
 .ft P
 option.
 
@@ -526,25 +526,25 @@ all have the same CF properties (other than those accounted for in the
 structural signature) with the same values, but with no restrictions
 on the existence or values of the long_name property you can use
 .ft B
-\-\-equal_all \-\-ignore=long_name
+\\-\\-equal_all \\-\\-ignore=long_name
 .ft P
 .
 .
 .TP
-.B \-\-fletcher32
+.B \\-\\-fletcher32
 Activate the Fletcher-32 HDF5 checksum algorithm to detect compression
 errors. Ignored if there is no compression (see the
 .ft B
-\-\-compress
+\\-\\-compress
 .ft P
 option).
 .
 .
 .TP
-.B \-\-follow_symlinks
+.B \\-\\-follow_symlinks
 In combination with
 .ft B
-\-\-recursive
+\\-\\-recursive
 .ft P
 also search for files in directories which resolve to symbolic
 links. Files specified by the
@@ -553,21 +553,21 @@ INPUTS
 .ft P
 which are symbolic links are always followed. Note that setting
 .ft B
-\-\-recursive --follow_symlinks
+\\-\\-recursive --follow_symlinks
 .ft P
 can lead to infinite recursion if a directory which resolves to a
 symbolic link points to a parent directory of itself.
 .
 .
 .TP
-.B \-\-ignore_read_error
+.B \\-\\-ignore_read_error
 Ignore, without failing, any input file which causes an error whilst
 being read, as would be the case for an empty file, unknown file
 format, etc. By default an error occurs in this case.
 .
 .
 .TP
-.B \-\-info=N
+.B \\-\\-info=N
 Aggregation configuration: Print information about the aggregation
 process. If N is
 .ft B
@@ -598,32 +598,32 @@ By default N is
 .
 .
 .TP
-.B \-\-least_sig_digit=N
+.B \\-\\-least_sig_digit=N
 Truncate the input field data arrays. For a positive integer N the
 precision that is retained in the compressed data is '10 to the power
 -N'. For example, if N is 2 then a precision of 0.01 is retained. In
 conjunction with compression this produces 'lossy', but significantly
 more efficient compression (see the
 .ft B
-\-\-compress
+\\-\\-compress
 .ft P
 option).
 .
 .
 .TP
-.B \-\-ncvar_identities
+.B \\-\\-ncvar_identities
 Aggregation configuration: Force fields and their components (such as
 coordinates) to be identified by their netCDF file variable names.
 .
 .
 .TP
-.B \-n, \-\-no_aggregation
+.B \\-n, \\-\\-no_aggregation
 Aggregation configuration: Do not aggregate fields. Writes the input
 fields as they exist in the input files.
 .
 .
 .TP
-.B \-\-no_overlap
+.B \\-\\-no_overlap
 Aggregation configuration: Requires that aggregated fields have
 adjacent dimension coordinate cells which do not overlap (but they may
 share common boundary values). Ignored if the dimension coordinates do
@@ -631,7 +631,7 @@ not have bounds.
 .
 .
 .TP
-.B \-\-no_shuffle
+.B \\-\\-no_shuffle
 Turn off the HDF5 shuffle filter, which de-interlaces a block of data
 before compression by reordering the bytes by storing the first byte
 of all of a variable's values in the chunk contiguously, followed by
@@ -640,25 +640,25 @@ because if the data array values are not all wildly different, using
 the filter can make the data more easily compressible. Ignored if
 there is no compression (see the
 .ft B
-\-\-compress
+\\-\\-compress
 .ft P
 option).
 .
 .
 .TP
-.B \-o file, \-\-outfile=file
+.B \\-o file, \\-\\-outfile=file
 Treat all input files collectively as a single CF dataset. In this
 case aggregation is attempted within and between the input files and
 all outputs are written to the specified file.
 .
 .
 .TP
-.B \-\-overwrite
-Allow pre\-existing output files to be overwritten.
+.B \\-\\-overwrite
+Allow pre\\-existing output files to be overwritten.
 .
 .
 .TP
-.B \-\-promote=component
+.B \\-\\-promote=component
 Promote field components to independent top-level fields. If component
 is ancillary then ancillary data fields are promoted. If component is
 auxiliary then auxiliary coordinate variables are promoted. If
@@ -669,19 +669,19 @@ fields are promoted.
 
 Multiple component types may be promoted by specifying more than one
 .ft B
-\-\-promote
+\\-\\-promote
 .ft P
 option.
 
 For example, promote to ancillary data field and cell measure
 variables to independent, top-level fields you can use
 .ft B
-\-\-promote=ancillary --promote=measure
+\\-\\-promote=ancillary --promote=measure
 .ft P
 .
 .
 .TP
-.B \-\-recursive
+.B \\-\\-recursive
 Recursively read sub-directories of any directories specified as
 .ft B
 INPUTS
@@ -689,17 +689,17 @@ INPUTS
 parameters. All files in the top-level of a given directory are
 always processed. Set the
 .ft B
-\-\-ignore_read_error
+\\-\\-ignore_read_error
 .ft P
 option to bypass any unreadable files and the
 .ft B
-\-\-follow_symlinks
+\\-\\-follow_symlinks
 .ft P
 option to allow directories to be symbolic links.
 .
 .
 .TP
-.B \-\-reference_datetime=datetime
+.B \\-\\-reference_datetime=datetime
 Set the reference date-time of time coordinate units to an ISO
 8601-like date-time. Changing the reference date-time does not change
 the absolute date-times of the coordinates. Ignored for non-reference
@@ -708,7 +708,7 @@ date-time coordinates. Some examples of valid date-times: 1830-12-1,
 .
 .
 .TP
-.B \-\-respect_valid
+.B \\-\\-respect_valid
 Aggregation configuration: Take into account the CF properties
 valid_max, valid_min and valid_range during aggregation. By default
 they are ignored for the purposes of aggregation and deleted from any
@@ -716,7 +716,7 @@ aggregated output CF fields.
 .
 .
 .TP
-.B \-s property, --select=property
+.B \\-s property, --select=property
 Select a subset of fields from the input files. The selection property
 is either the standard name of a field or the value of any other
 property. In the latter case the value is preceded by the property's
@@ -726,37 +726,37 @@ Multiple selections be made by specifying more than one option. For
 example, to select fields with standard name of air_temperature as
 well as those with a stash_code property of 3217 you could use
 .ft B
-\-s air_temperature \-s stash_code=3217
+\\-s air_temperature \\-s stash_code=3217
 .ft P
 .
 .
 .TP
-.B \-\-shared_nc_domain
+.B \\-\\-shared_nc_domain
 Aggregation configuration: Match axes between a field and its
 contained ancillary variable and coordinate reference fields via their
 netCDF dimension names and not via their domains.
 .
 .
 .TP
-.B \-\-single
+.B \\-\\-single
 Write 64-bit floats as 32-bit floats and 64-bit integers as 32-bit
 integers. By default, input data types are preserved.
 .
 .
 .TP
-.B \-\-squeeze
+.B \\-\\-squeeze
 Remove size 1 axes from the output field data arrays. If a size one
 axis has any one dimensional coordinates then these are converted to
 CF scalar coordinates.
 .
 .
 .TP
-.B \-u, \-\-relaxed_units
+.B \\-u, \\-\\-relaxed_units
 Aggregation configuration: Assume that fields or their components
 (such as coordinates) with the same standard name (or other
 identifiers, see the
 .ft B
-\-i
+\\-i
 .ft P
 option) but missing units all have equivalent (but unspecified) units,
 so that aggregation may occur. This is the default for Met Office (UK)
@@ -764,19 +764,19 @@ PP files and Met Office (UK) fields files, but not for other formats.
 .
 .
 .TP
-.B \-\-unsqueeze
+.B \\-\\-unsqueeze
 Include size 1 axes in the output field data arrays. If a size one
 axis has any CF scalar coordinates then these are converted to one
 dimensional coordinates.
 .
 .
 .TP
-.B \-\-um_version=version
+.B \\-\\-um_version=version
 Deprecated. Use --um instead.
 .
 .
 .TP
-.B \-\-um=option
+.B \\-\\-um=option
 For Met Office (UK) PP files and Met Office (UK) fields files only,
 provide extra instructions for interpreting the files. This option is
 ignored for input files which are not PP or fields files.
@@ -786,7 +786,7 @@ option. For example, to specify that UM files are 32-bit, big endian
 PP files for UM version 5.1:
 
 .ft B
-\-\-um=format=PP \-\-um=endian=little --um=version=5.1
+\\-\\-um=format=PP \\-\\-um=endian=little --um=version=5.1
 .ft P
 
 Valid options are:
@@ -805,7 +805,7 @@ version
 
       For example
 .ft B
-\-\-um=version=5.2
+\\-\\-um=version=5.2
 .ft P
 
 .ft I
@@ -816,7 +816,7 @@ format
 
       For example
 .ft B
-\-\-um=format=PP
+\\-\\-um=format=PP
 .ft P
 
 .ft I
@@ -828,7 +828,7 @@ word_size
 
       For example
 .ft B
-\-\-um=word_size=8
+\\-\\-um=word_size=8
 .ft P
 
 .ft I
@@ -840,7 +840,7 @@ endian
 
       For example
 .ft B
-\-\-um=endian=big
+\\-\\-um=endian=big
 .ft P
 
 .ft I
@@ -850,7 +850,7 @@ stash_table
 
       For example
 .ft B
-\-\-um=stash_table=new_mapping.txt
+\\-\\-um=stash_table=new_mapping.txt
 .ft P
 
       Each mapping is defined by a seperate line in a text file. Each
@@ -913,7 +913,7 @@ PP conditions which need to be satisfied for
 .
 .
 .TP
-.B \-\-unlimited=axis
+.B \\-\\-unlimited=axis
 Create an unlimited dimension (a dimension that can be appended to). A
 dimension is identified by either a standard name; one of T, Z, Y, X
 denoting time, height or horizontal axes (as defined by the CF
@@ -922,23 +922,23 @@ the property name and a colon. For example:
 
 Multiple unlimited axes may be defined by specifying more than one
 .ft B
-\-\-unlimited
+\\-\\-unlimited
 .ft P
 option. Note, however, that only netCDF4 formats support multiple
 unlimited dimensions. For example, to set the time and Z dimensions to
 be unlimited you could use
 .ft B
-\-\-unlimited=time \-\-unlimited=Z
+\\-\\-unlimited=time \\-\\-unlimited=Z
 .ft P
 
 An example of defining an axis by an arbitrary CF property could be
 .ft B
-\-\-unlimited=long_name:pseudo_level
+\\-\\-unlimited=long_name:pseudo_level
 .ft P
 .
 .
 .TP
-.B \-v mode, \-\-view=mode
+.B \\-v mode, \\-\\-view=mode
 Display text descriptions on standard output of the CF field
 constructs contained in the input files, instead of writing them to
 disk. If mode is
@@ -963,11 +963,11 @@ m
 .
 .
 .TP
-.B \-x, \-\-exclude
+.B \\-x, \\-\\-exclude
 Aggregation configuration: Omit unaggregatable fields from the
 output. Ignored if the
 .ft B
-\-n
+\\-n
 .ft P
 option is set. See the AGGREGATION section for the definition of an
 unaggregatable field.
@@ -980,7 +980,7 @@ cfdump(1), ncdump(1)
 .
 .
 .SH LIBRARY
-cf\-python library version {cf.__version__} at {library_path}
+cf\\-python library version {cf.__version__} at {library_path}
 .
 .
 .
@@ -1003,7 +1003,7 @@ Written by David Hassell
             [
                 "man",
                 "-r",
-                " Manual page cfa(1)\ ?ltline\ %lt?L/%L.:",
+                " Manual page cfa(1)\\ ?ltline\\ %lt?L/%L.:",
                 "-l",
                 "-",
             ],
@@ -1495,7 +1495,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         # can be created.
         # ------------------------------------------------------------
         if view is None and one_to_one:
-            outfile = re_sub("(\.pp|\.nc|\.nca)$", ".nc", infile)
+            outfile = re_sub(r"(\.pp|\.nc|\.nca)$", ".nc", infile)
             if write_options.get("cfa"):
                 outfile += "a"
 
