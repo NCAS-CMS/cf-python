@@ -153,7 +153,7 @@ intersphinx_mapping = {
     "cftime": ("https://unidata.github.io/cftime", None),
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
-    "cfplot": ("https://ajheaps.github.io/cf-plot", None),
+    "cfplot": ("https://ncas-cms.github.io/cf-plot/build/", None),
     "dask": ("https://docs.dask.org/en/latest", None),
     "matplotlib": ("https://matplotlib.org/stable/", None),
     # REVIEW: h5: new intersphinx mapping

@@ -35,12 +35,12 @@ test = cf.dt(2051, 4, 14, 1, 30, 0, 0)
 print(test)
 
 # %%
-# 6. Plot the wind gust by creating a subspace for the specified variable ``test`` using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
+# 6. Plot the wind gust by creating a subspace for the specified variable ``test`` using `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_. Here `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
 cfp.mapset(resolution="50m")
 cfp.con(gust.subspace(T=test), lines=False)
 
 # %%
-# 7. To see the rotated pole data on the native grid, the above steps are repeated and projection is set to rotated in `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_:
+# 7. To see the rotated pole data on the native grid, the above steps are repeated and projection is set to rotated in `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_:
 cfp.mapset(resolution="50m", proj="rotated")
 cfp.con(gust.subspace(T=test), lines=False)
 
