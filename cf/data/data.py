@@ -4896,9 +4896,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> d = cf.Data([1, 2, 3], units='m')
         >>> d.Units
         <Units: m>
-        >>> d.Units = cf.Units('kilmetres')
+        >>> d.Units = cf.Units('kilometres')
         >>> d.Units
-        <Units: kilmetres>
+        <Units: kilometres>
         >>> d.Units = cf.Units('km')
         >>> d.Units
         <Units: km>
@@ -12045,7 +12045,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def transpose(self, axes=None, inplace=False, i=False):
         """Permute the axes of the data array.
 
-        .. seealso:: `flatten', `insert_dimension`, `flip`, `squeeze`,
+        .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `swapaxes`
 
         :Parameters:
