@@ -3119,7 +3119,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """Storage for axis cyclicity.
 
         Contains a `set` that identifies which axes are cyclic (and
-        therefore allow cyclic slicing). The set contains a subset of
+        therefore allows cyclic slicing). The set contains a subset of
         the axis identifiers defined by the `_axes` attribute.
 
         .. warning:: Never change the value of the `_cyclic` attribute
