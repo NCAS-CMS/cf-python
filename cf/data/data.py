@@ -631,7 +631,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [1.0 1.5 0.5]]
         >>> print(d.diff(n=2).array)
         [[0.0  0.0]
-         [ --   --]s
+         [ --   --]
          [0.5 -1.0]]
         >>> print(d.diff(axis=0).array)
         [[4.0 3.5 -- 4.0]
