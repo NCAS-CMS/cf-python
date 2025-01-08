@@ -136,7 +136,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     # when a new dask array is set. See `_clear_after_dask_update` for
     # details.
     #
-    # These must constants must have values 2**N (N>=1), except for
+    # These constants must have values 2**N (N>=1), except for
     # `_NONE` which must be 0, and `_ALL` which must be the sum of
     # other constants. It is therefore convenient to define these
     # constants in binary.
