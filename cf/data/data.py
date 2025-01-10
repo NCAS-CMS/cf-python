@@ -540,7 +540,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [1.0 1.5 0.5]]
         >>> print(d.diff(n=2).array)
         [[0.0  0.0]
-         [ --   --]s
+         [ --   --]
          [0.5 -1.0]]
         >>> print(d.diff(axis=0).array)
         [[4.0 3.5 -- 4.0]
@@ -2646,7 +2646,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Storage for axis cyclicity.
 
         Contains a `set` that identifies which axes are cyclic (and
-        therefore allow cyclic slicing). The set contains a subset of
+        therefore allows cyclic slicing). The set contains a subset of
         the axis identifiers defined by the `_axes` attribute.
 
         .. warning:: Never change the value of the `_cyclic` attribute

@@ -6,7 +6,7 @@ from re import Pattern
 from urllib.parse import urlparse
 
 import cfdm
-from cfdm.read_write.exceptions import FileTypeError
+from cfdm.read_write.exceptions import DatasetTypeError
 from cfdm.read_write.netcdf import NetCDFRead
 
 from ..aggregate import aggregate as cf_aggregate
@@ -384,7 +384,7 @@ class read(cfdm.read):
 
               .. versionadded:: NEXTVERSION
 
-        {{read store_hdf5_chunks: `bool`, optional}}
+        {{read store_dataset_chunks: `bool`, optional}}
 
             .. versionadded:: NEXTVERSION
 
@@ -502,7 +502,7 @@ class read(cfdm.read):
         unpack=True,
         warn_valid=False,
         dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
+        store_dataset_chunks=True,
         domain=False,
         cfa=None,
         cfa_write=None,
@@ -728,7 +728,7 @@ class read(cfdm.read):
                             storage_options=storage_options,
                             netcdf_backend=netcdf_backend,
                             dask_chunks=dask_chunks,
-                            store_hdf5_chunks=store_hdf5_chunks,
+                            store_dataset_chunks=store_dataset_chunks,
                             cache=cache,
                             cfa=cfa,
                             cfa_write=cfa_write,
@@ -737,7 +737,7 @@ class read(cfdm.read):
                             unsqueeze=unsqueeze,
                             file_type=file_type,
                         )
-                    except FileTypeError as error:
+                    except DatasetTypeError as error:
                         if file_type is None:
                             file_format_errors.append(error)
                     else:
@@ -764,7 +764,7 @@ class read(cfdm.read):
                             domain=domain,
                             file_type=file_type,
                         )
-                    except FileTypeError as error:
+                    except DatasetTypeError as error:
                         if file_type is None:
                             file_format_errors.append(error)
                     else:
@@ -773,7 +773,7 @@ class read(cfdm.read):
 
                 if file_format_errors:
                     error = "\n".join(map(str, file_format_errors))
-                    raise FileTypeError(f"\n{error}")
+                    raise DatasetTypeError(f"\n{error}")
 
                 if domain:
                     file_contents = DomainList(file_contents)

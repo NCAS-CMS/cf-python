@@ -23,8 +23,8 @@ version NEXTVERSION
 * New class `cf.NetCDF4Array`
 * New class `cf.CFAH5netcdfArray`
 * New class `cf.CFANetCDF4Array`
-* Replace core `dask` functionality with that imported from `cfdm`.
-  https://github.com/NCAS-CMS/cf-python/pull/836)
+* Replace core `dask` functionality with that imported from `cfdm`
+  (https://github.com/NCAS-CMS/cf-python/pull/836)
 * Fix bug that sometimes puts an incorrect ``radian-1`` or
   ``radian-2`` in the returned units of the differential operator
   methods and functions
