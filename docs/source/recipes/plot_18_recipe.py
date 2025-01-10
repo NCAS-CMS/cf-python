@@ -13,10 +13,10 @@ between them.
 # %%
 # 1. Import cf-python, cf-plot and other required packages:
 import cfplot as cfp
-import cf
-
 import matplotlib.pyplot as plt
 import scipy.stats.mstats as mstats
+
+import cf
 
 # %%
 # 2. Read the data in and unpack the Fields from FieldLists using indexing.
@@ -62,7 +62,7 @@ sub_snow = snow_day.subspace(
 # unitless fraction, but the values are in the tens, so we need to
 # normalise these to all lie between 0 and 1 and change the units
 # appropriately:
-sub_snow = ((sub_snow - sub_snow.minimum()) / (sub_snow.range()))
+sub_snow = (sub_snow - sub_snow.minimum()) / (sub_snow.range())
 sub_snow.override_units("1", inplace=True)
 
 # %%
@@ -93,7 +93,9 @@ print(f"The Pearson correlation coefficient is: {coefficient}")
 # and its strength visually. We use 'gpos' to position the plots in two
 # columns and apply some specific axes ticks and labels for clarity.
 cfp.gopen(
-    rows=1, columns=2, top=0.85,
+    rows=1,
+    columns=2,
+    top=0.85,
     file="snow_and_orog_on_same_grid.png",
     user_position=True,
 )
@@ -131,10 +133,12 @@ cfp.gpos(2)
 # Don't add extentions on the colourbar since it can only be 0 to 1 inclusive
 cfp.levs(min=0, max=1, step=0.1, extend="neither")
 cfp.cscale("precip_11lev", ncols=11, reverse=1)
-cfp.con(sub_snow, lines=False,
-        title="Snow cover extent (from satellite imagery)",
-        colorbar_drawedges=False,
-        **label_info
+cfp.con(
+    sub_snow,
+    lines=False,
+    title="Snow cover extent (from satellite imagery)",
+    colorbar_drawedges=False,
+    **label_info,
 )
 
 cfp.gclose()
