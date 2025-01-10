@@ -5443,7 +5443,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         field construct.
 
         *Example:*
-          Calculate the temporal maximum of the weighted areal means
+          Calculate the temporal maximum of the weighted area means
           using two independent calls:
 
           >>> b = a.collapse('area: mean', weights=True).collapse('T: maximum')
@@ -5454,7 +5454,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         specifies each axis, and a space delimits the separate collapses).
 
         *Example:*
-          Calculate the temporal maximum of the weighted areal means in
+          Calculate the temporal maximum of the weighted area means in
           a single call, using the cf-netCDF cell methods-like syntax:
 
           >>> b =a.collapse('area: mean T: maximum', weights=True)
@@ -6070,7 +6070,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                    numbers of elements.
 
                                  * The start of the first group may be
-                                   before the first first axis element,
+                                   before the first axis element,
                                    depending on the offset defined by the
                                    time duration. For example, if
                                    ``group=cf.Y(month=12)`` then the first
