@@ -3,6 +3,8 @@ version NEXTVERSION
 
 **2024-12-??**
 
+* Import a lot of `dask` functionality from `cfdm`
+  (https://github.com/NCAS-CMS/cf-python/issues/839)
 * Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
   sampling geometry source grids
   (https://github.com/NCAS-CMS/cf-python/issues/832)
