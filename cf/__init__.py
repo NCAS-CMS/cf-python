@@ -221,7 +221,6 @@ if (
 
 # Check the version of dask
 
-# Check the version of numpy
 _minimum_vn = "2024.6.1"
 _maximum_vn = "2024.7.1"
 if (
