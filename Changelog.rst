@@ -43,9 +43,11 @@ version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
-* New dependency: ``s3fs>=2024.2.0``
+* New dependency: ``s3fs>=2024.6.0``
+* Changed dependency: ``numpy>=1.15,<2.0``
 * Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
 * Changed dependency: ``cfunits>=3.3.7``
+* Changed dependency: ``dask>=2024.6.0,<=2024.7.1``
 
 ----
 
