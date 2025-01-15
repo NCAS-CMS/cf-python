@@ -41,7 +41,9 @@ class ActiveStorageTest(unittest.TestCase):
         f = cf.example_field(0)
         cf.write(f, tmpfile)
 
-        f = cf.read(tmpfile, chunks={"latitude": (4, 1), "longitude": (3, 5)})
+        f = cf.read(
+            tmpfile, dask_chunks={"latitude": (4, 1), "longitude": (3, 5)}
+        )
         f = f[0]
         self.assertEqual(f.data.chunks, ((4, 1), (3, 5)))
 

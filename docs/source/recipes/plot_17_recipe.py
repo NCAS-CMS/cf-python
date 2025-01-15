@@ -91,9 +91,7 @@ for i, colour_scale in enumerate(colour_scales_columns):
     if i == 0:
         set_title = "Perceptually uniform\ncolour maps"
     elif i == 1:
-        set_title = (
-            "NCL colour maps enhanced to \nhelp with colour blindness"
-        )
+        set_title = "NCL colour maps enhanced to \nhelp with colour blindness"
     elif i == 2:
         set_title = "Orography/bathymetry\ncolour maps"
     else:

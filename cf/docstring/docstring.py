@@ -179,42 +179,6 @@ _docstring_substitution_definitions = {
                 value given by the *radius* parameter is used
                 instead. A value of ``'earth'`` is equivalent to a
                 default value of 6371229 metres.""",
-    # chunks
-    "{{chunks: `int`, `tuple`, `dict` or `str`, optional}}": """chunks: `int`, `tuple`, `dict` or `str`, optional
-                Specify the chunking of the underlying dask array.
-
-                Any value accepted by the *chunks* parameter of the
-                `dask.array.from_array` function is allowed.
-
-                By default, ``"auto"`` is used to specify the array
-                chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, preferring square-like
-                chunk shapes.
-
-                *Parameter example:*
-                  A blocksize like ``1000``.
-
-                *Parameter example:*
-                  A blockshape like ``(1000, 1000)``.
-
-                *Parameter example:*
-                  Explicit sizes of all blocks along all dimensions
-                  like ``((1000, 1000, 500), (400, 400))``.
-
-                *Parameter example:*
-                  A size in bytes, like ``"100MiB"`` which will choose
-                  a uniform block-like shape, preferring square-like
-                  chunk shapes.
-
-                *Parameter example:*
-                  A blocksize of ``-1`` or `None` in a tuple or
-                  dictionary indicates the size of the corresponding
-                  dimension.
-
-                *Parameter example:*
-                  Blocksizes of some or all dimensions mapped to
-                  dimension positions, like ``{1: 200}``, or ``{0: -1,
-                  1: (400, 400)}``.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.
@@ -233,28 +197,6 @@ _docstring_substitution_definitions = {
                   domain axis. If the vertical axis does not appear in
                   the computed non-parametric coordinates then this an
                   empty tuple.""",
-    # collapse axes
-    "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
-                The axes to be collapsed. By default all axes are
-                collapsed, resulting in output with size 1. Each axis
-                is identified by its integer position. If *axes* is an
-                empty sequence then the collapse is applied to each
-                scalar element and the result has the same shape as
-                the input data.""",
-    # collapse squeeze
-    "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional
-                By default, the axes which are collapsed are left in
-                the result as dimensions with size one, so that the
-                result will broadcast correctly against the input
-                array. If set to True then collapsed axes are removed
-                from the data.""",
-    # collapse keepdims
-    "{{collapse keepdims: `bool`, optional}}": """keepdims: `bool`, optional
-                By default, the axes which are collapsed are left in
-                the result as dimensions with size one, so that the
-                result will broadcast correctly against the input
-                array. If set to False then collapsed axes are removed
-                from the data.""",
     # weights
     "{{weights: data_like, `dict`, or `None`, optional}}": """weights: data_like, `dict`, or `None`, optional
                 Weights associated with values of the data. By default
@@ -304,26 +246,6 @@ _docstring_substitution_definitions = {
                 non-missing elements. A value of 1 applies Bessel's
                 correction. If the calculation is weighted then *ddof*
                 can only be 0 or 1.""",
-    # split_every
-    "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
-                Determines the depth of the recursive aggregation. If
-                set to or more than the number of input chunks, the
-                aggregation will be performed in two steps, one
-                partial collapse per input chunk and a single
-                aggregation at the end. If set to less than that, an
-                intermediate aggregation step will be used, so that
-                any of the intermediate or final aggregation steps
-                operates on no more than ``split_every`` inputs. The
-                depth of the aggregation graph will be
-                :math:`log_{split\_every}}(\textnormal{input chunks
-                along reduced axes})`. Setting to a low value can reduce
-                cache size and network transfers, at the cost of more
-                CPU and a larger dask graph.
-
-                By default, `dask` heuristically decides on a good
-                value. A default can also be set globally with the
-                ``split_every`` key in `dask.config`. See
-                `dask.array.reduction` for details.""",
     # active_storage
     "{{active_storage: `bool`, optional}}": """{{active_storage: `bool`, optional}}
                 If True then attempt to perform the collapse using

@@ -11,7 +11,6 @@ import warnings
 from collections.abc import Iterable
 from itertools import product
 from math import isnan
-from numbers import Integral
 from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import dirname as _os_path_dirname
@@ -24,9 +23,7 @@ from urllib.parse import urljoin, urlparse
 import cfdm
 import netCDF4
 import numpy as np
-from dask import config as _config
 from dask.base import is_dask_collection
-from dask.utils import parse_bytes
 from psutil import virtual_memory
 
 from . import __cfa_version__, __file__, __version__
@@ -548,7 +545,7 @@ _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level()
 # function as contained in _log_level, but can't inherit the
 # user-facing log_level() from cfdm as it operates on cfdm's CONSTANTS
-# dict. Define cf-python's own.  This also means the log_level
+# dict. Define cf-python's own. This also means the log_level
 # dostrings are independent which is important for providing
 # module-specific documentation links and directives, etc.
 _reset_log_emergence_level = cfdm._reset_log_emergence_level
@@ -570,6 +567,10 @@ class ConstantAccess(cfdm.ConstantAccess):
 
 
 class atol(ConstantAccess, cfdm.atol):
+    pass
+
+
+class chunksize(ConstantAccess, cfdm.chunksize):
     pass
 
 
@@ -776,74 +777,6 @@ class relaxed_identities(ConstantAccess):
 
         """
         return bool(arg)
-
-
-class chunksize(ConstantAccess):
-    """Set the default chunksize used by `dask` arrays.
-
-    If called without any arguments then the existing chunksize is
-    returned.
-
-    .. note:: Setting the chunk size will also change the `dask`
-              global configuration value ``'array.chunk-size'``. If
-              `chunksize` is used in a context manager then the `dask`
-              configuration value is only altered within that context.
-              Setting the chunk size directly from the `dask`
-              configuration API will affect subsequent data creation,
-              but will *not* change the value of `chunksize`.
-
-    :Parameters:
-
-        arg: number or `str` or `Constant`, optional
-            The chunksize in bytes. Any size accepted by
-            `dask.utils.parse_bytes` is accepted, for instance
-            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
-            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
-            ``'MB'`` are all valid sizes.
-
-            Note that if *arg* is a `float`, or a string that implies
-            a non-integral amount of bytes, then the integer part
-            (rounded down) will be used.
-
-            *Parameter example:*
-               A chunksize of 2 MiB may be specified as ``'2097152'``
-               or ``'2 MiB'``
-
-            *Parameter example:*
-               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
-               equivalent to ``2678``.
-
-    :Returns:
-
-        `Constant`
-            The value prior to the change, or the current value if no
-            new value was specified.
-
-    """
-
-    _name = "CHUNKSIZE"
-
-    def _parse(cls, arg):
-        """Parse a new constant value.
-
-        .. versionaddedd:: 3.8.0
-
-        :Parameters:
-
-            cls:
-                This class.
-
-            arg:
-                The given new constant value.
-
-        :Returns:
-
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
-
-        """
-        _config.set({"array.chunk-size": arg})
-        return parse_bytes(arg)
 
 
 class tempdir(ConstantAccess):
@@ -2191,6 +2124,10 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
         indices: `tuple`
             The indices to be applied.
 
+        cyclic: `bool`, optional
+            If True then allow cyclic slices (such as ``slice(-4, 3,
+            1)``).
+
         keepdims: `bool`, optional
             If True then an integral index is converted to a
             slice. For instance, ``3`` would become ``slice(3, 4)``.
@@ -2219,108 +2156,55 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
     [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
 
-
     """
-    parsed_indices = []
-    roll = {}
-
-    if not isinstance(indices, tuple):
-        indices = (indices,)
-
-    # Initialise the list of parsed indices as the input indices with any
-    # Ellipsis objects expanded
-    length = len(indices)
-    n = len(shape)
-    ndim = n
-    for index in indices:
-        if index is Ellipsis:
-            m = n - length + 1
-            parsed_indices.extend([slice(None)] * m)
-            n -= m
-        else:
-            parsed_indices.append(index)
-            n -= 1
-
-        length -= 1
-
-    len_parsed_indices = len(parsed_indices)
-
-    if ndim and len_parsed_indices > ndim:
-        raise IndexError(
-            f"Invalid indices {parsed_indices} for array with shape {shape}"
-        )
-
-    if len_parsed_indices < ndim:
-        parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
-
-    if not ndim and parsed_indices:
-        raise IndexError(
-            "Scalar array can only be indexed with () or Ellipsis"
-        )
-
-    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-        if cyclic and isinstance(index, slice):
-            # Check for a cyclic slice
-            try:
-                index = normalize_slice(index, size, cyclic=True)
-            except IndexError:
-                # Non-cyclic slice
-                pass
-            else:
-                # Cyclic slice
-                start = index.start
-                stop = index.stop
-                step = index.step
-                if (
-                    step > 0
-                    and -size <= start < 0
-                    and 0 <= stop <= size + start
-                ):
-                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[ -1:0:1] => [9]
-                    # x[ -1:1:1] => [9, 0]
-                    # x[ -1:3:1] => [9, 0, 1, 2]
-                    # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                    # x[ -4:0:1] => [6, 7, 8, 9]
-                    # x[ -4:1:1] => [6, 7, 8, 9, 0]
-                    # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
-                    # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                    # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                    # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    index = slice(0, stop - start, step)
-                    roll[i] = -start
-
-                elif (
-                    step < 0 and 0 <= start < size and start - size <= stop < 0
-                ):
-                    # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                    # x[0: -4:-1] => [0, 9, 8, 7]
-                    # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
-                    # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
-                    # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                    # x[0: -2:-1] => [0, 9]
-                    # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                    index = slice(start - stop - 1, None, step)
-                    roll[i] = -1 - stop
-
-        elif keepdims and isinstance(index, Integral):
-            # Convert an integral index to a slice
-            if index == -1:
-                index = slice(-1, None, None)
-            else:
-                index = slice(index, index + 1, 1)
-
-        elif hasattr(index, "to_dask_array"):
-            to_dask_array = index.to_dask_array
-            if callable(to_dask_array):
-                # Replace index with its Dask array
-                index = to_dask_array()
-
-        parsed_indices[i] = index
+    parsed_indices = cfdm.parse_indices(shape, indices, keepdims=keepdims)
 
     if not cyclic:
         return parsed_indices
+
+    roll = {}
+    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        if not isinstance(index, slice):
+            continue
+
+        try:
+            index = normalize_slice(index, size, cyclic=True)
+        except IndexError:
+            # Non-cyclic slice
+            pass
+        else:
+            # Cyclic slice
+            start = index.start
+            stop = index.stop
+            step = index.step
+            if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -1:0:1] => [9]
+                # x[ -1:1:1] => [9, 0]
+                # x[ -1:3:1] => [9, 0, 1, 2]
+                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                # x[ -4:0:1] => [6, 7, 8, 9]
+                # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                index = slice(0, stop - start, step)
+                roll[i] = -start
+
+            elif step < 0 and 0 <= start < size and start - size <= stop < 0:
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[0: -4:-1] => [0, 9, 8, 7]
+                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                # x[0: -2:-1] => [0, 9]
+                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                index = slice(start - stop - 1, None, step)
+                roll[i] = -1 - stop
+
+            parsed_indices[i] = index
 
     return parsed_indices, roll
 

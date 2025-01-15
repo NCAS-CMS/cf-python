@@ -3,8 +3,8 @@ from os import remove
 import cfdm
 import dask.array as da
 import numpy as np
+from cfdm.data.dask_utils import cfdm_to_memory
 
-from ...data.dask_utils import cf_asanyarray
 from .netcdfread import NetCDFRead
 
 
@@ -747,9 +747,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             #
-            # '_cfa_unique' has its own call to 'cf_asanyarray', so
-            # we can set '_asanyarray=False'.
-            dx = data.to_dask_array(_asanyarray=False)
+            # '_cfa_unique' has its own call to 'cfdm_to_memory', so
+            # we can set '_force_to_memory=False'.
+            dx = data.to_dask_array(_force_to_memory=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
@@ -807,7 +807,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 data if there is not a unique value.
 
         """
-        a = cf_asanyarray(a)
+        a = cfdm_to_memory(a)
 
         out_shape = (1,) * a.ndim
         a = np.unique(a)
@@ -963,7 +963,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
         if (
-            max(data.to_dask_array(_asanyarray=False).chunksize)
+            max(data.to_dask_array(_force_to_memory=False).chunksize)
             > np.iinfo(dtype).max
         ):
             dtype = np.dtype(np.int64)
