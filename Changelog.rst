@@ -3,8 +3,6 @@ version NEXTVERSION
 
 **2024-12-??**
 
-* Import a lot of `dask` functionality from `cfdm`
-  (https://github.com/NCAS-CMS/cf-python/issues/839)
 * Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
   sampling geometry source grids
   (https://github.com/NCAS-CMS/cf-python/issues/832)
@@ -26,7 +24,7 @@ version NEXTVERSION
 * New class `cf.CFAH5netcdfArray`
 * New class `cf.CFANetCDF4Array`
 * Replace core `dask` functionality with that imported from `cfdm`
-  (https://github.com/NCAS-CMS/cf-python/pull/836)
+  (https://github.com/NCAS-CMS/cf-python/issues/839)
 * Fix bug that sometimes puts an incorrect ``radian-1`` or
   ``radian-2`` in the returned units of the differential operator
   methods and functions
