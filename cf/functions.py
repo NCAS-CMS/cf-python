@@ -270,18 +270,18 @@ def configuration(
             reductions or False to disable them). The default is to
             not change the current behaviour.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         active_storage_url: `str` or `None` or `Constant`, optional
             The new value (either a new URL string or `None` to remove
             the URL). The default is to not change the value.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         active_storage_max_requests: `int` or `Constant`, optional
             The new value. The default is to not change the value.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
@@ -1133,7 +1133,7 @@ class bounds_combination_mode(ConstantAccess):
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     .. seealso:: `active_storage_max_requests`, `active_storage_url`,
                  `configuration`
@@ -1172,7 +1172,7 @@ class active_storage(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: NEXTVERSION
+        .. versionaddedd:: 1.11.2.0
 
         :Parameters:
 
@@ -1202,7 +1202,7 @@ class active_storage(ConstantAccess):
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     .. seealso:: `active_storage`, `active_storage_max_requests`,
                  `configuration`
@@ -1241,7 +1241,7 @@ class active_storage_url(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: NEXTVERSION
+        .. versionaddedd:: 1.11.2.0
 
         :Parameters:
 
@@ -1284,7 +1284,7 @@ class active_storage_max_requests(ConstantAccess):
     collapse operation are utilising active storage. If some are not
     then :math:`N` will likely be underestimated.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     .. seealso:: `active_storage`, `active_storage_url`,
                  `configuration`
@@ -1323,7 +1323,7 @@ class active_storage_max_requests(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: NEXTVERSION
+        .. versionaddedd:: 1.11.2.0
 
         :Parameters:
 
@@ -1485,7 +1485,7 @@ def total_memory():
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     .. seealso:: `log_level`
 
@@ -3262,7 +3262,7 @@ def environment(display=True, paths=True):
     cfunits: 3.3.7 /home/user/lib/python3.12/site-packages/cfunits/__init__.py
     cfplot: 3.3.0 /home/user/lib/python3.12/site-packages/cfplot/__init__.py
     cfdm: 1.11.2.0 /home/user/cfdm/cfdm/__init__.py
-    cf: NEXTVERSION /home/user/cf-python/cf/__init__.py
+    cf: 1.11.2.0 /home/user/cf-python/cf/__init__.py
 
     >>> cf.environment(paths=False)
     Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
@@ -3285,7 +3285,7 @@ def environment(display=True, paths=True):
     cfunits: 3.3.7
     cfplot: 3.3.0
     cfdm: 1.11.2.0
-    cf: NEXTVERSION
+    cf: 1.11.2.0
 
     """
     dependency_version_paths_mapping = {

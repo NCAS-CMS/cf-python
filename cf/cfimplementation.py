@@ -133,7 +133,7 @@ class CFImplementation(cfdm.CFDMImplementation):
     def initialise_CFAH5netcdfArray(self, **kwargs):
         """Return a `CFAH5netcdfArray` instance.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Parameters:
 

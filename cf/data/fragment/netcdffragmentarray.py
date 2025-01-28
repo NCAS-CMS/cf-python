@@ -67,7 +67,7 @@ class NetCDFFragmentArray(
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 1.11.2.0
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -75,18 +75,18 @@ class NetCDFFragmentArray(
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 1.11.2.0
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
         """
@@ -185,7 +185,7 @@ class NetCDFFragmentArray(
         `H5netcdfFragmentArray` will only be used if
         `NetCDF4FragmentArray` returns a `FileNotFoundError` exception.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 

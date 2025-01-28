@@ -15,7 +15,7 @@ class FragmentArrayMixin:
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 

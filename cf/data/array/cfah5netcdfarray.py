@@ -5,6 +5,6 @@ from .mixin import CFAMixin
 class CFAH5netcdfArray(CFAMixin, H5netcdfArray):
     """A CFA-netCDF array accessed with `h5netcdf`
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     """

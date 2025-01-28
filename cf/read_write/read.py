@@ -440,7 +440,7 @@ def read(
             following variable attributes: ``add_offset``,
             ``scale_factor``, and ``_Unsigned``.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -730,7 +730,7 @@ def read(
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
 
-              .. versionadded:: NEXTVERSION
+              .. versionadded:: 1.11.2.0
 
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
@@ -752,7 +752,7 @@ def read(
             on how the HDF5 chunking strategy is determined at the
             time of writing.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -815,7 +815,7 @@ def read(
                       `netCDF4` and `h5netcdf` to successfully open
                       the file is used.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -860,7 +860,7 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         cache: `bool`, optional
             If True, the default, then cache the first and last array
@@ -871,7 +871,7 @@ def read(
             data, setting *cache* to False may speed up the parsing of
             the file.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -891,7 +891,7 @@ def read(
         chunk: deprecated at version 3.14.0
             Use the *dask_chunks* parameter instead.
 
-        chunks: deprecated at version NEXTVERSION
+        chunks: deprecated at version 1.11.2.0
             Use the *dask_chunks* parameter instead.
 
     :Returns:
@@ -957,7 +957,7 @@ def read(
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "cf.read",
             {"follow_symlinks": follow_symlinks},
-            "Use keyword 'followlink' instead.",
+            "Use keyword 'followlinks' instead.",
             removed_at="4.0.0",
         )  # pragma: no cover
 
@@ -1334,17 +1334,17 @@ def _read_a_file(
         storage_options: `dict` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         netcdf_backend: `str` or `None`, optional
             See `cf.read` for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
         cache: `bool`, optional
             See `cf.read` for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 1.11.2.0
 
     :Returns:
 

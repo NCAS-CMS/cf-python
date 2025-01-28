@@ -1948,7 +1948,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         consistent with an updated `dask` array. See the *clear*
         parameter for details.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
                      `_set_dask`, `_cfa_del_write`
@@ -4068,7 +4068,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         `masked_where` causes all delayed operations to be executed.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `mask`, `masked_values`, `where`
 

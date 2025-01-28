@@ -1,7 +1,7 @@
 class NetCDFArray:
     """A netCDF array accessed with `netCDF4`.
 
-    Deprecated at version NEXTVERSION and is no longer available. Use
+    Deprecated at version 1.11.2.0 and is no longer available. Use
     `cf.NetCDF4Array` instead.
 
     """
@@ -11,6 +11,6 @@ class NetCDFArray:
         from ...functions import DeprecationError
 
         raise DeprecationError(
-            f"{self.__class__.__name__} was deprecated at version NEXTVERSION "
+            f"{self.__class__.__name__} was deprecated at version 1.11.2.0 "
             "and is no longer available. Use cf.NetCDF4Array instead."
         )

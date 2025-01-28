@@ -1,7 +1,7 @@
-version NEXTVERSION
--------------------
+version 3.16.3
+--------------
 
-**2024-12-??**
+**2025-01-28**
 
 * Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
   sampling geometry source grids

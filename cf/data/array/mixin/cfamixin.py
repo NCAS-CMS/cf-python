@@ -9,14 +9,14 @@ from cfdm.data.utils import chunk_locations, chunk_positions
 class CFAMixin:
     """Mixin class for a CFA array.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         """
         # Import fragment array classes. Do this here (as opposed to
@@ -78,7 +78,7 @@ class CFAMixin:
 
             {{init unpack: `bool`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 1.11.2.0
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value as found on
@@ -134,7 +134,7 @@ class CFAMixin:
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 1.11.2.0
 
             {{init attributes: `dict` or `None`, optional}}
 
@@ -142,18 +142,18 @@ class CFAMixin:
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionaddedd:: NEXTVERSION
+                .. versionaddedd:: 1.11.2.0
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
         """
@@ -226,7 +226,7 @@ class CFAMixin:
     def _parse_cfa(self, x, term, substitutions):
         """Parse the CFA aggregation instructions.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Parameters:
 
@@ -466,7 +466,7 @@ class CFAMixin:
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing S3 fragment files.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Returns:
 

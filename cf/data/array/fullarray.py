@@ -41,18 +41,18 @@ class FullArray(IndexMixin, Array):
 
             {{init attributes: `dict` or `None`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 1.11.2.0
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
         """
@@ -123,7 +123,7 @@ class FullArray(IndexMixin, Array):
     def _get_array(self, index=None):
         """Returns the full array.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -158,7 +158,7 @@ class FullArray(IndexMixin, Array):
     def array(self):
         """Return an independent numpy array containing the data.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Returns:
 
