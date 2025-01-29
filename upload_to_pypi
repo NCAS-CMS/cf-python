@@ -18,7 +18,8 @@ fi
 
 version=$1
 
-tarball=dist/cf-python-${version}.tar.gz
+tarball=dist/cf_python-${version}.tar.gz
+mv dist/cf-python-${version}.tar.gz dist/$tarball
 
 if [[ ! -f $tarball ]] ; then
   echo "Tar ball for version $version does not exist: $tarball"
