@@ -3151,7 +3151,7 @@ class PropertiesData(Properties):
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with a fill value.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Parameters:
 

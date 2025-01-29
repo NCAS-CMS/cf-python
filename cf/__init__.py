@@ -81,8 +81,8 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.11"
-__date__ = "2024-??-??"
-__version__ = "3.17.0"
+__date__ = "2025-01-28"
+__version__ = "3.16.3"
 
 _requires = (
     "numpy",
@@ -122,7 +122,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 try:
-    import numpy
+    import numpy as np
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
@@ -190,10 +190,11 @@ if Version(cftime.__version__) < Version(_minimum_vn):
 
 # Check the version of numpy
 _minimum_vn = "1.22"
-if Version(numpy.__version__) < Version(_minimum_vn):
-    raise RuntimeError(
-        f"Bad numpy version: cf requires numpy>={_minimum_vn}. "
-        f"Got {numpy.__version__} at {numpy.__file__}"
+_maximum_vn = "2.0"
+if not Version(_minimum_vn) <= Version(np.__version__) < Version(_maximum_vn):
+    raise ValueError(
+        "Bad numpy version: cf requires _minimum_vn}<=numpy<{_maximum_vn}. "
+        f"Got {np.__version__} at {np.__file__}"
     )
 
 # Check the version of cfunits
@@ -211,10 +212,22 @@ _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
-        f"Got {_cfdm_version} at {cfdm.__file__}"
+        f"Got {cfdm.__version__} at {cfdm.__file__}"
     )
 
 # Check the version of dask
+
+_minimum_vn = "2024.6.1"
+_maximum_vn = "2024.7.1"
+if (
+    not Version(_minimum_vn)
+    <= Version(dask.__version__)
+    <= Version(_maximum_vn)
+):
+    raise ValueError(
+        "Bad dask version: cf requires {_minimum_vn}<=dask<={_maximum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
+    )
 
 # Check the version of Python
 _minimum_vn = "3.8.0"
@@ -231,6 +244,8 @@ if Version(scipy.__version__) < Version(_minimum_vn):
         f"Bad scipy version: cf requires scipy>={_minimum_vn}. "
         f"Got {scipy.__version__} at {scipy.__file__}"
     )
+
+del _minimum_vn, _maximum_vn
 
 from .constructs import Constructs
 

@@ -2312,7 +2312,7 @@ class FieldDomain:
 
         * The axis with geometry cells.
 
-        .. versionaddedd:: NEXTVERSION
+        .. versionaddedd:: 1.11.2.0
 
         .. seealso:: `domain_axis`, `coordinates`
 

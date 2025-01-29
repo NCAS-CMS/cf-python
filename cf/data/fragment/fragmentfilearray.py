@@ -4,14 +4,14 @@ import cfdm
 class FragmentFileArray(cfdm.data.fragment.FragmentFileArray):
     """Fragment of aggregated data in a file.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: NEXTVERSION
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment classes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: NEXTVERSION
 
         """
         # Import fragment classes. Do this here (as opposed to outside

@@ -1813,7 +1813,7 @@ class PropertiesDataBounds(PropertiesData):
     def filled(self, fill_value=None, bounds=True, inplace=False):
         """Replace masked elements with a fill value.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Parameters:
 

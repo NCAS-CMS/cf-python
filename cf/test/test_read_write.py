@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 import numpy as np
-from cfdm.read_write.exceptions import FileTypeError
+from cfdm.read_write.exceptions import DatasetTypeError
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -904,15 +904,15 @@ class read_writeTest(unittest.TestCase):
 
         # UM file
         for file_type in (None, "UM", ("UM",), ("UM", "bad value")):
-            f = cf.read("umfile.pp", file_type=file_type)
+            f = cf.read("file1.pp", file_type=file_type)
             self.assertEqual(len(f), 1)
 
         for file_type in ("netCDF", "bad value", ()):
-            f = cf.read("umfile.pp", file_type=file_type)
+            f = cf.read("file1.pp", file_type=file_type)
             self.assertEqual(len(f), 0)
 
         # Not a netCDF, CDL, or UM file
-        with self.assertRaises(FileTypeError):
+        with self.assertRaises(DatasetTypeError):
             f = cf.read("test_read_write.py")
 
         for file_type in ("netCDF", "CDL", "bad value", ()):

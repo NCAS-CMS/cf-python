@@ -3660,7 +3660,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `masked_where` causes all delayed operations to be executed.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         .. seealso:: `mask`, `masked_values`, `where`
 

@@ -3038,7 +3038,7 @@ def aggregate(
 
         unaggregatable = False
 
-        # Record the names of theaxes thatr are actually aggregated
+        # Record the names of the axes that are actually aggregated
         axes_aggregated = []
 
         for axis in aggregating_axes:

@@ -14,7 +14,7 @@ class AggregatedArray(Container, cfdm.AggregatedArray):
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: NEXTVERSION
 
         """
         # Override the inherited FragmentFileArray class

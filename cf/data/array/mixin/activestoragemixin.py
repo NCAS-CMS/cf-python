@@ -1,7 +1,7 @@
 class ActiveStorageMixin:
     """Mixin class for enabling active storage operations.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.11.2.0
 
     """
 
@@ -12,7 +12,7 @@ class ActiveStorageMixin:
         Currently, active storage operations are allowed unless the
         data are numerically packed.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.11.2.0
 
         :Returns:
 
