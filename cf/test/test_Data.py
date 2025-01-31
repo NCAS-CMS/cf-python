@@ -2621,7 +2621,7 @@ class DataTest(unittest.TestCase):
                     a1 = np.nanpercentile(filled, q, keepdims=keepdims)
                     mask = np.isnan(a1)
                     if mask.any():
-                        a1 = np.ma.masked_where(mask, a1, copy=False)
+                        a1 = np.ma.masked_where(mask, a1)
 
                     b1 = d.percentile(q, squeeze=not keepdims)
                     self.assertEqual(b1.shape, a1.shape)
@@ -3613,6 +3613,7 @@ class DataTest(unittest.TestCase):
             b = np.ma.asanyarray(b)
 
             e = d.sample_size(axes=axis, squeeze=True)
+
             e = np.ma.array(e.array)
 
             self.assertTrue((e.mask == b.mask).all())

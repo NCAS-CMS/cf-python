@@ -858,7 +858,6 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
         return x
 
     x = cfdm_to_memory(x)
-
     if np.ma.isMA(x):
         N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
     else:

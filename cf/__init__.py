@@ -173,7 +173,7 @@ if Version(psutil.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of netCDF4
-_minimum_vn = "1.6.5"
+_minimum_vn = "1.7.2"
 if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
@@ -181,7 +181,7 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.6.2"
+_minimum_vn = "1.6.4"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
@@ -189,12 +189,11 @@ if Version(cftime.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of numpy
-_minimum_vn = "1.22"
-_maximum_vn = "2.0"
-if not Version(_minimum_vn) <= Version(np.__version__) < Version(_maximum_vn):
+_minimum_vn = "2.0.0"
+if not Version(_minimum_vn) < Version(np.__version__):
     raise ValueError(
-        "Bad numpy version: cf requires _minimum_vn}<=numpy<{_maximum_vn}. "
-        f"Got {np.__version__} at {np.__file__}"
+        "Bad numpy version: cfdm requires {_minimum_vn}<=numpy. "
+        f"Got {Version(np.__version__)} at {np.__file__}"
     )
 
 # Check the version of cfunits

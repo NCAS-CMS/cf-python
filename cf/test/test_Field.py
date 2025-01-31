@@ -2550,7 +2550,7 @@ class FieldTest(unittest.TestCase):
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
 
-    def test_Field__aaa_grad_xy(self):
+    def test_Field_grad_xy(self):
         f = cf.example_field(0)
 
         # theta=0 is at the north pole

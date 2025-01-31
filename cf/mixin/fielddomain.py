@@ -692,8 +692,7 @@ class FieldDomain:
             if ind is not None:
                 mask_component_shape = []
                 masked_subspace_size = 1
-                # TODONUMPY2: https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
-                ind = np.array(ind, copy=False)
+                ind = np.array(ind)
 
                 for i, (axis, start, stop) in enumerate(
                     zip(canonical_axes, ind.min(axis=1), ind.max(axis=1))
