@@ -9619,7 +9619,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(f.auxiliary_coordinate('altitude', default=None))
         None
         >>> g = f.compute_vertical_coordinates()
-        >>> print(g.auxiliary_coordinates)
+        >>> print(g.auxiliary_coordinates())
         Constructs:
         {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
          'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -9634,6 +9634,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             Data(1, 10, 9) = [[[10.0, ..., 5410.0]]] m
             Bounds:units = 'm'
             Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
+
+        >>> g, key = f.compute_vertical_coordinates(key=True)
+        >>> g
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+        >>> key
+        'auxiliarycoordinate3'
+
+        >>> i = f.compute_vertical_coordinates(inplace=True)
+        >>> print(i)
+        None
+        >>> print(f.auxiliary_coordinates())
+        Constructs:
+        {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'auxiliarycoordinate3': <CF AuxiliaryCoordinate: altitude(1, 10, 9) m>}
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
