@@ -9514,8 +9514,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(
-            self, default_to_zero=True,
-            strict=True, inplace=False, verbose=None, key=False
+            self, default_to_zero=True, strict=True, key=False,
+            inplace=False, verbose=None,
     ):
         """Compute non-parametric vertical coordinates.
 
@@ -9550,7 +9550,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{default_to_zero: `bool`, optional}}
 
             strict: `bool`
-                If False then allow the computation to occur when
+                If False then allow the computation to occur when:
 
                 * A domain ancillary construct has no standard name, but
                   the corresponding term has a standard name that is
@@ -9569,15 +9569,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 names, then an exception is raised regardless of the value
                 of *strict*.
 
+            key: `bool`
+                If True, return alongside the field construct the key
+                identifying the auxiliary coordinate of the field with
+                the newly-computed vertical coordinates, as a 2-tuple
+                of field and then key. If False, the default, then only
+                return the field construct.
+
+                If no coordinates were computed, `None` will be
+                returned in the key (second) position of the 2-tuple.
+
+                .. versionadded:: 3.17.0
+
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
 
         :Returns:
 
-            `Field` or `None`
+            `Field`, 2-tuple, or `None`
                 The field construct with the new non-parametric vertical
-                coordinates, or `None` if the operation was in-place.
+                coordinates, or a 2-tuple of this field construct along
+                with the key of the new auxiliary coordinate with the
+                computed vertical coordinates, or `None` if the operation
+                was in-place.
 
         **Examples**
 
