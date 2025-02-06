@@ -757,6 +757,16 @@ class FormulaTermsTest(unittest.TestCase):
         g = f.compute_vertical_coordinates(verbose=None)
         altitude = g.auxiliary_coordinate("altitude")
 
+        # Test the 'key' parameter
+        k = f.compute_vertical_coordinates(key=True, verbose=None)
+        self.assertEqual(len(k), 2)  # expect a 2-tuple of field then key
+        self.assertTrue(k[0].equals(g))  # field result, same as above
+        self.assertEqual(k[1], "auxiliarycoordinate3")  # i.e. key for altitude
+        # key=True and inplace=True are incompatible inputs
+        with self.assertRaises(ValueError):
+            k = f.compute_vertical_coordinates(
+                key=True, inplace=True, verbose=None)
+
         self.assertTrue(altitude)
         self.assertTrue(altitude.has_bounds())
         self.assertEqual(altitude.shape, (1,) + orog.shape)
@@ -881,6 +891,11 @@ class FormulaTermsTest(unittest.TestCase):
         f = cf.example_field(0)
         g = f.compute_vertical_coordinates()
         self.assertTrue(g.equals(f))
+        # With key=True, expect the key (second in return 2-tuple) to be None
+        k = f.compute_vertical_coordinates(key=True)
+        self.assertEqual(len(k), 2)
+        self.assertTrue(k[0].equals(f))
+        self.assertEqual(k[1], None)
 
         # ------------------------------------------------------------
         # Check other types
