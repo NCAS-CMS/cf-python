@@ -9514,7 +9514,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(
-        self, default_to_zero=True, strict=True, inplace=False, verbose=None
+            self, default_to_zero=True,
+            strict=True, inplace=False, verbose=None, key=False
     ):
         """Compute non-parametric vertical coordinates.
 
@@ -9622,9 +9623,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
+        if inplace and key:
+            raise ValueError(
+                "Can't set both key=True and inplace=True, since inplace "
+                "will always do the operation in-place and return None."
+            )
+
         detail = is_log_level_detail(logger)
         debug = is_log_level_debug(logger)
 
+        return_key = None  # in case there are no vertical coords to compute
         for cr in f.coordinate_references(todict=True).values():
             # --------------------------------------------------------
             # Compute the non-parametric vertical coordinates, if
@@ -9666,20 +9674,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"{c.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-            key = f.set_construct(c, axes=computed_axes, copy=False)
+            return_key = f.set_construct(c, axes=computed_axes, copy=False)
 
             # Reference the new coordinates from the coordinate
             # reference construct
-            cr.set_coordinate(key)
+            cr.set_coordinate(return_key)
 
             if debug:
                 logger.debug(
-                    f"Non-parametric coordinates construct key: {key!r}\n"
+                    "Non-parametric coordinates construct key: "
+                    f"{return_key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-        return f
+        if key:
+            # 2-tuple, where return_key will be None if nothing was computed
+            return f, return_key
+        else:
+            return f
 
     def match_by_construct(self, *identities, OR=False, **conditions):
         """Whether or not there are particular metadata constructs.
