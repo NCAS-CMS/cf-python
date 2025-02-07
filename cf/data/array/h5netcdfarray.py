@@ -1,13 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
+from .mixin import ActiveStorageMixin
 
 
 class H5netcdfArray(
     ActiveStorageMixin,
-    FileArrayMixin,
-    ArrayMixin,
     Container,
     cfdm.H5netcdfArray,
 ):

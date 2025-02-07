@@ -27,10 +27,9 @@ from . import (
 )
 from .data import Data
 from .data.array import (
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFAH5netcdfArray,
-    CFANetCDF4Array,
     GatheredArray,
     H5netcdfArray,
     NetCDF4Array,
@@ -114,49 +113,14 @@ class CFImplementation(cfdm.CFDMImplementation):
             parent, construct, axes=axes, copy=copy, **kwargs
         )
 
-    def initialise_CFANetCDF4Array(self, **kwargs):
-        """Return a `CFANetCDF4Array` instance.
-
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-        :Returns:
-
-            `CFANetCDF4Array`
-
-        """
-        cls = self.get_class("CFANetCDF4Array")
-        return cls(**kwargs)
-
-    def initialise_CFAH5netcdfArray(self, **kwargs):
-        """Return a `CFAH5netcdfArray` instance.
-
-        .. versionadded:: 1.11.2.0
-
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-        :Returns:
-
-            `CFAH5netcdfArray`
-
-        """
-        cls = self.get_class("CFAH5netcdfArray")
-        return cls(**kwargs)
-
 
 _implementation = CFImplementation(
     cf_version=CF(),
+    AggregatedArray=AggregatedArray,
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellConnectivity=CellConnectivity,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
-    CFAH5netcdfArray=CFAH5netcdfArray,
-    CFANetCDF4Array=CFANetCDF4Array,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,
@@ -214,8 +178,6 @@ def implementation():
      'CellConnectivityArray': cf.data.array.cellconnectivityarray.CellConnectivityArray,
      'CellMeasure': cf.cellmeasure.CellMeasure,
      'CellMethod': cf.cellmethod.CellMethod,
-     'CFAH5netcdfArray': cf.data.array.cfah5netcdfarray.CFAH5netcdfArray,
-     'CFANetCDF4Array': cf.data.array.cfanetcdf4array.CFANetCDF4Array,
      'CoordinateReference': cf.coordinatereference.CoordinateReference,
      'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
      'Domain': cf.domain.Domain,

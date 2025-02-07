@@ -470,38 +470,6 @@ _docstring_substitution_definitions = {
     # bounds
     "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
                 If True (the default) then alter any bounds.""",
-    # cull
-    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
-                If True then unnecessary tasks are removed (culled)
-                from each array's dask graph before
-                concatenation. This process can have a considerable
-                overhead but can sometimes improve the overall
-                performance of a workflow. If False (the default) then
-                dask graphs are not culled. See
-                `dask.optimization.cull` for details.""",
-    # relaxed_units
-    "{{relaxed_units: `bool`, optional}}": """relaxed_units: `bool`, optional
-                If True then allow the concatenation of data with
-                invalid but otherwise equal units. By default, if any
-                data array has invalid units then the concatenation
-                will fail. A `Units` object is considered to be
-                invalid if its `!isvalid` attribute is `False`.""",
-    # cfa substitutions
-    "{{cfa substitutions: `dict`}}": """substitutions: `dict`
-                The substitution definitions in a dictionary whose
-                key/value pairs are the file name parts to be
-                substituted and their corresponding substitution text.
-
-                Each substitution definition may be specified with or
-                without the ``${...}`` syntax. For instance, the
-                following are equivalent: ``{'base': 'sub'}``,
-                ``{'${base}': 'sub'}``.""",
-    # cfa base
-    "{{cfa base: `str`}}": """base: `str`
-                The substitution definition to be removed. May be
-                specified with or without the ``${...}`` syntax. For
-                instance, the following are equivalent: ``'base'`` and
-                ``'${base}'``.""",
     # regular args
     "{{regular args}}": """A sequence of three numeric values. The first two values in
                 the sequence represent the coordinate range (see the bounds
@@ -631,21 +599,6 @@ _docstring_substitution_definitions = {
                             coordinates check will be carried out,
                             however, if the *check_coordinates*
                             parameter is True.""",
-    # Returns cfa_file_substitutions
-    "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
-                whose key/value pairs are the file name parts to be
-                substituted and their corresponding substitution
-                text.""",
-    # Returns cfa_clear_file_substitutions
-    "{{Returns cfa_clear_file_substitutions}}": """The removed CFA-netCDF file name substitutions in a
-                dictionary whose key/value pairs are the file name
-                parts to be substituted and their corresponding
-                substitution text.""",
-    # Returns cfa_clear_file_substitutions
-    "{{Returns cfa_del_file_substitution}}": """
-                The removed CFA-netCDF file name substitution. If the
-                substitution was not defined then an empty dictionary
-                is returned.""",
     # subspace valid modes Field
     "{{subspace valid modes Field}}": """Valid modes are:
 

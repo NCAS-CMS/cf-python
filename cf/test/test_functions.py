@@ -32,9 +32,9 @@ class functionTest(unittest.TestCase):
         # Use as test case 'i' kwarg, the deprecated old name for
         # 'inplace':
         f = cf.example_field(0)
-        f.squeeze(inplace=True)  # new way to specify operation tested below
+        f.flip(inplace=True)  # new way to specify operation tested below
         with self.assertRaises(cf.functions.DeprecationError):
-            f.squeeze(i=True)
+            f.flip(i=True)
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
@@ -366,9 +366,6 @@ class functionTest(unittest.TestCase):
 
         x = da.arange(9)
         self.assertEqual(cf.size(x), x.size)
-
-    def test_CFA(self):
-        self.assertEqual(cf.CFA(), cf.__cfa_version__)
 
     def test_normalize_slice(self):
         self.assertEqual(cf.normalize_slice(slice(1, 4), 8), slice(1, 4, 1))

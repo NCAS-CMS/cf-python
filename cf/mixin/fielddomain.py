@@ -387,6 +387,7 @@ class FieldDomain:
 
             if debug:
                 logger.debug(
+                    f"  constructs   = {constructs!r}\n"
                     f"  item_axes    = {item_axes!r}\n"
                     f"  keys         = {keys!r}"
                 )  # pragma: no cover
@@ -405,6 +406,7 @@ class FieldDomain:
                 if debug:
                     logger.debug(
                         f"  {n_items} 1-d constructs: {constructs!r}\n"
+                        f"  item         = {item!r}\n"
                         f"  axis         = {axis!r}\n"
                         f"  value        = {value!r}\n"
                         f"  identity     = {identity!r}"
@@ -530,8 +532,8 @@ class FieldDomain:
                         index = normalize_index(index, (size,))[0]
                 else:
                     raise ValueError(
-                        "Must specify a domain axis construct or a "
-                        "construct with data for which to create indices"
+                        "Could not find a unique construct with identity "
+                        f"{identity!r} from which to infer the indices."
                     )
 
                 if debug:

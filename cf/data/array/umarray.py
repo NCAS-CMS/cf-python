@@ -4,13 +4,11 @@ from ...constants import _stash2standard_name
 from ...functions import _DEPRECATION_ERROR_ATTRIBUTE, load_stash2standard_name
 from ...umread_lib.umfile import File, Rec
 from .abstract import Array
-from .mixin import FileArrayMixin
 
 
 class UMArray(
-    FileArrayMixin,
     cfdm.data.mixin.IndexMixin,
-    cfdm.data.mixin.FileArrayMixin,
+    cfdm.data.abstract.FileArray,
     Array,
 ):
     """A sub-array stored in a PP or UM fields file."""
@@ -24,7 +22,10 @@ class UMArray(
         fmt=None,
         word_size=None,
         byte_ordering=None,
+        mask=True,
+        unpack=True,
         attributes=None,
+        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -98,33 +99,24 @@ class UMArray(
                 *attributes* parameter instead.
 
         """
-        super().__init__(source=source, copy=copy)
+        super().__init__(
+            filename=filename,
+            address=address,
+            dtype=dtype,
+            shape=shape,
+            mask=mask,
+            unpack=unpack,
+            attributes=attributes,
+            storage_options=storage_options,
+            source=source,
+            copy=copy,
+        )
 
         if source is not None:
-            try:
-                shape = source._get_component("shape", None)
-            except AttributeError:
-                shape = None
-
-            try:
-                filename = source._get_component("filename", None)
-            except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
             try:
                 fmt = source._get_component("fmt", None)
             except AttributeError:
                 fmt = None
-
-            try:
-                dtype = source._get_component("dtype", None)
-            except AttributeError:
-                dtype = None
 
             try:
                 word_size = source._get_component("word_size", None)
@@ -135,31 +127,6 @@ class UMArray(
                 byte_ordering = source._get_component("byte_ordering", None)
             except AttributeError:
                 byte_ordering = None
-
-            try:
-                attributes = source._get_component("attributes", None)
-            except AttributeError:
-                attributes = None
-
-        if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
-
-            self._set_component("filename", filename, copy=False)
-
-        if address is not None:
-            if isinstance(address, int):
-                address = (address,)
-            else:
-                address = tuple(address)
-
-            self._set_component("address", address, copy=False)
-
-        self._set_component("shape", shape, copy=False)
-        self._set_component("dtype", dtype, copy=False)
-        self._set_component("attributes", attributes, copy=False)
 
         if fmt is not None:
             self._set_component("fmt", fmt, copy=False)
@@ -215,8 +182,8 @@ class UMArray(
         # Get the data subspace, applying any masking and unpacking
         array = cfdm.netcdf_indexer(
             array,
-            mask=True,
-            unpack=True,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
             always_masked_array=False,
             orthogonal_indexing=True,
             attributes=attributes,

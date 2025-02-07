@@ -1,13 +1,11 @@
 import cfdm
 
 from ...mixin_container import Container
-from .mixin import ActiveStorageMixin, ArrayMixin, FileArrayMixin
+from .mixin import ActiveStorageMixin
 
 
 class NetCDF4Array(
     ActiveStorageMixin,
-    FileArrayMixin,
-    ArrayMixin,
     Container,
     cfdm.NetCDF4Array,
 ):
