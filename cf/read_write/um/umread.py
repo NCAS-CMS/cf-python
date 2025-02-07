@@ -491,6 +491,7 @@ class UMField:
         info=False,
         squeeze=False,
         unsqueeze=False,
+        unpack=True,
         **kwargs,
     ):
         """**Initialisation**
@@ -559,6 +560,17 @@ class UMField:
 
                 .. versionadded:: NEXTVERSION
 
+            unpack: `bool`, optional
+                If True, the default, then unpack arrays by convention
+                when the data is read from disk.
+
+                Unpacking is determined by netCDF conventions for the
+                following variable attributes ``add_offset`` and
+                ``scale_factor``, as applied to lookup header entries
+                BDATUM and BMKS repectively.
+
+                .. versionadded:: NEXTVERSION
+
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
                 return field construct.
@@ -579,6 +591,7 @@ class UMField:
         self.height_at_top_of_model = height_at_top_of_model
         self.byte_ordering = byte_ordering
         self.word_size = word_size
+        self.unpack = unpack
 
         self.atol = cf_atol()
 
@@ -2025,6 +2038,7 @@ class UMField:
         klass_name = UMArray().__class__.__name__
 
         fmt = self.fmt
+        unpack = self.unpack
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -2050,6 +2064,7 @@ class UMField:
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
                 attributes=attributes,
+                unpack=unpack,
             )
 
             key = f"{klass_name}-{tokenize(subarray)}"
@@ -2103,6 +2118,7 @@ class UMField:
                         word_size=word_size,
                         byte_ordering=byte_ordering,
                         attributes=attributes,
+                        unpack=unpack,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"
@@ -2153,6 +2169,7 @@ class UMField:
                         word_size=word_size,
                         byte_ordering=byte_ordering,
                         attributes=attributes,
+                        unpack=unpack,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"
@@ -3392,6 +3409,7 @@ class UMRead(cfdm.read_write.IORead):
         domain=False,
         file_type=None,
         ignore_unknown_type=False,
+        unpack=True,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3471,6 +3489,17 @@ class UMRead(cfdm.read_write.IORead):
                 default) then the presence or not of size 1 dimensions
                 is determined by how the data are stored in its
                 dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unpack: `bool`, optional
+                If True, the default, then unpack arrays by convention
+                when the data is read from disk.
+
+                Unpacking is determined by netCDF conventions for the
+                following variable attributes ``add_offset`` and
+                ``scale_factor``, as applied to lookup header entries
+                BDATUM and BMKS repectively.
 
                 .. versionadded:: NEXTVERSION
 
@@ -3555,6 +3584,7 @@ class UMRead(cfdm.read_write.IORead):
                 implementation=self.implementation,
                 select=select,
                 info=info,
+                unpack=unpack,
             )
             for var in f.vars
         ]
