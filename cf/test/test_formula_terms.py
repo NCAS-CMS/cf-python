@@ -765,7 +765,8 @@ class FormulaTermsTest(unittest.TestCase):
         # key=True and inplace=True are incompatible inputs
         with self.assertRaises(ValueError):
             k = f.compute_vertical_coordinates(
-                key=True, inplace=True, verbose=None)
+                key=True, inplace=True, verbose=None
+            )
 
         self.assertTrue(altitude)
         self.assertTrue(altitude.has_bounds())

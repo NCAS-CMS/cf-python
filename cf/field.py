@@ -9514,8 +9514,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(
-            self, default_to_zero=True, strict=True, key=False,
-            inplace=False, verbose=None,
+        self,
+        default_to_zero=True,
+        strict=True,
+        key=False,
+        inplace=False,
+        verbose=None,
     ):
         """Compute non-parametric vertical coordinates.
 
