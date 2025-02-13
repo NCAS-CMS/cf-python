@@ -72,7 +72,7 @@ can:
 
 Powerful, flexible, and very simple to produce visualisations of field
 constructs uses the `cfplot` package
-(http://ajheaps.github.io/cf-plot), that is automatically installed
+(https://ncas-cms.github.io/cf-plot/build/), that is automatically installed
 along with with `cf`.
 
 See the :ref:`cf-python home page <cf-python-home>` for documentation,

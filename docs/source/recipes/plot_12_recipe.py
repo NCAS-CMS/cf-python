@@ -43,7 +43,7 @@ lat = aod.coordinate("Y")
 
 # %%
 # 6. Plot the AOD for all the retrievals using
-# `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here the argument
+# `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_. Here the argument
 # ``'ptype'`` specifies the type of plot to use (latituide-longitude here) and
 # the argument ``'lines=False'`` does not draw contour lines:
 cfp.con(f=aod.array, x=lon.array, y=lat.array, ptype=1, lines=False)
@@ -68,17 +68,17 @@ high = aod.where(mask, cf.masked)
 
 # %%
 # 9. Now plot both the AOD from `high-quality` retrieval and all other retrievals
-# using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here:
+# using `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_. Here:
 #
-# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
+# - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, specifying that the figure should have
 #   1 row and 2 columns, which is closed by
-#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
+#   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
 # - `plt.suptitle <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html>`_
 #   is used to add a title for the whole figure;
 # - the subplots for plotting are selected using
-#   `cfplot.gpos <https://ajheaps.github.io/cf-plot/gpos.html>`_ after which
-#   `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+#   `cfplot.gpos <https://ncas-cms.github.io/cf-plot/build/gpos.html>`_ after which
+#   `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map limits and resolution for the subplots;
 # - and as cf-plot stores the plot in a plot object with the name
 #   ``cfp.plotvars.plot``, country borders are added using normal

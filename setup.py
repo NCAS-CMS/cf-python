@@ -157,11 +157,11 @@ Visualization
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the
-[cfplot](http://ajheaps.github.io/cf-plot) package, that needs to be
-installed seprately to the ``cf`` package.
+`cf-plot <https://ncas-cms.github.io/cf-plot/build/>`_ package, that
+needs to be installed seprately to the ``cf`` package.
 
 See the `cfplot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
+<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the full range
 of plotting possibilities with example code.
 
 Functionality
