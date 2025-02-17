@@ -6,6 +6,7 @@ version 3.17.0
 * Replace dataset aggregation functionality (CFA) with that imported
   from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
 * Changed dependency: ``1.12.0.0<=cfdm<1.12.1.0``
+* Changed dependency: ``dask>=2025.12.0``
 
 ----
 
@@ -53,7 +54,7 @@ version 3.16.3
   global or near-global cyclic subspaces
   (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
+* New dependency: ``h5py>=3.12.0``
 * New dependency: ``s3fs>=2024.6.0``
 * Changed dependency: ``numpy>=1.15,<2.0``
 * Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``

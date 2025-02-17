@@ -215,16 +215,10 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-
-_minimum_vn = "2024.6.1"
-_maximum_vn = "2024.7.1"
-if (
-    not Version(_minimum_vn)
-    <= Version(dask.__version__)
-    <= Version(_maximum_vn)
-):
+_minimum_vn = "2024.12.0"
+if Version(dask.__version__) < Version(_minimum_vn):
     raise ValueError(
-        "Bad dask version: cf requires {_minimum_vn}<=dask<={_maximum_vn}. "
+        f"Bad dask version: cf requires dask>={_minimum_vn}. "
         f"Got {dask.__version__} at {dask.__file__}"
     )
 
