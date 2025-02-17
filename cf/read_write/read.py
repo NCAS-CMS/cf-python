@@ -763,6 +763,7 @@ class read(cfdm.read):
                             unsqueeze=unsqueeze,
                             domain=domain,
                             file_type=file_type,
+                            unpack=unpack,
                         )
                     except DatasetTypeError as error:
                         if file_type is None:
