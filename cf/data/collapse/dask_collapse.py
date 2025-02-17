@@ -859,7 +859,16 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
 
     x = cfdm_to_memory(x)
     if np.ma.isMA(x):
-        N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
+        # Note: We're not using `np.ones_like` here (like we used to
+        #       for numpy<2.0.0) because numpy currently
+        #       (numpy==2.2.3) has a bug that produces a
+        #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
+        #       invalid value encountered in cast fill_value =
+        #       np.asarray(fill_value, dtype=ndtype)". See
+        #       https://github.com/numpy/numpy/issues/28255 for more
+        #       details.
+        x = np.ma.array(np.ones((x.shape), dtype=x.dtype), mask=x.mask)
+        N = chunk.sum(x, **kwargs)
     else:
         if dtype:
             kwargs["dtype"] = dtype

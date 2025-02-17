@@ -49,13 +49,13 @@ class PropertiesData(Properties):
 
     _special_properties = ("units", "calendar")
 
-#    def __array__(self, *dtype):
-#        """Returns a numpy array representation of the data."""
-#        data = self.get_data(None)
-#        if data is not None:
-#            return data.__array__(*dtype)#
-#
-#        raise ValueError(f"{self.__class__.__name__} has no data")
+    #    def __array__(self, *dtype):
+    #        """Returns a numpy array representation of the data."""
+    #        data = self.get_data(None)
+    #        if data is not None:
+    #            return data.__array__(*dtype)#
+    #
+    #        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __contains__(self, value):
         """Called to implement membership test operators.
