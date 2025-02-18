@@ -269,18 +269,18 @@ def configuration(
             reductions or False to disable them). The default is to
             not change the current behaviour.
 
-            .. versionadded:: 1.11.2.0
+            .. versionadded:: 3.16.3
 
         active_storage_url: `str` or `None` or `Constant`, optional
             The new value (either a new URL string or `None` to remove
             the URL). The default is to not change the value.
 
-            .. versionadded:: 1.11.2.0
+            .. versionadded:: 3.16.3
 
         active_storage_max_requests: `int` or `Constant`, optional
             The new value. The default is to not change the value.
 
-            .. versionadded:: 1.11.2.0
+            .. versionadded:: 3.16.3
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
@@ -1132,7 +1132,7 @@ class bounds_combination_mode(ConstantAccess):
 class active_storage(ConstantAccess):
     """Whether or not to attempt active storage reductions.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `active_storage_max_requests`, `active_storage_url`,
                  `configuration`
@@ -1171,7 +1171,7 @@ class active_storage(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: 1.11.2.0
+        .. versionaddedd:: 3.16.3
 
         :Parameters:
 
@@ -1201,7 +1201,7 @@ class active_storage(ConstantAccess):
 class active_storage_url(ConstantAccess):
     """The URL location of the active storage reducer.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `active_storage`, `active_storage_max_requests`,
                  `configuration`
@@ -1240,7 +1240,7 @@ class active_storage_url(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: 1.11.2.0
+        .. versionaddedd:: 3.16.3
 
         :Parameters:
 
@@ -1283,7 +1283,7 @@ class active_storage_max_requests(ConstantAccess):
     collapse operation are utilising active storage. If some are not
     then :math:`N` will likely be underestimated.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `active_storage`, `active_storage_url`,
                  `configuration`
@@ -1322,7 +1322,7 @@ class active_storage_max_requests(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: 1.11.2.0
+        .. versionaddedd:: 3.16.3
 
         :Parameters:
 
@@ -1488,7 +1488,7 @@ def total_memory():
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `log_level`
 
@@ -3188,7 +3188,7 @@ def environment(display=True, paths=True):
     udunits2 library: /home/user/lib/libudunits2.so.0
     esmpy/ESMF: 8.6.1 /home/user/lib/python3.12/site-packages/esmpy/__init__.py
     Python: 3.12.2 /home/user/bin/python
-    dask: 2024.6.0 /home/user/lib/python3.12/site-packages/dask/__init__.py
+    dask: 2025.2.0 /home/user/lib/python3.12/site-packages/dask/__init__.py
     netCDF4: 1.6.5 /home/user/lib/python3.12/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/user/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.11.0 /home/user/lib/python3.12/site-packages/h5py/__init__.py
@@ -3201,8 +3201,8 @@ def environment(display=True, paths=True):
     cftime: 1.6.3 /home/user/lib/python3.12/site-packages/cftime/__init__.py
     cfunits: 3.3.7 /home/user/lib/python3.12/site-packages/cfunits/__init__.py
     cfplot: 3.3.0 /home/user/lib/python3.12/site-packages/cfplot/__init__.py
-    cfdm: 1.11.2.0 /home/user/cfdm/cfdm/__init__.py
-    cf: 1.11.2.0 /home/user/cf-python/cf/__init__.py
+    cfdm: 1.12.0.0 /home/user/cfdm/cfdm/__init__.py
+    cf: 3.17.0 /home/user/cf-python/cf/__init__.py
 
     >>> cf.environment(paths=False)
     Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
@@ -3211,7 +3211,7 @@ def environment(display=True, paths=True):
     udunits2 library: /home/user/lib/libudunits2.so.0
     esmpy/ESMF: 8.6.1
     Python: 3.12.2
-    dask: 2024.6.0
+    dask: 2025.2.0
     netCDF4: 1.6.5
     h5netcdf: 1.3.0
     h5py: 3.11.0
@@ -3224,8 +3224,8 @@ def environment(display=True, paths=True):
     cftime: 1.6.3
     cfunits: 3.3.7
     cfplot: 3.3.0
-    cfdm: 1.11.2.0
-    cf: 1.11.2.0
+    cfdm: 1.12.0.0
+    cf: 3.17.0
 
     """
     dependency_version_paths_mapping = {

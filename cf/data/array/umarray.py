@@ -68,7 +68,7 @@ class UMArray(
                 already been set will be inferred from the lookup
                 header and cached for future use.
 
-                .. versionadded:: 1.11.2.0
+                .. versionadded:: 3.16.3
 
             {{init source: optional}}
 
@@ -91,11 +91,11 @@ class UMArray(
                 Deprecated at version 3.15.0.
 
             units: `str` or `None`, optional
-                Deprecated at version 1.11.2.0. Use the
+                Deprecated at version 3.16.3. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version 1.11.2.0. Use the
+                Deprecated at version 3.16.3. Use the
                 *attributes* parameter instead.
 
         """
@@ -143,7 +143,7 @@ class UMArray(
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         .. seealso:: `__array__`, `index`
 
@@ -243,7 +243,7 @@ class UMArray(
     def _set_FillValue(self, int_hdr, real_hdr, attributes):
         """Set the ``_FillValue`` attribute.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         :Parameters:
 
@@ -280,8 +280,6 @@ class UMArray(
         """Set the ``units`` attribute.
 
         .. versionadded:: 3.14.0
-
-        .. versionadded:: 1.11.2.0
 
         :Parameters:
 
@@ -339,7 +337,7 @@ class UMArray(
     def _set_unpack(self, int_hdr, real_hdr, attributes):
         """Set the ``add_offset`` and ``scale_factor`` attributes.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         :Parameters:
 

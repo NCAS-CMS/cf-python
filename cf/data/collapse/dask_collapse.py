@@ -859,12 +859,12 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
 
     x = cfdm_to_memory(x)
     if np.ma.isMA(x):
-        # Note: We're not using `np.ones_like` here (like we used to
-        #       for numpy<2.0.0) because numpy currently
-        #       (numpy==2.2.3) has a bug that produces a
-        #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
-        #       invalid value encountered in cast fill_value =
-        #       np.asarray(fill_value, dtype=ndtype)". See
+        # Note: We're not using `np.ones_like` here (like we used to)
+        #       because numpy currently (numpy==2.2.3) has a bug that
+        #       produces a RuntimeWarning: "numpy/ma/core.py:502:
+        #       RuntimeWarning: invalid value encountered in cast
+        #       fill_value = np.asarray(fill_value,
+        #       dtype=ndtype)". See
         #       https://github.com/numpy/numpy/issues/28255 for more
         #       details.
         x = np.ma.array(np.ones((x.shape), dtype=x.dtype), mask=x.mask)
@@ -1141,7 +1141,7 @@ def cf_sum_of_weights2_chunk(
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     :Parameters:
 

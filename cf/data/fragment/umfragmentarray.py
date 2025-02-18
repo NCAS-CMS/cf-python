@@ -53,7 +53,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
                 already been set will be inferred from the lookup
                 header and cached for future use.
 
-                .. versionadded:: 1.11.2.0
+                .. versionadded:: 3.16.3
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -66,12 +66,12 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             {{init copy: `bool`, optional}}
 
             units: `str` or `None`, optional
-                Deprecated at version 1.11.2.0. Use the
-                *attributes* parameter instead.
+                Deprecated at version 3.16.3. Use the *attributes*
+                parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version 1.11.2.0. Use the
-                *attributes* parameter instead.
+                Deprecated at version 3.16.3. Use the *attributes*
+                parameter instead.
 
         """
         super().__init__(

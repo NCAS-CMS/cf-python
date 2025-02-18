@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class H5netcdfFragmentArray(FragmentArrayMixin, H5netcdfArray):
     """A netCDF fragment array accessed with `h5netcdf`.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     """
 

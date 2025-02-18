@@ -27,7 +27,7 @@ class ArrayMixin:
         the actual metadata from the values. It does not force the
         output to have the structure or dtype of the specified meta.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         .. seealso:: `dask.utils.meta_from_array`
 
