@@ -9,11 +9,4 @@ class NetCDF4Array(
     Container,
     cfdm.NetCDF4Array,
 ):
-    """A netCDF array accessed with `netCDF4`.
-
-    **Active storage reductions**
-
-    An active storage reduction may be enabled with the `actify`
-    method. See `cf.data.collapse.Collapse` for details.
-
-    """
+    """A netCDF array accessed with `netCDF4`."""
