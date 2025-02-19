@@ -10,7 +10,7 @@
   pip install sphinxcontrib-devhelp==1.0.2
   pip install sphinxcontrib-serializinghtml==1.1.3
   pip install sphinxcontrib-qthelp==1.0.3
-  ip install sphinxcontrib.applehelp==1.0.4
+  pip install sphinxcontrib.applehelp==1.0.4
   pip install alabaster==0.7.13
   pip install sphinx==2.4.5
   ```
