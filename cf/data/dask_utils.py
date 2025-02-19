@@ -413,7 +413,7 @@ def cf_units(a, from_units, to_units):
 def cf_is_masked(a):
     """Determine whether an array has masked values.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     :Parameters:
 
@@ -436,7 +436,7 @@ def cf_is_masked(a):
 def cf_filled(a, fill_value=None):
     """Replace masked elements with a fill value.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     :Parameters:
 
