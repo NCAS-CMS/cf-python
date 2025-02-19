@@ -3,7 +3,7 @@ version 3.17.0
 
 **2025-??-??**
 
-* Set new minimum version of `numpy`: ``2.0.0``
+* Set a new minimum version of `numpy`: ``2.0.0``
   (https://github.com/NCAS-CMS/cf-python/issues/843)
 * Replace dataset aggregation functionality (CFA) with that imported
   from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
@@ -11,9 +11,9 @@ version 3.17.0
 * Changed dependency: ``numpy>=2.0.0``
 * Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
 * Changed optional dependency: ``esmpy>=8.7.0``
-* Removed dependency (now incorporated into `cfdm`): ``h5py``
-* Removed dependency (now incorporated into `cfdm`): ``h5netcdf``
-* Removed dependency (now incorporated into `cfdm`): ``s3fs``
+* Removed dependency (now incorporated into ``cfdm``): ``h5py``
+* Removed dependency (now incorporated into ``cfdm``): ``h5netcdf``
+* Removed dependency (now incorporated into ``cfdm``): ``s3fs``
 
 ----
 
