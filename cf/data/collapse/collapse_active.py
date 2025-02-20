@@ -40,7 +40,7 @@ def actify(method):
     can be done in active storage, or the active storage reduction
     failed) then the computations will be done locally "as usual".
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `active_chunk_function`
 
@@ -92,7 +92,7 @@ def active_chunk_function(method, *args, **kwargs):
     reduction components, similar to that returned by a ``cf_*_chunk``
     method, is returned.
 
-    .. versionadded:: 1.11.2.0
+    .. versionadded:: 3.16.3
 
     .. seealso:: `actify`
 

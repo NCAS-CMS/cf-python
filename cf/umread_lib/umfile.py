@@ -2,6 +2,7 @@ import os
 from functools import cmp_to_key
 
 import numpy
+from cfdm.read_write.exceptions import DatasetTypeError
 
 from . import cInterface
 from .extraData import ExtraDataUnpacker
@@ -132,7 +133,9 @@ class File:
             file_type_obj = c.detect_file_type(self.fd)
         except Exception:
             self.close_fd()
-            raise IOError(f"File {self.path} has unsupported format")
+            raise DatasetTypeError(
+                f"Can't open {self.path} as a PP or UM dataset"
+            )
 
         d = c.file_type_obj_to_dict(file_type_obj)
         self.fmt = d["fmt"]
