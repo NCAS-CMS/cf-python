@@ -10,7 +10,9 @@ version 3.17.0
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
 * Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
-* Changed dependency: ``dask>=2024.12.0``
+* Changed dependency: ``dask>=2025.2.0``
+* Changed dependency: ``netCDF4>=1.7.2``
+* Changed dependency: ``cftime>=1.6.4``
 * Changed optional dependency: ``esmpy>=8.7.0``
 * Removed dependency (now incorporated into ``cfdm``): ``h5py``
 * Removed dependency (now incorporated into ``cfdm``): ``h5netcdf``
