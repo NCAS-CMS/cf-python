@@ -2905,15 +2905,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
             concatenated_data.cyclic(axes=axis, iscyclic=False)
 
-        #        # Set whether or not the concatenated name is deterministic
-        #        deterministic = True
-        #        for d in conformed_data:
-        #            if not d.has_deterministic_name():
-        #                deterministic = False
-        #               break#
-        #
-        #        concatenated_data._update_deterministic(deterministic)
-
         return concatenated_data
 
     @_inplace_enabled(default=False)
