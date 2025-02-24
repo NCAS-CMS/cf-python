@@ -2754,6 +2754,10 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
 
 dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
 
+from functools import partial
+dirname2 = partial(cfdm.dirname)
+dirname2.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
+
 
 def pathjoin(path1, path2):
     """Join two file path components intelligently.
