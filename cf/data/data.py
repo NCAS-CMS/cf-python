@@ -2804,7 +2804,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Check and conform the units of data prior to concatenation.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
         .. versionadded:: NEXTVERSION
@@ -2853,7 +2853,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             raise ValueError(
                 "Can't concatenate: All the input arrays must have "
-                "equivalent units. Got {units0!r} and {units1!r}"
+                f"equivalent units. Got {units0!r} and {units1!r}"
             )
 
         return data1
@@ -2865,7 +2865,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Post-process concatenated data.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
         .. versionadded:: NEXTVERSION
