@@ -1429,6 +1429,9 @@ def spherical_grid(
     )
 
     set_grid_type(grid)
+
+    print (grid)
+    print ()
     return grid
 
 
