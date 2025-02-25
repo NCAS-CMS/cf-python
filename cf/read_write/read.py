@@ -848,8 +848,8 @@ class read(cfdm.read):
         if nfields is not None and len(out) != nfields:
             raise ValueError(
                 f"{nfields} field{cls._plural(nfields)} requested but "
-                f"{len(out)} field/domain constucts found in "
-                f"file{cls._plural(file_counter)}"
+                f"{len(out)} field/domain constuct{cls._plural(len(out))}"
+                f" found in file{cls._plural(file_counter)}"
             )
 
         return out
