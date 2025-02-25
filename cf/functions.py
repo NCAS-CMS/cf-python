@@ -13,7 +13,6 @@ from itertools import product
 from math import isnan
 from os import mkdir
 from os.path import abspath as _os_path_abspath
-from os.path import dirname as _os_path_dirname
 from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
@@ -26,7 +25,7 @@ import numpy as np
 from dask.base import is_dask_collection
 from psutil import virtual_memory
 
-from . import __cfa_version__, __file__, __version__
+from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -1359,6 +1358,8 @@ CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
 def CFA():
     """The version of the CFA conventions.
 
+    Deprecated at version NEXTVERSION and is no longer available.
+
     This indicates which version of the CFA conventions are
     represented by this release of the cf package, and therefore the
     version can not be changed.
@@ -1379,7 +1380,9 @@ def CFA():
     '0.6.2'
 
     """
-    return __cfa_version__
+    _DEPRECATION_ERROR_FUNCTION(
+        "CFA", version="NEXTVERSION", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 # Module-level alias to avoid name clashes with function keyword
@@ -2692,48 +2695,11 @@ def flat(x):
             yield a
 
 
-def abspath(filename):
-    """Return a normalized absolute version of a file name.
+def abspath(path, uri=None):
+    return cfdm.abspath(path, uri=uri)
 
-    If `None` or a string containing URL is provided then it is
-    returned unchanged.
 
-    .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
-
-    :Parameters:
-
-        filename: `str` or `None`
-            The name of the file, or `None`
-
-    :Returns:
-
-        `str`
-
-            The normalized absolutised version of *filename*, or
-            `None`.
-
-    **Examples**
-
-    >>> import os
-    >>> os.getcwd()
-    '/data/archive'
-    >>> cf.abspath('file.nc')
-    '/data/archive/file.nc'
-    >>> cf.abspath('..//archive///file.nc')
-    '/data/archive/file.nc'
-    >>> cf.abspath('http://data/archive/file.nc')
-    'http://data/archive/file.nc'
-
-    """
-    u = urlparse(filename)
-    scheme = u.scheme
-    if not scheme:
-        return _os_path_abspath(filename)
-
-    if scheme == "file":
-        return u.path
-
-    return filename
+abspath.__doc__ = cfdm.abspath.__doc__.replace("cfdm.", "cf.")
 
 
 def relpath(filename, start=None):
@@ -2780,39 +2746,17 @@ def relpath(filename, start=None):
     return _os_path_relpath(filename)
 
 
-def dirname(filename):
-    """Return the directory name of a file.
+def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
+    return cfdm.dirname(
+        path, normalise=normalise, uri=uri, isdir=isdir, sep=sep
+    )
 
-    If a string containing URL is provided then everything up to, but
-    not including, the last slash (/) is returned.
 
-    .. seealso:: `cf.abspath`, `cf.pathjoin`, `cf.relpath`
+dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
 
-    :Parameters:
-
-        filename: `str`
-            The name of the file.
-
-    :Returns:
-
-        `str`
-            The directory name.
-
-    **Examples**
-
-    >>> cf.dirname('/data/archive/file.nc')
-    '/data/archive'
-    >>> cf.dirname('..//file.nc')
-    '..'
-    >>> cf.dirname('http://data/archive/file.nc')
-    'http://data/archive'
-
-    """
-    u = urlparse(filename)
-    if u.scheme != "":
-        return filename.rpartition("/")[0]
-
-    return _os_path_dirname(filename)
+from functools import partial
+dirname2 = partial(cfdm.dirname)
+dirname2.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
 
 
 def pathjoin(path1, path2):

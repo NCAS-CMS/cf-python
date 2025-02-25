@@ -3,7 +3,6 @@ import math
 from functools import partial, reduce
 from itertools import product
 from operator import mul
-from os import sep
 
 import cfdm
 import cftime
@@ -28,11 +27,10 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
-    abspath,
     free_memory,
     parse_indices,
 )
-from ..mixin2 import CFANetCDF, Container
+from ..mixin2 import Container
 from ..units import Units
 from .collapse import Collapse
 from .dask_utils import (
@@ -68,7 +66,7 @@ _dtype_float = np.dtype(float)
 _dtype_bool = np.dtype(bool)
 
 
-class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
+class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -131,20 +129,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     **Cyclic axes**
 
     """
-
-    # Constants used to specify which components should be cleared
-    # when a new dask array is set. See `_clear_after_dask_update` for
-    # details.
-    #
-    # These constants must have values 2**N (N>=1), except for
-    # `_NONE` which must be 0, and `_ALL` which must be the sum of
-    # other constants. It is therefore convenient to define these
-    # constants in binary.
-    _NONE = 0b000
-    _ARRAY = 0b001
-    _CACHE = 0b010
-    _CFA = 0b100
-    _ALL = 0b111
 
     def __new__(cls, *args, **kwargs):
         """Store component classes."""
@@ -485,81 +469,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             self[indices] = reset
 
         return
-
-    def _cfa_del_write(self):
-        """Set the CFA write status of the data to `False`.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_get_write`, `_cfa_set_write`
-
-        :Returns:
-
-            `bool`
-                The CFA status prior to deletion.
-
-        """
-        return self._custom.pop("cfa_write", False)
-
-    def _cfa_set_term(self, value):
-        """Set the CFA aggregation instruction term status.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_get_term`, `cfa_set_term`
-
-        :Parameters:
-
-            status: `bool`
-                The new CFA aggregation instruction term status.
-
-        :Returns:
-
-            `None`
-
-        """
-        if not value:
-            self._custom.pop("cfa_term", None)
-
-        self._custom["cfa_term"] = bool(value)
-
-    def _is_abstract_Array_subclass(self, array):
-        """Whether or not an array is a type of Array.
-
-        :Parameters:
-
-            array:
-
-        :Returns:
-
-            `bool`
-
-        """
-        return isinstance(array, cfdm.Array)
-
-    def _cfa_set_write(self, status):
-        """Set the CFA write status of the data.
-
-        If and only if the CFA write status is True then it may be
-        possible to write the data as an aggregation variable to a
-        CFA-netCDF file.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_get_write`, `cfa_set_write`,
-                     `_cfa_del_write`, `cf.read`, `cf.write`,
-
-        :Parameters:
-
-            status: `bool`
-                The new CFA write status.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._custom["cfa_write"] = bool(status)
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -1390,7 +1299,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
 
-        d._update_deterministic(not is_dask_collection(q))
+        d._update_deterministic(q)
 
         return d
 
@@ -1432,110 +1341,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.ceil(dx)
         d._set_dask(dx)
         return d
-
-    def cfa_get_term(self):
-        """The CFA aggregation instruction term status.
-
-        If True then the data represents that of a non-standard CFA
-        aggregation instruction variable.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_set_term`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2])
-        >>> d.cfa_get_term()
-        False
-
-        """
-        return bool(self._custom.get("cfa_term", False))
-
-    def cfa_get_write(self):
-        """The CFA write status of the data.
-
-        If and only if the CFA write status is True then it may be
-        possible to write the data as an aggregation variable to a
-        CFA-netCDF file.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2])
-        >>> d.cfa_get_write()
-        False
-
-        """
-        return bool(self._custom.get("cfa_write", False))
-
-    def cfa_set_term(self, status):
-        """Set the CFA aggregation instruction term status.
-
-        If True then the data represents that of a non-standard CFA
-        aggregation instruction variable.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_get_term`
-
-        :Parameters:
-
-            status: `bool`
-                The new CFA aggregation instruction term status.
-
-        :Returns:
-
-            `None`
-
-        """
-        if status:
-            raise ValueError(
-                "'cfa_set_term' only allows the CFA aggregation instruction "
-                "term write status to be set to False"
-            )
-
-        self._custom.pop("cfa_term", False)
-
-    def cfa_set_write(self, status):
-        """Set the CFA write status of the data.
-
-        If and only if the CFA write status is True then it may be
-        possible to write the data as an aggregation variable to a
-        CFA-netCDF file.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `cfa_get_write`, `cf.read`, `cf.write`
-
-        :Parameters:
-
-            status: `bool`
-                The new CFA write status.
-
-        :Returns:
-
-            `None`
-
-        """
-        if status:
-            raise ValueError(
-                "'cfa_set_write' only allows the CFA write status to be "
-                "set to False"
-            )
-
-        self._cfa_del_write()
 
     @_inplace_enabled(default=False)
     def convolution_filter(
@@ -1940,47 +1745,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             d._set_dask(dx)
 
         return d
-
-    def _clear_after_dask_update(self, clear=None):
-        """Remove components invalidated by updating the `dask` array.
-
-        Removes or modifies components that can't be guaranteed to be
-        consistent with an updated `dask` array. See the *clear*
-        parameter for details.
-
-        .. versionadded:: 1.11.2.0
-
-        .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_set_dask`, `_cfa_del_write`
-
-        :Parameters:
-
-            clear: `int` or `None`, optional
-                Specify which components to remove, determined by
-                sequentially combining an integer value of *clear*
-                with the relevant class-level constants (such as
-                ``Data._ARRAY``), using the bitwise AND (&)
-                operator. If ``clear & <class-level constant>`` is
-                True then the corresponding component is cleared. The
-                default value of `None` is equivalent to *clear* being
-                set to ``Data._ALL``.
-
-                The bitwise OR (^) operator can be used to retain a
-                component (or components) but remove all others. For
-                instance, if *clear* is ``Data._ALL ^
-                Data._CACHE`` then all components except the
-                cached array values will be removed.
-
-        :Returns:
-
-            `None`
-
-        """
-        clear = super()._clear_after_dask_update(clear)
-
-        if clear & self._CFA:
-            # Set the CFA write status to False
-            self._cfa_del_write()
 
     def _combined_units(self, data1, method, inplace):
         """Combines by given method the data's units with other units.
@@ -2467,7 +2231,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         raise NotImplementedError(
-            "'cf.Data._parse_indices' is not available. "
+            "'cf.Data._parse_indices' is no longer available. "
             "Use function 'cf.parse_indices' instead."
         )
 
@@ -2636,243 +2400,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._update_deterministic(False)
 
         return d
-
-    @classmethod
-    def concatenate(
-        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
-    ):
-        """Join a sequence of data arrays together.
-
-        .. seealso:: `cull_graph`
-
-        :Parameters:
-
-            data: sequence of `Data`
-                The data arrays to be concatenated. Concatenation is
-                carried out in the order given. Each data array must have
-                equivalent units and the same shape, except in the
-                concatenation axis. Note that scalar arrays are treated as
-                if they were one dimensional.
-
-            axis: `int`, optional
-                The axis along which the arrays will be joined. The
-                default is 0. Note that scalar arrays are treated as if
-                they were one dimensional.
-
-                .. note:: If the axis specified is cyclic, it will become
-                          non-cyclic in the output.
-
-            {{cull_graph: `bool`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{relaxed_units: `bool`, optional}}
-
-                 .. versionadded:: 3.14.1
-
-            copy: `bool`, optional
-                If True (the default) then make copies of the data, if
-                required, prior to the concatenation, thereby ensuring
-                that the input data arrays are not changed by the
-                concatenation process. If False then some or all input
-                data arrays might be changed in-place, but the
-                concatenation process will be faster.
-
-                .. versionadded:: 3.15.1
-
-        :Returns:
-
-            `Data`
-                The concatenated data.
-
-        **Examples**
-
-        >>> d = cf.Data([[1, 2], [3, 4]], 'km')
-        >>> e = cf.Data([[5.0, 6.0]], 'metre')
-        >>> f = cf.Data.concatenate((d, e))
-        >>> print(f.array)
-        [[ 1.     2.   ]
-         [ 3.     4.   ]
-         [ 0.005  0.006]]
-        >>> f.equals(cf.Data.concatenate((d, e), axis=-2))
-        True
-
-        >>> e = cf.Data([[5.0], [6.0]], 'metre')
-        >>> f = cf.Data.concatenate((d, e), axis=1)
-        >>> print(f.array)
-        [[ 1.     2.     0.005]
-         [ 3.     4.     0.006]]
-
-        >>> d = cf.Data(1, 'km')
-        >>> e = cf.Data(50.0, 'metre')
-        >>> f = cf.Data.concatenate((d, e))
-        >>> print(f.array)
-        [ 1.    0.05]
-
-        >>> e = cf.Data([50.0, 75.0], 'metre')
-        >>> f = cf.Data.concatenate((d, e))
-        >>> print(f.array)
-        [ 1.     0.05   0.075]
-
-        """
-        data = tuple(data)
-        if len(data) < 2:
-            raise ValueError(
-                "Can't concatenate: Must provide at least two data arrays"
-            )
-
-        if cull_graph:
-            # Remove unnecessary components from the graph, which may
-            # improve performance, and because complicated task graphs
-            # can sometimes confuse da.concatenate.
-            for d in data:
-                d.cull_graph()
-
-        data0 = data[0]
-        units0 = data0.Units
-
-        if copy:
-            data0 = data0.copy()
-            copied = True
-        else:
-            copied = False
-
-        processed_data = []
-        for index, data1 in enumerate(data):
-            # Turn any scalar array into a 1-d array
-            if not data1.ndim:
-                if not copied:
-                    data1 = data1.copy()
-                    copied = True
-
-                data1.insert_dimension(inplace=True)
-
-            # Check and conform, if necessary, the units of all inputs
-            units1 = data1.Units
-            if (
-                relaxed_units
-                and not units0.isvalid
-                and not units1.isvalid
-                and units0.__dict__ == units1.__dict__
-            ):
-                # Allow identical invalid units to be equal
-                pass
-            elif units0.equals(units1):
-                pass
-            elif units0.equivalent(units1):
-                if not copied:
-                    data1 = data1.copy()
-                    copied = True
-
-                data1.Units = units0
-            else:
-                raise ValueError(
-                    "Can't concatenate: All the input arrays must have "
-                    "equivalent units"
-                )
-
-            processed_data.append(data1)
-            copied = not copy  # to avoid making two copies in a given case
-
-        # Get data as dask arrays and apply concatenation
-        # operation. We can set '_force_to_memory=False' because at compute
-        # time the concatenation operation does not need to access the
-        # actual data.
-        dxs = [d.to_dask_array(_force_to_memory=False) for d in processed_data]
-        dx = da.concatenate(dxs, axis=axis)
-
-        # Set the CFA write status
-        #
-        # Assume at first that all input data instances have True
-        # status, but ...
-        cfa = cls._CFA
-        for d in processed_data:
-            if not d.cfa_get_write():
-                # ... the CFA write status is False when any input
-                # data instance has False status ...
-                cfa = cls._NONE
-                break
-
-        if cfa != cls._NONE:
-            non_concat_axis_chunks0 = list(processed_data[0].chunks)
-            non_concat_axis_chunks0.pop(axis)
-            for d in processed_data[1:]:
-                non_concat_axis_chunks = list(d.chunks)
-                non_concat_axis_chunks.pop(axis)
-                if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # ... the CFA write status is False when any two
-                    # input data instances have different chunk
-                    # patterns for the non-concatenated axes.
-                    cfa = cls._NONE
-                    break
-
-        # Define the __in_memory__ status
-        in_memory = processed_data[0].__in_memory__
-        for d in processed_data[1:]:
-            if d.__in_memory__ != in_memory:
-                # If and only if any two input Data objects have
-                # different __in_memory__ values, then set
-                # in_memory=False on the concatenation.
-                in_memory = False
-                break
-
-        # Set the new dask array
-        data0._set_dask(dx, clear=cls._ALL ^ cfa, in_memory=in_memory)
-
-        # Set appropriate cached elements
-        cached_elements = {}
-        for i in (0, -1):
-            element = processed_data[i]._get_cached_elements().get(i)
-            if element is not None:
-                cached_elements[i] = element
-
-        if cached_elements:
-            data0._set_cached_elements(cached_elements)
-
-        # Set whether or not the concatenated name is deterministic
-        deterministic = True
-        for d in processed_data:
-            if not d.has_deterministic_name():
-                deterministic = False
-                break
-
-        data0._update_deterministic(deterministic)
-
-        # Set the CFA-netCDF aggregated data instructions and file
-        # name substitutions by combining them from all of the input
-        # data instances, giving precedence to those towards the left
-        # hand side of the input list.
-        if data0.cfa_get_write():
-            aggregated_data = {}
-            substitutions = {}
-            for d in processed_data[::-1]:
-                aggregated_data.update(d.cfa_get_aggregated_data())
-                substitutions.update(d.cfa_file_substitutions())
-
-            if aggregated_data:
-                data0.cfa_set_aggregated_data(aggregated_data)
-
-            if substitutions:
-                data0.cfa_update_file_substitutions(substitutions)
-
-        # Set the CFA aggregation instruction term status
-        if data0.cfa_get_term():
-            for d in processed_data[1:]:
-                if not d.cfa_get_term():
-                    data0.cfa_set_term(False)
-                    break
-
-        # Manage cyclicity of axes: if join axis was cyclic, it is no
-        # longer.
-        axis = data0._parse_axes(axis)[0]
-        if axis in data0.cyclic():
-            logger.warning(
-                f"Concatenating along a cyclic axis ({axis}) therefore the "
-                "axis has been set as non-cyclic in the output."
-            )
-            data0.cyclic(axes=axis, iscyclic=False)
-
-        return data0
 
     def __add__(self, other):
         """The binary arithmetic operation ``+``
@@ -3271,6 +2798,114 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         )
 
         return bool(dx.any())
+
+    @classmethod
+    def _concatenate_conform_units(cls, data1, units0, relaxed_units, copy):
+        """Check and conform the units of data prior to concatenation.
+
+        This is a helper function for `concatenate` that may be easily
+        overridden in subclasses, to allow for customisation of the
+        concatenation process.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            data1: `Data`
+                Data with units.
+
+            units0: `Units`
+                The units to conform *data1* to.
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`
+                If False then modify *data1* in-place. Otherwise a
+                copy of it is modified.
+
+        :Returns:
+
+            `Data`
+                Returns *data1*, possibly modified so that it conforms
+                to *units0*. If *copy* is False and *data1* is
+                modified, then it is done so in-place.
+
+        """
+        # Check and conform, if necessary, the units of all inputs
+        units1 = data1.Units
+        if (
+            relaxed_units
+            and not units0.isvalid
+            and not units1.isvalid
+            and units0.__dict__ == units1.__dict__
+        ):
+            # Allow identical invalid units to be equal
+            pass
+        elif units0.equals(units1):
+            pass
+        elif units0.equivalent(units1):
+            if copy:
+                data1 = data1.copy()
+
+            data1.Units = units0
+        else:
+            raise ValueError(
+                "Can't concatenate: All the input arrays must have "
+                f"equivalent units. Got {units0!r} and {units1!r}"
+            )
+
+        return data1
+
+    @classmethod
+    def _concatenate_post_process(
+        cls, concatenated_data, axis, conformed_data
+    ):
+        """Post-process concatenated data.
+
+        This is a helper function for `concatenate` that may be easily
+        overridden in subclasses, to allow for customisation of the
+        concatenation process.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            concatenated_data: `Data`
+                The concatenated data array.
+
+            axis: `int`
+                The axis of concatenation.
+
+            conformed_data: sequence of `Data`
+                The ordered sequence of data arrays that were
+                concatenated.
+
+        :Returns:
+
+            `Data`
+                Returns *concatenated_data*, possibly modified
+                in-place.
+
+        """
+        concatenated_data = super()._concatenate_post_process(
+            concatenated_data, axis, conformed_data
+        )
+
+        # Manage cyclicity of axes: if join axis was cyclic, it is no
+        # longer.
+        axis = concatenated_data._parse_axes(axis)[0]
+        if axis in concatenated_data.cyclic():
+            logger.warning(
+                f"Concatenating along a cyclic axis ({axis}) therefore the "
+                "axis has been set as non-cyclic in the output."
+            )
+            concatenated_data.cyclic(axes=axis, iscyclic=False)
+
+        return concatenated_data
 
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
@@ -3976,58 +3611,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    def add_file_location(self, location):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> d.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-
-        updated = False
-
-        # The dask graph is never going to be computed, so we can set
-        # '_force_to_memory=False'.
-        dsk = self.todict(_force_to_memory=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.add_file_location(location)
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
-
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
-
-        if updated:
-            dx = self.to_dask_array(_force_to_memory=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=self._NONE, in_memory=None)
-
-        return location
-
     def set_units(self, value):
         """Set the units.
 
@@ -4068,7 +3651,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         `masked_where` causes all delayed operations to be executed.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         .. seealso:: `mask`, `masked_values`, `where`
 
@@ -5809,41 +5392,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    def file_locations(self):
-        """The locations of files containing parts of the data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        out = set()
-
-        # The dask graph is never going to be computed, so we can set
-        # '_force_to_memory=False'.
-        for key, a in self.todict(_force_to_memory=False).items():
-            try:
-                out.update(a.file_locations())
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                pass
-
-        return out
-
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
 
@@ -6362,58 +5910,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.ma.masked_invalid(dx)
         d._set_dask(dx)
         return d
-
-    def del_file_location(self, location):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-
-        updated = False
-
-        # The dask graph is never going to be computed, so we can set
-        # '_force_to_memory=False'.
-        dsk = self.todict(_force_to_memory=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.del_file_location(location)
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
-
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
-
-        if updated:
-            dx = self.to_dask_array(_force_to_memory=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=self._NONE, in_memory=None)
-
-        return location
 
     @classmethod
     def masked_all(

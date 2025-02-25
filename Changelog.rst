@@ -1,10 +1,16 @@
 version 3.17.0
 --------------
 
-**2025-02-??**
+**2025-??-??**
 
+* Replace dataset aggregation functionality (CFA) with that imported
+  from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
 * New keyword parameter to `cf.Field.compute_vertical_coordinates`:
   ``key`` (https://github.com/NCAS-CMS/cf-python/issues/802)
+* Changed dependency: ``1.12.0.0<=cfdm<1.12.1.0``
+* Changed dependency: ``h5py>=3.12.0``
+
+----
 
 
 version 3.16.3

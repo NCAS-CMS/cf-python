@@ -3,7 +3,7 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -17,20 +17,18 @@ class create_fieldTest(unittest.TestCase):
 
     def test_create_field(self):
         # Dimension coordinates
-        dim1 = cf.DimensionCoordinate(
-            data=cf.Data(numpy.arange(10.0), "degrees")
-        )
+        dim1 = cf.DimensionCoordinate(data=cf.Data(np.arange(10.0), "degrees"))
         dim1.standard_name = "grid_latitude"
 
         dim0 = cf.DimensionCoordinate(
-            data=cf.Data(numpy.arange(9.0) + 20, "degrees")
+            data=cf.Data(np.arange(9.0) + 20, "degrees")
         )
         dim0.standard_name = "grid_longitude"
         dim0.data[-1] += 5
         bounds = cf.Data(
-            numpy.array(
-                [dim0.data.array - 0.5, dim0.data.array + 0.5]
-            ).transpose((1, 0))
+            np.array([dim0.data.array - 0.5, dim0.data.array + 0.5]).transpose(
+                (1, 0)
+            )
         )
         bounds[-2, 1] = 30
         bounds[-1, :] = [30, 36]
@@ -54,7 +52,7 @@ class create_fieldTest(unittest.TestCase):
 
         aux2 = cf.AuxiliaryCoordinate(
             data=cf.Data(
-                numpy.arange(-45, 45, dtype="int32").reshape(10, 9),
+                np.arange(-45, 45, dtype="int32").reshape(10, 9),
                 units="degree_N",
             )
         )
@@ -62,7 +60,7 @@ class create_fieldTest(unittest.TestCase):
 
         aux3 = cf.AuxiliaryCoordinate(
             data=cf.Data(
-                numpy.arange(60, 150, dtype="int32").reshape(9, 10),
+                np.arange(60, 150, dtype="int32").reshape(9, 10),
                 units="degreesE",
             )
         )
@@ -70,7 +68,7 @@ class create_fieldTest(unittest.TestCase):
 
         aux4 = cf.AuxiliaryCoordinate(
             data=cf.Data(
-                numpy.array(
+                np.array(
                     [
                         "alpha",
                         "beta",
@@ -97,12 +95,12 @@ class create_fieldTest(unittest.TestCase):
 
         # Cell measures
         msr0 = cf.CellMeasure(
-            data=cf.Data(1 + numpy.arange(90.0).reshape(9, 10) * 1234, "km 2")
+            data=cf.Data(1 + np.arange(90.0).reshape(9, 10) * 1234, "km 2")
         )
         msr0.measure = "area"
 
         # Data
-        data = cf.Data(numpy.arange(90.0).reshape(10, 9), "m s-1")
+        data = cf.Data(np.arange(90.0).reshape(10, 9), "m s-1")
 
         properties = {"standard_name": "eastward_wind"}
 
@@ -133,8 +131,11 @@ class create_fieldTest(unittest.TestCase):
                 "grid_north_pole_longitude": 190.0,
             }
         )
+        datum = cf.Datum(parameters={"earth_radius": 6371007})
+
         ref0 = cf.CoordinateReference(
             coordinate_conversion=coordinate_conversion,
+            datum=datum,
             coordinates=[x, y, lat, lon],
         )
 
@@ -156,10 +157,12 @@ class create_fieldTest(unittest.TestCase):
             domain_ancillaries={"orog": orog_key, "a": ak, "b": bk},
         )
         ref1 = cf.CoordinateReference(
-            coordinate_conversion=coordinate_conversion, coordinates=[z]
+            coordinates=[z],
+            datum=datum,
+            coordinate_conversion=coordinate_conversion,
         )
 
-        f.set_construct(ref1)
+        ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
         g = cf.FieldAncillary()
@@ -193,7 +196,7 @@ class create_fieldTest(unittest.TestCase):
         f.flag_meanings = ["a", "bb", "ccc"]
 
         for cm in cf.CellMethod.create(
-            "grid_longitude: mean grid_latitude: max"
+            "grid_longitude: mean grid_latitude: maximum"
         ):
             f.set_construct(cm)
 

@@ -206,14 +206,14 @@ Required
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.0 or newer.
 
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.11.2.0 or up to,
-  but not including, 1.11.3.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.0.0 or up to,
+  but not including, 1.12.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 

@@ -426,6 +426,7 @@ class _Meta:
         # Promote selected properties to field ancillaries that span
         # the same domain axes as the field
         # ------------------------------------------------------------
+        self.promoted_field_ancillaries = []
         if field_ancillaries:
             f = self.promote_to_field_ancillary(field_ancillaries)
 
@@ -2088,13 +2089,6 @@ class _Meta:
         ancillary construct that spans the entire domain, with the
         constant value of the property.
 
-        The `Data` of any new field ancillary construct is marked
-        as a CFA term, meaning that it will only be written to disk if
-        the parent field construct is written as a CFA aggregation
-        variable, and in that case the field ancillary is written as a
-        non-standard CFA aggregation instruction variable, rather than
-        a CF-netCDF ancillary variable.
-
         If a domain construct is being aggregated then it is always
         returned unchanged.
 
@@ -2125,7 +2119,6 @@ class _Meta:
             data = Data(
                 FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
             )
-            data._cfa_set_term(True)
 
             field_anc = FieldAncillary(
                 data=data, properties={"long_name": prop}, copy=False
@@ -2137,8 +2130,14 @@ class _Meta:
                 f = f.copy()
                 copy = False
 
-            f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
+            key = f.set_construct(
+                field_anc, axes=f.get_data_axes(), copy=False
+            )
             f.del_property(prop)
+
+            # Record that this field ancillary is derived from a
+            # promotion
+            self.promoted_field_ancillaries.append(key)
 
         self.field = f
         return f
@@ -2434,9 +2433,9 @@ def aggregate(
             Create new field ancillary constructs for each input field
             which has one or more of the given properties. For each
             input field, each property is converted to a field
-            ancillary construct that spans the entire domain, with the
-            constant value of the property, and the property itself is
-            deleted.
+            ancillary construct that spans the aggregation axes with
+            the constant value of the property, and the property
+            itself is deleted.
 
             .. versionadded:: 3.15.0
 
@@ -3039,6 +3038,9 @@ def aggregate(
 
         unaggregatable = False
 
+        # Record the names of the axes that are actually aggregated
+        axes_aggregated = []
+
         for axis in aggregating_axes:
             number_of_fields = len(meta)
             if number_of_fields == 1:
@@ -3251,6 +3253,7 @@ def aggregate(
             # the aggregated fields as a single list ready for
             # aggregation along the next axis.
             # --------------------------------------------------------
+            axes_aggregated.append(axis)
             meta = [m for gm in grouped_meta for m in gm]
 
         # Add fields to the output list
@@ -3266,6 +3269,10 @@ def aggregate(
 
     if cells:
         _set_cell_conditions(output_meta)
+
+    # Remove non-aggregated axes from promoted field ancillaries
+    if field_ancillaries:
+        _fix_promoted_field_ancillaries(output_meta, axes_aggregated)
 
     output_constructs = [m.field for m in output_meta]
 
@@ -4724,6 +4731,14 @@ def _aggregate_2_fields(
             hash_value1 = anc1["hash_value"]
             anc0["hash_value"] = hash_value0 + hash_value1
 
+            # The result of aggregating a promoted amd non-promoted
+            # field ancillary is a non-promoted field ancillary
+            if (
+                key0 in m0.promoted_field_ancillaries
+                and key1 not in m1.promoted_field_ancillaries
+            ):
+                m0.promoted_field_ancillaries.remove(key0)
+
     # Domain ancillaries
     for identity in m0.domain_anc:
         anc0 = m0.domain_anc[identity]
@@ -4745,9 +4760,9 @@ def _aggregate_2_fields(
             anc0["hash_value"] = hash_value0 + hash_value1
 
     # ----------------------------------------------------------------
-    # For each matching pair of coordinates, cell measures, field and
-    # domain ancillaries which span the aggregating axis, insert the
-    # one from parent1 into the one from parent0
+    # For each matching pair of coordinates, cell measures, and field
+    # and domain ancillaries which span the aggregating axis, insert
+    # the one from parent1 into the one from parent0
     # ----------------------------------------------------------------
     for key0, key1, construct0, construct1 in spanning_variables:
         construct_axes0 = parent0.get_data_axes(key0)
@@ -4909,7 +4924,7 @@ def _aggregate_2_fields(
                     actual_range = parent0.del_property("actual_range", None)
                     if actual_range is not None and is_log_level_info(logger):
                         logger.info(
-                            "Deleted 'actual_range' attribute due to being "
+                            "Deleted 'actual_range' attribute due to it being "
                             "outside of 'valid_range' attribute limits."
                         )
 
@@ -4919,7 +4934,6 @@ def _aggregate_2_fields(
 
     # Make a note that the parent construct in this _Meta object has
     # already been aggregated
-
     m0.aggregated_field = True
 
     # ----------------------------------------------------------------
@@ -4986,3 +5000,53 @@ def dsg_feature_type_axis(meta, axis):
     # cf_role property
     cf_role = coords["cf_role"]
     return cf_role.count(None) != len(cf_role)
+
+
+def _fix_promoted_field_ancillaries(output_meta, axes_aggregated):
+    """Remove non-aggregated axes from promoted field ancillaries.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        output_meta: `list`
+            The list of `_Meta` objects. If any include promoted field
+            ancillaries then these will be updated in-place.
+
+    :Returns:
+
+        `None`
+
+    """
+    for m in output_meta:
+        for value in m.field_anc.values():
+            index = []
+            squeeze = []
+
+            key = value["key"]
+            if key not in m.promoted_field_ancillaries:
+                continue
+
+            # Remove the non-aggregated axes from the promoted field
+            # ancillary
+            for i, axis in enumerate(value["axes"]):
+                if axis in axes_aggregated:
+                    index.append(slice(None))
+                else:
+                    index.append(0)
+                    squeeze.append(i)
+
+            if not squeeze:
+                continue
+
+            fa_axes = m.field.get_data_axes(key)
+            fa = m.field.del_construct(key)
+            fa = fa[tuple(index)]
+            fa.squeeze(squeeze, inplace=True)
+            fa_axes = [a for i, a in enumerate(fa_axes) if i not in squeeze]
+
+            # Record the field ancillary as being able to be written
+            # as a CF-netCDF aggregation 'value' variable
+            fa.data._nc_set_aggregation_fragment_type("value")
+
+            m.field.set_construct(fa, axes=fa_axes, copy=False)

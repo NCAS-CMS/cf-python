@@ -112,7 +112,7 @@ class ppTest(unittest.TestCase):
 
         f = cf.read(self.ppfile)[0]
 
-        for cfa in (False, True):
+        for cfa in (None, "auto"):
             cf.write(f, tmpfile, cfa=cfa)
             g = cf.read(tmpfile)[0]
 
