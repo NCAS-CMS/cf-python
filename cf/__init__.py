@@ -152,7 +152,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     _minimum_vn = "2.0.0"
-    if not Version(_minimum_vn) < Version(np.__version__):
+    if Version(np.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad numpy version: cf requires numpy>={_minimum_vn} "
             f"Got {np.__version__} at {np.__file__}"
