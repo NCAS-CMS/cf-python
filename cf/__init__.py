@@ -202,9 +202,8 @@ else:
     _minimum_vn = "2024.6.1"
     _maximum_vn = "2024.7.1"
     if (
-        not Version(_minimum_vn)
-        <= Version(dask.__version__)
-        <= Version(_maximum_vn)
+        Version(dask.__version__) < Version(_minimum_vn) or
+        Version(dask.__version__) > Version(_maximum_vn)
     ):
         raise ValueError(
             "Bad dask version: cf requires "
