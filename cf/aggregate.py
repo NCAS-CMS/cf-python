@@ -4732,7 +4732,7 @@ def _aggregate_2_fields(
             anc0["hash_value"] = hash_value0 + hash_value1
 
             # The result of aggregating a promoted amd non-promoted
-            # field ancillary is a non-promoted fierld ancillary
+            # field ancillary is a non-promoted field ancillary
             if (
                 key0 in m0.promoted_field_ancillaries
                 and key1 not in m1.promoted_field_ancillaries
@@ -5011,7 +5011,7 @@ def _fix_promoted_field_ancillaries(output_meta, axes_aggregated):
 
         output_meta: `list`
             The list of `_Meta` objects. If any include promoted field
-            ancillaries then thses will be updated in-place.
+            ancillaries then these will be updated in-place.
 
     :Returns:
 

@@ -567,7 +567,7 @@ class UMField:
                 Unpacking is determined by netCDF conventions for the
                 following variable attributes ``add_offset`` and
                 ``scale_factor``, as applied to lookup header entries
-                BDATUM and BMKS repectively.
+                BDATUM and BMKS respectively.
 
                 .. versionadded:: NEXTVERSION
 
@@ -3499,7 +3499,7 @@ class UMRead(cfdm.read_write.IORead):
                 Unpacking is determined by netCDF conventions for the
                 following variable attributes ``add_offset`` and
                 ``scale_factor``, as applied to lookup header entries
-                BDATUM and BMKS repectively.
+                BDATUM and BMKS respectively.
 
                 .. versionadded:: NEXTVERSION
 

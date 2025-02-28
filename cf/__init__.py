@@ -124,7 +124,10 @@ else:
     _minimum_vn = "1.12.0.0"
     _maximum_vn = "1.12.1.0"
     _cfdm_version = Version(cfdm.__version__)
-    if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
+    if (
+        _cfdm_version < Version(_minimum_vn) or
+        _cfdm_version >= Version(_maximum_vn)
+    ):
         raise RuntimeError(
             "Bad cfdm version: cf requires "
             f"{_minimum_vn}<=cfdm<{_maximum_vn}. "
@@ -152,7 +155,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     _minimum_vn = "2.0.0"
-    if not Version(_minimum_vn) < Version(np.__version__):
+    if Version(np.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad numpy version: cf requires numpy>={_minimum_vn} "
             f"Got {np.__version__} at {np.__file__}"
@@ -199,8 +202,8 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2024.12.0"
-    if Version(dask.__version__) <  Version(_minimum_vn):
+    _minimum_vn = "2025.2.0"
+    if Version(dask.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad dask version: cf requires dask>={_minimum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"

@@ -9141,7 +9141,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(
-        self, default_to_zero=True, strict=True, inplace=False, verbose=None
+        self,
+        default_to_zero=True,
+        strict=True,
+        key=False,
+        inplace=False,
+        verbose=None,
     ):
         """Compute non-parametric vertical coordinates.
 
@@ -9176,7 +9181,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{default_to_zero: `bool`, optional}}
 
             strict: `bool`
-                If False then allow the computation to occur when
+                If False then allow the computation to occur when:
 
                 * A domain ancillary construct has no standard name, but
                   the corresponding term has a standard name that is
@@ -9195,15 +9200,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 names, then an exception is raised regardless of the value
                 of *strict*.
 
+            key: `bool`
+                If True, return alongside the field construct the key
+                identifying the auxiliary coordinate of the field with
+                the newly-computed vertical coordinates, as a 2-tuple
+                of field and then key. If False, the default, then only
+                return the field construct.
+
+                If no coordinates were computed, `None` will be
+                returned in the key (second) position of the 2-tuple.
+
+                .. versionadded:: 3.17.0
+
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
 
         :Returns:
 
-            `Field` or `None`
+            `Field`, 2-tuple, or `None`
                 The field construct with the new non-parametric vertical
-                coordinates, or `None` if the operation was in-place.
+                coordinates, or a 2-tuple of this field construct along
+                with the key of the new auxiliary coordinate with the
+                computed vertical coordinates, or `None` if the operation
+                was in-place.
 
         **Examples**
 
@@ -9230,7 +9250,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(f.auxiliary_coordinate('altitude', default=None))
         None
         >>> g = f.compute_vertical_coordinates()
-        >>> print(g.auxiliary_coordinates)
+        >>> print(g.auxiliary_coordinates())
         Constructs:
         {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
          'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -9246,12 +9266,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             Bounds:units = 'm'
             Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
 
+        >>> g, key = f.compute_vertical_coordinates(key=True)
+        >>> g
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+        >>> key
+        'auxiliarycoordinate3'
+
+        >>> i = f.compute_vertical_coordinates(inplace=True)
+        >>> print(i)
+        None
+        >>> print(f.auxiliary_coordinates())
+        Constructs:
+        {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'auxiliarycoordinate3': <CF AuxiliaryCoordinate: altitude(1, 10, 9) m>}
+
         """
         f = _inplace_enabled_define_and_cleanup(self)
+
+        if inplace and key:
+            raise ValueError(
+                "Can't set both key=True and inplace=True, since inplace "
+                "will always do the operation in-place and return None."
+            )
 
         detail = is_log_level_detail(logger)
         debug = is_log_level_debug(logger)
 
+        return_key = None  # in case there are no vertical coords to compute
         for cr in f.coordinate_references(todict=True).values():
             # --------------------------------------------------------
             # Compute the non-parametric vertical coordinates, if
@@ -9293,20 +9336,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"{c.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-            key = f.set_construct(c, axes=computed_axes, copy=False)
+            return_key = f.set_construct(c, axes=computed_axes, copy=False)
 
             # Reference the new coordinates from the coordinate
             # reference construct
-            cr.set_coordinate(key)
+            cr.set_coordinate(return_key)
 
             if debug:
                 logger.debug(
-                    f"Non-parametric coordinates construct key: {key!r}\n"
+                    "Non-parametric coordinates construct key: "
+                    f"{return_key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-        return f
+        if key:
+            # 2-tuple, where return_key will be None if nothing was computed
+            return f, return_key
+        else:
+            return f
 
     def match_by_construct(self, *identities, OR=False, **conditions):
         """Whether or not there are particular metadata constructs.
