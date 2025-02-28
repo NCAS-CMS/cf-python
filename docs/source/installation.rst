@@ -32,7 +32,7 @@ Windows Subsystem for Linux (WSL)
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.8 or newer.
+The cf package is only for Python 3.9 or newer.
 
 ----
 
@@ -108,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge "esmpy>=8.0.0"
+   $ conda install -c conda-forge "esmpy>=8.7.0"
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -190,25 +190,17 @@ installed, which:
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.8.0 or newer.
+* `Python <https://www.python.org/>`_, 3.9.0 or newer.
 
-* `numpy <http://www.numpy.org>`_, versions 1.15 up to, but not
-  including, 2.0.
+* `numpy <http://www.numpy.org>`_, versions 2.0.0 or newer.
 
 * `dask <https://pypi.org/project/dask>`_, versions 2024.6.0 to
   2024.7.1 inclusive.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.6.5 or newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.2 or newer
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).
-
-* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
-  newer.
-
-* `h5py <https://pypi.org/project/h5py>`_, version 3.12.0 or newer.
-
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
@@ -256,11 +248,11 @@ environments for which these features are not required.
 
 * `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
   named `ESMF` with the old module name also being accepted for import,
-  version 8.0.0 or newer. This is easily installed via conda with
+  version 8.7.0 or newer. This is easily installed via conda with
 
   .. code-block:: console
 
-     $ conda install -c conda-forge "esmpy>=8.0.0"
+     $ conda install -c conda-forge "esmpy>=8.7.0"
 
   or may be installed from source.
 

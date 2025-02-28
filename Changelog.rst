@@ -3,12 +3,19 @@ version 3.17.0
 
 **2025-??-??**
 
+* Set a new minimum version of `numpy`: ``2.0.0``
+  (https://github.com/NCAS-CMS/cf-python/issues/843)
 * Replace dataset aggregation functionality (CFA) with that imported
   from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
 * New keyword parameter to `cf.Field.compute_vertical_coordinates`:
   ``key`` (https://github.com/NCAS-CMS/cf-python/issues/802)
-* Changed dependency: ``1.12.0.0<=cfdm<1.12.1.0``
-* Changed dependency: ``h5py>=3.12.0``
+* Changed dependency: ``Python>=3.9.0``
+* Changed dependency: ``numpy>=2.0.0``
+* Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
+* Changed optional dependency: ``esmpy>=8.7.0``
+* Removed dependency (now incorporated into ``cfdm``): ``h5py``
+* Removed dependency (now incorporated into ``cfdm``): ``h5netcdf``
+* Removed dependency (now incorporated into ``cfdm``): ``s3fs``
 
 ----
 
@@ -287,8 +294,8 @@ version 3.15.0
 * Handled the renaming of the ESMF Python interface from `ESMF` to
   `esmpy` at version 8.4.0. Both module names are accepted for now.
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
-* Changed (optional) dependency: ``8.0.0<=esmpy``
-* Changed (optional) dependency: ``1.10.0<=scipy``
+* Changed optional dependency: ``8.0.0<=esmpy``
+* Changed optional dependency: ``1.10.0<=scipy``
 
 ----
 

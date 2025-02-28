@@ -2186,7 +2186,7 @@ def create_esmpy_mesh(grid, mask=None):
     # esmpy.
     min_id = node_ids.min()
     if min_id < 1:
-        node_ids += min_id + 1
+        node_ids = node_ids + min_id + 1
 
     # Add nodes. This must be done before `add_elements`.
     esmpy_mesh.add_nodes(
