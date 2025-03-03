@@ -9,6 +9,8 @@ version 3.17.0
   from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
 * New keyword parameter to `cf.Field.compute_vertical_coordinates`:
   ``key`` (https://github.com/NCAS-CMS/cf-python/issues/802)
+* New keyword parameter to `cf.histogram`: ``density``
+  (https://github.com/NCAS-CMS/cf-python/issues/794)
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
 * Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
@@ -18,7 +20,6 @@ version 3.17.0
 * Removed dependency (now incorporated into ``cfdm``): ``s3fs``
 
 ----
-
 
 version 3.16.3
 --------------
