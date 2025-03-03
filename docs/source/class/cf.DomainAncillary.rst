@@ -260,6 +260,7 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.fill_value
+   ~cf.DomainAncillary.filled
    ~cf.DomainAncillary.masked_invalid
 
 .. autosummary::
@@ -462,6 +463,9 @@ NetCDF
    ~cf.DomainAncillary.nc_get_variable
    ~cf.DomainAncillary.nc_has_variable
    ~cf.DomainAncillary.nc_set_variable
+   ~cf.DomainAncillary.nc_clear_hdf5_chunksizes
+   ~cf.DomainAncillary.nc_hdf5_chunksizes
+   ~cf.DomainAncillary.nc_set_hdf5_chunksizes
    
 CFA
 ---

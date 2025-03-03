@@ -190,6 +190,7 @@ Data
    ~cf.FieldAncillary.count
    ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.fill_value
+   ~cf.FieldAncillary.filled
    ~cf.FieldAncillary.masked_invalid
 
 .. autosummary::
@@ -407,6 +408,9 @@ NetCDF
    ~cf.FieldAncillary.nc_get_variable
    ~cf.FieldAncillary.nc_has_variable
    ~cf.FieldAncillary.nc_set_variable 
+   ~cf.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_set_hdf5_chunksizes
 
 CFA
 ---

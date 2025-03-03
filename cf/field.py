@@ -2,7 +2,6 @@ import logging
 from dataclasses import dataclass
 from functools import reduce
 from operator import mul as operator_mul
-from os import sep
 
 import cfdm
 import numpy as np
@@ -49,7 +48,6 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
-    abspath,
     flat,
     parse_indices,
 )
@@ -198,7 +196,7 @@ class _Axis_characterisation:
     Used by `_binary_operation` to help with ascertaining if there is
     a common axis in two fields.
 
-    .. versionaddedd:: NEXTVERSION
+    .. versionaddedd:: 1.11.2.0
 
     """
 
@@ -546,8 +544,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         copy=False,
                         autocyclic={"no-op": True},
                     )
-
-        new.set_data(new_data, axes=data_axes, copy=False)
 
         return new
 
@@ -1004,7 +1000,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for axis in f.domain_axes(todict=True):
                 identity = None
 
-                if self.is_discrete_axis(axis):
+                if f.is_discrete_axis(axis):
                     # This is a discrete axis whose identity is
                     # inferred from all of its auxiliary coordinates
                     x = {}
@@ -1322,7 +1318,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Operate on the data
         # ------------------------------------------------------------
-        new_data = field0.data._binary_operation(field1.data, method)
+        new_data = field0.data._binary_operation(
+            field0.data, field1.data, method
+        )
 
         field0.set_data(new_data, set_axes=False, copy=False)
 
@@ -2604,164 +2602,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
-    def cfa_clear_file_substitutions(
-        self,
-    ):
-        """Remove all of the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_clear_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_clear_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_clear_file_substitution()
-
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.cfa_clear_file_substitutions())
-
-        return out
-
-    def cfa_del_file_substitution(
-        self,
-        base,
-        constructs=True,
-    ):
-        """Remove a CFA-netCDF file name substitution.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa base: `str`}}
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the file substitutions removed from them.
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_del_file_substitution}}
-
-        **Examples**
-
-        >>> f.cfa_del_file_substitution('base')
-
-        """
-        super().cfa_del_file_substitution(base)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_del_file_substitution(base)
-
-    def cfa_file_substitutions(self, constructs=True):
-        """Return the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_file_substitutions()
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                out.update(c.cfa_file_substitutions())
-
-        return out
-
-    def del_file_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the new file location removed from them.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-        super().del_file_location(location)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.del_file_location(location)
-
-        return location
-
-    def cfa_update_file_substitutions(
-        self,
-        substitutions,
-        constructs=True,
-    ):
-        """Set CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the file substitutions set on them.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f.cfa_update_file_substitutions({'base': '/data/model'})
-
-        """
-        super().cfa_update_file_substitutions(substitutions)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_update_file_substitutions(substitutions)
-
     def get_domain(self):
         """Return the domain.
 
@@ -2982,7 +2822,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
         >>> lp = f.laplacian_xy(radius='earth')
         >>> lp
-        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2.rad-2>
+        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2>
         >>> print(lp.array)
         [[-- -- -- -- -- -- -- --]
          [-- -- -- -- -- -- -- --]
@@ -3050,19 +2890,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             r2_sin_theta = sin_theta * r**2
 
             d2f_dphi2 = f.derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ).derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             )
 
             term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
 
             df_dtheta = f.derivative(
-                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             )
 
             term2 = (df_dtheta * sin_theta).derivative(
-                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ) / r2_sin_theta
 
             f = term1 + term2
@@ -3195,134 +3047,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             raise ValueError("Can't identify unique domain axis")
 
         return axis in self.cyclic()
-
-    @classmethod
-    def concatenate(
-        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
-    ):
-        """Join a sequence of fields together.
-
-        This is different to `cf.aggregate` because it does not account
-        for all metadata. For example, it assumes that the axis order is
-        the same in each field.
-
-        .. versionadded:: 1.0
-
-        .. seealso:: `cf.aggregate`, `Data.concatenate`,
-                     `Data.cull_graph`
-
-        :Parameters:
-
-            fields: (sequence of) `Field`
-                The fields to concatenate.
-
-            axis: `int`, optional
-                The axis along which the arrays will be joined. The
-                default is 0. Note that scalar arrays are treated as
-                if they were one dimensional.
-
-            {{cull_graph: `bool`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{relaxed_units: `bool`, optional}}
-
-                .. versionadded:: 3.15.1
-
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                {{class}} constructs, prior to the concatenation,
-                thereby ensuring that the input constructs are not
-                changed by the concatenation process. If False then
-                some or all input constructs might be changed
-                in-place, but the concatenation process will be
-                faster.
-
-                .. versionadded:: 3.15.1
-
-        :Returns:
-
-            `Field`
-                The field generated from the concatenation of input
-                fields.
-
-        """
-        if isinstance(fields, cls):
-            return fields.copy()
-
-        field0 = fields[0]
-        if copy:
-            out = field0.copy()
-
-        if len(fields) == 1:
-            return out
-
-        new_data = Data.concatenate(
-            [f.get_data(_fill_value=False) for f in fields],
-            axis=axis,
-            cull_graph=cull_graph,
-            relaxed_units=relaxed_units,
-            copy=copy,
-        )
-
-        # Change the domain axis size
-        dim = out.get_data_axes()[axis]
-        out.set_construct(DomainAxis(size=new_data.shape[axis]), key=dim)
-
-        # Insert the concatenated data
-        out.set_data(new_data, set_axes=False, copy=False)
-
-        # ------------------------------------------------------------
-        # Concatenate constructs with data
-        # ------------------------------------------------------------
-        for key, construct in field0.constructs.filter_by_data(
-            todict=True
-        ).items():
-            construct_axes = field0.get_data_axes(key)
-
-            if dim not in construct_axes:
-                # This construct does not span the concatenating axis
-                # in the first field
-                continue
-
-            constructs = [construct]
-            for f in fields[1:]:
-                c = f.constructs.get(key)
-                if c is None:
-                    # This field does not have this construct
-                    constructs = None
-                    break
-
-                constructs.append(c)
-
-            if not constructs:
-                # Not every field has this construct, so remove it
-                # from the output field.
-                out.del_construct(key)
-                continue
-
-            # Still here? Then try concatenating the constructs from
-            # each field.
-            try:
-                construct = construct.concatenate(
-                    constructs,
-                    axis=construct_axes.index(dim),
-                    cull_graph=cull_graph,
-                    relaxed_units=relaxed_units,
-                    copy=copy,
-                )
-            except ValueError:
-                # Couldn't concatenate this construct, so remove it from
-                # the output field.
-                out.del_construct(key)
-            else:
-                # Successfully concatenated this construct, so insert
-                # it into the output field.
-                out.set_construct(
-                    construct, key=key, axes=construct_axes, copy=False
-                )
-
-        return out
 
     def weights(
         self,
@@ -4077,7 +3801,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # ------------------------------------------------------------
         # Still here? Return a weights field which is the outer
-        # product of the component weights
+        # product of the component weights.
         # ------------------------------------------------------------
         pp = sorted(comp.items())
         waxes, wdata = pp.pop(0)
@@ -5385,18 +5109,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Collapse weights**
 
-        The calculations of means, standard deviations and variances are,
-        by default, **not weighted**. For weights to be incorporated in
-        the collapse, the axes to be weighted must be identified with the
-        *weights* keyword.
+        .. warning:: By default, the collapse calculations are **not**
+                     weighted.
+
+                     For weights to be incorporated in the collapse,
+                     the *weights* keyword must be set.
 
         Weights are either derived from the field construct's metadata
-        (such as cell sizes), or may be provided explicitly in the form of
-        other field constructs containing data of weights values. In
-        either case, the weights actually used are those derived by the
-        `weights` method of the field construct with the same weights
-        keyword value. Collapsed axes that are not identified by the
-        *weights* keyword are unweighted during the collapse operation.
+        (such as cell sizes), or may be provided explicitly in the
+        form of other field constructs containing data of weights
+        values. In either case, the weights actually used are those
+        derived by the `weights` method of the field construct with
+        the same *weights* keyword value. Collapsed axes that are not
+        identified by the *weights* keyword are unweighted during the
+        collapse operation.
 
         *Example:*
           Create a weighted time average:
@@ -5429,7 +5155,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         field construct.
 
         *Example:*
-          Calculate the temporal maximum of the weighted areal means
+          Calculate the temporal maximum of the weighted area means
           using two independent calls:
 
           >>> b = a.collapse('area: mean', weights=True).collapse('T: maximum')
@@ -5440,7 +5166,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         specifies each axis, and a space delimits the separate collapses).
 
         *Example:*
-          Calculate the temporal maximum of the weighted areal means in
+          Calculate the temporal maximum of the weighted area means in
           a single call, using the cf-netCDF cell methods-like syntax:
 
           >>> b =a.collapse('area: mean T: maximum', weights=True)
@@ -5585,6 +5311,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           >>> b = a.collapse('T: standard_deviation within years',
           ...                within_years=cf.seasons(), weights=True)
 
+
+        **Active storage collapses**
+
+        When the data being collapsed are stored remotely, the
+        collapse calculations may be carried out on a server (ideally
+        one that is close in a network distance sense) to the data,
+        thereby removing the time and energy costs of transferring the
+        entire un-collapsed data to the local client. Whether or not
+        this will occur is determined on a case-by-case basis, and
+        will only be done if all of the following criteria are met:
+
+        * the collapse method is one of ``'mean'``, ``'maximum'``,
+          ``'minimum'``, or ``'sum'``;
+
+        * the collapse is over all axes;
+
+        * the collapse is unweighted;
+
+        * ``cf.active_storage()`` is `True`;
+
+        * a URL of the active storage server has been set with
+          `cf.active_storage_url`;
+
+        * the data values are in netCDF-4 files on disk (rather than
+          in any other file format, or in memory) and are not
+          numerically packed;
+
+        * the `!active_storage` attribute of the field's `Data` object
+          is `True`, indicating that active storage operations may be
+          possible. In general, it will only be `True` for data that
+          are in files on disk, are not compressed by convention and
+          have not had any other operations applied, apart from
+          subspacing;
+
+        * it is possible to import the external `activestorage.Active`
+          class.
+
+        The performance improvements from using active storage
+        operations will increase the closer the active storage server
+        is to the data storage. If the active storage server is
+        sufficiently far away from the data then it may be faster to
+        do a normal, non-active operation.
 
         .. versionadded:: 1.0
 
@@ -6014,7 +5782,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                    numbers of elements.
 
                                  * The start of the first group may be
-                                   before the first first axis element,
+                                   before the first axis element,
                                    depending on the offset defined by the
                                    time duration. For example, if
                                    ``group=cf.Y(month=12)`` then the first
@@ -7046,10 +6814,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
+            # Note: It is important that size 1 axes are also passed
+            #       on to the Data collapse, because active storage
+            #       collapses get confused if they're not there.
             data_axes = f.get_data_axes()
             iaxes = [
                 data_axes.index(axis)
-                for axis in collapse_axes
+                for axis in collapse_axes_all_sizes
                 if axis in data_axes
             ]
 
@@ -7355,7 +7126,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group=None,
         group_span=None,
         group_contiguous=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         regroup=None,
         coordinate=None,
@@ -8380,7 +8151,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         within_days.Units.istime
                         and TimeDuration(24, "hours") % within_days
                     ):
-                        # % Data(1, 'day'): # % within_days:
                         raise ValueError(
                             f"Can't collapse: within_days={within_days!r} "
                             "is not an exact factor of 1 day"
@@ -8818,91 +8588,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             logger.debug(
                 f"    Modified cell methods = {self.cell_methods()}"
             )  # pragma: no cover
-
-    @_inplace_enabled(default=False)
-    def insert_dimension(
-        self, axis, position=0, constructs=False, inplace=False
-    ):
-        """Insert a size 1 axis into the data array.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `domain_axis`, `flatten`, `flip`, `squeeze`,
-                     `transpose`, `unsqueeze`
-
-        :Parameters:
-
-            axis:
-                Select the domain axis to insert, generally defined by that
-                which would be selected by passing the given axis description
-                to a call of the field construct's `domain_axis` method. For
-                example, for a value of ``'X'``, the domain axis construct
-                returned by ``f.domain_axis('X')`` is selected.
-
-                If *axis* is `None` then a new domain axis construct will
-                created for the inserted dimension.
-
-            position: `int`, optional
-                Specify the position that the new axis will have in the
-                data array. By default the new axis has position 0, the
-                slowest varying position.
-
-            constructs: `bool`, optional
-                If True then also insert the new axis into all
-                metadata constructs that don't already include it. By
-                default, metadata constructs are not changed.
-
-                .. versionadded:: 3.16.1
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `Field` or `None`
-                The field construct with expanded data, or `None` if the
-                operation was in-place.
-
-        **Examples**
-
-        >>> f = cf.example_field(0)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-        >>> g = f.insert_dimension('T', 0)
-        >>> print(g)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-
-        A previously non-existent size 1 axis must be created prior to
-        insertion:
-
-        >>> f.insert_dimension(None, 1, inplace=True)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-
-        """
-        return super().insert_dimension(
-            axis=axis,
-            position=position,
-            constructs=constructs,
-            inplace=inplace,
-        )
 
     def indices(self, *config, **kwargs):
         """Create indices that define a subspace of the field construct.
@@ -9456,7 +9141,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def compute_vertical_coordinates(
-        self, default_to_zero=True, strict=True, inplace=False, verbose=None
+        self,
+        default_to_zero=True,
+        strict=True,
+        key=False,
+        inplace=False,
+        verbose=None,
     ):
         """Compute non-parametric vertical coordinates.
 
@@ -9491,7 +9181,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{default_to_zero: `bool`, optional}}
 
             strict: `bool`
-                If False then allow the computation to occur when
+                If False then allow the computation to occur when:
 
                 * A domain ancillary construct has no standard name, but
                   the corresponding term has a standard name that is
@@ -9510,15 +9200,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 names, then an exception is raised regardless of the value
                 of *strict*.
 
+            key: `bool`
+                If True, return alongside the field construct the key
+                identifying the auxiliary coordinate of the field with
+                the newly-computed vertical coordinates, as a 2-tuple
+                of field and then key. If False, the default, then only
+                return the field construct.
+
+                If no coordinates were computed, `None` will be
+                returned in the key (second) position of the 2-tuple.
+
+                .. versionadded:: 3.17.0
+
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
 
         :Returns:
 
-            `Field` or `None`
+            `Field`, 2-tuple, or `None`
                 The field construct with the new non-parametric vertical
-                coordinates, or `None` if the operation was in-place.
+                coordinates, or a 2-tuple of this field construct along
+                with the key of the new auxiliary coordinate with the
+                computed vertical coordinates, or `None` if the operation
+                was in-place.
 
         **Examples**
 
@@ -9545,7 +9250,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(f.auxiliary_coordinate('altitude', default=None))
         None
         >>> g = f.compute_vertical_coordinates()
-        >>> print(g.auxiliary_coordinates)
+        >>> print(g.auxiliary_coordinates())
         Constructs:
         {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
          'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -9561,12 +9266,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             Bounds:units = 'm'
             Bounds:Data(1, 10, 9, 2) = [[[[5.0, ..., 5415.0]]]] m
 
+        >>> g, key = f.compute_vertical_coordinates(key=True)
+        >>> g
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+        >>> key
+        'auxiliarycoordinate3'
+
+        >>> i = f.compute_vertical_coordinates(inplace=True)
+        >>> print(i)
+        None
+        >>> print(f.auxiliary_coordinates())
+        Constructs:
+        {'auxiliarycoordinate0': <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <CF AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'auxiliarycoordinate3': <CF AuxiliaryCoordinate: altitude(1, 10, 9) m>}
+
         """
         f = _inplace_enabled_define_and_cleanup(self)
+
+        if inplace and key:
+            raise ValueError(
+                "Can't set both key=True and inplace=True, since inplace "
+                "will always do the operation in-place and return None."
+            )
 
         detail = is_log_level_detail(logger)
         debug = is_log_level_debug(logger)
 
+        return_key = None  # in case there are no vertical coords to compute
         for cr in f.coordinate_references(todict=True).values():
             # --------------------------------------------------------
             # Compute the non-parametric vertical coordinates, if
@@ -9608,20 +9336,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"{c.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-            key = f.set_construct(c, axes=computed_axes, copy=False)
+            return_key = f.set_construct(c, axes=computed_axes, copy=False)
 
             # Reference the new coordinates from the coordinate
             # reference construct
-            cr.set_coordinate(key)
+            cr.set_coordinate(return_key)
 
             if debug:
                 logger.debug(
-                    f"Non-parametric coordinates construct key: {key!r}\n"
+                    "Non-parametric coordinates construct key: "
+                    f"{return_key!r}\n"
                     "Updated coordinate reference construct:\n"
                     f"{cr.dump(display=False, _level=1)}"
                 )  # pragma: no cover
 
-        return f
+        if key:
+            # 2-tuple, where return_key will be None if nothing was computed
+            return f, return_key
+        else:
+            return f
 
     def match_by_construct(self, *identities, OR=False, **conditions):
         """Whether or not there are particular metadata constructs.
@@ -10797,41 +10530,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def file_locations(self, constructs=True):
-        """The locations of files containing parts of the data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Parameters:
-
-            constructs: `bool`, optional
-                If True (the default) then the file locations from
-                metadata constructs are also returned.
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> f.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        out = super().file_locations()
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                out.update(c.file_locations())
-
-        return out
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
@@ -11093,78 +10791,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return self.data.argmin(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
-        """Remove size 1 axes from the data.
-
-        By default all size 1 axes are removed, but particular size 1 axes
-        may be selected for removal.
-
-        Squeezed domain axis constructs are not removed from the metadata
-        constructs, nor from the domain of the field construct.
-
-        .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
-                     `remove_axes`, `transpose`, `unsqueeze`
-
-        :Parameters:
-
-            axes: (sequence of) `str` or `int`, optional
-                Select the domain axes to squeeze, defined by the domain
-                axes that would be selected by passing each given axis
-                description to a call of the field construct's
-                `domain_axis` method. For example, for a value of ``'X'``,
-                the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
-
-                If no axes are provided then all size 1 axes are squeezed.
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-            kwargs: deprecated at version 3.0.0
-
-        :Returns:
-
-            `Field` or `None`
-                The field construct with squeezed data, or `None` if the
-                operation was in-place.
-
-                **Examples**
-
-        >>> g = f.squeeze()
-        >>> g = f.squeeze('time')
-        >>> g = f.squeeze(1)
-        >>> g = f.squeeze(['time', 1, 'dim2'])
-        >>> f.squeeze(['dim2'], inplace=True)
-
-        """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "squeeze", kwargs, version="3.0.0", removed_at="4.0.0"
-            )  # pragma: no cover
-
-        data_axes = self.get_data_axes()
-
-        if axes is None:
-            domain_axes = self.domain_axes(todict=True)
-            axes = [
-                axis
-                for axis in data_axes
-                if domain_axes[axis].get_size(None) == 1
-            ]
-        else:
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-
-            axes = [self.domain_axis(x, key=True) for x in axes]
-            axes = set(axes).intersection(data_axes)
-
-        iaxes = [data_axes.index(axis) for axis in axes]
-
-        # Squeeze the field's data array
-        return super().squeeze(iaxes, inplace=inplace)
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         """Interchange two axes of the data.
@@ -11229,167 +10855,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 data_axes[axis1],
             )
             f.set_data_axes(data_axes)
-
-        return f
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    def transpose(
-        self,
-        axes=None,
-        constructs=False,
-        inplace=False,
-        items=True,
-        i=False,
-        **kwargs,
-    ):
-        """Permute the axes of the data array.
-
-        By default the order of the axes is reversed, but any ordering may
-        be specified by selecting the axes of the output in the required
-        order.
-
-        By default metadata constructs are not transposed, but they may be
-        if the *constructs* parameter is set.
-
-        .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
-                     `squeeze`, `unsqueeze`
-
-        :Parameters:
-
-            axes: (sequence of) `str` or `int`, optional
-                Select the domain axis order, defined by the domain axes
-                that would be selected by passing each given axis
-                description to a call of the field construct's
-                `domain_axis` method. For example, for a value of ``'X'``,
-                the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
-
-                Each dimension of the field construct's data must be
-                provided, or if no axes are specified then the axis order
-                is reversed.
-
-            constructs: `bool`, optional
-                If True then metadata constructs are also transposed so
-                that their axes are in the same relative order as in the
-                transposed data array of the field. By default metadata
-                constructs are not altered.
-
-            {{inplace: `bool`, optional}}
-
-            items: deprecated at version 3.0.0
-                Use the *constructs* parameter instead.
-
-            {{i: deprecated at version 3.0.0}}
-
-            kwargs: deprecated at version 3.0.0
-
-        :Returns:
-
-            `Field` or `None`
-                The field construct with transposed data, or `None` if the
-                operation was in-place.
-
-        **Examples**
-
-        >>> f.ndim
-        3
-        >>> g = f.transpose()
-        >>> g = f.transpose(['time', 1, 'dim2'])
-        >>> f.transpose(['time', -2, 'dim2'], inplace=True)
-
-        """
-        if not items:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "transpose",
-                {"items": items},
-                "Use keyword 'constructs' instead.",
-                version="3.0.0",
-                removed_at="4.0.0",
-            )  # pragma: no cover
-
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "transpose", kwargs, version="3.0.0", removed_at="4.0.0"
-            )  # pragma: no cover
-
-        if axes is None:
-            iaxes = list(range(self.ndim - 1, -1, -1))
-        else:
-            data_axes = self.get_data_axes(default=())
-            if isinstance(axes, (str, int)):
-                axes = (axes,)
-
-            axes2 = [self.domain_axis(x, key=True) for x in axes]
-
-            if sorted(axes2) != sorted(data_axes):
-                raise ValueError(
-                    f"Can't transpose {self.__class__.__name__}: "
-                    f"Bad axis specification: {axes!r}"
-                )
-
-            iaxes = [data_axes.index(axis) for axis in axes2]
-
-        # Transpose the field's data array
-        return super().transpose(iaxes, constructs=constructs, inplace=inplace)
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    @_inplace_enabled(default=False)
-    def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
-        """Insert size 1 axes into the data array.
-
-        All size 1 domain axes which are not spanned by the field
-        construct's data are inserted.
-
-        The axes are inserted into the slowest varying data array positions.
-
-        .. seealso:: `flatten`, `flip`, `insert_dimension`, `squeeze`,
-                     `transpose`
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-            axes: deprecated at version 3.0.0
-
-            kwargs: deprecated at version 3.0.0
-
-        :Returns:
-
-            `Field` or `None`
-                The field construct with size-1 axes inserted in its data,
-                or `None` if the operation was in-place.
-
-        **Examples**
-
-        >>> g = f.unsqueeze()
-        >>> f.unsqueeze(['dim2'], inplace=True)
-
-        """
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(
-                self, "unsqueeze", kwargs, version="3.0.0", removed_at="4.0.0"
-            )  # pragma: no cover
-
-        if axes is not None:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "unsqueeze",
-                {"axes": axes},
-                "All size one domain axes missing from the data are "
-                "inserted. Use method 'insert_dimension' to insert an "
-                "individual size one domain axis.",
-                version="3.0.0",
-                removed_at="4.0.0",
-            )  # pragma: no cover
-
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        size_1_axes = self.domain_axes(filter_by_size=(1,), todict=True)
-        for axis in set(size_1_axes).difference(self.get_data_axes()):
-            f.insert_dimension(axis, position=0, inplace=True)
 
         return f
 
@@ -11607,8 +11072,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
         >>> fx, fy = f.grad_xy(radius='earth')
         >>> fx, fy
-        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
-         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1>,
+         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1>)
         >>> print(fx.array)
         [[0. 0. 0. 0. 0. 0. 0. 0.]
          [0. 0. 0. 0. 0. 0. 0. 0.]
@@ -11679,7 +11144,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             r = f.radius(default=radius)
 
             X = f.derivative(
-                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+                ignore_coordinate_units=True,
             ) / (theta.sin() * r)
 
             Y = (
@@ -11687,6 +11155,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     y_key,
                     wrap=None,
                     one_sided_at_boundary=one_sided_at_boundary,
+                    ignore_coordinate_units=True,
                 )
                 / r
             )
@@ -13443,48 +12912,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
-    def add_file_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-            constructs: `bool`, optional
-                If True (the default) then metadata constructs also
-                have the new file location added to them.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> f.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = super().add_file_location(location)
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.add_file_location(location)
-
-        return location
-
     def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n
         dimensions, where M <= N.
@@ -14226,9 +13653,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         axis,
         wrap=None,
         one_sided_at_boundary=False,
+        cyclic=None,
+        ignore_coordinate_units=False,
         inplace=False,
         i=False,
-        cyclic=None,
     ):
         """Calculate the derivative along the specified axis.
 
@@ -14261,6 +13689,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 True, then one-sided finite differences are calculated
                 at the non-cyclic boundaries. By default missing
                 values are set at non-cyclic boundaries.
+
+            ignore_coordinate_units: `bool`, optional
+                If True then the coordinates providing the cell
+                spacings along the specified axis are assumed to be
+                dimensionless, even if they do in fact have
+                units. This does not change the magnitude of the
+                returned numerical values, but the units of the
+                returned field construct will be identical to the
+                original units.
+
+                If False (the default) then the coordinate units will
+                propagate through to the result. i.e. the units of the
+                returned field construct will be the original units
+                divided by the coordinate units.
+
+                For example, for a field construct with units of
+                ``m.s-1`` and X coordinate units of ``radians``, the
+                units of the X derivative will be ``m.s-1.radians-1``
+                by default, or ``m.s-1`` if *ignore_coordinate_units*
+                is True.
+
+                .. versionadded:: 1.11.2.0
 
             {{inplace: `bool`, optional}}
 
@@ -14392,6 +13842,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # the data
         for _ in range(self.ndim - 1 - axis_index):
             d.insert_dimension(position=1, inplace=True)
+
+        if ignore_coordinate_units:
+            # Remove the coordinate units from the coordinate
+            # differences, before we calculate the derivative.
+            d.override_units(None, inplace=True)
 
         # Find the derivative
         f.data /= d

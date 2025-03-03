@@ -1,13 +1,11 @@
 import logging
 from itertools import chain
-from os import sep
 
 import numpy as np
 from cfdm import is_log_level_info
 
 from ..cfdatetime import dt
 from ..data import Data
-from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -18,7 +16,6 @@ from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
-    abspath,
     default_netCDF_fillvals,
 )
 from ..functions import equivalent as cf_equivalent
@@ -51,14 +48,6 @@ class PropertiesData(Properties):
     """Mixin class for a data array with metadata."""
 
     _special_properties = ("units", "calendar")
-
-    def __array__(self, *dtype):
-        """Returns a numpy array representation of the data."""
-        data = self.get_data(None)
-        if data is not None:
-            return data.__array__(*dtype)
-
-        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __contains__(self, value):
         """Called to implement membership test operators.
@@ -622,11 +611,11 @@ class PropertiesData(Properties):
 
         if not inplace:
             new = self.copy()  # data=False) TODO
-            new_data = data._binary_operation(y, method)
+            new_data = data._binary_operation(data, y, method)
             new.set_data(new_data, copy=False)
         else:
             new = self
-            new.data._binary_operation(y, method)
+            new.data._binary_operation(new.data, y, method)
 
         if method in _relational_methods:
             # Booleans have no units
@@ -1193,14 +1182,6 @@ class PropertiesData(Properties):
 
         self._custom["direction"] = None
 
-    #        units = getattr(value, 'units', None)
-    #        if units is not None:
-    #            self.set_property('units', units)
-    #
-    #        calendar = getattr(value, 'calendar', None)
-    #        if calendar is not None:
-    #            self.set_property('calendar', calendar)
-
     @Units.deleter
     def Units(self):
         raise AttributeError(
@@ -1605,14 +1586,6 @@ class PropertiesData(Properties):
                 f"{self.__class__.__name__} doesn't have CF property 'units'"
             )
 
-    #        value = getattr(self.Units, "units", None)
-    #        if value is None:
-    #            raise AttributeError(
-    #                f"{self.__class__.__name__} doesn't have CF property 'units'"
-    #            )
-    #
-    #        return value
-
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, "calendar", None))
@@ -1626,39 +1599,6 @@ class PropertiesData(Properties):
             )
 
         self.Units = Units(None, getattr(self, "calendar", None))
-
-    def add_file_location(self, location):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> d.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.add_file_location(location)
-
-        return abspath(location).rstrip(sep)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -2012,48 +1952,6 @@ class PropertiesData(Properties):
         custom["period"] = value
 
         return old
-
-    @_inplace_enabled(default=False)
-    def persist(self, inplace=False):
-        """Persist the underlying dask array into memory.
-
-        This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed.
-
-        `persist` is particularly useful when using distributed
-        systems, because the results will be kept in distributed
-        memory, rather than returned to the local process.
-
-        **Performance**
-
-        `persist` causes all delayed operations to be computed.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `array`, `datetime_array`,
-                     `dask.array.Array.persist`
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The construct with persisted data. If the operation
-                was in-place then `None` is returned.
-
-        **Examples**
-
-        >>> g = f.persist()
-
-        """
-        return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "persist",
-            inplace=inplace,
-            delete_props=False,
-        )
 
     def range(self):
         """The absolute difference between the maximum and minimum of
@@ -2578,100 +2476,6 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    def cfa_update_file_substitutions(self, substitutions):
-        """Set CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            data.cfa_update_file_substitutions(substitutions)
-
-    @_inplace_enabled(default=False)
-    def cfa_clear_file_substitutions(self, inplace=False):
-        """Remove all of the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_clear_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_clear_file_substitutions()
-        {}
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return {}
-
-        return data.cfa_clear_file_substitutions({})
-
-    def cfa_del_file_substitution(
-        self,
-        base,
-    ):
-        """Remove a CFA-netCDF file name substitution.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            `dict`
-                {{Returns cfa_del_file_substitution}}
-
-        **Examples**
-
-        >>> f.cfa_del_file_substitution('base')
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            data.cfa_del_file_substitution(base)
-
-    def cfa_file_substitutions(
-        self,
-    ):
-        """Return the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_file_substitutions}}
-
-        **Examples**
-
-        >>> g = f.cfa_file_substitutions()
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return {}
-
-        return data.cfa_file_substitutions({})
-
     def chunk(self, chunksize=None):
         """Partition the data array.
 
@@ -2773,67 +2577,6 @@ class PropertiesData(Properties):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    @classmethod
-    def concatenate(
-        cls,
-        variables,
-        axis=0,
-        cull_graph=False,
-        relaxed_units=False,
-        copy=True,
-    ):
-        """Join a sequence of variables together.
-
-        .. seealso:: `Data.cull_graph`
-
-        :Parameters:
-
-            variables: sequence of constructs.
-
-            axis: `int`, optional
-
-            {{cull_graph: `bool`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{relaxed_units: `bool`, optional}}
-
-                .. versionadded:: 3.15.1
-
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                {{class}} constructs, prior to the concatenation,
-                thereby ensuring that the input constructs are not
-                changed by the concatenation process. If False then
-                some or all input constructs might be changed
-                in-place, but the concatenation process will be
-                faster.
-
-                .. versionadded:: 3.15.1
-
-        :Returns:
-
-        TODO
-
-        """
-        out = variables[0]
-        if copy:
-            out = out.copy()
-
-        if len(variables) == 1:
-            return out
-
-        data = Data.concatenate(
-            [v.get_data(_fill_value=False) for v in variables],
-            axis=axis,
-            cull_graph=cull_graph,
-            relaxed_units=relaxed_units,
-            copy=copy,
-        )
-        out.set_data(data, copy=False)
-
-        return out
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -3066,39 +2809,6 @@ class PropertiesData(Properties):
             )
 
         return data.datum(*index)
-
-    def del_file_location(self, location):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> f.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.del_file_location(location)
-
-        return abspath(location).rstrip(sep)
 
     @_manage_log_level_via_verbosity
     def equals(
@@ -3429,33 +3139,35 @@ class PropertiesData(Properties):
             calendar_years=calendar_years,
         )
 
-    def file_locations(self):
-        """The locations of files containing parts of the data.
+    @_inplace_enabled(default=False)
+    def filled(self, fill_value=None, inplace=False):
+        """Replace masked elements with a fill value.
 
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
+        .. versionadded:: 1.11.2.0
 
-        .. versionadded:: 3.15.0
+        :Parameters:
 
-        .. seealso:: `add_file_location`, `del_file_location`
+            fill_value: scalar, optional
+                The fill value. By default the fill returned by
+                `fill_value` is used, or if this is not set then
+                the netCDF default fill value for the data type is
+                used (as defined by `cf.default_netCDF_fillvals`).
+
+            {{inplace: `bool`, optional}}
 
         :Returns:
 
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
+            `{{class}}` or `None`
+                The construct with filled data, or `None` if the
+                operation was in-place.
 
         """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.file_locations()
-
-        return set()
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "filled",
+            fill_value=fill_value,
+            inplace=inplace,
+        )
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -3909,7 +3621,7 @@ class PropertiesData(Properties):
         """Flip (reverse the direction of) data dimensions.
 
         .. seealso:: `flatten`, `insert_dimension`, `squeeze`,
-                     `transpose`, `unsqueeze`
+                     `transpose`
 
         :Parameters:
 
@@ -5362,7 +5074,7 @@ class PropertiesData(Properties):
     @_inplace_enabled(default=False)
     def rechunk(
         self,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
         threshold=None,
         block_size_limit=None,
         balance=False,

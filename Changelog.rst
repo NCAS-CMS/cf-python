@@ -1,14 +1,57 @@
-version NEXTVERSION
--------------------
+version 3.17.0
+--------------
 
-**2024-??-??**
+**2025-??-??**
 
+* Set a new minimum version of `numpy`: ``2.0.0``
+  (https://github.com/NCAS-CMS/cf-python/issues/843)
+* Replace dataset aggregation functionality (CFA) with that imported
+  from `cfdm` (https://github.com/NCAS-CMS/cf-python/issues/841)
+* New keyword parameter to `cf.Field.compute_vertical_coordinates`:
+  ``key`` (https://github.com/NCAS-CMS/cf-python/issues/802)
 * New keyword parameter to `cf.histogram`: ``density``
   (https://github.com/NCAS-CMS/cf-python/issues/794)
+* Changed dependency: ``Python>=3.9.0``
+* Changed dependency: ``numpy>=2.0.0``
+* Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
+* Changed optional dependency: ``esmpy>=8.7.0``
+* Removed dependency (now incorporated into ``cfdm``): ``h5py``
+* Removed dependency (now incorporated into ``cfdm``): ``h5netcdf``
+* Removed dependency (now incorporated into ``cfdm``): ``s3fs``
+
+----
+
+version 3.16.3
+--------------
+
+**2025-01-28**
+
+* Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
+  sampling geometry source grids
+  (https://github.com/NCAS-CMS/cf-python/issues/832)
+* New method: `cf.Field.filled`
+  (https://github.com/NCAS-CMS/cf-python/issues/811)
 * New method: `cf.Field.is_discrete_axis`
   (https://github.com/NCAS-CMS/cf-python/issues/784)
 * Include the UM version as a field property when reading UM files
   (https://github.com/NCAS-CMS/cf-python/issues/777)
+* Fix bug that caused climatological time collapses within/over days
+  to fail (https://github.com/NCAS-CMS/cf-python/issues/809)
+* New keyword parameter to `cf.Field.derivative`:
+  ``ignore_coordinate_units``
+  (https://github.com/NCAS-CMS/cf-python/issues/807)
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cf-python/issues/712)
+* New class `cf.H5netcdfArray`
+* New class `cf.NetCDF4Array`
+* New class `cf.CFAH5netcdfArray`
+* New class `cf.CFANetCDF4Array`
+* Replace core `dask` functionality with that imported from `cfdm`
+  (https://github.com/NCAS-CMS/cf-python/issues/839)
+* Fix bug that sometimes puts an incorrect ``radian-1`` or
+  ``radian-2`` in the returned units of the differential operator
+  methods and functions
+  (https://github.com/NCAS-CMS/cf-python/issues/807)
 * Fix bug where `cf.example_fields` returned a `list` of Fields rather
   than a `Fieldlist`
   (https://github.com/NCAS-CMS/cf-python/issues/725)
@@ -18,6 +61,16 @@ version NEXTVERSION
 * Fix bug where `cf.normalize_slice` doesn't correctly
   handle certain cyclic slices
   (https://github.com/NCAS-CMS/cf-python/issues/774)
+* Fix bug where `cf.Field.subspace` doesn't always correctly handle
+  global or near-global cyclic subspaces
+  (https://github.com/NCAS-CMS/cf-python/issues/828)
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.6.0``
+* Changed dependency: ``numpy>=1.15,<2.0``
+* Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``
+* Changed dependency: ``cfunits>=3.3.7``
+* Changed dependency: ``dask>=2024.6.0,<=2024.7.1``
 
 ----
 
@@ -132,6 +185,8 @@ version 3.16.0
 * Changed dependency: ``1.11.0.0<=cfdm<1.11.1.0``
 * New dependency: ``scipy>=1.10.0``
 
+----
+
 version 3.15.4
 --------------
 
@@ -240,8 +295,8 @@ version 3.15.0
 * Handled the renaming of the ESMF Python interface from `ESMF` to
   `esmpy` at version 8.4.0. Both module names are accepted for now.
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
-* Changed (optional) dependency: ``8.0.0<=esmpy``
-* Changed (optional) dependency: ``1.10.0<=scipy``
+* Changed optional dependency: ``8.0.0<=esmpy``
+* Changed optional dependency: ``1.10.0<=scipy``
 
 ----
 
@@ -270,7 +325,7 @@ version 3.14.1
 
 ----
 
-version 3.14.0 (*first Dask release*)
+version 3.14.0 (*first Dask version*)
 -------------------------------------
 
 **2023-01-31**
@@ -305,7 +360,7 @@ version 3.14.0 (*first Dask release*)
 
 ----
 
-version 3.13.1 (*last LAMA release*)
+version 3.13.1 (*last LAMA version*)
 ------------------------------------
 
 **2022-10-17**

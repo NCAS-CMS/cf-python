@@ -26,9 +26,8 @@ class Properties(Container):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        .. note:: If a child class requires a different component
-        classes than the ones defined here, then they must be redefined
-        in the child class.
+        Child classes should consider redefining these component
+        classes.
 
         """
         instance = super().__new__(cls)

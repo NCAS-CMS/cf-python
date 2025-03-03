@@ -20,6 +20,7 @@ Reading and writing
 
    cf.read 
    cf.write
+   cf.netcdf_lock
 
 Aggregation
 -----------
@@ -144,6 +145,19 @@ Resource management
    cf.REGRID_LOGGING
    cf.TEMPDIR
    cf.TOTAL_MEMORY
+
+Active storage reductions
+-------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cf.active_storage
+   cf.active_storage_url
+   cf.active_storage_max_requests
+   cf.netcdf_lock
 
 Miscellaneous
 -------------

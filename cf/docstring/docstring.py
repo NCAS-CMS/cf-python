@@ -161,7 +161,9 @@ _docstring_substitution_definitions = {
                   mapped to the closest destination point. A
                   destination point can be mapped to multiple source
                   points. Some destination points may not be
-                  mapped. Useful for regridding of categorical data.
+                  mapped. Each regridded value is the sum of its
+                  contributing source elements. Useful for binning or
+                  for categorical data.
 
                 * `None`: This is the default and can only be used
                   when *dst* is a `RegridOperator`.""",
@@ -177,42 +179,6 @@ _docstring_substitution_definitions = {
                 value given by the *radius* parameter is used
                 instead. A value of ``'earth'`` is equivalent to a
                 default value of 6371229 metres.""",
-    # chunks
-    "{{chunks: `int`, `tuple`, `dict` or `str`, optional}}": """chunks: `int`, `tuple`, `dict` or `str`, optional
-                Specify the chunking of the underlying dask array.
-
-                Any value accepted by the *chunks* parameter of the
-                `dask.array.from_array` function is allowed.
-
-                By default, ``"auto"`` is used to specify the array
-                chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, preferring square-like
-                chunk shapes.
-
-                *Parameter example:*
-                  A blocksize like ``1000``.
-
-                *Parameter example:*
-                  A blockshape like ``(1000, 1000)``.
-
-                *Parameter example:*
-                  Explicit sizes of all blocks along all dimensions
-                  like ``((1000, 1000, 500), (400, 400))``.
-
-                *Parameter example:*
-                  A size in bytes, like ``"100MiB"`` which will choose
-                  a uniform block-like shape, preferring square-like
-                  chunk shapes.
-
-                *Parameter example:*
-                  A blocksize of ``-1`` or `None` in a tuple or
-                  dictionary indicates the size of the corresponding
-                  dimension.
-
-                *Parameter example:*
-                  Blocksizes of some or all dimensions mapped to
-                  dimension positions, like ``{1: 200}``, or ``{0: -1,
-                  1: (400, 400)}``.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.
@@ -231,28 +197,6 @@ _docstring_substitution_definitions = {
                   domain axis. If the vertical axis does not appear in
                   the computed non-parametric coordinates then this an
                   empty tuple.""",
-    # collapse axes
-    "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
-                The axes to be collapsed. By default all axes are
-                collapsed, resulting in output with size 1. Each axis
-                is identified by its integer position. If *axes* is an
-                empty sequence then the collapse is applied to each
-                scalar element and the result has the same shape as
-                the input data.""",
-    # collapse squeeze
-    "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional
-                By default, the axes which are collapsed are left in
-                the result as dimensions with size one, so that the
-                result will broadcast correctly against the input
-                array. If set to True then collapsed axes are removed
-                from the data.""",
-    # collapse keepdims
-    "{{collapse keepdims: `bool`, optional}}": """keepdims: `bool`, optional
-                By default, the axes which are collapsed are left in
-                the result as dimensions with size one, so that the
-                result will broadcast correctly against the input
-                array. If set to False then collapsed axes are removed
-                from the data.""",
     # weights
     "{{weights: data_like, `dict`, or `None`, optional}}": """weights: data_like, `dict`, or `None`, optional
                 Weights associated with values of the data. By default
@@ -282,14 +226,12 @@ _docstring_substitution_definitions = {
                 The sample size threshold below which collapsed values
                 are set to missing data. It is defined as a fraction
                 (between 0 and 1 inclusive) of the contributing input
-                data values.
-
-                The default of *mtol* is 1, meaning that a missing
-                datum in the output array occurs whenever all of its
+                data values. A missing value in the output array
+                occurs whenever more than ``100*mtol%`` of its
                 contributing input array elements are missing data.
 
-                For other values, a missing datum in the output array
-                occurs whenever more than ``100*mtol%`` of its
+                The default of *mtol* is 1, meaning that a missing
+                value in the output array occurs whenever all of its
                 contributing input array elements are missing data.
 
                 Note that for non-zero values of *mtol*, different
@@ -300,35 +242,28 @@ _docstring_substitution_definitions = {
     "{{ddof: number}}": """ddof: number
                 The delta degrees of freedom, a non-negative
                 number. The number of degrees of freedom used in the
-                calculation is (N-*ddof*) where N represents the
-                number of non-missing elements. A value of 1 applies
-                Bessel's correction. If the calculation is weighted
-                then *ddof* can only be 0 or 1.""",
-    # split_every
-    "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
-                Determines the depth of the recursive aggregation. If
-                set to or more than the number of input chunks, the
-                aggregation will be performed in two steps, one
-                partial collapse per input chunk and a single
-                aggregation at the end. If set to less than that, an
-                intermediate aggregation step will be used, so that
-                any of the intermediate or final aggregation steps
-                operates on no more than ``split_every`` inputs. The
-                depth of the aggregation graph will be
-                :math:`log_{split\_every}}(\textnormal{input chunks
-                along reduced axes})`. Setting to a low value can reduce
-                cache size and network transfers, at the cost of more
-                CPU and a larger dask graph.
+                calculation is ``N-ddof`` where ``N`` is the number of
+                non-missing elements. A value of 1 applies Bessel's
+                correction. If the calculation is weighted then *ddof*
+                can only be 0 or 1.""",
+    # active_storage
+    "{{active_storage: `bool`, optional}}": """{{active_storage: `bool`, optional}}
+                If True then attempt to perform the collapse using
+                active storage reductions. However, if other necessary
+                conditions are not met (see `Collapse` for details)
+                then the reduction will be carried out locally, as
+                usual. When an active storage reduction on a chunk
+                fails at compute time, the reduction for that chunk is
+                carried out locally.
 
-                By default, `dask` heuristically decides on a good
-                value. A default can also be set globally with the
-                ``split_every`` key in `dask.config`. See
-                `dask.array.reduction` for details.""",
+                If False, the default, then the reduction will be
+                carried out locally.""",
     # Collapse chunk_function
-    "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
+    "{{chunk_function: callable or `None`, optional}}": """{{chunk_function: callable or `None`, optional}}
                 Provides the ``chunk`` parameter to
-                `dask.array.reduction`. If unset then an approriate
-                default function will be used.""",
+                `dask.array.reduction`. If `None`, the default, then
+                an appropriate default function from
+                `cf.data.collapse.dask_collapse` will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By
@@ -535,38 +470,6 @@ _docstring_substitution_definitions = {
     # bounds
     "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
                 If True (the default) then alter any bounds.""",
-    # cull
-    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
-                If True then unnecessary tasks are removed (culled)
-                from each array's dask graph before
-                concatenation. This process can have a considerable
-                overhead but can sometimes improve the overall
-                performance of a workflow. If False (the default) then
-                dask graphs are not culled. See
-                `dask.optimization.cull` for details.""",
-    # relaxed_units
-    "{{relaxed_units: `bool`, optional}}": """relaxed_units: `bool`, optional
-                If True then allow the concatenation of data with
-                invalid but otherwise equal units. By default, if any
-                data array has invalid units then the concatenation
-                will fail. A `Units` object is considered to be
-                invalid if its `!isvalid` attribute is `False`.""",
-    # cfa substitutions
-    "{{cfa substitutions: `dict`}}": """substitutions: `dict`
-                The substitution definitions in a dictionary whose
-                key/value pairs are the file name parts to be
-                substituted and their corresponding substitution text.
-
-                Each substitution definition may be specified with or
-                without the ``${...}`` syntax. For instance, the
-                following are equivalent: ``{'base': 'sub'}``,
-                ``{'${base}': 'sub'}``.""",
-    # cfa base
-    "{{cfa base: `str`}}": """base: `str`
-                The substitution definition to be removed. May be
-                specified with or without the ``${...}`` syntax. For
-                instance, the following are equivalent: ``'base'`` and
-                ``'${base}'``.""",
     # regular args
     "{{regular args}}": """A sequence of three numeric values. The first two values in
                 the sequence represent the coordinate range (see the bounds
@@ -621,6 +524,10 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # _get_array index
+    "{{index: `tuple` or `None`, optional}}": """index: `tuple` or `None`, optional
+               Provide the indices that define the subspace. If `None`
+               then the `index` attribute is used.""",
     # subspace config options
     "{{config: optional}}": """config: optional
                 Configure the subspace by specifying the mode of
@@ -692,21 +599,6 @@ _docstring_substitution_definitions = {
                             coordinates check will be carried out,
                             however, if the *check_coordinates*
                             parameter is True.""",
-    # Returns cfa_file_substitutions
-    "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
-                whose key/value pairs are the file name parts to be
-                substituted and their corresponding substitution
-                text.""",
-    # Returns cfa_clear_file_substitutions
-    "{{Returns cfa_clear_file_substitutions}}": """The removed CFA-netCDF file name substitutions in a
-                dictionary whose key/value pairs are the file name
-                parts to be substituted and their corresponding
-                substitution text.""",
-    # Returns cfa_clear_file_substitutions
-    "{{Returns cfa_del_file_substitution}}": """
-                The removed CFA-netCDF file name substitution. If the
-                substitution was not defined then an empty dictionary
-                is returned.""",
     # subspace valid modes Field
     "{{subspace valid modes Field}}": """Valid modes are:
 

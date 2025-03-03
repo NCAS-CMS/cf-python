@@ -1,3 +1,2 @@
-from .fullfragmentarray import FullFragmentArray
-from .netcdffragmentarray import NetCDFFragmentArray
-from .umfragmentarray import UMFragmentArray
+from .fragmentfilearray import FragmentFileArray
+from .fragmentumarray import FragmentUMArray

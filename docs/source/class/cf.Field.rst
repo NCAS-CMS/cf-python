@@ -210,6 +210,7 @@ Data
    ~cf.Field.count
    ~cf.Field.count_masked
    ~cf.Field.fill_value
+   ~cf.Field.filled
    ~cf.Field.masked_invalid
 	    
 .. autosummary::
@@ -415,6 +416,9 @@ NetCDF
    ~cf.Field.nc_set_global_attribute
    ~cf.Field.nc_set_global_attributes
    ~cf.Field.ncdimensions
+   ~cf.Field.nc_clear_hdf5_chunksizes
+   ~cf.Field.nc_hdf5_chunksizes
+   ~cf.Field.nc_set_hdf5_chunksizes
 
 Groups
 ^^^^^^

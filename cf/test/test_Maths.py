@@ -34,7 +34,7 @@ class MathTest(unittest.TestCase):
                     one_sided_at_boundary=one_sided,
                 )
 
-                self.assertTrue(c.Units == cf.Units("m-2 rad-2"))
+                self.assertEqual(c.Units, cf.Units("m-2"))
 
                 term1 = (x * sin_theta).derivative(
                     "Y", one_sided_at_boundary=one_sided
@@ -47,7 +47,7 @@ class MathTest(unittest.TestCase):
 
                 # Check the data
                 with cf.rtol(1e-10):
-                    self.assertTrue((c.data == c0.data).all())
+                    self.assertTrue(c.data.allclose(c0.data))
 
                 del c.long_name
                 c0.set_data(c.data)
@@ -70,7 +70,7 @@ class MathTest(unittest.TestCase):
                     x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(d.Units == cf.Units("m-2"))
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -122,21 +122,23 @@ class MathTest(unittest.TestCase):
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
-
-                self.assertTrue(d.Units == cf.Units("m-2 rad-2"), d.Units)
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
-                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                    "X",
+                    wrap=wrap,
+                    one_sided_at_boundary=one_sided,
                 )
                 term2 = (y * sin_theta).derivative(
-                    "Y", one_sided_at_boundary=one_sided
+                    "Y",
+                    one_sided_at_boundary=one_sided,
                 )
 
                 d0 = (term1 + term2) / (sin_theta * r)
 
                 # Check the data
                 with cf.rtol(1e-10):
-                    self.assertTrue((d.data == d0.data).all())
+                    self.assertTrue(d.data.allclose(d0.data))
 
                 del d.long_name
                 d0.set_data(d.data)
@@ -159,7 +161,7 @@ class MathTest(unittest.TestCase):
                     x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
-                self.assertTrue(d.Units == cf.Units("m-2"))
+                self.assertEqual(d.Units, cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided

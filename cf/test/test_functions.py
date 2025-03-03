@@ -31,12 +31,10 @@ class functionTest(unittest.TestCase):
     def test_keyword_deprecation(self):
         # Use as test case 'i' kwarg, the deprecated old name for
         # 'inplace':
-        a = cf.Data([list(range(100))])
-        a.squeeze(inplace=True)  # new way to specify operation tested below
-
-        b = cf.Data([list(range(100))])
+        f = cf.example_field(0)
+        f.flip(inplace=True)  # new way to specify operation tested below
         with self.assertRaises(cf.functions.DeprecationError):
-            b.squeeze(i=True)
+            f.flip(i=True)
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
@@ -58,7 +56,7 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 8)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
 
         # Types expected:
         self.assertIsInstance(org["atol"], float)
@@ -68,6 +66,8 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org["bounds_combination_mode"], str)
         self.assertIsInstance(org["regrid_logging"], bool)
         self.assertIsInstance(org["tempdir"], str)
+        self.assertIsInstance(org["active_storage"], bool)
+        self.assertIsInstance(org["active_storage_max_requests"], int)
         # Log level may be input as an int but always given as
         # equiv. string
         self.assertIsInstance(org["log_level"], str)
@@ -87,12 +87,20 @@ class functionTest(unittest.TestCase):
             "bounds_combination_mode": "XOR",
             "log_level": "INFO",
             "chunksize": 8e9,
+            "active_storage": True,
+            "active_storage_url": None,
+            "active_storage_max_requests": 100,
         }
 
         # Test the setting of each lone item.
         expected_post_set = dict(org)  # copy for safety with mutable dict
         for setting, value in reset_values.items():
-            cf.configuration(**{setting: value})
+            try:
+                cf.configuration(**{setting: value})
+            except ModuleNotFoundError as error:
+                print(f"WARNING: not testing {setting!r} due to: {error}")
+                continue
+
             post_set = cf.configuration()
 
             # Expect a dict that is identical to the original to start
@@ -186,6 +194,10 @@ class functionTest(unittest.TestCase):
         # Reset so later test fixtures don't spam with output
         # messages:
         cf.log_level("DISABLE")
+
+        # Reset configuration
+        cf.configuration(**org)
+        self.assertEqual(cf.configuration(), org)
 
     def test_context_managers(self):
         # rtol, atol
@@ -354,9 +366,6 @@ class functionTest(unittest.TestCase):
 
         x = da.arange(9)
         self.assertEqual(cf.size(x), x.size)
-
-    def test_CFA(self):
-        self.assertEqual(cf.CFA(), cf.__cfa_version__)
 
     def test_normalize_slice(self):
         self.assertEqual(cf.normalize_slice(slice(1, 4), 8), slice(1, 4, 1))

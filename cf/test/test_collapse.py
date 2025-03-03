@@ -246,6 +246,23 @@ class Field_collapseTest(unittest.TestCase):
             print(g.constructs)
         self.assertEqual(list(g.shape), expected_shape)
 
+    def test_Field_collapse_CLIMATOLOGICAL_TIME_within_days(self):
+        verbose = False
+
+        f = cf.example_field(5)
+
+        g = f.collapse(
+            "T: mean within days time: minimum over days", within_days=cf.h(12)
+        )
+        expected_shape = list(f.shape)
+        expected_shape[0] = 2
+
+        if verbose:
+            print("\n", f)
+            print(g)
+            print(g.constructs)
+        self.assertEqual(list(g.shape), expected_shape)
+
     def test_Field_collapse(self):
         verbose = False
 

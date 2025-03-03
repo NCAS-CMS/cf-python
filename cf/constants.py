@@ -37,7 +37,7 @@ in cf.
       Find the total amount of physical memory (in bytes).
 
     CHUNKSIZE: `int`
-      The chunk size (in bytes) for data storage and processing.
+      The Dask chunk size (in bytes). See `cf.chunksize`.
 
     TEMPDIR: `str`
       The location to store temporary files. By default it is the
@@ -63,6 +63,9 @@ CONSTANTS = {
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
+    "active_storage": False,
+    "active_storage_url": None,
+    "active_storage_max_requests": 100,
 }
 
 masked = np.ma.masked

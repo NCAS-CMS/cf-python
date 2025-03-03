@@ -431,11 +431,11 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
      [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
     >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
     >>> fx, fy
-    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
-     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1>,
+     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1>)
     >>> c = cf.curl_xy(fx, fy, radius='earth')
     >>> c
-    <CF Field: long_name=Divergence of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2.rad-2>
+    <CF Field: long_name=Horizontal curl of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2>
     >>> print(c.array)
     [[-- -- -- -- -- -- -- --]
      [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
@@ -496,8 +496,7 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
         # --------------------------------------------------------
         # Spherical polar coordinates
         # --------------------------------------------------------
-        # Convert latitude and longitude units to radians, so that the
-        # units of the result are nice.
+        # Convert latitude and longitude units to radians
         radians = Units("radians")
         fx_x_coord.Units = radians
         fx_y_coord.Units = radians
@@ -520,10 +519,16 @@ def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
         r = fx.radius(default=radius)
 
         term1 = (fx * sin_theta).derivative(
-            fx_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            fx_y_key,
+            wrap=None,
+            one_sided_at_boundary=one_sided_at_boundary,
+            ignore_coordinate_units=True,
         )
         term2 = fy.derivative(
-            fy_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            fy_x_key,
+            wrap=x_wrap,
+            one_sided_at_boundary=one_sided_at_boundary,
+            ignore_coordinate_units=True,
         )
 
         c = (term1 - term2) / (sin_theta * r)
@@ -656,11 +661,12 @@ def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
      [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
     >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
     >>> fx, fy
-    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
-     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1>,
+     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1>)
     >>> d = cf.div_xy(fx, fy, radius='earth')
     >>> d
-    <CF Field: long_name=Divergence of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2.rad-2>
+    <CF Field: long_name=Horizontal divergence of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2>
+
     >>> print(d.array)
     [[-- -- -- -- -- -- -- --]
      [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
@@ -745,11 +751,17 @@ def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
         r = fx.radius(default=radius)
 
         term1 = fx.derivative(
-            fx_x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            fx_x_key,
+            wrap=x_wrap,
+            one_sided_at_boundary=one_sided_at_boundary,
+            ignore_coordinate_units=True,
         )
 
         term2 = (fy * sin_theta).derivative(
-            fy_y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            fy_y_key,
+            wrap=None,
+            one_sided_at_boundary=one_sided_at_boundary,
+            ignore_coordinate_units=True,
         )
 
         d = (term1 + term2) / (sin_theta * r)

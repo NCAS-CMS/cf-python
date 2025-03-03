@@ -1,7 +1,8 @@
 """Reduction functions intended to be passed to be dask.
 
-Most of these functions are expected to be set as *chunk*, *combine* and
-*aggregate* parameters of `dask.array.reduction`
+Most of these functions are expected to be passed to
+`dask.array.reduction` as its *chunk*, *combine* and *aggregate*
+parameters.
 
 """
 
@@ -9,12 +10,14 @@ from functools import reduce
 from operator import mul
 
 import numpy as np
+from cfdm.data.dask_utils import cfdm_to_memory
 from dask.array import chunk
 from dask.array.core import _concatenate2
 from dask.array.reductions import divide, numel
 from dask.core import flatten
 from dask.utils import deepmap
 
+from .collapse_active import actify
 from .collapse_utils import double_precision_dtype
 
 
@@ -37,14 +40,13 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
         mtol: number
             The sample size threshold below which collapsed values are
             set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
+            0 and 1 inclusive) of the contributing input data
+            values. A missing value in the output array occurs
+            whenever more than ``100*mtol%`` of its contributing input
+            array elements are missing data.
 
-            The default of *mtol* is 1, meaning that a missing datum
+            The default of *mtol* is 1, meaning that a missing value
             in the output array occurs whenever all of its
-            contributing input array elements are missing data.
-
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
             contributing input array elements are missing data.
 
             Note that for non-zero values of *mtol*, different
@@ -126,7 +128,8 @@ def sum_weights_chunk(
             N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
-    elif check_weights:
+
+    if check_weights:
         w_min = weights.min()
         if w_min <= 0:
             raise ValueError(
@@ -227,6 +230,7 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # mean
 # --------------------------------------------------------------------
+@actify("mean")
 def cf_mean_chunk(
     x,
     weights=None,
@@ -237,8 +241,13 @@ def cf_mean_chunk(
 ):
     """Chunk calculations for the mean.
 
-     This function is passed to `dask.array.reduction` as its *chunk*
-     parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
+    for details.
 
     .. versionadded:: 3.14.0
 
@@ -267,11 +276,15 @@ def cf_mean_chunk(
     if computing_meta:
         return x
 
+    x = cfdm_to_memory(x)
+    if weights is not None:
+        weights = cfdm_to_memory(weights)
+
     # N, sum
-    d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
+    d = cf_sum_chunk(x, weights=weights, dtype=dtype, **kwargs)
 
     d["V1"] = sum_weights_chunk(
-        x, weights, N=d["N"], check_weights=False, **kwargs
+        x, weights=weights, N=d["N"], check_weights=False, **kwargs
     )
     d["weighted"] = weights is not None
 
@@ -363,6 +376,7 @@ def cf_mean_agg(
 # --------------------------------------------------------------------
 # maximum
 # --------------------------------------------------------------------
+@actify("max")
 def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the maximum.
 
@@ -381,11 +395,13 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
             Dictionary with the keys:
 
             * N: The sample size.
-            * max: The maximum of `x``.
+            * max: The maximum of ``x``.
 
     """
     if computing_meta:
         return x
+
+    x = cfdm_to_memory(x)
 
     return {
         "max": chunk.max(x, **kwargs),
@@ -514,6 +530,7 @@ def cf_mid_range_agg(
 # --------------------------------------------------------------------
 # minimum
 # --------------------------------------------------------------------
+@actify("min")
 def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the minimum.
 
@@ -537,6 +554,8 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
+
+    x = cfdm_to_memory(x)
 
     return {
         "min": chunk.min(x, **kwargs),
@@ -617,6 +636,7 @@ def cf_min_agg(
 # --------------------------------------------------------------------
 # range
 # --------------------------------------------------------------------
+@actify("range")
 def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the range.
 
@@ -636,11 +656,13 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
 
             * N: The sample size.
             * min: The minimum of ``x``.
-            * max: The maximum of ``x`.
+            * max: The maximum of ``x``.
 
     """
     if computing_meta:
         return x
+
+    x = cfdm_to_memory(x)
 
     # N, max
     d = cf_max_chunk(x, **kwargs)
@@ -727,11 +749,17 @@ def cf_range_agg(
 # --------------------------------------------------------------------
 # root mean square
 # --------------------------------------------------------------------
+@actify("rms")
 def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the root mean square (RMS).
 
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
+
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
+    for details.
 
     .. versionadded:: 3.14.0
 
@@ -750,6 +778,8 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
+
+    x = cfdm_to_memory(x)
 
     return cf_mean_chunk(
         np.multiply(x, x, dtype=dtype), weights=weights, dtype=dtype, **kwargs
@@ -803,6 +833,7 @@ def cf_rms_agg(
 # --------------------------------------------------------------------
 # sample size
 # --------------------------------------------------------------------
+@actify("sample_size")
 def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     """Chunk calculations for the sample size.
 
@@ -826,8 +857,18 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
+    x = cfdm_to_memory(x)
     if np.ma.isMA(x):
-        N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
+        # Note: We're not using `np.ones_like` here (like we used to)
+        #       because numpy currently (numpy==2.2.3) has a bug that
+        #       produces a RuntimeWarning: "numpy/ma/core.py:502:
+        #       RuntimeWarning: invalid value encountered in cast
+        #       fill_value = np.asarray(fill_value,
+        #       dtype=ndtype)". See
+        #       https://github.com/numpy/numpy/issues/28255 for more
+        #       details.
+        x = np.ma.array(np.ones((x.shape), dtype=x.dtype), mask=x.mask)
+        N = chunk.sum(x, **kwargs)
     else:
         if dtype:
             kwargs["dtype"] = dtype
@@ -913,6 +954,7 @@ def cf_sample_size_agg(
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
+@actify("sum")
 def cf_sum_chunk(
     x,
     weights=None,
@@ -951,7 +993,10 @@ def cf_sum_chunk(
     if computing_meta:
         return x
 
+    x = cfdm_to_memory(x)
+
     if weights is not None:
+        weights = cfdm_to_memory(weights)
         if check_weights:
             w_min = weights.min()
             if w_min <= 0:
@@ -1044,8 +1089,9 @@ def cf_sum_agg(
 # --------------------------------------------------------------------
 # sum of weights
 # --------------------------------------------------------------------
+@actify("sum_of_weights")
 def cf_sum_of_weights_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, square=False, **kwargs
+    x, weights=None, dtype="f8", computing_meta=False, **kwargs
 ):
     """Chunk calculations for the sum of the weights.
 
@@ -1053,10 +1099,6 @@ def cf_sum_of_weights_chunk(
     parameter.
 
     :Parameters:
-
-        square: `bool`, optional
-            If True then calculate the sum of the squares of the
-            weights.
 
         See `dask.array.reductions` for details of the other
         parameters.
@@ -1067,18 +1109,66 @@ def cf_sum_of_weights_chunk(
             Dictionary with the keys:
 
             * N: The sample size.
-            * sum: The sum of ``weights``, or the sum of
-                   ``weights**2`` if *square* is True.
+            * sum: The sum of ``weights``.
 
     """
     if computing_meta:
         return x
 
+    x = cfdm_to_memory(x)
+    if weights is not None:
+        weights = cfdm_to_memory(weights)
+
     # N
     d = cf_sample_size_chunk(x, **kwargs)
 
     d["sum"] = sum_weights_chunk(
-        x, weights=weights, square=square, N=d["N"], **kwargs
+        x, weights=weights, square=False, N=d["N"], **kwargs
+    )
+
+    return d
+
+
+# --------------------------------------------------------------------
+# sum of squares of weights
+# --------------------------------------------------------------------
+@actify("sum_of_weights2")
+def cf_sum_of_weights2_chunk(
+    x, weights=None, dtype="f8", computing_meta=False, **kwargs
+):
+    """Chunk calculations for the sum of the squares of the weights.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: 3.16.3
+
+    :Parameters:
+
+        See `dask.array.reductions` for details of the other
+        parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+            * sum: The sum of the squares of ``weights``.
+
+    """
+    if computing_meta:
+        return x
+
+    x = cfdm_to_memory(x)
+    if weights is not None:
+        weights = cfdm_to_memory(weights)
+
+    # N
+    d = cf_sample_size_chunk(x, **kwargs)
+
+    d["sum"] = sum_weights_chunk(
+        x, weights=weights, square=True, N=d["N"], **kwargs
     )
 
     return d
@@ -1087,6 +1177,7 @@ def cf_sum_of_weights_chunk(
 # --------------------------------------------------------------------
 # unique
 # --------------------------------------------------------------------
+@actify("unique")
 def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the unique values.
 
@@ -1109,6 +1200,8 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
+
+    x = cfdm_to_memory(x)
 
     return {"unique": np.unique(x)}
 
@@ -1148,16 +1241,35 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 # --------------------------------------------------------------------
 # variance
 # --------------------------------------------------------------------
+@actify("var")
 def cf_var_chunk(
     x, weights=None, dtype="f8", computing_meta=False, ddof=None, **kwargs
 ):
-    """Chunk calculations for the variance.
+    r"""Chunk calculations for the variance.
 
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
+    For non-overlapping data sets, X_{i}, making up the aggregate data
+    set X=\bigcup _{i}X_{i}, the unweighted variance \sigma ^{2} is
+
+    \mu &={\frac {1}{\sum _{i}{N_{X_{i}}}}}\left(\sum
+    _{i}{N_{X_{i}}\mu _{X_{i}}}\right)
+
+    \sigma ^{2}&={\sqrt {{\frac {1}{\sum
+    _{i}{N_{X_{i}}-ddof}}}\left(\sum _{i}{\left[(N_{X_{i}}-1)\sigma
+    _{X_{i}}^{2}+N_{X_{i}}\mu _{X_{i}}^{2}\right]}-\left[\sum
+    _{i}{N_{X_{i}}}\right]\mu _{X}^{2}\right)}}
+
+    where X_{i}\cap X_{j}=\emptyset , \forall i<j.
+
     See
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
+    for details.
+
+    Weights are interpreted as reliability weights, as opposed to
+    frequency weights. See
+    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
     for details.
 
     .. versionadded:: 3.14.0
@@ -1181,7 +1293,7 @@ def cf_var_chunk(
             * N: The sample size.
             * V1: The sum of ``weights`` (equal to ``N`` if weights
                   are not set).
-            * V2: The sum of ``weights**2``, or `None` of not
+            * V2: The sum of ``weights**2``, or `None` if not
                   required.
             * sum: The weighted sum of ``x``.
             * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
@@ -1194,10 +1306,14 @@ def cf_var_chunk(
     if computing_meta:
         return x
 
+    x = cfdm_to_memory(x)
+
     weighted = weights is not None
+    if weighted:
+        weights = cfdm_to_memory(weights)
 
     # N, V1, sum
-    d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
+    d = cf_mean_chunk(x, weights=weights, dtype=dtype, **kwargs)
 
     wsum = d["sum"]
     V1 = d["V1"]
@@ -1215,7 +1331,7 @@ def cf_var_chunk(
 
     if weighted and ddof == 1:
         d["V2"] = sum_weights_chunk(
-            x, weights, square=True, check_weights=False, **kwargs
+            x, weights=weights, square=True, check_weights=False, **kwargs
         )
     else:
         d["V2"] = None
@@ -1285,13 +1401,6 @@ def cf_var_agg(
 
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
-
-    .. note:: Weights are interpreted as reliability weights, as
-              opposed to frequency weights.
-
-    See
-    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
-    for details.
 
     .. versionadded:: 3.14.0
 

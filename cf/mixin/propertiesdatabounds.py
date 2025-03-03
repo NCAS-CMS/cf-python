@@ -4,7 +4,6 @@ import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 
 from ..data import Data
-from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -1151,45 +1150,6 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             del data.dtype
 
-    def add_file_location(self, location):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> d.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = super().add_file_location(location)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.add_file_location(location)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.add_file_location(location)
-
-        return location
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, bounds=True, inplace=False, i=False):
@@ -1236,121 +1196,6 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
             i=i,
         )
-
-    def cfa_clear_file_substitutions(
-        self,
-    ):
-        """Remove all of the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_clear_file_substitutions}}
-
-        **Examples**
-
-        >>> f.cfa_clear_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_clear_file_substitutions()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            out.update(bounds.cfa_clear_file_substitutions())
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            out.update(interior_ring.cfa_clear_file_substitutions())
-
-        return out
-
-    def cfa_del_file_substitution(self, base):
-        """Remove a CFA-netCDF file name substitution.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa base: `str`}}
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_del_file_substitution}}
-
-        **Examples**
-
-        >>> c.cfa_del_file_substitution('base')
-
-        """
-        super().cfa_del_file_substitution(base)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.cfa_del_file_substitution(base)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.cfa_del_file_substitution(base)
-
-    def cfa_file_substitutions(self):
-        """Return the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_file_substitutions}}
-
-        **Examples**
-
-        >>> c.cfa_file_substitutions()
-        {}
-
-        """
-        out = super().cfa_file_substitutions()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            out.update(bounds.cfa_file_substitutions({}))
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            out.update(interior_ring.cfa_file_substitutions({}))
-
-        return out
-
-    def cfa_update_file_substitutions(self, substitutions):
-        """Set CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> c.cfa_add_file_substitutions({'base', '/data/model'})
-
-        """
-        super().cfa_update_file_substitutions(substitutions)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.cfa_update_file_substitutions(substitutions)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.cfa_update_file_substitutions(substitutions)
 
     def chunk(self, chunksize=None):
         """Partition the data array.
@@ -1467,87 +1312,6 @@ class PropertiesDataBounds(PropertiesData):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    @classmethod
-    def concatenate(
-        cls,
-        variables,
-        axis=0,
-        cull_graph=False,
-        relaxed_units=False,
-        copy=True,
-    ):
-        """Join a sequence of variables together.
-
-        .. seealso:: `Data.cull_graph`
-
-        :Parameters:
-
-            variables: sequence of constructs
-
-            axis: `int`, optional
-
-            {{cull_graph: `bool`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{relaxed_units: `bool`, optional}}
-
-                .. versionadded:: 3.15.1
-
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                {{class}} objects, prior to the concatenation, thereby
-                ensuring that the input constructs are not changed by
-                the concatenation process. If False then some or all
-                input constructs might be changed in-place, but the
-                concatenation process will be faster.
-
-                .. versionadded:: 3.15.1
-
-        :Returns:
-
-            TODO
-
-        """
-        variable0 = variables[0]
-        if copy:
-            variable0 = variable0.copy()
-
-        if len(variables) == 1:
-            return variable0
-
-        out = super().concatenate(
-            variables,
-            axis=axis,
-            cull_graph=cull_graph,
-            relaxed_units=relaxed_units,
-            copy=copy,
-        )
-
-        bounds = variable0.get_bounds(None)
-        if bounds is not None:
-            bounds = bounds.concatenate(
-                [v.get_bounds() for v in variables],
-                axis=axis,
-                cull_graph=cull_graph,
-                relaxed_units=relaxed_units,
-                copy=copy,
-            )
-            out.set_bounds(bounds, copy=False)
-
-        interior_ring = variable0.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring = interior_ring.concatenate(
-                [v.get_interior_ring() for v in variables],
-                axis=axis,
-                cull_graph=cull_graph,
-                relaxed_units=relaxed_units,
-                copy=copy,
-            )
-            out.set_interior_ring(interior_ring, copy=False)
-
-        return out
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -2045,39 +1809,40 @@ class PropertiesDataBounds(PropertiesData):
 
         return super().get_property(prop, default)
 
-    def file_locations(self):
-        """The locations of files containing parts of the data.
+    @_inplace_enabled(default=False)
+    def filled(self, fill_value=None, bounds=True, inplace=False):
+        """Replace masked elements with a fill value.
 
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
+        .. versionadded:: 1.11.2.0
 
-        .. versionadded:: 3.15.0
+        :Parameters:
 
-        .. seealso:: `add_file_location`, `del_file_location`
+            fill_value: scalar, optional
+                The fill value. By default the fill returned by
+                `fill_value` is used, or if this is not set then
+                the netCDF default fill value for the data type is
+                used (as defined by `cf.default_netCDF_fillvals`).
+
+            bounds: `bool`, optional
+                If False then do not alter any bounds. By default any
+                bounds are also altered.
+
+            {{inplace: `bool`, optional}}
 
         :Returns:
 
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
+            `{{class}}` or `None`
+                The construct with filled data, or `None` if the
+                operation was in-place.
 
         """
-        out = super().file_locations()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            out.update(bounds.file_locations())
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            out.update(interior_ring.file_locations())
-
-        return out
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "filled",
+            (fill_value,),
+            bounds=bounds,
+            inplace=inplace,
+        )
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -2149,45 +1914,6 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.flatten(axes, inplace=True)
 
         return v
-
-    def del_file_location(self, location):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> c.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = super().del_file_location(location)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.del_file_location(location)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.del_file_location(location)
-
-        return location
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -2701,8 +2427,7 @@ class PropertiesDataBounds(PropertiesData):
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
 
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`,
-        `unsqueeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 
         :Parameters:
 
@@ -3582,62 +3307,6 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    def squeeze(self, axes=None, inplace=False, i=False):
-        """Remove size one axes from the data array.
-
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal. Corresponding axes are also
-        removed from the bounds data array, if present.
-
-        .. seealso:: `flip`, `insert_dimension`, `transpose`
-
-        :Parameters:
-
-            axes: (sequence of) `int`
-                The positions of the size one axes to be removed. By
-                default all size one axes are removed. Each axis is
-                identified by its original integer position. Negative
-                integers counting from the last position are allowed.
-
-                *Parameter example:*
-                  ``axes=0``
-
-                *Parameter example:*
-                  ``axes=-2``
-
-                *Parameter example:*
-                  ``axes=[2, 0]``
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The new construct with removed data axes. If the operation
-                was in-place then `None` is returned.
-
-        **Examples**
-
-        >>> f.shape
-        (1, 73, 1, 96)
-        >>> f.squeeze().shape
-        (73, 96)
-        >>> f.squeeze(0).shape
-        (73, 1, 96)
-        >>> g = f.squeeze([-3, 2])
-        >>> g.shape
-        (73, 96)
-        >>> f.bounds.shape
-        (1, 73, 1, 96, 4)
-        >>> g.shape
-        (73, 96, 4)
-
-        """
-        return super().squeeze(axes=axes, inplace=inplace)
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, bounds=True, inplace=False, i=False):
         """Truncate the data, element-wise.
@@ -3684,68 +3353,6 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
             i=i,
         )
-
-    #   def identities(self, generator=False):
-    #       """Return all possible identities.
-    #
-    #       The identities comprise:
-    #
-    #       * The "standard_name" property.
-    #       * The "id" attribute, preceded by ``'id%'``.
-    #       * The "cf_role" property, preceded by ``'cf_role='``.
-    #       * The "axis" property, preceded by ``'axis='``.
-    #       * The "long_name" property, preceded by ``'long_name='``.
-    #       * All other properties (including "standard_name"), preceded by
-    #         the property name and an ``'='``.
-    #       * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-    #       * The netCDF variable name, preceded by ``'ncvar%'``.
-    #
-    #       The identities of the bounds, if present, are included (with the
-    #       exception of the bounds netCDF variable name).
-    #
-    #       .. versionadded:: 3.0.0
-    #
-    #       .. seealso:: `id`, `identity`
-    # ODO
-    #       :Returns:
-    #
-    #           `list`
-    #               The identities.
-    #
-    #       **Examples**
-    #
-    #       >>> f.properties()
-    #       {'foo': 'bar',
-    #        'long_name': 'Air Temperature',
-    #        'standard_name': 'air_temperature'}
-    #       >>> f.nc_get_variable()
-    #       'tas'
-    #       >>> f.identities()
-    #       ['air_temperature',
-    #        'long_name=Air Temperature',
-    #        'foo=bar',
-    #        'standard_name=air_temperature',
-    #        'ncvar%tas']
-    #
-    #       >>> f.properties()
-    #       {}
-    #       >>> f.bounds.properties()
-    #       {'axis': 'Z',
-    #        'units': 'm'}
-    #       >>> f.identities()
-    #       ['axis=Z', 'units=m', 'ncvar%z']
-    #
-    #       """
-    #       identities = super().identities()
-    #
-    #       bounds = self.get_bounds(None)
-    #       if bounds is not None:
-    #           identities.extend(
-    #               [i for i in bounds.identities() if i not in identities]
-    #           )
-    #       # TODO ncvar AND?
-    #
-    #       return identities
 
     @_deprecated_kwarg_check(
         "relaxed_identity", version="3.0.0", removed_at="4.0.0"
@@ -3968,56 +3575,9 @@ class PropertiesDataBounds(PropertiesData):
         return bounds.period(*value, **config)
 
     @_inplace_enabled(default=False)
-    def persist(self, bounds=True, inplace=False):
-        """Persist the underlying dask array into memory.
-
-        This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed.
-
-        `persist` is particularly useful when using distributed
-        systems, because the results will be kept in distributed
-        memory, rather than returned to the local process.
-
-        **Performance**
-
-        `persist` causes all delayed operations to be computed.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `array`, `datetime_array`,
-                     `dask.array.Array.persist`
-
-        :Parameters:
-
-            bounds: `bool`, optional
-                If False then do not persist any bounds data. By
-                default any bound data are also persisted.
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The construct with persisted data. If the operation
-                was in-place then `None` is returned.
-
-        **Examples**
-
-        >>> g = f.persist()
-
-        """
-        return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "persist",
-            bounds=bounds,
-            interior_ring=True,
-            inplace=inplace,
-        )
-
-    @_inplace_enabled(default=False)
     def rechunk(
         self,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
         threshold=None,
         block_size_limit=None,
         balance=False,
@@ -4187,7 +3747,8 @@ class PropertiesDataBounds(PropertiesData):
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
 
-        .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+        .. seealso:: `insert_dimension`, `flip`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 

@@ -1,6 +1,7 @@
 """Regridding functions used within a dask graph."""
 
 import numpy as np
+from cfdm.data.dask_utils import cfdm_to_memory
 
 
 def regrid(
@@ -173,6 +174,13 @@ def regrid(
 
     """
     weights, dst_mask = weights_dst_mask
+
+    a = cfdm_to_memory(a)
+    if dst_mask is not None:
+        dst_mask = cfdm_to_memory(dst_mask)
+
+    if ref_src_mask is not None:
+        ref_src_mask = cfdm_to_memory(ref_src_mask)
 
     # ----------------------------------------------------------------
     # Reshape the array into a form suitable for the regridding dot
@@ -498,17 +506,20 @@ def _regrid(
             # Note: It is much more efficient to access
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
-            #       over rows of 'weights' and using 'weights.getrow'.
+            #       over rows of 'weights' and using
+            #       'weights.getrow'. Also, 'np.count_nonzero' is much
+            #       faster than 'np.any' and 'np.all'.
             count_nonzero = np.count_nonzero
             indptr = weights.indptr.tolist()
             indices = weights.indices
             data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
-                if not count_nonzero(mask):
+                n_masked = count_nonzero(mask)
+                if not n_masked:
                     continue
 
-                if mask.all():
+                if n_masked == mask.size:
                     dst_mask[j] = True
                     continue
 
@@ -520,8 +531,8 @@ def _regrid(
 
             del indptr
 
-        elif method in ("linear", "bilinear", "nearest_dtos"):
-            # 2) Linear and nearest neighbour methods:
+        elif method in ("linear", "bilinear"):
+            # 2) Linear methods:
             #
             # Mask out any row j that contains at least one positive
             # (i.e. greater than or equal to 'min_weight') w_ji that
@@ -537,7 +548,9 @@ def _regrid(
             # Note: It is much more efficient to access
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
-            #       over rows of 'weights' and using 'weights.getrow'.
+            #       over rows of 'weights' and using
+            #       'weights.getrow'. Also, 'np.count_nonzero' is much
+            #       faster than 'np.any' and 'np.all'.
             count_nonzero = np.count_nonzero
             where = np.where
             indptr = weights.indptr.tolist()
@@ -553,12 +566,45 @@ def _regrid(
 
             del indptr, pos_data
 
+        elif method == "nearest_dtos":
+            # 3) Nearest neighbour dtos method:
+            #
+            # Set to 0 any weight that corresponds to a masked source
+            # grid cell.
+            #
+            # Mask out any row j for which all source grid cells are
+            # masked.
+            dst_size = weights.shape[0]
+            if dst_mask is None:
+                dst_mask = np.zeros((dst_size,), dtype=bool)
+            else:
+                dst_mask = dst_mask.copy()
+
+            # Note: It is much more efficient to access
+            #       'weights.indptr', 'weights.indices', and
+            #       'weights.data' directly, rather than iterating
+            #       over rows of 'weights' and using
+            #       'weights.getrow'. Also, 'np.count_nonzero' is much
+            #       faster than 'np.any' and 'np.all'.
+            count_nonzero = np.count_nonzero
+            indptr = weights.indptr.tolist()
+            indices = weights.indices
+            for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+                mask = src_mask[indices[i0:i1]]
+                n_masked = count_nonzero(mask)
+                if n_masked == mask.size:
+                    dst_mask[j] = True
+                elif n_masked:
+                    weights.data[np.arange(i0, i1)[mask]] = 0
+
+            del indptr
+
         elif method in (
             "patch",
             "conservative_2nd",
             "nearest_stod",
         ):
-            # 3) Patch recovery and second-order conservative methods:
+            # 4) Patch recovery and second-order conservative methods:
             #
             # A reference source data mask has already been
             # incorporated into the weights matrix, and 'a' is assumed

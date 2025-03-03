@@ -186,6 +186,7 @@ Data
    ~cf.Index.count
    ~cf.Index.count_masked
    ~cf.Index.fill_value
+   ~cf.Index.filled
    ~cf.Index.masked_invalid
 
 .. autosummary::
@@ -411,6 +412,9 @@ NetCDF
    ~cf.Index.nc_get_sample_dimension
    ~cf.Index.nc_has_sample_dimension
    ~cf.Index.nc_set_sample_dimension
+   ~cf.Index.nc_clear_hdf5_chunksizes
+   ~cf.Index.nc_hdf5_chunksizes
+   ~cf.Index.nc_set_hdf5_chunksizes
 
 CFA
 ---

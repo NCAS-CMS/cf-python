@@ -16,9 +16,9 @@ vn=$1
 dir=~/tmp/test_cf-python
 rm -fr $dir
 
-tar ztvf dist/cf-python-$vn.tar.gz
+tar ztvf dist/cf_python-$vn.tar.gz
 
-pip install dist/cf-python-$vn.tar.gz -t $dir --no-deps
+pip install dist/cf_python-$vn.tar.gz -t $dir --no-deps
 
 export PYTHONPATH=$dir:$PYTHONPATH
 export PATH=$dir/bin:$PATH

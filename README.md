@@ -84,7 +84,8 @@ The `cf` package uses
 [Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
 of its array manipulation and can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs from netCDF, CDL, PP and UM datasets with a
+  choice of netCDF backends,and in local, http, and s3 locations,
 * create new field constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, create, and manipulate UGRID mesh topologies,
@@ -119,16 +120,17 @@ of its array manipulation and can:
 Visualization
 =============
 
-Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the [cfplot
-package](http://ajheaps.github.io/cf-plot), that needs to be installed
-seprately to the `cf` package.
+Powerful and flexible visualizations of `cf` field constructs,
+designed to be produced and configured in as few lines of code as
+possible, are available with the [cf-plot
+package](https://ncas-cms.github.io/cf-plot/build/index.html), which
+needs to be installed separately to the `cf` package.
 
 See the [cf-plot
-gallery](http://ajheaps.github.io/cf-plot/gallery.html) for the full
+gallery](https://ncas-cms.github.io/cf-plot/build/gallery.html) for a
 range of plotting possibilities with example code.
 
-![Example output of cf-plot displaying a `cf` field construct](docs/source/images/cfplot_example.png)
+![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](https://raw.githubusercontent.com/NCAS-CMS/cf-plot/master/docs/source/images/cf_gallery_image.png)
 
 Command line utilities
 ======================

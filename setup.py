@@ -4,7 +4,7 @@ import re
 import subprocess
 from distutils.command.build import build
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def find_package_data_files(directory):
@@ -294,35 +294,16 @@ setup(
         "Operating System :: MacOS",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
-    packages=[
-        "cf",
-        "cf.mixin",
-        "cf.mixin2",
-        "cf.data",
-        "cf.data.array",
-        "cf.data.array.abstract",
-        "cf.data.array.mixin",
-        "cf.data.collapse",
-        "cf.data.fragment",
-        "cf.data.fragment.mixin",
-        "cf.data.mixin",
-        "cf.docstring",
-        "cf.read_write",
-        "cf.read_write.um",
-        "cf.read_write.netcdf",
-        "cf.regrid",
-        "cf.umread_lib",
-        "cf.test",
-    ],
+    packages=find_packages(),
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,

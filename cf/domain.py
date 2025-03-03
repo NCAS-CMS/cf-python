@@ -162,104 +162,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return location
 
-    def cfa_clear_file_substitutions(
-        self,
-    ):
-        """Remove all of the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_clear_file_substitutions}}
-
-        **Examples**
-
-        >>> d.cfa_clear_file_substitutions()
-        {}
-
-        """
-        out = {}
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.cfa_clear_file_substitutions())
-
-        return out
-
-    def cfa_file_substitutions(self):
-        """Return the CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_file_substitutions}}
-
-        **Examples**
-
-        >>> d.cfa_file_substitutions()
-        {}
-
-        """
-        out = {}
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.cfa_file_substitutions())
-
-        return out
-
-    def cfa_del_file_substitution(
-        self,
-        base,
-    ):
-        """Remove a CFA-netCDF file name substitution.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            base: `str`
-                {{cfa base: `str`}}
-
-        :Returns:
-
-            `dict`
-                {{Returns cfa_del_file_substitution}}
-
-        **Examples**
-
-        >>> f.cfa_del_file_substitution('base')
-
-        """
-        for c in self.constructs.filter_by_data(todict=True).values():
-            c.cfa_del_file_substitution(
-                base,
-            )
-
-    def cfa_update_file_substitutions(
-        self,
-        substitutions,
-    ):
-        """Set CFA-netCDF file name substitutions.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.cfa_update_file_substitutions({'base': '/data/model'})
-
-        """
-        for c in self.constructs.filter_by_data(todict=True).values():
-            c.cfa_update_file_substitutions(substitutions)
-
     def close(self):
         """Close all files referenced by the domain construct.
 
@@ -707,7 +609,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
           equals e.g. ``'foo=bar'``.
         * The netCDF variable name, preceded by ``'ncvar%'``.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: 3.8.0
 
         .. seealso:: `identity`
 

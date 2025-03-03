@@ -9,6 +9,7 @@ import cftime
 import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
+from cfdm.read_write.exceptions import DatasetTypeError
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -27,9 +28,6 @@ from ...functions import load_stash2standard_name
 from ...functions import rtol as cf_rtol
 from ...umread_lib.umfile import File
 from ...units import Units
-
-# import numpy as np
-
 
 logger = logging.getLogger(__name__)
 
@@ -491,6 +489,9 @@ class UMField:
         implementation=None,
         select=None,
         info=False,
+        squeeze=False,
+        unsqueeze=False,
+        unpack=True,
         **kwargs,
     ):
         """**Initialisation**
@@ -540,11 +541,44 @@ class UMField:
                 increasing verbosity, the more description that is printed
                 about the read process.
 
+            squeeze: `bool`, optional
+                If True then remove all size 1 dimensions from field
+                construct data arrays, regardless of how the data are
+                stored in the dataset. If False (the default) then the
+                presence or not of size 1 dimensions is determined by
+                how the data are stored in its dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                If True then ensure that field construct data arrays
+                span all of the size 1 dimensions, regardless of how
+                the data are stored in the dataset. If False (the
+                default) then the presence or not of size 1 dimensions
+                is determined by how the data are stored in its
+                dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unpack: `bool`, optional
+                If True, the default, then unpack arrays by convention
+                when the data is read from disk.
+
+                Unpacking is determined by netCDF conventions for the
+                following variable attributes ``add_offset`` and
+                ``scale_factor``, as applied to lookup header entries
+                BDATUM and BMKS respectively.
+
+                .. versionadded:: NEXTVERSION
+
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
                 return field construct.
 
         """
+        if squeeze and unsqueeze:
+            raise ValueError("'squeeze' and 'unsqueeze' can not both be True")
+
         self._bool = False
 
         self.info = info
@@ -557,6 +591,7 @@ class UMField:
         self.height_at_top_of_model = height_at_top_of_model
         self.byte_ordering = byte_ordering
         self.word_size = word_size
+        self.unpack = unpack
 
         self.atol = cf_atol()
 
@@ -1113,6 +1148,16 @@ class UMField:
                 )
 
             self.fields.append(field)
+
+        # ------------------------------------------------------------
+        # Squeeze/unsqueeze size 1 axes in field constructs
+        # ------------------------------------------------------------
+        if unsqueeze:
+            for f in self.fields:
+                f.unsqueeze(inplace=True)
+        elif squeeze:
+            for f in self.fields:
+                f.squeeze(inplace=True)
 
         self._bool = True
 
@@ -1973,8 +2018,10 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        units = getattr(um_Units, "units", None)
-        calendar = getattr(um_Units, "calendar", None)
+        attributes = {
+            "units": getattr(um_Units, "units", None),
+            "calendar": getattr(um_Units, "calendar", None),
+        }
 
         data_type_in_file = self.data_type_in_file
 
@@ -1991,6 +2038,7 @@ class UMField:
         klass_name = UMArray().__class__.__name__
 
         fmt = self.fmt
+        unpack = self.unpack
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -2015,8 +2063,8 @@ class UMField:
                 fmt=fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
-                units=units,
-                calendar=calendar,
+                attributes=attributes,
+                unpack=unpack,
             )
 
             key = f"{klass_name}-{tokenize(subarray)}"
@@ -2069,8 +2117,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        units=units,
-                        calendar=calendar,
+                        attributes=attributes,
+                        unpack=unpack,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"
@@ -2120,8 +2168,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
-                        units=units,
-                        calendar=calendar,
+                        attributes=attributes,
+                        unpack=unpack,
                     )
 
                     key = f"{klass_name}-{tokenize(subarray)}"
@@ -2151,7 +2199,7 @@ class UMField:
 
         # Create the Data object
         data = Data(dx, units=um_Units, fill_value=fill_value)
-        data._cfa_set_write(True)
+        data._nc_set_aggregation_write_status(True)
 
         self.data = data
         self.data_axes = data_axes
@@ -3346,7 +3394,7 @@ class UMRead(cfdm.read_write.IORead):
     def read(
         self,
         filename,
-        um_version=405,
+        um_version=None,
         aggregate=True,
         endian=None,
         word_size=None,
@@ -3356,6 +3404,12 @@ class UMRead(cfdm.read_write.IORead):
         chunk=True,
         verbose=None,
         select=None,
+        squeeze=False,
+        unsqueeze=False,
+        domain=False,
+        file_type=None,
+        ignore_unknown_type=False,
+        unpack=True,
     ):
         """Read fields from a PP file or UM fields file.
 
@@ -3405,18 +3459,49 @@ class UMRead(cfdm.read_write.IORead):
 
             set_standard_name: `bool`, optional
 
-        select: (sequence of) `str` or `Query` or `re.Pattern`, optional
-            Only return field constructs whose identities match the
-            given values(s), i.e. those fields ``f`` for which
-            ``f.match_by_identity(*select)`` is `True`. See
-            `cf.Field.match_by_identity` for details.
+            select: (sequence of) `str` or `Query` or `re.Pattern`, optional
+                Only return field constructs whose identities match
+                the given values(s), i.e. those fields ``f`` for which
+                ``f.match_by_identity(*select)`` is `True`. See
+                `cf.Field.match_by_identity` for details.
 
-            This is equivalent to, but faster than, not using the
-            *select* parameter but applying its value to the returned
-            field list with its `cf.FieldList.select_by_identity`
-            method. For example, ``fl = cf.read(file,
-            select='stash_code=3236')`` is equivalent to ``fl =
-            cf.read(file).select_by_identity('stash_code=3236')``.
+                This is equivalent to, but faster than, not using the
+                *select* parameter but applying its value to the
+                returned field list with its
+                `cf.FieldList.select_by_identity` method. For example,
+                ``fl = cf.read(file, select='stash_code=3236')`` is
+                equivalent to ``fl =
+                cf.read(file).select_by_identity('stash_code=3236')``.
+
+            squeeze: `bool`, optional
+                If True then remove all size 1 dimensions from field
+                construct data arrays, regardless of how the data are
+                stored in the dataset. If False (the default) then the
+                presence or not of size 1 dimensions is determined by
+                how the data are stored in its dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                If True then ensure that field construct data arrays
+                span all of the size 1 dimensions, regardless of how
+                the data are stored in the dataset. If False (the
+                default) then the presence or not of size 1 dimensions
+                is determined by how the data are stored in its
+                dataset.
+
+                .. versionadded:: NEXTVERSION
+
+            unpack: `bool`, optional
+                If True, the default, then unpack arrays by convention
+                when the data is read from disk.
+
+                Unpacking is determined by netCDF conventions for the
+                following variable attributes ``add_offset`` and
+                ``scale_factor``, as applied to lookup header entries
+                BDATUM and BMKS respectively.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -3429,6 +3514,12 @@ class UMRead(cfdm.read_write.IORead):
         >>> f = read('*/file[0-9].pp', um_version=708)
 
         """
+        if domain:
+            raise ValueError(
+                "Can't read Domain constructs from UM or PP datasets "
+                "(only Field constructs)"
+            )
+
         if not _stash2standard_name:
             # --------------------------------------------------------
             # Create the STASH code to standard_name conversion
@@ -3440,6 +3531,14 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering = endian + "_endian"
         else:
             byte_ordering = None
+
+        if fmt is not None:
+            fmt = fmt.upper()
+
+        if um_version is None:
+            um_version = 405
+        else:
+            um_version = float(str(um_version).replace(".", "0", 1))
 
         self.read_vars = {
             "filename": filename,
@@ -3454,6 +3553,18 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering = endian + "_endian"
         else:
             byte_ordering = None
+
+        # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        if file_type is not None:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            file_type = set(file_type)
+            if not file_type.intersection(("UM",)):
+                # Return now if there are valid file types
+                return []
 
         f = self.file_open(filename, parse=True)
 
@@ -3473,6 +3584,7 @@ class UMRead(cfdm.read_write.IORead):
                 implementation=self.implementation,
                 select=select,
                 info=info,
+                unpack=unpack,
             )
             for var in f.vars
         ]
@@ -3520,13 +3632,15 @@ class UMRead(cfdm.read_write.IORead):
                 fmt=fmt,
                 parse=parse,
             )
-        except Exception as error:
+        except Exception:
             try:
                 f.close_fd()
             except Exception:
                 pass
 
-            raise Exception(error)
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as a PP or UM dataset"
+            )
 
         self._um_file = f
         return f
@@ -3535,7 +3649,7 @@ class UMRead(cfdm.read_write.IORead):
         """Whether or not a file is a PP file or UM fields file.
 
         Note that the file type is determined by inspecting the file's
-        content and any file suffix is not not considered.
+        content and any file suffix is not considered.
 
         :Parameters:
 
