@@ -28,7 +28,7 @@ version 3.16.3
 
 **2025-01-28**
 
-* Implementationof active storage reduction operations
+* Implementation of active storage reduction operations
   (https://github.com/NCAS-CMS/cf-python/issues/501)
 * Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
   sampling geometry source grids
@@ -48,8 +48,6 @@ version 3.16.3
   (https://github.com/NCAS-CMS/cf-python/issues/712)
 * New class `cf.H5netcdfArray`
 * New class `cf.NetCDF4Array`
-* New class `cf.CFAH5netcdfArray`
-* New class `cf.CFANetCDF4Array`
 * Replace core `dask` functionality with that imported from `cfdm`
   (https://github.com/NCAS-CMS/cf-python/issues/839)
 * Fix bug that sometimes puts an incorrect ``radian-1`` or

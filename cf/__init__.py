@@ -124,9 +124,8 @@ else:
     _minimum_vn = "1.12.0.0"
     _maximum_vn = "1.12.1.0"
     _cfdm_version = Version(cfdm.__version__)
-    if (
-        _cfdm_version < Version(_minimum_vn) or
-        _cfdm_version >= Version(_maximum_vn)
+    if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
+        _maximum_vn
     ):
         raise RuntimeError(
             "Bad cfdm version: cf requires "
