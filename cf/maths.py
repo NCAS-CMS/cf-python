@@ -92,7 +92,7 @@ def relative_vorticity(
     )  # pragman: no cover
 
 
-def histogram(*digitized):
+def histogram(*digitized, density=False):
     """Return the distribution of a set of variables in the form of an
     N-dimensional histogram.
 
@@ -151,6 +151,17 @@ def histogram(*digitized):
             manipulating the dimensions of the digitized field
             construct's data to ensure that broadcasting can occur.
 
+        density: `bool`, optional
+            If False, the default, the result will contain the number
+            of samples in each bin. If True, the result is the value
+            of the probability density function at the bin, normalized
+            such that the integral over the range is 1. Note that the
+            sum of the histogram values will not be equal to 1 unless
+            bins of unity size are chosen; it is not a probability
+            mass function.
+
+            .. versionadded:: NEXTVERSION
+
     :Returns:
 
         `Field`
@@ -197,7 +208,7 @@ def histogram(*digitized):
      [0.1174 0.1317]
      [0.1317 0.146 ]]
     >>> h = cf.histogram(indices)
-    >>> rint(h)
+    >>> print(h)
     Field: number_of_observations
     -----------------------------
     Data            : number_of_observations(specific_humidity(10)) 1
@@ -216,7 +227,21 @@ def histogram(*digitized):
      [0.1031 0.1174]
      [0.1174 0.1317]
      [0.1317 0.146 ]]
+    >>> p = cf.histogram(indices, density=True)
+    >>> print(p)
+    Field: long_name=probability density function
+    ---------------------------------------------
+    Data            : long_name=probability density function(specific_humidity(10)) 1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1
+    >>> print(p.data.round(2).array))
+    [15.73 12.24 15.73 6.99 8.74 1.75 1.75 1.75 3.5 1.75]
 
+    The sum of the density values multiplied by the bin sizes is
+    unity:
+
+    >>> print((p * p.dimension_coordinate().cellsize).sum().array)
+    1.0
 
     Create a two-dimensional histogram based on specific humidity and
     temperature bins. The temperature bins in this example are derived
@@ -225,8 +250,8 @@ def histogram(*digitized):
 
     >>> g = f.copy()
     >>> g.standard_name = 'air_temperature'
-    >>> import numpy
-    >>> g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
+    >>> import numpy as np
+    >>> g[...] = np.arange(40).reshape(5, 8) + 253.15
     >>> g.override_units('K', inplace=True)
     >>> print(g)
     Field: air_temperature (ncvar%q)
@@ -247,13 +272,28 @@ def histogram(*digitized):
     Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K
                     : specific_humidity(10) = [0.01015, ..., 0.13885] 1
     >>> print(h.array)
-    [[2  1  5  3  2 -- -- -- -- --]
-     [1  1  2 --  1 --  1  1 -- --]
-     [4  4  2  1  1  1 -- --  1  1]
-     [1  1 -- --  1 -- -- --  1 --]
-     [1 -- -- -- -- -- -- -- -- --]]
+    [[3  3  2 -- -- -- -- -- -- --]
+     [1  1  2  1  3 -- -- -- -- --]
+     [1 -- --  1 --  1  1  1  2  1]
+     [2  1  1  2  2 -- -- -- -- --]
+     [2  2  4 -- -- -- -- -- -- --]]
     >>> h.sum()
     <CF Data(): 40 1>
+    >>> p = cf.histogram(indices, indices_t, density=True)
+    >>> print(p)
+    Field: long_name=probability density function
+    ---------------------------------------------
+    Data            : long_name=probability density function(air_temperature(5), specific_humidity(10)) K-1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: air_temperature(5) = [257.05, ..., 288.25] K
+                    : specific_humidity(10) = [0.01015, ..., 0.13885] 1
+    >>> print(p.array)
+    >>> print(p.data.round(2).array))
+    [[0.67 0.67 0.45   --   --   --   --   --   --   --]
+     [0.22 0.22 0.45 0.22 0.67   --  --    --   --   --]
+     [0.22   --   -- 0.22   -- 0.22 0.22 0.22 0.45 0.22]
+     [0.45 0.22 0.22 0.45 0.45   --   --   --   --   --]
+     [0.45 0.45 0.9    --   --   --   --   --   --   --]]
 
     """
     if not digitized:
@@ -264,7 +304,26 @@ def histogram(*digitized):
     f = digitized[0].copy()
     f.clear_properties()
 
-    return f.bin("sample_size", digitized=digitized)
+    out = f.bin("sample_size", digitized=digitized)
+
+    if density:
+        # Get the measure of each bin. This is the outer product of
+        # the cell sizes of each dimension coordinate construct (the
+        # dimension coordinate constructs define the bins).
+        data_axes = out.get_data_axes()
+        dim = out.dimension_coordinate(filter_by_axis=(data_axes[0],))
+        bin_measures = dim.cellsize
+        for axis in data_axes[1:]:
+            dim = out.dimension_coordinate(filter_by_axis=(axis,))
+            bin_measures.outerproduct(dim.cellsize, inplace=True)
+
+        # Convert counts to densities
+        out /= out.data.sum() * bin_measures
+
+        out.del_property("standard_name", None)
+        out.set_property("long_name", "probability density function")
+
+    return out
 
 
 def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):

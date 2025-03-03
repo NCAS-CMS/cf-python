@@ -4,6 +4,8 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import numpy as np
+
 import cf
 
 
@@ -208,6 +210,54 @@ class MathTest(unittest.TestCase):
         zeros = cg.copy()
         zeros[...] = 0
         self.assertTrue(cg.data.equals(zeros.data, rtol=0, atol=1e-15))
+
+    def test_histogram(self):
+        f = cf.example_field(0)
+        g = f.copy()
+        g.standard_name = "air_temperature"
+        g[...] = np.arange(40).reshape(5, 8) + 253.15
+        g.override_units("K", inplace=True)
+
+        atol = 1e-15
+
+        # 1-d histogram
+        indices = f.digitize(10)
+        h = cf.histogram(indices)
+        self.assertTrue((h.array == [9, 7, 9, 4, 5, 1, 1, 1, 2, 1]).all)
+        h = cf.histogram(indices, density=True)
+        self.assertEqual(h.Units, cf.Units("1"))
+        # Check that integral is 1
+        bin_measures = h.dimension_coordinate().cellsize
+        integral = (h * bin_measures).sum()
+        self.assertTrue(np.allclose(integral.array, 1, rtol=0, atol=atol))
+
+        # 2-d histogram
+        indices_t = g.digitize(5)
+        h = cf.histogram(indices, indices_t)
+        self.assertEqual(h.Units, cf.Units())
+        # The -1 values correspond to missing values in h
+        self.assertTrue(
+            (
+                h.array
+                == [
+                    [3, 3, 2, -1, -1, -1, -1, -1, -1, -1],
+                    [1, 1, 2, 1, 3, -1, -1, -1, -1, -1],
+                    [1, -1, -1, 1, -1, 1, 1, 1, 2, 1],
+                    [2, 1, 1, 2, 2, -1, -1, -1, -1, -1],
+                    [2, 2, 4, -1, -1, -1, -1, -1, -1, -1],
+                ]
+            ).all()
+        )
+
+        h = cf.histogram(indices, indices_t, density=True)
+        self.assertEqual(h.Units, cf.Units("K-1"))
+        # Check that integral is 1
+        bin_measures = h.dimension_coordinate("air_temperature").cellsize
+        bin_measures.outerproduct(
+            h.dimension_coordinate("specific_humidity").cellsize, inplace=True
+        )
+        integral = (h * bin_measures).sum()
+        self.assertTrue(np.allclose(integral.array, 1, rtol=0, atol=atol))
 
 
 if __name__ == "__main__":
