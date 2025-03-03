@@ -80,8 +80,8 @@ installation and source code.
 
 """
 
-__date__ = "2025-01-28"
-__version__ = "3.16.3"
+__date__ = "2025-03-??"
+__version__ = "3.17.0"
 
 _requires = (
     "numpy",
