@@ -4,7 +4,7 @@ version 3.17.0
 **2025-03-??**
 
 * Set new minimum version of `dask`: ``2025.2.0``
-  (https://github.com/NCAS-CMS/cf-python/849)
+  (https://github.com/NCAS-CMS/cf-python/issues/849)
 * Set a new minimum version of `numpy`: ``2.0.0``
   (https://github.com/NCAS-CMS/cf-python/issues/843)
 * Replace dataset aggregation functionality (CFA) with that imported
