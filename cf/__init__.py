@@ -80,8 +80,8 @@ installation and source code.
 
 """
 
-__date__ = "2025-01-28"
-__version__ = "3.16.3"
+__date__ = "2025-03-??"
+__version__ = "3.17.0"
 
 _requires = (
     "numpy",
@@ -124,9 +124,8 @@ else:
     _minimum_vn = "1.12.0.0"
     _maximum_vn = "1.12.1.0"
     _cfdm_version = Version(cfdm.__version__)
-    if (
-        _cfdm_version < Version(_minimum_vn) or
-        _cfdm_version >= Version(_maximum_vn)
+    if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
+        _maximum_vn
     ):
         raise RuntimeError(
             "Bad cfdm version: cf requires "
@@ -202,15 +201,10 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2024.6.1"
-    _maximum_vn = "2024.7.1"
-    if (
-        Version(dask.__version__) < Version(_minimum_vn) or
-        Version(dask.__version__) > Version(_maximum_vn)
-    ):
+    _minimum_vn = "2025.2.0"
+    if Version(dask.__version__) < Version(_minimum_vn):
         raise ValueError(
-            "Bad dask version: cf requires "
-            f"{_minimum_vn}<=dask<={_maximum_vn}. "
+            f"Bad dask version: cf requires dask>={_minimum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"
         )
 

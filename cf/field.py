@@ -196,7 +196,7 @@ class _Axis_characterisation:
     Used by `_binary_operation` to help with ascertaining if there is
     a common axis in two fields.
 
-    .. versionaddedd:: 1.11.2.0
+    .. versionaddedd:: 3.16.3
 
     """
 
@@ -13710,7 +13710,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 by default, or ``m.s-1`` if *ignore_coordinate_units*
                 is True.
 
-                .. versionadded:: 1.11.2.0
+                .. versionadded:: 3.16.3
 
             {{inplace: `bool`, optional}}
 
