@@ -1,8 +1,10 @@
 version 3.17.0
 --------------
 
-**2025-??-??**
+**2025-03-??**
 
+* Set new minimum version of `dask`: ``2025.2.0``
+  (https://github.com/NCAS-CMS/cf-python/issues/849)
 * Set a new minimum version of `numpy`: ``2.0.0``
   (https://github.com/NCAS-CMS/cf-python/issues/843)
 * Replace dataset aggregation functionality (CFA) with that imported
@@ -14,6 +16,9 @@ version 3.17.0
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
 * Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``
+* Changed dependency: ``dask>=2025.2.0``
+* Changed dependency: ``netCDF4>=1.7.2``
+* Changed dependency: ``cftime>=1.6.4``
 * Changed optional dependency: ``esmpy>=8.7.0``
 * Removed dependency (now incorporated into ``cfdm``): ``h5py``
 * Removed dependency (now incorporated into ``cfdm``): ``h5netcdf``
@@ -26,6 +31,8 @@ version 3.16.3
 
 **2025-01-28**
 
+* Implementation of active storage reduction operations
+  (https://github.com/NCAS-CMS/cf-python/issues/501)
 * Allow ``'nearest_dtos'`` 2-d regridding to work with discrete
   sampling geometry source grids
   (https://github.com/NCAS-CMS/cf-python/issues/832)
@@ -44,8 +51,6 @@ version 3.16.3
   (https://github.com/NCAS-CMS/cf-python/issues/712)
 * New class `cf.H5netcdfArray`
 * New class `cf.NetCDF4Array`
-* New class `cf.CFAH5netcdfArray`
-* New class `cf.CFANetCDF4Array`
 * Replace core `dask` functionality with that imported from `cfdm`
   (https://github.com/NCAS-CMS/cf-python/issues/839)
 * Fix bug that sometimes puts an incorrect ``radian-1`` or
@@ -65,7 +70,7 @@ version 3.16.3
   global or near-global cyclic subspaces
   (https://github.com/NCAS-CMS/cf-python/issues/828)
 * New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
+* New dependency: ``h5py>=3.12.0``
 * New dependency: ``s3fs>=2024.6.0``
 * Changed dependency: ``numpy>=1.15,<2.0``
 * Changed dependency: ``1.11.2.0<=cfdm<1.11.3.0``

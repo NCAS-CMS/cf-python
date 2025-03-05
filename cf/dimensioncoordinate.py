@@ -263,7 +263,7 @@ class DimensionCoordinate(
         *value*; or is the closest to cell to *value* from above
         (below) for increasing (decreasing) coordinates.
 
-        .. versionadded:: 1.11.2.0
+        .. versionadded:: 3.16.3
 
         .. seealso:: `period`, `roll`
 
