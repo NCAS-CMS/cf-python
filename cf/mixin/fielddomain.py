@@ -1345,10 +1345,13 @@ class FieldDomain:
             # Don't do anything
             return
 
+        dry_run = config.get("dry_run")
+
         if "cyclic" in config:
             if not config["cyclic"]:
-                if not noop:
+                if not dry_run:
                     self.cyclic(key, iscyclic=False, config=config)
+
                 return False
             else:
                 period = coord.period()
@@ -1357,23 +1360,45 @@ class FieldDomain:
                 else:
                     period = config.get("period")
 
-                self.cyclic(key, iscyclic=True, period=period, config=config)
+                if not dry_run:
+                    self.cyclic(
+                        key, iscyclic=True, period=period, config=config
+                    )
+                    
                 return True
 
+#        if axis is not None:
+#            if coord is not None:
+#                raise ValueError("TODO")
+#            
+#            key, coord = self.dimension_coordinate(
+#                filter_by_axis=(axis,), item=True, default=(None, None)
+#            )
+#            if coord is None:
+#                if not dry_run:
+#                    self.cyclic(key, iscyclic=False, config=config)
+#
+#                return False
+            
         if coord is None:
             key, coord = self.dimension_coordinate(
                 "X", item=True, default=(None, None)
             )
             if coord is None:
+                if not dry_run:
+                    self.cyclic(key, iscyclic=False, config=config)
+
                 return False
         elif "X" in config:
             if not config["X"]:
-                if not noop:
+                if not dry_run:
                     self.cyclic(key, iscyclic=False, config=config)
+
                 return False
         elif not coord.X:
-            if not noop:
+            if not dry_run:
                 self.cyclic(key, iscyclic=False, config=config)
+
             return False
 
         bounds_range = config.get("bounds_range")
@@ -1382,14 +1407,16 @@ class FieldDomain:
         else:
             bounds = coord.get_bounds(None)
             if bounds is None:
-                if not noop:
+                if not dry_run:
                     self.cyclic(key, iscyclic=False, config=config)
+
                 return False
 
             data = bounds.get_data(None, _fill_value=False)
             if data is None:
-                if not noop:
+                if not dry_run:
                     self.cyclic(key, iscyclic=False, config=config)
+
                 return False
 
             bounds_units = bounds.Units
@@ -1411,7 +1438,9 @@ class FieldDomain:
             elif bounds_units.equivalent(_units_degrees):
                 period = Data(360.0, units="degrees")
             else:
-                self.cyclic(key, iscyclic=False, config=config)
+                if not dry_run:
+                    self.cyclic(key, iscyclic=False, config=config)
+
                 return False
 
             period.Units = bounds_units
@@ -1422,14 +1451,16 @@ class FieldDomain:
                 bounds_range = None
 
         if bounds_range is None or bounds_range != period:
-            if not noop:
+            if not dry_run:
                 self.cyclic(key, iscyclic=False, config=config)
+
             return False
 
         config = config.copy()
         config["axis"] = self.get_data_axes(key, default=(None,))[0]
 
-        self.cyclic(key, iscyclic=True, period=period, config=config)
+        if not dry_run:
+            self.cyclic(key, iscyclic=True, period=period, config=config)
 
         return True
 
@@ -1885,6 +1916,7 @@ class FieldDomain:
                 coordinates, otherwise it is assumed to have the same
                 units as the dimension coordinates.
 
+
             config: `dict`, optional
                 Additional parameters for optimising the
                 operation. See the code for details.
@@ -1923,7 +1955,15 @@ class FieldDomain:
         cyclic = self._cyclic
 
         if not identity and not filter_kwargs:
-            return cyclic.copy()
+            cyclic  = cyclic.copy()
+            if (
+                    len(cyclic) < len(self.domain_axes(todict=True))
+                    and self.autocyclic()
+            ):
+                cyclic = cyclic.update(self._cyclic)
+                self._cyclic = cyclic
+
+            return cyclic
 
         axis = config.get("axis")
         if axis is None:
@@ -2250,6 +2290,8 @@ class FieldDomain:
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
+
+        If
 
         {{unique construct}}
 
