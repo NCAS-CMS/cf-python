@@ -3006,48 +3006,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    # def iscyclic(self, *identity, **filter_kwargs):
-    #    """Returns True if the specified axis is cyclic.
-    #
-    #    .. versionadded:: 1.0
-    #
-    #    .. seealso:: `axis`, `cyclic`, `period`, `domain_axis`
-    #
-    #    :Parameters:
-    #
-    #        identity, filter_kwargs: optional
-    #            Select the unique domain axis construct returned by
-    #            ``f.domain_axis(*identity, **filter_kwargs)``. See
-    #            `domain_axis` for details.
-    #
-    #    :Returns:
-    #
-    #        `bool`
-    #            True if the selected axis is cyclic, otherwise False.
-    #
-    #    **Examples**
-    #
-    #    >>> f.iscyclic('X')
-    #    True
-    #    >>> f.iscyclic('latitude')
-    #    False
-    #
-    #    >>> x = f.iscyclic('long_name=Latitude')
-    #    >>> x = f.iscyclic('dimensioncoordinate1')
-    #    >>> x = f.iscyclic('domainaxis2')
-    #    >>> x = f.iscyclic('key%domainaxis2')
-    #    >>> x = f.iscyclic('ncdim%y')
-    #    >>> x = f.iscyclic(2)
-    #
-    #    """
-    #    axis = self.domain_axis(
-    #        *identity, key=True, default=None, **filter_kwargs
-    #    )
-    #    if axis is None:
-    #        raise ValueError("Can't identify unique domain axis")
-    #
-    #    return axis in self.cyclic()
-
     def weights(
         self,
         weights=True,
