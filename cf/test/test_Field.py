@@ -2970,9 +2970,37 @@ class FieldTest(unittest.TestCase):
 
         # Setting
         self.assertEqual(f2.cyclic("X", iscyclic=False), set(("domainaxis2",)))
-        self.assertEqual(f2.cyclic(), set())
-        self.assertEqual(f2.cyclic("X", period=360), set())
         self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
+
+        f2.cyclic("Y", period=360), set()
+        self.assertEqual(
+            f2.cyclic(),
+            set(
+                (
+                    "domainaxis1",
+                    "domainaxis2",
+                )
+            ),
+        )
+        self.assertTrue(f2.iscyclic("Y"))
+        self.assertEqual(
+            f2.cyclic("Y", iscyclic=False),
+            set(
+                (
+                    "domainaxis1",
+                    "domainaxis2",
+                )
+            ),
+        )
+        self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
+
+        # Auto setting of cyclicity
+        self.assertTrue(f2.iscyclic("X"))
+        f2.cyclic("X", iscyclic=False)
+        self.assertFalse(f2._cyclic)
+        self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
+
+        f2.cyclic("X", iscyclic=False)
         self.assertTrue(f2.iscyclic("X"))
 
     def test_Field_is_discrete_axis(self):

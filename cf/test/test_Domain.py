@@ -437,14 +437,15 @@ class DomainTest(unittest.TestCase):
         d2 = f2.domain
 
         # Getting
-        self.assertEqual(d1.cyclic(), f1.cyclic())
         self.assertEqual(d1.cyclic(), set())
+        self.assertEqual(d1.cyclic(), f1.cyclic())
         self.assertFalse(d1.iscyclic("X"))
         self.assertFalse(d1.iscyclic("Y"))
         self.assertFalse(d1.iscyclic("Z"))
         self.assertFalse(d1.iscyclic("T"))
-        self.assertEqual(d2.cyclic(), f2.cyclic())
+
         self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+        self.assertEqual(d2.cyclic(), f2.cyclic())
         self.assertTrue(d2.iscyclic("X"))
         self.assertFalse(d2.iscyclic("Y"))
         self.assertFalse(d2.iscyclic("Z"))
@@ -452,9 +453,37 @@ class DomainTest(unittest.TestCase):
 
         # Setting
         self.assertEqual(d2.cyclic("X", iscyclic=False), set(("domainaxis2",)))
-        self.assertEqual(d2.cyclic(), set())
-        self.assertEqual(d2.cyclic("X", period=360), set())
         self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+
+        d2.cyclic("Y", period=360), set()
+        self.assertEqual(
+            d2.cyclic(),
+            set(
+                (
+                    "domainaxis1",
+                    "domainaxis2",
+                )
+            ),
+        )
+        self.assertTrue(d2.iscyclic("Y"))
+        self.assertEqual(
+            d2.cyclic("Y", iscyclic=False),
+            set(
+                (
+                    "domainaxis1",
+                    "domainaxis2",
+                )
+            ),
+        )
+        self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+
+        # Auto setting of cyclicity
+        self.assertTrue(d2.iscyclic("X"))
+        d2.cyclic("X", iscyclic=False)
+        self.assertFalse(d2._cyclic)
+        self.assertEqual(d2.cyclic(), set(("domainaxis2",)))
+
+        d2.cyclic("X", iscyclic=False)
         self.assertTrue(d2.iscyclic("X"))
 
 
