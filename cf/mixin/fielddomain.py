@@ -1345,6 +1345,7 @@ class FieldDomain:
             # Don't do anything
             return
 
+        # On a dry run, return as usual, but don't update _cyclic.
         dry_run = config.get("dry_run")
 
         if "cyclic" in config:
@@ -1364,31 +1365,16 @@ class FieldDomain:
                     self.cyclic(
                         key, iscyclic=True, period=period, config=config
                     )
-                    
+
                 return True
 
-#        if axis is not None:
-#            if coord is not None:
-#                raise ValueError("TODO")
-#            
-#            key, coord = self.dimension_coordinate(
-#                filter_by_axis=(axis,), item=True, default=(None, None)
-#            )
-#            if coord is None:
-#                if not dry_run:
-#                    self.cyclic(key, iscyclic=False, config=config)
-#
-#                return False
-            
         if coord is None:
             key, coord = self.dimension_coordinate(
                 "X", item=True, default=(None, None)
             )
             if coord is None:
-                if not dry_run:
-                    self.cyclic(key, iscyclic=False, config=config)
-
                 return False
+
         elif "X" in config:
             if not config["X"]:
                 if not dry_run:
@@ -1955,12 +1941,15 @@ class FieldDomain:
         cyclic = self._cyclic
 
         if not identity and not filter_kwargs:
-            cyclic  = cyclic.copy()
+            cyclic = cyclic.copy()
+
+            # Check for axes that are currently marked as non-cyclic,
+            # but are in fact cyclic.
             if (
-                    len(cyclic) < len(self.domain_axes(todict=True))
-                    and self.autocyclic()
+                len(cyclic) < len(self.domain_axes(todict=True))
+                and self.autocyclic()
             ):
-                cyclic = cyclic.update(self._cyclic)
+                cyclic.update(self._cyclic)
                 self._cyclic = cyclic
 
             return cyclic
@@ -2290,8 +2279,6 @@ class FieldDomain:
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
-
-        If
 
         {{unique construct}}
 
