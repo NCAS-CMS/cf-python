@@ -1,209 +1,584 @@
-cf.CellConnectivity
-===================
-
 .. currentmodule:: cf
+.. default-role:: obj
 
-.. autoclass:: CellConnectivity
+.. _cf-CellConnectivity:
 
-   
-   .. automethod:: __init__
+cf.CellConnectivity
+=====================
 
-   
-   .. rubric:: Methods
+----
 
-   .. autosummary::
-   
-      ~CellConnectivity.__init__
-      ~CellConnectivity.all
-      ~CellConnectivity.allclose
-      ~CellConnectivity.any
-      ~CellConnectivity.apply_masking
-      ~CellConnectivity.arccos
-      ~CellConnectivity.arccosh
-      ~CellConnectivity.arcsin
-      ~CellConnectivity.arcsinh
-      ~CellConnectivity.arctan
-      ~CellConnectivity.arctanh
-      ~CellConnectivity.asdatetime
-      ~CellConnectivity.asreftime
-      ~CellConnectivity.ceil
-      ~CellConnectivity.chunk
-      ~CellConnectivity.clear_properties
-      ~CellConnectivity.clip
-      ~CellConnectivity.close
-      ~CellConnectivity.concatenate
-      ~CellConnectivity.convert_reference_time
-      ~CellConnectivity.copy
-      ~CellConnectivity.cos
-      ~CellConnectivity.cosh
-      ~CellConnectivity.count
-      ~CellConnectivity.count_masked
-      ~CellConnectivity.creation_commands
-      ~CellConnectivity.cyclic
-      ~CellConnectivity.datum
-      ~CellConnectivity.del_connectivity
-      ~CellConnectivity.del_data
-      ~CellConnectivity.del_properties
-      ~CellConnectivity.del_property
-      ~CellConnectivity.delprop
-      ~CellConnectivity.dump
-      ~CellConnectivity.equals
-      ~CellConnectivity.equivalent
-      ~CellConnectivity.exp
-      ~CellConnectivity.expand_dims
-      ~CellConnectivity.file_directories
-      ~CellConnectivity.fill_value
-      ~CellConnectivity.filled
-      ~CellConnectivity.flatten
-      ~CellConnectivity.flip
-      ~CellConnectivity.floor
-      ~CellConnectivity.get_connectivity
-      ~CellConnectivity.get_data
-      ~CellConnectivity.get_filenames
-      ~CellConnectivity.get_original_filenames
-      ~CellConnectivity.get_property
-      ~CellConnectivity.getprop
-      ~CellConnectivity.halo
-      ~CellConnectivity.has_bounds
-      ~CellConnectivity.has_connectivity
-      ~CellConnectivity.has_data
-      ~CellConnectivity.has_property
-      ~CellConnectivity.hasprop
-      ~CellConnectivity.identities
-      ~CellConnectivity.identity
-      ~CellConnectivity.insert_data
-      ~CellConnectivity.insert_dimension
-      ~CellConnectivity.inspect
-      ~CellConnectivity.iscyclic
-      ~CellConnectivity.log
-      ~CellConnectivity.mask_invalid
-      ~CellConnectivity.masked_invalid
-      ~CellConnectivity.match
-      ~CellConnectivity.match_by_identity
-      ~CellConnectivity.match_by_naxes
-      ~CellConnectivity.match_by_ncvar
-      ~CellConnectivity.match_by_property
-      ~CellConnectivity.match_by_units
-      ~CellConnectivity.max
-      ~CellConnectivity.maximum
-      ~CellConnectivity.mean
-      ~CellConnectivity.mid_range
-      ~CellConnectivity.min
-      ~CellConnectivity.minimum
-      ~CellConnectivity.name
-      ~CellConnectivity.nc_clear_hdf5_chunksizes
-      ~CellConnectivity.nc_clear_variable_groups
-      ~CellConnectivity.nc_del_variable
-      ~CellConnectivity.nc_get_variable
-      ~CellConnectivity.nc_has_variable
-      ~CellConnectivity.nc_hdf5_chunksizes
-      ~CellConnectivity.nc_set_hdf5_chunksizes
-      ~CellConnectivity.nc_set_variable
-      ~CellConnectivity.nc_set_variable_groups
-      ~CellConnectivity.nc_variable_groups
-      ~CellConnectivity.normalise
-      ~CellConnectivity.override_calendar
-      ~CellConnectivity.override_units
-      ~CellConnectivity.pad_missing
-      ~CellConnectivity.period
-      ~CellConnectivity.persist
-      ~CellConnectivity.properties
-      ~CellConnectivity.range
-      ~CellConnectivity.rechunk
-      ~CellConnectivity.remove_data
-      ~CellConnectivity.replace_directory
-      ~CellConnectivity.rint
-      ~CellConnectivity.roll
-      ~CellConnectivity.round
-      ~CellConnectivity.sample_size
-      ~CellConnectivity.sd
-      ~CellConnectivity.select
-      ~CellConnectivity.set_connectivity
-      ~CellConnectivity.set_data
-      ~CellConnectivity.set_properties
-      ~CellConnectivity.set_property
-      ~CellConnectivity.setprop
-      ~CellConnectivity.sin
-      ~CellConnectivity.sinh
-      ~CellConnectivity.squeeze
-      ~CellConnectivity.standard_deviation
-      ~CellConnectivity.sum
-      ~CellConnectivity.swapaxes
-      ~CellConnectivity.tan
-      ~CellConnectivity.tanh
-      ~CellConnectivity.to_dask_array
-      ~CellConnectivity.to_memory
-      ~CellConnectivity.transpose
-      ~CellConnectivity.trunc
-      ~CellConnectivity.uncompress
-      ~CellConnectivity.unique
-      ~CellConnectivity.var
-      ~CellConnectivity.variance
-      ~CellConnectivity.where
-   
-   
+.. autoclass:: cf.CellConnectivity
+   :no-members:
+   :no-inherited-members:
 
-   
-   
-   .. rubric:: Attributes
+Inspection
+----------
 
-   .. autosummary::
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.dump
+   ~cf.CellConnectivity.identity  
+   ~cf.CellConnectivity.identities
+
+.. rubric:: Attributes
    
-      ~CellConnectivity.Data
-      ~CellConnectivity.T
-      ~CellConnectivity.Units
-      ~CellConnectivity.X
-      ~CellConnectivity.Y
-      ~CellConnectivity.Z
-      ~CellConnectivity.add_offset
-      ~CellConnectivity.array
-      ~CellConnectivity.attributes
-      ~CellConnectivity.binary_mask
-      ~CellConnectivity.calendar
-      ~CellConnectivity.comment
-      ~CellConnectivity.connectivity
-      ~CellConnectivity.construct_type
-      ~CellConnectivity.data
-      ~CellConnectivity.datetime_array
-      ~CellConnectivity.day
-      ~CellConnectivity.dtarray
-      ~CellConnectivity.dtvarray
-      ~CellConnectivity.dtype
-      ~CellConnectivity.hardmask
-      ~CellConnectivity.hasbounds
-      ~CellConnectivity.hasdata
-      ~CellConnectivity.history
-      ~CellConnectivity.hour
-      ~CellConnectivity.id
-      ~CellConnectivity.isauxiliary
-      ~CellConnectivity.isdimension
-      ~CellConnectivity.isdomainancillary
-      ~CellConnectivity.isfieldancillary
-      ~CellConnectivity.ismeasure
-      ~CellConnectivity.isperiodic
-      ~CellConnectivity.isscalar
-      ~CellConnectivity.leap_month
-      ~CellConnectivity.leap_year
-      ~CellConnectivity.long_name
-      ~CellConnectivity.mask
-      ~CellConnectivity.minute
-      ~CellConnectivity.missing_value
-      ~CellConnectivity.month
-      ~CellConnectivity.month_lengths
-      ~CellConnectivity.ndim
-      ~CellConnectivity.reference_datetime
-      ~CellConnectivity.scale_factor
-      ~CellConnectivity.second
-      ~CellConnectivity.shape
-      ~CellConnectivity.size
-      ~CellConnectivity.standard_name
-      ~CellConnectivity.subspace
-      ~CellConnectivity.units
-      ~CellConnectivity.unsafe_array
-      ~CellConnectivity.valid_max
-      ~CellConnectivity.valid_min
-      ~CellConnectivity.valid_range
-      ~CellConnectivity.varray
-      ~CellConnectivity.year
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.construct_type
+
+Topology
+--------
+ 
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.del_connectivity
+   ~cf.CellConnectivity.get_connectivity
+   ~cf.CellConnectivity.has_connectivity
+   ~cf.CellConnectivity.set_connectivity
+   ~cf.CellConnectivity.normalise
+
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.connectivity
+
+Selection
+---------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.match_by_identity
+   ~cf.CellConnectivity.match_by_naxes
+   ~cf.CellConnectivity.match_by_ncvar
+   ~cf.CellConnectivity.match_by_property
+   ~cf.CellConnectivity.match_by_units
+ 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.del_property
+   ~cf.CellConnectivity.get_property
+   ~cf.CellConnectivity.has_property
+   ~cf.CellConnectivity.set_property
+   ~cf.CellConnectivity.properties
+   ~cf.CellConnectivity.clear_properties
+   ~cf.CellConnectivity.del_properties
+   ~cf.CellConnectivity.set_properties
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.add_offset
+   ~cf.CellConnectivity.calendar
+   ~cf.CellConnectivity.comment
+   ~cf.CellConnectivity._FillValue
+   ~cf.CellConnectivity.history
+   ~cf.CellConnectivity.leap_month
+   ~cf.CellConnectivity.leap_year
+   ~cf.CellConnectivity.long_name
+   ~cf.CellConnectivity.missing_value
+   ~cf.CellConnectivity.month_lengths
+   ~cf.CellConnectivity.scale_factor
+   ~cf.CellConnectivity.standard_name
+   ~cf.CellConnectivity.units
+   ~cf.CellConnectivity.valid_max
+   ~cf.CellConnectivity.valid_min
+   ~cf.CellConnectivity.valid_range
+
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.override_units
+   ~cf.CellConnectivity.override_calendar
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.Units
+
+Data
+----
+
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.array
+   ~cf.CellConnectivity.Data
+   ~cf.CellConnectivity.data
+   ~cf.CellConnectivity.datetime_array
+   ~cf.CellConnectivity.datum
+   ~cf.CellConnectivity.dtype
+   ~cf.CellConnectivity.isscalar
+   ~cf.CellConnectivity.ndim
+   ~cf.CellConnectivity.shape
+   ~cf.CellConnectivity.size
+   ~cf.CellConnectivity.varray
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.to_dask_array
+   ~cf.CellConnectivity.__getitem__
+   ~cf.CellConnectivity.del_data
+   ~cf.CellConnectivity.get_data
+   ~cf.CellConnectivity.has_data
+   ~cf.CellConnectivity.set_data
+ 
+.. rubric:: *Rearranging elements*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.flatten
+   ~cf.CellConnectivity.flip
+   ~cf.CellConnectivity.insert_dimension
+   ~cf.CellConnectivity.roll
+   ~cf.CellConnectivity.squeeze
+   ~cf.CellConnectivity.swapaxes
+   ~cf.CellConnectivity.transpose
+   
+.. rubric:: *Expanding the data*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.halo
+   ~cf.CellConnectivity.pad_missing
+
+.. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.apply_masking
+   ~cf.CellConnectivity.count
+   ~cf.CellConnectivity.count_masked
+   ~cf.CellConnectivity.fill_value
+   ~cf.CellConnectivity.filled
+   ~cf.CellConnectivity.masked_invalid
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.binary_mask
+   ~cf.CellConnectivity.hardmask
+   ~cf.CellConnectivity.mask
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+.. rubric:: *Changing data values*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.__setitem__
+   ~cf.CellConnectivity.masked_invalid
+   ~cf.CellConnectivity.subspace
+   ~cf.CellConnectivity.where
+
+.. rubric:: *Miscellaneous*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+
+   ~cf.CellConnectivity.rechunk
+   ~cf.CellConnectivity.close
+   ~cf.CellConnectivity.convert_reference_time
+   ~cf.CellConnectivity.cyclic
+   ~cf.CellConnectivity.period
+   ~cf.CellConnectivity.iscyclic
+   ~cf.CellConnectivity.isperiodic
+   ~cf.CellConnectivity.get_original_filenames
+   ~cf.CellConnectivity.has_bounds
+   ~cf.CellConnectivity.persist
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.concatenate
+   ~cf.CellConnectivity.copy
+   ~cf.CellConnectivity.creation_commands
+   ~cf.CellConnectivity.equals
+   ~cf.CellConnectivity.to_memory
+   ~cf.CellConnectivity.uncompress
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.T
+   ~cf.CellConnectivity.X
+   ~cf.CellConnectivity.Y
+   ~cf.CellConnectivity.Z
+   ~cf.CellConnectivity.id
+
+Mathematical operations
+-----------------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.math.html
+
+.. rubric:: Methods
+
+.. rubric:: *Trigonometrical and hyperbolic functions*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.arccos
+   ~cf.CellConnectivity.arccosh
+   ~cf.CellConnectivity.arcsin
+   ~cf.CellConnectivity.arcsinh
+   ~cf.CellConnectivity.arctan
+   .. ~cf.CellConnectivity.arctan2  [AT2]
+   ~cf.CellConnectivity.arctanh
+   ~cf.CellConnectivity.cos
+   ~cf.CellConnectivity.cosh
+   ~cf.CellConnectivity.sin
+   ~cf.CellConnectivity.sinh
+   ~cf.CellConnectivity.tan
+   ~cf.CellConnectivity.tanh
+
+.. rubric:: *Rounding and truncation*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.ceil  
+   ~cf.CellConnectivity.clip
+   ~cf.CellConnectivity.floor
+   ~cf.CellConnectivity.rint
+   ~cf.CellConnectivity.round
+   ~cf.CellConnectivity.trunc
+
+.. rubric:: *Statistical collapses*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.max
+   ~cf.CellConnectivity.mean
+   ~cf.CellConnectivity.mid_range
+   ~cf.CellConnectivity.min
+   ~cf.CellConnectivity.range
+   ~cf.CellConnectivity.sample_size
+   ~cf.CellConnectivity.sum  
+   ~cf.CellConnectivity.sd
+   ~cf.CellConnectivity.var
+   ~cf.CellConnectivity.standard_deviation
+   ~cf.CellConnectivity.variance
+   ~cf.CellConnectivity.maximum
+   ~cf.CellConnectivity.minimum
+
+.. rubric:: *Exponential and logarithmic functions*
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.exp
+   ~cf.CellConnectivity.log
+
+Date-time operations
+--------------------
+
+.. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.day
+   ~cf.CellConnectivity.datetime_array
+   ~cf.CellConnectivity.hour
+   ~cf.CellConnectivity.minute
+   ~cf.CellConnectivity.month
+   ~cf.CellConnectivity.reference_datetime   
+   ~cf.CellConnectivity.second
+   ~cf.CellConnectivity.year
+
+Logic functions
+---------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.logic.html#truth-value-testing
+
+.. rubric:: Truth value testing
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.all
+   ~cf.CellConnectivity.any
+ 
+.. rubric:: Comparison
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.allclose
+   ~cf.CellConnectivity.equals
+   ~cf.CellConnectivity.equivalent
+
+.. rubric:: Set operations
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.unique
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.nc_del_variable
+   ~cf.CellConnectivity.nc_get_variable
+   ~cf.CellConnectivity.nc_has_variable
+   ~cf.CellConnectivity.nc_set_variable 
+   ~cf.CellConnectivity.nc_clear_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_set_hdf5_chunksizes
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.CellConnectivity.file_directories
+   ~cf.CellConnectivity.replace_directory
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.nc_del_variable
+   ~cf.CellConnectivity.nc_get_variable
+   ~cf.CellConnectivity.nc_has_variable
+   ~cf.CellConnectivity.nc_set_variable
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.nc_variable_groups
+   ~cf.CellConnectivity.nc_clear_variable_groups
+   ~cf.CellConnectivity.nc_set_variable_groups
+
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.nc_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_set_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_clear_hdf5_chunksizes
+
+Aliases
+-------
+
+.. rubric:: Methods
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst  
+
+   ~cf.CellConnectivity.match
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.CellConnectivity.dtarray
+   
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.__deepcopy__
+   ~cf.CellConnectivity.__getitem__
+   ~cf.CellConnectivity.__repr__
+   ~cf.CellConnectivity.__str__
+
+Docstring substitutions
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cf.CellConnectivity._docstring_special_substitutions
+   ~cf.CellConnectivity._docstring_substitutions        
+   ~cf.CellConnectivity._docstring_package_depth        
+   ~cf.CellConnectivity._docstring_method_exclusions    
+	 
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.add_file_location
+   ~cf.CellConnectivity.asdatetime
+   ~cf.CellConnectivity.asreftime
+   ~cf.CellConnectivity.attributes
+   ~cf.CellConnectivity.cfa_clear_file_substitutions
+   ~cf.CellConnectivity.cfa_del_file_substitution
+   ~cf.CellConnectivity.cfa_file_substitutions
+   ~cf.CellConnectivity.cfa_update_file_substitutions
+   ~cf.CellConnectivity.chunk
+   ~cf.CellConnectivity.del_file_location
+   ~cf.CellConnectivity.delprop
+   ~cf.CellConnectivity.dtvarray
+   ~cf.CellConnectivity.expand_dims
+   ~cf.CellConnectivity.get_filenames
+   ~cf.CellConnectivity.file_locations
+   ~cf.CellConnectivity.getprop
+   ~cf.CellConnectivity.hasbounds
+   ~cf.CellConnectivity.hasdata
+   ~cf.CellConnectivity.hasprop
+   ~cf.CellConnectivity.insert_data
+   ~cf.CellConnectivity.isauxiliary
+   ~cf.CellConnectivity.isdimension
+   ~cf.CellConnectivity.isdomainancillary
+   ~cf.CellConnectivity.isfieldancillary
+   ~cf.CellConnectivity.ismeasure
+   ~cf.CellConnectivity.mask_invalid
+   ~cf.CellConnectivity.name
+   ~cf.CellConnectivity.remove_data
+   ~cf.CellConnectivity.select
+   ~cf.CellConnectivity.setprop
+   ~cf.CellConnectivity.unsafe_array
