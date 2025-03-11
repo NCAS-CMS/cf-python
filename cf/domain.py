@@ -1,5 +1,4 @@
 from math import prod
-from os import sep
 
 import cfdm
 import numpy as np
@@ -14,7 +13,6 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
-    abspath,
     indices_shape,
     parse_indices,
 )
@@ -125,43 +123,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
-    def add_file_location(
-        self,
-        location,
-    ):
-        """Add a new file location in-place.
-
-        All data definitions that reference files are additionally
-        referenced from the given location.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `del_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                The new location.
-
-        :Returns:
-
-            `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
-
-        **Examples**
-
-        >>> f.add_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-
-        for c in self.constructs.filter_by_data(todict=True).values():
-            c.add_file_location(location)
-
-        return location
-
     def close(self):
         """Close all files referenced by the domain construct.
 
@@ -187,43 +148,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    def del_file_location(
-        self,
-        location,
-    ):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `file_locations`
-
-        :Parameters:
-
-            location: `str`
-                 The file location to remove.
-
-        :Returns:
-
-            `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
-
-        """
-        location = abspath(location).rstrip(sep)
-
-        for c in self.constructs.filter_by_data(todict=True).values():
-            c.del_file_location(location)
-
-        return location
 
     @classmethod
     def create_regular(cls, x_args, y_args, bounds=True):
@@ -332,38 +256,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
 
         return domain
-
-    def file_locations(
-        self,
-    ):
-        """The locations of files containing parts of the components data.
-
-        Returns the locations of any files that may be required to
-        deliver the computed data arrays of any of the component
-        constructs (such as dimension coordinate constructs, cell
-        measure constructs, etc.).
-
-        .. versionadded:: 3.15.0
-
-        .. seealso:: `add_file_location`, `del_file_location`
-
-        :Returns:
-
-            `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
-
-        **Examples**
-
-        >>> d.file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        out = set()
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.file_locations())
-
-        return out
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):

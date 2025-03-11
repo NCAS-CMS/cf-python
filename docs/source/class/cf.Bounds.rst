@@ -418,8 +418,8 @@ NetCDF
    ~cf.Bounds.nc_hdf5_chunksizes
    ~cf.Bounds.nc_set_hdf5_chunksizes
 
-CFA
----
+Aggregation
+-----------
 
 .. rubric:: Methods
 	    
@@ -428,13 +428,8 @@ CFA
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Bounds.add_file_location
-   ~cf.Bounds.cfa_clear_file_substitutions
-   ~cf.Bounds.cfa_del_file_substitution
-   ~cf.Bounds.cfa_file_substitutions
-   ~cf.Bounds.cfa_update_file_substitutions
-   ~cf.Bounds.del_file_location
-   ~cf.Bounds.file_locations
+   ~cf.Bounds.file_directories
+   ~cf.Bounds.replace_directory
 
 Aliases
 -------
@@ -632,13 +627,21 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.Bounds.add_file_location
    ~cf.Bounds.asdatetime
    ~cf.Bounds.asreftime
    ~cf.Bounds.attributes
+   ~cf.Bounds.cfa_clear_file_substitutions
+   ~cf.Bounds.cfa_del_file_substitution
+   ~cf.Bounds.cfa_file_substitutions
+   ~cf.Bounds.cfa_update_file_substitutions
    ~cf.Bounds.chunk
+   ~cf.Bounds.del_file_location
    ~cf.Bounds.delprop
    ~cf.Bounds.dtvarray
    ~cf.Bounds.expand_dims
+   ~cf.Bounds.file_locations   
    ~cf.Bounds.getprop
    ~cf.Bounds.get_filenames
    ~cf.Bounds.hasbounds

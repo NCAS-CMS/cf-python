@@ -263,6 +263,7 @@ Miscellaneous data operations
    ~cf.Field.close
    ~cf.Field.rechunk
    ~cf.Field.persist
+   ~cf.Field.persist_metadata
  
 Metadata constructs
 -------------------
@@ -438,8 +439,8 @@ Groups
    ~cf.Field.nc_set_group_attribute
    ~cf.Field.nc_set_group_attributes
 
-CFA
-^^^
+Aggregation
+^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -447,14 +448,9 @@ CFA
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-	      
-   ~cf.Field.file_locations
-   ~cf.Field.add_file_location
-   ~cf.Field.del_file_location
-   ~cf.Field.cfa_clear_file_substitutions
-   ~cf.Field.cfa_del_file_substitution
-   ~cf.Field.cfa_file_substitutions
-   ~cf.Field.cfa_update_file_substitutions
+
+   ~cf.Field.file_directories
+   ~cf.Field.replace_directory
 
 Geometries
 ^^^^^^^^^^
@@ -990,16 +986,24 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.Field.add_file_location
    ~cf.Field.asdatetime
    ~cf.Field.asreftime
    ~cf.Field.axis_name
+   ~cf.Field.cfa_clear_file_substitutions
+   ~cf.Field.cfa_del_file_substitution
+   ~cf.Field.cfa_file_substitutions
+   ~cf.Field.cfa_update_file_substitutions
    ~cf.Field.chunk
    ~cf.Field.data_axes
+   ~cf.Field.del_file_location
    ~cf.Field.delprop
    ~cf.Field.equivalent
    ~cf.Field.example_field
    ~cf.Field.expand_dims
    ~cf.Field.field
+   ~cf.Field.file_locations
    ~cf.Field.get_filenames
    ~cf.Field.getprop
    ~cf.Field.HDF_chunks

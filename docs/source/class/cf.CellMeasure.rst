@@ -438,8 +438,8 @@ NetCDF
    ~cf.CellMeasure.nc_hdf5_chunksizes
    ~cf.CellMeasure.nc_set_hdf5_chunksizes
 
-CFA
----
+Aggregation
+-----------
 
 .. rubric:: Methods
 	    
@@ -448,13 +448,8 @@ CFA
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.CellMeasure.add_file_location
-   ~cf.CellMeasure.cfa_clear_file_substitutions
-   ~cf.CellMeasure.cfa_del_file_substitution
-   ~cf.CellMeasure.cfa_file_substitutions
-   ~cf.CellMeasure.cfa_update_file_substitutions
-   ~cf.CellMeasure.del_file_location
-   ~cf.CellMeasure.file_locations
+   ~cf.CellMeasure.file_directories
+   ~cf.CellMeasure.replace_directory
 
 Aliases
 -------
@@ -649,13 +644,21 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.CellMeasure.add_file_location
    ~cf.CellMeasure.asdatetime
    ~cf.CellMeasure.asreftime
    ~cf.CellMeasure.attributes
+   ~cf.CellMeasure.cfa_clear_file_substitutions
+   ~cf.CellMeasure.cfa_del_file_substitution
+   ~cf.CellMeasure.cfa_file_substitutions
+   ~cf.CellMeasure.cfa_update_file_substitutions
    ~cf.CellMeasure.chunk
+   ~cf.CellMeasure.del_file_location
    ~cf.CellMeasure.delprop
    ~cf.CellMeasure.dtvarray
    ~cf.CellMeasure.expand_dims
+   ~cf.CellMeasure.file_locations
    ~cf.CellMeasure.get_filenames
    ~cf.CellMeasure.getprop
    ~cf.CellMeasure.hasbounds

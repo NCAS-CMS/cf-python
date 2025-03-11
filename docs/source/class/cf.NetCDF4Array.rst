@@ -24,7 +24,7 @@ Inspection
    ~cf.NetCDF4Array.get_subspace
    ~cf.NetCDF4Array.get_attributes
    ~cf.NetCDF4Array.index
-
+   ~cf.NetCDF4Array.is_subspace
    
 .. rubric:: Attributes
 
@@ -39,6 +39,7 @@ Inspection
    ~cf.NetCDF4Array.shape
    ~cf.NetCDF4Array.size
    ~cf.NetCDF4Array.original_shape
+   ~cf.NetCDF4Array.reference_shape
 
 Units
 -----
@@ -81,7 +82,11 @@ File
    ~cf.NetCDF4Array.add_file_location
    ~cf.NetCDF4Array.del_file_location
    ~cf.NetCDF4Array.file_locations
+   ~cf.NetCDF4Array.file_directory
+   ~cf.NetCDF4Array.replace_directory
+   ~cf.NetCDF4Array.replace_filename
    ~cf.NetCDF4Array._lock
+
    
 Miscellaneous
 -------------

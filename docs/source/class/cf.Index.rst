@@ -416,8 +416,8 @@ NetCDF
    ~cf.Index.nc_hdf5_chunksizes
    ~cf.Index.nc_set_hdf5_chunksizes
 
-CFA
----
+Aggregation
+-----------
 
 .. rubric:: Methods
 	    
@@ -426,13 +426,8 @@ CFA
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cf.Index.add_file_location
-   ~cf.Index.cfa_clear_file_substitutions
-   ~cf.Index.cfa_del_file_substitution
-   ~cf.Index.cfa_file_substitutions
-   ~cf.Index.cfa_update_file_substitutions
-   ~cf.Index.del_file_location
-   ~cf.Index.file_locations
+   ~cf.Index.file_directories
+   ~cf.Index.replace_directory
 
 Aliases
 -------
@@ -633,14 +628,22 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.Index.add_file_location
    ~cf.Index.asdatetime
    ~cf.Index.asreftime
    ~cf.Index.attributes
+   ~cf.Index.cfa_clear_file_substitutions
+   ~cf.Index.cfa_del_file_substitution
+   ~cf.Index.cfa_file_substitutions
+   ~cf.Index.cfa_update_file_substitutions
    ~cf.Index.chunk
    ~cf.Index.Data
+   ~cf.Index.del_file_location
    ~cf.Index.delprop
    ~cf.Index.dtvarray
    ~cf.Index.expand_dims
+   ~cf.Index.file_locations   
    ~cf.Index.get_filenames
    ~cf.Index.getprop
    ~cf.Index.hasbounds
