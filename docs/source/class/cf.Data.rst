@@ -87,6 +87,7 @@ Dask
 
    ~cf.Data.chunks
    ~cf.Data.chunksize
+   ~cf.Data.chunk_positions
    ~cf.Data.npartitions
    ~cf.Data.numblocks
    
@@ -669,31 +670,25 @@ Performance
    ~cf.Data.npartitions
    ~cf.Data.numblocks
 
-
-CFA
----
+Aggregation
+-----------
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-	  
-   ~cf.Data.file_locations
-   ~cf.Data.del_file_location
-   ~cf.Data.add_file_location
-   ~cf.Data.cfa_clear_file_substitutions
-   ~cf.Data.cfa_file_substitutions
-   ~cf.Data.cfa_update_file_substitutions
-   ~cf.Data.cfa_del_file_substitution
-   ~cf.Data.cfa_has_file_substitutions
-   ~cf.Data.cfa_del_aggregated_data
-   ~cf.Data.cfa_get_aggregated_data
-   ~cf.Data.cfa_has_aggregated_data
-   ~cf.Data.cfa_set_aggregated_data
-   ~cf.Data.cfa_get_term
-   ~cf.Data.cfa_get_write
-   ~cf.Data.cfa_set_term
-   ~cf.Data.cfa_set_write
+
+   ~cf.Data.file_directories
+   ~cf.Data.replace_directory
+   ~cf.Data.replace_filenames
+   ~cf.Data.nc_del_aggregated_data
+   ~cf.Data.nc_del_aggregation_write_status
+   ~cf.Data.nc_get_aggregated_data
+   ~cf.Data.nc_get_aggregation_fragment_type
+   ~cf.Data.nc_get_aggregation_write_status
+   ~cf.Data.nc_has_aggregated_data
+   ~cf.Data.nc_set_aggregated_data
+   ~cf.Data.nc_set_aggregation_write_status
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
@@ -863,13 +858,29 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.add_file_location
+   ~cf.Data.cfa_clear_file_substitutions
+   ~cf.Data.cfa_file_substitutions
+   ~cf.Data.cfa_update_file_substitutions
+   ~cf.Data.cfa_del_file_substitution
+   ~cf.Data.cfa_has_file_substitutions
+   ~cf.Data.cfa_del_aggregated_data
+   ~cf.Data.cfa_get_aggregated_data
+   ~cf.Data.cfa_has_aggregated_data
+   ~cf.Data.cfa_set_aggregated_data
+   ~cf.Data.cfa_get_term
+   ~cf.Data.cfa_get_write
+   ~cf.Data.cfa_set_term
+   ~cf.Data.cfa_set_write
    ~cf.Data.chunk
    ~cf.Data.Data
+   ~cf.Data.del_file_location
    ~cf.Data.dtvarray
    ~cf.Data.dumpd
    ~cf.Data.dumps
    ~cf.Data.expand_dims
    ~cf.Data.files
+   ~cf.Data.file_locations
    ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.HDF_chunks
    ~cf.Data.in_memory

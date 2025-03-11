@@ -346,6 +346,7 @@ Cyclicity
    ~cf.DimensionCoordinate.cyclic
    ~cf.DimensionCoordinate.get_original_filenames
    ~cf.DimensionCoordinate.period
+   ~cf.DimensionCoordinate.anchor
    ~cf.DimensionCoordinate.persist
 
 Miscellaneous
@@ -525,8 +526,8 @@ Groups
    ~cf.DimensionCoordinate.nc_set_variable_groups
    ~cf.DimensionCoordinate.nc_clear_variable_groups
   
-CFA
----
+Aggregation
+-----------
 
 .. rubric:: Methods
 	    
@@ -535,13 +536,8 @@ CFA
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DimensionCoordinate.add_file_location
-   ~cf.DimensionCoordinate.cfa_clear_file_substitutions
-   ~cf.DimensionCoordinate.cfa_del_file_substitution
-   ~cf.DimensionCoordinate.cfa_file_substitutions
-   ~cf.DimensionCoordinate.cfa_update_file_substitutions
-   ~cf.DimensionCoordinate.del_file_location
-   ~cf.DimensionCoordinate.file_locations
+   ~cf.DimensionCoordinate.file_directories
+   ~cf.DimensionCoordinate.replace_directory
 
 Aliases
 -------
@@ -726,11 +722,18 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.add_file_location
    ~cf.DimensionCoordinate.asdatetime
    ~cf.DimensionCoordinate.asreftime
+   ~cf.DimensionCoordinate.cfa_clear_file_substitutions
+   ~cf.DimensionCoordinate.cfa_del_file_substitution
+   ~cf.DimensionCoordinate.cfa_file_substitutions
+   ~cf.DimensionCoordinate.cfa_update_file_substitutions
    ~cf.DimensionCoordinate.chunk
+   ~cf.DimensionCoordinate.del_file_location
    ~cf.DimensionCoordinate.delprop
    ~cf.DimensionCoordinate.expand_dims
+   ~cf.DimensionCoordinate.file_locations
    ~cf.DimensionCoordinate.files
    ~cf.DimensionCoordinate.get_filenames
    ~cf.DimensionCoordinate.getprop

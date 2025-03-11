@@ -24,6 +24,15 @@ Field list class
 
    cf.FieldList
 
+Domain class
+------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.Domain
+   
 Metadata component classes
 --------------------------
 
@@ -32,12 +41,14 @@ Metadata component classes
    :toctree: class/
 
    cf.AuxiliaryCoordinate
+   cf.CellConnectivity
    cf.CellMeasure
    cf.CellMethod
    cf.CoordinateReference
    cf.DimensionCoordinate
    cf.DomainAncillary
    cf.DomainAxis
+   cf.DomainTopology
    cf.FieldAncillary
 
 Constructs class
@@ -60,15 +71,6 @@ Coordinate component classes
    cf.CoordinateConversion
    cf.Datum
       
-Domain class
-------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: class/
-
-   cf.Domain
-   
 Data classes
 ------------
 

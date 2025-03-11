@@ -24,7 +24,7 @@ Inspection
    ~cf.H5netcdfArray.get_subspace
    ~cf.H5netcdfArray.get_attributes
    ~cf.H5netcdfArray.index
-
+   ~cf.H5netcdfArray.is_subspace
    
 .. rubric:: Attributes
 
@@ -39,6 +39,7 @@ Inspection
    ~cf.H5netcdfArray.shape
    ~cf.H5netcdfArray.size
    ~cf.H5netcdfArray.original_shape
+   ~cf.H5netcdfArray.reference_shape
 
 Units
 -----
@@ -79,6 +80,9 @@ File
    ~cf.H5netcdfArray.add_file_location
    ~cf.H5netcdfArray.del_file_location
    ~cf.H5netcdfArray.file_locations
+   ~cf.H5netcdfArray.file_directory
+   ~cf.H5netcdfArray.replace_directory
+   ~cf.H5netcdfArray.replace_filename
    ~cf.H5netcdfArray._lock
    
 Miscellaneous
