@@ -1,5 +1,4 @@
 from math import prod
-from os import sep
 
 import cfdm
 import numpy as np
@@ -14,7 +13,6 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
-    abspath,
     indices_shape,
     parse_indices,
 )
