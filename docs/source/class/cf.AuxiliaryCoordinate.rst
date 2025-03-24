@@ -716,18 +716,11 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.AuxiliaryCoordinate.add_file_location
    ~cf.AuxiliaryCoordinate.asdatetime
    ~cf.AuxiliaryCoordinate.asreftime
-   ~cf.AuxiliaryCoordinate.cfa_clear_file_substitutions
-   ~cf.AuxiliaryCoordinate.cfa_del_file_substitution
-   ~cf.AuxiliaryCoordinate.cfa_file_substitutions
-   ~cf.AuxiliaryCoordinate.cfa_update_file_substitutions
    ~cf.AuxiliaryCoordinate.chunk
-   ~cf.AuxiliaryCoordinate.del_file_location
    ~cf.AuxiliaryCoordinate.delprop
    ~cf.AuxiliaryCoordinate.expand_dims
-   ~cf.AuxiliaryCoordinate.file_locations
    ~cf.AuxiliaryCoordinate.files
    ~cf.AuxiliaryCoordinate.get_filenames
    ~cf.AuxiliaryCoordinate.getprop
