@@ -535,16 +535,16 @@ files <External-variables-with-cfa>`.
 
 Powerful, flexible, and user-friendly visualisations of field
 constructs are available with the `cf-plot` package (that needs to be
-installed separately to cf, see http://ajheaps.github.io/cf-plot for
-details).
+installed separately to cf, see `cf-plot documentation
+<https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
 .. figure:: images/cfplot_example.png
 
    *Example output of cf-plot displaying a cf field construct.*
 
-See the `cfplot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
-of plotting possibilities, with example code. These include, but are
+See the `cf-plot gallery
+<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide
+range of plotting possibilities, with example code. These include, but are
 not limited to:
 
 * Cylindrical, polar stereographic and other plane projections

@@ -127,10 +127,12 @@ manipulation and can:
 
 Powerful, flexible, and user-friendly visualisations of field
 constructs are available with the `cf-plot` package that is installed
-separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
+separately to `cf` (see the
+`cf-plot documentation
+<https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
 See the `cf-plot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
+<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide range
 of plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png

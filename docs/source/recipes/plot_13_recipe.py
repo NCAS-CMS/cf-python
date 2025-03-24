@@ -38,16 +38,16 @@ region = sst.subspace(X=cf.wi(360 - 170, 360 - 120), Y=cf.wi(-5, 5))
 # %%
 # 5. Plot the various Niño regions using cf-plot. Here:
 #
-# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
+# - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
-#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# - `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+#   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
+# - `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map limits and projection;
-# - `cfplot.setvars <http://ajheaps.github.io/cf-plot/setvars.html>`_ is used to
+# - `cfplot.setvars <https://ncas-cms.github.io/cf-plot/build/setvars.html>`_ is used to
 #   set various attributes of the plot, like setting the land colour to grey;
-# - `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to
+# - `cfplot.cscale <https://ncas-cms.github.io/cf-plot/build/cscale.html>`_ is used to
 #   choose one of the colour maps amongst many available;
-# - `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_ plots contour data
+# - `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_ plots contour data
 #   from the ``region`` subspace at a specific time with no contour lines and a
 #   title;
 # - next, four Niño regions and labels are defined using
@@ -206,13 +206,13 @@ nino34_rolling = nino34_anomaly.moving_window(
 # El Niño and La Niña events. Now plot SST anomalies in the Niño 3.4 region over
 # time using cf-plot. Here:
 #
-# - `cfplot.gset <http://ajheaps.github.io/cf-plot/gset.html>`_ sets the limits
+# - `cfplot.gset <https://ncas-cms.github.io/cf-plot/build/gset.html>`_ sets the limits
 #   of the x-axis (years from 1940 to 2022) and y-axis (anomalies from -3
 #   degrees C to 3 degrees C) for the plot;
-# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
+# - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
-#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# - `cfplot.lineplot <http://ajheaps.github.io/cf-plot/lineplot.html>`_ plots
+#   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
+# - `cfplot.lineplot <https://ncas-cms.github.io/cf-plot/build/lineplot.html>`_ plots
 #   the rolling Niño 3.4 index over time;
 # - a zero line and also horizontal dashed lines are drawn for El Niño and
 #   La Niña thresholds using
