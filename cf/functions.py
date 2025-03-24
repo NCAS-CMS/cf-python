@@ -1358,7 +1358,7 @@ CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
 def CFA():
     """The version of the CFA conventions.
 
-    Deprecated at version NEXTVERSION and is no longer available.
+    Deprecated at version 3.17.0 and is no longer available.
 
     This indicates which version of the CFA conventions are
     represented by this release of the cf package, and therefore the
@@ -1381,7 +1381,7 @@ def CFA():
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "CFA", version="NEXTVERSION", removed_at="5.0.0"
+        "CFA", version="3.17.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 

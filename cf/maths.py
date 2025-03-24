@@ -160,7 +160,7 @@ def histogram(*digitized, density=False):
             bins of unity size are chosen; it is not a probability
             mass function.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
     :Returns:
 

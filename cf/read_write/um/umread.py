@@ -548,7 +548,7 @@ class UMField:
                 presence or not of size 1 dimensions is determined by
                 how the data are stored in its dataset.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
             unsqueeze: `bool`, optional
                 If True then ensure that field construct data arrays
@@ -558,7 +558,7 @@ class UMField:
                 is determined by how the data are stored in its
                 dataset.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
             unpack: `bool`, optional
                 If True, the default, then unpack arrays by convention
@@ -569,7 +569,7 @@ class UMField:
                 ``scale_factor``, as applied to lookup header entries
                 BDATUM and BMKS respectively.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
@@ -3480,7 +3480,7 @@ class UMRead(cfdm.read_write.IORead):
                 presence or not of size 1 dimensions is determined by
                 how the data are stored in its dataset.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
             unsqueeze: `bool`, optional
                 If True then ensure that field construct data arrays
@@ -3490,7 +3490,7 @@ class UMRead(cfdm.read_write.IORead):
                 is determined by how the data are stored in its
                 dataset.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
             unpack: `bool`, optional
                 If True, the default, then unpack arrays by convention
@@ -3501,7 +3501,7 @@ class UMRead(cfdm.read_write.IORead):
                 ``scale_factor``, as applied to lookup header entries
                 BDATUM and BMKS respectively.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.17.0
 
         :Returns:
 

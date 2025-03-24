@@ -211,7 +211,7 @@ class read(cfdm.read):
             ``'UM'``      UM fields files or PP files
             ============  ============================================
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         cdl_string: `bool`, optional
             If True and the format to read is CDL, read a string
@@ -362,7 +362,7 @@ class read(cfdm.read):
 
         {{read unpack: `bool`}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read domain: `bool`, optional}}
 
@@ -370,23 +370,23 @@ class read(cfdm.read):
 
         {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read storage_options: `dict` or `None`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read cache: `bool`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read dask_chunks: `str`, `int`, `None`, or `dict`, optional}}
 
-              .. versionadded:: NEXTVERSION
+              .. versionadded:: 3.17.0
 
         {{read store_dataset_chunks: `bool`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read cfa: `dict`, optional}}
 
@@ -394,11 +394,11 @@ class read(cfdm.read):
 
         {{read cfa_write: sequence of `str`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         {{read to_memory: (sequence of) `str`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.17.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -418,13 +418,13 @@ class read(cfdm.read):
         chunk: deprecated at version 3.14.0
             Use the *dask_chunks* parameter instead.
 
-        chunks: deprecated at version NEXTVERSION
+        chunks: deprecated at version 3.17.0
             Use the *dask_chunks* parameter instead.
 
-        fmt: deprecated at version NEXTVERSION
+        fmt: deprecated at version 3.17.0
             Use the *file_type* parameter instead.
 
-        ignore_read_error: deprecated at version NEXTVERSION
+        ignore_read_error: deprecated at version 3.17.0
             Use the *file_type* parameter instead.
 
     :Returns:
@@ -569,7 +569,7 @@ class read(cfdm.read):
                 "cf.read",
                 {"fmt": fmt},
                 "Use keyword 'file_type' instead.",
-                version="NEXTVERSION",
+                version="3.17.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -578,7 +578,7 @@ class read(cfdm.read):
                 "cf.read",
                 {"ignore_read_error": ignore_read_error},
                 "Use keyword 'file_type' instead.",
-                version="NEXTVERSION",
+                version="3.17.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 

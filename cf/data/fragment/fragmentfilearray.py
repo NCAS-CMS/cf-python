@@ -9,14 +9,14 @@ class FragmentFileArray(
 ):
     """Fragment of aggregated data in a file.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.17.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment classes.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.17.0
 
         """
         # Import fragment classes. Do this here (as opposed to outside

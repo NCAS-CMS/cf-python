@@ -2807,7 +2807,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `concatenate`
 
@@ -2868,7 +2868,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.17.0
 
         .. seealso:: `concatenate`
 

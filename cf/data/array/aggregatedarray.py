@@ -7,14 +7,14 @@ from ..fragment import FragmentFileArray
 class AggregatedArray(Container, cfdm.AggregatedArray):
     """An array stored in a CF aggregation variable.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.17.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.17.0
 
         """
         # Override the inherited FragmentFileArray class
