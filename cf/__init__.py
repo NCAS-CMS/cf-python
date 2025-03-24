@@ -80,7 +80,7 @@ installation and source code.
 
 """
 
-__date__ = "2025-03-??"
+__date__ = "2025-03-24"
 __version__ = "3.17.0"
 
 _requires = (
