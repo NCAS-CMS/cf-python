@@ -188,11 +188,12 @@ cards). Shell environment variables are also permitted.
    >>> len(z)
    3
 
-All of the datasets in one more directories may also be read by
+All of the datasets in one or more directories may also be read by
 replacing any file name with a directory name. An attempt will be made
 to read all files in the directory, which will result in an error if
 any have a non-supported format. Non-supported files may be ignored
-with the *ignore_read_error* keyword.
+by being more specific about the file type intended for reading in
+using the *file_type* keyword:
 
 .. code-block:: python
    :caption: *Read all of the files in the current working directory.*
@@ -201,7 +202,7 @@ with the *ignore_read_error* keyword.
    Traceback (most recent call last):
        ...
    Exception: Can't determine format of file cf_tutorial_files.zip
-   >>> y = cf.read('$PWD', ignore_read_error=True)
+   >>> y = cf.read('$PWD', file_type='netCDF')
    >>> len(y)
    15
 
