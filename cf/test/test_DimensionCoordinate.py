@@ -544,6 +544,15 @@ class DimensionCoordinateTest(unittest.TestCase):
             ).all()
         )
 
+        # In-place
+        self.assertFalse(d.has_bounds())
+        self.assertIsNone(d.create_bounds(inplace=True))
+        self.assertTrue(d.has_bounds())
+
+        # Fail when inplace=True and bounds already exist
+        with self.assertRaises(ValueError):
+            d.create_bounds(inplace=True)
+
         # Cellsize units must be equivalent to the coordinate units,
         # or if the cell has no units then they are assumed to be
         # the same as the coordinates:

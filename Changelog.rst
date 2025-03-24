@@ -1,3 +1,11 @@
+version 3.??.?
+--------------
+
+**2025-??-??**
+
+* New keyword parameter to `cf.DimensionCoordinate.create_bounds`:
+  ``inplace`` (https://github.com/NCAS-CMS/cf-python/issues/855)
+
 version 3.17.0
 --------------
 
