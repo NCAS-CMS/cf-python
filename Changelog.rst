@@ -1,7 +1,7 @@
 version 3.17.0
 --------------
 
-**2025-03-??**
+**2025-03-24**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cf-python/issues/849)
