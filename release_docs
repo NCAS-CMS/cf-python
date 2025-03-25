@@ -184,5 +184,5 @@ fi
 
 set +x
 
-echo PYTHONATH=$PYTHONPATH
+echo PYTHONPATH=$PYTHONPATH
 
