@@ -279,7 +279,7 @@ class DimensionCoordinate(
                 units as the coordinates.
 
                 The coordinate values are transformed so the first
-                corodinate is the closest to *value* from above (for
+                coordinate is the closest to *value* from above (for
                 increasing coordinates), or the closest to *value* from
                 above (for decreasing coordinates)
 
@@ -328,7 +328,7 @@ class DimensionCoordinate(
 
             parameters: `dict`, optional
                 If a `dict` is provided then it will be updated
-                in-place with parameters which describe thethe
+                in-place with parameters which describe the
                 anchoring process.
 
             {{inplace: `bool`, optional}}
