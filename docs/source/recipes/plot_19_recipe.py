@@ -1,5 +1,5 @@
 """
-Plotting per-season trends in global sea surface tempreature extrema
+Plotting per-season trends in global sea surface temperature extrema
 ====================================================================
 
 In this recipe we find the area-based extrema of global sea surface
@@ -11,8 +11,8 @@ maxima.
 
 # %%
 # 1. Import cf-python, cf-plot and other required packages:
-import cfplot as cfp
 import matplotlib.pyplot as plt
+import cfplot as cfp
 
 import cf
 
@@ -37,7 +37,7 @@ am_min = am_min.subspace(T=cf.ge(cf.dt("1980-01-01")))
 # 5. Create a mapping which provides the queries we need to collapse on
 # the four seasons, along with our description of them, as a value, with
 # the key of the string encoding the colour we want to plot these
-# trendlines in. This structure will be iterated over to make our plot:
+# trend lines in. This structure will be iterated over to make our plot:
 colours_seasons_mapping = {
     "red": (cf.mam(), "Mean across MAM: March, April and May"),
     "blue": (cf.jja(), "Mean across JJA: June, July and August"),

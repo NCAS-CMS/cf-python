@@ -47,7 +47,7 @@ global_temperature = period.collapse("X: Y: mean")
 global_avg_temp = global_temperature.array.squeeze()
 
 # %%
-# 7. Create a normalization function that maps the interval from the minimum to
+# 7. Create a normalisation function that maps the interval from the minimum to
 # the maximum temperature to the interval [0, 1] for colouring:
 norm_global = plt.Normalize(global_avg_temp.min(), global_avg_temp.max())
 

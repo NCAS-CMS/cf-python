@@ -14,11 +14,16 @@ period of six months or more.
 """
 
 # %%
-# 1. Import cf-python and cf-plot:
+# 1. Import cf-python and cf-plot, as well as some other libraries for use
+# in next steps.
+
+import cartopy.crs as ccrs
+import matplotlib.patches as mpatches
 
 import cfplot as cfp
 
 import cf
+
 
 # %%
 # 2. Read and select the SST by index and look at its contents:
@@ -55,8 +60,6 @@ region = sst.subspace(X=cf.wi(360 - 170, 360 - 120), Y=cf.wi(-5, 5))
 #   and
 #   `Text <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html>`_
 #   function with cf-plot plot object (``cfp.plotvars.plot``):
-import cartopy.crs as ccrs
-import matplotlib.patches as mpatches
 
 cfp.gopen()
 cfp.mapset(proj="cyl", lonmin=0, lonmax=360, latmin=-90, latmax=90)
@@ -160,7 +163,7 @@ cfp.plotvars.mymap.text(
 cfp.gclose()
 
 # %%
-# 6. Calculate the Niño 3.4 index and standardize it to create an anomaly index.
+# 6. Calculate the Niño 3.4 index and standardise it to create an anomaly index.
 # The `collapse <https://ncas-cms.github.io/cf-python/method/cf.Field.collapse.html>`_
 # method is used to calculate the mean over the longitude (X) and latitude (Y)
 # dimensions:
@@ -179,7 +182,7 @@ climatology = base_period.collapse("T: mean")
 std_dev = base_period.collapse("T: sd")
 
 # %%
-# 8. The line for variable ``nino34_anomaly`` calculates the standardized
+# 8. The line for variable ``nino34_anomaly`` calculates the standardised
 # anomaly for each time step in the ``nino34_index`` data. It subtracts the
 # ``climatology`` from the ``nino34_index`` and then divides by the ``std_dev``.
 # The resulting ``nino34_anomaly`` data represents how much the SST in the Niño

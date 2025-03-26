@@ -16,7 +16,7 @@ import cfplot as cfp
 import cf
 
 # %%
-# 2. Read and select the 200 hpa geopotential by index and look at its contents:
+# 2. Read and select the 200 hPa geopotential by index and look at its contents:
 gp = cf.read("~/recipes/ERA5_monthly_averaged_z200.nc")[0]
 print(gp)
 
@@ -42,7 +42,7 @@ gph_july = gph.subspace(T=cf.month(7) & cf.year(2018)).squeeze()
 #   set various attributes of the plot, like setting the thickness of the lines
 #   that represent continents;
 # - `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_ plots the contour
-#   lines representing the 200 hpa geopotential height values without filling
+#   lines representing the 200 hPa geopotential height values without filling
 #   between the contour lines (``fill=False``) and no colour bar
 #   (``colorbar=False``);
 # - `cfplot.levs <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to
@@ -136,7 +136,7 @@ t2m_july_anomaly_2018 = (
 #   of temperature anomalies without contour lines (``lines=False``);
 # - `cfplot.levs() <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to
 #   reset contour levels to default after which the steps to plot the contour
-#   lines representing the 200 hpa geopotential height values, the approximate
+#   lines representing the 200 hPa geopotential height values, the approximate
 #   polar-front jet and subtropical jet from Step 5 are repeated:
 cfp.gopen()
 cfp.mapset(proj="robin")

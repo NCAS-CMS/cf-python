@@ -13,8 +13,8 @@ retrievals.
 # %%
 # 1. Import cf-python, cf-plot and matplotlib.pyplot:
 
-import cfplot as cfp
 import matplotlib.pyplot as plt
+import cfplot as cfp
 
 import cf
 
@@ -44,7 +44,7 @@ lat = aod.coordinate("Y")
 # %%
 # 6. Plot the AOD for all the retrievals using
 # `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_. Here the argument
-# ``'ptype'`` specifies the type of plot to use (latituide-longitude here) and
+# ``'ptype'`` specifies the type of plot to use (latitude-longitude here) and
 # the argument ``'lines=False'`` does not draw contour lines:
 cfp.con(f=aod.array, x=lon.array, y=lat.array, ptype=1, lines=False)
 
