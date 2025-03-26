@@ -35,7 +35,10 @@ AuxiliaryCoordinate
 auxiliarycoordinate
 auxs
 azimuthal
+backend
+backends
 basenames
+bathymetry
 Bhandekar
 bilinear
 Bilinear
@@ -50,6 +53,7 @@ boolean
 booleans
 Booleans
 boreal
+BoundsFromNodesArray
 broadcastable
 Caron
 Cartopy
@@ -60,6 +64,8 @@ cellge
 cellgt
 cellle
 celllt
+CellConnectivity
+CellConnectivityArray
 CellMeasure
 CellMethod
 CellMethods
@@ -67,12 +73,14 @@ cellsize
 cellsizes
 cellwi
 cellwo
+celsius
 centre
 centred
 cf
 CF
 cfa
 CFA
+cfp
 cftime
 changelog
 chunksize
@@ -82,7 +90,11 @@ Chunksizes
 climatological
 Climatological
 cls
+cmap
+colored
+colormap
 Colour
+colourmap
 conda
 config
 conformant
@@ -100,6 +112,7 @@ coords
 coprime
 cosh
 crs
+cscale
 CSR
 ctype
 cumsum
@@ -143,6 +156,7 @@ domainancillary
 DomainAncillary
 domainaxis
 DomainAxis
+DomainTopology
 donotchecknonaggregatingaxes
 Drach
 DSG
@@ -155,6 +169,7 @@ dumpd
 durations
 El
 endian
+endianness
 eq
 esmpy
 et
@@ -181,10 +196,12 @@ fracfield
 fromconstructs
 fromkeys
 fullname
+FullArray
 func
 fx
 fy
 GatheredArray
+gclose
 ge
 geopotential
 Geosci
@@ -194,7 +211,11 @@ getitem
 getprop
 getslice
 ggroup
+gopen
+gpos
 gregorian
+gridded
+gset
 gt
 Hallouin
 Hankin
@@ -214,6 +235,7 @@ iadd
 iand
 iaxes
 iaxis
+isdir
 idiv
 ifloordiv
 ilshift
@@ -270,10 +292,12 @@ lbtim
 le
 len
 linebreaks
+Lineplot
 ln
 loadd
 lon
 lossy
+Løvset
 lshift
 lt
 Makefile
@@ -284,6 +308,8 @@ metacharacters
 MiB
 Midlatitudes
 Modeling
+Mollweide
+mstats
 mpi
 mpich
 mpirun
@@ -298,6 +324,7 @@ nc
 ncdim
 ncdimensions
 ncdims
+ncols
 ncvar
 ncvars
 nd
@@ -307,7 +334,9 @@ ne
 ness
 netcdf
 netCDF
+NetCDF
 NetCDFArray
+netcdfArray
 netcdftime
 Niña
 Niño
@@ -323,6 +352,7 @@ onwards
 openmpi
 optimize_graph
 orography
+orog
 outerproduct
 parallelisation
 parallelise
@@ -331,12 +361,16 @@ pathjoin
 Pathname
 pdim
 pentad
+pearsonr
+performant
 picklable
 pmshape
+PointTopologyArray
 popitem
 pos
 pow
 pre
+prepended
 priori
 programmatically
 pseudolevels
@@ -349,6 +383,8 @@ RaggedIndexedContiguousArray
 rd
 rdiv
 readonly
+realization
+realizations
 rechunk
 rechunked
 Rechunking
@@ -390,6 +426,7 @@ scikit
 scipy
 sd
 Sebastián
+sep
 setdefault
 seealso
 seterr
@@ -397,6 +434,7 @@ setitem
 setmask
 setprop
 Signell
+shapefiles
 sinh
 spacings
 spatiotemporal
@@ -411,10 +449,13 @@ stod
 str
 subarray
 subarrays
+subcells
 subclasses
 submodel
+subsample
 subsampled
 subsampling
+SubsampledArray
 subspaced
 subspaces
 Subspaces
@@ -441,6 +482,7 @@ todict
 tokenize
 tolist
 topologies
+topo
 tosparse
 trac
 trajectoryProfile
@@ -449,6 +491,8 @@ tripolar
 Tripolar
 truediv
 trunc
+txt
+Tyge
 Typecode
 u
 udunits
@@ -456,6 +500,7 @@ Udunits
 UGRID
 umread
 umversion
+UMArray
 un
 unadjusted
 unaggregatable
@@ -465,12 +510,16 @@ uncompress
 Uncompress
 uncompresses
 uncompressing
+undirected
 unfilter
+unitless
 Univ
 unmapped
 unselected
 Unselected
 unsqueeze
+url
+uri
 var
 varid
 varray
