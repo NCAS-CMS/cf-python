@@ -31,7 +31,7 @@ projtypes = ["cyl", "npstere", "spstere", "moll", "merc", "robin"]
 # 4. Create the file with subplots. If changing the number of subplots,
 # ensure the number of rows * number of columns = the number of projections.
 # Here we are doing 6 projections so 2 x 3 is fine. Then loop through the
-# list of projection types and plot each as a sub-plot.
+# list of projection types and plot each as a sub-plot:
 cfp.gopen(rows=2, columns=3, bottom=0.2, file="projections.png")
 for i, proj in enumerate(projtypes):
     # gpos has 1 added to the index because it takes 1 as its first value
