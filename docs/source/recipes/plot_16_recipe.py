@@ -19,13 +19,7 @@ import cf
 f = cf.read("~/recipes/ggap.nc")[0]
 
 # %%
-# 3. Create the file with subplots. If changing the number of subplots,
-# ensure the number of rows * number of columns = the number of projections.
-# Here we are doing 6 projections so 2 x 3 is fine:
-cfp.gopen(rows=2, columns=3, bottom=0.2, file="projections.png")
-
-# %%
-# 4. List the projection types to use. Here we are using
+# 3. List the projection types to use. Here we are using
 # Cylindrical/Default, North Pole Stereographic, South Pole Stereographic,
 # Mollweide, Mercator and Robinson. However there are several other choices
 # possible, see:
@@ -34,7 +28,11 @@ cfp.gopen(rows=2, columns=3, bottom=0.2, file="projections.png")
 projtypes = ["cyl", "npstere", "spstere", "moll", "merc", "robin"]
 
 # %%
-# 5. Loop through the list of projection types and plot each as a sub-plot:
+# 4. Create the file with subplots. If changing the number of subplots,
+# ensure the number of rows * number of columns = the number of projections.
+# Here we are doing 6 projections so 2 x 3 is fine. Then loop through the
+# list of projection types and plot each as a sub-plot.
+cfp.gopen(rows=2, columns=3, bottom=0.2, file="projections.png")
 for i, proj in enumerate(projtypes):
     # gpos has 1 added to the index because it takes 1 as its first value
     cfp.gpos(i + 1)
