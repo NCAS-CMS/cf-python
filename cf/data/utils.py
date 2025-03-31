@@ -402,8 +402,14 @@ def collapse(
             weights, axis)``.
 
     """
+    original_size = d.size
+    if axis is None:
+        axis = range(d.ndim)
+    else:
+        axis = d._parse_axes(axis)
+
     kwargs = {
-        "axis": axis,
+        "axis": tuple(axis),
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
@@ -423,6 +429,14 @@ def collapse(
     dx = d.to_dask_array(_force_to_memory=False)
     dx = func(dx, **kwargs)
     d._set_dask(dx)
+
+    if not keepdims:
+        # Remove collapsed axis names
+        d._axes = [a for i, a in enumerate(d._axes) if i not in axis]
+
+    if d.size != original_size:
+        # Remove the out-dated HDF5 chunking strategy
+        d.nc_clear_hdf5_chunksizes()
 
     return d, weights
 
