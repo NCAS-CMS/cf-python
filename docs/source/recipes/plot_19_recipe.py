@@ -9,10 +9,11 @@ on top of this the mean across each season for both the minima and the
 maxima.
 """
 
+import cfplot as cfp
+
 # %%
 # 1. Import cf-python, cf-plot and other required packages:
 import matplotlib.pyplot as plt
-import cfplot as cfp
 
 import cf
 
