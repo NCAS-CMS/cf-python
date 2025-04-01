@@ -74,7 +74,7 @@ div = cf.div_xy(u_2, v_2, radius="earth")
 # the data which can be positive or negative, i.e. has 0 as the 'middle'
 # value of significance, so should use a diverging colour map.
 cfp.mapset(resolution="10m")
-cfp.cscale("ncl_default")
+cfp.cscale("ncl_default", ncols=25)
 
 # %%
 # 9. Now generate the final plot. Plot the current vectors, noting we had
