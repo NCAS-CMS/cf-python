@@ -131,9 +131,9 @@ class DimensionCoordinate(
         """Return True if a coordinate is increasing, otherwise return
         False.
 
-        A dimension coordinate construct is considered to be increasing if
-        its data array values are increasing in index space, or if it has
-        no data nor bounds.
+        A dimension coordinate construct is considered to be
+        increasing if its data array values are not strictly
+        decreasing in index space, or if it has no data nor bounds.
 
         If the direction can not be inferred from the data not bounds then
         the coordinate's units are used.
@@ -168,12 +168,12 @@ class DimensionCoordinate(
                 c = data._get_cached_elements()
                 if c:
                     try:
-                        return bool(c.get(0) < c.get(1))
+                        return bool(c.get(0) <= c.get(1))
                     except TypeError:
                         pass
 
                 data = data[:2].compute()
-                return bool(data.item(0) < data.item(1))
+                return bool(data.item(0) <= data.item(1))
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
@@ -182,12 +182,12 @@ class DimensionCoordinate(
             c = data._get_cached_elements()
             if c:
                 try:
-                    return bool(c.get(0) < c.get(1))
+                    return bool(c.get(0) <= c.get(1))
                 except TypeError:
                     pass
 
             b = data[0].compute()
-            return bool(b.item(0) < b.item(1))
+            return bool(b.item(0) <= b.item(1))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure

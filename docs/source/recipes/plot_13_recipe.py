@@ -24,7 +24,6 @@ import cfplot as cfp
 
 import cf
 
-
 # %%
 # 2. Read and select the SST by index and look at its contents:
 sst = cf.read("~/recipes/ERA5_monthly_averaged_SST.nc")[0]
