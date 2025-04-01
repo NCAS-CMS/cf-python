@@ -112,7 +112,9 @@ do
     # all pages referencing these resources must be added to this list
 done
 
-# For Recipes
+# --------------------------------------------------------------------
+# Process recipes
+# --------------------------------------------------------------------
 recipes_dir="source/recipes"
 recipes_files=( "${recipes_dir}"/*_{recipe,helper}.{ipynb,py} )
 
@@ -152,6 +154,10 @@ while IFS= read -r href; do
   ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
 done < source/recipes/recipe_list.txt
 
+
+# --------------------------------------------------------------------
+# Process styles and templates
+# --------------------------------------------------------------------
 # Copy over our custom stylesheet. It is referenced in the HTML docs
 # files but Sphinx with alabaster theme doesn't seem to (?) provide a
 # means to transfer it to the created _static dir via the build itself
