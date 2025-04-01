@@ -141,5 +141,4 @@ cfp.con(
     colorbar_drawedges=False,
     **label_info,
 )
-
 cfp.gclose()

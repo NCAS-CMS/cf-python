@@ -68,19 +68,22 @@ v_2 = v_1.where(cf.lt(-9000), cf.masked)
 div = cf.div_xy(u_2, v_2, radius="earth")
 
 # %%
-# 8. Generate the final plot. First we configure the overall plot by
+# 8. First we configure the overall plot by
 # making the map higher resolution, to show the coastlines of the UK and
 # Ireland in greater detail, and changing the colourmap to better reflect
 # the data which can be positive or negative, i.e. has 0 as the 'middle'
-# value of significance, so should use a diverging colour map. Then we
-# plot the current vectors, noting we had to play around with the 'stride'
-# and 'scale' parameter values to adjust the vector spacing and size so that
-# the vector field is best represented and visible without over-cluttering
-# the plot. Finally we plot the divergence as a contour plot without any
-# lines showing. This compound plot is saved on one canvas using 'gopen'
-# and 'gclose' to wrap the two plotting calls:
+# value of significance, so should use a diverging colour map.
 cfp.mapset(resolution="10m")
 cfp.cscale("ncl_default")
+
+# %%
+# 9. Now generate the final plot. Plot the current vectors, noting we had
+# to play around with the 'stride' and 'scale' parameter values to adjust
+# the vector spacing and size so that the vector field is best represented
+# and visible without over-cluttering the plot. Finally we plot the
+# divergence as a contour plot without any lines showing. This compound
+# plot is saved on one canvas using 'gopen' and 'gclose' to wrap the two
+# plotting calls:
 cfp.gopen(
     file=f"irish-sea-currents-divergence-{chosen_time.replace(' ', '-')}.png"
 )

@@ -13,7 +13,7 @@ import cf
 # %%
 # 2. Read the field constructs:
 
-obs = cf.read("~/recipes/cru_ts4.06.1901.2021.tmp.dat.nc", chunks=None)
+obs = cf.read("~/recipes/cru_ts4.06.1901.2021.tmp.dat.nc", dask_chunks=None)
 print(obs)
 
 # %%
