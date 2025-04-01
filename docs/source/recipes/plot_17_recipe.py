@@ -106,5 +106,4 @@ for i, colour_scale in enumerate(colour_scales_columns):
         colorbar_thick=0.02,
         colorbar_fontsize=11,
     )
-
-cfp.gclose(view=True)
+cfp.gclose()
