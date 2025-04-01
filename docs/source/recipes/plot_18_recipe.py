@@ -122,7 +122,7 @@ label_info = {
 
 # Plot the two contour plots as columns
 cfp.gpos(1)
-cfp.cscale("wiki_2_0_reduced")
+cfp.cscale("wiki_2_0_reduced", ncols=11)
 cfp.con(
     regridded_orog,
     lines=False,

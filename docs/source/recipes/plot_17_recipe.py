@@ -80,7 +80,7 @@ plt.suptitle(
 )
 for i, colour_scale in enumerate(colour_scales_columns):
     cfp.gpos(i + 1)
-    cfp.cscale(colour_scale)
+    cfp.cscale(colour_scale, ncols=11)
 
     # For the topmost plots, label the column with the colour scale category
     # using the 'title' argument, otherwise don't add a title.
