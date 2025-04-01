@@ -97,7 +97,6 @@ cfp.gopen(
     rows=1,
     columns=2,
     top=0.85,
-    file="snow_and_orog_on_same_grid.png",
     user_position=True,
 )
 

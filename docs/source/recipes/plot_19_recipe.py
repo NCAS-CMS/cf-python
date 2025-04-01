@@ -55,7 +55,7 @@ colours_seasons_mapping = {
 # of the maxima, we loop through the season query mapping and do a
 # "T: mean" collapse setting the season as the grouping:
 cfp.gopen(
-    rows=2, columns=1, bottom=0.1, top=0.85, file="global_avg_sst_plot.png"
+    rows=2, columns=1, bottom=0.1, top=0.85, file="recipe_19.png"
 )
 cfp.gpos(1)
 cfp.gset(xmin="1980-01-01", xmax="2022-12-01", ymin=304, ymax=312)

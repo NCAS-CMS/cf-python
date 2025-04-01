@@ -84,9 +84,7 @@ cfp.cscale("ncl_default")
 # divergence as a contour plot without any lines showing. This compound
 # plot is saved on one canvas using 'gopen' and 'gclose' to wrap the two
 # plotting calls:
-cfp.gopen(
-    file=f"irish-sea-currents-divergence-{chosen_time.replace(' ', '-')}.png"
-)
+cfp.gopen()
 cfp.vect(u=u_2, v=v_2, stride=6, scale=3, key_length=1)
 cfp.con(
     div,
