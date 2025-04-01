@@ -809,6 +809,30 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertEqual(e[0].array, d[0].array - 360)
 
 
+    def test_DimensionCoordinate_direction(self):
+        """Test DimensionCoordinate.direction"""
+        d = self.dim.copy()
+
+        # Test the use case of
+        # https://github.com/NCAS-CMS/cf-python/issues/859
+        #
+        # Create a coordinate with all equal values
+        d.data[...] = d[0].array
+        for i, x in enumerate(d.array):
+            d.bounds.data[i, :] = x
+
+        d._custom["direction"] = None  # Force a re-calculation of direction
+        self.assertTrue(d.direction())
+        d._custom["direction"] = None
+        self.assertTrue(d[0].direction())
+
+        d.del_bounds()
+        d._custom["direction"] = None
+        self.assertTrue(d.direction())
+        d._custom["direction"] = None
+        self.assertTrue(d[0].direction())
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
