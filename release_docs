@@ -29,7 +29,7 @@ elif [[ $1 = "dev" ]] ; then
 elif [[ $1 = "dev-clean" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also deletes an existing .doctrees subdirectory
-    dir=$PWD/docs/dev
+  dir=$PWD/docs/dev
 elif [[ $1 = "dev-scrub" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also completely deletes the new target directory.
@@ -38,10 +38,15 @@ elif [[ $1 = "dev-scrub" ]] ; then
 elif [[ $1 = "dev-recipes" ]] ; then
   # For testing: similar to dev, but specifically for generating recipes.
   dir=$PWD/docs/dev
+elif [[ $1 = "dev-recipes-scrub" ]] ; then
+  # For testing: similar to dev, but specifically for generating recipes,
+  # but cleaning any generated recipe files and gen'd dev dir first.
+  dir=$PWD/docs/dev
+  rm -fr $dir
 else
   set +x
   echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', 'archive',
-  or 'dev-recipes'"
+  'dev-recipes' or 'dev-recipes-scrub'"
   exit 2
 fi
 
@@ -76,6 +81,13 @@ mkdir -p $dir/_downloads
 #  # Force recreation of recipes
 #  rm source/recipes/*.md5
 #fi
+if [[ $1 = "dev-recipes-scrub" ]] ; then
+  # Force recreation of recipes
+  rm source/recipes/*.md5
+  rm source/recipes/*.ipynb
+  rm source/recipes/*_codeobj.pickle
+  rm source/recipes/*_recipe.rst
+fi
 
 export CF_DOCS_MODE=$1
 
@@ -164,11 +176,11 @@ if [[ $1 = "latest" ]] ; then
   cd $dir
   git add \
           *.html \
-	  class/*.html \
-	  function/*.html \
-	  method/*.html \
-	  attribute/*.html \
-	  recipes/*.html \
+          class/*.html \
+          function/*.html \
+          method/*.html \
+          attribute/*.html \
+          recipes/*.html \
           *.inv \
           *.js \
           _static \
@@ -185,4 +197,3 @@ fi
 set +x
 
 echo PYTHONPATH=$PYTHONPATH
-
