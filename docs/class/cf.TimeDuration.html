@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -136,8 +134,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.TimeDuration">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">TimeDuration</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">units=None</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/timeduration.py#L55-L1693"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">TimeDuration</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">units=None</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/timeduration.py#L55-L1691"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A duration of time.</p>
 <p>The duration of time is a number of either calendar years,
 calendar months, days, hours, minutes or seconds.</p>
@@ -200,7 +198,7 @@ the time duration instance:</p>
 </div>
 <p><strong>Comparison operations</strong></p>
 <p>Comparison operations are defined for <a class="reference internal" href="#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> objects,
-<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and numbers:</p>
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and numbers:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span>
 <span class="go">True</span>
@@ -245,7 +243,7 @@ the time duration instance:</p>
 <p><strong>Arithmetic operations</strong></p>
 <p>Arithmetic operations are defined for <a class="reference internal" href="#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> objects,
 date-time-like objects (such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>,
-<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, etc.), <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, etc.), <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and
 numbers:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF TimeDuration: P92D (Y-M-D 00:00:00)&gt;</span>
@@ -374,13 +372,13 @@ object.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>Instances, <code class="docutils literal notranslate"><span class="pre">x</span></code>, of following types are all examples of
 data-like objects (because <code class="docutils literal notranslate"><span class="pre">cf.Data(x)</span></code> creates a
-valid <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>,
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>,
+valid <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>,
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>,
 <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>, optional</dt><dd><blockquote>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>, optional</dt><dd><blockquote>
 <div><p>The units of the time duration. Required if, and only if,
 <em>duration</em> is not a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object which already
 contains the units. Units must be one of calendar years,
@@ -395,7 +393,7 @@ calendar months, days, hours, minutes or seconds.</p>
 </dl>
 </div></blockquote>
 <dl>
-<dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The offset used when creating, with the <a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
+<dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The offset used when creating, with the <a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
 time interval containing a given date-time.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -512,22 +510,22 @@ the time duration is at least 1 minute</p>
 <td><p>Used if copy.deepcopy is called.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__repr__.html#cf.TimeDuration.__repr__" title="cf.TimeDuration.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__str__.html#cf.TimeDuration.__str__" title="cf.TimeDuration.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>“Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>“Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__abs__.html#cf.TimeDuration.__abs__" title="cf.TimeDuration.__abs__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__abs__</span></code></a></p></td>
 <td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__bool__.html#cf.TimeDuration.__bool__" title="cf.TimeDuration.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
-<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
+<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__neg__.html#cf.TimeDuration.__neg__" title="cf.TimeDuration.__neg__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__neg__</span></code></a></p></td>
 <td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__int__.html#cf.TimeDuration.__int__" title="cf.TimeDuration.__int__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></a></p></td>
-<td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__ge__.html#cf.TimeDuration.__ge__" title="cf.TimeDuration.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></p></td>
 <td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
@@ -599,7 +597,7 @@ the time duration is at least 1 minute</p>
 <td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__array__.html#cf.TimeDuration.__array__" title="cf.TimeDuration.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
-<td><p>Returns a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array representing the time duration.</p></td>
+<td><p>Returns a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array representing the time duration.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.__dask_tokenize__.html#cf.TimeDuration.__dask_tokenize__" title="cf.TimeDuration.__dask_tokenize__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__dask_tokenize__</span></code></a></p></td>
 <td><p>Return a hashable value fully representative of the object.</p></td>
@@ -620,7 +618,7 @@ the time duration is at least 1 minute</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

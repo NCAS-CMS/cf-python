@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cheat Sheet" href="cheat_sheet.html" />
-    <link rel="prev" title="CF data model" href="cf_data_model.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -94,7 +92,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="cf_data_model.html" title="previous chapter"><strong>CF data model</strong></a></li>
+      <li>Previous: <a href="introduction.html" title="previous chapter"><strong>Introduction</strong></a></li>
       <li>Next: <a href="cheat_sheet.html" title="next chapter"><strong>Cheat Sheet</strong></a></li>
   </ul></li>
 </ul>
@@ -130,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.16.2 for version 1.11 of the CF conventions.</p>
+<p>Version 3.17.0 for version 1.12 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id19"><strong>Operating systems</strong></a></p></li>
@@ -162,7 +160,7 @@ Windows Subsystem for Linux (WSL)</a>.</p>
 </section>
 <section id="python-versions">
 <span id="id3"></span><h2><a class="toc-backref" href="#id20"><strong>Python versions</strong></a><a class="headerlink" href="#python-versions" title="Permalink to this headline">¶</a></h2>
-<p>The cf package is only for Python 3.8 or newer.</p>
+<p>The cf package is only for Python 3.9 or newer.</p>
 <hr class="docutils" />
 </section>
 <section id="pip">
@@ -214,12 +212,12 @@ details.</p>
 <section id="conda">
 <span id="id6"></span><h2><a class="toc-backref" href="#id23"><strong>conda</strong></a><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
 <p>To install cf with all of its <a class="reference internal" href="#required"><span class="std std-ref">required</span></a> and
-<a class="reference internal" href="#optional"><span class="std std-ref">optional</span></a> dependencies, and the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot
+<a class="reference internal" href="#optional"><span class="std std-ref">optional</span></a> dependencies, and the <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/">cf-plot
 visualisation package</a>, run:</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id18" title="Permalink to this code">¶</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cf-python<span class="w"> </span>cf-plot<span class="w"> </span>udunits2
-<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.0.0&quot;</span>
+<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.7.0&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -235,7 +233,7 @@ properly, although the defaults are usually sufficient.</p>
 <ol class="arabic">
 <li><p>Download the cf package from <a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p></li>
 <li><p>Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
-you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.16.2</span></code>):</p>
+you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.17.0</span></code>):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tar<span class="w"> </span>zxvf<span class="w"> </span>cf-python-&lt;version&gt;.tar.gz
 <span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cf-python-&lt;version&gt;
 </pre></div>
@@ -284,15 +282,16 @@ files</span></a>, and</p></li>
 <section id="required">
 <span id="id10"></span><h3><a class="toc-backref" href="#id27">Required</a><a class="headerlink" href="#required" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.8.0 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, 1.22.0 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/dask/">dask</a>, 2022.12.1 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.6.5 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.2 or newer
+<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.9.0 or newer.</p></li>
+<li><p><a class="reference external" href="http://www.numpy.org">numpy</a>, versions 2.0.0 or newer.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/dask">dask</a>, version 2025.2.0 or newer up to
+2025.3.0 inclusive.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.7.2 or newer.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.4 or newer
 (note that this package may be installed with netCDF4).</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/scipy">scipy</a>, version 1.10.0 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.11.1.0 or up to,
-but not including, 1.11.2.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.12.1.0 or up to,
+but not including, 1.12.2.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.7 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/packaging/">packaging</a>, version 20.0 or newer.</p></li>
@@ -326,8 +325,8 @@ environments for which these features are not required.</p>
 <ul>
 <li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">esmpy</a>, previously
 named <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> with the old module name also being accepted for import,
-version 8.0.0 or newer. This is easily installed via conda with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.0.0&quot;</span>
+version 8.7.0 or newer. This is easily installed via conda with</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.7.0&quot;</span>
 </pre></div>
 </div>
 <p>or may be installed from source.</p>
@@ -338,6 +337,13 @@ containing a given value</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://pypi.org/project/matplotlib">matplotlib</a>, version 3.0.0
 or newer.</p></li>
+</ul>
+<p class="rubric">Active storage collapses</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/NCAS-CMS/PyActiveStorage">activestorage</a>. This
+library is not yet in PyPi (it will be soon), so in the interim you
+must use a copy of the <code class="docutils literal notranslate"><span class="pre">pyfive</span></code> branch of the
+<a class="reference external" href="https://github.com/NCAS-CMS/PyActiveStorage">https://github.com/NCAS-CMS/PyActiveStorage</a> repository.</p></li>
 </ul>
 <hr class="docutils" />
 </section>
@@ -365,7 +371,7 @@ or newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

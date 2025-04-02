@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.cull_graph<a class="headerlink" href="#cf-data-cull-graph" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.cull_graph">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">cull_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/data/data.py#L11432-L11472"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.cull_graph" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">cull_graph</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.cull_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove unnecessary tasks from the dask graph in-place.</p>
 <p><strong>Performance</strong></p>
 <p>An unnecessary task is one which does not contribute to the
@@ -146,32 +144,43 @@ computed result. Such tasks are always automatically removed
 improve performance by reducing the amount of work done in
 later steps.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference external" href="https://docs.dask.org/en/latest/optimize.html#dask.optimization.cull" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.optimization.cull</span></code></a></p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">chunks</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">chunks</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">to_dask_array</span><span class="p">()</span><span class="o">.</span><span class="n">dask</span><span class="p">)</span>
-<span class="go">{(&#39;array-21ea057f160746a3d3f0943bba945460&#39;, 0): array([1, 2, 3]),</span>
-<span class="go"> (&#39;array-21ea057f160746a3d3f0943bba945460&#39;, 1): array([4, 5]),</span>
-<span class="go"> (&#39;getitem-3e4edac0a632402f6b45923a6b9d215f&#39;,</span>
-<span class="go">  0): (&lt;function dask.array.chunk.getitem(obj, index)&gt;, (&#39;array-21ea057f160746a3d3f0943bba945460&#39;,</span>
-<span class="go">   0), (slice(0, 2, 1),))}</span>
+<span class="go">{(&#39;array-729a27a557981dd627b6c07e8ef93250&#39;, 0): array([1, 2, 3]),</span>
+<span class="go"> (&#39;array-729a27a557981dd627b6c07e8ef93250&#39;, 1): array([4, 5]),</span>
+<span class="go"> (&#39;getitem-9890f07ccf98df4ab5231fbd87792f74&#39;,</span>
+<span class="go">  0): &lt;Task (&#39;getitem-9890f07ccf98df4ab5231fbd87792f74&#39;, 0) getitem(...)&gt;,</span>
+<span class="go"> (&#39;cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c&#39;,</span>
+<span class="go">  0): &lt;Task (&#39;cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c&#39;, 0) cfdm_harden_mask(...)&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">cull_graph</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">to_dask_array</span><span class="p">()</span><span class="o">.</span><span class="n">dask</span><span class="p">)</span>
-<span class="go">{(&#39;getitem-3e4edac0a632402f6b45923a6b9d215f&#39;,</span>
-<span class="go">  0): (&lt;function dask.array.chunk.getitem(obj, index)&gt;, (&#39;array-21ea057f160746a3d3f0943bba945460&#39;,</span>
-<span class="go">   0), (slice(0, 2, 1),)),</span>
-<span class="go"> (&#39;array-21ea057f160746a3d3f0943bba945460&#39;, 0): array([1, 2, 3])}</span>
+<span class="go">{(&#39;getitem-9890f07ccf98df4ab5231fbd87792f74&#39;,</span>
+<span class="go">  0): &lt;Task (&#39;getitem-9890f07ccf98df4ab5231fbd87792f74&#39;, 0) getitem(...)&gt;,</span>
+<span class="go"> (&#39;array-729a27a557981dd627b6c07e8ef93250&#39;, 0): array([1, 2, 3]),</span>
+<span class="go"> (&#39;cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c&#39;,</span>
+<span class="go">  0): &lt;Task (&#39;cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c&#39;, 0) cfdm_harden_mask(...)&gt;}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -186,7 +195,7 @@ later steps.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

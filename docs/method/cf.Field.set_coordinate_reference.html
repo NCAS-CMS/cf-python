@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.set_coordinate_reference<a class="headerlink" href="#cf-field-set-coordinate-reference" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_coordinate_reference">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">set_coordinate_reference</code><span class="sig-paren">(</span><em class="sig-param">coordinate_reference</em>, <em class="sig-param">key=None</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">strict=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/mixin/fielddomain.py#L2791-L2870"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_coordinate_reference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">set_coordinate_reference</code><span class="sig-paren">(</span><em class="sig-param">coordinate_reference</em>, <em class="sig-param">key=None</em>, <em class="sig-param">parent=None</em>, <em class="sig-param">strict=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/mixin/fielddomain.py#L2861-L2940"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_coordinate_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a coordinate reference construct.</p>
 <p>By default, this is equivalent to using the <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>
 method. If, however, the <em>parent</em> parameter has been set to be
@@ -157,7 +155,7 @@ coordinate reference construct.</p>
 <dd class="field-odd"><dl>
 <dt>coordinate_reference: <a class="reference internal" href="../class/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a></dt><dd><p>The coordinate reference construct to be inserted.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the
 construct. If not set then a new, unique identifier is
 created automatically. If the identifier already
 exists then the existing construct will be replaced.</p>
@@ -169,7 +167,7 @@ exists then the existing construct will be replaced.</p>
 <dt>parent: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code>, optional</dt><dd><p>A field or domain construct that contains the new
 coordinate reference construct.</p>
 </dd>
-<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then allow non-strict identities for
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then allow non-strict identities for
 identifying coordinate and domain ancillary metadata
 constructs.</p>
 </dd>
@@ -177,7 +175,7 @@ constructs.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The construct identifier for the coordinate reference
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The construct identifier for the coordinate reference
 construct.</p>
 </dd>
 </dl>
@@ -195,7 +193,7 @@ construct.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

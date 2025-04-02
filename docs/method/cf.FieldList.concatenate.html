@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.FieldList.concatenate<a class="headerlink" href="#cf-fieldlist-concatenate" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.concatenate">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em>, <em class="sig-param">cull_graph=False</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/fieldlist.py#L28-L80"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.concatenate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em>, <em class="sig-param">cull_graph=False</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/fieldlist.py#L28-L80"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.concatenate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join the sequence of fields within the field list together.</p>
 <p>This is different to <a class="reference internal" href="../function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> because it does not
 account for all metadata. For example, it assumes that the
@@ -153,11 +151,11 @@ axis order is the same in each field.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The axis along which the arrays will be joined. The
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The axis along which the arrays will be joined. The
 default is 0. Note that scalar arrays are treated as
 if they were one dimensional.</p>
 </dd>
-<dt>cull_graph: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then unnecessary tasks are removed (culled)
+<dt>cull_graph: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then unnecessary tasks are removed (culled)
 from each array’s dask graph before
 concatenation. This process can have a considerable
 overhead but can sometimes improve the overall
@@ -168,16 +166,16 @@ dask graphs are not culled. See
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
 </div>
 </dd>
-<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the concatenation of data with
+<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the concatenation of data with
 invalid but otherwise equal units. By default, if any
 data array has invalid units then the concatenation
 will fail. A <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is considered to be
-invalid if its <code class="xref py py-obj docutils literal notranslate"><span class="pre">isvalid</span></code> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+invalid if its <code class="xref py py-obj docutils literal notranslate"><span class="pre">isvalid</span></code> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.1.</span></p>
 </div>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then make copies of the Field
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then make copies of the Field
 constructs, prior to the concatenation, thereby
 ensuring that the input constructs are not changed by
 the concatenation process. If False then some or all
@@ -209,7 +207,7 @@ the fields contained in the input field list.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

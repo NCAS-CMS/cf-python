@@ -1,0 +1,1337 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.DomainTopology &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.DomainTopology.dump" href="../method/cf.DomainTopology.dump.html" />
+    <link rel="prev" title="cf.DomainAxis.__str__" href="../method/cf.DomainAxis.__str__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.DomainAxis.__str__.html" title="previous chapter">cf.DomainAxis.__str__</a></li>
+      <li>Next: <a href="../method/cf.DomainTopology.dump.html" title="next chapter">cf.DomainTopology.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-domaintopology">
+<span id="id1"></span><h1>cf.DomainTopology<a class="headerlink" href="#cf-domaintopology" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.DomainTopology">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainTopology</code><span class="sig-paren">(</span><em class="sig-param">cell=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domaintopology.py#L6-L240"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainTopology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domaintopology.DomainTopology</span></code></p>
+<p>A domain topology construct of the CF data model.</p>
+<p>A domain topology construct defines the geospatial topology of
+cells arranged in two or three dimensions in real space but
+indexed by a single (discrete) domain axis construct, and at most
+one domain topology construct may be associated with any such
+domain axis. The topology describes topological relationships
+between the cells - spatial relationships which do not depend on
+the cell locations - and is represented by an undirected graph,
+i.e. a mesh in which pairs of nodes are connected by links. Each
+node has a unique arbitrary identity that is independent of its
+spatial location, and different nodes may be spatially co-located.</p>
+<p>The topology may only describe cells that have a common spatial
+dimensionality, one of:</p>
+<ul class="simple">
+<li><p>Point: A point is zero-dimensional and has no boundary vertices.</p></li>
+<li><dl class="simple">
+<dt>Edge: An edge is one-dimensional and corresponds to a line</dt><dd><p>connecting two boundary vertices.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Face: A face is two-dimensional and corresponds to a surface</dt><dd><p>enclosed by a set of edges.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Each type of cell implies a restricted topology for which only
+some kinds of mesh are allowed. For point cells, every node
+corresponds to exactly one cell; and two cells have a topological
+relationship if and only if their nodes are connected by a mesh
+link. For edge and face cells, every node corresponds to a
+boundary vertex of a cell; the same node can represent vertices in
+multiple cells; every link in the mesh connects two cell boundary
+vertices; and two cells have a topological relationship if and
+only if they share at least one node.</p>
+<p>A domain topology construct contains an array defining the mesh,
+and properties to describe it. There must be a property indicating
+the spatial dimensionality of the cells. The array values comprise
+the node identities, and all array elements that refer to the same
+node must contain the same value, which must differ from any other
+value in the array. The array spans the domain axis construct and
+also has a ragged dimension, whose function depends on the spatial
+dimensionality of the cells.</p>
+<p>For each point cell, the first element along the ragged dimension
+contains the node identity of the cell, and the following elements
+contain in arbitrary order the identities of all the cells to
+which it is connected by a mesh link.</p>
+<p>For each edge or face cell, the elements along the ragged
+dimension contain the node identities of the boundary vertices of
+the cell, in the same order that the boundary vertices are stored
+by the auxiliary coordinate constructs. Each boundary vertex
+except the last is connected by a mesh link to the next vertex
+along the ragged dimension, and the last vertex is connected to
+the first.</p>
+<p>When a domain topology construct is present it is considered to be
+definitive and must be used in preference to the topology implied
+by inspection of any other constructs, which is not guaranteed to
+be the same.</p>
+<p>In CF-netCDF a domain topology construct can only be provided for
+a UGRID mesh topology variable. The information in the construct
+array is supplied by the UGRID “edge_nodes_connectivity” variable
+(for edge cells) or “face_nodes_connectivity” variable (for face
+cells). The topology for node cells may be provided by any of
+these three UGRID variables. The integer indices contained in the
+UGRID variable may be used as the mesh node identities, although
+the CF data model attaches no significance to the values other
+than the fact that some values are the same as others. The spatial
+dimensionality property is provided by the “location” attribute of
+a variable that references the UGRID mesh topology variable,
+i.e. a data variable or a UGRID location index set variable.</p>
+<p>A single UGRID mesh topology defines multiple domain constructs
+and defines how they relate to each other. For instance, when
+“face_node_connectivity” and “edge_node_connectivity” variables
+are both present there are three implied domain constructs - one
+each for face, edge and point cells - all of which have the same
+mesh and so are explicitly linked (e.g. it is known which edge
+cells define each face cell). The CF data model has no mechanism
+for explicitly recording such relationships between multiple
+domain constructs, however whether or not two domains have the
+same mesh may be reliably determined by inspection, thereby
+allowing the creation of netCDF datasets containing UGRID mesh
+topology variables.</p>
+<p>The restrictions on the type of mesh that may be used with a given
+cell spatial dimensionality excludes some meshes which can be
+described by an undirected graph, but is consistent with UGRID
+encoding within CF-netCDF. UGRID also describes meshes for
+three-dimensional volume cells that correspond to a volume
+enclosed by a set of faces, but how the nodes relate to volume
+boundary vertices is undefined and so volume cells are currently
+omitted from the CF data model.</p>
+<p>See CF Appendix I “The CF Data Model”.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the UGRID mesh topology variable may
+be accessed with the <a class="reference internal" href="../method/cf.DomainTopology.nc_set_variable.html#cf.DomainTopology.nc_set_variable" title="cf.DomainTopology.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.DomainTopology.nc_get_variable.html#cf.DomainTopology.nc_get_variable" title="cf.DomainTopology.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>,
+<a class="reference internal" href="../method/cf.DomainTopology.nc_del_variable.html#cf.DomainTopology.nc_del_variable" title="cf.DomainTopology.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and <a class="reference internal" href="../method/cf.DomainTopology.nc_has_variable.html#cf.DomainTopology.nc_has_variable" title="cf.DomainTopology.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.0.</span></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>cell: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The cell type that indicates the spatial dimensionality
+of the cells, one of <code class="docutils literal notranslate"><span class="pre">'point'</span></code> (a 0-d point with no
+boundary vertices), <code class="docutils literal notranslate"><span class="pre">'edge'</span></code> (a 1-d line connecting
+two boundary vertices), or <code class="docutils literal notranslate"><span class="pre">'face'</span></code> (a 2-d surface
+enclosed by a set of edges).</p>
+</dd>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.DomainTopology.set_properties.html#cf.DomainTopology.set_properties" title="cf.DomainTopology.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.DomainTopology.set_property.html#cf.DomainTopology.set_property" title="cf.DomainTopology.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'face</span> <span class="pre">to</span> <span class="pre">node</span> <span class="pre">mapping'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cf.DomainTopology.set_data.html#cf.DomainTopology.set_data" title="cf.DomainTopology.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.DomainTopology" title="cf.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.DomainTopology" title="cf.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.DomainTopology" title="cf.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.DomainTopology(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.dump.html#cf.DomainTopology.dump" title="cf.DomainTopology.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the domain topology construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.identity.html#cf.DomainTopology.identity" title="cf.DomainTopology.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.identities.html#cf.DomainTopology.identities" title="cf.DomainTopology.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.inspect.html#cf.DomainTopology.inspect" title="cf.DomainTopology.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the object for debugging.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.construct_type.html#cf.DomainTopology.construct_type" title="cf.DomainTopology.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.id.html#cf.DomainTopology.id" title="cf.DomainTopology.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the DomainTopology object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="topology">
+<h2>Topology<a class="headerlink" href="#topology" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.del_cell.html#cf.DomainTopology.del_cell" title="cf.DomainTopology.del_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_cell</span></code></a></p></td>
+<td><p>Remove the cell type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.get_cell.html#cf.DomainTopology.get_cell" title="cf.DomainTopology.get_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell</span></code></a></p></td>
+<td><p>Return the cell type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.has_cell.html#cf.DomainTopology.has_cell" title="cf.DomainTopology.has_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_cell</span></code></a></p></td>
+<td><p>Whether the cell type has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.set_cell.html#cf.DomainTopology.set_cell" title="cf.DomainTopology.set_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell</span></code></a></p></td>
+<td><p>Set the cell type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.normalise.html#cf.DomainTopology.normalise" title="cf.DomainTopology.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a></p></td>
+<td><p>Normalise the data values.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.cell.html#cf.DomainTopology.cell" title="cf.DomainTopology.cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell</span></code></a></p></td>
+<td><p>The cell type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match_by_identity.html#cf.DomainTopology.match_by_identity" title="cf.DomainTopology.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
+<td><p>Whether or not the construct identity satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match_by_naxes.html#cf.DomainTopology.match_by_naxes" title="cf.DomainTopology.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></p></td>
+<td><p>Whether or not the data has a given dimensionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match_by_ncvar.html#cf.DomainTopology.match_by_ncvar" title="cf.DomainTopology.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p></td>
+<td><p>Whether or not the netCDF variable name satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match_by_property.html#cf.DomainTopology.match_by_property" title="cf.DomainTopology.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p></td>
+<td><p>Whether or not properties satisfy conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match_by_units.html#cf.DomainTopology.match_by_units" title="cf.DomainTopology.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></p></td>
+<td><p>Whether or not the construct has given units.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.del_property.html#cf.DomainTopology.del_property" title="cf.DomainTopology.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.get_property.html#cf.DomainTopology.get_property" title="cf.DomainTopology.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Get a CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.has_property.html#cf.DomainTopology.has_property" title="cf.DomainTopology.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.set_property.html#cf.DomainTopology.set_property" title="cf.DomainTopology.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.properties.html#cf.DomainTopology.properties" title="cf.DomainTopology.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.clear_properties.html#cf.DomainTopology.clear_properties" title="cf.DomainTopology.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.del_properties.html#cf.DomainTopology.del_properties" title="cf.DomainTopology.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.set_properties.html#cf.DomainTopology.set_properties" title="cf.DomainTopology.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.add_offset.html#cf.DomainTopology.add_offset" title="cf.DomainTopology.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></p></td>
+<td><p>The add_offset CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.calendar.html#cf.DomainTopology.calendar" title="cf.DomainTopology.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p></td>
+<td><p>The calendar CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.comment.html#cf.DomainTopology.comment" title="cf.DomainTopology.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></p></td>
+<td><p>The comment CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology._FillValue.html#cf.DomainTopology._FillValue" title="cf.DomainTopology._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a></p></td>
+<td><p>The _FillValue CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.history.html#cf.DomainTopology.history" title="cf.DomainTopology.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></p></td>
+<td><p>The history CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.leap_month.html#cf.DomainTopology.leap_month" title="cf.DomainTopology.leap_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_month</span></code></a></p></td>
+<td><p>The leap_month CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.leap_year.html#cf.DomainTopology.leap_year" title="cf.DomainTopology.leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_year</span></code></a></p></td>
+<td><p>The leap_year CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.long_name.html#cf.DomainTopology.long_name" title="cf.DomainTopology.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a></p></td>
+<td><p>The long_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.missing_value.html#cf.DomainTopology.missing_value" title="cf.DomainTopology.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></p></td>
+<td><p>The missing_value CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.month_lengths.html#cf.DomainTopology.month_lengths" title="cf.DomainTopology.month_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month_lengths</span></code></a></p></td>
+<td><p>The month_lengths CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.scale_factor.html#cf.DomainTopology.scale_factor" title="cf.DomainTopology.scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factor</span></code></a></p></td>
+<td><p>The scale_factor CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.standard_name.html#cf.DomainTopology.standard_name" title="cf.DomainTopology.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p></td>
+<td><p>The standard_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.units.html#cf.DomainTopology.units" title="cf.DomainTopology.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>The units CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.valid_max.html#cf.DomainTopology.valid_max" title="cf.DomainTopology.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a></p></td>
+<td><p>The valid_max CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.valid_min.html#cf.DomainTopology.valid_min" title="cf.DomainTopology.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a></p></td>
+<td><p>The valid_min CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.valid_range.html#cf.DomainTopology.valid_range" title="cf.DomainTopology.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a></p></td>
+<td><p>The valid_range CF property.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.override_units.html#cf.DomainTopology.override_units" title="cf.DomainTopology.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
+<td><p>Override the units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.override_calendar.html#cf.DomainTopology.override_calendar" title="cf.DomainTopology.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
+<td><p>Override the calendar of date-time units.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.Units.html#cf.DomainTopology.Units" title="cf.DomainTopology.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.array.html#cf.DomainTopology.array" title="cf.DomainTopology.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.Data.html#cf.DomainTopology.Data" title="cf.DomainTopology.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.data.html#cf.DomainTopology.data" title="cf.DomainTopology.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.datetime_array.html#cf.DomainTopology.datetime_array" title="cf.DomainTopology.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.datum.html#cf.DomainTopology.datum" title="cf.DomainTopology.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></p></td>
+<td><p>Return an element of the data array as a standard Python scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.dtype.html#cf.DomainTopology.dtype" title="cf.DomainTopology.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.isscalar.html#cf.DomainTopology.isscalar" title="cf.DomainTopology.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
+<td><p>True if the data array is scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.ndim.html#cf.DomainTopology.ndim" title="cf.DomainTopology.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.shape.html#cf.DomainTopology.shape" title="cf.DomainTopology.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array’s dimension sizes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.size.html#cf.DomainTopology.size" title="cf.DomainTopology.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number elements in the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.varray.html#cf.DomainTopology.varray" title="cf.DomainTopology.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
+<td><p>A numpy array view of the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.to_dask_array.html#cf.DomainTopology.to_dask_array" title="cf.DomainTopology.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__getitem__.html#cf.DomainTopology.__getitem__" title="cf.DomainTopology.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.del_data.html#cf.DomainTopology.del_data" title="cf.DomainTopology.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.get_data.html#cf.DomainTopology.get_data" title="cf.DomainTopology.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.has_data.html#cf.DomainTopology.has_data" title="cf.DomainTopology.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.set_data.html#cf.DomainTopology.set_data" title="cf.DomainTopology.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rearranging elements</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.flatten.html#cf.DomainTopology.flatten" title="cf.DomainTopology.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
+<td><p>Flatten axes of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.flip.html#cf.DomainTopology.flip" title="cf.DomainTopology.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
+<td><p>Flip (reverse the direction of) data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.insert_dimension.html#cf.DomainTopology.insert_dimension" title="cf.DomainTopology.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.roll.html#cf.DomainTopology.roll" title="cf.DomainTopology.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
+<td><p>Roll the data along one or more axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.squeeze.html#cf.DomainTopology.squeeze" title="cf.DomainTopology.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.swapaxes.html#cf.DomainTopology.swapaxes" title="cf.DomainTopology.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
+<td><p>Interchange two axes of an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.transpose.html#cf.DomainTopology.transpose" title="cf.DomainTopology.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Expanding the data</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.halo.html#cf.DomainTopology.halo" title="cf.DomainTopology.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.pad_missing.html#cf.DomainTopology.pad_missing" title="cf.DomainTopology.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
+<td><p>Pad an axis with missing data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Data array mask</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.apply_masking.html#cf.DomainTopology.apply_masking" title="cf.DomainTopology.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.count.html#cf.DomainTopology.count" title="cf.DomainTopology.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.count_masked.html#cf.DomainTopology.count_masked" title="cf.DomainTopology.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.fill_value.html#cf.DomainTopology.fill_value" title="cf.DomainTopology.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<td><p>Return the data array missing data value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.filled.html#cf.DomainTopology.filled" title="cf.DomainTopology.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
+<td><p>Replace masked elements with a fill value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.masked_invalid.html#cf.DomainTopology.masked_invalid" title="cf.DomainTopology.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.binary_mask.html#cf.DomainTopology.binary_mask" title="cf.DomainTopology.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
+<td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.hardmask.html#cf.DomainTopology.hardmask" title="cf.DomainTopology.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
+<td><p>Whether the mask is hard (True) or soft (False).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.mask.html#cf.DomainTopology.mask" title="cf.DomainTopology.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>The mask of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<p class="rubric"><em>Changing data values</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__setitem__.html#cf.DomainTopology.__setitem__" title="cf.DomainTopology.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.masked_invalid.html#cf.DomainTopology.masked_invalid" title="cf.DomainTopology.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.subspace.html#cf.DomainTopology.subspace" title="cf.DomainTopology.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<td><p>Return a new variable whose data is subspaced.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.where.html#cf.DomainTopology.where" title="cf.DomainTopology.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<td><p>Set data array elements depending on a condition.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Miscellaneous</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.rechunk.html#cf.DomainTopology.rechunk" title="cf.DomainTopology.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.close.html#cf.DomainTopology.close" title="cf.DomainTopology.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.convert_reference_time.html#cf.DomainTopology.convert_reference_time" title="cf.DomainTopology.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
+<td><p>Convert reference time data values to have new units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.cyclic.html#cf.DomainTopology.cyclic" title="cf.DomainTopology.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<td><p>Get or set the cyclicity of an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.period.html#cf.DomainTopology.period" title="cf.DomainTopology.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>Return or set the period of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.iscyclic.html#cf.DomainTopology.iscyclic" title="cf.DomainTopology.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<td><p>Whether or not a given axis is cyclic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.isperiodic.html#cf.DomainTopology.isperiodic" title="cf.DomainTopology.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
+<td><p>True if a given axis is periodic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.get_original_filenames.html#cf.DomainTopology.get_original_filenames" title="cf.DomainTopology.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.has_bounds.html#cf.DomainTopology.has_bounds" title="cf.DomainTopology.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.persist.html#cf.DomainTopology.persist" title="cf.DomainTopology.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist data into memory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.concatenate.html#cf.DomainTopology.concatenate" title="cf.DomainTopology.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cf.DomainTopology" title="cf.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.copy.html#cf.DomainTopology.copy" title="cf.DomainTopology.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.creation_commands.html#cf.DomainTopology.creation_commands" title="cf.DomainTopology.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Returns the commands to create the domain topology construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.equals.html#cf.DomainTopology.equals" title="cf.DomainTopology.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.to_memory.html#cf.DomainTopology.to_memory" title="cf.DomainTopology.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.uncompress.html#cf.DomainTopology.uncompress" title="cf.DomainTopology.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.T.html#cf.DomainTopology.T" title="cf.DomainTopology.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.X.html#cf.DomainTopology.X" title="cf.DomainTopology.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.Y.html#cf.DomainTopology.Y" title="cf.DomainTopology.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.Z.html#cf.DomainTopology.Z" title="cf.DomainTopology.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.id.html#cf.DomainTopology.id" title="cf.DomainTopology.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the DomainTopology object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arccos.html#cf.DomainTopology.arccos" title="cf.DomainTopology.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arccosh.html#cf.DomainTopology.arccosh" title="cf.DomainTopology.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arcsin.html#cf.DomainTopology.arcsin" title="cf.DomainTopology.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arcsinh.html#cf.DomainTopology.arcsinh" title="cf.DomainTopology.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arctan.html#cf.DomainTopology.arctan" title="cf.DomainTopology.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.arctanh.html#cf.DomainTopology.arctanh" title="cf.DomainTopology.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.cos.html#cf.DomainTopology.cos" title="cf.DomainTopology.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.cosh.html#cf.DomainTopology.cosh" title="cf.DomainTopology.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.sin.html#cf.DomainTopology.sin" title="cf.DomainTopology.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.sinh.html#cf.DomainTopology.sinh" title="cf.DomainTopology.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.tan.html#cf.DomainTopology.tan" title="cf.DomainTopology.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.tanh.html#cf.DomainTopology.tanh" title="cf.DomainTopology.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
+<td><p>Take the hyperbolic tangent of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rounding and truncation</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.ceil.html#cf.DomainTopology.ceil" title="cf.DomainTopology.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></p></td>
+<td><p>The ceiling of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.clip.html#cf.DomainTopology.clip" title="cf.DomainTopology.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></p></td>
+<td><p>Limit the values in the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.floor.html#cf.DomainTopology.floor" title="cf.DomainTopology.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></p></td>
+<td><p>Floor the data array, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.rint.html#cf.DomainTopology.rint" title="cf.DomainTopology.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></p></td>
+<td><p>Round the data to the nearest integer, element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.round.html#cf.DomainTopology.round" title="cf.DomainTopology.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></p></td>
+<td><p>Round the data to the given number of decimals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.trunc.html#cf.DomainTopology.trunc" title="cf.DomainTopology.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></p></td>
+<td><p>Truncate the data, element-wise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Statistical collapses</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.max.html#cf.DomainTopology.max" title="cf.DomainTopology.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.mean.html#cf.DomainTopology.mean" title="cf.DomainTopology.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
+<td><p>The unweighted mean the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.mid_range.html#cf.DomainTopology.mid_range" title="cf.DomainTopology.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
+<td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.min.html#cf.DomainTopology.min" title="cf.DomainTopology.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.range.html#cf.DomainTopology.range" title="cf.DomainTopology.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
+<td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.sample_size.html#cf.DomainTopology.sample_size" title="cf.DomainTopology.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
+<td><p>The number of non-missing data elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.sum.html#cf.DomainTopology.sum" title="cf.DomainTopology.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
+<td><p>The sum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.sd.html#cf.DomainTopology.sd" title="cf.DomainTopology.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.var.html#cf.DomainTopology.var" title="cf.DomainTopology.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.standard_deviation.html#cf.DomainTopology.standard_deviation" title="cf.DomainTopology.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
+<td><p>The unweighted sample standard deviation of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.variance.html#cf.DomainTopology.variance" title="cf.DomainTopology.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p></td>
+<td><p>The unweighted sample variance of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.maximum.html#cf.DomainTopology.maximum" title="cf.DomainTopology.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a></p></td>
+<td><p>The maximum of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.minimum.html#cf.DomainTopology.minimum" title="cf.DomainTopology.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a></p></td>
+<td><p>The minimum of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Exponential and logarithmic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.exp.html#cf.DomainTopology.exp" title="cf.DomainTopology.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
+<td><p>The exponential of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.log.html#cf.DomainTopology.log" title="cf.DomainTopology.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
+<td><p>The logarithm of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="date-time-operations">
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.day.html#cf.DomainTopology.day" title="cf.DomainTopology.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
+<td><p>The day of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.datetime_array.html#cf.DomainTopology.datetime_array" title="cf.DomainTopology.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.hour.html#cf.DomainTopology.hour" title="cf.DomainTopology.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></p></td>
+<td><p>The hour of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.minute.html#cf.DomainTopology.minute" title="cf.DomainTopology.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></p></td>
+<td><p>The minute of each date-time data array element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.month.html#cf.DomainTopology.month" title="cf.DomainTopology.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></p></td>
+<td><p>The month of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.reference_datetime.html#cf.DomainTopology.reference_datetime" title="cf.DomainTopology.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></p></td>
+<td><p>The reference date-time of units of elapsed time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.second.html#cf.DomainTopology.second" title="cf.DomainTopology.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></p></td>
+<td><p>The second of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.year.html#cf.DomainTopology.year" title="cf.DomainTopology.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></p></td>
+<td><p>The year of each date-time data array element.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logic-functions">
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Truth value testing</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.all.html#cf.DomainTopology.all" title="cf.DomainTopology.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
+<td><p>Test whether all data elements evaluate to True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.any.html#cf.DomainTopology.any" title="cf.DomainTopology.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></p></td>
+<td><p>Test whether any data elements evaluate to True.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.allclose.html#cf.DomainTopology.allclose" title="cf.DomainTopology.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
+<td><p>Test whether all data are element-wise equal to other, broadcastable data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.equals.html#cf.DomainTopology.equals" title="cf.DomainTopology.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.equivalent.html#cf.DomainTopology.equivalent" title="cf.DomainTopology.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two constructs are equal, False otherwise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Set operations</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.unique.html#cf.DomainTopology.unique" title="cf.DomainTopology.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
+<td><p>The unique elements of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_del_variable.html#cf.DomainTopology.nc_del_variable" title="cf.DomainTopology.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_get_variable.html#cf.DomainTopology.nc_get_variable" title="cf.DomainTopology.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_has_variable.html#cf.DomainTopology.nc_has_variable" title="cf.DomainTopology.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_set_variable.html#cf.DomainTopology.nc_set_variable" title="cf.DomainTopology.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_clear_hdf5_chunksizes.html#cf.DomainTopology.nc_clear_hdf5_chunksizes" title="cf.DomainTopology.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_hdf5_chunksizes.html#cf.DomainTopology.nc_hdf5_chunksizes" title="cf.DomainTopology.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_set_hdf5_chunksizes.html#cf.DomainTopology.nc_set_hdf5_chunksizes" title="cf.DomainTopology.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.file_directories.html#cf.DomainTopology.file_directories" title="cf.DomainTopology.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.replace_directory.html#cf.DomainTopology.replace_directory" title="cf.DomainTopology.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h2>NetCDF<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_del_variable.html#cf.DomainTopology.nc_del_variable" title="cf.DomainTopology.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_get_variable.html#cf.DomainTopology.nc_get_variable" title="cf.DomainTopology.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_has_variable.html#cf.DomainTopology.nc_has_variable" title="cf.DomainTopology.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_set_variable.html#cf.DomainTopology.nc_set_variable" title="cf.DomainTopology.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_variable_groups.html#cf.DomainTopology.nc_variable_groups" title="cf.DomainTopology.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_clear_variable_groups.html#cf.DomainTopology.nc_clear_variable_groups" title="cf.DomainTopology.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_set_variable_groups.html#cf.DomainTopology.nc_set_variable_groups" title="cf.DomainTopology.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hdf5-chunks">
+<h3>HDF5 chunks<a class="headerlink" href="#hdf5-chunks" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_hdf5_chunksizes.html#cf.DomainTopology.nc_hdf5_chunksizes" title="cf.DomainTopology.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_set_hdf5_chunksizes.html#cf.DomainTopology.nc_set_hdf5_chunksizes" title="cf.DomainTopology.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.nc_clear_hdf5_chunksizes.html#cf.DomainTopology.nc_clear_hdf5_chunksizes" title="cf.DomainTopology.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.match.html#cf.DomainTopology.match" title="cf.DomainTopology.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainTopology.dtarray.html#cf.DomainTopology.dtarray" title="cf.DomainTopology.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__deepcopy__.html#cf.DomainTopology.__deepcopy__" title="cf.DomainTopology.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__getitem__.html#cf.DomainTopology.__getitem__" title="cf.DomainTopology.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__repr__.html#cf.DomainTopology.__repr__" title="cf.DomainTopology.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.__str__.html#cf.DomainTopology.__str__" title="cf.DomainTopology.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology._docstring_special_substitutions.html#cf.DomainTopology._docstring_special_substitutions" title="cf.DomainTopology._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology._docstring_substitutions.html#cf.DomainTopology._docstring_substitutions" title="cf.DomainTopology._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology._docstring_package_depth.html#cf.DomainTopology._docstring_package_depth" title="cf.DomainTopology._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology._docstring_method_exclusions.html#cf.DomainTopology._docstring_method_exclusions" title="cf.DomainTopology._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.add_file_location</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.asdatetime.html#cf.DomainTopology.asdatetime" title="cf.DomainTopology.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.asreftime.html#cf.DomainTopology.asreftime" title="cf.DomainTopology.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.attributes.html#cf.DomainTopology.attributes" title="cf.DomainTopology.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.cfa_clear_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.cfa_del_file_substitution</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.cfa_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.cfa_update_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.chunk.html#cf.DomainTopology.chunk" title="cf.DomainTopology.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.del_file_location</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.delprop.html#cf.DomainTopology.delprop" title="cf.DomainTopology.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.dtvarray.html#cf.DomainTopology.dtvarray" title="cf.DomainTopology.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.expand_dims.html#cf.DomainTopology.expand_dims" title="cf.DomainTopology.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.get_filenames.html#cf.DomainTopology.get_filenames" title="cf.DomainTopology.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainTopology.file_locations</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.getprop.html#cf.DomainTopology.getprop" title="cf.DomainTopology.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.hasbounds.html#cf.DomainTopology.hasbounds" title="cf.DomainTopology.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.hasdata.html#cf.DomainTopology.hasdata" title="cf.DomainTopology.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.hasprop.html#cf.DomainTopology.hasprop" title="cf.DomainTopology.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.insert_data.html#cf.DomainTopology.insert_data" title="cf.DomainTopology.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.isauxiliary.html#cf.DomainTopology.isauxiliary" title="cf.DomainTopology.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.isdimension.html#cf.DomainTopology.isdimension" title="cf.DomainTopology.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.isdomainancillary.html#cf.DomainTopology.isdomainancillary" title="cf.DomainTopology.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.isfieldancillary.html#cf.DomainTopology.isfieldancillary" title="cf.DomainTopology.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.ismeasure.html#cf.DomainTopology.ismeasure" title="cf.DomainTopology.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.mask_invalid.html#cf.DomainTopology.mask_invalid" title="cf.DomainTopology.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.name.html#cf.DomainTopology.name" title="cf.DomainTopology.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.remove_data.html#cf.DomainTopology.remove_data" title="cf.DomainTopology.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.select.html#cf.DomainTopology.select" title="cf.DomainTopology.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainTopology.setprop.html#cf.DomainTopology.setprop" title="cf.DomainTopology.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainTopology.unsafe_array.html#cf.DomainTopology.unsafe_array" title="cf.DomainTopology.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

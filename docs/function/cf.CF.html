@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.abspath" href="cf.abspath.html" />
-    <link rel="prev" title="cf.TOTAL_MEMORY" href="cf.TOTAL_MEMORY.html" />
+    <link rel="prev" title="cf.active_storage_max_requests" href="cf.active_storage_max_requests.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -96,7 +94,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.TOTAL_MEMORY.html" title="previous chapter">cf.TOTAL_MEMORY</a></li>
+      <li>Previous: <a href="cf.active_storage_max_requests.html" title="previous chapter">cf.active_storage_max_requests</a></li>
       <li>Next: <a href="cf.abspath.html" title="next chapter">cf.abspath</a></li>
   </ul></li>
   </ul></li>
@@ -135,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CF<a class="headerlink" href="#cf-cf" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.CF">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CF</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/functions.py#L1138-L1146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CF" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CF</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/functions.py#L1344-L1352"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CF" title="Permalink to this definition">¶</a></dt>
 <dd><p>The version of the CF conventions.</p>
 <p>This indicates which version of the CF conventions are represented
 by this release of the cfdm package, and therefore the version can
@@ -146,7 +144,7 @@ not be changed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The version of the CF conventions represented by this
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The version of the CF conventions represented by this
 release of the cfdm package.</p>
 </dd>
 </dl>
@@ -154,7 +152,7 @@ release of the cfdm package.</p>
 </dl>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CF</span><span class="p">()</span>
-<span class="go">&#39;1.11&#39;</span>
+<span class="go">&#39;1.12&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -169,7 +167,7 @@ release of the cfdm package.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CoordinateReference.equals<a class="headerlink" href="#cf-coordinatereference-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CoordinateReference.equals">
-<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CoordinateReference.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two coordinate reference constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -171,13 +169,13 @@ checked.</p>
 </dd>
 <dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
 numbers. The default value is set by the
-<a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.atol.html#cfdm.atol" title="(in Python cfdm package v1.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a> function.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code> function.</p>
 </dd>
 <dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
 numbers. The default value is set by the
-<a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.rtol.html#cfdm.rtol" title="(in Python cfdm package v1.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code> function.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
 string equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -189,20 +187,20 @@ string equal ignoring case to one of:</p>
 <p>set for the duration of the method call only as the
 minimum cut-off for the verboseness level of displayed
 output (log) messages, regardless of the
-globally-configured <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.log_level.html#cfdm.log_level" title="(in Python cfdm package v1.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>. Note that
+globally-configured <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.log_level.html#cfdm.log_level" title="(in Python cfdm package v1.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>. Note that
 increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
 case of maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
 messages will be shown according to the value of the
-<a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.log_level.html#cfdm.log_level" title="(in Python cfdm package v1.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.log_level.html#cfdm.log_level" title="(in Python cfdm package v1.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or
 equivalent string that is set (up to a maximum of
 <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for increasing verbosity, the more
 description that is printed to convey information
 about the operation.</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
 equality is only possible with another <a class="reference internal" href="../class/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>
 instance, or a subclass of one. If <em>ignore_type</em> is
 True then <code class="docutils literal notranslate"><span class="pre">cfdm.CoordinateReference(source=other)</span></code> is
@@ -213,7 +211,7 @@ tested, rather than the <code class="docutils literal notranslate"><span class="
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two coordinate reference constructs are equal.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two coordinate reference constructs are equal.</p>
 </dd>
 </dl>
 </dd>
@@ -242,7 +240,7 @@ tested, rather than the <code class="docutils literal notranslate"><span class="
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

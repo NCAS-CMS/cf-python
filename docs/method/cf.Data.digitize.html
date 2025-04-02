@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.digitize<a class="headerlink" href="#cf-data-digitize" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.digitize">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/data/data.py#L1715-L2021"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.digitize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/data.py#L570-L876"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
 result in masked values in the output data.</p>
@@ -193,16 +191,16 @@ defines a right-open (i.e. not bounded above) bin.</p>
 </li>
 </ul>
 </dd>
-<dt>upper: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then each bin includes its upper bound but not its
+<dt>upper: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then each bin includes its upper bound but not its
 lower bound. By default the opposite is applied, i.e. each
 bin includes its lower bound but not its upper bound.</p>
 </dd>
-<dt>open_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then create left-open (i.e. not bounded below) and
+<dt>open_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then create left-open (i.e. not bounded below) and
 right-open (i.e. not bounded above) bins from the lowest
 lower bin boundary and largest upper bin boundary
 respectively. By default these bins are not created</p>
 </dd>
-<dt>closed_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then extend the most extreme open boundary by a
+<dt>closed_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then extend the most extreme open boundary by a
 small amount so that its bin includes values that are
 equal to the unadjusted boundary value. This is done by
 multiplying it by <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span> <span class="pre">epsilon</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilon</span></code>,
@@ -215,10 +213,10 @@ lowest lower bin boundary is made slightly lower.</p>
 <p>By default <em>closed_ends</em> is assumed to be True if <em>bins</em>
 is a scalar and False otherwise.</p>
 </dd>
-<dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then also return the bins in their 2-d form.</p>
+<dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then also return the bins in their 2-d form.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -298,7 +296,7 @@ non-contiguous</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

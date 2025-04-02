@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -135,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">field_ancillaries=None</em>, <em class="sig-param">cells=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/aggregate.py#L2147-L3286"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">field_ancillaries=None</em>, <em class="sig-param">cells=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/aggregate.py#L2146-L3293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -148,7 +146,7 @@ group is then aggregated to a single field construct.</p>
 aggregatable, the aggregation rules rely on field constructs (and
 their metadata constructs where applicable) being identified by
 standard name properties. However, it is sometimes the case that
-standard names are not available. In such cases the <a class="reference external" href="https://docs.python.org/3/library/functions.html#id" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute
+standard names are not available. In such cases the <a class="reference external" href="https://docs.python.org/3/library/functions.html#id" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute
 (which is not a CF property) may be set on any construct, which
 will be treated like a standard name if one doesn’t
 exist.</p>
@@ -167,7 +165,7 @@ constructs to be identified by their netCDF file variable names.</p>
 <dd class="field-odd"><dl>
 <dt>fields: sequence of <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, or sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field or domain constructs to aggregate.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -182,7 +180,7 @@ messages, regardless of the globally-configured <a class="reference internal" hr
 Note that increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of
 maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
 be shown according to the value of the <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or equivalent string
 that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
@@ -232,13 +230,13 @@ coordinate values.</p>
 </tbody>
 </table>
 </dd>
-<dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then require that aggregated field constructs
+<dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
 do not overlap (but they may share common boundary
 values). Ignored for a dimension coordinate construct that
 does not have bounds. See also the <em>contiguous</em> parameter.</p>
 </dd>
-<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that the dimension coordinates of an
+<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that the dimension coordinates of an
 aggregated field have no “gaps” (defined below) between
 neighbouring cells that came from different input fields.</p>
 <p>By default, or if <em>contiguous</em> is False, gaps may occur
@@ -253,7 +251,7 @@ with bounds specifying zero cell sizes, the concept of a
 gap is generally ill-defined. In this case there is no
 restriction on the neighbouring cells originating from
 different input fields (i.e. <em>contiguous</em> is effectively
-taken as <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, regardless of its setting). However, if
+taken as <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, regardless of its setting). However, if
 the <em>contiguous</em> parameter is True and a coordinate
 spacing condition defined by the <em>cells</em> parameter has
 also been passed, then the concept of a “gap” becomes well
@@ -273,26 +271,26 @@ coordinate spacing condition defined by the
 <em>cells</em> parameter.</p>
 </div>
 </dd>
-<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs
+<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs
 with the same identity but missing units actually have
 equivalent (but unspecified) units, so that aggregation
 may occur. Also assumes that invalid but otherwise equal
 units are equal. By default such field constructs are not
 aggregatable.</p>
 </dd>
-<dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs with
+<dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then assume that field and metadata constructs with
 no identity (see the <em>relaxed_identities</em> parameter) actually
 have the same (but unspecified) identity, so that aggregation
 may occur. By default such field constructs are not
 aggregatable.</p>
 </dd>
-<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and there is no standard name property nor “id”
+<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and there is no standard name property nor “id”
 attribute, then allow field and metadata constructs to be
 identifiable by long name properties or netCDF variable
 names. Also allows netCDF dimension names to be used when
 there are no spanning 1-d coordinates.</p>
 </dd>
-<dt>field_identity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify a property with which to identify field constructs
+<dt>field_identity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify a property with which to identify field constructs
 instead of any other technique. How metadata constructs
 are identified is not affected by this parameter. See the
 <em>relaxed_identities</em> and <em>ncvar_identities</em> parameters.</p>
@@ -306,51 +304,51 @@ their long_name properties:
 <p><span class="versionmodified added">New in version 3.1.0.</span></p>
 </div>
 </dd>
-<dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then force field and metadata constructs to be
+<dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then force field and metadata constructs to be
 identified by their netCDF file variable names See also the
 <em>relaxed_identities</em> parameter.</p>
 </dd>
-<dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
+<dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
 of non-standard CF properties (including
 <a class="reference internal" href="../attribute/cf.Field.long_name.html#cf.Field.long_name" title="cf.Field.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>), with the same values. See the
 <em>concatenate</em> parameter.</p>
 </dd>
-<dt>equal: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
+<dt>equal: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
 fields all contain the properties, with the same values. See
 the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>exist_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
+<dt>exist_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then require that aggregated fields have the same set
 of non-standard CF properties (including, in this case,
 long_name), but not requiring the values to be the same. See
 the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>exist: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
+<dt>exist: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties for which it is required that aggregated
 fields all contain the properties, but not requiring the
 values to be the same. See the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties to omit from any properties
+<dt>ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify CF properties to omit from any properties
 specified by or implied by the <em>equal_all</em>, <em>exist_all</em>,
 <em>equal</em> and <em>exist</em> parameters.</p>
 </dd>
-<dt>exclude: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not return unaggregatable field
+<dt>exclude: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not return unaggregatable field
 constructs. By default, all input field constructs are
 represent in the outputs.</p>
 </dd>
-<dt>respect_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the CF properties <a class="reference internal" href="../attribute/cf.Field.valid_min.html#cf.Field.valid_min" title="cf.Field.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a>,
+<dt>respect_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the CF properties <a class="reference internal" href="../attribute/cf.Field.valid_min.html#cf.Field.valid_min" title="cf.Field.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a>,
 <a class="reference internal" href="../attribute/cf.Field.valid_max.html#cf.Field.valid_max" title="cf.Field.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a> and <a class="reference internal" href="../attribute/cf.Field.valid_range.html#cf.Field.valid_range" title="cf.Field.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a> are taken
 into account during aggregation. I.e. a requirement for
 aggregation is that fields have identical values for each
 these attributes, if set. By default these CF properties are
 ignored and are not set in the output fields.</p>
 </dd>
-<dt>dimension: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new axes for each input field which has one or more of
+<dt>dimension: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new axes for each input field which has one or more of
 the given properties. For each CF property name specified, if
 an input field has the property then, prior to aggregation, a
 new axis is created with an auxiliary coordinate whose datum
 is the property’s value and the property itself is deleted
 from that field.</p>
 </dd>
-<dt>concatenate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then a CF property is omitted from an aggregated
+<dt>concatenate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then a CF property is omitted from an aggregated
 field if the property has unequal values across constituent
 fields or is missing from at least one constituent field. By
 default a CF property in an aggregated field is the
@@ -358,7 +356,7 @@ concatenated collection of the distinct values from the
 constituent fields, delimited with the string
 <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">:AGGREGATED:</span> <span class="pre">'</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not copy fields prior to aggregation.
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not copy fields prior to aggregation.
 Setting this option to False may change input fields in place,
 and the output fields may not be independent of the
 inputs. However, if it is known that the input fields are
@@ -366,7 +364,7 @@ never to accessed again (such as in this case: <code class="docutils literal not
 <span class="pre">cf.aggregate(f)</span></code>) then setting <em>copy</em> to False can reduce the
 time taken for aggregation.</p>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Select axes to aggregate over. Aggregation will only occur
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Select axes to aggregate over. Aggregation will only occur
 over as large a subset as possible of these axes. Each axis is
 identified by the exact identity of a one dimensional
 coordinate object, as returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code>
@@ -374,7 +372,7 @@ method. Aggregations over more than one axis will occur in the
 order given. By default, aggregation will be over as many axes
 as possible.</p>
 </dd>
-<dt>donotchecknonaggregatingaxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>axes</em> is set, then checks for consistent data
+<dt>donotchecknonaggregatingaxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>axes</em> is set, then checks for consistent data
 array values will only be made for one dimensional coordinate
 objects which span the any of the given aggregating axes. This
 can reduce the time taken for aggregation, but if any those
@@ -391,17 +389,17 @@ numbers. The default value is set by the
 numbers. The default value is set by the
 <a class="reference internal" href="cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a> function.</p>
 </dd>
-<dt>field_ancillaries: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new field ancillary constructs for each input field
+<dt>field_ancillaries: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new field ancillary constructs for each input field
 which has one or more of the given properties. For each
 input field, each property is converted to a field
-ancillary construct that spans the entire domain, with the
-constant value of the property, and the property itself is
-deleted.</p>
+ancillary construct that spans the aggregation axes with
+the constant value of the property, and the property
+itself is deleted.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.0.</span></p>
 </div>
 </dd>
-<dt>cells: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide conditions for dimension coordinate cells so that
+<dt>cells: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide conditions for dimension coordinate cells so that
 input field or domain constructs whose dimension
 coordinates match particular conditions will be aggregated
 separately from those which don’t. All other aggregation
@@ -455,7 +453,7 @@ coordinate spacing are given as
 <blockquote>
 <div><p>where <code class="docutils literal notranslate"><span class="pre">&lt;condition1&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;condition2&gt;</span></code> must each be
 one of a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>, <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a>, scalar <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, scalar
-data_like object, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. A condition of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
+data_like object, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. A condition of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
 equivalent to that condition not being defined (which may
 be a useful setting for conditions that are generated
 automatically).</p>
@@ -629,7 +627,7 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

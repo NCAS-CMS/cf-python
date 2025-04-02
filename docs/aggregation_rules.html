@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -130,10 +128,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="aggregation-rules">
 <span id="id1"></span><h1><strong>Aggregation rules</strong><a class="headerlink" href="#aggregation-rules" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.16.2 for version 1.11 of the CF conventions.</p>
+<p>Version 3.17.0 for version 1.12 of the CF conventions.</p>
 <p><em>David Hassell and Jonathan Gregory (2012)</em></p>
 <p><a class="reference external" href="https://cf-trac.llnl.gov/trac/ticket/78">https://cf-trac.llnl.gov/trac/ticket/78</a></p>
-<p>Aggregation is the combination of two field constructs <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field
+<p>Aggregation is the combination of two field constructs <a class="reference internal" href="introduction.html#term-field-construct"><span class="xref std std-term">field
 constructs</span></a> to create a new field construct that
 occupies a “larger” domain. In practice, this means combining the two
 field constructs so that their data are concatenated along one or more
@@ -142,17 +140,17 @@ which span those domain axis constructs.</p>
 <p>These rules are to be used for deciding whether or not two arbitrary
 field constructs may be aggregated into one, larger field construct.
 The rules are based solely on the field constructs’ metadata as
-recognised by the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> <a class="footnote-reference brackets" href="#cfdm" id="id2">1</a>. For example, netCDF
+recognised by the <a class="reference internal" href="introduction.html#cf-data-model"><span class="std std-ref">CF data model</span></a> <a class="footnote-reference brackets" href="#cfdm" id="id2">1</a>. For example, netCDF
 variable names are ignored during the aggregation process, meaning
 that having different netCDF variable names does not preclude the
 aggregation of two field constructs.</p>
 <p>More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.</p>
-<p>From <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> version 3.11.0, CF-1.9 is supported and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">Domain
+<p>From <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> version 3.11.0, CF-1.9 is supported and <a class="reference internal" href="introduction.html#term-domain-construct"><span class="xref std std-term">Domain
 constructs</span></a> may also be aggregated. The rules for
-<a class="reference internal" href="cf_data_model.html#term-cell-method-constructs"><span class="xref std std-term">cell method constructs</span></a> and
-<a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a> are
+<a class="reference internal" href="introduction.html#term-cell-method-constructs"><span class="xref std std-term">cell method constructs</span></a> and
+<a class="reference internal" href="introduction.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a> are
 ignored for domain construct aggregation.</p>
 <p>Aggregation is implemented in the <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function, and is
 applied by default by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
@@ -171,8 +169,8 @@ for all other construct properties unnamed by these rules.</p></li>
 </ul>
 <div class="admonition-coordinate-construct admonition">
 <p class="admonition-title">Coordinate construct</p>
-<p>A coordinate construct is either a <a class="reference internal" href="cf_data_model.html#term-dimension-coordinate-constructs"><span class="xref std std-term">dimension coordinate
-construct</span></a> or an <a class="reference internal" href="cf_data_model.html#term-auxiliary-coordinate-constructs"><span class="xref std std-term">auxiliary
+<p>A coordinate construct is either a <a class="reference internal" href="introduction.html#term-dimension-coordinate-constructs"><span class="xref std std-term">dimension coordinate
+construct</span></a> or an <a class="reference internal" href="introduction.html#term-auxiliary-coordinate-constructs"><span class="xref std std-term">auxiliary
 coordinate construct</span></a>.</p>
 </div>
 <div class="admonition-pair-of-matching-coordinate-constructs admonition">
@@ -247,7 +245,7 @@ to choose the single domain axis for array concatenation.</p></li>
 </li>
 </ul>
 <div class="admonition-pair-of-matching-term-cell-measure-constructs-cell-measure-constructs admonition">
-<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-cell-measure-constructs"><span class="xref std std-term">cell measure constructs</span></a></p>
+<p class="admonition-title">Pair of matching <a class="reference internal" href="introduction.html#term-cell-measure-constructs"><span class="xref std std-term">cell measure constructs</span></a></p>
 <p>A pair of matching cell measure constructs is a cell measure
 construct from each field or domain construct with equivalent units
 and corresponding domain axes that are matching pairs.</p>
@@ -290,7 +288,7 @@ order. Corresponding domain axes in each cell methods are matching
 pairs. <em>This rule is ignored for domain construct aggregation.</em></p></li>
 </ul>
 <div class="admonition-pair-of-matching-term-domain-ancillary-constructs-domain-ancillary-constructs admonition">
-<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-domain-ancillary-constructs"><span class="xref std std-term">domain ancillary constructs</span></a></p>
+<p class="admonition-title">Pair of matching <a class="reference internal" href="introduction.html#term-domain-ancillary-constructs"><span class="xref std std-term">domain ancillary constructs</span></a></p>
 <p>A pair of matching domain ancillary constructs is a domain
 ancillary construct from each field or domain construct for
 identical standard coordinate conversion terms and corresponding
@@ -304,7 +302,7 @@ constructs with a unique domain ancillary construct in the other
 field or domain construct.</p></li>
 </ul>
 <div class="admonition-pair-of-matching-term-field-ancillary-constructs-field-ancillary-constructs admonition">
-<p class="admonition-title">Pair of matching <a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a></p>
+<p class="admonition-title">Pair of matching <a class="reference internal" href="introduction.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a></p>
 <p>A pair of matching field ancillary constructs is a field ancillary
 construct from each field construct with identical standard names
 and corresponding domain axes that are matching pairs.</p>
@@ -347,7 +345,7 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

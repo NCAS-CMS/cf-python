@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Domain.subspace" href="cf.Domain.subspace.html" />
-    <link rel="prev" title="cf.Domain.iscyclic" href="cf.Domain.iscyclic.html" />
+    <link rel="prev" title="cf.Domain.is_discrete_axis" href="cf.Domain.is_discrete_axis.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -97,7 +95,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Domain.html">cf.Domain</a><ul>
-      <li>Previous: <a href="cf.Domain.iscyclic.html" title="previous chapter">cf.Domain.iscyclic</a></li>
+      <li>Previous: <a href="cf.Domain.is_discrete_axis.html" title="previous chapter">cf.Domain.is_discrete_axis</a></li>
       <li>Next: <a href="cf.Domain.subspace.html" title="next chapter">cf.Domain.subspace</a></li>
   </ul></li>
   </ul></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.indices<a class="headerlink" href="#cf-domain-indices" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.indices">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">indices</code><span class="sig-paren">(</span><em class="sig-param">*config</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/domain.py#L742-L852"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.indices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">indices</code><span class="sig-paren">(</span><em class="sig-param">*config</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domain.py#L536-L646"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create indices that define a subspace of the domain
 construct.</p>
 <p>The indices returned by this method may be used to create the
@@ -157,7 +155,7 @@ unchanged.</p></li>
 doesn’t matter which order they are specified in.</p></li>
 <li><p>Explicit indices may also be assigned to a domain axis
 identified by a metadata construct, with either a Python
-<a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence of integers or booleans.</p></li>
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence of integers or booleans.</p></li>
 <li><p>For a dimension that is cyclic, a subspace defined by a
 slice or by a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around
 the edges of the data.</p></li>
@@ -191,8 +189,8 @@ operation (<code class="docutils literal notranslate"><span class="pre">mode</sp
 subspaced axes (<code class="docutils literal notranslate"><span class="pre">halo</span></code>), with positional arguments
 in the format <code class="docutils literal notranslate"><span class="pre">mode</span></code>, or <code class="docutils literal notranslate"><span class="pre">halo</span></code>, or <code class="docutils literal notranslate"><span class="pre">mode,</span>
 <span class="pre">halo</span></code>, or with no positional arguments at all.</p>
-<p>A mode of operation is given as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, and a halo as
-a non-negative <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or any object that can be
+<p>A mode of operation is given as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, and a halo as
+a non-negative <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or any object that can be
 converted to one):</p>
 <table class="docutils align-default">
 <colgroup>
@@ -259,7 +257,7 @@ condition.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A dictionary of indices, keyed by the domain axis
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A dictionary of indices, keyed by the domain axis
 construct identifiers to which they apply.</p>
 </dd>
 </dl>
@@ -315,7 +313,7 @@ construct identifiers to which they apply.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

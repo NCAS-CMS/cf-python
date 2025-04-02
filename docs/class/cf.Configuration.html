@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -136,11 +134,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Configuration">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Configuration</code><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Configuration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Configuration</code><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Configuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.functions.Configuration</span></code></p>
 <p>Dictionary-like container for the global constants.</p>
 <p>The container has context manager support.</p>
-<p>Initialisation is as for a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, and nearly all of the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>
+<p>Initialisation is as for a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, and nearly all of the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>
 methods are available with the same behaviours (<a class="reference internal" href="../method/cf.Configuration.clear.html#cf.Configuration.clear" title="cf.Configuration.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>,
 <a class="reference internal" href="../method/cf.Configuration.fromkeys.html#cf.Configuration.fromkeys" title="cf.Configuration.fromkeys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.get.html#cf.Configuration.get" title="cf.Configuration.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.items.html#cf.Configuration.items" title="cf.Configuration.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.keys.html#cf.Configuration.keys" title="cf.Configuration.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.pop.html#cf.Configuration.pop" title="cf.Configuration.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.popitem.html#cf.Configuration.popitem" title="cf.Configuration.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>,
 <a class="reference internal" href="../method/cf.Configuration.setdefault.html#cf.Configuration.setdefault" title="cf.Configuration.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.update.html#cf.Configuration.update" title="cf.Configuration.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>, <a class="reference internal" href="../method/cf.Configuration.values.html#cf.Configuration.values" title="cf.Configuration.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>):</p>
@@ -211,7 +209,7 @@ exit.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Configuration.pop.html#cf.Configuration.pop" title="cf.Configuration.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a></p></td>
-<td><p>If key is not found, d is returned if given, otherwise KeyError is raised</p></td>
+<td><p>If the key is not found, return the default if given; otherwise, raise a KeyError.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Configuration.popitem.html#cf.Configuration.popitem" title="cf.Configuration.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a></p></td>
 <td><p>Remove and return a (key, value) pair as a 2-tuple.</p></td>
@@ -244,7 +242,7 @@ exit.</p>
 <td><p>Exit the runtime context.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Configuration.__repr__.html#cf.Configuration.__repr__" title="cf.Configuration.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -259,7 +257,7 @@ exit.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

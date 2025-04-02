@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.CellMeasure.dump" href="../method/cf.CellMeasure.dump.html" />
-    <link rel="prev" title="cf.AuxiliaryCoordinate.unsafe_array" href="../attribute/cf.AuxiliaryCoordinate.unsafe_array.html" />
+    <link rel="prev" title="cf.CellConnectivity.unsafe_array" href="../method/cf.CellConnectivity.unsafe_array.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -96,7 +94,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../attribute/cf.AuxiliaryCoordinate.unsafe_array.html" title="previous chapter">cf.AuxiliaryCoordinate.unsafe_array</a></li>
+      <li>Previous: <a href="../method/cf.CellConnectivity.unsafe_array.html" title="previous chapter">cf.CellConnectivity.unsafe_array</a></li>
       <li>Next: <a href="../method/cf.CellMeasure.dump.html" title="next chapter">cf.CellMeasure.dump</a></li>
   </ul></li>
   </ul></li>
@@ -136,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CellMeasure">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/cellmeasure.py#L7-L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/cellmeasure.py#L7-L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -167,7 +165,7 @@ methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the measure that indicates the metric given by
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the measure that indicates the metric given by
 the data array.</p>
 <p>The measure may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.CellMeasure.set_measure.html#cf.CellMeasure.set_measure" title="cf.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a> method.</p>
@@ -176,7 +174,7 @@ the <a class="reference internal" href="../method/cf.CellMeasure.set_measure.htm
 </dd>
 </dl>
 </dd>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
 <div><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
@@ -189,7 +187,7 @@ the <a class="reference internal" href="../method/cf.CellMeasure.set_properties.
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -206,7 +204,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cf.CellMeasure(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -465,7 +463,7 @@ parameters are not deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellMeasure.dtype.html#cf.CellMeasure.dtype" title="cf.CellMeasure.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellMeasure.isscalar.html#cf.CellMeasure.isscalar" title="cf.CellMeasure.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data array is scalar.</p></td>
@@ -575,7 +573,10 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.fill_value.html#cf.CellMeasure.fill_value" title="cf.CellMeasure.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>Return the data array missing data value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.masked_invalid.html#cf.CellMeasure.masked_invalid" title="cf.CellMeasure.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.filled.html#cf.CellMeasure.filled" title="cf.CellMeasure.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
+<td><p>Replace masked elements with a fill value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.masked_invalid.html#cf.CellMeasure.masked_invalid" title="cf.CellMeasure.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
 </tbody>
@@ -661,7 +662,7 @@ parameters are not deep copied.</p>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.persist.html#cf.CellMeasure.persist" title="cf.CellMeasure.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
-<td><p>Persist the underlying dask array into memory.</p></td>
+<td><p>Persist data into memory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -676,7 +677,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.concatenate.html#cf.CellMeasure.concatenate" title="cf.CellMeasure.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
-<td><p>Join a sequence of variables together.</p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.copy.html#cf.CellMeasure.copy" title="cf.CellMeasure.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
@@ -703,7 +704,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.T.html#cf.CellMeasure.T" title="cf.CellMeasure.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.X.html#cf.CellMeasure.X" title="cf.CellMeasure.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
 <td><p>Always False.</p></td>
@@ -970,11 +971,20 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.nc_set_external.html#cf.CellMeasure.nc_set_external" title="cf.CellMeasure.nc_set_external"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code></a></p></td>
 <td><p>Set external status of a netCDF variable.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.nc_clear_hdf5_chunksizes.html#cf.CellMeasure.nc_clear_hdf5_chunksizes" title="cf.CellMeasure.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.nc_hdf5_chunksizes.html#cf.CellMeasure.nc_hdf5_chunksizes" title="cf.CellMeasure.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.nc_set_hdf5_chunksizes.html#cf.CellMeasure.nc_set_hdf5_chunksizes" title="cf.CellMeasure.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="cfa">
-<h2>CFA<a class="headerlink" href="#cfa" title="Permalink to this headline">¶</a></h2>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -982,26 +992,11 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.add_file_location.html#cf.CellMeasure.add_file_location" title="cf.CellMeasure.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
-<td><p>Add a new file location in-place.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.file_directories.html#cf.CellMeasure.file_directories" title="cf.CellMeasure.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cfa_clear_file_substitutions.html#cf.CellMeasure.cfa_clear_file_substitutions" title="cf.CellMeasure.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
-<td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cfa_del_file_substitution.html#cf.CellMeasure.cfa_del_file_substitution" title="cf.CellMeasure.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
-<td><p>Remove a CFA-netCDF file name substitution.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cfa_file_substitutions.html#cf.CellMeasure.cfa_file_substitutions" title="cf.CellMeasure.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
-<td><p>Return the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cfa_update_file_substitutions.html#cf.CellMeasure.cfa_update_file_substitutions" title="cf.CellMeasure.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
-<td><p>Set CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.del_file_location.html#cf.CellMeasure.del_file_location" title="cf.CellMeasure.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
-<td><p>Remove a file location in-place.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.file_locations.html#cf.CellMeasure.file_locations" title="cf.CellMeasure.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
-<td><p>The locations of files containing parts of the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.replace_directory.html#cf.CellMeasure.replace_directory" title="cf.CellMeasure.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1301,22 +1296,22 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>Called to implement membership test operators.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__deepcopy__.html#cf.CellMeasure.__deepcopy__" title="cf.CellMeasure.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__getitem__.html#cf.CellMeasure.__getitem__" title="cf.CellMeasure.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__repr__.html#cf.CellMeasure.__repr__" title="cf.CellMeasure.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__setitem__.html#cf.CellMeasure.__setitem__" title="cf.CellMeasure.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Called to implement assignment to x[indices]</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__str__.html#cf.CellMeasure.__str__" title="cf.CellMeasure.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__array__.html#cf.CellMeasure.__array__" title="cf.CellMeasure.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
-<td><p>Returns a numpy array representation of the data.</p></td>
+<td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.__data__.html#cf.CellMeasure.__data__" title="cf.CellMeasure.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
 <td><p>Returns a new reference to the data.</p></td>
@@ -1336,17 +1331,35 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.asdatetime.html#cf.CellMeasure.asdatetime" title="cf.CellMeasure.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.add_file_location</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.asdatetime.html#cf.CellMeasure.asdatetime" title="cf.CellMeasure.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.asreftime.html#cf.CellMeasure.asreftime" title="cf.CellMeasure.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.asreftime.html#cf.CellMeasure.asreftime" title="cf.CellMeasure.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.attributes.html#cf.CellMeasure.attributes" title="cf.CellMeasure.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.attributes.html#cf.CellMeasure.attributes" title="cf.CellMeasure.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.chunk.html#cf.CellMeasure.chunk" title="cf.CellMeasure.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.cfa_clear_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.cfa_del_file_substitution</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.cfa_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.cfa_update_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.chunk.html#cf.CellMeasure.chunk" title="cf.CellMeasure.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
 <td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.del_file_location</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.delprop.html#cf.CellMeasure.delprop" title="cf.CellMeasure.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
@@ -1357,56 +1370,59 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.expand_dims.html#cf.CellMeasure.expand_dims" title="cf.CellMeasure.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.get_filenames.html#cf.CellMeasure.get_filenames" title="cf.CellMeasure.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure.file_locations</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.get_filenames.html#cf.CellMeasure.get_filenames" title="cf.CellMeasure.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.getprop.html#cf.CellMeasure.getprop" title="cf.CellMeasure.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.getprop.html#cf.CellMeasure.getprop" title="cf.CellMeasure.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasbounds.html#cf.CellMeasure.hasbounds" title="cf.CellMeasure.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasbounds.html#cf.CellMeasure.hasbounds" title="cf.CellMeasure.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasdata.html#cf.CellMeasure.hasdata" title="cf.CellMeasure.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasdata.html#cf.CellMeasure.hasdata" title="cf.CellMeasure.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasprop.html#cf.CellMeasure.hasprop" title="cf.CellMeasure.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.hasprop.html#cf.CellMeasure.hasprop" title="cf.CellMeasure.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.insert_data.html#cf.CellMeasure.insert_data" title="cf.CellMeasure.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.insert_data.html#cf.CellMeasure.insert_data" title="cf.CellMeasure.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isauxiliary.html#cf.CellMeasure.isauxiliary" title="cf.CellMeasure.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isauxiliary.html#cf.CellMeasure.isauxiliary" title="cf.CellMeasure.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isdimension.html#cf.CellMeasure.isdimension" title="cf.CellMeasure.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isdimension.html#cf.CellMeasure.isdimension" title="cf.CellMeasure.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isdomainancillary.html#cf.CellMeasure.isdomainancillary" title="cf.CellMeasure.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isdomainancillary.html#cf.CellMeasure.isdomainancillary" title="cf.CellMeasure.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isfieldancillary.html#cf.CellMeasure.isfieldancillary" title="cf.CellMeasure.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.isfieldancillary.html#cf.CellMeasure.isfieldancillary" title="cf.CellMeasure.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.ismeasure.html#cf.CellMeasure.ismeasure" title="cf.CellMeasure.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.ismeasure.html#cf.CellMeasure.ismeasure" title="cf.CellMeasure.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.mask_invalid.html#cf.CellMeasure.mask_invalid" title="cf.CellMeasure.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.mask_invalid.html#cf.CellMeasure.mask_invalid" title="cf.CellMeasure.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.name.html#cf.CellMeasure.name" title="cf.CellMeasure.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.name.html#cf.CellMeasure.name" title="cf.CellMeasure.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.remove_data.html#cf.CellMeasure.remove_data" title="cf.CellMeasure.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.remove_data.html#cf.CellMeasure.remove_data" title="cf.CellMeasure.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.select.html#cf.CellMeasure.select" title="cf.CellMeasure.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.select.html#cf.CellMeasure.select" title="cf.CellMeasure.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.setprop.html#cf.CellMeasure.setprop" title="cf.CellMeasure.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.setprop.html#cf.CellMeasure.setprop" title="cf.CellMeasure.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.unsafe_array.html#cf.CellMeasure.unsafe_array" title="cf.CellMeasure.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.unsafe_array.html#cf.CellMeasure.unsafe_array" title="cf.CellMeasure.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1421,7 +1437,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

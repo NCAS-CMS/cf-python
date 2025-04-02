@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,12 +135,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.del_domain_axis<a class="headerlink" href="#cf-field-del-domain-axis" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.del_domain_axis">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">del_domain_axis</code><span class="sig-paren">(</span><em class="sig-param">identity=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/mixin/fielddomain.py#L1706-L1833"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.del_domain_axis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">del_domain_axis</code><span class="sig-paren">(</span><em class="sig-param">identity=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/mixin/fielddomain.py#L1672-L1799"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.del_domain_axis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a domain axis construct.</p>
 <p>In general, a domain axis construct can only be removed if it
 is not spanned by any construct’s data. However, a size 1
 domain axis construct can be removed in any case if the
-<em>squeeze</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. In this case, a metadata
+<em>squeeze</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. In this case, a metadata
 construct whose data spans only the removed domain axis
 construct will also be removed.</p>
 <div class="versionadded">
@@ -166,10 +164,10 @@ domain axis construct.</p>
 <p>defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, and is selected
 if any of them match the <em>identity</em>
 parameter. <em>identity</em> may be a string that equals one
-of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
+of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
 that matches one of a construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a metadata construct is always described by one
 of its identities, and so this description may always
 be used as an <em>identity</em> value.</p>
@@ -181,12 +179,12 @@ be used as an <em>identity</em> value.</p>
 <p>identities (defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method) and
 is selected if any of them match the <em>identity</em>
 parameter.  <em>identity</em> may be a string that equals one
-of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
+of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
 that matches one of a construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
 <ul class="simple">
 <li><p>The key of a domain axis construct.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the
 domain axis construct when there is only one of
 them.  <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code> are both
 acceptable keys.</p></li>
@@ -204,13 +202,13 @@ acceptable keys.</p></li>
 </dd>
 </dl>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the removal of a size 1 domain axis
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the removal of a size 1 domain axis
 construct that is spanned by any data array and
 squeeze the corresponding dimension from those arrays.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 construct can not be removed, or does not exist.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 </dl>
@@ -263,7 +261,7 @@ raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

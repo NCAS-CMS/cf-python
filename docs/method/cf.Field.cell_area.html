@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.cell_area<a class="headerlink" href="#cf-field-cell-area" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_area">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">cell_measures=True</em>, <em class="sig-param">coordinates=True</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">return_cell_measure=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L2360-L2534"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">cell_measures=True</em>, <em class="sig-param">coordinates=True</em>, <em class="sig-param">methods=False</em>, <em class="sig-param">return_cell_measure=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/field.py#L2429-L2603"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the horizontal cell areas.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.</span></p>
@@ -160,7 +158,7 @@ and only if the radius can not found from the datums
 of any coordinate reference constructs, then the
 default radius taken as 6371229 metres.</p>
 </dd>
-<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i)
+<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i)
 area weights from polygon geometry cells by assuming
 that each cell part is a spherical polygon composed of
 great circle segments; and ii) and the derivation of
@@ -171,28 +169,28 @@ circle segments.</p>
 <p><span class="versionmodified added">New in version 3.2.0.</span></p>
 </div>
 </dd>
-<dt>cell_measures: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then area cell measure
+<dt>cell_measures: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then area cell measure
 constructs are considered for cell area
 creation. Otherwise they are ignored.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.1.</span></p>
 </div>
 </dd>
-<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then coordinate constructs are
+<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then coordinate constructs are
 considered for cell area creation. Otherwise they are
 ignored.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.1.</span></p>
 </div>
 </dd>
-<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a dictionary describing the method
+<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a dictionary describing the method
 used to create the cell areas instead of the default,
 a field construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.1.</span></p>
 </div>
 </dd>
-<dt>return_cell_measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a cell measure construct instead
+<dt>return_cell_measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, then return a cell measure construct instead
 of the default, a field construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.1.</span></p>
@@ -204,7 +202,7 @@ of the default, a field construct.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="../class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A field construct, or cell measure construct containing
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="../class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>A field construct, or cell measure construct containing
 the horizontal cell areas if <em>return_cell_measure</em> is True,
 or a dictionary describing the method used to create the
 cell areas if <em>methods</em> is True.</p>
@@ -275,7 +273,7 @@ cell areas if <em>methods</em> is True.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

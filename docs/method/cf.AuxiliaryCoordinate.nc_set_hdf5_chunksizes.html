@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.AuxiliaryCoordinate.nc_variable_groups" href="cf.AuxiliaryCoordinate.nc_variable_groups.html" />
+    <link rel="prev" title="cf.AuxiliaryCoordinate.nc_hdf5_chunksizes" href="cf.AuxiliaryCoordinate.nc_hdf5_chunksizes.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.AuxiliaryCoordinate.html">cf.AuxiliaryCoordinate</a><ul>
+      <li>Previous: <a href="cf.AuxiliaryCoordinate.nc_hdf5_chunksizes.html" title="previous chapter">cf.AuxiliaryCoordinate.nc_hdf5_chunksizes</a></li>
+      <li>Next: <a href="cf.AuxiliaryCoordinate.nc_variable_groups.html" title="next chapter">cf.AuxiliaryCoordinate.nc_variable_groups</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-auxiliarycoordinate-nc-set-hdf5-chunksizes">
+<h1>cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes<a class="headerlink" href="#cf-auxiliarycoordinate-nc-set-hdf5-chunksizes" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes">
+<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">nc_set_hdf5_chunksizes</code><span class="sig-paren">(</span><em class="sig-param">chunksizes</em>, <em class="sig-param">bounds=True</em>, <em class="sig-param">interior_ring=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/propertiesdatabounds.py#L1609-L1659"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the HDF5 chunking strategy.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.AuxiliaryCoordinate.nc_hdf5_chunksizes.html#cf.AuxiliaryCoordinate.nc_hdf5_chunksizes" title="cf.AuxiliaryCoordinate.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes.html#cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes" title="cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a>,
+<a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>chunksizes: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or a sequence</dt><dd><p>Set the chunking strategy for writing to a netCDF4
+file. One of:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>: No HDF5 chunking strategy has been
+defined. The chunking strategy will be determined at
+write time by <a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'contiguous'</span></code>: The data will be written to the
+file contiguously, i.e. no chunking.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>: The size in bytes of the
+HDF5 chunks. A floating point value is rounded down
+to the nearest integer, and a string represents a
+quantity of byte units. “Square-like” chunk shapes
+are preferred, maximising the amount of chunks that
+are completely filled with data values (see the
+<a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> <em>hdf5_chunks</em> parameter for
+details). For instance a chunksize of 1024 bytes may
+be specified with any of <code class="docutils literal notranslate"><span class="pre">1024</span></code>, <code class="docutils literal notranslate"><span class="pre">1024.9</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'1024'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1024.9'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1024</span> <span class="pre">B'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1</span> <span class="pre">KiB'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'0.0009765625</span> <span class="pre">MiB'</span></code>, etc. Recognised byte units
+are (case insensitive): <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">KiB</span></code>, <code class="docutils literal notranslate"><span class="pre">MiB</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GiB</span></code>, <code class="docutils literal notranslate"><span class="pre">TiB</span></code>, <code class="docutils literal notranslate"><span class="pre">PiB</span></code>, <code class="docutils literal notranslate"><span class="pre">KB</span></code>, <code class="docutils literal notranslate"><span class="pre">MB</span></code>, <code class="docutils literal notranslate"><span class="pre">GB</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TB</span></code>, and <code class="docutils literal notranslate"><span class="pre">PB</span></code>. Spaces in strings are optional.</p></li>
+<li><p>sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>: The maximum number of
+array elements in a chunk along each data axis,
+provided in the same order as the data axes. Values
+are automatically limited to the full size of their
+corresponding data axis, but the special values
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> may be used to indicate the full
+axis size. This chunking strategy may get
+automatically modified by methods that change the
+data shape (such as <a class="reference internal" href="cf.AuxiliaryCoordinate.insert_dimension.html#cf.AuxiliaryCoordinate.insert_dimension" title="cf.AuxiliaryCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>: The maximum number of array elements in a
+chunk along the axes specified by the dictionary
+keys. Integer values are automatically limited to
+the full size of their corresponding data axis, and
+the special values <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> may be used to
+indicate the full axis size. The chunk size for an
+unspecified axis defaults to an existing chunk size
+for that axis, if there is one, or else the axis
+size. This chunking strategy may get automatically
+modified by methods that change the data shape (such
+as <a class="reference internal" href="cf.AuxiliaryCoordinate.insert_dimension.html#cf.AuxiliaryCoordinate.insert_dimension" title="cf.AuxiliaryCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>).
+Each dictionary key is an integer that specifies an
+axis by its position in the data array.</p></li>
+</ul>
+</dd>
+<dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then apply the HDF5 chunking
+strategy to the corresponding axes of any bounds. If
+False then leave the bounds chunking strategy
+unchanged.</p>
+</dd>
+<dt>interior_ring: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True, the default, then apply the HDF5 chunking
+strategy to the corresponding axis of a geometry
+interior ring variable. If False then leave the
+geometry interior ring variable chunking strategy
+unchanged.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

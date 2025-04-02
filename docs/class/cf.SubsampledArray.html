@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.SubsampledArray &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.SubsampledArray.compressed_dimensions" href="../method/cf.SubsampledArray.compressed_dimensions.html" />
+    <link rel="prev" title="cf.RaggedIndexedContiguousArray.Units" href="../attribute/cf.RaggedIndexedContiguousArray.Units.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../attribute/cf.RaggedIndexedContiguousArray.Units.html" title="previous chapter">cf.RaggedIndexedContiguousArray.Units</a></li>
+      <li>Next: <a href="../method/cf.SubsampledArray.compressed_dimensions.html" title="next chapter">cf.SubsampledArray.compressed_dimensions</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-subsampledarray">
+<h1>cf.SubsampledArray<a class="headerlink" href="#cf-subsampledarray" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.SubsampledArray">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">SubsampledArray</code><span class="sig-paren">(</span><em class="sig-param">interpolation_name=None</em>, <em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">computational_precision=None</em>, <em class="sig-param">interpolation_description=None</em>, <em class="sig-param">tie_point_indices=None</em>, <em class="sig-param">parameters=None</em>, <em class="sig-param">parameter_dimensions=None</em>, <em class="sig-param">dependent_tie_points=None</em>, <em class="sig-param">dependent_tie_point_dimensions=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/array/subsampledarray.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.SubsampledArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.subsampledarray.SubsampledArray</span></code></p>
+<p>An underlying subsampled array.</p>
+<p>For some structured coordinate data (e.g. coordinates describing
+remote sensing products) space may be saved by storing a subsample
+of the data, called tie points. The uncompressed data can be
+reconstituted by interpolation, from the subsampled values. This
+process will likely result in a loss in accuracy (as opposed to
+precision) in the uncompressed variables, due to rounding and
+approximation errors in the interpolation calculations, but it is
+assumed that these errors will be small enough to not be of
+concern to users of the uncompressed dataset. The creator of the
+compressed dataset can control the accuracy of the reconstituted
+data through the degree of subsampling and the choice of
+interpolation method.</p>
+<p>See CF section 8.3 “Lossy Compression by Coordinate Subsampling”
+and Appendix J “Coordinate Interpolation Methods”.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tie_point_indices</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">TiePointIndex</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">InterpolationParameter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coords</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">SubsampledArray</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">interpolation_name</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">compressed_array</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">15</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">345</span><span class="p">]),</span>
+<span class="gp">... </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,),</span>
+<span class="gp">... </span>    <span class="n">tie_point_indices</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">tie_point_indices</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">parameter_dimensions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="go">[ 15.          48.75        80.         108.75       135.</span>
+<span class="go"> 173.88888889 203.88888889 225.         255.         289.44444444</span>
+<span class="go"> 319.44444444 345.        ]</span>
+</pre></div>
+</div>
+<p><strong>Cell boundaries</strong></p>
+<p>When the tie points array represents bounds tie points then the
+<em>shape</em> parameter describes the uncompressed bounds shape. See CF
+section 8.3.9 “Interpolation of Cell Boundaries”.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">SubsampledArray</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">interpolation_name</span><span class="o">=</span><span class="s1">&#39;quadratic&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">compressed_array</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">360</span><span class="p">]),</span>
+<span class="gp">... </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">tie_point_indices</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">tie_point_indices</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">parameter_dimensions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="go">[[0.0 33.2]</span>
+<span class="go"> [33.2 64.8]</span>
+<span class="go"> [64.8 94.80000000000001]</span>
+<span class="go"> [94.80000000000001 123.2]</span>
+<span class="go"> [123.2 150.0]</span>
+<span class="go"> [150.0 188.88888888888889]</span>
+<span class="go"> [188.88888888888889 218.88888888888889]</span>
+<span class="go"> [218.88888888888889 240.0]</span>
+<span class="go"> [240.0 273.75]</span>
+<span class="go"> [273.75 305.0]</span>
+<span class="go"> [305.0 333.75]</span>
+<span class="go"> [333.75 360.0]]</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>interpolation_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the interpolation method.</p>
+<p>Standardised interpolation method are defined in CF
+appendix J “Coordinate Interpolation Methods”.</p>
+<p>If not set then the non-standardised interpolation
+method is assumed to be defined by the
+<em>interpolation_description</em> parameter</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'bi_linear'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>compressed_array: array_like</dt><dd><p>The (bounds) tie points array.</p>
+</dd>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array shape.</p>
+</dd>
+<dt>tie_point_indices: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The tie point index variable for each subsampled
+dimension. A key identifies a subsampled dimension by
+its integer position in the compressed array, and its
+value is a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TiePointIndex</span></code> variable.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{1:</span> <span class="pre">cf.TiePointIndex(data=[0,</span> <span class="pre">16,</span> <span class="pre">31])}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>computational_precision: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The floating-point arithmetic precision used during
+the preparation and validation of the compressed data.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'64'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>interpolation_description: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>A complete non-standardised description of the
+interpolation method.</p>
+</dd>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Interpolation parameters required by the interpolation
+method. Each key is an interpolation parameter term
+name, whose value is an <code class="xref py py-obj docutils literal notranslate"><span class="pre">InterpolationParameter</span></code>
+variable.</p>
+<p>Interpolation parameter term names for the
+standardised interpolation methods are defined in CF
+Appendix J “Coordinate Interpolation Methods”.</p>
+<p>Set to an empty dictionary for interpolation methods
+that do not require interpolation parameters.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'w':</span> <span class="pre">cf.InterpolationParameter(data=[5,</span> <span class="pre">10,</span> <span class="pre">5])}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>parameter_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The tie point array dimensions that correspond to the
+dimensions of the interpolation parameters, keyed by the
+interpolation parameter term names.</p>
+<p>Interpolation parameter term names for the
+standardised interpolation methods are defined in CF
+Appendix J “Coordinate Interpolation Methods”.</p>
+<p>Set to an empty dictionary for interpolation methods
+that do not require interpolation parameters.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'w':</span> <span class="pre">(0,)}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'ce1':</span> <span class="pre">(1,</span> <span class="pre">2),</span> <span class="pre">'ca2':</span> <span class="pre">(2,</span> <span class="pre">1)}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>dependent_tie_points: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The dependent tie point arrays needed by the
+interpolation method, keyed by the dependent tie point
+identities. Each key is a dependent tie point
+identity, whose value is a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> variable.</p>
+<p>The identities must be understood the interpolation
+method. When <em>interpolation_name</em> is
+<code class="docutils literal notranslate"><span class="pre">'quadratic_latitude_longitude'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">'bi_quadratic_latitude_longitude'`</span> <span class="pre">then</span> <span class="pre">the</span>
+<span class="pre">*dependent_tie_points*</span> <span class="pre">dictionary</span> <span class="pre">must</span> <span class="pre">contain</span> <span class="pre">exactly</span>
+<span class="pre">one</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">keys</span> <span class="pre">``'latitude'</span></code> or <code class="docutils literal notranslate"><span class="pre">'longitude</span></code>.</p>
+<p>Set to an empty dictionary for interpolation methods
+that do not require dependent tie points.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'latitude':</span> <span class="pre">cf.Data([30,</span> <span class="pre">31,</span> <span class="pre">32])}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>dependent_tie_points_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The tie point array dimensions that correspond to the
+dimensions of the dependent tie points arrays, keyed
+the dependent tie point identities.</p>
+<p>Set to an empty dictionary for interpolation methods
+that do not require dependent tie points.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'latitude':</span> <span class="pre">(0,)}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'longitude':</span> <span class="pre">(0,</span> <span class="pre">1)}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'latitude':</span> <span class="pre">(2,</span> <span class="pre">0,</span> <span class="pre">1)}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.SubsampledArray" title="cf.SubsampledArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubsampledArray</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.SubsampledArray" title="cf.SubsampledArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubsampledArray</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.SubsampledArray" title="cf.SubsampledArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubsampledArray</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.SubsampledArray(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.compressed_dimensions.html#cf.SubsampledArray.compressed_dimensions" title="cf.SubsampledArray.compressed_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_dimensions</span></code></a></p></td>
+<td><p>Mapping of compressed to uncompressed dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.conformed_data.html#cf.SubsampledArray.conformed_data" title="cf.SubsampledArray.conformed_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conformed_data</span></code></a></p></td>
+<td><p>Return the conformed tie points and any ancillary data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.copy.html#cf.SubsampledArray.copy" title="cf.SubsampledArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_attributes.html#cf.SubsampledArray.get_attributes" title="cf.SubsampledArray.get_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></a></p></td>
+<td><p>The attributes of the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_Subarray.html#cf.SubsampledArray.get_Subarray" title="cf.SubsampledArray.get_Subarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_Subarray</span></code></a></p></td>
+<td><p>Return the Subarray class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_calendar.html#cf.SubsampledArray.get_calendar" title="cf.SubsampledArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
+<td><p>The calendar of the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_compressed_axes.html#cf.SubsampledArray.get_compressed_axes" title="cf.SubsampledArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></p></td>
+<td><p>Return axes that are compressed in the underlying array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_compressed_dimension.html#cf.SubsampledArray.get_compressed_dimension" title="cf.SubsampledArray.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></p></td>
+<td><p>Returns the compressed dimension’s position in the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_compression_type.html#cf.SubsampledArray.get_compression_type" title="cf.SubsampledArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
+<td><p>Returns the array’s compression type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_computational_precision.html#cf.SubsampledArray.get_computational_precision" title="cf.SubsampledArray.get_computational_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_computational_precision</span></code></a></p></td>
+<td><p>Get the validation computational precision.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_dependent_tie_point_dimensions.html#cf.SubsampledArray.get_dependent_tie_point_dimensions" title="cf.SubsampledArray.get_dependent_tie_point_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dependent_tie_point_dimensions</span></code></a></p></td>
+<td><p>Get the dimension order of dependent tie points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_dependent_tie_points.html#cf.SubsampledArray.get_dependent_tie_points" title="cf.SubsampledArray.get_dependent_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dependent_tie_points</span></code></a></p></td>
+<td><p>Get the dependent tie points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SubsampledArray.get_filenames</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_interpolation_description.html#cf.SubsampledArray.get_interpolation_description" title="cf.SubsampledArray.get_interpolation_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interpolation_description</span></code></a></p></td>
+<td><p>Get the non-standardised interpolation method description.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_interpolation_name.html#cf.SubsampledArray.get_interpolation_name" title="cf.SubsampledArray.get_interpolation_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interpolation_name</span></code></a></p></td>
+<td><p>Get the name of a standardised interpolation method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_parameter_dimensions.html#cf.SubsampledArray.get_parameter_dimensions" title="cf.SubsampledArray.get_parameter_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter_dimensions</span></code></a></p></td>
+<td><p>Get the dimension order interpolation parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_parameters.html#cf.SubsampledArray.get_parameters" title="cf.SubsampledArray.get_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameters</span></code></a></p></td>
+<td><p>Get the interpolation parameter variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SubsampledArray.get_subspace</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_tie_point_indices.html#cf.SubsampledArray.get_tie_point_indices" title="cf.SubsampledArray.get_tie_point_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tie_point_indices</span></code></a></p></td>
+<td><p>Get the tie point index variables for subsampled dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.get_units.html#cf.SubsampledArray.get_units" title="cf.SubsampledArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
+<td><p>The units of the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.set_dependent_tie_point_dimensions.html#cf.SubsampledArray.set_dependent_tie_point_dimensions" title="cf.SubsampledArray.set_dependent_tie_point_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dependent_tie_point_dimensions</span></code></a></p></td>
+<td><p>Set the dimension order of dependent tie points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.set_dependent_tie_points.html#cf.SubsampledArray.set_dependent_tie_points" title="cf.SubsampledArray.set_dependent_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dependent_tie_points</span></code></a></p></td>
+<td><p>Set the dependent tie points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.set_parameter_dimensions.html#cf.SubsampledArray.set_parameter_dimensions" title="cf.SubsampledArray.set_parameter_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter_dimensions</span></code></a></p></td>
+<td><p>Set the dimension order interpolation parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.set_parameters.html#cf.SubsampledArray.set_parameters" title="cf.SubsampledArray.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></p></td>
+<td><p>Set the interpolation parameter variables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.set_tie_point_indices.html#cf.SubsampledArray.set_tie_point_indices" title="cf.SubsampledArray.set_tie_point_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_tie_point_indices</span></code></a></p></td>
+<td><p>Set the tie point index variables for subsampled dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.source.html#cf.SubsampledArray.source" title="cf.SubsampledArray.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
+<td><p>Return the underlying array object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.subarray_parameters.html#cf.SubsampledArray.subarray_parameters" title="cf.SubsampledArray.subarray_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_parameters</span></code></a></p></td>
+<td><p>Non-data parameters required by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Subarray</span></code> class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.subarray_shapes.html#cf.SubsampledArray.subarray_shapes" title="cf.SubsampledArray.subarray_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_shapes</span></code></a></p></td>
+<td><p>Create the subarray shapes along each uncompressed dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.subarrays.html#cf.SubsampledArray.subarrays" title="cf.SubsampledArray.subarrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarrays</span></code></a></p></td>
+<td><p>Return descriptors for every subarray.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.to_dask_array.html#cf.SubsampledArray.to_dask_array" title="cf.SubsampledArray.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.SubsampledArray.to_memory.html#cf.SubsampledArray.to_memory" title="cf.SubsampledArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.Units.html#cf.SubsampledArray.Units" title="cf.SubsampledArray.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object containing the units of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.array.html#cf.SubsampledArray.array" title="cf.SubsampledArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>Returns a numpy array containing the uncompressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.astype.html#cf.SubsampledArray.astype" title="cf.SubsampledArray.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a></p></td>
+<td><p>Cast the data to a specified type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.bounds.html#cf.SubsampledArray.bounds" title="cf.SubsampledArray.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p></td>
+<td><p>True if the compressed array represents bounds tie points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.compressed_array.html#cf.SubsampledArray.compressed_array" title="cf.SubsampledArray.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></p></td>
+<td><p>Returns an independent numpy array with the compressed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.dtype.html#cf.SubsampledArray.dtype" title="cf.SubsampledArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Data-type of the uncompressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.ndim.html#cf.SubsampledArray.ndim" title="cf.SubsampledArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>Number of array dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.shape.html#cf.SubsampledArray.shape" title="cf.SubsampledArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Shape of the uncompressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.SubsampledArray.size.html#cf.SubsampledArray.size" title="cf.SubsampledArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>Number of elements in the array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

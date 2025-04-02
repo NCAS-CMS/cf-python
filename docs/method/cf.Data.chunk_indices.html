@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,26 +135,26 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.chunk_indices<a class="headerlink" href="#cf-data-chunk-indices" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.chunk_indices">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">chunk_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/data/data.py#L9567-L9605"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.chunk_indices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return indices that define each dask compute chunk.</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">chunk_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/data.py#L3725-L3754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.chunk_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return indices of the data that define each dask chunk.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.15.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p>
+<p><a class="reference internal" href="cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.chunk_positions.html#cf.Data.chunk_positions" title="cf.Data.chunk_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_positions</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/itertools.html#itertools.product" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertools.product</span></code></a></dt><dd><p>An iterator over tuples of indices of the data array.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/itertools.html#itertools.product" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertools.product</span></code></a></dt><dd><p>An iterator over tuples of indices of the data array.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">405</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
-<span class="gp">... </span>            <span class="n">chunks</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)))</span>
+<span class="gp">... </span>    <span class="n">chunks</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">npartitions</span>
 <span class="go">6</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">chunk_indices</span><span class="p">():</span>
@@ -182,7 +180,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

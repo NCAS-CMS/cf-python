@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,23 +135,23 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.derivative<a class="headerlink" href="#cf-field-derivative" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.derivative">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">derivative</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L14151-L14332"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.derivative" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">derivative</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">cyclic=None</em>, <em class="sig-param">ignore_coordinate_units=False</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/field.py#L13607-L13816"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.derivative" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the derivative along the specified axis.</p>
 <p>The derivative is calculated using centred finite differences
 apart from at the boundaries (see the <em>one_sided_at_boundary</em>
 parameter). If missing values are present then missing values
 will be returned at all points where a centred finite
 difference could not be calculated.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt>axis:</dt><dd><p>The axis, defined by that which would be selected by
 passing the given axis description to a call of the
 field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example,
 for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
 returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
 </dd>
-<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the axis is cyclic or not. By default <em>wrap</em>
+<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the axis is cyclic or not. By default <em>wrap</em>
 is set to the result of this call to the field
 construct’s <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a> method:
 <code class="docutils literal notranslate"><span class="pre">f.iscyclic(axis)</span></code>. If the axis is cyclic then
@@ -161,13 +159,33 @@ centred differences at one boundary will always use
 values from the other boundary, regardless of the
 setting of <em>one_sided_at_boundary</em>.</p>
 </dd>
-<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and the field is not cyclic or <em>wrap</em> is
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and the field is not cyclic or <em>wrap</em> is
 True, then one-sided finite differences are calculated
 at the non-cyclic boundaries. By default missing
 values are set at non-cyclic boundaries.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>ignore_coordinate_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the coordinates providing the cell
+spacings along the specified axis are assumed to be
+dimensionless, even if they do in fact have
+units. This does not change the magnitude of the
+returned numerical values, but the units of the
+returned field construct will be identical to the
+original units.</p>
+<p>If False (the default) then the coordinate units will
+propagate through to the result. i.e. the units of the
+returned field construct will be the original units
+divided by the coordinate units.</p>
+<p>For example, for a field construct with units of
+<code class="docutils literal notranslate"><span class="pre">m.s-1</span></code> and X coordinate units of <code class="docutils literal notranslate"><span class="pre">radians</span></code>, the
+units of the X derivative will be <code class="docutils literal notranslate"><span class="pre">m.s-1.radians-1</span></code>
+by default, or <code class="docutils literal notranslate"><span class="pre">m.s-1</span></code> if <em>ignore_coordinate_units</em>
+is True.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.3.</span></p>
+</div>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
@@ -175,8 +193,8 @@ values are set at non-cyclic boundaries.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The derivative of the field along the specified axis,
-or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The derivative of the field along the specified axis,
+or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </dd>
@@ -230,7 +248,7 @@ or <a class="reference external" href="https://docs.python.org/3/library/constan
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

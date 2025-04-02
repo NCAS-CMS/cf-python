@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,42 +135,44 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.DimensionCoordinate.squeeze<a class="headerlink" href="#cf-dimensioncoordinate-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.squeeze">
-<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">squeeze</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/decorators.py#L47-L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">squeeze</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size one axes from the data array.</p>
-<p>By default all size one axes are removed, but particular size one
-axes may be selected for removal. Corresponding axes are also
-removed from the bounds data array, if present.</p>
+<p>By default all size one axes are removed, but particular size
+one axes may be selected for removal. Corresponding axes are
+also removed from the bounds data array, if present.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.DimensionCoordinate.flip.html#cf.DimensionCoordinate.flip" title="cf.DimensionCoordinate.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>, <a class="reference internal" href="cf.DimensionCoordinate.insert_dimension.html#cf.DimensionCoordinate.insert_dimension" title="cf.DimensionCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.DimensionCoordinate.transpose.html#cf.DimensionCoordinate.transpose" title="cf.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
+<p><a class="reference internal" href="cf.DimensionCoordinate.insert_dimension.html#cf.DimensionCoordinate.insert_dimension" title="cf.DimensionCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.DimensionCoordinate.transpose.html#cf.DimensionCoordinate.transpose" title="cf.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The positions of the size one axes to be removed. By
-default all size one axes are removed. Each axis is
-identified by its original integer position. Negative
-integers counting from the last position are allowed.</p>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The positions of the size one axes to be removed. By
+default all size one axes are removed.</p>
+<p>Each axis is identified by its integer position in the
+data. Negative integers counting from the last
+position are allowed.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=0</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=-2</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=-1</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=[2,</span> <span class="pre">0]</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=[1,</span> <span class="pre">-2]</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
-</dd>
-<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The new construct with removed data axes. If the operation
-was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<dt><a class="reference internal" href="../class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The new construct with removed data axes. If the
+operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </dd>
 </dl>
 </dd>
@@ -205,7 +205,7 @@ was in-place then <a class="reference external" href="https://docs.python.org/3/
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

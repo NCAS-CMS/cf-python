@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.List.del_file_location" href="cf.List.del_file_location.html" />
+    <link rel="next" title="cf.List.chunk" href="cf.List.chunk.html" />
     <link rel="prev" title="cf.List.cfa_file_substitutions" href="cf.List.cfa_file_substitutions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -98,7 +96,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.List.html">cf.List</a><ul>
       <li>Previous: <a href="cf.List.cfa_file_substitutions.html" title="previous chapter">cf.List.cfa_file_substitutions</a></li>
-      <li>Next: <a href="cf.List.del_file_location.html" title="next chapter">cf.List.del_file_location</a></li>
+      <li>Next: <a href="cf.List.chunk.html" title="next chapter">cf.List.chunk</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -135,36 +133,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
   <section id="cf-list-cfa-update-file-substitutions">
 <h1>cf.List.cfa_update_file_substitutions<a class="headerlink" href="#cf-list-cfa-update-file-substitutions" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="cf.List.cfa_update_file_substitutions">
-<code class="sig-prename descclassname">List.</code><code class="sig-name descname">cfa_update_file_substitutions</code><span class="sig-paren">(</span><em class="sig-param">substitutions</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/mixin/propertiesdata.py#L2581-L2601"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List.cfa_update_file_substitutions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set CFA-netCDF file name substitutions.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 3.15.0.</span></p>
-</div>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt>substitutions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The substitution definitions in a dictionary whose
-key/value pairs are the file name parts to be
-substituted and their corresponding substitution text.</p>
-<p>Each substitution definition may be specified with or
-without the <code class="docutils literal notranslate"><span class="pre">${...}</span></code> syntax. For instance, the
-following are equivalent: <code class="docutils literal notranslate"><span class="pre">{'base':</span> <span class="pre">'sub'}</span></code>,
-<code class="docutils literal notranslate"><span class="pre">{'${base}':</span> <span class="pre">'sub'}</span></code>.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
-</dd>
-</dl>
-<p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cfa_update_file_substitutions</span><span class="p">({</span><span class="s1">&#39;base&#39;</span><span class="p">,</span> <span class="s1">&#39;/data/model&#39;</span><span class="p">})</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </section>
 
 
@@ -175,7 +143,7 @@ following are equivalent: <code class="docutils literal notranslate"><span class
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

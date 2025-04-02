@@ -146,17 +146,8 @@ time
 c = a.regridc([time], axes='T', method='linear')
 v = cf.read('vertical.nc')[0]
 print(v)
-z_p = v.construct('Z')
-print(z_p.array)
-z_ln_p = z_p.log()
-z_ln_p.axis = 'Z'
-print(z_ln_p.array)
-_ = v.replace_construct('Z', new=z_ln_p)
-new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
-new_z_ln_p = new_z_p.log()
-new_z_ln_p.axis = 'Z'
-new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
-new_v.replace_construct('Z', new=new_z_p)
+new_z = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
+new_v = v.regridc([new_z], axes='Z', method='linear', z='Z', ln_z=True)
 print(new_v)
 q, t = cf.read('file.nc')
 t.data.stats()

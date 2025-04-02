@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.TimeDuration.days_in_month<a class="headerlink" href="#cf-timeduration-days-in-month" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.TimeDuration.days_in_month">
-<em class="property">classmethod </em><code class="sig-prename descclassname">TimeDuration.</code><code class="sig-name descname">days_in_month</code><span class="sig-paren">(</span><em class="sig-param">year</em>, <em class="sig-param">month</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">leap_month=2</em>, <em class="sig-param">month_lengths=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/timeduration.py#L1042-L1116"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.days_in_month" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-prename descclassname">TimeDuration.</code><code class="sig-name descname">days_in_month</code><span class="sig-paren">(</span><em class="sig-param">year</em>, <em class="sig-param">month</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">leap_month=2</em>, <em class="sig-param">month_lengths=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/timeduration.py#L1040-L1114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.days_in_month" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of days in a specific month in a specific year in
 a specific calendar.</p>
 <div class="versionadded">
@@ -146,26 +144,26 @@ a specific calendar.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>year: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The calendar year to query.</p>
+<dt>year: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The calendar year to query.</p>
 </dd>
-<dt>month: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The one- or two-digit integer representing the calendar
+<dt>month: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The one- or two-digit integer representing the calendar
 month to query (numbered by order in the calendar year,
 for example 2 for February, 10 for October).</p>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>By default, calendar is the mixed Gregorian/Julian
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>By default, calendar is the mixed Gregorian/Julian
 calendar as defined by Udunits.</p>
 </dd>
-<dt>leap_month: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The leap month. By default the leap month is 2, i.e. the
+<dt>leap_month: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The leap month. By default the leap month is 2, i.e. the
 second month of the year.</p>
 </dd>
-<dt>month_lengths: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>By default, <em>month_lengths</em> is <code class="docutils literal notranslate"><span class="pre">[31,</span> <span class="pre">28,</span> <span class="pre">31,</span> <span class="pre">30,</span> <span class="pre">31,</span> <span class="pre">30,</span>
+<dt>month_lengths: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>By default, <em>month_lengths</em> is <code class="docutils literal notranslate"><span class="pre">[31,</span> <span class="pre">28,</span> <span class="pre">31,</span> <span class="pre">30,</span> <span class="pre">31,</span> <span class="pre">30,</span>
 <span class="pre">31,</span> <span class="pre">31,</span> <span class="pre">30,</span> <span class="pre">31,</span> <span class="pre">30,</span> <span class="pre">31]</span></code>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of days in the specified month.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of days in the specified month.</p>
 </dd>
 </dl>
 </dd>
@@ -187,7 +185,7 @@ second month of the year.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

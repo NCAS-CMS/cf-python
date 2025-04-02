@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Count.dump" href="../method/cf.Count.dump.html" />
-    <link rel="prev" title="cf.Configuration.__repr__" href="../method/cf.Configuration.__repr__.html" />
+    <link rel="prev" title="cf.UMArray.word_size" href="../method/cf.UMArray.word_size.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -96,7 +94,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../method/cf.Configuration.__repr__.html" title="previous chapter">cf.Configuration.__repr__</a></li>
+      <li>Previous: <a href="../method/cf.UMArray.word_size.html" title="previous chapter">cf.UMArray.word_size</a></li>
       <li>Next: <a href="../method/cf.Count.dump.html" title="next chapter">cf.Count.dump</a></li>
   </ul></li>
   </ul></li>
@@ -136,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Count">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/count.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/count.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.count.Count</span></code></p>
 <p>A count variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using a contiguous ragged array
@@ -163,6 +161,9 @@ and which does not correspond to a domain axis construct) may be
 accessed with the <a class="reference internal" href="../method/cf.Count.nc_set_sample_dimension.html#cf.Count.nc_set_sample_dimension" title="cf.Count.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a>,
 <a class="reference internal" href="../method/cf.Count.nc_get_sample_dimension.html#cf.Count.nc_get_sample_dimension" title="cf.Count.nc_get_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_del_sample_dimension.html#cf.Count.nc_del_sample_dimension" title="cf.Count.nc_del_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></a> and
 <a class="reference internal" href="../method/cf.Count.nc_has_sample_dimension.html#cf.Count.nc_has_sample_dimension" title="cf.Count.nc_has_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></a> methods.</p>
+<p>The netCDF4 HDF5 chunks may be accessed with the
+<a class="reference internal" href="../method/cf.Count.nc_hdf5_chunksizes.html#cf.Count.nc_hdf5_chunksizes" title="cf.Count.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_set_hdf5_chunksizes.html#cf.Count.nc_set_hdf5_chunksizes" title="cf.Count.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a>, and
+<a class="reference internal" href="../method/cf.Count.nc_clear_hdf5_chunksizes.html#cf.Count.nc_clear_hdf5_chunksizes" title="cf.Count.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -170,7 +171,7 @@ accessed with the <a class="reference internal" href="../method/cf.Count.nc_set_
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.Count.set_properties.html#cf.Count.set_properties" title="cf.Count.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.Count.set_property.html#cf.Count.set_property" title="cf.Count.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
@@ -181,13 +182,13 @@ the <a class="reference internal" href="../method/cf.Count.set_properties.html#c
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
 <a class="reference internal" href="../method/cf.Count.set_data.html#cf.Count.set_data" title="cf.Count.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 </dd>
@@ -202,7 +203,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cf.Count(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -422,7 +423,7 @@ parameters are not deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.dtype.html#cf.Count.dtype" title="cf.Count.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.isscalar.html#cf.Count.isscalar" title="cf.Count.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data array is scalar.</p></td>
@@ -526,7 +527,10 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>Return the data array missing data value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.masked_invalid.html#cf.Count.masked_invalid" title="cf.Count.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.filled.html#cf.Count.filled" title="cf.Count.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
+<td><p>Replace masked elements with a fill value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.masked_invalid.html#cf.Count.masked_invalid" title="cf.Count.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
 </tbody>
@@ -612,7 +616,7 @@ parameters are not deep copied.</p>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.persist.html#cf.Count.persist" title="cf.Count.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
-<td><p>Persist the underlying dask array into memory.</p></td>
+<td><p>Persist data into memory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -627,7 +631,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.concatenate.html#cf.Count.concatenate" title="cf.Count.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
-<td><p>Join a sequence of variables together.</p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.copy.html#cf.Count.copy" title="cf.Count.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
@@ -654,7 +658,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.T.html#cf.Count.T" title="cf.Count.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.X.html#cf.Count.X" title="cf.Count.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
 <td><p>Always False.</p></td>
@@ -939,11 +943,20 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_sample_dimension.html#cf.Count.nc_set_sample_dimension" title="cf.Count.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a></p></td>
 <td><p>Set the netCDF sample dimension name.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_clear_hdf5_chunksizes.html#cf.Count.nc_clear_hdf5_chunksizes" title="cf.Count.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_hdf5_chunksizes.html#cf.Count.nc_hdf5_chunksizes" title="cf.Count.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_hdf5_chunksizes.html#cf.Count.nc_set_hdf5_chunksizes" title="cf.Count.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="cfa">
-<h2>CFA<a class="headerlink" href="#cfa" title="Permalink to this headline">¶</a></h2>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -951,26 +964,11 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.add_file_location.html#cf.Count.add_file_location" title="cf.Count.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
-<td><p>Add a new file location in-place.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.file_directories.html#cf.Count.file_directories" title="cf.Count.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.cfa_clear_file_substitutions.html#cf.Count.cfa_clear_file_substitutions" title="cf.Count.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
-<td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.cfa_del_file_substitution.html#cf.Count.cfa_del_file_substitution" title="cf.Count.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
-<td><p>Remove a CFA-netCDF file name substitution.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.cfa_file_substitutions.html#cf.Count.cfa_file_substitutions" title="cf.Count.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
-<td><p>Return the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.cfa_update_file_substitutions.html#cf.Count.cfa_update_file_substitutions" title="cf.Count.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
-<td><p>Set CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.del_file_location.html#cf.Count.del_file_location" title="cf.Count.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
-<td><p>Remove a file location in-place.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.file_locations.html#cf.Count.file_locations" title="cf.Count.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
-<td><p>The locations of files containing parts of the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.replace_directory.html#cf.Count.replace_directory" title="cf.Count.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1288,22 +1286,22 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>Called to implement membership test operators.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__deepcopy__.html#cf.Count.__deepcopy__" title="cf.Count.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__getitem__.html#cf.Count.__getitem__" title="cf.Count.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__repr__.html#cf.Count.__repr__" title="cf.Count.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__setitem__.html#cf.Count.__setitem__" title="cf.Count.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Called to implement assignment to x[indices]</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__str__.html#cf.Count.__str__" title="cf.Count.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__array__.html#cf.Count.__array__" title="cf.Count.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
-<td><p>Returns a numpy array representation of the data.</p></td>
+<td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__data__.html#cf.Count.__data__" title="cf.Count.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
 <td><p>Returns a new reference to the data.</p></td>
@@ -1323,20 +1321,38 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.asdatetime.html#cf.Count.asdatetime" title="cf.Count.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.add_file_location</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.asdatetime.html#cf.Count.asdatetime" title="cf.Count.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.asreftime.html#cf.Count.asreftime" title="cf.Count.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.asreftime.html#cf.Count.asreftime" title="cf.Count.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.attributes.html#cf.Count.attributes" title="cf.Count.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.attributes.html#cf.Count.attributes" title="cf.Count.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.chunk.html#cf.Count.chunk" title="cf.Count.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.cfa_clear_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.cfa_del_file_substitution</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.cfa_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.cfa_update_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.chunk.html#cf.Count.chunk" title="cf.Count.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
 <td><p>Partition the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.Data.html#cf.Count.Data" title="cf.Count.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.Data.html#cf.Count.Data" title="cf.Count.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.del_file_location</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.delprop.html#cf.Count.delprop" title="cf.Count.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
@@ -1347,59 +1363,62 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.expand_dims.html#cf.Count.expand_dims" title="cf.Count.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.get_filenames.html#cf.Count.get_filenames" title="cf.Count.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count.file_locations</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.get_filenames.html#cf.Count.get_filenames" title="cf.Count.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.getprop.html#cf.Count.getprop" title="cf.Count.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.getprop.html#cf.Count.getprop" title="cf.Count.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.halo.html#cf.Count.halo" title="cf.Count.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.halo.html#cf.Count.halo" title="cf.Count.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the data by adding a halo.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.hasbounds.html#cf.Count.hasbounds" title="cf.Count.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.hasbounds.html#cf.Count.hasbounds" title="cf.Count.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.hasdata.html#cf.Count.hasdata" title="cf.Count.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.hasdata.html#cf.Count.hasdata" title="cf.Count.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.hasprop.html#cf.Count.hasprop" title="cf.Count.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.hasprop.html#cf.Count.hasprop" title="cf.Count.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.insert_data.html#cf.Count.insert_data" title="cf.Count.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.insert_data.html#cf.Count.insert_data" title="cf.Count.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isauxiliary.html#cf.Count.isauxiliary" title="cf.Count.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isauxiliary.html#cf.Count.isauxiliary" title="cf.Count.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isdimension.html#cf.Count.isdimension" title="cf.Count.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isdimension.html#cf.Count.isdimension" title="cf.Count.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isdomainancillary.html#cf.Count.isdomainancillary" title="cf.Count.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isdomainancillary.html#cf.Count.isdomainancillary" title="cf.Count.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isfieldancillary.html#cf.Count.isfieldancillary" title="cf.Count.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isfieldancillary.html#cf.Count.isfieldancillary" title="cf.Count.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.ismeasure.html#cf.Count.ismeasure" title="cf.Count.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.ismeasure.html#cf.Count.ismeasure" title="cf.Count.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.mask_invalid.html#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.mask_invalid.html#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.name.html#cf.Count.name" title="cf.Count.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.name.html#cf.Count.name" title="cf.Count.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.remove_data.html#cf.Count.remove_data" title="cf.Count.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.remove_data.html#cf.Count.remove_data" title="cf.Count.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.select.html#cf.Count.select" title="cf.Count.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.select.html#cf.Count.select" title="cf.Count.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.setprop.html#cf.Count.setprop" title="cf.Count.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.setprop.html#cf.Count.setprop" title="cf.Count.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.unsafe_array.html#cf.Count.unsafe_array" title="cf.Count.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.unsafe_array.html#cf.Count.unsafe_array" title="cf.Count.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1414,7 +1433,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
