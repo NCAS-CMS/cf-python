@@ -39,6 +39,7 @@ Inspection
    :template: attribute.rst
    
    ~cf.UMArray.array
+   ~cf.UMArray.astype
    ~cf.UMArray.dtype
    ~cf.UMArray.ndim
    ~cf.UMArray.shape

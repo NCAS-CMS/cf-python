@@ -58,6 +58,7 @@ cf.SubsampledArray
    
    ~cf.SubsampledArray.Units
    ~cf.SubsampledArray.array
+   ~cf.SubsampledArray.astype
    ~cf.SubsampledArray.bounds
    ~cf.SubsampledArray.compressed_array
    ~cf.SubsampledArray.dtype

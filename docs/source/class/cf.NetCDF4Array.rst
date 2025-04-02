@@ -34,6 +34,7 @@ Inspection
    :template: attribute.rst
    
    ~cf.NetCDF4Array.array
+   ~cf.NetCDF4Array.astype
    ~cf.NetCDF4Array.dtype
    ~cf.NetCDF4Array.ndim
    ~cf.NetCDF4Array.shape

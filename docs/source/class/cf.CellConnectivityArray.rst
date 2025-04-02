@@ -48,6 +48,7 @@ cf.CellConnectivityArray
 
    ~cf.CellConnectivityArray.Units
    ~cf.CellConnectivityArray.array
+   ~cf.CellConnectivityArray.astype
    ~cf.CellConnectivityArray.compressed_array
    ~cf.CellConnectivityArray.dtype
    ~cf.CellConnectivityArray.ndim

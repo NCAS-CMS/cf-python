@@ -47,6 +47,7 @@ cf.RaggedIndexedArray
    :template: attribute.rst
    
    ~cf.RaggedIndexedArray.array
+   ~cf.RaggedIndexedArray.astype
    ~cf.RaggedIndexedArray.compressed_array
    ~cf.RaggedIndexedArray.dtype
    ~cf.RaggedIndexedArray.ndim

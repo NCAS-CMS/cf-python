@@ -48,6 +48,7 @@ cf.PointTopologyArray
    
    ~cf.PointTopologyArray.Units
    ~cf.PointTopologyArray.array
+   ~cf.PointTopologyArray.astype
    ~cf.PointTopologyArray.compressed_array
    ~cf.PointTopologyArray.dtype
    ~cf.PointTopologyArray.ndim

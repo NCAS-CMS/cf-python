@@ -48,6 +48,7 @@ cf.BoundsFromNodesArray
 
    ~cf.BoundsFromNodesArray.Units
    ~cf.BoundsFromNodesArray.array
+   ~cf.BoundsFromNodesArray.astype
    ~cf.BoundsFromNodesArray.compressed_array
    ~cf.BoundsFromNodesArray.dtype
    ~cf.BoundsFromNodesArray.ndim
