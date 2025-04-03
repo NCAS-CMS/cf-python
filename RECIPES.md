@@ -19,6 +19,11 @@
   pip install sphinx==2.4.5
   ```
   
+* **Note** this is a very old very of Sphinx and some of its plugins etc., which will be updated soon so we
+use the latest, but is necessary for now to maintain certain features. When installing libraries, take
+care not to allow the newest version of Sphinx to be installed by default during the operation.
+
+
 ## Notes
 
 * The `.py` files to generate recipes are stored in `docs/source/recipes/`.
@@ -57,7 +62,20 @@
       <button data-filter="testfilter">Test</button>
   </div>
   ```
-  
+
+
 ## Building for a release
 
-TODO
+* Since the datasets to use are often very large, it is best to build only new recipes and re-build any
+  which have been updated (usually to replace deprecated keywords or methods, etc.).
+  * To force the prevention of re-builds, move the relevant `docs/source/recipes/plot_*_recipe.py` script(s)
+  out of that directory (or `rm` them, they can be recovered by version control) and they won't be built.
+  Use that to build only recipes that are new or updated.
+  * The HTML files, code and generated notebooks under `_downloads` and generated plots
+     and thumbnail images under  `_images`, for any previously-built recipes, can then be manually copied
+     across from stored archive builds, to create the full recipe listing.
+  * The `index.html` will need to be updated to list the previously-generated recipes, also.
+  * Note that recipes built for the `dev` or `archive` documentation builds will have paths in the
+     recipes HTML files beginning with the relative path `../../` whereas for the `latest` documentation
+     build this needs to be `../` only i.e. is one level up in the tree structure, so if copying anything over
+     note this might need to be updated.
