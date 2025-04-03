@@ -1,3 +1,7 @@
+# Instructions for the cf-python gallery of code recipes
+
+## Environment
+
 * The generation of recipes using Sphinx-Gallery requires `Python<3.12.0` and:
 
   ```txt
@@ -14,6 +18,8 @@
   pip install alabaster==0.7.13
   pip install sphinx==2.4.5
   ```
+  
+## Notes
 
 * The `.py` files to generate recipes are stored in `docs/source/recipes/`.
   
@@ -51,3 +57,7 @@
       <button data-filter="testfilter">Test</button>
   </div>
   ```
+  
+## Building for a release
+
+TODO

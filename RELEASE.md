@@ -60,7 +60,7 @@
   ./test_tutorial_code
   ```
 
-- [ ] **Follow all of the steps outlined externally in `DOCUMENTATION.md`**,
+- [ ] **Follow all of the steps outlined externally in `RECIPES.md`**,
   notably so that the correct Sphinx-related environment is prepared for
   documentation building.
   
