@@ -22,7 +22,6 @@ from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
 
-
 print("\ncf environment:")
 print("-----------------")
 cf.environment()
@@ -392,7 +391,9 @@ sphinx_gallery_conf = {
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
     "default_thumb_file": "_static/logo.svg",
-    "image_scrapers": ("matplotlib",),  # Ensures Matplotlib images are captured
+    "image_scrapers": (
+        "matplotlib",
+    ),  # Ensures Matplotlib images are captured
     "plot_gallery": "True",  # Enables plot rendering
     "reset_modules": ("matplotlib",),  # Helps with memory management
     "capture_repr": (),

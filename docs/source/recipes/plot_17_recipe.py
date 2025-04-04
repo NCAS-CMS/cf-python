@@ -6,6 +6,8 @@ In this recipe, we will plot the same data with different colour maps from
 three categories in separate subplots to illustrate the importance of
 choosing a suitable one for given data. To avoid unintended bias and
 misrepresentation, or lack of accessibility, a careful choice must be made.
+
+isort:skip_file
 """
 
 # %%
