@@ -34,6 +34,7 @@ Inspection
    :template: attribute.rst
    
    ~cf.FullArray.array
+   ~cf.FullArray.astype
    ~cf.FullArray.dtype
    ~cf.FullArray.ndim
    ~cf.FullArray.shape

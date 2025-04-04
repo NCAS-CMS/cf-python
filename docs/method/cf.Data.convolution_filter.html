@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.convolution_filter<a class="headerlink" href="#cf-data-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.convolution_filter">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/data/data.py#L2793-L2989"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/data.py#L1345-L1541"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data convolved along the given axis with the
 specified filter.</p>
 <p>The magnitude of the integral of the filter (i.e. the sum of the
@@ -146,7 +144,7 @@ values. For example, filter weights of <code class="docutils literal notranslate
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1 (see
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.15.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1 (see
 the examples for details).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.3.0.</span></p>
@@ -160,11 +158,11 @@ the examples for details).</p>
 with <code class="docutils literal notranslate"><span class="pre">weights=[0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code></p>
 </dd>
 </dl>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.15.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of
 window functions for creating weights for filtering (see
 the examples for details).</p>
 </dd>
-<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Select the axis over which the filter is to be applied.
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Select the axis over which the filter is to be applied.
 removed. The <em>axis</em> parameter is an integer that selects
 the axis corresponding to the given position in the list
 of axes of the data.</p>
@@ -175,7 +173,7 @@ of axes of the data.</p>
 </dd>
 </dl>
 </dd>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The <em>mode</em> parameter determines how the input array is
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The <em>mode</em> parameter determines how the input array is
 extended when the filter overlaps an array border. The
 default value is <code class="docutils literal notranslate"><span class="pre">'constant'</span></code> or, if the dimension being
 convolved is cyclic (as ascertained by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code>
@@ -236,7 +234,7 @@ opposite edge.</p></td>
 changed by using the <em>origin</em> parameter.</p>
 </dd>
 <dt>cval: scalar, optional</dt><dd><p>Value to fill past the edges of the array if <em>mode</em> is
-<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the
+<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the
 edges of the array will be filled with missing data.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To extend the input by filling all values beyond the
@@ -244,7 +242,7 @@ edge with zero: <code class="docutils literal notranslate"><span class="pre">cva
 </dd>
 </dl>
 </dd>
-<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Controls the placement of the filter. Defaults to 0, which
+<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Controls the placement of the filter. Defaults to 0, which
 is the centre of the window. If the window has an even
 number of weights then then a value of 0 defines the index
 defined by <code class="docutils literal notranslate"><span class="pre">width/2</span> <span class="pre">-1</span></code>.</p>
@@ -259,14 +257,14 @@ the and the next three points.</p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The convolved data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
+<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The convolved data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
 in-place.</p>
 </dd>
 </dl>
@@ -284,7 +282,7 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

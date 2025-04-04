@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.direction<a class="headerlink" href="#cf-domain-direction" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.direction">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/decorators.py#L47-L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.direction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">direction</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/decorators.py#L47-L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not a domain axis is increasing.</p>
 <p>An domain axis is considered to be increasing if its dimension
 coordinate values are increasing in index space or if it has
@@ -160,10 +158,10 @@ domain axis construct.</p>
 <p>defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, and is selected
 if any of them match the <em>identity</em>
 parameter. <em>identity</em> may be a string that equals one
-of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
+of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
 that matches one of a construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a metadata construct is always described by one
 of its identities, and so this description may always
 be used as an <em>identity</em> value.</p>
@@ -176,7 +174,7 @@ value of <code class="docutils literal notranslate"><span class="pre">'X'</span>
 by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
 </li>
 <li><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the</dt><dd><p>domain construct when there is only one of them.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the</dt><dd><p>domain construct when there is only one of them.</p>
 </dd>
 </dl>
 </li>
@@ -190,7 +188,7 @@ by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the domain axis is increasing.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the domain axis is increasing.</p>
 </dd>
 </dl>
 </dd>
@@ -217,7 +215,7 @@ by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

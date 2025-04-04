@@ -34,6 +34,7 @@ Inspection
    :template: attribute.rst
    
    ~cf.H5netcdfArray.array
+   ~cf.H5netcdfArray.astype
    ~cf.H5netcdfArray.dtype
    ~cf.H5netcdfArray.ndim
    ~cf.H5netcdfArray.shape

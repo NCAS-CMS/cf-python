@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.FullArray &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.FullArray.get_compression_type" href="../method/cf.FullArray.get_compression_type.html" />
+    <link rel="prev" title="cf.NetCDF4Array.get_missing_values" href="../method/cf.NetCDF4Array.get_missing_values.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.NetCDF4Array.get_missing_values.html" title="previous chapter">cf.NetCDF4Array.get_missing_values</a></li>
+      <li>Next: <a href="../method/cf.FullArray.get_compression_type.html" title="next chapter">cf.FullArray.get_compression_type</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-fullarray">
+<h1>cf.FullArray<a class="headerlink" href="#cf-fullarray" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.FullArray">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FullArray</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">attributes=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/array/fullarray.py#L6-L13"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FullArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.fullarray.FullArray</span></code></p>
+<p>A array filled with a given value.</p>
+<p>The array may be empty or all missing values.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>fill_value<span class="classifier">scalar, optional</span></dt><dd><p>The fill value for the array. May be set to
+<a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ma.masked</span></code>.</p>
+</dd>
+<dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><p>The data type of the array.</p>
+</dd>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The array dimension sizes.</p>
+</dd>
+<dt>attributes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide netCDF attributes for the data as a dictionary
+of key/value pairs.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.FullArray" title="cf.FullArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FullArray</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.FullArray" title="cf.FullArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FullArray</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.FullArray" title="cf.FullArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FullArray</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.FullArray(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.get_compression_type.html#cf.FullArray.get_compression_type" title="cf.FullArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
+<td><p>Returns the array’s compression type.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FullArray.get_subspace</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.get_attributes.html#cf.FullArray.get_attributes" title="cf.FullArray.get_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></a></p></td>
+<td><p>The attributes of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FullArray.index.html#cf.FullArray.index" title="cf.FullArray.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a></p></td>
+<td><p>The index to be applied when converting to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.is_subspace.html#cf.FullArray.is_subspace" title="cf.FullArray.is_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_subspace</span></code></a></p></td>
+<td><p>True if the index represents a subspace of the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FullArray.array.html#cf.FullArray.array" title="cf.FullArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>Return an independent numpy array containing the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FullArray.astype.html#cf.FullArray.astype" title="cf.FullArray.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a></p></td>
+<td><p>Cast the data to a specified type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FullArray.dtype.html#cf.FullArray.dtype" title="cf.FullArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Data-type of the data elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FullArray.ndim.html#cf.FullArray.ndim" title="cf.FullArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>Number of array dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FullArray.shape.html#cf.FullArray.shape" title="cf.FullArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Tuple of array dimension sizes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FullArray.size.html#cf.FullArray.size" title="cf.FullArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>Number of elements in the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FullArray.original_shape.html#cf.FullArray.original_shape" title="cf.FullArray.original_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">original_shape</span></code></a></p></td>
+<td><p>The shape of the data in the file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FullArray.reference_shape.html#cf.FullArray.reference_shape" title="cf.FullArray.reference_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_shape</span></code></a></p></td>
+<td><p>The shape of the data in the file with added dimensions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="full-value">
+<h2>Full value<a class="headerlink" href="#full-value" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.get_full_value.html#cf.FullArray.get_full_value" title="cf.FullArray.get_full_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_full_value</span></code></a></p></td>
+<td><p>Return the data array fill value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FullArray.set_full_value.html#cf.FullArray.set_full_value" title="cf.FullArray.set_full_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_full_value</span></code></a></p></td>
+<td><p>Set the data array fill value.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.get_calendar.html#cf.FullArray.get_calendar" title="cf.FullArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
+<td><p>The calendar of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FullArray.get_units.html#cf.FullArray.get_units" title="cf.FullArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
+<td><p>The units of the array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.Units.html#cf.FullArray.Units" title="cf.FullArray.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object containing the units of the array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.copy.html#cf.FullArray.copy" title="cf.FullArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy of the array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray.__getitem__.html#cf.FullArray.__getitem__" title="cf.FullArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Returns a subspace of the data as a new <a class="reference internal" href="#cf.FullArray" title="cf.FullArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FullArray</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray._docstring_special_substitutions.html#cf.FullArray._docstring_special_substitutions" title="cf.FullArray._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FullArray._docstring_substitutions.html#cf.FullArray._docstring_substitutions" title="cf.FullArray._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FullArray._docstring_package_depth.html#cf.FullArray._docstring_package_depth" title="cf.FullArray._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FullArray._docstring_method_exclusions.html#cf.FullArray._docstring_method_exclusions" title="cf.FullArray._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

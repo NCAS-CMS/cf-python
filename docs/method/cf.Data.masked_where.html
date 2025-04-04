@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Data.masked_where &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Data.binary_mask" href="../attribute/cf.Data.binary_mask.html" />
+    <link rel="prev" title="cf.Data.soften_mask" href="cf.Data.soften_mask.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Data.html">cf.Data</a><ul>
+      <li>Previous: <a href="cf.Data.soften_mask.html" title="previous chapter">cf.Data.soften_mask</a></li>
+      <li>Next: <a href="../attribute/cf.Data.binary_mask.html" title="next chapter">cf.Data.binary_mask</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-data-masked-where">
+<h1>cf.Data.masked_where<a class="headerlink" href="#cf-data-masked-where" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Data.masked_where">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">masked_where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/data.py#L3643-L3685"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.masked_where" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask the data where a condition is met.</p>
+<p><code class="docutils literal notranslate"><span class="pre">d.masked_where(condition)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">d.where(condition,</span> <span class="pre">cf.masked)</span></code>.</p>
+<p><strong>Performance</strong></p>
+<p><a class="reference internal" href="#cf.Data.masked_where" title="cf.Data.masked_where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></a> causes all delayed operations to be executed.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.3.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../attribute/cf.Data.mask.html#cf.Data.mask" title="cf.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>, <a class="reference internal" href="cf.Data.masked_values.html#cf.Data.masked_values" title="cf.Data.masked_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_values</span></code></a>, <a class="reference internal" href="cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>condition: array_like</dt><dd><p>The masking condition. The data is masked where
+<em>condition</em> is True. Any masked values already in the
+data are also masked in the result.</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The result of masking the data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">masked_where</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[1 -- 3 -- 5]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

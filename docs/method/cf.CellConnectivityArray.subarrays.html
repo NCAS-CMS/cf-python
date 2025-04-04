@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.CellConnectivityArray.subarrays &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.CellConnectivityArray.to_dask_array" href="cf.CellConnectivityArray.to_dask_array.html" />
+    <link rel="prev" title="cf.CellConnectivityArray.subarray_shapes" href="cf.CellConnectivityArray.subarray_shapes.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.CellConnectivityArray.html">cf.CellConnectivityArray</a><ul>
+      <li>Previous: <a href="cf.CellConnectivityArray.subarray_shapes.html" title="previous chapter">cf.CellConnectivityArray.subarray_shapes</a></li>
+      <li>Next: <a href="cf.CellConnectivityArray.to_dask_array.html" title="next chapter">cf.CellConnectivityArray.to_dask_array</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-cellconnectivityarray-subarrays">
+<h1>cf.CellConnectivityArray.subarrays<a class="headerlink" href="#cf-cellconnectivityarray-subarrays" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.CellConnectivityArray.subarrays">
+<code class="sig-prename descclassname">CellConnectivityArray.</code><code class="sig-name descname">subarrays</code><span class="sig-paren">(</span><em class="sig-param">shapes=-1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/abstract/mesharray.py#L295-L385"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellConnectivityArray.subarrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return descriptors for every subarray.</p>
+<p>These descriptors are used during subarray decompression.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>chunks: <code class="docutils literal notranslate"><span class="pre">-1</span></code> or sequence, optional</dt><dd><p>Define the subarray shapes.</p>
+<p>Must be either <code class="docutils literal notranslate"><span class="pre">-1</span></code>, the default, meaning that all
+non-compressed dimensions in each subarray have the
+maximum possible size; or a sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>. In
+the latter case <em>chunks</em> must be allowed as an input
+to <a class="reference internal" href="cf.CellConnectivityArray.subarray_shapes.html#cf.CellConnectivityArray.subarray_shapes" title="cf.CellConnectivityArray.subarray_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_shapes</span></code></a>.</p>
+<p>A valid <em>chunks</em> specification may always be found by
+normalising an output of <a class="reference internal" href="cf.CellConnectivityArray.subarray_shapes.html#cf.CellConnectivityArray.subarray_shapes" title="cf.CellConnectivityArray.subarray_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_shapes</span></code></a> with
+<a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.core.normalize_chunks.html#dask.array.core.normalize_chunks" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.core.normalize_chunks</span></code></a> as follows:
+<code class="docutils literal notranslate"><span class="pre">chunks</span> <span class="pre">=</span>
+<span class="pre">dask.array.core.normalize_chunks(a.subarray_shapes(...),</span>
+<span class="pre">shape=a.shape,</span> <span class="pre">dtype=a.dtype)</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>4-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of iterators</dt><dd><p>Each iterable iterates over a particular descriptor
+from each subarray:</p>
+<ol class="arabic simple">
+<li><p>The indices of the uncompressed array that
+correspond to each subarray.</p></li>
+<li><p>The shape of each uncompressed subarray.</p></li>
+<li><p>The indices of the compressed array that correspond
+to each subarray.</p></li>
+<li><p>The location of each subarray on the uncompressed
+dimensions.</p></li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>A compressed array with shape (4, 4) that has an original
+UGRID connectivity array with shape (4, 2).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u_indices</span><span class="p">,</span> <span class="n">u_shapes</span><span class="p">,</span> <span class="n">c_indices</span><span class="p">,</span> <span class="n">locations</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">subarrays</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">u_indices</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">(slice(0, 4, None), slice(0, 4, None))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">u_shapes</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">(4, 4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c_indices</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">(slice(0, 4, None), slice(0, 2, None))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">(0, 0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

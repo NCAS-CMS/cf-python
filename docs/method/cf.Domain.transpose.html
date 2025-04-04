@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.transpose<a class="headerlink" href="#cf-domain-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.transpose">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/domain.py#L1267-L1369"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domain.py#L1061-L1163"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the data axes of the metadata constructs.</p>
 <p>Each metadata construct has its data axis order changed to the
 relative ordering defined by the <em>axes</em> parameter. For
@@ -154,7 +152,7 @@ will be transposed to have data order <code class="docutils literal notranslate"
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the new domain axis order.</p>
+<dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the new domain axis order.</p>
 <p>A domain axis is identified by that which would be
 selected by passing a given axis description to a call of
 the <a class="reference internal" href="cf.Domain.domain_axis.html#cf.Domain.domain_axis" title="cf.Domain.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>
@@ -163,19 +161,19 @@ would select the domain axis construct returned by
 <p>Each domain axis of the domain construct data must be
 specified.</p>
 </dd>
-<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then metadata constructs are also transposed so
+<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then metadata constructs are also transposed so
 that their axes are in the same relative order as in the
 transposed data array of the field. By default metadata
 constructs are not altered.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The domain construct with transposed constructs, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The domain construct with transposed constructs, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
 if the operation was in-place.</p>
 </dd>
 </dl>
@@ -215,7 +213,7 @@ if the operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

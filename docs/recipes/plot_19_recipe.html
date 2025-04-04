@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Plotting per-season trends in global sea surface temperature extrema &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-19-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="plotting-per-season-trends-in-global-sea-surface-temperature-extrema">
+<span id="sphx-glr-recipes-plot-19-recipe-py"></span><h1>Plotting per-season trends in global sea surface temperature extrema<a class="headerlink" href="#plotting-per-season-trends-in-global-sea-surface-temperature-extrema" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe we find the area-based extrema of global sea surface
+temperature per month and, because it is very difficult to
+interpret for trends when in a monthly form, we calculate and plot
+on top of this the mean across each season for both the minima and the
+maxima.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python, cf-plot and other required packages:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Read the dataset in extract the SST Field from the FieldList:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_SST.nc&quot;</span><span class="p">)</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sst</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this gives the sea surface temperature (SST)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Collapse the SST data by area extrema (extrema over spatial dimensions):</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_max</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sst</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;area: maximum&quot;</span><span class="p">)</span>  <span class="c1"># equivalent to &quot;X Y: maximum&quot;</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_min</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sst</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;area: minimum&quot;</span><span class="p">)</span>  <span class="c1"># equivalent to &quot;X Y: minimum&quot;</span>
+</pre></div>
+</div>
+<p>4. Reduce all timeseries down to just 1980+ since there are some data
+quality issues before 1970 and also this window is about perfect size
+for viewing the trends without the line plot becoming too cluttered:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_max</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">am_max</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.ge.html#cf.ge" title="cf.ge" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">ge</span></a><span class="p">(</span><a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><span class="s2">&quot;1980-01-01&quot;</span><span class="p">)))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_min</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">am_min</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.ge.html#cf.ge" title="cf.ge" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">ge</span></a><span class="p">(</span><a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><span class="s2">&quot;1980-01-01&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>5. Create a mapping which provides the queries we need to collapse on
+the four seasons, along with our description of them, as a value, with
+the key of the string encoding the colour we want to plot these
+trend lines in. This structure will be iterated over to make our plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colours_seasons_mapping</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;red&quot;</span><span class="p">:</span> <span class="p">(</span><a href="../function/cf.mam.html#cf.mam" title="cf.mam" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">mam</span></a><span class="p">(),</span> <span class="s2">&quot;Mean across MAM: March, April and May&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;blue&quot;</span><span class="p">:</span> <span class="p">(</span><a href="../function/cf.jja.html#cf.jja" title="cf.jja" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">jja</span></a><span class="p">(),</span> <span class="s2">&quot;Mean across JJA: June, July and August&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;green&quot;</span><span class="p">:</span> <span class="p">(</span><a href="../function/cf.son.html#cf.son" title="cf.son" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">son</span></a><span class="p">(),</span> <span class="s2">&quot;Mean across SON: September, October and November&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;purple&quot;</span><span class="p">:</span> <span class="p">(</span><a href="../function/cf.djf.html#cf.djf" title="cf.djf" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">djf</span></a><span class="p">(),</span> <span class="s2">&quot;Mean across DJF: December, January and February&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>6. Create and open the plot file. Put maxima subplot at top since these
+values are higher, given increasing x axis.
+Note we set limits manually with ‘gset’ only to
+allow space so the legend doesn’t overlap the data, which isn’t
+possible purely from positioning it anywhere within the default plot.
+Otherwise cf-plot handles this for us. To plot the per-season means
+of the maxima, we loop through the season query mapping and do a
+“T: mean” collapse setting the season as the grouping:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ncas-cms.github.io/cf-plot/build/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span>
+    <span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gset.html#cfplot.gset" title="cfplot.gset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gset</span></a><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="s2">&quot;1980-01-01&quot;</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="s2">&quot;2022-12-01&quot;</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">304</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">312</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_query</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colours_seasons_mapping</span></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_on_season</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_description</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_query</span></a>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_max_collapse</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">am_max</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_on_season</span></a><span class="p">)</span>
+    <a href="https://ncas-cms.github.io/cf-plot/build/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+        <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_max_collapse</span></a><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span>
+        <span class="n">markeredgecolor</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_description</span></a><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Maxima per month or season&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_max</span></a><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;All months&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Create and add minima subplot below the maxima one. Just like for the</span>
+<span class="c1"># maxima case, we plot per-season means by looping through the season query</span>
+<span class="c1"># mapping and doing a &quot;T: mean&quot; collapse setting the season as the grouping</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gset.html#cfplot.gset" title="cfplot.gset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gset</span></a><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="s2">&quot;1980-01-01&quot;</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="s2">&quot;2022-12-01&quot;</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">269</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">272</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_query</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colours_seasons_mapping</span></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_on_season</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_description</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season_query</span></a>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_min_collapse</span></a> <span class="o">=</span> <a href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">am_min</span><span class="o">.</span><span class="n">collapse</span></a><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">query_on_season</span></a><span class="p">)</span>
+    <a href="https://ncas-cms.github.io/cf-plot/build/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+        <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_min_collapse</span></a><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span>
+        <span class="n">markeredgecolor</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour</span></a><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Minima per month or season&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">am_min</span></a><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Add an overall title to the plot and close the file to save it</span>
+<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html#matplotlib.pyplot.suptitle" title="matplotlib.pyplot.suptitle" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span></a><span class="p">(</span>
+    <span class="s2">&quot;Global mean sea surface temperature (SST) monthly</span><span class="se">\n</span><span class="s2">minima and maxima &quot;</span>
+    <span class="s2">&quot;showing seasonal means of these extrema&quot;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+<span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_19_recipe_001.png" srcset="../_images/sphx_glr_plot_19_recipe_001.png" alt="Global mean sea surface temperature (SST) monthly minima and maxima showing seasonal means of these extrema, Maxima per month or season, Minima per month or season" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 4 minutes  38.032 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-19-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bc4ca595d7dce17868f53b7528366a48/plot_19_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_19_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/68d2c091b38a7be0f3e6ec95a4290d4d/plot_19_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_19_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

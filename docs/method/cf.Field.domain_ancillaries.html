@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.domain_ancillaries<a class="headerlink" href="#cf-field-domain-ancillaries" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.domain_ancillaries">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">domain_ancillaries</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/mixin/fielddomain.py#L1391-L1440"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">domain_ancillaries</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/fielddomain.py#L1460-L1509"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return domain ancillary constructs.</p>
 <p>Note that <code class="docutils literal notranslate"><span class="pre">f.domain_ancillaries(*identities,</span>
 <span class="pre">**filter_kwargs)</span></code> is equivalent to
@@ -157,9 +155,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 identity, defined by their <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods, that
 matches any of the given values.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -204,7 +202,7 @@ were selected.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -16,7 +16,7 @@ Documentation for all versions of cf.
 **CF-1.12**
 -----------
 
-* `Version 3.17.0 <https://ncas-cms.github.io/cf-python-docs/3.17.0>`_ (2025-03-24)
+* `Version 3.17.0 <https://ncas-cms.github.io/cf-python-docs/3.17.0>`_ (2025-04-02)
 
 **CF-1.11**
 -----------

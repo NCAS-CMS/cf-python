@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.create_regular<a class="headerlink" href="#cf-domain-create-regular" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.create_regular">
-<em class="property">classmethod </em><code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">create_regular</code><span class="sig-paren">(</span><em class="sig-param">x_args</em>, <em class="sig-param">y_args</em>, <em class="sig-param">bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/domain.py#L326-L432"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.create_regular" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">create_regular</code><span class="sig-paren">(</span><em class="sig-param">x_args</em>, <em class="sig-param">y_args</em>, <em class="sig-param">bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domain.py#L152-L258"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.create_regular" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new domain with the regular longitudes and latitudes.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.1.</span></p>
@@ -157,7 +155,7 @@ cellsize.</p>
 <p class="admonition-title">Note</p>
 <p>The cellsize does not have to explicitly divide into
 the range of the given dimension. But as it follows
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a> while creating the points, one should
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a> while creating the points, one should
 verify that that the number of grid points are
 returned as expected.</p>
 </div>
@@ -170,12 +168,12 @@ cellsize.</p>
 <p class="admonition-title">Note</p>
 <p>The cellsize does not have to explicitly divide into
 the range of the given dimension. But as it follows
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a> while creating the points, one should
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a> while creating the points, one should
 verify that that the number of grid points are
 returned as expected.</p>
 </div>
 </dd>
-<dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (default), bounds will be created
+<dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (default), bounds will be created
 for the coordinates, and the coordinate points will be the
 midpoints of the bounds. If False, the given ranges represent
 the coordinate points directly.</p>
@@ -191,7 +189,7 @@ latitude coordinates and bounds.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">create_regular</span><span class="p">((</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 <span class="go">--------</span>
@@ -225,7 +223,7 @@ latitude coordinates and bounds.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

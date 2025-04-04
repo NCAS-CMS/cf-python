@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,26 +135,37 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.compute<a class="headerlink" href="#cf-data-compute" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.compute">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/data/data.py#L2738-L2791"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.compute" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">compute</code><span class="sig-paren">(</span><em class="sig-param">_force_to_memory=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/data.py#L3849-L3927"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>A view of the computed data.</p>
 <p>In-place changes to the returned array <em>might</em> affect the
-underlying dask array, depending on how the dask array has
-been defined, including any delayed operations.</p>
-<p>The returned array has the same mask hardness and fill values
+underlying Dask array, depending on how the that Dask array
+has been defined.</p>
+<p>The returned array has the same mask hardness and fill value
 as the data.</p>
 <p>Compare with <a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>.</p>
 <p><strong>Performance</strong></p>
 <p><a class="reference internal" href="#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a> causes all delayed operations to be computed.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p>
+<p><a class="reference internal" href="cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>,
+<a class="reference internal" href="../attribute/cf.Data.sparse_array.html#cf.Data.sparse_array" title="cf.Data.sparse_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse_array</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An in-memory view of the data</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>_force_to_memory: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then force the data resulting
+from computing the returned Dask graph to be in
+memory. If False then the data resulting from
+computing the Dask graph may or may not be in memory,
+depending on the nature of the stack</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An in-memory view of the data</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -165,17 +174,30 @@ as the data.</p>
 <span class="go">array([1., 2., 3.])</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_array</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csr_array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">csr_array</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="go">&lt;2x3 sparse array of type &#39;&lt;class &#39;numpy.float64&#39;&gt;&#39;</span>
 <span class="go">        with 0 stored elements in Compressed Sparse Row format&gt;</span>
-<span class="go">&gt;&gt;&gt;: d.array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">array</span>
 <span class="go">array([[0., 0., 0.],</span>
 <span class="go">       [0., 0., 0.]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
 <span class="go">array([[0., 0., 0.],</span>
 <span class="go">       [0., 0., 0.]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">_force_to_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&lt;CF NetCDF4Array(5, 8): file.nc, q(5, 8)&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -190,7 +212,7 @@ as the data.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

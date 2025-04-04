@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Bounds.transpose<a class="headerlink" href="#cf-bounds-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Bounds.transpose">
-<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -149,7 +147,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The new axis order. By default the order is reversed.</p>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The new axis order. By default the order is reversed.</p>
 <p>Each axis is identified by its integer position in the
 data. Negative integers counting from the last
 position are allowed.</p>
@@ -162,15 +160,15 @@ position are allowed.</p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new instance with permuted data axes. If the operation
-was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<dt><a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new instance with permuted data axes. If the operation
+was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </dd>
 </dl>
 </dd>
@@ -196,7 +194,7 @@ was in-place then <a class="reference external" href="https://docs.python.org/3/
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

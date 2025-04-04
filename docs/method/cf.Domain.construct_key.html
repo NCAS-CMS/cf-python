@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.construct_key<a class="headerlink" href="#cf-domain-construct-key" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.construct_key">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_key</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/mixin/fielddomain.py#L1854-L1935"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.construct_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_key</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/fielddomain.py#L1923-L2004"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.construct_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the identifier of a metadata construct.</p>
 <p>If zero or two or more constructs are selected then an
 exception is raised, or the <em>default</em> parameter is returned.</p>
@@ -162,15 +160,15 @@ identifiers, with or without the <code class="docutils literal notranslate"><spa
 <p>If no values are provided then all constructs are
 selected.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
 is no unique construct.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code>
@@ -184,7 +182,7 @@ criteria.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The identifier of the selected construct.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The identifier of the selected construct.</p>
 </dd>
 </dl>
 </dd>
@@ -206,7 +204,7 @@ criteria.</p>
 </div>
 <p>Attempt to select a unique construct whose “standard_name”
 start with the letter ‘l’:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^l&#39;</span><span class="p">))</span>
 <span class="go">Traceback</span>
 <span class="go">    ...</span>
@@ -227,7 +225,7 @@ start with the letter ‘l’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -48,6 +48,7 @@ cf.RaggedContiguousArray
    :template: attribute.rst
    
    ~cf.RaggedContiguousArray.array
+   ~cf.RaggedContiguousArray.astype
    ~cf.RaggedContiguousArray.compressed_array
    ~cf.RaggedContiguousArray.dtype
    ~cf.RaggedContiguousArray.ndim

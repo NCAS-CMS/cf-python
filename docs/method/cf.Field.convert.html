@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.convert<a class="headerlink" href="#cf-field-convert" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convert">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">full_domain=True</em>, <em class="sig-param">cellsize=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L10490-L10588"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">full_domain=True</em>, <em class="sig-param">cellsize=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/field.py#L10252-L10350"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a metadata construct into a new field construct.</p>
 <p>The new field construct has the properties and data of the
 metadata construct, and domain axis constructs corresponding to
@@ -169,12 +167,12 @@ different field construct to that created with the convert method.</p>
 <code class="docutils literal notranslate"><span class="pre">f.construct(*identity,</span> <span class="pre">**filter_kwargs)</span></code>. See
 <a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a> for details.</p>
 </dd>
-<dt>full_domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not create a domain, other than domain
+<dt>full_domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not create a domain, other than domain
 axis constructs, for the new field construct. By default
 as much of the domain as possible is copied to the new
 field construct.</p>
 </dd>
-<dt>cellsize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then create a field construct from the selected
+<dt>cellsize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then create a field construct from the selected
 metadata construct’s cell sizes.</p>
 </dd>
 </dl>
@@ -230,7 +228,7 @@ metadata construct’s cell sizes.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

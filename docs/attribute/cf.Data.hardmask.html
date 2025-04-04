@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -139,10 +137,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt id="cf.Data.hardmask">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">hardmask</code><a class="headerlink" href="#cf.Data.hardmask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hardness of the mask.</p>
-<p>If the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, i.e. there is a hard
+<p>If the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, i.e. there is a hard
 mask, then unmasking an entry will silently not occur. This is
 the default, and prevents overwriting the mask.</p>
-<p>If the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, i.e. there is a soft
+<p>If the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, i.e. there is a soft
 mask, then masked entries may be overwritten with non-missing
 values.</p>
 <div class="admonition note">
@@ -159,10 +157,13 @@ methods immediately reset the mask hardness of the
 underlying <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array, and also set the value of
 the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute.</p>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../method/cf.Data.harden_mask.html#cf.Data.harden_mask" title="cf.Data.harden_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">harden_mask</span></code></a>, <a class="reference internal" href="../method/cf.Data.soften_mask.html#cf.Data.soften_mask" title="cf.Data.soften_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></a>, <a class="reference internal" href="../method/cf.Data.to_dask_array.html#cf.Data.to_dask_array" title="cf.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a>,
-<a class="reference internal" href="../method/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a>, <a class="reference internal" href="../method/cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
+<a class="reference internal" href="../method/cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
 </div>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
@@ -194,7 +195,7 @@ the <a class="reference internal" href="#cf.Data.hardmask" title="cf.Data.hardma
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

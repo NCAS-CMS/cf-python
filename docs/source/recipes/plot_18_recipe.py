@@ -97,7 +97,6 @@ cfp.gopen(
     rows=1,
     columns=2,
     top=0.85,
-    file="snow_and_orog_on_same_grid.png",
     user_position=True,
 )
 
@@ -122,7 +121,7 @@ label_info = {
 
 # Plot the two contour plots as columns
 cfp.gpos(1)
-cfp.cscale("wiki_2_0_reduced")
+cfp.cscale("wiki_2_0_reduced", ncols=11)
 cfp.con(
     regridded_orog,
     lines=False,
@@ -141,5 +140,4 @@ cfp.con(
     colorbar_drawedges=False,
     **label_info,
 )
-
 cfp.gclose()

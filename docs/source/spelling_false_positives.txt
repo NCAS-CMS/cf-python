@@ -24,6 +24,7 @@ args
 asdata
 asdatetime
 asreftime
+astype
 atol
 ATOL
 attr
@@ -77,6 +78,7 @@ celsius
 centre
 centred
 cf
+cfdm
 CF
 cfa
 CFA
@@ -350,6 +352,7 @@ numblocks
 numpy
 onwards
 openmpi
+optimize
 optimize_graph
 orography
 orog

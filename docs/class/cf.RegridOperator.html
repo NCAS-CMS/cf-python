@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -136,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.RegridOperator">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RegridOperator</code><span class="sig-paren">(</span><em class="sig-param">weights=None</em>, <em class="sig-param">row=None</em>, <em class="sig-param">col=None</em>, <em class="sig-param">coord_sys=None</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_shape=None</em>, <em class="sig-param">dst_shape=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">src_mask=None</em>, <em class="sig-param">dst_mask=None</em>, <em class="sig-param">src_coords=None</em>, <em class="sig-param">src_bounds=None</em>, <em class="sig-param">start_index=0</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">dst=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">src_mesh_location=None</em>, <em class="sig-param">dst_mesh_location=None</em>, <em class="sig-param">src_featureType=None</em>, <em class="sig-param">dst_featureType=None</em>, <em class="sig-param">dimensionality=None</em>, <em class="sig-param">src_z=None</em>, <em class="sig-param">dst_z=None</em>, <em class="sig-param">ln_z=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/regrid/regridoperator.py#L11-L811"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RegridOperator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">RegridOperator</code><span class="sig-paren">(</span><em class="sig-param">weights=None</em>, <em class="sig-param">row=None</em>, <em class="sig-param">col=None</em>, <em class="sig-param">coord_sys=None</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_shape=None</em>, <em class="sig-param">dst_shape=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">src_mask=None</em>, <em class="sig-param">dst_mask=None</em>, <em class="sig-param">src_coords=None</em>, <em class="sig-param">src_bounds=None</em>, <em class="sig-param">start_index=0</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">dst=None</em>, <em class="sig-param">weights_file=None</em>, <em class="sig-param">src_mesh_location=None</em>, <em class="sig-param">dst_mesh_location=None</em>, <em class="sig-param">src_featureType=None</em>, <em class="sig-param">dst_featureType=None</em>, <em class="sig-param">dimensionality=None</em>, <em class="sig-param">src_z=None</em>, <em class="sig-param">dst_z=None</em>, <em class="sig-param">ln_z=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/regrid/regridoperator.py#L11-L809"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RegridOperator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.abstract.container.Container</span></code></p>
 <p>A regridding operator between two grids.</p>
 <p>Regridding is the process of interpolating from one grid
@@ -161,41 +159,41 @@ has J rows and I columns, where J and I are the total
 number of cells in the destination and source grids
 respectively. See the <em>start_index</em> parameter.</p>
 </dd>
-<dt>coord_sys: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the coordinate system of the source and
+<dt>coord_sys: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the coordinate system of the source and
 destination grids. Either <code class="docutils literal notranslate"><span class="pre">'spherical'</span></code> or
 <code class="docutils literal notranslate"><span class="pre">'Cartesian'</span></code>.</p>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the regridding method.</p>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the regridding method.</p>
 </dd>
-<dt>src_shape: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the source grid.</p>
+<dt>src_shape: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the source grid.</p>
 </dd>
-<dt>dst_shape: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the destination grid.</p>
+<dt>dst_shape: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The shape of the destination grid.</p>
 </dd>
-<dt>src_cyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>For spherical regridding, specifies whether or not the
+<dt>src_cyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>For spherical regridding, specifies whether or not the
 source grid longitude axis is cyclic.</p>
 </dd>
-<dt>dst_cyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>For spherical regridding, specifies whether or not the
+<dt>dst_cyclic: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>For spherical regridding, specifies whether or not the
 destination grid longitude axis is cyclic.</p>
 </dd>
-<dt>src_mask: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> with shape <em>src_shape</em> then this
+<dt>src_mask: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> with shape <em>src_shape</em> then this
 is the source grid mask that was used during the
 creation of the <em>weights</em>. If <em>src_mask</em> is a scalar
-array with value <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, then this is equivalent to a
+array with value <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, then this is equivalent to a
 source grid mask with shape <em>src_shape</em> entirely
-populated with <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
-<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default), then the weights are assumed
+populated with <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default), then the weights are assumed
 to have been created assuming no source grid masked
 cells.</p>
 </dd>
-<dt>dst_mask: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>A destination grid mask to be applied to the weights
+<dt>dst_mask: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>A destination grid mask to be applied to the weights
 matrix, in addition to those destination grid cells
-that have no non-zero weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default)
+that have no non-zero weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default)
 then no additional destination grid cells are
-masked. If a Boolean <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array then it must have
-shape <em>dst_shape</em>, and a value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> signifies a
+masked. If a Boolean <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array then it must have
+shape <em>dst_shape</em>, and a value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> signifies a
 masked destination grid cell.</p>
 </dd>
-<dt>start_index: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify whether the <em>row</em> and <em>col</em> parameters use 0-
+<dt>start_index: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify whether the <em>row</em> and <em>col</em> parameters use 0-
 or 1-based indexing. By default 0-based indexing is
 used.</p>
 <p>If <em>row</em> and <em>col</em> are to be read from a weights file
@@ -207,62 +205,62 @@ attributes, then these will be used in preference to
 </dd>
 <dt>dst: <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The definition of the destination grid.</p>
 </dd>
-<dt>dst_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or sequence or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The destination grid axes to be regridded.</p>
+<dt>dst_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or sequence or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The destination grid axes to be regridded.</p>
 </dd>
-<dt>src_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or sequence or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The source grid axes to be regridded.</p>
+<dt>src_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or sequence or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The source grid axes to be regridded.</p>
 </dd>
-<dt>weights_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Path to a netCDF file that contained the regridding
-weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights
+<dt>weights_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Path to a netCDF file that contained the regridding
+weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights
 were computed rather than read from a file.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.15.2.</span></p>
 </div>
 </dd>
-<dt>src_mesh_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The UGRID mesh element of the source grid
+<dt>src_mesh_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The UGRID mesh element of the source grid
 (e.g. <code class="docutils literal notranslate"><span class="pre">'face'</span></code>).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.0.</span></p>
 </div>
 </dd>
-<dt>dst_mesh_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The UGRID mesh element of the destination grid
+<dt>dst_mesh_location: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The UGRID mesh element of the destination grid
 (e.g. <code class="docutils literal notranslate"><span class="pre">'face'</span></code>).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
-<dt>src_featureType: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The discrete sampling geometry (DSG) featureType of
+<dt>src_featureType: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The discrete sampling geometry (DSG) featureType of
 the source grid (e.g. <code class="docutils literal notranslate"><span class="pre">'trajectory'</span></code>).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
-<dt>dst_featureType: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The DSG featureType of the destination grid
+<dt>dst_featureType: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The DSG featureType of the destination grid
 (e.g. <code class="docutils literal notranslate"><span class="pre">'trajectory'</span></code>).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
 <dt>src_z: optional</dt><dd><p>The identity of the source grid vertical coordinates
-used to calculate the weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then no
+used to calculate the weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then no
 source grid vertical axis is identified.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
 <dt>dst_z: optional</dt><dd><p>The identity of the destination grid vertical
-coordinates used to calculate the weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+coordinates used to calculate the weights. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
 then no destination grid vertical axis is identified.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
-<dt>ln_z: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether or not the weights were calculated with the
+<dt>ln_z: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether or not the weights were calculated with the
 natural logarithm of vertical coordinates.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.16.2.</span></p>
 </div>
 </dd>
-<dt>dimensionality: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The number of physical regridding dimensions. This may
+<dt>dimensionality: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The number of physical regridding dimensions. This may
 differ from the corresponding number of storage
 dimensions in the source or destination grids, if
 either has an unstructured mesh or a DSG featureType.</p>
@@ -289,7 +287,7 @@ either has an unstructured mesh or a DSG featureType.</p>
 <td><p>A full description of the regrid operator.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.RegridOperator.tosparse.html#cf.RegridOperator.tosparse" title="cf.RegridOperator.tosparse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tosparse</span></code></a></p></td>
-<td><p>Convert the weights to <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array format in-place.</p></td>
+<td><p>Convert the weights to <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.15.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array format in-place.</p></td>
 </tr>
 </tbody>
 </table>
@@ -376,10 +374,10 @@ either has an unstructured mesh or a DSG featureType.</p>
 <td><p>The start index of the row and column indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.RegridOperator.weights.html#cf.RegridOperator.weights" title="cf.RegridOperator.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a></p></td>
-<td><p>The 1-d array of the regridding weights, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
+<td><p>The 1-d array of the regridding weights, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.RegridOperator.weights_file.html#cf.RegridOperator.weights_file" title="cf.RegridOperator.weights_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights_file</span></code></a></p></td>
-<td><p>The file which contains the weights, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
+<td><p>The file which contains the weights, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -426,7 +424,7 @@ either has an unstructured mesh or a DSG featureType.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

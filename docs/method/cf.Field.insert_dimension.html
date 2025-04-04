@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,15 +135,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.insert_dimension<a class="headerlink" href="#cf-field-insert-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.insert_dimension">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">insert_dimension</code><span class="sig-paren">(</span><em class="sig-param">axis</em>, <em class="sig-param">position=0</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L8751-L8834"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert a size 1 axis into the data array.</p>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">insert_dimension</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand the shape of the data array.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>, <a class="reference internal" href="cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>, <a class="reference internal" href="cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>,
-<a class="reference internal" href="cf.Field.transpose.html#cf.Field.transpose" title="cf.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>, <a class="reference internal" href="cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></p>
+<p><a class="reference internal" href="cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="cf.Field.transpose.html#cf.Field.transpose" title="cf.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>, <a class="reference internal" href="cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -153,37 +150,38 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt>axis:</dt><dd><p>Select the domain axis to insert, generally defined by that
 which would be selected by passing the given axis description
 to a call of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
-example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
-returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
-<p>If <em>axis</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then a new domain axis construct will
-created for the inserted dimension.</p>
+example, for a value of <code class="docutils literal notranslate"><span class="pre">'time'</span></code>, the domain axis construct
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('time')</span></code> is selected.</p>
+<p>If <em>axis</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then a new domain axis construct
+will be created for the inserted dimension.</p>
 </dd>
-<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify the position that the new axis will have in the
-data array. By default the new axis has position 0, the
-slowest varying position.</p>
+<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify the position that the new axis will have in
+the data array. By default the new axis has position
+0, the slowest varying position. Negative integers
+counting from the last position are allowed.</p>
 </dd>
-<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then also insert the new axis into all
+<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True then also insert the new axis into all
 metadata constructs that don’t already include it. By
 default, metadata constructs are not changed.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.16.1.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.1.0</p>
 </div>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with expanded data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with expanded data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
 operation was in-place.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
@@ -192,7 +190,7 @@ operation was in-place.</p>
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
@@ -228,7 +226,7 @@ insertion:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -163,7 +161,7 @@ doesn’t matter which order they are specified in.</p></li>
 <li><p>Subspace criteria may be provided for size 1 domain axes that
 are not spanned by the field construct’s data.</p></li>
 <li><p>Explicit indices may also be assigned to a domain axis
-identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
 object, or a sequence of integers or booleans.</p></li>
 <li><p>For a dimension that is cyclic, a subspace defined by a slice or
 by a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around the edges of
@@ -189,7 +187,7 @@ then these indices work independently along each dimension
 the same indexing behaviour as on a Variable object of the
 netCDF4 package.</p></li>
 <li><p>For a dimension that is cyclic, a range of indices specified by
-a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
+a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
 <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
 a null result.</p></li>
 </ul>
@@ -220,8 +218,8 @@ operation (<code class="docutils literal notranslate"><span class="pre">mode</sp
 subspaced axes (<code class="docutils literal notranslate"><span class="pre">halo</span></code>), with positional arguments
 in the format <code class="docutils literal notranslate"><span class="pre">mode</span></code>, or <code class="docutils literal notranslate"><span class="pre">halo</span></code>, or <code class="docutils literal notranslate"><span class="pre">mode,</span>
 <span class="pre">halo</span></code>, or with no positional arguments at all.</p>
-<p>A mode of operation is given as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, and a halo as
-a non-negative <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or any object that can be
+<p>A mode of operation is given as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, and a halo as
+a non-negative <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (or any object that can be
 converted to one):</p>
 <table class="docutils align-default">
 <colgroup>
@@ -298,7 +296,7 @@ within the output domain.</p>
 </div>
 <p>In addition, an extra positional argument of <code class="docutils literal notranslate"><span class="pre">'test'</span></code>
 is allowed. When provided, the subspace is not
-returned, instead <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> is returned
+returned, instead <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> is returned
 depending on whether or not it is possible for the
 requested subspace to be created.</p>
 </dd>
@@ -313,9 +311,9 @@ construct’s data satisfies the condition.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>An independent field construct containing the subspace of
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>An independent field construct containing the subspace of
 the original field. If the <code class="docutils literal notranslate"><span class="pre">'test'</span></code> positional argument
-has been set then return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on
+has been set then return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on
 whether or not it is possible to create specified
 subspace.</p>
 </dd>
@@ -366,7 +364,7 @@ subspace.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

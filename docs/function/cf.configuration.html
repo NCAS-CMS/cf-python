@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -135,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.configuration<a class="headerlink" href="#cf-configuration" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.configuration">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">tempdir=None</em>, <em class="sig-param">chunksize=None</em>, <em class="sig-param">log_level=None</em>, <em class="sig-param">regrid_logging=None</em>, <em class="sig-param">relaxed_identities=None</em>, <em class="sig-param">bounds_combination_mode=None</em>, <em class="sig-param">of_fraction=None</em>, <em class="sig-param">collapse_parallel_mode=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/functions.py#L166-L378"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.configuration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">tempdir=None</em>, <em class="sig-param">chunksize=None</em>, <em class="sig-param">log_level=None</em>, <em class="sig-param">regrid_logging=None</em>, <em class="sig-param">relaxed_identities=None</em>, <em class="sig-param">bounds_combination_mode=None</em>, <em class="sig-param">active_storage=None</em>, <em class="sig-param">active_storage_url=None</em>, <em class="sig-param">active_storage_max_requests=None</em>, <em class="sig-param">of_fraction=None</em>, <em class="sig-param">collapse_parallel_mode=None</em>, <em class="sig-param">free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/functions.py#L162-L420"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.configuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>View or set any number of constants in the project-wide
 configuration.</p>
 <p>The full list of global constants that can be set in any
@@ -149,11 +147,14 @@ combination are:</p>
 <li><p><a class="reference internal" href="cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrid_logging</span></code></a></p></li>
 <li><p><a class="reference internal" href="cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relaxed_identities</span></code></a></p></li>
 <li><p><a class="reference internal" href="cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds_combination_mode</span></code></a></p></li>
+<li><p><a class="reference internal" href="cf.active_storage.html#cf.active_storage" title="cf.active_storage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage</span></code></a></p></li>
+<li><p><a class="reference internal" href="cf.active_storage_url.html#cf.active_storage_url" title="cf.active_storage_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage_url</span></code></a></p></li>
+<li><p><a class="reference internal" href="cf.active_storage_max_requests.html#cf.active_storage_max_requests" title="cf.active_storage_max_requests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage_max_requests</span></code></a></p></li>
 </ul>
 <p>These are all constants that apply throughout cf, except for in
 specific functions only if overridden by the corresponding keyword
 argument to that function.</p>
-<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a
+<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a
 value, will result in the constant in question not being changed
 from the current value. That is, it will have no effect.</p>
 <p>Note that setting a constant using this function is equivalent to
@@ -167,18 +168,20 @@ at once.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a>, <a class="reference internal" href="cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a>, <a class="reference internal" href="cf.tempdir.html#cf.tempdir" title="cf.tempdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tempdir</span></code></a>, <a class="reference internal" href="cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>,
 <a class="reference internal" href="cf.total_memory.html#cf.total_memory" title="cf.total_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">total_memory</span></code></a>, <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_level</span></code></a>, <a class="reference internal" href="cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrid_logging</span></code></a>,
-<a class="reference internal" href="cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relaxed_identities</span></code></a>, <a class="reference internal" href="cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds_combination_mode</span></code></a></p>
+<a class="reference internal" href="cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relaxed_identities</span></code></a>, <a class="reference internal" href="cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds_combination_mode</span></code></a>,
+<a class="reference internal" href="cf.active_storage.html#cf.active_storage" title="cf.active_storage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage</span></code></a>, <a class="reference internal" href="cf.active_storage_url.html#cf.active_storage_url" title="cf.active_storage_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage_url</span></code></a>,
+<a class="reference internal" href="cf.active_storage_max_requests.html#cf.active_storage_max_requests" title="cf.active_storage_max_requests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage_max_requests</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of absolute tolerance. The default is to not
+<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of absolute tolerance. The default is to not
 change the current value.</p>
 </dd>
-<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of relative tolerance. The default is to not
+<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of relative tolerance. The default is to not
 change the current value.</p>
 </dd>
-<dt>tempdir: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new directory for temporary files. Tilde expansion (an
+<dt>tempdir: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new directory for temporary files. Tilde expansion (an
 initial component of <code class="docutils literal notranslate"><span class="pre">~</span></code> or <code class="docutils literal notranslate"><span class="pre">~user</span></code> is replaced by
 that <em>user</em>’s home directory) and environment variable
 expansion (substrings of the form <code class="docutils literal notranslate"><span class="pre">$name</span></code> or <code class="docutils literal notranslate"><span class="pre">${name}</span></code>
@@ -186,13 +189,13 @@ are replaced by the value of environment variable <em>name</em>)
 are applied to the new directory name.</p>
 <p>The default is to not change the directory.</p>
 </dd>
-<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new chunksize in bytes. The default is to not change
+<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new chunksize in bytes. The default is to not change
 the current behaviour.</p>
 </dd>
-<dt>bounds_combination_mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Determine how to deal with cell bounds in binary
+<dt>bounds_combination_mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Determine how to deal with cell bounds in binary
 operations. See <a class="reference internal" href="cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.bounds_combination_mode</span></code></a> for details.</p>
 </dd>
-<dt>log_level: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of the minimal log severity level. This can
+<dt>log_level: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of the minimal log severity level. This can
 be specified either as a string equal (ignoring case) to
 the named set of log levels or identifier <code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code>,
 or an integer code corresponding to each of these, namely:</p>
@@ -204,21 +207,39 @@ or an integer code corresponding to each of these, namely:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>).</p></li>
 </ul>
 </dd>
-<dt>regrid_logging: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value (either True to enable logging or False to
+<dt>regrid_logging: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value (either True to enable logging or False to
 disable it). The default is to not change the current
 behaviour.</p>
 </dd>
-<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value; if True, use “relaxed” mode when getting a
+<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value; if True, use “relaxed” mode when getting a
 construct identity. The default is to not change the
 current value.</p>
 </dd>
-<dt>of_fraction: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
+<dt>active_storage: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value (either True to enable active storage
+reductions or False to disable them). The default is to
+not change the current behaviour.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.3.</span></p>
+</div>
+</dd>
+<dt>active_storage_url: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value (either a new URL string or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> to remove
+the URL). The default is to not change the value.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.3.</span></p>
+</div>
+</dd>
+<dt>active_storage_max_requests: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value. The default is to not change the value.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.16.3.</span></p>
+</div>
+</dd>
+<dt>of_fraction: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
 available.</p>
 </dd>
-<dt>collapse_parallel_mode: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
+<dt>collapse_parallel_mode: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
 available.</p>
 </dd>
-<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
+<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0 and is no longer
 available.</p>
 </dd>
 </dl>
@@ -241,7 +262,10 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 82873466.88000001}</span>
+<span class="go"> &#39;chunksize&#39;: 82873466.88000001,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None,</span>
+<span class="go"> &#39;active_storage_max_requests&#39;: 100}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">chunksize</span><span class="p">(</span><span class="mf">7.5e7</span><span class="p">)</span>  <span class="c1"># any change to one constant...</span>
 <span class="go">82873466.88000001</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">configuration</span><span class="p">()[</span><span class="s1">&#39;chunksize&#39;</span><span class="p">]</span>  <span class="c1"># ...is reflected in the configuration</span>
@@ -256,7 +280,10 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 75000000.0}</span>
+<span class="go"> &#39;chunksize&#39;: 75000000.0,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None,</span>
+<span class="go"> &#39;active_storage_max_requests&#39;: 100}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">configuration</span><span class="p">()</span>  <span class="c1"># the items set have been updated accordingly</span>
 <span class="go">{&#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;atol&#39;: 2.220446049250313e-16,</span>
@@ -265,7 +292,10 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 75000000.0}</span>
+<span class="go"> &#39;chunksize&#39;: 75000000.0,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None,</span>
+<span class="go"> &#39;active_storage_max_requests&#39;: 100}</span>
 </pre></div>
 </div>
 <p>Use as a context manager:</p>
@@ -277,7 +307,9 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 75000000.0}</span>
+<span class="go"> &#39;chunksize&#39;: 75000000.0,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cf</span><span class="o">.</span><span class="n">configuration</span><span class="p">(</span><span class="n">atol</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">configuration</span><span class="p">())</span>
 <span class="gp">...</span>
@@ -288,7 +320,10 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 75000000.0}</span>
+<span class="go"> &#39;chunksize&#39;: 75000000.0,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None,</span>
+<span class="go"> &#39;active_storage_max_requests&#39;: 100}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">configuration</span><span class="p">())</span>
 <span class="go">{&#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;atol&#39;: 2.220446049250313e-16,</span>
@@ -297,7 +332,10 @@ current names and values if no new values are specified.</p>
 <span class="go"> &#39;relaxed_identities&#39;: False,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;bounds_combination_mode&#39;: &#39;AND&#39;,</span>
-<span class="go"> &#39;chunksize&#39;: 75000000.0}</span>
+<span class="go"> &#39;chunksize&#39;: 75000000.0,</span>
+<span class="go"> &#39;active_storage&#39;: False,</span>
+<span class="go"> &#39;active_storage_url&#39;: None,</span>
+<span class="go"> &#39;active_storage_max_requests&#39;: 100}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -312,7 +350,7 @@ current names and values if no new values are specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

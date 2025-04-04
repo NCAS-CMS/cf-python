@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -135,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.histogram<a class="headerlink" href="#cf-histogram" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.histogram">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param">*digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/maths.py#L95-L267"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param">*digitized</em>, <em class="sig-param">density=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/maths.py#L95-L326"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the distribution of a set of variables in the form of an
 N-dimensional histogram.</p>
 <p>The number of dimensions of the histogram is equal to the number
@@ -190,6 +188,17 @@ compatible dimensions between the fields, and then
 manipulating the dimensions of the digitized field
 construct’s data to ensure that broadcasting can occur.</p>
 </dd>
+<dt>density: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False, the default, the result will contain the number
+of samples in each bin. If True, the result is the value
+of the probability density function at the bin, normalized
+such that the integral over the range is 1. Note that the
+sum of the histogram values will not be equal to 1 unless
+bins of unity size are chosen; it is not a probability
+mass function.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.17.0.</span></p>
+</div>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -238,7 +247,7 @@ that exactly span the data range:</p>
 <span class="go"> [0.1174 0.1317]</span>
 <span class="go"> [0.1317 0.146 ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rint</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>
 <span class="go">Data            : number_of_observations(specific_humidity(10)) 1</span>
@@ -257,6 +266,21 @@ that exactly span the data range:</p>
 <span class="go"> [0.1031 0.1174]</span>
 <span class="go"> [0.1174 0.1317]</span>
 <span class="go"> [0.1317 0.146 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="go">Field: long_name=probability density function</span>
+<span class="go">---------------------------------------------</span>
+<span class="go">Data            : long_name=probability density function(specific_humidity(10)) 1</span>
+<span class="go">Cell methods    : latitude: longitude: point</span>
+<span class="go">Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">))</span>
+<span class="go">[15.73 12.24 15.73 6.99 8.74 1.75 1.75 1.75 3.5 1.75]</span>
+</pre></div>
+</div>
+<p>The sum of the density values multiplied by the bin sizes is
+unity:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">p</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">()</span><span class="o">.</span><span class="n">cellsize</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">1.0</span>
 </pre></div>
 </div>
 <p>Create a two-dimensional histogram based on specific humidity and
@@ -265,8 +289,8 @@ from a dummy temperature field construct with the same shape as
 the specific humidity field construct already in use:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="mf">253.15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%q)</span>
@@ -288,13 +312,28 @@ the specific humidity field construct already in use:</p>
 <span class="go">Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K</span>
 <span class="go">                : specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[2  1  5  3  2 -- -- -- -- --]</span>
-<span class="go"> [1  1  2 --  1 --  1  1 -- --]</span>
-<span class="go"> [4  4  2  1  1  1 -- --  1  1]</span>
-<span class="go"> [1  1 -- --  1 -- -- --  1 --]</span>
-<span class="go"> [1 -- -- -- -- -- -- -- -- --]]</span>
+<span class="go">[[3  3  2 -- -- -- -- -- -- --]</span>
+<span class="go"> [1  1  2  1  3 -- -- -- -- --]</span>
+<span class="go"> [1 -- --  1 --  1  1  1  2  1]</span>
+<span class="go"> [2  1  1  2  2 -- -- -- -- --]</span>
+<span class="go"> [2  2  4 -- -- -- -- -- -- --]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="go">&lt;CF Data(): 40 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">indices_t</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="go">Field: long_name=probability density function</span>
+<span class="go">---------------------------------------------</span>
+<span class="go">Data            : long_name=probability density function(air_temperature(5), specific_humidity(10)) K-1</span>
+<span class="go">Cell methods    : latitude: longitude: point</span>
+<span class="go">Dimension coords: air_temperature(5) = [257.05, ..., 288.25] K</span>
+<span class="go">                : specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">))</span>
+<span class="go">[[0.67 0.67 0.45   --   --   --   --   --   --   --]</span>
+<span class="go"> [0.22 0.22 0.45 0.22 0.67   --  --    --   --   --]</span>
+<span class="go"> [0.22   --   -- 0.22   -- 0.22 0.22 0.22 0.45 0.22]</span>
+<span class="go"> [0.45 0.22 0.22 0.45 0.45   --   --   --   --   --]</span>
+<span class="go"> [0.45 0.45 0.9    --   --   --   --   --   --   --]]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -309,7 +348,7 @@ the specific humidity field construct already in use:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

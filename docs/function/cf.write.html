@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -135,8 +133,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa=False</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">cfa_options=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/read_write/write.py#L16-L832"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write field constructs to a netCDF file.</p>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">single=False</em>, <em class="sig-param">double=False</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=4</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">dataset_chunks='4 MiB'</em>, <em class="sig-param">cfa='auto'</em>, <em class="sig-param">extra_write_vars=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/read_write/write.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write field and domain constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
 formats are supported.</p>
@@ -163,49 +161,55 @@ attributes and/or netCDF data variable attributes. See the
 parameters for details.</p>
 <p><strong>External variables</strong></p>
 <p>Metadata constructs marked as external are omitted from the file
-and referred to via the netCDF “external_variables” global
+and referred to via the netCDF <code class="docutils literal notranslate"><span class="pre">external_variables</span></code> global
 attribute. However, omitted constructs may be written to an
 external file (see the <em>external</em> parameter for details).</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited
 dimensions may be accessed with the
 <a class="reference internal" href="../method/cf.DomainAxis.nc_is_unlimited.html#cf.DomainAxis.nc_is_unlimited" title="cf.DomainAxis.nc_is_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_is_unlimited</span></code></a> and
-<a class="reference internal" href="../method/cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> methods of a domain axis
-construct.</p>
-<p><strong>NetCDF hierarchical groups</strong></p>
+<a class="reference internal" href="../method/cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> methods of a domain
+axis construct.</p>
+<p><strong>NetCDF4 hierarchical groups</strong></p>
 <p>Hierarchical groups in CF provide a mechanism to structure
 variables within netCDF4 datasets with well defined rules for
 resolving references to out-of-group netCDF variables and
 dimensions. The group structure defined by a field construct’s
 netCDF interface will, by default, be recreated in the output
 dataset. See the <em>group</em> parameter for details.</p>
-<p><strong>NetCDF4 HDF chunk sizes</strong></p>
-<p>HDF5 chunksizes may be set on contruct’s data. See the
-<a class="reference internal" href="../method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>,
-<a class="reference internal" href="../method/cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> and
-<a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a> methods of a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<p><strong>NetCDF4 dataset chunks</strong></p>
+<p>Dataset chunking is configured by the <em>dataset_chunks</em> parameter,
+which defines the chunking strategy for all output data, including
+the option of no chunking. However, this will be overridden for
+any data that defines its own chunking strategy. See
+<a class="reference internal" href="../method/cf.Field.nc_set_hdf5_chunksizes.html#cf.Field.nc_set_hdf5_chunksizes" title="cf.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_hdf5_chunksizes</span></code></a>,
+<a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a>, and <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt>fields: (arbitrarily nested sequence of) <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt><dd><p>The field constructs to write to the file.</p>
+<dd class="field-odd"><blockquote>
+<div><dl>
+<dt>fields: (sequence of) <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field and domain constructs to write to the file.</p>
 </dd>
-<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The output netCDF file name. Various type of expansion are
+<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The output netCDF file name. Various type of expansion are
 applied to the file names.</p>
 <p>Relative paths are allowed, and standard tilde and shell
 parameter expansions are applied to the string.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>The file file.nc in the user’s home directory could be
-described by any of the following: ‘<code class="docutils literal notranslate"><span class="pre">$HOME/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
+<dt><em>Parameter example:</em></dt><dd><p>The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could
+be described by any of the following:
+<code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
 </dd>
 </dl>
 </dd>
-<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output file. One of:</p>
+<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output file. One of:</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 46%" />
@@ -243,34 +247,27 @@ file</p></td>
 file with extensions (see
 below)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'CFA'</span></code> or <code class="docutils literal notranslate"><span class="pre">'CFA4'</span></code></p></td>
-<td><p>Deprecated at version
-3.15.0.  See the <em>cfa</em>
-parameter.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'CFA3'</span></code></p></td>
-<td><p>Deprecated at version
-3.15.0.  See the <em>cfa</em>
-parameter.</p></td>
-</tr>
 </tbody>
 </table>
 <p>By default the format is <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>.</p>
+<p>All formats support large files (i.e. those greater than
+2GB) except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
-4.4.0 or newer of the C library (use <a class="reference internal" href="cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a> to
-see which version if the netCDF-C library is in use). It
-extends the <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> binary format to
-allow for unsigned/64 bit integer data types and 64-bit
-dimension sizes.</p>
+4.4.0 or newer of the C library (use
+<a class="reference internal" href="cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a> to see which version of the
+netCDF-C library is in use). It extends the
+<code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> binary format to allow for
+unsigned 64 bit integer data types and 64-bit dimension
+sizes.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF4_CLASSIC'</span></code> files use the version 4 disk format
-(HDF5), but omits features not found in the version 3
+(HDF5), but omit features not found in the version 3
 API. They can be read by HDF5 clients. They can also be
 read by netCDF3 clients only if they have been re-linked
 against the netCDF4 library.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code> files use the version 4 disk format (HDF5)
 and use the new features of the version 4 API.</p>
 </dd>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output file. One of:</p>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output file. One of:</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 14%" />
@@ -331,12 +328,12 @@ and similar methods if required.</p></li>
 <p>By default the file is opened with write access mode
 <code class="docutils literal notranslate"><span class="pre">'w'</span></code>.</p>
 </dd>
-<dt>overwrite: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then raise an error if the output file
+<dt>overwrite: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then raise an error if the output file
 pre-exists. By default a pre-existing output file is
 overwritten.</p>
 </dd>
-<dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify conventions to be recorded by the netCDF global
-“Conventions” attribute. By default the current
+<dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify conventions to be recorded by the netCDF global
+<code class="docutils literal notranslate"><span class="pre">Conventions</span></code> attribute. By default the current
 conventions are always included, but if an older CF
 conventions is defined then this is used instead.</p>
 <dl class="simple">
@@ -351,10 +348,10 @@ conventions is defined then this is used instead.</p>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CF-1.7',</span> <span class="pre">'UGRID-1.0']</span></code></p>
 </dd>
 </dl>
-<p>Note that if the “Conventions” property is set on a field
-construct then it is ignored.</p>
+<p>Note that if the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is set on a
+field construct then it is ignored.</p>
 </dd>
-<dt>file_descriptors: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Create description of file contents netCDF global
+<dt>file_descriptors: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Create description of file contents netCDF global
 attributes from the specified attributes and their
 values.</p>
 <p>If any field construct has a property with the same name
@@ -369,11 +366,12 @@ file are not specified as a file descriptor, but by the
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'title':</span> <span class="pre">'my</span> <span class="pre">data'}</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'history':</span> <span class="pre">'created</span> <span class="pre">2019-01-01',</span> <span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">file_attributes={'history':</span> <span class="pre">'created</span> <span class="pre">2019-01-01',</span>
+<span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>global_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create netCDF global attributes from the specified field
+<dt>global_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create netCDF global attributes from the specified field
 construct properties, rather than netCDF data variable
 attributes.</p>
 <p>These attributes are in addition to the following field
@@ -408,7 +406,7 @@ instead.</p>
 </dd>
 </dl>
 </dd>
-<dt>variable_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create netCDF data variable attributes from the specified
+<dt>variable_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create netCDF data variable attributes from the specified
 field construct properties.</p>
 <p>By default, all field construct properties that are not
 created as netCDF global properties are created as
@@ -426,11 +424,29 @@ a netCDF data variable attribute</p>
 </dd>
 </dl>
 </dd>
-<dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Write metadata constructs that have data and are marked as
+<dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Write metadata constructs that have data and are marked as
 external to the named external file. Ignored if there are
 no such constructs.</p>
 </dd>
-<dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The endian-ness of the output file. Valid values are
+<dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify data type conversions to be applied prior to
+writing data to disk. This may be useful as a means of
+packing, or because the output format does not support a
+particular data type (for example, netCDF3 classic files
+do not support 64-bit integers). By default, input data
+types are preserved. Any data type conversion is only
+applied to the arrays on disk, and not to the input field
+constructs themselves.</p>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+objects in a dictionary whose keys are input data types
+with values of output data types.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To convert 64-bit integers to 32-bit integers:
+<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('int64'):</span>
+<span class="pre">numpy.dtype('int32')}</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The endian-ness of the output file. Valid values are
 <code class="docutils literal notranslate"><span class="pre">'little'</span></code>, <code class="docutils literal notranslate"><span class="pre">'big'</span></code> or <code class="docutils literal notranslate"><span class="pre">'native'</span></code>. By default the
 output is native endian. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
 details.</p>
@@ -439,20 +455,17 @@ details.</p>
 </dd>
 </dl>
 </dd>
-<dt>compress: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Regulate the speed and efficiency of compression. Must be
-an integer between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">9</span></code>. <code class="docutils literal notranslate"><span class="pre">0</span></code> means no
-compression; <code class="docutils literal notranslate"><span class="pre">1</span></code> is the fastest, but has the lowest
-compression ratio; <code class="docutils literal notranslate"><span class="pre">9</span></code> is the slowest but best
-compression ratio. The default value is <code class="docutils literal notranslate"><span class="pre">0</span></code>. An error is
-raised if compression is requested for a netCDF3 output
-file format. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
-details.</p>
+<dt>compress: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Regulate the speed and efficiency of zlib
+compression. Must be an integer between <code class="docutils literal notranslate"><span class="pre">0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">9</span></code>. <code class="docutils literal notranslate"><span class="pre">0</span></code> means no compression; <code class="docutils literal notranslate"><span class="pre">1</span></code> is the fastest,
+but has the lowest compression ratio; <code class="docutils literal notranslate"><span class="pre">9</span></code> is the slowest
+but best compression ratio. The default value is <code class="docutils literal notranslate"><span class="pre">4</span></code>.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">compress=4</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">compress=0</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>least_significant_digit: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Truncate the input field construct data arrays, but not
+<dt>least_significant_digit: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Truncate the input field construct data arrays, but not
 the data arrays of metadata constructs. For a given
 positive integer, N the precision that is retained in the
 compressed data is 10 to the power -N. For example, a
@@ -466,11 +479,11 @@ details.</p>
 </dd>
 </dl>
 </dd>
-<dt>fletcher32: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the Fletcher-32 HDF5 checksum algorithm is
+<dt>fletcher32: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the Fletcher-32 HDF5 checksum algorithm is
 activated to detect compression errors. Ignored if
 <em>compress</em> is <code class="docutils literal notranslate"><span class="pre">0</span></code>. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for details.</p>
 </dd>
-<dt>shuffle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then the HDF5 shuffle filter (which
+<dt>shuffle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then the HDF5 shuffle filter (which
 de-interlaces a block of data before compression by
 reordering the bytes by storing the first byte of all of a
 variable’s values in the chunk contiguously, followed by
@@ -482,57 +495,7 @@ parameter is <code class="docutils literal notranslate"><span class="pre">0</spa
 <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
 details.</p>
 </dd>
-<dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify data type conversions to be applied prior to
-writing data to disk. This may be useful as a means of
-packing, or because the output format does not support a
-particular data type (for example, netCDF3 classic files
-do not support 64-bit integers). By default, input data
-types are preserved. Any data type conversion is only
-applied to the arrays on disk, and not to the input field
-constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
-objects in a dictionary whose keys are input data types
-with values of output data types.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>To convert 64-bit integers to 32-bit integers:
-<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('int64'):</span>
-<span class="pre">numpy.dtype('int32')}</span></code>.</p>
-</dd>
-</dl>
-</dd>
-<dt>single: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then write 64-bit floats as 32-bit floats and
-64-bit integers as 32-bit integers.</p>
-<p>If False then write 32-bit floats as 64-bit floats and
-32-bit integers as 64-bit integers.</p>
-<p>By default, input data types are preserved.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">single=True</span></code> is exactly equivalent to
-<code class="docutils literal notranslate"><span class="pre">double=False</span></code>, as well as
-<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype(float):</span>
-<span class="pre">numpy.dtype('float32'),</span> <span class="pre">numpy.dtype(int):</span>
-<span class="pre">numpy.dtype('int32')}</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">single=False</span></code> is exactly equivalent to
-<code class="docutils literal notranslate"><span class="pre">double=True</span></code>.</p>
-</div>
-</dd>
-<dt>double: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then write 32-bit floats as 64-bit floats and
-32-bit integers as 64-bit integers.</p>
-<p>If False then write 64-bit floats as 32-bit floats and
-64-bit integers as 32-bit integers.</p>
-<p>By default, input data types are preserved.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">double=True</span></code> is exactly equivalent to
-<code class="docutils literal notranslate"><span class="pre">single=False</span></code>, as well as
-<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('float32'):</span>
-<span class="pre">numpy.dtype(float),</span> <span class="pre">numpy.dtype('int32'):</span>
-<span class="pre">numpy.dtype(int)}</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">double=False</span></code> is exactly equivalent to
-<code class="docutils literal notranslate"><span class="pre">single=True</span></code>.</p>
-</div>
-</dd>
-<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default string-valued construct data are written as
+<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default string-valued construct data are written as
 netCDF arrays of type string if the output file format is
 <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>, or of type char with an extra dimension
 denoting the maximum string length for any other output
@@ -541,8 +504,11 @@ then string-valued construct data are written as netCDF
 arrays of type char with an extra dimension denoting the
 maximum string length, regardless of the selected output
 file format.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.0</p>
+</div>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -551,27 +517,32 @@ equal ignoring case to one of:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
 </ul>
-<p>set for the duration of the method call only as the minimum
-cut-off for the verboseness level of displayed output (log)
-messages, regardless of the globally-configured <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>.
-Note that increasing numerical value corresponds to increasing
-verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case of
-maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages will
-be shown according to the value of the <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
+<p>set for the duration of the method call only as the
+minimum cut-off for the verboseness level of displayed
+output (log) messages, regardless of the
+globally-configured <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a>.  Note that
+increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case
+of maximal and extreme verbosity.</p>
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages
+will be shown according to the value of the
+<a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or equivalent string
 that is set (up to a maximum of <code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for
 increasing verbosity, the more description that is printed to
 convey how constructs map to output netCDF dimensions, variables
 and attributes.</p>
 </dd>
-<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not print a warning when writing
+</dl>
+</div></blockquote>
+<dl>
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
+<div><p>If True (the default) then print a warning when writing
 “out-of-range” data, as indicated by the values, if
 present, of any of the <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or
 <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties on field and metadata
-constructs that have data. By default a warning is printed
-if any such construct has any of these properties in
-combination with out-of-range data.</p>
+constructs that have data. If False the warning
+is not printed.</p>
 <p>The consequence of writing out-of-range data values is
 that, by default, these values will be masked when the
 file is subsequently read.</p>
@@ -583,33 +554,34 @@ resulting warning may be suppressed by setting
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.4.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.3</p>
 </div>
-</dd>
-<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” netCDF file, i.e. one with
+</div></blockquote>
+<dl>
+<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” netCDF file, i.e. one with
 only the root group, regardless of any group structure
 specified by the field constructs. By default any groups
-defined by the netCDF interface of the field constructs
-and its components will be created and populated.</p>
+defined by the netCDF interface of the field constructs and
+its components will be created and populated.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.6.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.6</p>
 </div>
 </dd>
-<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then include CF-netCDF coordinate variable names
+<dt>coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then include CF-netCDF coordinate variable names
 in the ‘coordinates’ attribute of output data
 variables. By default only auxiliary and scalar coordinate
 variables are included.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>3.7.0</p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.7.0</p>
 </div>
 </dd>
-<dt>omit_data: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Do not write the data of the named construct types.</p>
+<dt>omit_data: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Do not write the data of the named construct types.</p>
 <p>This does not affect the amount of netCDF variables and
 dimensions that are written to the file, nor the netCDF
 variables’ attributes, but does not create data on disk
 for the requested variables. The resulting file will be
 smaller than it otherwise would have been, and when the
-new file is read then the data of these variables will be
+new file is read the data of these variables will be
 represented by an array of all missing data.</p>
 <p>The <em>omit_data</em> parameter may be one, or a sequence, of:</p>
 <table class="docutils align-default">
@@ -641,6 +613,12 @@ represented by an array of all missing data.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></p></td>
 <td><p>Cell measure constructs</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_topology'</span></code></p></td>
+<td><p>Domain topology constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_connectivity'</span></code></p></td>
+<td><p>Cell connectivity constructs</p></td>
+</tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'all'</span></code></p></td>
 <td><p>All of the above constructs</p></td>
 </tr>
@@ -656,106 +634,243 @@ constructs: <code class="docutils literal notranslate"><span class="pre">omit_da
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.1</p>
 </div>
 </dd>
-<dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True or a (possibly empty) dictionary then write the
-constructs as CFA-netCDF aggregation variables, where
-possible and where requested.</p>
-<p>The netCDF format of the CFA-netCDF file is determined by
-the <em>fmt</em> parameter, as usual.</p>
-<p>If <em>cfa</em> is a dictionary then it is used to configure the
-CFA write process. The default options when CFA writing is
-enabled are <code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">'field',</span> <span class="pre">'absolute_paths':</span>
-<span class="pre">True,</span> <span class="pre">'strict':</span> <span class="pre">True,</span> <span class="pre">'substitutions':</span> <span class="pre">{}}</span></code>, and the
-dictionary may have any subset of the following key/value
-pairs to override these defaults:</p>
+<dt>dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The dataset chunking strategy for data arrays being written
+to the file.</p>
+<p>By default, <em>dataset_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'4</span> <span class="pre">MiB'</span></code>, i.e. 4194304
+bytes.</p>
+<p>If any <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> being written already stores its own dataset
+chunking strategy (i.e. its <a class="reference internal" href="../method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.nc_hdf5_chunksizes</span></code></a>
+method returns something other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) then, for that
+data array alone, it is used in preference to the strategy
+defined by the <em>dataset_chunks</em> parameter.</p>
+<p>Ignored for netCDF3 output formats, for which all data is
+always written out contiguously.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, a data array returned by
+<a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> stores its dataset chunking
+strategy from the file being read. When this
+happens that same dataset chunking strategy will
+be used when the data is written to a new
+netCDF4 file, unless the strategy was modified
+or removed prior to writing. To prevent the
+dataset chunking strategy from the original file
+being stored, see the <em>store_dataset_chunks</em>
+parameter to <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
+</div>
+<p>The <em>dataset_chunks</em> parameter may be one of:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">'constructs'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
-<p>The types of construct to be written as CFA-netCDF
-aggregation variables. By default only field constructs
-are written as CFA-netCDF aggregation variables.</p>
-<p>The types may be given as a (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, which
-may take any of the values allowed by the <em>omit_data</em>
-parameter. Alternatively, the same types may be given as
-keys to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> whose values specify the number of
-dimensions that a construct must also have if it is to
-be written as a CFA-netCDF aggregation variable. A value
-of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> means no restriction on the number of
-dimensions, which is equivalent to a value of
-<code class="docutils literal notranslate"><span class="pre">cf.ge(0)</span></code>.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">'contiguous'</span></code></p>
+<p>The data will written to the file contiguously, i.e. no
+chunking.</p>
+</li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>The size in bytes of the dataset chunks. A floating
+point value is rounded down to the nearest integer, and
+a string represents a quantity of byte
+units. “Square-like” chunk shapes are preferred,
+maximising the amount of chunks that are completely
+filled with data values. For instance a chunksize of
+1024 bytes may be specified with any of <code class="docutils literal notranslate"><span class="pre">1024</span></code>,
+<code class="docutils literal notranslate"><span class="pre">1024.9</span></code>, <code class="docutils literal notranslate"><span class="pre">'1024'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1024.9'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1024</span> <span class="pre">B'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1</span>
+<span class="pre">KiB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'0.001024</span> <span class="pre">MB'</span></code>, etc. Recognised byte units
+are (case insensitive): <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">KiB</span></code>, <code class="docutils literal notranslate"><span class="pre">MiB</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GiB</span></code>, <code class="docutils literal notranslate"><span class="pre">TiB</span></code>, <code class="docutils literal notranslate"><span class="pre">PiB</span></code>, <code class="docutils literal notranslate"><span class="pre">KB</span></code>, <code class="docutils literal notranslate"><span class="pre">MB</span></code>, <code class="docutils literal notranslate"><span class="pre">GB</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TB</span></code>, and <code class="docutils literal notranslate"><span class="pre">PB</span></code>. Spaces in strings are optional.</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the dataset chunk size is defined by a
+number of bytes (taken either from the
+<em>dataset_chunks</em> parameter, or as stored by the
+data itself), “square-like” dataset chunk shapes
+are preferred that maximise the amount of chunks
+that are completely filled with data values. For
+example, with <em>dataset_chunks</em> of <code class="docutils literal notranslate"><span class="pre">'4</span> <span class="pre">MiB'</span></code>, a
+data array of 64-bit floats with shape (400,
+300, 60) will be written with 20 dataset chunks,
+each of which contains (93, 93, 60)
+elements. The first axis is split across 5
+chunks, the second axis across 4 chunks, and the
+third axis across 1 chunk containing 60
+elements. 12 of these chunks are completely
+filled with 93*93*60 data values (93*93*60*8 B =
+3.9592 MiB), whilst the remaining 8 chunks at
+the “edges” of the array contain only 93*21*60,
+28*93*60, or 28*21*60 data values. The shape of
+the dataset chunks is based on the shape of the
+data array and its data type, and is calculated
+internally with the
+<a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.core.normalize_chunks.html#dask.array.core.normalize_chunks" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.core.normalize_chunks</span></code></a> function. The
+use of native compression (see the <em>compress</em>
+parameter) does not affect the dataset chunk
+size.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+</div>
+</dd>
+<dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Specify which netCDF variables, if any, should be written
+as CF-netCDF aggregation variables.</p>
+<p>By default, <em>cfa</em> is the string <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>, meaning that a
+construct that was previously read from a CF-netCDF
+aggregation variable will be written as an aggregation
+variable, provided that its data have not been changed in
+ways which prevent the encoding, in which case a normal
+non-aggregation variable will be written. This default, as
+well as other options, can be configured by setting <em>cfa</em>
+to a dictionary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the intention is to create aggregation
+variables from fields read from disk, then it is
+strongly recommended to use the <em>cfa_write</em>
+parameter to <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, in order to set
+up the conditions in which a CF-netCDF
+aggregation encoding is possible.</p>
+</div>
+<p>If <em>cfa</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or a (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> then it
+defines which types of constructs are to be written as CF
+aggregation variables:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><em>cfa</em></p></th>
+<th class="head"><p>Constructs</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'auto'</span></code></p></td>
+<td><p><strong>This is the default</strong>. Any
+construct whose data is
+unchanged from having been
+previously read from a
+CF-netCDF aggregation
+variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<td><p>No aggregation variables will
+be created.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'field'</span></code></p></td>
+<td><p>Field constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></p></td>
+<td><p>Field ancillary constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></p></td>
+<td><p>Domain ancillary constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></p></td>
+<td><p>Dimension coordinate constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></p></td>
+<td><p>Auxiliary coordinate constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></p></td>
+<td><p>Cell measure constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_topology'</span></code></p></td>
+<td><p>Domain topology constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_connectivity'</span></code></p></td>
+<td><p>Cell connectivity constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'all'</span></code></p></td>
+<td><p>All constructs</p></td>
+</tr>
+</tbody>
+</table>
+<p>If <em>cfa</em> is a dictionary then it is used to explicitly
+configure the writing of aggregation variables. It may
+have some or all of the following keys:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'constructs'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>The types of construct to be written as aggregation
+variables.</p>
+<p>If the value is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or a (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> then the
+types are the same as if the <em>cfa</em> parameter itself was
+set to that value (see the table above). If the
+<code class="docutils literal notranslate"><span class="pre">'constructs'</span></code> key is missing then <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> is
+assumed.</p>
+<p>If the value is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> then each of its keys defines a
+construct type (see the table above), with a value that
+specifies the number of dimensions that a construct of
+that type must also have if it is to be written as an
+aggregation variable. A value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> means no
+restriction on the number of dimensions.</p>
 <dl class="simple">
 <dt><em>Example:</em></dt><dd><p>Equivalent ways to only write cell measure constructs
-as CFA-netCDF aggregation variables:
-<code class="docutils literal notranslate"><span class="pre">'cell_measure</span></code>, <code class="docutils literal notranslate"><span class="pre">['cell_measure']</span></code>,
-<code class="docutils literal notranslate"><span class="pre">{'cell_measure':</span> <span class="pre">None}</span></code>, <code class="docutils literal notranslate"><span class="pre">{'cell_measure':</span>
-<span class="pre">cf.ge(0)}</span></code></p>
+as aggregation variables: <code class="docutils literal notranslate"><span class="pre">{'constructs':</span>
+<span class="pre">'cell_measure'}</span></code>, <code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">['cell_measure']}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{'cell_measure':</span> <span class="pre">None}</span></code>.</p>
 </dd>
 <dt><em>Example:</em></dt><dd><p>Equivalent ways to only write field and auxiliary
-coordinate constructs as CFA-netCDF aggregation
-variables: <code class="docutils literal notranslate"><span class="pre">('field',</span> <span class="pre">'auxiliary_coordinate')</span></code> and
-<code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">None,</span> <span class="pre">'auxiliary_coordinate':</span> <span class="pre">None}</span></code>.</p>
+coordinate constructs as aggregation variables:
+<code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">('field',</span> <span class="pre">'auxiliary_coordinate')}</span></code>
+and <code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">{'field':</span> <span class="pre">None,</span>
+<span class="pre">'auxiliary_coordinate':</span> <span class="pre">None}}</span></code>.</p>
 </dd>
-<dt><em>Example:</em></dt><dd><p>Equivalent ways to only write two-dimensional
-auxiliary coordinate constructs as CFA-netCDF
-aggregation variables: <code class="docutils literal notranslate"><span class="pre">{'auxiliary_coordinate':</span>
-<span class="pre">2}</span></code> and <code class="docutils literal notranslate"><span class="pre">{'auxiliary_coordinate':</span> <span class="pre">cf.eq(2)}</span></code>.</p>
+<dt><em>Example:</em></dt><dd><p>To only write two-dimensional auxiliary coordinate
+constructs as aggregation variables: <code class="docutils literal notranslate"><span class="pre">{'constructs':</span>
+<span class="pre">{'auxiliary_coordinate':</span> <span class="pre">2}}</span></code>.</p>
 </dd>
-<dt><em>Example:</em></dt><dd><p>Only write auxiliary coordinate constructs with two or
-more dimensions as CFA-netCDF variables, and also all
-field constructs: <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">None,</span>
-<span class="pre">'auxiliary_coordinate':</span> <span class="pre">cf.ge(2)}</span></code>.</p>
+<dt><em>Example:</em></dt><dd><p>Write two-dimensional auxiliary coordinate constructs
+as aggregation variables, and also all field
+constructs: <code class="docutils literal notranslate"><span class="pre">{'constructs':</span> <span class="pre">{'auxiliary_coordinate':</span>
+<span class="pre">2,</span> <span class="pre">'field':</span> <span class="pre">None}}</span></code>.</p>
 </dd>
-</dl>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'absolute_paths'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
-<p>How to write fragment file names. Set to True (the
-default) for them to be written as fully qualified URIs,
-or else set to False for them to be written as local
-paths relative to the location of the CFA-netCDF file
-being created.</p>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'strict'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
-<p>If True (the default) then an exception is raised if it
-is not possible to create a CFA aggregation variable
-from data identified by the <code class="docutils literal notranslate"><span class="pre">'constructs'</span></code> option. If
-False then a normal CF-netCDF variable will be written
-in this case.</p>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'substitutions'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
-<p>A dictionary whose key/value pairs define text
-substitutions to be applied to the fragment file
-names. Each key may be specified with or without the
-<code class="docutils literal notranslate"><span class="pre">${...}</span></code> syntax. For instance, the following are
-equivalent: <code class="docutils literal notranslate"><span class="pre">{'base':</span> <span class="pre">'sub'}</span></code>, <code class="docutils literal notranslate"><span class="pre">{'${base}':</span> <span class="pre">'sub'}</span></code>.
-The substitutions are used in conjunction with, and take
-precedence over, any that are also defined on individual
-constructs (see <a class="reference internal" href="../method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions" title="cf.Data.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cfa_update_file_substitutions</span></code></a>
-for details).</p>
-<p>Substitutions are stored in the output file by the
-<code class="docutils literal notranslate"><span class="pre">substitutions</span></code> attribute of the <code class="docutils literal notranslate"><span class="pre">file</span></code> CFA
-aggregation instruction variable.</p>
-<dl class="simple">
-<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'base':</span> <span class="pre">'file:///data/'}</span></code></p>
+<dt><em>Example:</em></dt><dd><p>Write any three-dimensional construct whose data is
+unchanged from having been previously read from a
+CF-netCDF aggregation variable: <code class="docutils literal notranslate"><span class="pre">{'constructs':</span>
+<span class="pre">{'auto':</span> <span class="pre">3}}</span></code>.</p>
 </dd>
 </dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'uri'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>Specify the URI format of the fragment file names.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">'default'</span></code> (the default) then the fragment file
+names will be written with the same URI formats that
+they had when read from input files (for file names
+originating from the reading of normal non-aggregation
+variables, this will result in absolute URIs). If
+<code class="docutils literal notranslate"><span class="pre">'absolute'</span></code> then all fragment file names will be
+written as absolute URIs. If <code class="docutils literal notranslate"><span class="pre">'relative'</span></code> then all
+fragment file names will be written as relative-path URI
+references URIs, relative to the location of the
+aggregation file.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'strict'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<p>If True (the default if this key is missing) then an
+exception is raised if it is not possible to create an
+aggregation variable from any construct identified by
+the <code class="docutils literal notranslate"><span class="pre">'constructs'</span></code> option. If False then a normal,
+non-aggregation variable will be written in this case.</p>
 </li>
 </ul>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.15.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
-<dt>cfa_options: Deprecated at version 3.15.0</dt><dd><p>Use the <em>cfa</em> parameter instead.</p>
+<dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that defines field
+and metadata constructs and their components.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<p>There are further worked examples
-<a class="reference internal" href="../tutorial.html#writing-to-a-netcdf-dataset"><span class="std std-ref">in the tutorial</span></a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -765,7 +880,7 @@ aggregation instruction variable.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="s1">&#39;cell_measures.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">Conventions</span><span class="o">=</span><span class="s1">&#39;CMIP-6.2&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">Conventions</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -780,7 +895,7 @@ aggregation instruction variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,18 +135,21 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.coordinates<a class="headerlink" href="#cf-domain-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.coordinates">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">coordinates</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/mixin/fielddomain.py#L806-L864"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.coordinates" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">coordinates</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/fielddomain.py#L865-L933"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dimension and auxiliary coordinate constructs.</p>
 <p>Note that <code class="docutils literal notranslate"><span class="pre">f.coordinates(*identities,</span> <span class="pre">**filter_kwargs)</span></code> is
 equivalent to
 <code class="docutils literal notranslate"><span class="pre">f.constructs.filter(filter_by_type=[&quot;dimension_coordinate&quot;,</span>
 <span class="pre">&quot;auxiliary_coordinate&quot;],</span> <span class="pre">filter_by_identity=identities,</span>
 <span class="pre">**filter_kwargs)</span></code>.</p>
-<p>. versionadded:: (cfdm) 1.7.0</p>
-<dl class="simple">
-<dt>. seealso:: <a class="reference internal" href="cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates" title="cf.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a>, <a class="reference internal" href="../attribute/cf.Domain.constructs.html#cf.Domain.constructs" title="cf.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>,</dt><dd><p><a class="reference internal" href="cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates" title="cf.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></p>
-</dd>
-</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates" title="cf.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a>, <a class="reference internal" href="../attribute/cf.Domain.constructs.html#cf.Domain.constructs" title="cf.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>,
+<a class="reference internal" href="cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates" title="cf.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></p>
+</div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
@@ -158,9 +159,9 @@ methods, that matches any of the given values.</p>
 <p>If no identities are provided then all dimension and
 auxiliary coordinate constructs are selected.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -181,18 +182,31 @@ were selected.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<p>&gt;&gt; f.coordinates()
-Constructs:
-}</p>
-<p>&gt;&gt; f.coordinates()
-Constructs:
-‘auxiliarycoordinate0’: &lt;CF AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;,
-‘auxiliarycoordinate1’: &lt;CF AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;,
-‘auxiliarycoordinate2’: &lt;CF AuxiliaryCoordinate: long_name=Grid latitude name(10) &gt;,
-‘dimensioncoordinate0’: &lt;CF DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) &gt;,
-‘dimensioncoordinate1’: &lt;CF DimensionCoordinate: grid_latitude(10) degrees&gt;,
-‘dimensioncoordinate2’: &lt;CF DimensionCoordinate: grid_longitude(9) degrees&gt;,
-‘dimensioncoordinate3’: &lt;CF DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: eastward_wind (ncvar%ua)</span>
+<span class="go">-------------------------------</span>
+<span class="go">Data            : eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1</span>
+<span class="go">Cell methods    : time(3): mean</span>
+<span class="go">Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian</span>
+<span class="go">                : air_pressure(1) = [850.0] hPa</span>
+<span class="go">                : grid_latitude(4) = [0.44, ..., -0.88] degrees</span>
+<span class="go">                : grid_longitude(5) = [-1.18, ..., 0.58] degrees</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north</span>
+<span class="go">                : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east</span>
+<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">coordinates</span><span class="p">()</span>
+<span class="go">&lt;Constructs: auxiliary_coordinate(2), dimension_coordinate(4)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinates</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;CF AuxiliaryCoordinate: latitude(4, 5) degrees_north&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;CF AuxiliaryCoordinate: longitude(4, 5) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;CF DimensionCoordinate: time(3) days since 1979-1-1 gregorian&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;CF DimensionCoordinate: air_pressure(1) hPa&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;CF DimensionCoordinate: grid_latitude(4) degrees&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate3&#39;: &lt;CF DimensionCoordinate: grid_longitude(5) degrees&gt;}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -205,7 +219,7 @@ Constructs:
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

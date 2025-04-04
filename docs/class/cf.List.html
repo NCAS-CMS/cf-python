@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -136,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.List">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/list.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/list.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.list.List</span></code></p>
 <p>A list variable required to uncompress a gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
@@ -159,7 +157,7 @@ methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.List.set_properties.html#cf.List.set_properties" title="cf.List.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.List.set_property.html#cf.List.set_property" title="cf.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
@@ -170,7 +168,7 @@ the <a class="reference internal" href="../method/cf.List.set_properties.html#cf
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -187,7 +185,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cf.List(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -404,7 +402,7 @@ parameters are not deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.List.dtype.html#cf.List.dtype" title="cf.List.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.List.isscalar.html#cf.List.isscalar" title="cf.List.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data array is scalar.</p></td>
@@ -514,7 +512,10 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.fill_value.html#cf.List.fill_value" title="cf.List.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>Return the data array missing data value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.masked_invalid.html#cf.List.masked_invalid" title="cf.List.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.filled.html#cf.List.filled" title="cf.List.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
+<td><p>Replace masked elements with a fill value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.masked_invalid.html#cf.List.masked_invalid" title="cf.List.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
 </tbody>
@@ -600,7 +601,7 @@ parameters are not deep copied.</p>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.persist.html#cf.List.persist" title="cf.List.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
-<td><p>Persist the underlying dask array into memory.</p></td>
+<td><p>Persist data into memory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -615,7 +616,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.concatenate.html#cf.List.concatenate" title="cf.List.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
-<td><p>Join a sequence of variables together.</p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.copy.html#cf.List.copy" title="cf.List.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
@@ -642,7 +643,7 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.T.html#cf.List.T" title="cf.List.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.X.html#cf.List.X" title="cf.List.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
 <td><p>Always False.</p></td>
@@ -903,11 +904,20 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_set_variable.html#cf.List.nc_set_variable" title="cf.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_clear_hdf5_chunksizes.html#cf.List.nc_clear_hdf5_chunksizes" title="cf.List.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_hdf5_chunksizes.html#cf.List.nc_hdf5_chunksizes" title="cf.List.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_set_hdf5_chunksizes.html#cf.List.nc_set_hdf5_chunksizes" title="cf.List.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="cfa">
-<h2>CFA<a class="headerlink" href="#cfa" title="Permalink to this headline">¶</a></h2>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -915,26 +925,11 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.add_file_location.html#cf.List.add_file_location" title="cf.List.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
-<td><p>Add a new file location in-place.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.file_directories.html#cf.List.file_directories" title="cf.List.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.cfa_clear_file_substitutions.html#cf.List.cfa_clear_file_substitutions" title="cf.List.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
-<td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.cfa_del_file_substitution.html#cf.List.cfa_del_file_substitution" title="cf.List.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
-<td><p>Remove a CFA-netCDF file name substitution.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.cfa_file_substitutions.html#cf.List.cfa_file_substitutions" title="cf.List.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
-<td><p>Return the CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.cfa_update_file_substitutions.html#cf.List.cfa_update_file_substitutions" title="cf.List.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
-<td><p>Set CFA-netCDF file name substitutions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.del_file_location.html#cf.List.del_file_location" title="cf.List.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
-<td><p>Remove a file location in-place.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.file_locations.html#cf.List.file_locations" title="cf.List.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
-<td><p>The locations of files containing parts of the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.replace_directory.html#cf.List.replace_directory" title="cf.List.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1234,22 +1229,22 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <td><p>Called to implement membership test operators.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.__deepcopy__.html#cf.List.__deepcopy__" title="cf.List.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.__getitem__.html#cf.List.__getitem__" title="cf.List.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.__repr__.html#cf.List.__repr__" title="cf.List.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.__setitem__.html#cf.List.__setitem__" title="cf.List.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Called to implement assignment to x[indices]</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.__str__.html#cf.List.__str__" title="cf.List.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.__array__.html#cf.List.__array__" title="cf.List.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
-<td><p>Returns a numpy array representation of the data.</p></td>
+<td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.__data__.html#cf.List.__data__" title="cf.List.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
 <td><p>Returns a new reference to the data.</p></td>
@@ -1269,20 +1264,38 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.asdatetime.html#cf.List.asdatetime" title="cf.List.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.add_file_location</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.asdatetime.html#cf.List.asdatetime" title="cf.List.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.asreftime.html#cf.List.asreftime" title="cf.List.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.asreftime.html#cf.List.asreftime" title="cf.List.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.attributes.html#cf.List.attributes" title="cf.List.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.attributes.html#cf.List.attributes" title="cf.List.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.chunk.html#cf.List.chunk" title="cf.List.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.cfa_clear_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.cfa_del_file_substitution</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.cfa_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.cfa_update_file_substitutions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.chunk.html#cf.List.chunk" title="cf.List.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
 <td><p>Partition the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.Data.html#cf.List.Data" title="cf.List.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.Data.html#cf.List.Data" title="cf.List.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.del_file_location</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.delprop.html#cf.List.delprop" title="cf.List.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
@@ -1293,56 +1306,59 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.expand_dims.html#cf.List.expand_dims" title="cf.List.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.get_filenames.html#cf.List.get_filenames" title="cf.List.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List.file_locations</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.get_filenames.html#cf.List.get_filenames" title="cf.List.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.getprop.html#cf.List.getprop" title="cf.List.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.getprop.html#cf.List.getprop" title="cf.List.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.hasbounds.html#cf.List.hasbounds" title="cf.List.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.hasbounds.html#cf.List.hasbounds" title="cf.List.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.hasdata.html#cf.List.hasdata" title="cf.List.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.hasdata.html#cf.List.hasdata" title="cf.List.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.hasprop.html#cf.List.hasprop" title="cf.List.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.hasprop.html#cf.List.hasprop" title="cf.List.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.insert_data.html#cf.List.insert_data" title="cf.List.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.insert_data.html#cf.List.insert_data" title="cf.List.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.isauxiliary.html#cf.List.isauxiliary" title="cf.List.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.isauxiliary.html#cf.List.isauxiliary" title="cf.List.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.isdimension.html#cf.List.isdimension" title="cf.List.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.isdimension.html#cf.List.isdimension" title="cf.List.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.isdomainancillary.html#cf.List.isdomainancillary" title="cf.List.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.isdomainancillary.html#cf.List.isdomainancillary" title="cf.List.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.isfieldancillary.html#cf.List.isfieldancillary" title="cf.List.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.isfieldancillary.html#cf.List.isfieldancillary" title="cf.List.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.ismeasure.html#cf.List.ismeasure" title="cf.List.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.ismeasure.html#cf.List.ismeasure" title="cf.List.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.mask_invalid.html#cf.List.mask_invalid" title="cf.List.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.mask_invalid.html#cf.List.mask_invalid" title="cf.List.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.name.html#cf.List.name" title="cf.List.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.name.html#cf.List.name" title="cf.List.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.remove_data.html#cf.List.remove_data" title="cf.List.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.remove_data.html#cf.List.remove_data" title="cf.List.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.select.html#cf.List.select" title="cf.List.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.select.html#cf.List.select" title="cf.List.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.setprop.html#cf.List.setprop" title="cf.List.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.setprop.html#cf.List.setprop" title="cf.List.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.unsafe_array.html#cf.List.unsafe_array" title="cf.List.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.unsafe_array.html#cf.List.unsafe_array" title="cf.List.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1357,7 +1373,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

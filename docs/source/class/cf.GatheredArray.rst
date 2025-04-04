@@ -46,6 +46,7 @@ cf.GatheredArray
    :template: attribute.rst
    
    ~cf.GatheredArray.array
+   ~cf.GatheredArray.astype
    ~cf.GatheredArray.compressed_array
    ~cf.GatheredArray.dtype
    ~cf.GatheredArray.ndim

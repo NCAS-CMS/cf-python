@@ -22,6 +22,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
 
+
 print("\ncf environment:")
 print("-----------------")
 cf.environment()
@@ -90,7 +91,6 @@ needs_sphinx = "2.3.1"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    # 'sphinx.ext.viewcode',
     "sphinx.ext.linkcode",
     "sphinx.ext.mathjax",
     "sphinx.ext.graphviz",
@@ -106,7 +106,7 @@ extensions = [
 
 CF_DOCS_MODE = os.environ.get("CF_DOCS_MODE", "none")
 
-if CF_DOCS_MODE in ["dev-recipes", "latest", "archive"]:
+if CF_DOCS_MODE in ["dev-recipes", "dev-recipes-scrub", "latest", "archive"]:
     extensions.append("sphinx_gallery.gen_gallery")
 
 # Spelling extension configuration: set British English and false positives
@@ -388,9 +388,14 @@ sphinx_gallery_conf = {
     "run_stale_examples": False,
     "reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
-    "doc_module": ("cf"),
+    "doc_module": ("cf",),
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
+    "default_thumb_file": "_static/logo.svg",
+    "image_scrapers": ("matplotlib",),  # Ensures Matplotlib images are captured
+    "plot_gallery": "True",  # Enables plot rendering
+    "reset_modules": ("matplotlib",),  # Helps with memory management
+    "capture_repr": (),
 }
 
 import warnings

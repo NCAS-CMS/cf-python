@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Constructs.__call__<a class="headerlink" href="#cf-constructs-call" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.__call__">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/constructs.py#L60-L112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/constructs.py#L60-L112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by identity.</p>
 <p>Calling a <a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance selects metadata constructs by
 identity and is an alias for the <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>
@@ -150,7 +148,7 @@ identity of ‘air_temperature’: <code class="docutils literal notranslate"><s
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a></p>
+<p><a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -159,9 +157,9 @@ identity of ‘air_temperature’: <code class="docutils literal notranslate"><s
 their <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods, that matches any of the
 given values.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
@@ -182,7 +180,7 @@ criteria. Also to configure the returned value.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<p>See <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for examples.</p>
+<p>See <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for examples.</p>
 </dd></dl>
 
 </section>
@@ -195,7 +193,7 @@ criteria. Also to configure the returned value.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

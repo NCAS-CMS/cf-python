@@ -66,7 +66,10 @@ colour_scales_columns = [
 
 # %%
 # 5. Create the figure and give it an overall title. Ensure the
-# number of rows * number of columns = number of colour scales:
+# number of rows * number of columns = number of colour scales.
+# Then we loop through all the different colour maps defined and plot
+# as subplots, with each category in the same column, labelling each column
+# with the colour scale category:
 cfp.gopen(rows=3, columns=3, bottom=0.1, top=0.85)
 plt.suptitle(
     (
@@ -75,14 +78,9 @@ plt.suptitle(
     ),
     fontsize=18,
 )
-
-# %%
-# 6. We loop through all the different colour maps defined and plot
-# as subplots, with each category in the same column, labelling each column
-# with the colour scale category:
 for i, colour_scale in enumerate(colour_scales_columns):
     cfp.gpos(i + 1)
-    cfp.cscale(colour_scale)
+    cfp.cscale(colour_scale, ncols=15)
 
     # For the topmost plots, label the column with the colour scale category
     # using the 'title' argument, otherwise don't add a title.
@@ -108,5 +106,4 @@ for i, colour_scale in enumerate(colour_scales_columns):
         colorbar_thick=0.02,
         colorbar_fontsize=11,
     )
-
-cfp.gclose(view=True)
+cfp.gclose()

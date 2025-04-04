@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -137,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.radius<a class="headerlink" href="#cf-field-radius" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.radius">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">radius</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/field.py#L2718-L2822"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.radius" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">radius</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/field.py#L2629-L2733"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the radius of a latitude-longitude plane defined in
 spherical polar coordinates.</p>
 <p>The radius is taken from the datums of any coordinate
@@ -157,11 +155,11 @@ then a default value may be used instead.</p>
 reference constructs, but if and only if this is not
 possible then the value set by the <em>default</em> parameter
 is used. May be set to any numeric scalar object,
-including <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the
+including <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the
 radius are assumed to be metres, unless specified by a
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. If the special value <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> is
 given then the default radius taken as 6371229
-metres. If <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> an exception will be
+metres. If <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> an exception will be
 raised if no unique datum can be found in the
 coordinate reference constructs.</p>
 <dl class="simple">
@@ -207,7 +205,7 @@ coordinate reference constructs.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

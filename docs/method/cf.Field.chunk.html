@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.delprop" href="cf.Field.delprop.html" />
-    <link rel="prev" title="cf.Field.asreftime" href="cf.Field.asreftime.html" />
+    <link rel="next" title="cf.Field.del_file_location" href="cf.Field.del_file_location.html" />
+    <link rel="prev" title="cf.Field.cfa_update_file_substitutions" href="cf.Field.cfa_update_file_substitutions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -97,8 +95,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.asreftime.html" title="previous chapter">cf.Field.asreftime</a></li>
-      <li>Next: <a href="cf.Field.delprop.html" title="next chapter">cf.Field.delprop</a></li>
+      <li>Previous: <a href="cf.Field.cfa_update_file_substitutions.html" title="previous chapter">cf.Field.cfa_update_file_substitutions</a></li>
+      <li>Next: <a href="cf.Field.del_file_location.html" title="next chapter">cf.Field.del_file_location</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -137,16 +135,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.chunk<a class="headerlink" href="#cf-field-chunk" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.chunk">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">chunk</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.16.2/cf/mixin/propertiesdata.py#L2675-L2696"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.chunk" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">chunk</code><span class="sig-paren">(</span><em class="sig-param">chunksize=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/mixin/propertiesdata.py#L2479-L2500"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.chunk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Partition the data array.</p>
 <p>Deprecated at version 3.14.0. Use the <a class="reference internal" href="cf.Field.rechunk.html#cf.Field.rechunk" title="cf.Field.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a> method
 instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -161,7 +159,7 @@ instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

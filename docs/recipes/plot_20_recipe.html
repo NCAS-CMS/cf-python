@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Calculating and plotting the divergence of sea currents &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-recipes-plot-20-recipe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="calculating-and-plotting-the-divergence-of-sea-currents">
+<span id="sphx-glr-recipes-plot-20-recipe-py"></span><h1>Calculating and plotting the divergence of sea currents<a class="headerlink" href="#calculating-and-plotting-the-divergence-of-sea-currents" title="Permalink to this headline">¶</a></h1>
+<p>In this recipe, we will calculate the divergence of depth-averaged
+currents in the Irish Sea, then plot the divergence as a contour
+fill plot underneath the vectors themselves in the form of a vector plot.</p>
+<ol class="arabic simple">
+<li><p>Import cf-python and cf-plot:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+</pre></div>
+</div>
+<p>2. Read the fields in. This dataset consists of depth-averaged eastward and
+northward current components plus the sea surface height above sea level and
+is a gridded dataset, with grid resolution of 1.85 km, covering the entire
+Irish Sea area. It was found via the CEDA Archive at the location of:
+<a class="reference external" href="https://catalogue.ceda.ac.uk/uuid/1b89e025eedd49e8976ee0721ec6e9b5">https://catalogue.ceda.ac.uk/uuid/1b89e025eedd49e8976ee0721ec6e9b5</a>, with
+DOI of <a class="reference external" href="https://dx.doi.org/10.5285/031e7ca1-9710-280d-e063-6c86abc014a0">https://dx.doi.org/10.5285/031e7ca1-9710-280d-e063-6c86abc014a0</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/POLCOMS_WAM_ZUV_01_16012006.nc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3. Get the separate vector components, which are stored as separate fields.
+The first, ‘u’, corresponds to the eastward component and the second, ‘v’,
+the northward component:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a> <span class="o">=</span> <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Squeeze the fields to remove the size 1 axes in each case:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a> <span class="o">=</span> <a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a> <span class="o">=</span> <a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p>5. Consider the currents at a set point in time. To do this we
+select one of the 720 datetime sample points in the fields to
+investigate, in this case by subspacing to pick out a particular
+datetime value we saw within the time coordinate data of the field (but
+you could also use indexing or filtering to select a specific value).
+Once we subspace to one datetime, we squeeze out the size 1 time axis
+in each case:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">chosen_time</span></a> <span class="o">=</span> <span class="s2">&quot;2006-01-15 23:30:00&quot;</span>  <span class="c1"># 720 choices to pick from, try this one!</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u_1</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">chosen_time</span></a><span class="p">))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v_1</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.dt.html#cf.dt" title="cf.dt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">dt</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">chosen_time</span></a><span class="p">))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u_1</span></a> <span class="o">=</span> <a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u_1</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v_1</span></a> <span class="o">=</span> <a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v_1</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p>6.
+When inspecting the u and v fields using cf inspection methods such as
+from print(u_1.data) and u_1.data.dump(), for example, we can see that there are
+lots of -9999 values in their data array, apparently used as a
+fill/placeholder value, including to indicate undefined data over the land.
+In order for these to not skew the data and dominate the plot, we need
+to mask values matching this, so that only meaningful values remain.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u_2</span></a> <span class="o">=</span> <a href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u_1</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><a href="../function/cf.lt.html#cf.lt" title="cf.lt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">lt</span></a><span class="p">(</span><span class="o">-</span><span class="mi">9000</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v_2</span></a> <span class="o">=</span> <a href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v_1</span><span class="o">.</span><span class="n">where</span></a><span class="p">(</span><a href="../function/cf.lt.html#cf.lt" title="cf.lt" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">lt</span></a><span class="p">(</span><span class="o">-</span><span class="mi">9000</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>7. Calculate the divergence using the ‘div_xy’ function operating on the
+vector eastward and northward components as the first and second argument
+respectively. We need to calculate this for the latitude-longitude plane
+of the Earth, defined in spherical polar coordinates, so we must specify
+the Earth’s radius for the appropriate calculation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">div</span></a> <span class="o">=</span> <a href="../function/cf.div_xy.html#cf.div_xy" title="cf.div_xy" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">div_xy</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u_2</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v_2</span></a><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>8. First we configure the overall plot by
+making the map higher resolution, to show the coastlines of the UK and
+Ireland in greater detail, and changing the colourmap to better reflect
+the data which can be positive or negative, i.e. has 0 as the ‘middle’
+value of significance, so should use a diverging colour map.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ncas-cms.github.io/cf-plot/build/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;ncl_default&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>9. Now generate the final plot. Plot the current vectors, noting we had
+to play around with the ‘stride’ and ‘scale’ parameter values to adjust
+the vector spacing and size so that the vector field is best represented
+and visible without over-cluttering the plot. Finally we plot the
+divergence as a contour plot without any lines showing. This compound
+plot is saved on one canvas using ‘gopen’ and ‘gclose’ to wrap the two
+plotting calls:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ncas-cms.github.io/cf-plot/build/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/vect.html#cfplot.vect" title="cfplot.vect" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">vect</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u_2</span></a><span class="p">,</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v_2</span></a><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">div</span></a><span class="p">,</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Depth-averaged Irish Sea currents at </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">chosen_time</span></a><span class="si">}</span><span class="s2"> with &quot;</span>
+        <span class="s2">&quot;their divergence&quot;</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_20_recipe_001.png" srcset="../_images/sphx_glr_plot_20_recipe_001.png" alt="plot 20 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  6.721 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-20-recipe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/49613dbd5c75b4b5b077d740243466f7/plot_20_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_20_recipe.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/48481213480e5f1d3a9be8668cc93614/plot_20_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_20_recipe.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-02.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

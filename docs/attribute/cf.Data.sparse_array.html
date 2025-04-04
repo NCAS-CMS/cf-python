@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -138,17 +136,17 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="attribute">
 <dt id="cf.Data.sparse_array">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">sparse_array</code><a class="headerlink" href="#cf.Data.sparse_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p>
+<dd><p>Return an independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.15.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p>
 <p>In-place changes to the returned sparse array do not affect
 the underlying dask array.</p>
-<p>An <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttributeError</span></code></a> is raised if a sparse array representation
+<p>An <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttributeError</span></code></a> is raised if a sparse array representation
 is not available.</p>
 <p><strong>Performance</strong></p>
 <p><a class="reference internal" href="#cf.Data.sparse_array" title="cf.Data.sparse_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse_array</span></code></a> causes all delayed operations to be
 computed. The returned sparse array is a deep copy of that
 returned by created <a class="reference internal" href="../method/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.16.0.</span></p>
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -156,11 +154,11 @@ returned by created <a class="reference internal" href="../method/cf.Data.comput
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.13.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p>
+<dd class="field-odd"><p>An independent <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.15.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array of the data.</p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">issparse</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">issparse</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">issparse</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">sparse_array</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
@@ -177,7 +175,7 @@ returned by created <a class="reference internal" href="../method/cf.Data.comput
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

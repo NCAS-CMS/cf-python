@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.16.2</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,12 +77,10 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -132,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cf-functions">
 <span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.16.2 for version 1.11 of the CF conventions.</p>
+<p>Version 3.17.0 for version 1.12 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -145,7 +143,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <td><p>Read field or domain constructs from files.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p></td>
-<td><p>Write field constructs to a netCDF file.</p></td>
+<td><p>Write field and domain constructs to a netCDF file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.netcdf_lock</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -369,7 +370,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <td><p>View or set any number of constants in the project-wide configuration.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a></p></td>
-<td><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p></td>
+<td><p>Return a <a class="reference internal" href="class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance during class creation.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.free_memory.html#cf.free_memory" title="cf.free_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory</span></code></a></p></td>
 <td><p>The available physical memory.</p></td>
@@ -401,6 +402,29 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </tbody>
 </table>
 </section>
+<section id="active-storage-reductions">
+<h2>Active storage reductions<a class="headerlink" href="#active-storage-reductions" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.active_storage.html#cf.active_storage" title="cf.active_storage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.active_storage</span></code></a></p></td>
+<td><p>Whether or not to attempt active storage reductions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.active_storage_url.html#cf.active_storage_url" title="cf.active_storage_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.active_storage_url</span></code></a></p></td>
+<td><p>The URL location of the active storage reducer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.active_storage_max_requests.html#cf.active_storage_max_requests" title="cf.active_storage_max_requests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.active_storage_max_requests</span></code></a></p></td>
+<td><p>Concurrent active storage server requests per <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunk.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.netcdf_lock</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -413,10 +437,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <td><p>The version of the CF conventions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.abspath.html#cf.abspath" title="cf.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.abspath</span></code></a></p></td>
-<td><p>Return a normalized absolute version of a file name.</p></td>
+<td><p>Return a normalised absolute version of a path.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.dirname.html#cf.dirname" title="cf.dirname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dirname</span></code></a></p></td>
-<td><p>Return the directory name of a file.</p></td>
+<td><p>Return the directory of a path.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dump</span></code></a></p></td>
 <td><p>Print a description of an object.</p></td>
@@ -550,7 +574,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-04-26.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

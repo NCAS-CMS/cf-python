@@ -11,7 +11,7 @@ try:
     y = cf.read('$PWD')  # Raises Exception
 except Exception:
     pass
-y = cf.read('$PWD', ignore_read_error=True)
+y = cf.read('$PWD', file_type='netCDF')
 len(y)
 x = cf.read('file.nc')
 x
@@ -35,7 +35,7 @@ len(y + y)
 len(y * 4)
 for f in y:
     print('field:', repr(f))
-q, t = cf.read('file.nc')
+t = cf.read('file.nc')[1]
 t.properties()
 t.has_property('standard_name')
 t.get_property('standard_name')
@@ -347,6 +347,8 @@ lon.dump()
 lon.get_geometry()
 print(lon.bounds.data.array)
 print(lon.get_interior_ring().data.array)
+f = cf.example_field(8)
+print(f)
 a = t.constructs.get('domainancillary0')
 print(a.array)
 bounds = a.bounds
@@ -763,8 +765,8 @@ print(q.creation_commands())
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
 v = nc.variables['ta']
-netcdf_array = cf.NetCDFArray(filename='file.nc', address='ta',
-                               dtype=v.dtype, shape=v.shape)
+netcdf_array = cf.NetCDF4Array(filename='file.nc', address='ta',
+                              dtype=v.dtype, shape=v.shape)
 data_disk = cf.Data(netcdf_array)
 numpy_array = v[...]
 data_memory = cf.Data(numpy_array)
