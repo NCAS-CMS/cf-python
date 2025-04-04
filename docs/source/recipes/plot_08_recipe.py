@@ -3,6 +3,8 @@ Plotting statistically significant temperature trends with stippling
 ====================================================================
 
 In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset for two different time periods. The plotted maps also include stippling, which is used to highlight areas where the temperature trends are statistically significant.
+
+isort:skip_file
 """
 
 # %%
