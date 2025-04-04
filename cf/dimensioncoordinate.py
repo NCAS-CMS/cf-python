@@ -769,8 +769,8 @@ class DimensionCoordinate(
         if inplace and self.has_bounds():
             raise ValueError(
                 "Can't create dimension coordinate bounds in-place when "
-                "bounds already exist. Consider removing the existing bounds "
-                "with 'del_bounds'."
+                "bounds already exist. Existing bounds may be removed "
+                "with the 'del_bounds' method."
             )
 
         array = self.array
