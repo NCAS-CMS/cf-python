@@ -52,7 +52,7 @@ joint_histogram = cf.histogram(pm25_indices, temp_indices)
 histogram_data = joint_histogram.array
 
 # %%
-# 8. Calculate bin centers for PM2.5 and temperature bins:
+# 8. Calculate bin centres for PM2.5 and temperature bins:
 pm25_bin_centers = [(a + b) / 2 for a, b in pm25_bins]
 temp_bin_centers = [(a + b) / 2 for a, b in temp_bins]
 

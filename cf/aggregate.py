@@ -5005,7 +5005,7 @@ def dsg_feature_type_axis(meta, axis):
 def _fix_promoted_field_ancillaries(output_meta, axes_aggregated):
     """Remove non-aggregated axes from promoted field ancillaries.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.17.0
 
     :Parameters:
 

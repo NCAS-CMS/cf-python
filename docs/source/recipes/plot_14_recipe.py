@@ -16,7 +16,7 @@ import cfplot as cfp
 import cf
 
 # %%
-# 2. Read and select the 200 hpa geopotential by index and look at its contents:
+# 2. Read and select the 200 hPa geopotential by index and look at its contents:
 gp = cf.read("~/recipes/ERA5_monthly_averaged_z200.nc")[0]
 print(gp)
 
@@ -33,22 +33,22 @@ gph_july = gph.subspace(T=cf.month(7) & cf.year(2018)).squeeze()
 # %%
 # 5. Plot contour lines of this geopotential height for July 2018. Here:
 #
-# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
+# - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
-#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# - `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+#   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
+# - `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map projection to North Polar Stereographic;
-# - `cfplot.setvars <http://ajheaps.github.io/cf-plot/setvars.html>`_ is used to
+# - `cfplot.setvars <https://ncas-cms.github.io/cf-plot/build/setvars.html>`_ is used to
 #   set various attributes of the plot, like setting the thickness of the lines
 #   that represent continents;
-# - `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_ plots the contour
-#   lines representing the 200 hpa geopotential height values without filling
+# - `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_ plots the contour
+#   lines representing the 200 hPa geopotential height values without filling
 #   between the contour lines (``fill=False``) and no colour bar
 #   (``colorbar=False``);
-# - `cfplot.levs <https://ajheaps.github.io/cf-plot/levs.html>`_ is used to
+# - `cfplot.levs <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to
 #   specify two contour levels, 12000 and 12300 m, corresponding to the
 #   approximate polar-front jet and subtropical jet respectively;
-# - `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_ is again used to
+# - `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_ is again used to
 #   plot the contour lines for polar-front jet and subtropical jet with a
 #   thicker line width;
 # - `cfp.plotvars.mymap.stock_img() <https://scitools.org.uk/cartopy/docs/v0.15/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes.stock_img>`_
@@ -119,24 +119,24 @@ t2m_july_anomaly_2018 = (
 # provide an insight into the atmospheric conditions, the temperature anomalies
 # and the geopotential height contours are plotted using cf-plot. Here:
 #
-# - `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to
+# - `cfplot.gopen <https://ncas-cms.github.io/cf-plot/build/gopen.html>`_ is used to
 #   define the parts of the plot area, which is closed by
-#   `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_;
-# - `cfplot.mapset <https://ajheaps.github.io/cf-plot/mapset.html>`_ is used to
+#   `cfplot.gclose <https://ncas-cms.github.io/cf-plot/build/gclose.html>`_;
+# - `cfplot.mapset <https://ncas-cms.github.io/cf-plot/build/mapset.html>`_ is used to
 #   set the map projection to Robinson;
-# - `cfplot.setvars <http://ajheaps.github.io/cf-plot/setvars.html>`_ is used to
+# - `cfplot.setvars <https://ncas-cms.github.io/cf-plot/build/setvars.html>`_ is used to
 #   set various attributes of the plot, like setting the thickness of the lines
 #   that represent continents and master title properties;
-# - `cfplot.levs <https://ajheaps.github.io/cf-plot/levs.html>`_ is used to
+# - `cfplot.levs <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to
 #   specify the contour levels for temperature anomalies, starting from -2 to 2
 #   with an interval of 0.5;
-# - `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to
+# - `cfplot.cscale <https://ncas-cms.github.io/cf-plot/build/cscale.html>`_ is used to
 #   choose one of the colour maps amongst many available;
-# - `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_ plots contour fill
+# - `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_ plots contour fill
 #   of temperature anomalies without contour lines (``lines=False``);
-# - `cfplot.levs() <https://ajheaps.github.io/cf-plot/levs.html>`_ is used to
+# - `cfplot.levs() <https://ncas-cms.github.io/cf-plot/build/levs.html>`_ is used to
 #   reset contour levels to default after which the steps to plot the contour
-#   lines representing the 200 hpa geopotential height values, the approximate
+#   lines representing the 200 hPa geopotential height values, the approximate
 #   polar-front jet and subtropical jet from Step 5 are repeated:
 cfp.gopen()
 cfp.mapset(proj="robin")

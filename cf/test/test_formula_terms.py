@@ -37,7 +37,7 @@ def _formula_terms(standard_name):
     if standard_name == "atmosphere_ln_pressure_coordinate":
         computed_standard_name = "air_pressure"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], "hPa", dtype="f8")
         aux.set_data(data)
@@ -80,7 +80,7 @@ def _formula_terms(standard_name):
     elif standard_name == "atmosphere_sigma_coordinate":
         computed_standard_name = "air_pressure"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], "hPa", dtype="f8")
         aux.set_data(data)
@@ -134,7 +134,7 @@ def _formula_terms(standard_name):
     elif standard_name == "atmosphere_hybrid_sigma_pressure_coordinate":
         computed_standard_name = "air_pressure"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([700, 500, 300], "hPa", dtype="f8")
         aux.set_data(data)
@@ -203,7 +203,7 @@ def _formula_terms(standard_name):
     elif standard_name == "atmosphere_sleve_coordinate":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([100, 200, 300], "m", dtype="f8")
         aux.set_data(data)
@@ -279,7 +279,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_sigma_coordinate":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([10, 20, 30], "m", dtype="f8")
         aux.set_data(data)
@@ -333,7 +333,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_s_coordinate":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([15.01701191, 31.86034296, 40.31150319], units="m")
         aux.set_data(data)
@@ -413,7 +413,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_s_coordinate_g1":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([555.4, 464.32, 373.33], units="m")
         aux.set_data(data)
@@ -485,7 +485,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_s_coordinate_g2":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([555.45454545, 464.36363636, 373.36363636], units="m")
         aux.set_data(data)
@@ -563,7 +563,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_sigma_z_coordinate":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data([10.0, 30.0, 40.0], "m", dtype="f8")
         aux.set_data(data)
@@ -643,7 +643,7 @@ def _formula_terms(standard_name):
     elif standard_name == "ocean_double_sigma_coordinate":
         computed_standard_name = "altitude"
 
-        # Computed vertical corodinates
+        # Computed vertical coordinates
         aux.standard_name = computed_standard_name
         data = cf.Data(
             [0.15000000000000002, 0.12, 932.895], units="m", dtype="f8"

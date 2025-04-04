@@ -510,7 +510,7 @@ class FieldDomain:
                     # Performance: Convert the 1-d 'index' to a numpy
                     #              array of bool.
                     #
-                    # This is beacuse Dask can be *very* slow at
+                    # This is because Dask can be *very* slow at
                     # instantiation time when the 'index' is a Dask
                     # array, in which case contents of 'index' are
                     # unknown.

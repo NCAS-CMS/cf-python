@@ -25,6 +25,7 @@ Inspection
    ~cf.CellConnectivity.dump
    ~cf.CellConnectivity.identity  
    ~cf.CellConnectivity.identities
+   ~cf.CellConnectivity.inspect
 
 .. rubric:: Attributes
    

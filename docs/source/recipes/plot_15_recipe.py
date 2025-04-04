@@ -17,7 +17,7 @@ will give a dataset where each 25 km grid cell contains a histogram of land use
 flags, as determined by the original 100 m resolution data. It retains the
 original spatial extent of the data while reducing its spatial complexity.
 Regridding, on the other hand, involves interpolating the data onto a new grid,
-which can introduce artifacts and distortions in the data.
+which can introduce artefacts and distortions in the data.
 
 """
 
@@ -31,7 +31,8 @@ import numpy as np
 import cf
 
 # %%
-# 2. Read and select land use data by index and see properties of all construcs:
+# 2. Read and select land use data by index and see properties of
+# all constructs:
 f = cf.read("~/recipes/output.tif.nc")[0]
 f.dump()
 
@@ -102,7 +103,7 @@ def extract_data(country_name):
 # - The ``percentages`` variable calculates the percentage of each bin by
 #   dividing the ``bin_counts`` by the ``total_valid_sub_cells`` and multiplying
 #   by 100.
-# - The ``bin_indices`` variable calculates the center of each bin by averaging
+# - The ``bin_indices`` variable calculates the centre of each bin by averaging
 #   the bin edges. This is done by adding the ``bins.array[:-1, 0]`` and
 #   ``bins.array[1:, 0]`` arrays and dividing by 2.
 # - The ``ax.bar`` function is called to plot the histogram as a bar chart on

@@ -102,7 +102,7 @@ details.
 
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
-visualisation package <http://ajheaps.github.io/cf-plot>`_, run:
+visualisation package <https://ncas-cms.github.io/cf-plot/build/>`_, run:
 
 .. code-block:: console
    :caption: *Install with conda.*
@@ -129,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.16.2``):
+   you want to install, e.g. ``3.17.0``):
 
    .. code-block:: console
 

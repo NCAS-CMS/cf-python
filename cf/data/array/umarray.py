@@ -635,7 +635,7 @@ class UMArray(
 
             `str` or `None`
                 ``'little_endian'`` or ``'big_endian'``. If the byte
-                ordereing has not been set then `None` is returned, in
+                ordering has not been set then `None` is returned, in
                 which case byte ordering will be detected
                 automatically (if possible) when the file is opened
                 with `open`.

@@ -40,9 +40,9 @@ jan_2023 = cf.year(2023) & cf.month(1)
 # %%
 # 5. The relative vorticity is calculated using `cf.curl_xy
 # <https://ncas-cms.github.io/cf-python/function/cf.curl_xy.html>`_ and
-# plotted using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_.
+# plotted using `cfplot.con <https://ncas-cms.github.io/cf-plot/build/con.html>`_.
 # The ``with cf.relaxed_identities(True)`` context manager statement prevents
-# the curl opereration broadcasting across the two ``expver`` dimensions because
+# the curl operation broadcasting across the two ``expver`` dimensions because
 # it can't be certain that they are the same as they lack the standardised
 # metadata. Setting
 # ``cf.relaxed_identities(True)`` allows the ``long_name`` to be treated

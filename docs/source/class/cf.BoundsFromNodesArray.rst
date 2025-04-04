@@ -28,10 +28,9 @@ cf.BoundsFromNodesArray
    ~cf.BoundsFromNodesArray.get_compressed_axes
    ~cf.BoundsFromNodesArray.get_compressed_dimension
    ~cf.BoundsFromNodesArray.get_compression_type
-   ~cf.BoundsFromNodesArray.get_filenames
+   ~cf.BoundsFromNodesArray.get_filename
    ~cf.BoundsFromNodesArray.get_node_coordinates
    ~cf.BoundsFromNodesArray.get_start_index
-   ~cf.BoundsFromNodesArray.get_subspace
    ~cf.BoundsFromNodesArray.get_units
    ~cf.BoundsFromNodesArray.source
    ~cf.BoundsFromNodesArray.subarray_parameters

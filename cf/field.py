@@ -4781,7 +4781,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             names.append(dim.identity())
 
         # ------------------------------------------------------------
-        # Initialise the ouput data as a totally masked array
+        # Initialise the output data as a totally masked array
         # ------------------------------------------------------------
         if method == "sample_size":
             dtype = int

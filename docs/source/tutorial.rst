@@ -188,11 +188,12 @@ cards). Shell environment variables are also permitted.
    >>> len(z)
    3
 
-All of the datasets in one more directories may also be read by
+All of the datasets in one or more directories may also be read by
 replacing any file name with a directory name. An attempt will be made
 to read all files in the directory, which will result in an error if
 any have a non-supported format. Non-supported files may be ignored
-with the *ignore_read_error* keyword.
+by being more specific about the file type intended for reading in
+using the *file_type* keyword:
 
 .. code-block:: python
    :caption: *Read all of the files in the current working directory.*
@@ -201,7 +202,7 @@ with the *ignore_read_error* keyword.
    Traceback (most recent call last):
        ...
    Exception: Can't determine format of file cf_tutorial_files.zip
-   >>> y = cf.read('$PWD', ignore_read_error=True)
+   >>> y = cf.read('$PWD', file_type='netCDF')
    >>> len(y)
    15
 
@@ -535,16 +536,16 @@ files <External-variables-with-cfa>`.
 
 Powerful, flexible, and user-friendly visualisations of field
 constructs are available with the `cf-plot` package (that needs to be
-installed separately to cf, see http://ajheaps.github.io/cf-plot for
-details).
+installed separately to cf, see `cf-plot documentation
+<https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
 .. figure:: images/cfplot_example.png
 
    *Example output of cf-plot displaying a cf field construct.*
 
-See the `cfplot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
-of plotting possibilities, with example code. These include, but are
+See the `cf-plot gallery
+<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide
+range of plotting possibilities, with example code. These include, but are
 not limited to:
 
 * Cylindrical, polar stereographic and other plane projections

@@ -4657,6 +4657,33 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d[0].is_masked)
         self.assertFalse(d[1].is_masked)
 
+    def test_Data_collapse_axes_hdf_chunks(self):
+        """Test that _axes and hdf_chunks are updated after a collapse."""
+        d = cf.Data([[1, 2, 3, 4]])
+        chunks = d.shape
+        d.nc_set_hdf5_chunksizes(chunks)
+        e = d.mean(axes=1)
+        self.assertEqual(d._axes, ("dim0", "dim1"))
+        self.assertEqual(d.nc_hdf5_chunksizes(), chunks)
+
+        e = d.mean(axes=1)
+        self.assertNotEqual(e.size, d.size)
+        self.assertEqual(e._axes, d._axes)
+        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+
+        e = d.mean(axes=1, squeeze=True)
+        self.assertEqual(e._axes, d._axes[:1])
+        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+
+        e = d.mean(axes=0)
+        self.assertEqual(e.size, d.size)
+        self.assertEqual(e._axes, d._axes)
+        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+
+        e = d.mean(axes=0, squeeze=True)
+        self.assertEqual(e._axes, d._axes[1:])
+        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

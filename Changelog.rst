@@ -9,7 +9,7 @@ version 3.??.?
 version 3.17.0
 --------------
 
-**2025-03-??**
+**2025-03-24**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cf-python/issues/849)
@@ -21,6 +21,9 @@ version 3.17.0
   ``key`` (https://github.com/NCAS-CMS/cf-python/issues/802)
 * New keyword parameter to `cf.histogram`: ``density``
   (https://github.com/NCAS-CMS/cf-python/issues/794)
+* Fix bug that caused `Data._axes` to be incorrect after a call to
+  `cf.Field.collapse`
+  (https://github.com/NCAS-CMS/cf-python/issues/857)
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
 * Changed dependency: ``cfdm>=1.12.0.0, <1.12.1.0``

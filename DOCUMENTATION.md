@@ -37,7 +37,7 @@
   ```
 
 * If the filter doesn't exist, it has to be added in `<div class="filter-menu">` 
-  alphabetically for `/docs/source/recipes/README.rst`, e.g.,
+  alphabetically for `docs/source/recipes/README.rst`, e.g.,
 
   ```html
   <div class="filter-menu">
