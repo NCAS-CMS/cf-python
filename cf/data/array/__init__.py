@@ -12,3 +12,4 @@ from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .subsampledarray import SubsampledArray
 from .umarray import UMArray
+from .zarrarray import ZarrArray

@@ -11,7 +11,7 @@ nonetheless be modified in memory.
 The `cf` package uses `dask` for all of its array manipulation and
 can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs from netCDF, CDL, Zarr, PP and UM datasets,
 
 * read field constructs and domain constructs from netCDF, CDL, PP and
   UM datasets with a choice of netCDF backends,

@@ -38,6 +38,7 @@ from .data.array import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    ZarrArray,
 )
 from .functions import CF
 
@@ -151,6 +152,7 @@ _implementation = CFImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
     TiePointIndex=TiePointIndex,
+    ZarrArray=ZarrArray,
 )
 
 
@@ -205,7 +207,9 @@ def implementation():
      'RaggedIndexedArray': cf.data.array.raggedindexedarray.RaggedIndexedArray,
      'RaggedIndexedContiguousArray': cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
      'SubsampledArray': cf.data.array.subsampledarray.SubsampledArray,
-     'TiePointIndex': cf.tiepointindex.TiePointIndex}
+     'TiePointIndex': cf.tiepointindex.TiePointIndex,
+     'ZarrArray': cf.data.array.zarrarray.ZarrArray,
+    }
 
     """
     return _implementation.copy()

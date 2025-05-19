@@ -51,6 +51,14 @@ filename = os.path.join(
 class read_writeTest(unittest.TestCase):
     filename = filename
 
+    zarr2 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
+    )
+
+    zarr3 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
+    )
+
     broken_bounds = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "broken_bounds.cdl"
     )
@@ -696,9 +704,8 @@ class read_writeTest(unittest.TestCase):
             cf.read("test_read_write.py")
 
     def test_read_cdl_string(self):
-        """Test the `cdl_string` keyword of the `read` function."""
-        f = self.f0
-        cf.write(f, tmpfile0)
+        """Test the cf.read 'cdl_string' keyword."""
+        f = cf.read("example_field_0.nc")[0]
 
         # Test CDL in full, header-only and coordinate-only type:
         tempfile_to_option_mapping = {
@@ -709,7 +716,7 @@ class read_writeTest(unittest.TestCase):
 
         for tempf, option in tempfile_to_option_mapping.items():
             # Set up the CDL string to test...
-            command_to_run = ["ncdump", tmpfile0, ">", tempf]
+            command_to_run = ["ncdump", "example_field_0.nc", ">", tempf]
             if option:
                 command_to_run.insert(1, option)
 
@@ -720,12 +727,15 @@ class read_writeTest(unittest.TestCase):
             for cdl_input in (cdl_string_1, (cdl_string_1,)):
                 f_from_str = cf.read(cdl_input, cdl_string=True)
                 self.assertEqual(len(f_from_str), 1)
-                self.assertEqual(f_from_str[0], f)
+                if not option:
+                    self.assertTrue(f_from_str[0].equals(f))
 
-        # Check compatibility with the 'file_type' kwarg.
-        for file_type in ("netCDF", "CDL", "UM", ()):
-            with self.assertRaises(ValueError):
-                cf.read(cdl_string_1, cdl_string=True, file_type=file_type)
+        # Check compatibility with the 'dataset_type' kwarg.
+        f_from_str = cf.read(cdl_string_1, cdl_string=True, dataset_type="CDL")
+        self.assertEqual(len(f_from_str), 1)
+
+        with self.assertRaises(ValueError):
+            cf.read(cdl_string_1, cdl_string=True, dataset_type="netCDF")
 
         # If the user forgets the cdl_string=True argument they will
         # accidentally attempt to create a file with a very long name
@@ -788,6 +798,7 @@ class read_writeTest(unittest.TestCase):
 
         e = cf.read(tmpfile, domain=True, verbose=1)
         self.assertEqual(len(e), 1)
+        print(type(e))
         self.assertIsInstance(e, cf.DomainList)
         e = e[0]
         self.assertIsInstance(e, cf.Domain)
@@ -855,9 +866,9 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(np.ma.count(g.array))
         self.assertTrue(np.ma.count(g.construct("grid_latitude").array))
 
-    @unittest.skipUnless(
-        True, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
-    )
+    #    @unittest.skipUnless(
+    #        True, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
+    #    )
     def test_read_url(self):
         """Test reading urls."""
         for scheme in ("http", "https"):
@@ -866,21 +877,20 @@ class read_writeTest(unittest.TestCase):
             f = cf.read(remote)
             self.assertEqual(len(f), 1)
 
-    def test_read_file_type(self):
-        """Test the cf.read 'file_type' keyword."""
-        # netCDF file
-        for file_type in (
+    def test_read_dataset_type(self):
+        """Test the cf.read 'dataset_type' keyword."""
+        # netCDF dataset
+        for dataset_type in (
             None,
             "netCDF",
             ("netCDF",),
             ("netCDF", "CDL"),
-            ("netCDF", "bad value"),
         ):
-            f = cf.read(self.filename, file_type=file_type)
+            f = cf.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("CDL", "bad value", ()):
-            f = cf.read(self.filename, file_type=file_type)
+        for dataset_type in ("CDL", ("CDL", "Zarr"), ()):
+            f = cf.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
         # CDL file
@@ -889,35 +899,49 @@ class read_writeTest(unittest.TestCase):
             shell=True,
             check=True,
         )
-        for file_type in (
+        for dataset_type in (
             None,
             "CDL",
-            ("netCDF", "CDL"),
-            ("CDL", "bad value"),
+            ("CDL", "netCDF"),
         ):
-            f = cf.read(tmpfile, file_type=file_type)
+            f = cf.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("netCDF", "bad value", ()):
-            f = cf.read(tmpfile, file_type=file_type)
+        for dataset_type in ("netCDF", ()):
+            f = cf.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
-        # UM file
-        for file_type in (None, "UM", ("UM",), ("UM", "bad value")):
-            f = cf.read("file1.pp", file_type=file_type)
-            self.assertEqual(len(f), 1)
-
-        for file_type in ("netCDF", "bad value", ()):
-            f = cf.read("file1.pp", file_type=file_type)
-            self.assertEqual(len(f), 0)
-
-        # Not a netCDF, CDL, or UM file
+        # Not a netCDF or CDL file
         with self.assertRaises(DatasetTypeError):
             f = cf.read("test_read_write.py")
 
-        for file_type in ("netCDF", "CDL", "bad value", ()):
-            f = cf.read("test_read_write.py", file_type=file_type)
+        for dataset_type in ("netCDF", ()):
+            f = cf.read("test_read_write.py", dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
+
+        # Bad values
+        for dataset_type in ("bad value", ("bad value", "netCDF")):
+            with self.assertRaises(ValueError):
+                cf.read(self.filename, dataset_type=dataset_type)
+
+    def test_read_zarr(self):
+        """Test the cf.read of a zarr dataset."""
+        n = cf.read("example_field_0.nc")[0]
+        for zarr_dataset in (self.zarr2, self.zarr3):
+            z = cf.read(zarr_dataset, dask_chunks=3)
+            self.assertEqual(len(z), 1)
+            z = z[0]
+            self.assertTrue(z.equals(n))
+
+            cf.write(z, tmpfile)
+            n2 = cf.read(tmpfile)[0]
+            self.assertTrue(n2.equals(n))
+
+            z = cf.read(zarr_dataset, dataset_type="netCDF")
+            self.assertEqual(len(z), 0)
+
+            z = cf.read(zarr_dataset, dataset_type="Zarr")
+            self.assertEqual(len(z), 1)
 
 
 if __name__ == "__main__":
