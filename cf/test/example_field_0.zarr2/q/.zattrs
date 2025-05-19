@@ -1,0 +1,11 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "lat",
+        "lon"
+    ],
+    "cell_methods": "area: mean",
+    "coordinates": "time",
+    "project": "research",
+    "standard_name": "specific_humidity",
+    "units": "1"
+}
