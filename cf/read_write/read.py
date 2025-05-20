@@ -556,7 +556,8 @@ class read(cfdm.read):
         UM = "UM" in self.unique_dataset_categories
 
         # ----------------------------------------------------------------
-        # Select matching fields from non-UM files (before aggregation)
+        # Select matching constructs from non-UM files (before
+        # aggregation)
         # ----------------------------------------------------------------
         select = self.select
         if select and not UM:
@@ -585,8 +586,8 @@ class read(cfdm.read):
                     del f._custom["standard_name"]
 
         # ----------------------------------------------------------------
-        # Select matching fields from UM files (post setting of their
-        # standard names)
+        # Select matching constructs from UM files (after setting
+        # their standard names)
         # ----------------------------------------------------------------
         if select and UM:
             self.constructs = self.constructs.select_by_identity(*select)
@@ -679,7 +680,7 @@ class read(cfdm.read):
         # ------------------------------------------------------------
         super()._read(dataset)
 
-        if self.dataset_contents:
+        if self.dataset_contents is not None:
             return
 
         # ------------------------------------------------------------
@@ -694,13 +695,13 @@ class read(cfdm.read):
                 um_kwargs = {
                     key: kwargs[key]
                     for key in (
-                        "verbose",
                         "height_at_top_of_model",
                         "squeeze",
                         "unsqueeze",
                         "domain",
-                        "file_type",
+                        "dataset_type",
                         "unpack",
+                        "verbose",
                     )
                 }
                 um_kwargs["set_standard_name"] = False
@@ -725,14 +726,14 @@ class read(cfdm.read):
                 # Successfully read the dataset
                 self.unique_dataset_categories.add("UM")
 
-        if self.dataset_contents:
+        if self.dataset_contents is not None:
             return
 
         # ------------------------------------------------------------
         # Try to read as a GRIB dataset
-        # ------------------------------------------------------------
-        # Not yet available! The framework will be:
         #
+        # Not yet available! The framework will be:
+        # ------------------------------------------------------------
         # if dataset_type is None or dataset_type.intersection(
         #     self.GRIB_dataset_types
         # ):
@@ -743,13 +744,13 @@ class read(cfdm.read):
         #             <ADD SOME CODE HERE>
         #         }
         #
-        #         self.um_read = partial(
+        #         self.grib_read = partial(
         #             GRIBRead(self.implementation).read, **grib_kwargs
         #         )
         #
         #     try:
         #         # Try to read the dataset
-        #         self.dataset_contents = self.grid_read(dataset)
+        #         self.dataset_contents = self.grib_read(dataset)
         #     except DatasetTypeError as error:
         #         if dataset_type is None:
         #             self.dataset_format_errors.append(error)
@@ -757,5 +758,5 @@ class read(cfdm.read):
         #         # Successfully read the dataset
         #         self.unique_dataset_categories.add("GRIB")
         #
-        # if self.dataset_contents:
+        # if self.dataset_contents is not None:
         #     return
