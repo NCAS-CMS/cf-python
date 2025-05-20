@@ -463,9 +463,9 @@ NetCDF
    ~cf.DomainAncillary.nc_get_variable
    ~cf.DomainAncillary.nc_has_variable
    ~cf.DomainAncillary.nc_set_variable
-   ~cf.DomainAncillary.nc_clear_hdf5_chunksizes
-   ~cf.DomainAncillary.nc_hdf5_chunksizes
-   ~cf.DomainAncillary.nc_set_hdf5_chunksizes
+   ~cf.DomainAncillary.nc_clear_dataset_chunksizes
+   ~cf.DomainAncillary.nc_dataset_chunksizes
+   ~cf.DomainAncillary.nc_set_dataset_chunksizes
    
 Aggregation
 -----------

@@ -441,11 +441,13 @@ class DataClassDeprecationsMixin:
         `Data` objects to be written to netCDF files.
 
         Deprecated at version 3.14.0 and is no longer available. Use
-        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-        and `nc_set_hdf5_chunksizes` instead.
+        the methods `nc_clear_dataset_chunksizes`,
+        `nc_dataset_chunksizes`, and `nc_set_dataset_chunksizes`
+        instead.
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`
 
         :Parameters:
 
@@ -506,8 +508,8 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "HDF_chunks",
-            message="Use the methods 'nc_clear_hdf5_chunksizes', "
-            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            message="Use the methods 'nc_clear_dataset_chunksizes', "
+            "'nc_dataset_chunksizes', and 'nc_set_dataset_chunksizes' "
             "instead.",
             version="3.14.0",
             removed_at="5.0.0",

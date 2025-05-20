@@ -13993,17 +13993,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def HDF_chunks(self, *chunksizes):
         """Deprecated at version 3.0.0.
 
-        Use methods 'Data.nc_hdf5_chunksizes',
-        'Data.nc_set_hdf5_chunksizes', 'Data.nc_clear_hdf5_chunksizes'
-        instead.
+        Use methods 'Data.nc_dataset_chunksizes',
+        'Data.nc_set_dataset_chunksizes',
+        'Data.nc_clear_dataset_chunksizes' instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
             self,
             "HDF_chunks",
-            "Use methods 'Data.nc_hdf5_chunksizes', "
-            "'Data.nc_set_hdf5_chunksizes', "
-            "'Data.nc_clear_hdf5_chunksizes' instead.",
+            "Use methods 'Data.nc_dataset_chunksizes', "
+            "'Data.nc_set_dataset_chunksizes', "
+            "'Data.nc_clear_dataset_chunksizes' instead.",
             version="3.0.0",
             removed_at="4.0.0",
         )  # pragma: no cover

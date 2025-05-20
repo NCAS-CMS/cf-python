@@ -432,9 +432,9 @@ NetCDF
    ~cf.DomainTopology.nc_get_variable
    ~cf.DomainTopology.nc_has_variable
    ~cf.DomainTopology.nc_set_variable 
-   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
-   ~cf.DomainTopology.nc_hdf5_chunksizes
-   ~cf.DomainTopology.nc_set_hdf5_chunksizes
+   ~cf.DomainTopology.nc_clear_dataset_chunksizes
+   ~cf.DomainTopology.nc_dataset_chunksizes
+   ~cf.DomainTopology.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -478,8 +478,8 @@ Groups
    ~cf.DomainTopology.nc_clear_variable_groups
    ~cf.DomainTopology.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -488,9 +488,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DomainTopology.nc_hdf5_chunksizes
-   ~cf.DomainTopology.nc_set_hdf5_chunksizes
-   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cf.DomainTopology.nc_dataset_chunksizes
+   ~cf.DomainTopology.nc_set_dataset_chunksizes
+   ~cf.DomainTopology.nc_clear_dataset_chunksizes
 
 Aliases
 -------

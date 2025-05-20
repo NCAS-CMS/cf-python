@@ -4661,28 +4661,28 @@ class DataTest(unittest.TestCase):
         """Test that _axes and hdf_chunks are updated after a collapse."""
         d = cf.Data([[1, 2, 3, 4]])
         chunks = d.shape
-        d.nc_set_hdf5_chunksizes(chunks)
+        d.nc_set_dataset_chunksizes(chunks)
         e = d.mean(axes=1)
         self.assertEqual(d._axes, ("dim0", "dim1"))
-        self.assertEqual(d.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(d.nc_dataset_chunksizes(), chunks)
 
         e = d.mean(axes=1)
         self.assertNotEqual(e.size, d.size)
         self.assertEqual(e._axes, d._axes)
-        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+        self.assertEqual(e.nc_dataset_chunksizes(), None)
 
         e = d.mean(axes=1, squeeze=True)
         self.assertEqual(e._axes, d._axes[:1])
-        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+        self.assertEqual(e.nc_dataset_chunksizes(), None)
 
         e = d.mean(axes=0)
         self.assertEqual(e.size, d.size)
         self.assertEqual(e._axes, d._axes)
-        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(e.nc_dataset_chunksizes(), chunks)
 
         e = d.mean(axes=0, squeeze=True)
         self.assertEqual(e._axes, d._axes[1:])
-        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(e.nc_dataset_chunksizes(), chunks)
 
 
 if __name__ == "__main__":

@@ -130,6 +130,10 @@ The following file types can be read:
   with or without the data array values.
 
 ..
+  
+* Datasets in `Zarr v2 (xarray) <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_ and `Zarr v3 <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_ formats.
+
+..
 
 * `CFA-netCDF
   <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_

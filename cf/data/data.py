@@ -5532,7 +5532,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         shape = d.shape
-        chunksizes0 = d.nc_hdf5_chunksizes()
+        chunksizes0 = d.nc_dataset_chunksizes()
 
         # Cast 'a' as a Data object so that it definitely has sensible
         # Units. We don't mind if the units of 'a' are incompatible
@@ -5563,8 +5563,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
-        # Update the HDF5 chunking strategy
-        chunksizes1 = a.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes1 = a.nc_dataset_chunksizes()
         if chunksizes0 or chunksizes1:
             if isinstance(chunksizes0, tuple):
                 if isinstance(chunksizes1, tuple):
@@ -5572,10 +5572,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 else:
                     chunksizes = chunksizes0 + a.shape
 
-                d.nc_set_hdf5_chunksizes(chunksizes)
+                d.nc_set_dataset_chunksizes(chunksizes)
             elif isinstance(chunksizes1, tuple):
                 chunksizes = shape + chunksizes1
-                d.nc_set_hdf5_chunksizes(chunksizes)
+                d.nc_set_dataset_chunksizes(chunksizes)
 
         d._update_deterministic(a)
         return d
