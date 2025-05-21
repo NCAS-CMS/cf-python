@@ -6259,7 +6259,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Clear cyclic axes, as we can't help but lose them in this
         # operation
-        d._cyclic = _empty_set
+        del d._cyclic
 
         return d
 

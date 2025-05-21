@@ -163,10 +163,10 @@ class read(cfdm.read):
             ============  ============================================
             file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
-            ``'CDL'``     Text CDL representations of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 hierarchy
-            ``'UM'``      UM fields file or PP file
+            ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``     A text CDL file of a netCDF dataset
+            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'UM'``      A UM fields file or PP dataset
             ============  ============================================
 
             .. versionadded:: NEXTVERSION
@@ -566,14 +566,15 @@ class read(cfdm.read):
         # ----------------------------------------------------------------
         # Aggregate the output fields/domains
         # ----------------------------------------------------------------
-        constructs = self.constructs
-        if self.aggregate and len(constructs) > 1:
+        if self.aggregate and len(self.constructs) > 1:
             aggregate_options = self.aggregate_options
             # Set defaults specific to UM fields
             if UM and "strict_units" not in aggregate_options:
                 aggregate_options["relaxed_units"] = True
 
-            self.constructs = cf_aggregate(constructs, **aggregate_options)
+            self.constructs = cf_aggregate(
+                self.constructs, **aggregate_options
+            )
 
         # ----------------------------------------------------------------
         # Add standard names to UM/PP fields (after aggregation)
@@ -611,7 +612,7 @@ class read(cfdm.read):
         # Initialise the list of output constructs
         if self.field:
             self.constructs = FieldList()
-        else:
+        elif self.domain:
             self.constructs = DomainList()
 
         # Recognised UM dataset formats
@@ -681,6 +682,7 @@ class read(cfdm.read):
         super()._read(dataset)
 
         if self.dataset_contents is not None:
+            # Successfully read the dataset
             return
 
         # ------------------------------------------------------------
@@ -727,22 +729,23 @@ class read(cfdm.read):
                 self.unique_dataset_categories.add("UM")
 
         if self.dataset_contents is not None:
+            # Successfully read the dataset
             return
 
         # ------------------------------------------------------------
         # Try to read as a GRIB dataset
         #
-        # Not yet available! The framework will be:
+        # Not yet available! When (if) the time comes, the framework
+        # will be:
         # ------------------------------------------------------------
+        #
         # if dataset_type is None or dataset_type.intersection(
         #     self.GRIB_dataset_types
         # ):
         #     if not hasattr(self, "grib_read"):
         #         # Initialise the GRIB read function
         #         kwargs = self.kwargs
-        #         grib_kwargs = {
-        #             <ADD SOME CODE HERE>
-        #         }
+        #         grib_kwargs = ...  # <ADD SOME CODE HERE>
         #
         #         self.grib_read = partial(
         #             GRIBRead(self.implementation).read, **grib_kwargs
@@ -759,4 +762,5 @@ class read(cfdm.read):
         #         self.unique_dataset_categories.add("GRIB")
         #
         # if self.dataset_contents is not None:
+        #     # Successfully read the dataset
         #     return
