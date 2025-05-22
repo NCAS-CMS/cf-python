@@ -2,11 +2,13 @@ import cfdm
 
 from ...mixin_container import Container
 
+# Uncomment when we can use active storage on Zarr datasets:
 # from .mixin import ActiveStorageMixin
 
 
 class ZarrArray(
-    #    ActiveStorageMixin,
+    # Uncomment when we can use active storage on Zarr datasets:
+    # ActiveStorageMixin,
     Container,
     cfdm.ZarrArray,
 ):

@@ -1,3 +1,14 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Read Zarr datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/863)
+* Changed dependency: ``cfdm>=1.12.2.0, <1.12.3.0``
+
+----
+
 version 3.17.0
 --------------
 

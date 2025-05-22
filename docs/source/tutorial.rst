@@ -131,7 +131,11 @@ The following file types can be read:
 
 ..
   
-* Datasets in `Zarr v2 (xarray) <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_ and `Zarr v3 <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_ formats.
+* Datasets in `Zarr v2 (xarray-style)
+  <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
+  and `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
+  formats.
 
 ..
 

@@ -146,6 +146,10 @@ class read(cfdm.read):
 
         {{read datasets: (arbitrarily nested sequence of) `str`}}
 
+        {{read recursive: `bool`, optional}}
+
+        {{read followlinks: `bool`, optional}}
+
         {{read cdl_string: `bool`, optional}}
 
         {{read external: (sequence of) `str`, optional}}
@@ -165,7 +169,7 @@ class read(cfdm.read):
             ============  ============================================
             ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
             ``'CDL'``     A text CDL file of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Zarr'``    A Zarr v2 (xarray-style) or Zarr v3 dataset
             ``'UM'``      A UM fields file or PP dataset
             ============  ============================================
 
@@ -275,24 +279,6 @@ class read(cfdm.read):
             method. For example, ``fl = cf.read(file,
             select='air_temperature')`` is equivalent to ``fl =
             cf.read(file).select_by_identity('air_temperature')``.
-
-        recursive: `bool`, optional
-            If True then recursively read sub-directories of any
-            directories specified with the *files* parameter.
-
-        followlinks: `bool`, optional
-            If True, and *recursive* is True, then also search for
-            files in sub-directories which resolve to symbolic
-            links. By default directories which resolve to symbolic
-            links are ignored. Ignored of *recursive* is False. Files
-            which are symbolic links are always followed.
-
-            Note that setting ``recursive=True, followlinks=True`` can
-            lead to infinite recursion if a symbolic link points to a
-            parent directory of itself.
-
-            This parameter replaces the deprecated *follow_symlinks*
-            parameter.
 
         {{read warn_valid: `bool`, optional}}
 

@@ -437,13 +437,13 @@ class DataClassDeprecationsMixin:
     def HDF_chunks(self, *chunks):
         """Get or set HDF chunk sizes.
 
-        The HDF chunk sizes may be used by external code that allows
-        `Data` objects to be written to netCDF files.
-
         Deprecated at version 3.14.0 and is no longer available. Use
         the methods `nc_clear_dataset_chunksizes`,
         `nc_dataset_chunksizes`, and `nc_set_dataset_chunksizes`
         instead.
+
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
 
         .. seealso:: `nc_clear_dataset_chunksizes`,
                      `nc_dataset_chunksizes`,

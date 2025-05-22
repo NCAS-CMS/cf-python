@@ -13991,11 +13991,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def HDF_chunks(self, *chunksizes):
-        """Deprecated at version 3.0.0.
+        """Get or set HDF chunk sizes.
 
-        Use methods 'Data.nc_dataset_chunksizes',
-        'Data.nc_set_dataset_chunksizes',
-        'Data.nc_clear_dataset_chunksizes' instead.
+        Deprecated at version 3.0.0 and is no longer available.  Use
+        methods `Data.nc_dataset_chunksizes`,
+        `Data.nc_set_dataset_chunksizes`,
+        `Data.nc_clear_dataset_chunksizes` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
