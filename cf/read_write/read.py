@@ -152,6 +152,21 @@ class read(cfdm.read):
 
         {{read cdl_string: `bool`, optional}}
 
+        {{read dataset_type: `None` or (sequence of) `str`, optional}}
+
+            Valid file types are:
+
+            ==============  ==========================================
+            *dataset_type*  Description
+            ==============  ==========================================
+            ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``       A text CDL file of a netCDF dataset
+            ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'UM'``        A UM fields file or PP dataset
+            ==============  ==========================================
+
+            .. versionadded:: NEXTVERSION
+
         {{read external: (sequence of) `str`, optional}}
 
         {{read extra: (sequence of) `str`, optional}}
@@ -159,21 +174,6 @@ class read(cfdm.read):
         {{read verbose: `int` or `str` or `None`, optional}}
 
         {{read warnings: `bool`, optional}}
-
-        {{read dataset_type: (sequence of) `str`, optional}}
-
-            Valid file types are:
-
-            ============  ============================================
-            file type     Description
-            ============  ============================================
-            ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
-            ``'CDL'``     A text CDL file of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray-style) or Zarr v3 dataset
-            ``'UM'``      A UM fields file or PP dataset
-            ============  ============================================
-
-            .. versionadded:: NEXTVERSION
 
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields

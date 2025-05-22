@@ -288,6 +288,7 @@ from .data.array import (
     RaggedIndexedContiguousArray,
     SubsampledArray,
     UMArray,
+    ZarrArray,
 )
 
 from .aggregate import aggregate, climatology_cells
