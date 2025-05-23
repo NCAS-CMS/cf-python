@@ -661,3 +661,6 @@ Deprecated
    ~cf.Index.select
    ~cf.Index.setprop
    ~cf.Index.unsafe_array
+   ~cf.Index.nc_clear_hdf5_chunksizes
+   ~cf.Index.nc_hdf5_chunksizes
+   ~cf.Index.nc_set_hdf5_chunksizes

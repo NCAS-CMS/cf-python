@@ -648,3 +648,6 @@ Deprecated
    ~cf.FieldAncillary.select
    ~cf.FieldAncillary.setprop
    ~cf.FieldAncillary.unsafe_array
+   ~cf.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_set_hdf5_chunksizes

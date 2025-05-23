@@ -744,6 +744,9 @@ Deprecated
    ~cf.DimensionCoordinate.remove_data
    ~cf.DimensionCoordinate.select
    ~cf.DimensionCoordinate.setprop
+   ~cf.DimensionCoordinate.nc_clear_hdf5_chunksizes
+   ~cf.DimensionCoordinate.nc_hdf5_chunksizes
+   ~cf.DimensionCoordinate.nc_set_hdf5_chunksizes  
 
 .. rubric:: Attributes
 

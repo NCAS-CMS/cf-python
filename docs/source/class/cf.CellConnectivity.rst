@@ -583,3 +583,7 @@ Deprecated
    ~cf.CellConnectivity.select
    ~cf.CellConnectivity.setprop
    ~cf.CellConnectivity.unsafe_array
+   ~cf.CellConnectivity.nc_clear_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_hdf5_chunksizes
+   ~cf.CellConnectivity.nc_set_hdf5_chunksizes
+

@@ -660,3 +660,6 @@ Deprecated
    ~cf.Count.select
    ~cf.Count.setprop
    ~cf.Count.unsafe_array
+   ~cf.Count.nc_clear_hdf5_chunksizes
+   ~cf.Count.nc_hdf5_chunksizes      
+   ~cf.Count.nc_set_hdf5_chunksizes  

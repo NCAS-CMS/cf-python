@@ -584,3 +584,6 @@ Deprecated
    ~cf.DomainTopology.select
    ~cf.DomainTopology.setprop
    ~cf.DomainTopology.unsafe_array
+   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cf.DomainTopology.nc_hdf5_chunksizes
+   ~cf.DomainTopology.nc_set_hdf5_chunksizes

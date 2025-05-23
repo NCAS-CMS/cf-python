@@ -731,6 +731,9 @@ Deprecated
    ~cf.AuxiliaryCoordinate.remove_data
    ~cf.AuxiliaryCoordinate.select
    ~cf.AuxiliaryCoordinate.setprop
+   ~cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
 
 .. rubric:: Attributes
 

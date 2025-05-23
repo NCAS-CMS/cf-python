@@ -896,7 +896,10 @@ Deprecated
    ~cf.Data.to_disk
    ~cf.Data.to_memory
    ~cf.Data.unsafe_array
-
+   ~cf.Data.nc_clear_hdf5_chunksizes
+   ~cf.Data.nc_hdf5_chunksizes         
+   ~cf.Data.nc_set_hdf5_chunksizes  
+   
 .. rubric:: Attributes
 
 .. autosummary::

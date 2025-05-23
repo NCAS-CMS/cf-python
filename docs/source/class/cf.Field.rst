@@ -1036,6 +1036,9 @@ Deprecated
    ~cf.Field.setprop
    ~cf.Field.transpose_item
    ~cf.Field.unlimited
+   ~cf.Field.nc_clear_hdf5_chunksizes
+   ~cf.Field.nc_hdf5_chunksizes
+   ~cf.Field.nc_set_hdf5_chunksizes
 
 .. rubric:: Attributes
 

@@ -676,3 +676,6 @@ Deprecated
    ~cf.CellMeasure.select
    ~cf.CellMeasure.setprop
    ~cf.CellMeasure.unsafe_array
+   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cf.CellMeasure.nc_hdf5_chunksizes
+   ~cf.CellMeasure.nc_set_hdf5_chunksizes

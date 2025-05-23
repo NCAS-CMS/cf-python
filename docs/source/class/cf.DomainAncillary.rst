@@ -706,3 +706,6 @@ Deprecated
    ~cf.DomainAncillary.select
    ~cf.DomainAncillary.setprop
    ~cf.DomainAncillary.unsafe_array
+   ~cf.DomainAncillary.nc_clear_hdf5_chunksizes
+   ~cf.DomainAncillary.nc_hdf5_chunksizes
+   ~cf.DomainAncillary.nc_set_hdf5_chunksizes
