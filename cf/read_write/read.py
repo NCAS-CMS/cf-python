@@ -1,20 +1,16 @@
 import logging
-import os
-from glob import glob
-from os.path import isdir
+from functools import partial
 from re import Pattern
-from urllib.parse import urlparse
 
 import cfdm
 from cfdm.read_write.exceptions import DatasetTypeError
-from cfdm.read_write.netcdf import NetCDFRead
 
 from ..aggregate import aggregate as cf_aggregate
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
 from ..domainlist import DomainList
 from ..fieldlist import FieldList
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from ..query import Query
 from .um import UMRead
 
@@ -24,17 +20,21 @@ logger = logging.getLogger(__name__)
 class read(cfdm.read):
     """Read field or domain constructs from files.
 
-    The following file formats are supported: netCDF, CFA-netCDF, CDL,
-    UM fields file, and PP.
+    The following file formats are supported: netCDF, CDL, Zarr, PP,
+    and UM fields file.
 
-    Input datasets are mapped to constructs in memory which are
-    returned as elements of a `FieldList` or if the *domain* parameter
-    is True, a `DomainList`.
+    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
+    server, or in an S3 object store.
 
-    NetCDF files may be on disk, on an OPeNDAP server, or in an S3
-    object store.
+    CDL, PP, and UM fields files must be on local disk.
 
     Any amount of files of any combination of file types may be read.
+
+    Input datasets are mapped to `Field` constructs which are returned
+    as elements of a `FieldList`, or if the *domain* parameter is
+    True, `Domain` constructs returned as elements of a
+    `DomainList`. The returned constructs are sorted by the netCDF
+    variable names of their corresponding data or domain variables.
 
     **NetCDF unlimited dimensions**
 
@@ -136,7 +136,7 @@ class read(cfdm.read):
 
     However, when two or more field or domain constructs are
     aggregated to form a single construct then the data arrays of some
-    metadata constructs (coordinates, cell measures, etc.)  must be
+    metadata constructs (coordinates, cell measures, etc.) must be
     compared non-lazily to ascertain if aggregation is possible.
 
     .. seealso:: `cf.aggregate`, `cf.write`, `cf.Field`, `cf.Domain`,
@@ -144,52 +144,28 @@ class read(cfdm.read):
 
     :Parameters:
 
-        files: (arbitrarily nested sequence of) `str`
-            A string or arbitrarily nested sequence of strings giving
-            the file names, directory names, or OPenDAP URLs from
-            which to read field constructs. Various type of expansion
-            are applied to the names:
+        {{read datasets: (arbitrarily nested sequence of) `str`}}
 
-            ====================  ======================================
-            Expansion             Description
-            ====================  ======================================
-            Tilde                 An initial component of ``~`` or
-                                  ``~user`` is replaced by that *user*'s
-                                  home directory.
+        {{read recursive: `bool`, optional}}
 
-            Environment variable  Substrings of the form ``$name`` or
-                                  ``${name}`` are replaced by the value
-                                  of environment variable *name*.
+        {{read followlinks: `bool`, optional}}
 
-            Pathname              A string containing UNIX file name
-                                  metacharacters as understood by the
-                                  Python `glob` module is replaced by
-                                  the list of matching file names. This
-                                  type of expansion is ignored for
-                                  OPenDAP URLs.
-            ====================  ======================================
+        {{read cdl_string: `bool`, optional}}
 
-            Where more than one type of expansion is used in the same
-            string, they are applied in the order given in the above
-            table.
+        {{read dataset_type: `None` or (sequence of) `str`, optional}}
 
-            *Parameter example:*
-              The file ``file.nc`` in the user's home directory could
-              be described by any of the following:
-              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+            Valid file types are:
 
-            When a directory is specified, all files in that directory
-            are read. Sub-directories are not read unless the
-            *recursive* parameter is True. If any directories contain
-            files that are not valid datasets then an exception will
-            be raised, unless the *ignore_unknown_type* parameter is
-            True.
+            ==============  ==========================================
+            *dataset_type*  Description
+            ==============  ==========================================
+            ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``       A text CDL file of a netCDF dataset
+            ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'UM'``        A UM fields file or PP dataset
+            ==============  ==========================================
 
-            As a special case, if the `cdl_string` parameter is set to
-            True, the interpretation of `files` changes so that each
-            value is assumed to be a string of CDL input rather
-            than the above.
+            .. versionadded:: NEXTVERSION
 
         {{read external: (sequence of) `str`, optional}}
 
@@ -198,36 +174,6 @@ class read(cfdm.read):
         {{read verbose: `int` or `str` or `None`, optional}}
 
         {{read warnings: `bool`, optional}}
-
-        {{read file_type: (sequence of) `str`, optional}}
-
-            Valid file types are:
-
-            ============  ============================================
-            file type     Description
-            ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 files
-            ``'CDL'``     Text CDL representations of netCDF files
-            ``'UM'``      UM fields files or PP files
-            ============  ============================================
-
-            .. versionadded:: 3.17.0
-
-        cdl_string: `bool`, optional
-            If True and the format to read is CDL, read a string
-            input, or sequence of string inputs, each being interpreted
-            as a string of CDL rather than names of locations from
-            which field constructs can be read from, as standard.
-
-            By default, each string input or string element in the input
-            sequence is taken to be a file or directory name or an
-            OPenDAP URL from which to read field constructs, rather
-            than a string of CDL input, including when the `fmt`
-            parameter is set as CDL.
-
-            Note that when `cdl_string` is True, the `fmt` parameter is
-            ignored as the format is assumed to be CDL, so in that case
-            it is not necessary to also specify ``fmt='CDL'``.
 
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
@@ -334,24 +280,6 @@ class read(cfdm.read):
             select='air_temperature')`` is equivalent to ``fl =
             cf.read(file).select_by_identity('air_temperature')``.
 
-        recursive: `bool`, optional
-            If True then recursively read sub-directories of any
-            directories specified with the *files* parameter.
-
-        followlinks: `bool`, optional
-            If True, and *recursive* is True, then also search for
-            files in sub-directories which resolve to symbolic
-            links. By default directories which resolve to symbolic
-            links are ignored. Ignored of *recursive* is False. Files
-            which are symbolic links are always followed.
-
-            Note that setting ``recursive=True, followlinks=True`` can
-            lead to infinite recursion if a symbolic link points to a
-            parent directory of itself.
-
-            This parameter replaces the deprecated *follow_symlinks*
-            parameter.
-
         {{read warn_valid: `bool`, optional}}
 
             .. versionadded:: 3.4.0
@@ -422,10 +350,13 @@ class read(cfdm.read):
             Use the *dask_chunks* parameter instead.
 
         fmt: deprecated at version 3.17.0
-            Use the *file_type* parameter instead.
+            Use the dataset_type* parameter instead.
 
         ignore_read_error: deprecated at version 3.17.0
-            Use the *file_type* parameter instead.
+            Use the *dataset_type* parameter instead.
+
+        file_type: deprecated at version NEXTVERSION
+            Use the *dataset_type* parameter instead.
 
     :Returns:
 
@@ -478,7 +409,7 @@ class read(cfdm.read):
     @_manage_log_level_via_verbosity
     def __new__(
         cls,
-        files,
+        datasets,
         external=None,
         verbose=None,
         warnings=False,
@@ -486,7 +417,7 @@ class read(cfdm.read):
         nfields=None,
         squeeze=False,
         unsqueeze=False,
-        file_type=None,
+        dataset_type=None,
         cdl_string=False,
         select=None,
         extra=None,
@@ -513,8 +444,11 @@ class read(cfdm.read):
         chunks="auto",
         ignore_read_error=False,
         fmt=None,
+        file_type=None,
     ):
         """Read field or domain constructs from a dataset."""
+        kwargs = locals()
+
         if field:
             _DEPRECATION_ERROR_FUNCTION_KWARGS(
                 "cf.read",
@@ -568,7 +502,7 @@ class read(cfdm.read):
             _DEPRECATION_ERROR_FUNCTION_KWARGS(
                 "cf.read",
                 {"fmt": fmt},
-                "Use keyword 'file_type' instead.",
+                "Use keyword 'dataset_type' instead.",
                 version="3.17.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
@@ -577,25 +511,129 @@ class read(cfdm.read):
             _DEPRECATION_ERROR_FUNCTION_KWARGS(
                 "cf.read",
                 {"ignore_read_error": ignore_read_error},
-                "Use keyword 'file_type' instead.",
+                "Use keyword 'dataset_type' instead.",
                 version="3.17.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
-        info = cfdm.is_log_level_info(logger)
+        if file_type is not None:
+            _DEPRECATION_ERROR_FUNCTION_KWARGS(
+                "cf.read",
+                {"file_type": file_type},
+                "Use keyword 'dataset_type' instead.",
+                version="NEXTVERSION",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
-        cls.netcdf = NetCDFRead(cls.implementation)
-        cls.um = UMRead(cls.implementation)
+        return super().__new__(**kwargs)
+
+    def _finalise(self):
+        """Actions to take after all datasets have been read.
+
+        Called by `__new__`.
+
+        .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        # Whether or not there were only netCDF datasets
+        only_netCDF = self.unique_dataset_categories == set(("netCDF",))
+
+        # Whether or not there were any UM datasets
+        some_UM = "UM" in self.unique_dataset_categories
+
+        # ----------------------------------------------------------------
+        # Select matching constructs from netCDF datasets (before
+        # aggregation)
+        # ----------------------------------------------------------------
+        select = self.select
+        if select and only_netCDF:
+            self.constructs = self.constructs.select_by_identity(*select)
+
+        # ----------------------------------------------------------------
+        # Aggregate the output fields or domains
+        # ----------------------------------------------------------------
+        if self.aggregate and len(self.constructs) > 1:
+            aggregate_options = self.aggregate_options
+            # Set defaults specific to UM fields
+            if some_UM and "strict_units" not in aggregate_options:
+                aggregate_options["relaxed_units"] = True
+
+            self.constructs = cf_aggregate(
+                self.constructs, **aggregate_options
+            )
+
+        # ----------------------------------------------------------------
+        # Add standard names to non-netCDF fields (after aggregation)
+        # ----------------------------------------------------------------
+        if not only_netCDF:
+            for f in self.constructs:
+                standard_name = f._custom.get("standard_name", None)
+                if standard_name is not None:
+                    f.set_property("standard_name", standard_name, copy=False)
+                    del f._custom["standard_name"]
+
+        # ----------------------------------------------------------------
+        # Select matching constructs from non-netCDF files (after
+        # setting their standard names)
+        # ----------------------------------------------------------------
+        if select and not only_netCDF:
+            self.constructs = self.constructs.select_by_identity(*select)
+
+        super()._finalise()
+
+    def _initialise(self):
+        """Actions to take before any datasets have been read.
+
+        Called by `__new__`.
+
+        .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        super()._initialise()
+
+        # Initialise the list of output constructs
+        if self.field:
+            self.constructs = FieldList()
+        elif self.domain:
+            self.constructs = DomainList()
+
+        # Recognised UM dataset formats
+        self.UM_dataset_types = set(("UM",))
+
+        # Allowed dataset formats
+        self.allowed_dataset_types.update(self.UM_dataset_types)
+
+        # ------------------------------------------------------------
+        # Parse the 'um' keyword parameter
+        # ------------------------------------------------------------
+        kwargs = self.kwargs
+        um = kwargs["um"]
+        if not um:
+            um = {}
+
+        self.um = um
 
         # ------------------------------------------------------------
         # Parse the 'select' keyword parameter
         # ------------------------------------------------------------
+        select = kwargs["select"]
         if isinstance(select, (str, Query, Pattern)):
             select = (select,)
+
+        self.select = select
 
         # ------------------------------------------------------------
         # Parse the 'aggregate' keyword parameter
         # ------------------------------------------------------------
+        aggregate = kwargs["aggregate"]
         if isinstance(aggregate, dict):
             aggregate_options = aggregate.copy()
             aggregate = True
@@ -604,257 +642,115 @@ class read(cfdm.read):
 
         aggregate_options["copy"] = False
 
+        self.aggregate = aggregate
+        self.aggregate_options = aggregate_options
+
+    def _read(self, dataset):
+        """Read a given dataset into field or domain constructs.
+
+        The constructs are stored in the `dataset_contents` attribute.
+
+        Called by `__new__`.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset to be read.
+
+        :Returns:
+
+            `None`
+
+        """
+        dataset_type = self.dataset_type
+
         # ------------------------------------------------------------
-        # Parse the 'file_type' keyword parameter
+        # Try to read as a netCDF dataset
         # ------------------------------------------------------------
-        netCDF_file_types = set(("netCDF", "CDL"))
-        UM_file_types = set(("UM",))
-        if file_type is not None:
-            if isinstance(file_type, str):
-                file_type = (file_type,)
+        super()._read(dataset)
 
-            file_type = set(file_type)
+        if self.dataset_contents is not None:
+            # Successfully read the dataset
+            return
 
         # ------------------------------------------------------------
-        # Parse the 'um' keyword parameter
+        # Try to read as a PP/UM dataset
         # ------------------------------------------------------------
-        if not um:
-            um = {}
+        if dataset_type is None or dataset_type.intersection(
+            self.UM_dataset_types
+        ):
+            if not hasattr(self, "um_read"):
+                # Initialise the UM read function
+                kwargs = self.kwargs
+                um_kwargs = {
+                    key: kwargs[key]
+                    for key in (
+                        "height_at_top_of_model",
+                        "squeeze",
+                        "unsqueeze",
+                        "domain",
+                        "dataset_type",
+                        "unpack",
+                        "verbose",
+                    )
+                }
+                um_kwargs["set_standard_name"] = False
+                um_kwargs["select"] = self.select
+                um = self.um
+                um_kwargs["um_version"] = um.get("version")
+                um_kwargs["fmt"] = um.get("fmt")
+                um_kwargs["word_size"] = um.get("word_size")
+                um_kwargs["endian"] = um.get("endian")
 
-        # ------------------------------------------------------------
-        # Parse the 'cdl_string' keyword parameter
-        # ------------------------------------------------------------
-        if cdl_string and file_type is not None:
-            raise ValueError("Can't set file_type when cdl_string=True")
+                self.um_read = partial(
+                    UMRead(self.implementation).read, **um_kwargs
+                )
 
-        # ------------------------------------------------------------
-        # Parse the 'follow_symlinks' and 'recursive' keyword
-        # parameters
-        # ------------------------------------------------------------
-        if follow_symlinks and not recursive:
-            raise ValueError(
-                f"Can't set follow_symlinks={follow_symlinks!r} "
-                f"when recursive={recursive!r}"
-            )
-
-        # Initialise the output list of fields/domains
-        if domain:
-            out = DomainList()
-        else:
-            out = FieldList()
-
-        # Count the number of fields (in all files) and the number of
-        # files
-        field_counter = -1
-        file_counter = 0
-
-        if cdl_string:
-            if isinstance(files, str):
-                files = (files,)
-
-            files = [
-                NetCDFRead.string_to_cdl(cdl_string) for cdl_string in files
-            ]
-            file_type = set(("CDL",))
-
-        for file_glob in flat(files):
-            # Expand variables
-            file_glob = os.path.expanduser(os.path.expandvars(file_glob))
-
-            scheme = urlparse(file_glob).scheme
-            if scheme in ("https", "http", "s3"):
-                # Do not glob a remote URL
-                files2 = (file_glob,)
+            try:
+                # Try to read the dataset
+                self.dataset_contents = self.um_read(dataset)
+            except DatasetTypeError as error:
+                if dataset_type is None:
+                    self.dataset_format_errors.append(error)
             else:
-                # Glob files on disk
-                files2 = glob(file_glob)
+                # Successfully read the dataset
+                self.unique_dataset_categories.add("UM")
 
-                if not files2:
-                    # Trigger a FileNotFoundError error
-                    open(file_glob)
+        if self.dataset_contents is not None:
+            # Successfully read the dataset
+            return
 
-                files3 = []
-                for x in files2:
-                    if isdir(x):
-                        # Walk through directories, possibly recursively
-                        for path, subdirs, filenames in os.walk(
-                            x, followlinks=followlinks
-                        ):
-                            files3.extend(
-                                os.path.join(path, f) for f in filenames
-                            )
-                            if not recursive:
-                                break
-                    else:
-                        files3.append(x)
-
-                files2 = files3
-
-            # The types of all of the input files
-            ftypes = set()
-
-            for filename in files2:
-                if info:
-                    logger.info(f"File: {filename}")  # pragma: no cover
-
-                # ----------------------------------------------------
-                # Read the file
-                # ----------------------------------------------------
-                file_contents = []
-
-                # The type of this file
-                ftype = None
-
-                # Record file type errors
-                file_format_errors = []
-
-                if ftype is None and (
-                    file_type is None
-                    or file_type.intersection(netCDF_file_types)
-                ):
-                    # Try to read as netCDF
-                    try:
-                        file_contents = super().__new__(
-                            cls,
-                            filename=filename,
-                            external=external,
-                            extra=extra,
-                            verbose=verbose,
-                            warnings=warnings,
-                            mask=mask,
-                            unpack=unpack,
-                            warn_valid=warn_valid,
-                            domain=domain,
-                            storage_options=storage_options,
-                            netcdf_backend=netcdf_backend,
-                            dask_chunks=dask_chunks,
-                            store_dataset_chunks=store_dataset_chunks,
-                            cache=cache,
-                            cfa=cfa,
-                            cfa_write=cfa_write,
-                            to_memory=to_memory,
-                            squeeze=squeeze,
-                            unsqueeze=unsqueeze,
-                            file_type=file_type,
-                        )
-                    except DatasetTypeError as error:
-                        if file_type is None:
-                            file_format_errors.append(error)
-                    else:
-                        file_format_errors = []
-                        ftype = "netCDF"
-
-                if ftype is None and (
-                    file_type is None or file_type.intersection(UM_file_types)
-                ):
-                    # Try to read as UM
-                    try:
-                        file_contents = cls.um.read(
-                            filename,
-                            um_version=um.get("version"),
-                            verbose=verbose,
-                            set_standard_name=False,
-                            height_at_top_of_model=height_at_top_of_model,
-                            fmt=um.get("fmt"),
-                            word_size=um.get("word_size"),
-                            endian=um.get("endian"),
-                            select=select,
-                            squeeze=squeeze,
-                            unsqueeze=unsqueeze,
-                            domain=domain,
-                            file_type=file_type,
-                            unpack=unpack,
-                        )
-                    except DatasetTypeError as error:
-                        if file_type is None:
-                            file_format_errors.append(error)
-                    else:
-                        file_format_errors = []
-                        ftype = "UM"
-
-                if file_format_errors:
-                    error = "\n".join(map(str, file_format_errors))
-                    raise DatasetTypeError(f"\n{error}")
-
-                if domain:
-                    file_contents = DomainList(file_contents)
-
-                file_contents = FieldList(file_contents)
-
-                if ftype:
-                    ftypes.add(ftype)
-
-                # Select matching fields (only for netCDF files at
-                # this stage - we'll other it for other file types
-                # later)
-                if select and ftype == "netCDF":
-                    file_contents = file_contents.select_by_identity(*select)
-
-                # Add this file's contents to that already read from
-                # other files
-                out.extend(file_contents)
-
-                field_counter = len(out)
-                file_counter += 1
-
-        # ----------------------------------------------------------------
-        # Aggregate the output fields/domains
-        # ----------------------------------------------------------------
-        if aggregate and len(out) > 1:
-            org_len = len(out)  # pragma: no cover
-
-            if "UM" in ftypes:
-                # Set defaults specific to UM fields
-                if "strict_units" not in aggregate_options:
-                    aggregate_options["relaxed_units"] = True
-
-            out = cf_aggregate(out, **aggregate_options)
-
-            n = len(out)  # pragma: no cover
-            if info:
-                logger.info(
-                    f"{org_len} input field{cls._plural(org_len)} "
-                    f"aggregated into {n} field{cls._plural(n)}"
-                )  # pragma: no cover
-
-        # ----------------------------------------------------------------
-        # Sort by netCDF variable name
-        # ----------------------------------------------------------------
-        if len(out) > 1:
-            out.sort(key=lambda f: f.nc_get_variable(""))
-
-        # ----------------------------------------------------------------
-        # Add standard names to UM/PP fields (post aggregation)
-        # ----------------------------------------------------------------
-        for f in out:
-            standard_name = f._custom.get("standard_name", None)
-            if standard_name is not None:
-                f.set_property("standard_name", standard_name, copy=False)
-                del f._custom["standard_name"]
-
-        # ----------------------------------------------------------------
-        # Select matching fields from UM files (post setting of their
-        # standard names)
-        # ----------------------------------------------------------------
-        if select and "UM" in ftypes:
-            out = out.select_by_identity(*select)
-
-        if info:
-            logger.info(
-                f"Read {field_counter} field{cls._plural(field_counter)} "
-                f"from {file_counter} file{cls._plural(file_counter)}"
-            )  # pragma: no cover
-
-        if nfields is not None and len(out) != nfields:
-            raise ValueError(
-                f"{nfields} field{cls._plural(nfields)} requested but "
-                f"{len(out)} field/domain constuct{cls._plural(len(out))}"
-                f" found in file{cls._plural(file_counter)}"
-            )
-
-        return out
-
-    @staticmethod
-    def _plural(n):  # pragma: no cover
-        """Return a suffix which reflects a word's plural."""
-        return "s" if n != 1 else ""  # pragma: no cover
+        # ------------------------------------------------------------
+        # Try to read as a GRIB dataset
+        #
+        # Not yet availabl. When (if!) the time comes, the framework
+        # will be:
+        # ------------------------------------------------------------
+        #
+        # if dataset_type is None or dataset_type.intersection(
+        #     self.GRIB_dataset_types
+        # ):
+        #     if not hasattr(self, "grib_read"):
+        #         # Initialise the GRIB read function
+        #         kwargs = self.kwargs
+        #         grib_kwargs = ...  # <ADD SOME CODE HERE>
+        #
+        #         self.grib_read = partial(
+        #             GRIBRead(self.implementation).read, **grib_kwargs
+        #         )
+        #
+        #     try:
+        #         # Try to read the dataset
+        #         self.dataset_contents = self.grib_read(dataset)
+        #     except DatasetTypeError as error:
+        #         if dataset_type is None:
+        #             self.dataset_format_errors.append(error)
+        #     else:
+        #         # Successfully read the dataset
+        #         self.unique_dataset_categories.add("GRIB")
+        #
+        # if self.dataset_contents is not None:
+        #     # Successfully read the dataset
+        #     return

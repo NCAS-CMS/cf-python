@@ -130,6 +130,14 @@ The following file types can be read:
   with or without the data array values.
 
 ..
+  
+* Datasets in `Zarr v2 (xarray-style)
+  <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
+  and `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
+  formats.
+
+..
 
 * `CFA-netCDF
   <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
@@ -193,7 +201,7 @@ replacing any file name with a directory name. An attempt will be made
 to read all files in the directory, which will result in an error if
 any have a non-supported format. Non-supported files may be ignored
 by being more specific about the file type intended for reading in
-using the *file_type* keyword:
+using the *dataset_type* keyword:
 
 .. code-block:: python
    :caption: *Read all of the files in the current working directory.*
@@ -202,7 +210,7 @@ using the *file_type* keyword:
    Traceback (most recent call last):
        ...
    Exception: Can't determine format of file cf_tutorial_files.zip
-   >>> y = cf.read('$PWD', file_type='netCDF')
+   >>> y = cf.read('$PWD', dataset_type='netCDF')
    >>> len(y)
    15
 

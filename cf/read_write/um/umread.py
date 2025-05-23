@@ -3407,7 +3407,7 @@ class UMRead(cfdm.read_write.IORead):
         squeeze=False,
         unsqueeze=False,
         domain=False,
-        file_type=None,
+        dataset_type=None,
         ignore_unknown_type=False,
         unpack=True,
     ):
@@ -3555,14 +3555,14 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering = None
 
         # ------------------------------------------------------------
-        # Parse the 'file_type' keyword parameter
+        # Parse the 'dataset_type' keyword parameter
         # ------------------------------------------------------------
-        if file_type is not None:
-            if isinstance(file_type, str):
-                file_type = (file_type,)
+        if dataset_type is not None:
+            if isinstance(dataset_type, str):
+                dataset_type = (dataset_type,)
 
-            file_type = set(file_type)
-            if not file_type.intersection(("UM",)):
+            dataset_type = set(dataset_type)
+            if not dataset_type.intersection(("UM",)):
                 # Return now if there are valid file types
                 return []
 

@@ -83,6 +83,7 @@ Data classes
    cf.NetCDF4Array
    cf.FullArray
    cf.UMArray
+   cf.ZarrArray
    
 Data compression classes
 ------------------------

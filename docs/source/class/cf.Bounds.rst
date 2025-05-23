@@ -414,9 +414,9 @@ NetCDF
    ~cf.Bounds.nc_get_dimension
    ~cf.Bounds.nc_has_dimension
    ~cf.Bounds.nc_set_dimension
-   ~cf.Bounds.nc_clear_hdf5_chunksizes
-   ~cf.Bounds.nc_hdf5_chunksizes
-   ~cf.Bounds.nc_set_hdf5_chunksizes
+   ~cf.Bounds.nc_clear_dataset_chunksizes
+   ~cf.Bounds.nc_dataset_chunksizes
+   ~cf.Bounds.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -651,3 +651,6 @@ Deprecated
    ~cf.Bounds.select
    ~cf.Bounds.setprop
    ~cf.Bounds.unsafe_array
+   ~cf.Bounds.nc_clear_hdf5_chunksizes
+   ~cf.Bounds.nc_hdf5_chunksizes
+   ~cf.Bounds.nc_set_hdf5_chunksizes

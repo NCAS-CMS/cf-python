@@ -412,9 +412,9 @@ NetCDF
    ~cf.Index.nc_get_sample_dimension
    ~cf.Index.nc_has_sample_dimension
    ~cf.Index.nc_set_sample_dimension
-   ~cf.Index.nc_clear_hdf5_chunksizes
-   ~cf.Index.nc_hdf5_chunksizes
-   ~cf.Index.nc_set_hdf5_chunksizes
+   ~cf.Index.nc_clear_dataset_chunksizes
+   ~cf.Index.nc_dataset_chunksizes
+   ~cf.Index.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -661,3 +661,6 @@ Deprecated
    ~cf.Index.select
    ~cf.Index.setprop
    ~cf.Index.unsafe_array
+   ~cf.Index.nc_clear_hdf5_chunksizes
+   ~cf.Index.nc_hdf5_chunksizes
+   ~cf.Index.nc_set_hdf5_chunksizes
