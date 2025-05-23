@@ -539,23 +539,27 @@ class read(cfdm.read):
             `None`
 
         """
-        UM = "UM" in self.unique_dataset_categories
+        # Whether or not there were only netCDF datasets
+        only_netCDF = self.unique_dataset_categories == set(("netCDF",))
+
+        # Whether or not there were any UM datasets
+        some_UM = "UM" in self.unique_dataset_categories
 
         # ----------------------------------------------------------------
-        # Select matching constructs from non-UM files (before
+        # Select matching constructs from netCDF datasets (before
         # aggregation)
         # ----------------------------------------------------------------
         select = self.select
-        if select and not UM:
+        if select and only_netCDF:
             self.constructs = self.constructs.select_by_identity(*select)
 
         # ----------------------------------------------------------------
-        # Aggregate the output fields/domains
+        # Aggregate the output fields or domains
         # ----------------------------------------------------------------
         if self.aggregate and len(self.constructs) > 1:
             aggregate_options = self.aggregate_options
             # Set defaults specific to UM fields
-            if UM and "strict_units" not in aggregate_options:
+            if some_UM and "strict_units" not in aggregate_options:
                 aggregate_options["relaxed_units"] = True
 
             self.constructs = cf_aggregate(
@@ -563,9 +567,9 @@ class read(cfdm.read):
             )
 
         # ----------------------------------------------------------------
-        # Add standard names to UM/PP fields (after aggregation)
+        # Add standard names to non-netCDF fields (after aggregation)
         # ----------------------------------------------------------------
-        if UM:
+        if not only_netCDF:
             for f in self.constructs:
                 standard_name = f._custom.get("standard_name", None)
                 if standard_name is not None:
@@ -573,10 +577,10 @@ class read(cfdm.read):
                     del f._custom["standard_name"]
 
         # ----------------------------------------------------------------
-        # Select matching constructs from UM files (after setting
-        # their standard names)
+        # Select matching constructs from non-netCDF files (after
+        # setting their standard names)
         # ----------------------------------------------------------------
-        if select and UM:
+        if select and not only_netCDF:
             self.constructs = self.constructs.select_by_identity(*select)
 
         super()._finalise()
@@ -721,7 +725,7 @@ class read(cfdm.read):
         # ------------------------------------------------------------
         # Try to read as a GRIB dataset
         #
-        # Not yet available! When (if) the time comes, the framework
+        # Not yet availabl. When (if!) the time comes, the framework
         # will be:
         # ------------------------------------------------------------
         #
