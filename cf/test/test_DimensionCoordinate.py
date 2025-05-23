@@ -817,7 +817,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         e = d.anchor(15, cell=True)
         self.assertEqual(e[0].array, d[0].array - 360)
 
-
     def test_DimensionCoordinate_direction(self):
         """Test DimensionCoordinate.direction"""
         d = self.dim.copy()
