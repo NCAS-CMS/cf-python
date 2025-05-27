@@ -5,6 +5,9 @@ version NEXTVERSION
 
 * New keyword parameter to `cf.DimensionCoordinate.create_bounds`:
   ``inplace`` (https://github.com/NCAS-CMS/cf-python/issues/855)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cf-python/issues/866)
+* Changed dependency: ``dask>=2025.5.1``
 
 ----
   

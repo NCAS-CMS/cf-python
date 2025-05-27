@@ -3187,50 +3187,50 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
-    HDF5 library: 1.12.2
-    netcdf library: 4.9.3-development
-    udunits2 library: /home/user/lib/libudunits2.so.0
-    esmpy/ESMF: 8.6.1 /home/user/lib/python3.12/site-packages/esmpy/__init__.py
-    Python: 3.12.2 /home/user/bin/python
-    dask: 2025.2.0 /home/user/lib/python3.12/site-packages/dask/__init__.py
-    netCDF4: 1.6.5 /home/user/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/user/lib/python3.12/site-packages/h5netcdf/__init__.py
-    h5py: 3.11.0 /home/user/lib/python3.12/site-packages/h5py/__init__.py
-    s3fs: 2024.6.0 /home/user/lib/python3.12/site-packages/s3fs/__init__.py
-    psutil: 5.9.8 /home/user/lib/python3.12/site-packages/psutil/__init__.py
-    packaging: 23.2 /home/user/lib/python3.12/site-packages/packaging/__init__.py
-    numpy: 1.26.4 /home/user/lib/python3.12/site-packages/numpy/__init__.py
-    scipy: 1.13.0 /home/user/lib/python3.12/site-packages/scipy/__init__.py
-    matplotlib: 3.8.4 /home/user/lib/python3.12/site-packages/matplotlib/__init__.py
-    cftime: 1.6.3 /home/user/lib/python3.12/site-packages/cftime/__init__.py
-    cfunits: 3.3.7 /home/user/lib/python3.12/site-packages/cfunits/__init__.py
-    cfplot: 3.3.0 /home/user/lib/python3.12/site-packages/cfplot/__init__.py
-    cfdm: 1.12.0.0 /home/user/cfdm/cfdm/__init__.py
-    cf: 3.17.0 /home/user/cf-python/cf/__init__.py
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    udunits2 library: libudunits2.so.0
+    esmpy/ESMF: 8.7.0 /home/miniconda/lib/python3.12/site-packages/esmpy/__init__.py
+    Python: 3.12.8 /home/miniconda/bin/python
+    dask: 2025.5.1 /home/miniconda/lib/python3.12/site-packages/dask/__init__.py
+    netCDF4: 1.7.2 /home/miniconda/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0  /home/miniconda/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda/lib/python3.12/site-packages/h5py/__init__.py
+    s3fs: 2024.12.0 /home/miniconda/lib/python3.12/site-packages/s3fs/__init__.py
+    psutil: 6.1.1 /home/miniconda/lib/python3.12/site-packages/psutil/__init__.py
+    packaging: 24.2 /home/miniconda/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.2 /home/miniconda/lib/python3.12/site-packages/numpy/__init__.py
+    scipy: 1.15.2 /home/miniconda/lib/python3.12/site-packages/scipy/__init__.py
+    matplotlib: 3.10.0 /home/miniconda/lib/python3.12/site-packages/matplotlib/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/miniconda/lib/python3.12/site-packages/cfunits/__init__.py
+    cfplot: 3.3.0 /home/miniconda/lib/python3.12/site-packages/cfplot/__init__.py
+    cfdm: 1.12.2.0  /home/miniconda/lib/python3.12/site-packages/cfdm/__init__.py
+    cf: NEXTVERSION  /home/miniconda/lib/python3.12/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
-    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
-    HDF5 library: 1.12.2
-    netcdf library: 4.9.3-development
-    udunits2 library: /home/user/lib/libudunits2.so.0
-    esmpy/ESMF: 8.6.1
-    Python: 3.12.2
-    dask: 2025.2.0
-    netCDF4: 1.6.5
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    udunits2 library: libudunits2.so.0
+    esmpy/ESMF: 8.7.0
+    Python: 3.12.8
+    dask: 2025.5.1
+    netCDF4: 1.7.2
     h5netcdf: 1.3.0
-    h5py: 3.11.0
-    s3fs: 2024.6.0
-    psutil: 5.9.8
-    packaging: 23.2
-    numpy: 1.26.4
-    scipy: 1.13.0
-    matplotlib: 3.8.4
-    cftime: 1.6.3
+    h5py: 3.12.1
+    s3fs: 2024.12.0
+    psutil: 6.1.1
+    packaging: 24.2
+    numpy: 2.2.2
+    scipy: 1.15.2
+    matplotlib: 3.10.0
+    cftime: 1.6.4.post1
     cfunits: 3.3.7
     cfplot: 3.3.0
-    cfdm: 1.12.0.0
-    cf: 3.17.0
+    cfdm: 1.12.2.0
+    cf: NEXTVERSION
 
     """
     dependency_version_paths_mapping = {
