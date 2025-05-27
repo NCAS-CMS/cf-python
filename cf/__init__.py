@@ -196,21 +196,17 @@ else:
             f"Got {psutil.__version__} at {psutil.__file__}"
         )
 
+# Check the version of dask
 try:
     import dask
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2025.2.0"
-    # Note in this case max is inclusive, change inequalities if this changes
-    _maximum_vn = "2025.3.0"
-    _dask_version = Version(dask.__version__)
-    if _dask_version < Version(_minimum_vn) or _dask_version > Version(
-        _maximum_vn
-    ):
-        raise RuntimeError(
-            "Bad dask version: cf requires "
-            f"{_minimum_vn}<=dask<={_maximum_vn}. Got {_dask_version}."
+    _minimum_vn = "2025.5.1"
+    if Version(dask.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad dask version: cf requires dask>={_minimum_vn}. "
+            f"Got {dask.__version__} at {dask.__file__}"
         )
 
 try:

@@ -194,8 +194,7 @@ Required
 
 * `numpy <http://www.numpy.org>`_, versions 2.0.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, version 2025.2.0 or newer up to
-  2025.3.0 inclusive.
+* `dask <https://pypi.org/project/dask>`_, version 2025.5.1.
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
 
@@ -204,8 +203,8 @@ Required
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.1.0 or up to,
-  but not including, 1.12.2.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.2.0 or up to,
+  but not including, 1.12.3.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 

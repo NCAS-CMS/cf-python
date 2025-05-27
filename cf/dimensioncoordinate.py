@@ -533,18 +533,25 @@ class DimensionCoordinate(
         return coordinate
 
     def create_bounds(
-        self, bound=None, cellsize=None, flt=0.5, max=None, min=None
+        self,
+        bound=None,
+        cellsize=None,
+        flt=0.5,
+        max=None,
+        min=None,
+        inplace=False,
     ):
         """Create cell bounds.
 
-        Creates new cell bounds, irrespective of whether the cells
-        already have cell bounds. The new bounds are not set on the
-        dimension coordinate construct, but if that is desired they
-        may always be added with the `set_bounds` method, for
-        instance:
+        When the operation is *not* in-place (the default), new bounds
+        will be created and returned, regardless of whether or not
+        bounds already exist, but the bounds are not set on the
+        dimension coordinate construct.
 
-        >>> b = d.create_bounds()
-        >>> d.set_bounds(b)
+        If the operation is in-place (i.e. the *inplace* parameter is
+        True) then the newly created bounds will be set on the
+        dimension coordinate construct and `None` is returned, but
+        only if there are no existing bounds.
 
         By default, Voronoi cells are created by defining cell bounds
         that are half way between adjacent coordinate values. For
@@ -640,10 +647,13 @@ class DimensionCoordinate(
                   ``-90``: ``min=-90``, or ``min=cf.Data(-90,
                   'degrees_north')``.
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
-            `Bounds`
-                The new coordinate cell bounds.
+            `Bounds` or `None`
+                The new coordinate cell bounds, or `None` if the
+                operation was in-place.
 
         **Examples**
 
@@ -756,6 +766,13 @@ class DimensionCoordinate(
           cftime.DatetimeGregorian(1985, 12, 1, 0, 0, 0, 0)]]
 
         """
+        if inplace and self.has_bounds():
+            raise ValueError(
+                "Can't create dimension coordinate bounds in-place when "
+                "bounds already exist. Existing bounds may be removed "
+                "with the 'del_bounds' method."
+            )
+
         array = self.array
         size = array.size
 
@@ -906,6 +923,10 @@ class DimensionCoordinate(
 
         # Create coordinate bounds object
         bounds = Bounds(data=Data(bounds, units=self.Units), copy=False)
+
+        if inplace:
+            self.set_bounds(bounds)
+            return
 
         return bounds
 
