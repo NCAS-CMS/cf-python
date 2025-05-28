@@ -130,8 +130,8 @@ class CFATest(unittest.TestCase):
             )
 
             nc = netCDF4.Dataset(cfa_file, "r")
-            cfa_location = nc.variables["cfa_location"]
-            self.assertEqual(cfa_location[...], filename)
+            fragment_uris = nc.variables["fragment_uris"]
+            self.assertEqual(fragment_uris[...], filename)
             nc.close()
 
             g = cf.read(cfa_file)
@@ -168,8 +168,8 @@ class CFATest(unittest.TestCase):
             )
 
             nc = netCDF4.Dataset(cfa_file2, "r")
-            cfa_location = nc.variables["cfa_location"]
-            self.assertEqual(cfa_location[...], filename)
+            fragment_uris = nc.variables["fragment_uris"]
+            self.assertEqual(fragment_uris[...], filename)
             nc.close()
 
     def test_CFA_constructs(self):
@@ -271,8 +271,8 @@ class CFATest(unittest.TestCase):
         h = cf.read(cfa_file)[0]
         self.assertTrue(h.equals(f))
 
-    def test_CFA_value(self):
-        """Test the value fragment array variable."""
+    def test_CFA_unique_value(self):
+        """Test the unique value fragment array variable."""
         write = True
         for aggregation_value_file in (self.aggregation_value, cfa_file):
             f = cf.read(aggregation_value_file, cfa_write="all")
@@ -288,7 +288,7 @@ class CFATest(unittest.TestCase):
                 fa.data.nc_get_aggregated_data(),
                 {
                     "map": "fragment_map_uid",
-                    "unique_value": "fragment_value_uid",
+                    "unique_values": "fragment_value_uid",
                 },
             )
 
