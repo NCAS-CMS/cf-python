@@ -434,9 +434,9 @@ NetCDF
    ~cf.CellMeasure.nc_set_variable 
    ~cf.CellMeasure.nc_get_external
    ~cf.CellMeasure.nc_set_external 
-   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
-   ~cf.CellMeasure.nc_hdf5_chunksizes
-   ~cf.CellMeasure.nc_set_hdf5_chunksizes
+   ~cf.CellMeasure.nc_clear_dataset_chunksizes
+   ~cf.CellMeasure.nc_dataset_chunksizes
+   ~cf.CellMeasure.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -676,3 +676,6 @@ Deprecated
    ~cf.CellMeasure.select
    ~cf.CellMeasure.setprop
    ~cf.CellMeasure.unsafe_array
+   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cf.CellMeasure.nc_hdf5_chunksizes
+   ~cf.CellMeasure.nc_set_hdf5_chunksizes

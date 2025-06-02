@@ -435,8 +435,8 @@ def collapse(
         d._axes = [a for i, a in enumerate(d._axes) if i not in axis]
 
     if d.size != original_size:
-        # Remove the out-dated HDF5 chunking strategy
-        d.nc_clear_hdf5_chunksizes()
+        # Remove the out-dated dataset chunking strategy
+        d.nc_clear_dataset_chunksizes()
 
     return d, weights
 

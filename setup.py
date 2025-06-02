@@ -177,7 +177,9 @@ are partially conformant may nonetheless be modified in memory.
 
 The ``cf`` package can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs from netCDF, CDL, Zarr, PP and UM datasets,
+
+* be fully flexible with respect to dataset storage chunking,
 
 * create new field constructs in memory,
 

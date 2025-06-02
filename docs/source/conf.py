@@ -157,6 +157,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
     # REVIEW: h5: new intersphinx mapping
     "h5netcdf": ("https://h5netcdf.org", None),
+    "zarr": ("https://zarr.readthedocs.io", None),
 }
 
 # This extension is meant to help with the common pattern of having

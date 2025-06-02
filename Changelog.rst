@@ -1,18 +1,21 @@
-version NEXTVERSION
--------------------
+Version NEXTVERSION
+----------------
 
 **2025-??-??**
 
+* Read Zarr datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/863)
 * Update CF aggregation keywords
   (https://github.com/NCAS-CMS/cf-python/issues/868)
 * New keyword parameter to `cf.DimensionCoordinate.create_bounds`:
   ``inplace`` (https://github.com/NCAS-CMS/cf-python/issues/855)
 * Set new minimum version of `dask`: ``2025.5.1``
   (https://github.com/NCAS-CMS/cf-python/issues/866)
+* Changed dependency: ``cfdm>=1.12.2.0, <1.12.3.0``
 * Changed dependency: ``dask>=2025.5.1``
 
 ----
-  
+
 version 3.17.0
 --------------
 

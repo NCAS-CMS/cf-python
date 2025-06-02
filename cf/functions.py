@@ -1,12 +1,9 @@
 import atexit
 import csv
-import ctypes.util
-import importlib
 import logging
 import os
 import platform
 import re
-import sys
 import warnings
 from collections.abc import Iterable
 from itertools import product
@@ -34,7 +31,7 @@ from .constants import (
 from .docstring import _docstring_substitution_definitions
 
 
-# Instruction to close /proc/mem at exit.
+# Instruction to close /proc/meminfo at exit.
 def _close_proc_meminfo():
     try:
         _meminfo_file.close()
@@ -3134,34 +3131,6 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     return out
 
 
-def _get_module_info(module, alternative_name=False, try_except=False):
-    """Helper function for processing modules for cf.environment."""
-    if try_except:
-        module_name = None
-        try:
-            importlib.import_module(module)
-            module_name = module
-        except ImportError:
-            if (
-                alternative_name
-            ):  # where a module has a different (e.g. old) name
-                try:
-                    importlib.import_module(alternative_name)
-                    module_name = alternative_name
-                except ImportError:
-                    pass
-
-        if not module_name:
-            return ("not available", "")
-    else:
-        module_name = module
-
-    return (
-        importlib.import_module(module_name).__version__,
-        importlib.util.find_spec(module_name).origin,
-    )
-
-
 def environment(display=True, paths=True):
     """Return the names and versions of the cf package and its
     dependencies.
@@ -3188,97 +3157,82 @@ def environment(display=True, paths=True):
 
     >>> cf.environment()
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
-    udunits2 library: libudunits2.so.0
-    esmpy/ESMF: 8.7.0 /home/miniconda/lib/python3.12/site-packages/esmpy/__init__.py
-    Python: 3.12.8 /home/miniconda/bin/python
-    dask: 2025.5.1 /home/miniconda/lib/python3.12/site-packages/dask/__init__.py
-    netCDF4: 1.7.2 /home/miniconda/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0  /home/miniconda/lib/python3.12/site-packages/h5netcdf/__init__.py
-    h5py: 3.12.1 /home/miniconda/lib/python3.12/site-packages/h5py/__init__.py
-    s3fs: 2024.12.0 /home/miniconda/lib/python3.12/site-packages/s3fs/__init__.py
-    psutil: 6.1.1 /home/miniconda/lib/python3.12/site-packages/psutil/__init__.py
-    packaging: 24.2 /home/miniconda/lib/python3.12/site-packages/packaging/__init__.py
-    numpy: 2.2.2 /home/miniconda/lib/python3.12/site-packages/numpy/__init__.py
-    scipy: 1.15.2 /home/miniconda/lib/python3.12/site-packages/scipy/__init__.py
-    matplotlib: 3.10.0 /home/miniconda/lib/python3.12/site-packages/matplotlib/__init__.py
-    cftime: 1.6.4.post1 /home/miniconda/lib/python3.12/site-packages/cftime/__init__.py
-    cfunits: 3.3.7 /home/miniconda/lib/python3.12/site-packages/cfunits/__init__.py
-    cfplot: 3.3.0 /home/miniconda/lib/python3.12/site-packages/cfplot/__init__.py
-    cfdm: 1.12.2.0  /home/miniconda/lib/python3.12/site-packages/cfdm/__init__.py
-    cf: NEXTVERSION  /home/miniconda/lib/python3.12/site-packages/cf/__init__.py
+    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
+    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
+    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/__init__.py
+    esmpy/ESMF: 8.7.0 /home/miniconda3/lib/python3.12/site-packages/esmpy/__init__.py
+    psutil: 6.1.1 /home/miniconda3/lib/python3.12/site-packages/psutil/__init__.py
+    matplotlib: 3.10.0 /home/miniconda3/lib/python3.12/site-packages/matplotlib/__init__.py
+    cfplot: 3.4.0 /home/miniconda3/lib/python3.12/site-packages/cfplot/__init__.py
+    cf: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: 1.12.2.0
+    udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
-    udunits2 library: libudunits2.so.0
-    esmpy/ESMF: 8.7.0
-    Python: 3.12.8
-    dask: 2025.5.1
     netCDF4: 1.7.2
     h5netcdf: 1.3.0
     h5py: 3.12.1
+    zarr: 3.0.8
     s3fs: 2024.12.0
-    psutil: 6.1.1
-    packaging: 24.2
-    numpy: 2.2.2
-    scipy: 1.15.2
-    matplotlib: 3.10.0
+    scipy: 1.15.1
+    dask: 2025.5.1
     cftime: 1.6.4.post1
     cfunits: 3.3.7
-    cfplot: 3.3.0
     cfdm: 1.12.2.0
+    esmpy/ESMF: 8.7.0
+    psutil: 6.1.1
+    matplotlib: 3.10.0
+    cfplot: 3.4.0
     cf: NEXTVERSION
 
     """
+    # Get cfdm env
+    out = cfdm.environment(display=False, paths=paths)
+
+    _get_module_info = cfdm.functions._get_module_info
     dependency_version_paths_mapping = {
-        # Platform first, then use an ordering to group libraries as follows...
-        "Platform": (platform.platform(), ""),
-        # Underlying C and Fortran based libraries first
-        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
-        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "esmpy/ESMF": (
             _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
         ),
-        # Now Python itself
-        "Python": (platform.python_version(), sys.executable),
-        # Then Dask (cover first from below as it's important under-the-hood)
-        "dask": _get_module_info("dask"),
-        # Then Python libraries not related to CF
-        "netCDF4": _get_module_info("netCDF4"),
-        "h5netcdf": _get_module_info("h5netcdf"),
-        "h5py": _get_module_info("h5py"),
-        "s3fs": _get_module_info("s3fs"),
         "psutil": _get_module_info("psutil"),
-        "packaging": _get_module_info("packaging"),
-        "numpy": _get_module_info("numpy"),
-        "scipy": _get_module_info("scipy"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
-        # Finally the CF related Python libraries, with the cf version last
-        # as it is the most relevant (cfdm penultimate for similar reason)
-        "cftime": _get_module_info("cftime"),
-        "cfunits": _get_module_info("cfunits"),
         "cfplot": _get_module_info("cfplot", try_except=True),
-        "cfdm": _get_module_info("cfdm"),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
     if paths:
-        # Include path information, else exclude, when unpacking tuple
+        # Include path information, else exclude, when unpacking tuple.
         string += " {2!s}"
 
-    out = [
-        string.format(dep, *info)
-        for dep, info in dependency_version_paths_mapping.items()
-    ]
-
-    out = "\n".join(out)
+    out.extend(
+        [
+            string.format(dep, *info)
+            for dep, info in dependency_version_paths_mapping.items()
+        ]
+    )
 
     if display:
-        print(out)  # pragma: no cover
+        print("\n".join(out))  # pragma: no cover
     else:
         return out
 

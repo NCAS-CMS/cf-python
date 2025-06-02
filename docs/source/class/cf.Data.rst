@@ -639,9 +639,9 @@ Performance
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cf.Data.nc_clear_hdf5_chunksizes
-   ~cf.Data.nc_hdf5_chunksizes
-   ~cf.Data.nc_set_hdf5_chunksizes
+   ~cf.Data.nc_clear_dataset_chunksizes
+   ~cf.Data.nc_dataset_chunksizes
+   ~cf.Data.nc_set_dataset_chunksizes
    ~cf.Data.rechunk
    ~cf.Data.close
    ~cf.Data.chunks
@@ -896,7 +896,10 @@ Deprecated
    ~cf.Data.to_disk
    ~cf.Data.to_memory
    ~cf.Data.unsafe_array
-
+   ~cf.Data.nc_clear_hdf5_chunksizes
+   ~cf.Data.nc_hdf5_chunksizes         
+   ~cf.Data.nc_set_hdf5_chunksizes  
+   
 .. rubric:: Attributes
 
 .. autosummary::

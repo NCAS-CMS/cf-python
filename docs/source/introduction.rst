@@ -70,6 +70,8 @@ manipulation and can:
 
 * read files from OPeNDAP servers and S3 object stores,
 
+* be fully flexible with respect to dataset chunking,
+
 * create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
