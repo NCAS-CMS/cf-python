@@ -23,6 +23,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    Quantization,
     TiePointIndex,
 )
 from .data import Data
@@ -147,6 +148,7 @@ _implementation = CFImplementation(
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
+    Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
@@ -203,6 +205,7 @@ def implementation():
      'H5netcdfArray': cf.data.array.h5netcdfarray.H5netcdfArray,
      'NetCDF4Array': cf.data.array.netcdf4array.NetCDF4Array,
      'PointTopologyArray': <class 'cf.data.array.pointtopologyarray.PointTopologyArray'>,
+     'Quantization': cf.quantization.Quantization,
      'RaggedContiguousArray': cf.data.array.raggedcontiguousarray.RaggedContiguousArray,
      'RaggedIndexedArray': cf.data.array.raggedindexedarray.RaggedIndexedArray,
      'RaggedIndexedContiguousArray': cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
