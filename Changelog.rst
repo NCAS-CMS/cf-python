@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* New keyword parameter to `cf.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cf-python/issues/871)
 * Read Zarr datasets with `cf.read`
   (https://github.com/NCAS-CMS/cf-python/issues/863)
 * Update CF aggregation keywords
