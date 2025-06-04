@@ -31,7 +31,7 @@ class FieldAncillary(mixin.PropertiesData, cfdm.FieldAncillary):
 
     {{netCDF dataset chunks}}
 
-    .. versionadded:: 3.0.0
+    .. versionadded:: 2.0
 
     """
 

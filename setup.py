@@ -227,7 +227,10 @@ The ``cf`` package can:
 
 * apply differential operators to field constructs,
 
-* create derived quantities (such as relative vorticity).
+* create derived quantities (such as relative vorticity),
+
+* read and write that data that are quantized to eliminate false
+  precision.
 
 """
 
