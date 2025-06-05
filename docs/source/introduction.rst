@@ -61,8 +61,7 @@ may nonetheless be modified in memory.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The `cf` package uses :ref:`Dask <Performance>` for all of its array
-manipulation and can:
+The `cf` package can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, PP and UM datasets
@@ -120,7 +119,10 @@ manipulation and can:
 
 * apply differential operators to field constructs,
 
-* create derived quantities (such as relative vorticity).
+* create derived quantities (such as relative vorticity),
+
+* read and write that data that are quantized to eliminate false
+  precision.
 
 ----
 
@@ -146,9 +148,9 @@ of plotting possibilities with example code.
 **Performance**
 ---------------
 
-As of version 3.14.0 (released 2023-01-31), cf uses :ref:`Dask
-<Performance>` for all of its data manipulations, which provides lazy,
-parallelised, and out-of-core computations of array operations.
+The `cf` package uses :ref:`Dask <Performance>` for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
 
 ----
 
