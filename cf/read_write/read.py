@@ -165,7 +165,7 @@ class read(cfdm.read):
             ``'UM'``        A UM fields file or PP dataset
             ==============  ==========================================
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.18.0
 
         {{read external: (sequence of) `str`, optional}}
 
@@ -355,7 +355,7 @@ class read(cfdm.read):
         ignore_read_error: deprecated at version 3.17.0
             Use the *dataset_type* parameter instead.
 
-        file_type: deprecated at version NEXTVERSION
+        file_type: deprecated at version 3.18.0
             Use the *dataset_type* parameter instead.
 
     :Returns:
@@ -521,7 +521,7 @@ class read(cfdm.read):
                 "cf.read",
                 {"file_type": file_type},
                 "Use keyword 'dataset_type' instead.",
-                version="NEXTVERSION",
+                version="3.18.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -532,7 +532,7 @@ class read(cfdm.read):
 
         Called by `__new__`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.0
 
         :Returns:
 
@@ -590,7 +590,7 @@ class read(cfdm.read):
 
         Called by `__new__`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.0
 
         :Returns:
 
@@ -652,7 +652,7 @@ class read(cfdm.read):
 
         Called by `__new__`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.0
 
         :Parameters:
 

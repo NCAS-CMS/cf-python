@@ -3178,7 +3178,7 @@ def environment(display=True, paths=True):
     psutil: 6.1.1 /home/miniconda3/lib/python3.12/site-packages/psutil/__init__.py
     matplotlib: 3.10.0 /home/miniconda3/lib/python3.12/site-packages/matplotlib/__init__.py
     cfplot: 3.4.0 /home/miniconda3/lib/python3.12/site-packages/cfplot/__init__.py
-    cf: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cf/__init__.py
+    cf: 3.18.0 /home/miniconda3/lib/python3.12/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
@@ -3203,7 +3203,7 @@ def environment(display=True, paths=True):
     psutil: 6.1.1
     matplotlib: 3.10.0
     cfplot: 3.4.0
-    cf: NEXTVERSION
+    cf: 3.18.0
 
     """
     # Get cfdm env

@@ -80,8 +80,8 @@ installation and source code.
 
 """
 
-__date__ = "2025-04-02"
-__version__ = "3.17.0"
+__date__ = "2025-06-05"
+__version__ = "3.18.0"
 
 _requires = (
     "numpy",
@@ -121,8 +121,8 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     # Check the version of cfdm
-    _minimum_vn = "1.12.1.0"
-    _maximum_vn = "1.12.2.0"
+    _minimum_vn = "1.12.2.0"
+    _maximum_vn = "1.12.3.0"
     _cfdm_version = Version(cfdm.__version__)
     if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
         _maximum_vn

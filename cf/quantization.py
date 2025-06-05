@@ -44,7 +44,7 @@ class Quantization(cfdm.Quantization):
 
     {{netCDF group attributes}}
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.18.0
 
     """
 
@@ -53,7 +53,7 @@ class Quantization(cfdm.Quantization):
 
         x.__repr__() <==> repr(x)
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.0
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
