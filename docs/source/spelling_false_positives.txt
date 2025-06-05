@@ -1,6 +1,7 @@
 absoluted
 absolutised
 abspath
+actify
 addattr
 aggregatable
 al
@@ -293,6 +294,7 @@ lbproc
 lbtim
 le
 len
+libnetcdf
 linebreaks
 Lineplot
 ln
@@ -379,6 +381,8 @@ programmatically
 pseudolevels
 py
 pyplot
+Quantization
+quantization
 radd
 RaggedContiguousArray
 RaggedIndexedArray
@@ -521,6 +525,7 @@ unmapped
 unselected
 Unselected
 unsqueeze
+unstandardised
 url
 uri
 var
@@ -534,8 +539,11 @@ Voronoi
 vorticity	
 wi
 wo
+xarray
 xor
 xy
+Zarr
+ZarrArray
 Zimmermann
 δu
 δv
