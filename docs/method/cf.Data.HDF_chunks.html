@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -135,17 +135,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.HDF_chunks<a class="headerlink" href="#cf-data-hdf-chunks" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.HDF_chunks">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">HDF_chunks</code><span class="sig-paren">(</span><em class="sig-param">*chunks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/data/mixin/deprecations.py#L437-L514"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.HDF_chunks" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">HDF_chunks</code><span class="sig-paren">(</span><em class="sig-param">*chunks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/data/mixin/deprecations.py#L437-L516"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.HDF_chunks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get or set HDF chunk sizes.</p>
+<p>Deprecated at version 3.14.0 and is no longer available. Use
+the methods <a class="reference internal" href="cf.Data.nc_clear_dataset_chunksizes.html#cf.Data.nc_clear_dataset_chunksizes" title="cf.Data.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a>,
+<a class="reference internal" href="cf.Data.nc_dataset_chunksizes.html#cf.Data.nc_dataset_chunksizes" title="cf.Data.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>, and <a class="reference internal" href="cf.Data.nc_set_dataset_chunksizes.html#cf.Data.nc_set_dataset_chunksizes" title="cf.Data.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a>
+instead.</p>
 <p>The HDF chunk sizes may be used by external code that allows
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects to be written to netCDF files.</p>
-<p>Deprecated at version 3.14.0 and is no longer available. Use
-the methods <a class="reference internal" href="cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>,
-and <a class="reference internal" href="cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a> instead.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>,
-<a class="reference internal" href="cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p>
+<p><a class="reference internal" href="cf.Data.nc_clear_dataset_chunksizes.html#cf.Data.nc_clear_dataset_chunksizes" title="cf.Data.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a>,
+<a class="reference internal" href="cf.Data.nc_dataset_chunksizes.html#cf.Data.nc_dataset_chunksizes" title="cf.Data.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>,
+<a class="reference internal" href="cf.Data.nc_set_dataset_chunksizes.html#cf.Data.nc_set_dataset_chunksizes" title="cf.Data.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -215,7 +217,7 @@ default chunk size should be used for that dimension.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

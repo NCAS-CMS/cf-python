@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -133,16 +133,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">file_type=None</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">unpack=True</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">dask_chunks='storage-aligned'</em>, <em class="sig-param">store_dataset_chunks=True</em>, <em class="sig-param">domain=False</em>, <em class="sig-param">cfa=None</em>, <em class="sig-param">cfa_write=None</em>, <em class="sig-param">to_memory=None</em>, <em class="sig-param">netcdf_backend=None</em>, <em class="sig-param">storage_options=None</em>, <em class="sig-param">cache=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">fmt=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/read_write/read.py#L24-L860"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">datasets</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">dataset_type=None</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">unpack=True</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">dask_chunks='storage-aligned'</em>, <em class="sig-param">store_dataset_chunks=True</em>, <em class="sig-param">domain=False</em>, <em class="sig-param">cfa=None</em>, <em class="sig-param">cfa_write=None</em>, <em class="sig-param">to_memory=None</em>, <em class="sig-param">netcdf_backend=None</em>, <em class="sig-param">storage_options=None</em>, <em class="sig-param">cache=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">file_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/read_write/read.py#L20-L756"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from files.</p>
-<p>The following file formats are supported: netCDF, CFA-netCDF, CDL,
-UM fields file, and PP.</p>
-<p>Input datasets are mapped to constructs in memory which are
-returned as elements of a <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> or if the <em>domain</em> parameter
-is True, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainList</span></code>.</p>
-<p>NetCDF files may be on disk, on an OPeNDAP server, or in an S3
-object store.</p>
+<p>The following file formats are supported: netCDF, CDL, Zarr, PP,
+and UM fields file.</p>
+<p>NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
+server, or in an S3 object store.</p>
+<p>CDL, PP, and UM fields files must be on local disk.</p>
 <p>Any amount of files of any combination of file types may be read.</p>
+<p>Input datasets are mapped to <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> constructs which are returned
+as elements of a <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a>, or if the <em>domain</em> parameter is
+True, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code> constructs returned as elements of a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainList</span></code>. The returned constructs are sorted by the netCDF
+variable names of their corresponding data or domain variables.</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited
 dimensions may be accessed with the
@@ -228,7 +231,7 @@ instance, when a field has a unique standard name).</p></li>
 </ul>
 <p>However, when two or more field or domain constructs are
 aggregated to form a single construct then the data arrays of some
-metadata constructs (coordinates, cell measures, etc.)  must be
+metadata constructs (coordinates, cell measures, etc.) must be
 compared non-lazily to ascertain if aggregation is possible.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -238,61 +241,94 @@ compared non-lazily to ascertain if aggregation is possible.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string or arbitrarily nested sequence of strings giving
-the file names, directory names, or OPenDAP URLs from
-which to read field constructs. Various type of expansion
-are applied to the names:</p>
+<dt>dataset: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string, or arbitrarily nested sequence of strings,
+giving the dataset names, or directory names, from which
+to read field or domain constructs.</p>
+<p>Local names may be relative paths and will have tilde and
+shell environment variables expansions applied to them,
+followed by the replacement of any UNIX wildcards (such as
+<code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">?</span></code>, <code class="docutils literal notranslate"><span class="pre">[a-z]</span></code>, etc.) with the list of matching
+names. Remote names (i.e. those with an http or s3
+schema), however, are not transformed in any way.</p>
+<p>Directories will be walked through to find their contents
+(recursively if <em>recursive</em> is True), unless the directory
+defines a Zarr dataset (which is ascertained by presence
+in the directory of appropriate Zarr metadata files).</p>
+<p>Remote datasets (i.e. those with an http or s3 schema) are
+assumed to be netCDF files, or else Zarr datasets if the
+<em>dataset_type</em> parameter is set to <code class="docutils literal notranslate"><span class="pre">'Zarr'</span></code>.</p>
+<p>As a special case, if the <em>cdl_string</em> parameter is True,
+then interpretation of <em>datasets</em> changes so that each
+string is assumed to be an actual CDL representation of a
+dataset, rather than a than a file or directory name.</p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>The local dataset <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home
+directory could be described by any of the following:
+<code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p>The local datasets <code class="docutils literal notranslate"><span class="pre">file1.nc</span></code> and <code class="docutils literal notranslate"><span class="pre">file2.nc</span></code> could
+be described by any of the following: <code class="docutils literal notranslate"><span class="pre">['file1.nc',</span>
+<span class="pre">'file2.nc']</span></code>, <code class="docutils literal notranslate"><span class="pre">'file[12].nc'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
+directories specified with the <em>datasets</em> parameter.</p>
+</dd>
+<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
+datasets in sub-directories which resolve to symbolic
+links. By default directories which resolve to symbolic
+links are ignored. Ignored of <em>recursive</em> is
+False. Datasets which are symbolic links are always
+followed.</p>
+<p>Note that setting <code class="docutils literal notranslate"><span class="pre">recursive=True,</span> <span class="pre">followlinks=True</span></code> can
+lead to infinite recursion if a symbolic link points to a
+parent directory of itself.</p>
+</dd>
+<dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL then each string
+given by the <em>datasets</em> parameter is interpreted as a
+string of actual CDL rather than the name of a location
+from which field or domain constructs can be read.</p>
+<p>Note that when <code class="xref py py-obj docutils literal notranslate"><span class="pre">cdl_string</span></code> is True, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code> parameter
+is ignored as the format is assumed to be CDL, so in this
+case it is not necessary to also specify <code class="docutils literal notranslate"><span class="pre">fmt='CDL'</span></code>.</p>
+</dd>
+<dt>dataset_type: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only read datasets of the given type or types, ignoring
+others. If there are no dataset of the given types, or
+<em>dataset_type</em> is empty sequence, then an empty list is
+returned. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) all datasets defined by
+the <em>dataset</em> parameter are read, and an exception is
+raised for any invalid dataset type.</p>
+<p>Valid file types are:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 34%" />
-<col style="width: 66%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Expansion</p></th>
+<tr class="row-odd"><th class="head"><p><em>dataset_type</em></p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Tilde</p></td>
-<td><p>An initial component of <code class="docutils literal notranslate"><span class="pre">~</span></code> or
-<code class="docutils literal notranslate"><span class="pre">~user</span></code> is replaced by that <em>user</em>’s
-home directory.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code></p></td>
+<td><p>A netCDF-3 or netCDF-4 dataset</p></td>
 </tr>
-<tr class="row-odd"><td><p>Environment variable</p></td>
-<td><p>Substrings of the form <code class="docutils literal notranslate"><span class="pre">$name</span></code> or
-<code class="docutils literal notranslate"><span class="pre">${name}</span></code> are replaced by the value
-of environment variable <em>name</em>.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'CDL'</span></code></p></td>
+<td><p>A text CDL file of a netCDF dataset</p></td>
 </tr>
-<tr class="row-even"><td><p>Pathname</p></td>
-<td><p>A string containing UNIX file name
-metacharacters as understood by the
-Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
-the list of matching file names. This
-type of expansion is ignored for
-OPenDAP URLs.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'Zarr'</span></code></p></td>
+<td><p>A Zarr v2 (xarray) or Zarr v3 dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'UM'</span></code></p></td>
+<td><p>A UM fields file or PP dataset</p></td>
 </tr>
 </tbody>
 </table>
-<p>Where more than one type of expansion is used in the same
-string, they are applied in the order given in the above
-table.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could
-be described by any of the following:
-<code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
-</dd>
-</dl>
-<p>When a directory is specified, all files in that directory
-are read. Sub-directories are not read unless the
-<em>recursive</em> parameter is True. If any directories contain
-files that are not valid datasets then an exception will
-be raised, unless the <em>ignore_unknown_type</em> parameter is
-True.</p>
-<p>As a special case, if the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cdl_string</span></code> parameter is set to
-True, the interpretation of <code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code> changes so that each
-value is assumed to be a string of CDL input rather
-than the above.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.18.0.</span></p>
+</div>
 </dd>
 <dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
 attributes, but are not present, in the parent file given
@@ -395,50 +431,6 @@ mapped to CF data model constructs.</p>
 <dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print warnings when an output field construct
 is incomplete due to structural non-compliance of the
 dataset. By default such warnings are not displayed.</p>
-</dd>
-</dl>
-<p>{{read file_type: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
-<blockquote>
-<div><p>Valid file types are:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 79%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>file type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code></p></td>
-<td><p>Binary netCDF-3 or netCDF-4 files</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'CDL'</span></code></p></td>
-<td><p>Text CDL representations of netCDF files</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'UM'</span></code></p></td>
-<td><p>UM fields files or PP files</p></td>
-</tr>
-</tbody>
-</table>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 3.17.0.</span></p>
-</div>
-</div></blockquote>
-<dl>
-<dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL, read a string
-input, or sequence of string inputs, each being interpreted
-as a string of CDL rather than names of locations from
-which field constructs can be read from, as standard.</p>
-<p>By default, each string input or string element in the input
-sequence is taken to be a file or directory name or an
-OPenDAP URL from which to read field constructs, rather
-than a string of CDL input, including when the <code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code>
-parameter is set as CDL.</p>
-<p>Note that when <code class="xref py py-obj docutils literal notranslate"><span class="pre">cdl_string</span></code> is True, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">fmt</span></code> parameter is
-ignored as the format is assumed to be CDL, so in that case
-it is not necessary to also specify <code class="docutils literal notranslate"><span class="pre">fmt='CDL'</span></code>.</p>
 </dd>
 <dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
 files only, provide extra decoding instructions. This
@@ -544,20 +536,6 @@ field list with its <a class="reference internal" href="../method/cf.FieldList.s
 method. For example, <code class="docutils literal notranslate"><span class="pre">fl</span> <span class="pre">=</span> <span class="pre">cf.read(file,</span>
 <span class="pre">select='air_temperature')</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">fl</span> <span class="pre">=</span>
 <span class="pre">cf.read(file).select_by_identity('air_temperature')</span></code>.</p>
-</dd>
-<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
-directories specified with the <em>files</em> parameter.</p>
-</dd>
-<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
-files in sub-directories which resolve to symbolic
-links. By default directories which resolve to symbolic
-links are ignored. Ignored of <em>recursive</em> is False. Files
-which are symbolic links are always followed.</p>
-<p>Note that setting <code class="docutils literal notranslate"><span class="pre">recursive=True,</span> <span class="pre">followlinks=True</span></code> can
-lead to infinite recursion if a symbolic link points to a
-parent directory of itself.</p>
-<p>This parameter replaces the deprecated <em>follow_symlinks</em>
-parameter.</p>
 </dd>
 <dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
 <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties
@@ -680,7 +658,7 @@ following:</p>
 <p>This is the default. The Dask chunk size in bytes will
 be as close as possible the size given by
 <a class="reference internal" href="cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a>, favouring square-like chunk
-shapes, with the added restriction that the entirety of
+shapes, with the added guarantee that the entirety of
 each storage chunk lies within exactly one Dask
 chunk. This strategy is general the most performant, as
 it ensures that when accessing the data, each storage
@@ -727,8 +705,8 @@ compressed array in the file.</p></li>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-exact'</span></code></p>
 <p>Each Dask chunk will contain exactly one storage chunk
-and each storage chunk will lie within exactly one Dask
-chunk.</p>
+and each storage chunk will lie entirely within exactly
+one Dask chunk.</p>
 <p>For instance, consider a file variable that has an array
 of 64-bit floats with shape (400, 300, 60) and a storage
 chunk shape of (100, 5, 60). This has an overall size of
@@ -757,14 +735,15 @@ possible to the size given by <a class="reference internal" href="cf.chunksize.h
 favouring square-like chunk shapes. This may give
 similar Dask chunk shapes as the <code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code>
 option, but without the guarantee that each storage
-chunk will lie within exactly one Dask chunk.</p>
+chunk will lie entirely within exactly one Dask chunk.</p>
 </li>
 <li><p>A byte-size given by a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
 <p>The Dask chunk size in bytes will be as close as
 possible to the given byte-size, favouring square-like
 chunk shapes. Any string value, accepted by the <em>chunks</em>
 parameter of the <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.from_array.html#dask.array.from_array" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.from_array</span></code></a> function is
-permitted.</p>
+permitted. There is no guarantee that a storage chunk
+lies entirely within one Dask chunk.</p>
 <dl class="simple">
 <dt><em>Example:</em></dt><dd><p>A Dask chunksize of 2 MiB may be specified as
 <code class="docutils literal notranslate"><span class="pre">'2097152'</span></code> or <code class="docutils literal notranslate"><span class="pre">'2</span> <span class="pre">MiB'</span></code>.</p>
@@ -773,11 +752,14 @@ permitted.</p>
 </li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 <p>There is no Dask chunking, i.e. every data array has one
-Dask chunk regardless of its size.</p>
+Dask chunk regardless of its size. In this case each
+storage chunk is guaranteed to lie entirely within the
+one Dask chunk.</p>
 </li>
 <li><p>Positive <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
 <p>Every dimension of all Dask chunks has this number of
-elements.</p>
+elements. There is no guarantee that a storage chunk
+lies entirely within one Dask chunk.</p>
 <dl class="simple">
 <dt><em>Example:</em></dt><dd><p>For 3-dimensional data, <em>dask_chunks</em> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">10</span></code> will
 give Dask chunks with shape (10, 10, 10).</p>
@@ -817,13 +799,12 @@ equivalent to it being defined with a value of
 <span class="pre">None}</span></code></p>
 </dd>
 <dt><em>Example:</em></dt><dd><p>If a netCDF file contains dimensions <code class="docutils literal notranslate"><span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>,
-<code class="docutils literal notranslate"><span class="pre">lat</span></code> and <code class="docutils literal notranslate"><span class="pre">lon</span></code>, then <code class="docutils literal notranslate"><span class="pre">{'ncdim%time':</span> <span class="pre">12,</span>
+<code class="docutils literal notranslate"><span class="pre">lat</span></code>, and <code class="docutils literal notranslate"><span class="pre">lon</span></code>, then <code class="docutils literal notranslate"><span class="pre">{'ncdim%time':</span> <span class="pre">12,</span>
 <span class="pre">'ncdim%lat',</span> <span class="pre">None,</span> <span class="pre">'ncdim%lon':</span> <span class="pre">None}</span></code> will ensure
-that, for all applicable data arrays, all <code class="docutils literal notranslate"><span class="pre">time</span></code>
-axes have a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunksize of 12; all <code class="docutils literal notranslate"><span class="pre">lat</span></code> and
-<code class="docutils literal notranslate"><span class="pre">lon</span></code> axes are not <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunked; and all <code class="docutils literal notranslate"><span class="pre">z</span></code>
-axes are <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunked to comply as closely as
-possible with the default <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunk size.</p>
+that all <code class="docutils literal notranslate"><span class="pre">time</span></code> axes have a Dask chunksize of 12;
+all <code class="docutils literal notranslate"><span class="pre">lat</span></code> and <code class="docutils literal notranslate"><span class="pre">lon</span></code> axes are not Dask chunked; and
+all <code class="docutils literal notranslate"><span class="pre">z</span></code> axes are Dask chunked to comply as closely
+as possible with the default Dask chunk size.</p>
 <p>If the netCDF file also contains a <code class="docutils literal notranslate"><span class="pre">time</span></code> coordinate
 variable with a “standard_name” attribute of
 <code class="docutils literal notranslate"><span class="pre">'time'</span></code> or “axis” attribute of <code class="docutils literal notranslate"><span class="pre">'T'</span></code>, then the
@@ -839,26 +820,31 @@ or <code class="docutils literal notranslate"><span class="pre">{'T':</span> <sp
 </li>
 </ul>
 </dd>
-<dt>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the dataset chunking
+</dl>
+<p>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
+<blockquote>
+<div><p>If True (the default) then store the dataset chunking
 strategy for each returned data array. The dataset
 chunking strategy is then accessible via an object’s
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code> method. When the dataset chunking
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method. When the dataset chunking
 strategy is stored, it will be used when the data is
-written to a new netCDF4 file with <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>
+written to a new netCDF file with <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>
 (unless the strategy is modified prior to writing).</p>
-<p>If False, or if the dataset format does not support
-chunking, then no dataset chunking strategy is stored.
-(i.e. an <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
-for all <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case, when the data is
-written to a new netCDF4 file, the dataset chunking
-strategy will be determined by <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p>
-<p>See the <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> <em>hdf5_chunks</em> parameter for
+<p>If False, or if the dataset being read does not support
+chunking (such as a netCDF-3 dataset), then no dataset
+chunking strategy is stored (i.e. an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all
+<a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case, when the data is written to
+a new netCDF file, the dataset chunking strategy will be
+determined by <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p>
+<p>See the <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> <em>dataset_chunks</em> parameter for
 details on how the dataset chunking strategy is determined
 at the time of writing.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.17.0.</span></p>
 </div>
-</dd>
+</div></blockquote>
+<dl>
 <dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Configure the reading of CF-netCDF aggregation files.</p>
 <p>The dictionary may have any subset of the following
 key/value pairs that supplement or override the
@@ -977,9 +963,11 @@ arrays into memory: <code class="docutils literal notranslate"><span class="pre"
 </dd>
 <dt>chunks: deprecated at version 3.17.0</dt><dd><p>Use the <em>dask_chunks</em> parameter instead.</p>
 </dd>
-<dt>fmt: deprecated at version 3.17.0</dt><dd><p>Use the <em>file_type</em> parameter instead.</p>
+<dt>fmt: deprecated at version 3.17.0</dt><dd><p>Use the dataset_type* parameter instead.</p>
 </dd>
-<dt>ignore_read_error: deprecated at version 3.17.0</dt><dd><p>Use the <em>file_type</em> parameter instead.</p>
+<dt>ignore_read_error: deprecated at version 3.17.0</dt><dd><p>Use the <em>dataset_type</em> parameter instead.</p>
+</dd>
+<dt>file_type: deprecated at version 3.18.0</dt><dd><p>Use the <em>dataset_type</em> parameter instead.</p>
 </dd>
 </dl>
 </dd>
@@ -1047,7 +1035,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

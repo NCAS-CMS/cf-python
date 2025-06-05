@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -133,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">single=False</em>, <em class="sig-param">double=False</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=4</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">dataset_chunks='4 MiB'</em>, <em class="sig-param">cfa='auto'</em>, <em class="sig-param">extra_write_vars=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/read_write/write.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">single=False</em>, <em class="sig-param">double=False</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">chunk_cache=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=4</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">omit_data=None</em>, <em class="sig-param">dataset_chunks='4 MiB'</em>, <em class="sig-param">cfa='auto'</em>, <em class="sig-param">extra_write_vars=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/read_write/write.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field and domain constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -182,8 +182,9 @@ dataset. See the <em>group</em> parameter for details.</p>
 which defines the chunking strategy for all output data, including
 the option of no chunking. However, this will be overridden for
 any data that defines its own chunking strategy. See
-<a class="reference internal" href="../method/cf.Field.nc_set_hdf5_chunksizes.html#cf.Field.nc_set_hdf5_chunksizes" title="cf.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_hdf5_chunksizes</span></code></a>,
-<a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a>, and <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
+<a class="reference internal" href="../method/cf.Field.nc_set_dataset_chunksizes.html#cf.Field.nc_set_dataset_chunksizes" title="cf.Field.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_dataset_chunksizes</span></code></a>,
+<a class="reference internal" href="../method/cf.Data.nc_set_dataset_chunksizes.html#cf.Data.nc_set_dataset_chunksizes" title="cf.Data.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_dataset_chunksizes</span></code></a>, and
+<a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -337,15 +338,15 @@ overwritten.</p>
 conventions are always included, but if an older CF
 conventions is defined then this is used instead.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions='UGRID-1.0'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions='ACDD-1.3'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['UGRID-1.0']</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2']</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2',</span> <span class="pre">'UGRID-1.0']</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CMIP-6.2',</span> <span class="pre">'ACDD-1.3']</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions='CF-1.7'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions='CF-1.12'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CF-1.7',</span> <span class="pre">'UGRID-1.0']</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">Conventions=['CF-1.12',</span> <span class="pre">'CMIP-6.2']</span></code></p>
 </dd>
 </dl>
 <p>Note that if the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is set on a
@@ -478,6 +479,28 @@ details.</p>
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">least_significant_digit=3</span></code></p>
 </dd>
 </dl>
+</dd>
+<dt>chunk_cache: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The amount of memory (in bytes) used in each variable’s
+chunk cache at the HDF5 level.</p>
+<p>Ignored when not writing to a netCDF-4 format. By default,
+or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default netCDF-C chunk cache size of
+16777216 bytes (i.e. 16 MiB) is used. Changing this has no
+effect on the new netCDF-4 file on disk, but may be used
+to prevent the available memory from filling up when a
+very large number of netCDF-4 variables are being
+created. Note the changing the size of the per-variable
+chunk cache has the potential to seriously degrade
+performance, although that may be preferable to the write
+process failing due to lack of memory.</p>
+<p>For instance, if 1024 netCDF-4 variables are being
+created, then by default 17179869184 bytes (i.e. 16 GiB)
+of memory will be needed for their chunk caches, and if
+this is too much then the chunk cache should be reduced.</p>
+<p>See the netCDF-C library documentation for
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_var_chunk_cache</span></code> for details.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.12.2.0</p>
+</div>
 </dd>
 <dt>fletcher32: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the Fletcher-32 HDF5 checksum algorithm is
 activated to detect compression errors. Ignored if
@@ -642,7 +665,7 @@ to the file.</p>
 <p>By default, <em>dataset_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'4</span> <span class="pre">MiB'</span></code>, i.e. 4194304
 bytes.</p>
 <p>If any <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> being written already stores its own dataset
-chunking strategy (i.e. its <a class="reference internal" href="../method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.nc_hdf5_chunksizes</span></code></a>
+chunking strategy (i.e. its <a class="reference internal" href="../method/cf.Data.nc_dataset_chunksizes.html#cf.Data.nc_dataset_chunksizes" title="cf.Data.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.nc_dataset_chunksizes</span></code></a>
 method returns something other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) then, for that
 data array alone, it is used in preference to the strategy
 defined by the <em>dataset_chunks</em> parameter.</p>
@@ -895,7 +918,7 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

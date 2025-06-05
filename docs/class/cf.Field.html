@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/field.py#L216-L14401"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/field.py#L217-L14403"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -707,6 +707,36 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.get_quantization.html#cf.Field.get_quantization" title="cf.Field.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field._set_quantization.html#cf.Field._set_quantization" title="cf.Field._set_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_set_quantization</span></code></a></p></td>
+<td><p>Set quantization metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field._del_quantization.html#cf.Field._del_quantization" title="cf.Field._del_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_del_quantization</span></code></a></p></td>
+<td><p>Remove quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.get_quantize_on_write.html#cf.Field.get_quantize_on_write" title="cf.Field.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.set_quantize_on_write.html#cf.Field.set_quantize_on_write" title="cf.Field.set_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_quantize_on_write</span></code></a></p></td>
+<td><p>Set a quantize-on-write instruction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.del_quantize_on_write.html#cf.Field.del_quantize_on_write" title="cf.Field.del_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_quantize_on_write</span></code></a></p></td>
+<td><p>Remove a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="metadata-constructs">
 <h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
@@ -1014,14 +1044,14 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncdimensions</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_hdf5_chunksizes.html#cf.Field.nc_clear_hdf5_chunksizes" title="cf.Field.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_dataset_chunksizes.html#cf.Field.nc_clear_dataset_chunksizes" title="cf.Field.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_hdf5_chunksizes.html#cf.Field.nc_hdf5_chunksizes" title="cf.Field.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_dataset_chunksizes.html#cf.Field.nc_dataset_chunksizes" title="cf.Field.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_hdf5_chunksizes.html#cf.Field.nc_set_hdf5_chunksizes" title="cf.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_dataset_chunksizes.html#cf.Field.nc_set_dataset_chunksizes" title="cf.Field.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2069,7 +2099,7 @@ construct’s data in-place.</p>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.HDF_chunks.html#cf.Field.HDF_chunks" title="cf.Field.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0.</p></td>
+<td><p>Get or set HDF chunk sizes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.hasprop.html#cf.Field.hasprop" title="cf.Field.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
@@ -2158,6 +2188,15 @@ construct’s data in-place.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.unlimited.html#cf.Field.unlimited" title="cf.Field.unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unlimited</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_clear_hdf5_chunksizes.html#cf.Field.nc_clear_hdf5_chunksizes" title="cf.Field.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.nc_hdf5_chunksizes.html#cf.Field.nc_hdf5_chunksizes" title="cf.Field.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.nc_set_hdf5_chunksizes.html#cf.Field.nc_set_hdf5_chunksizes" title="cf.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -2210,7 +2249,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

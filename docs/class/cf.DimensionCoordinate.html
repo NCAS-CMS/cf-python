@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DimensionCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/dimensioncoordinate.py#L20-L1329"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/dimensioncoordinate.py#L20-L1350"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate
@@ -845,6 +845,24 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.get_quantization.html#cf.DimensionCoordinate.get_quantization" title="cf.DimensionCoordinate.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.get_quantize_on_write.html#cf.DimensionCoordinate.get_quantize_on_write" title="cf.DimensionCoordinate.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
@@ -1123,14 +1141,14 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_clear_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_clear_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_clear_dataset_chunksizes.html#cf.DimensionCoordinate.nc_clear_dataset_chunksizes" title="cf.DimensionCoordinate.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_dataset_chunksizes.html#cf.DimensionCoordinate.nc_dataset_chunksizes" title="cf.DimensionCoordinate.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_set_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_dataset_chunksizes.html#cf.DimensionCoordinate.nc_set_dataset_chunksizes" title="cf.DimensionCoordinate.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1561,6 +1579,15 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.setprop.html#cf.DimensionCoordinate.setprop" title="cf.DimensionCoordinate.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_clear_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_clear_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_hdf5_chunksizes.html#cf.DimensionCoordinate.nc_set_hdf5_chunksizes" title="cf.DimensionCoordinate.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -1619,7 +1646,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

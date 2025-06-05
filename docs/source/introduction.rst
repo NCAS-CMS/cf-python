@@ -35,6 +35,7 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 
 **Functionality**
 -----------------
+<a href="https://doi.org/10.5281/zenodo.14274886"><img src="https://zenodo.org/badge/DOI/https://doi.org/10.5281/zenodo.14274886" alt="DOI"></a>
 
 The `cf` package implements the :ref:`CF-data-model` for its internal
 data structures and so is able to process any CF-compliant dataset. It

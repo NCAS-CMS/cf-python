@@ -186,6 +186,7 @@ Data
    ~cf.List.count
    ~cf.List.count_masked
    ~cf.List.fill_value
+   ~cf.List.filled
    ~cf.List.masked_invalid
    
 .. autosummary::
@@ -232,6 +233,19 @@ Data
    ~cf.List.get_original_filenames
    ~cf.List.has_bounds
    ~cf.List.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.List.get_quantization
+   ~cf.List.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -403,9 +417,12 @@ NetCDF
    ~cf.List.nc_get_variable
    ~cf.List.nc_has_variable
    ~cf.List.nc_set_variable
+   ~cf.List.nc_clear_dataset_chunksizes
+   ~cf.List.nc_dataset_chunksizes
+   ~cf.List.nc_set_dataset_chunksizes
 
-CFA
----
+Aggregation
+-----------
 
 .. rubric:: Methods
 	    
@@ -414,13 +431,8 @@ CFA
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cf.List.add_file_location
-   ~cf.List.cfa_clear_file_substitutions
-   ~cf.List.cfa_del_file_substitution
-   ~cf.List.cfa_file_substitutions
-   ~cf.List.cfa_update_file_substitutions
-   ~cf.List.del_file_location
-   ~cf.List.file_locations
+   ~cf.List.file_directories
+   ~cf.List.replace_directory
 
 Aliases
 -------
@@ -615,14 +627,22 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.List.add_file_location
    ~cf.List.asdatetime
    ~cf.List.asreftime
    ~cf.List.attributes
+   ~cf.List.cfa_clear_file_substitutions
+   ~cf.List.cfa_del_file_substitution
+   ~cf.List.cfa_file_substitutions
+   ~cf.List.cfa_update_file_substitutions
    ~cf.List.chunk
    ~cf.List.Data
+   ~cf.List.del_file_location
    ~cf.List.delprop
    ~cf.List.dtvarray
    ~cf.List.expand_dims
+   ~cf.List.file_locations
    ~cf.List.get_filenames
    ~cf.List.getprop
    ~cf.List.hasbounds
@@ -640,3 +660,6 @@ Deprecated
    ~cf.List.select
    ~cf.List.setprop
    ~cf.List.unsafe_array
+   ~cf.List.nc_clear_hdf5_chunksizes
+   ~cf.List.nc_hdf5_chunksizes
+   ~cf.List.nc_set_hdf5_chunksizes

@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Data.nc_hdf5_chunksizes" href="cf.Data.nc_hdf5_chunksizes.html" />
-    <link rel="prev" title="cf.Data.data" href="../attribute/cf.Data.data.html" />
+    <link rel="prev" title="cf.Data.unsafe_array" href="cf.Data.unsafe_array.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -95,7 +95,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="../attribute/cf.Data.data.html" title="previous chapter">cf.Data.data</a></li>
+      <li>Previous: <a href="cf.Data.unsafe_array.html" title="previous chapter">cf.Data.unsafe_array</a></li>
       <li>Next: <a href="cf.Data.nc_hdf5_chunksizes.html" title="next chapter">cf.Data.nc_hdf5_chunksizes</a></li>
   </ul></li>
   </ul></li>
@@ -135,38 +135,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.nc_clear_hdf5_chunksizes<a class="headerlink" href="#cf-data-nc-clear-hdf5-chunksizes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.nc_clear_hdf5_chunksizes">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_clear_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/netcdf.py#L2540-L2570"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_clear_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_clear_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/mixin/netcdf.py#L2595-L2610"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_clear_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the HDF5 chunking strategy for the data.</p>
+<p>Deprecated at version 1.12.2.0 and is no longer
+available. Use <a class="reference internal" href="cf.Data.nc_clear_dataset_chunksizes.html#cf.Data.nc_clear_dataset_chunksizes" title="cf.Data.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a> instead.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.2</p>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a>,
-<a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The chunking strategy prior to being cleared, as would
-be returned by <a class="reference internal" href="cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(1, 96, 73)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_set_hdf5_chunksizes</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">73</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_clear_hdf5_chunksizes</span><span class="p">()</span>
-<span class="go">(1, 35, 73)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_set_hdf5_chunksizes</span><span class="p">(</span><span class="s1">&#39;1 KiB&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_clear_hdf5_chunksizes</span><span class="p">()</span>
-<span class="go">1024</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_set_hdf5_chunksizes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">nc_clear_hdf5_chunksizes</span><span class="p">())</span>
-<span class="go">None</span>
-</pre></div>
 </div>
 </dd></dl>
 
@@ -180,7 +154,7 @@ be returned by <a class="reference internal" href="cf.Data.nc_hdf5_chunksizes.ht
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

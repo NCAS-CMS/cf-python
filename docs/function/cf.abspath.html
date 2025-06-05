@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -133,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.abspath<a class="headerlink" href="#cf-abspath" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.abspath">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">abspath</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">uri=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/functions.py#L2698-L2699"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.abspath" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">abspath</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">uri=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/functions.py#L2695-L2696"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.abspath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a normalised absolute version of a path.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -169,62 +169,56 @@ with a URI scheme component if the input <em>path</em> does.</p>
 <span class="go">&#39;/data/archive&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;/data/archive/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;/data/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:///file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;file:///file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file://file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:/file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;file:///file.nc&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http:///file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;http:///file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http://file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;http://&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http:/file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;http:///file.nc&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///data/archive/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///data/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:///file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file://file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:/file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///file.nc&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http:///file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;http:///file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http://file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;http://&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;http:/file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;http:///file.nc&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">&#39;/data/archive/file.nc&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">&#39;/data/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:///file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">&#39;/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file://file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;file:/file.nc&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">&#39;/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;/data/archive/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;/data/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:///file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;file:///file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file://file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;file://file.nc/data/archive&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:/file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;file:/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http:///file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;http:///file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http://file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;http://file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http:/file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;http:/file.nc&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="go">&#39;/data/archive&quot;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:/data/archive/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:/data/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:///file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:///file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file://file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file://file.nc/data/archive&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:/file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http:///file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;http:///file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http://file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;http://file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;http:/file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;http:/file.nc&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/data/archive/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/data/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:///file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/file.nc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file://file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/data/archive&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;file:/file.nc&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/file.nc&#39;</span>
+<span class="go"> &gt;&gt;&gt; cf.abspath(&quot;http:///file.nc&quot;, uri=False)</span>
+<span class="go">ValueError: Can&#39;t set uri=False for path=&#39;http:///file.nc&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -239,7 +233,7 @@ with a URI scheme component if the input <em>path</em> does.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

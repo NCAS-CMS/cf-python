@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.nc_global_attributes<a class="headerlink" href="#cf-domain-nc-global-attributes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.nc_global_attributes">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">nc_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">values=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/netcdf.py#L1432-L1502"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">nc_global_attributes</code><span class="sig-paren">(</span><em class="sig-param">values=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/mixin/netcdf.py#L1472-L1542"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.nc_global_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns properties to write as netCDF global attributes.</p>
 <p>When multiple field constructs are being written to the same file,
 it is only possible to create a netCDF global attribute from a
@@ -186,7 +186,7 @@ netCDF global attributes.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
 <span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">{&#39;Conventions&#39;: &#39;CF-1.9&#39;, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: &#39;bar&#39;}</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.12&#39;, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: &#39;bar&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_clear_global_attributes</span><span class="p">()</span>
 <span class="go">{&#39;Conventions&#39;: None, &#39;comment&#39;: &#39;global_comment&#39;, &#39;foo&#39;: None}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
@@ -205,7 +205,7 @@ netCDF global attributes.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

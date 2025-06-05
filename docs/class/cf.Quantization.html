@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Quantization &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Quantization.dump" href="../method/cf.Quantization.dump.html" />
+    <link rel="prev" title="cf.SubsampledArray.size" href="../attribute/cf.SubsampledArray.size.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../attribute/cf.SubsampledArray.size.html" title="previous chapter">cf.SubsampledArray.size</a></li>
+      <li>Next: <a href="../method/cf.Quantization.dump.html" title="next chapter">cf.Quantization.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-quantization">
+<h1>cf.Quantization<a class="headerlink" href="#cf-quantization" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.Quantization">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Quantization</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/quantization.py#L4-L59"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Quantization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.quantization.Quantization</span></code></p>
+<p>A quantization variable.</p>
+<p>A quantization variable describes a quantization algorithm via a
+collection of parameters.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter names a specific quantization
+algorithm via one of the keys in the <a class="reference internal" href="../method/cf.Quantization.algorithm_parameters.html#cf.Quantization.algorithm_parameters" title="cf.Quantization.algorithm_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code></a>
+dictionary.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">implementation</span></code> parameter contains unstandardised text that
+concisely conveys the algorithm provenance including the name of
+the library or client that performed the quantization, the
+software version, and any other information required to
+disambiguate the source of the algorithm employed. The text must
+take the form <code class="docutils literal notranslate"><span class="pre">software-name</span> <span class="pre">version</span> <span class="pre">version-string</span>
+<span class="pre">[(optional-information)]</span></code>.</p>
+<p>The retained precision of the algorithm is defined with either the
+<code class="docutils literal notranslate"><span class="pre">quantization_nsb</span></code> or <code class="docutils literal notranslate"><span class="pre">quantization_nsd</span></code> parameter.</p>
+<p>For instance, the following parameters describe quantization via
+the BitRound algorithm, retaining 6 significant bits, and
+implemented by libnetcdf:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Quantization</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;algorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;bitround&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;quantization_nsb&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s1">&#39;implementation&#39;</span><span class="p">:</span> <span class="s1">&#39;libnetcdf version 4.9.4&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;algorithm&#39;: &#39;bitround&#39;,</span>
+<span class="go"> &#39;quantization_nsb&#39;: 6,</span>
+<span class="go"> &#39;implementation&#39;: &#39;libnetcdf version 4.9.4&#39;}</span>
+</pre></div>
+</div>
+<p>See CF section 8.4. “Lossy Compression via Quantization”.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cf.Quantization.nc_set_variable.html#cf.Quantization.nc_set_variable" title="cf.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Quantization.nc_get_variable.html#cf.Quantization.nc_get_variable" title="cf.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Quantization.nc_del_variable.html#cf.Quantization.nc_del_variable" title="cf.Quantization.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
+<a class="reference internal" href="../method/cf.Quantization.nc_has_variable.html#cf.Quantization.nc_has_variable" title="cf.Quantization.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cf.Quantization.nc_set_variable.html#cf.Quantization.nc_set_variable" title="cf.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Quantization.nc_get_variable.html#cf.Quantization.nc_get_variable" title="cf.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Quantization.nc_variable_groups.html#cf.Quantization.nc_variable_groups" title="cf.Quantization.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cf.Quantization.nc_clear_variable_groups.html#cf.Quantization.nc_clear_variable_groups" title="cf.Quantization.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cf.Quantization.nc_set_variable_groups.html#cf.Quantization.nc_set_variable_groups" title="cf.Quantization.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<p>The netCDF group attributes may be accessed with the
+<a class="reference internal" href="../method/cf.Quantization.nc_group_attributes.html#cf.Quantization.nc_group_attributes" title="cf.Quantization.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a>, <a class="reference internal" href="../method/cf.Quantization.nc_clear_group_attributes.html#cf.Quantization.nc_clear_group_attributes" title="cf.Quantization.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a>,
+<a class="reference internal" href="../method/cf.Quantization.nc_set_group_attribute.html#cf.Quantization.nc_set_group_attribute" title="cf.Quantization.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a>, and <a class="reference internal" href="../method/cf.Quantization.nc_set_group_attributes.html#cf.Quantization.nc_set_group_attributes" title="cf.Quantization.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a> methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.18.0.</span></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
+names, with corresponding values.</p>
+<p>Parameters may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.Quantization.set_parameters.html#cf.Quantization.set_parameters" title="cf.Quantization.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cf.Quantization.set_parameter.html#cf.Quantization.set_parameter" title="cf.Quantization.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.Quantization" title="cf.Quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantization</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.Quantization" title="cf.Quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantization</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.Quantization" title="cf.Quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantization</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.Quantization(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.dump.html#cf.Quantization.dump" title="cf.Quantization.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="parameter-terms">
+<h2>Parameter terms<a class="headerlink" href="#parameter-terms" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.del_parameter.html#cf.Quantization.del_parameter" title="cf.Quantization.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></p></td>
+<td><p>Delete a parameter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.get_parameter.html#cf.Quantization.get_parameter" title="cf.Quantization.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></p></td>
+<td><p>Get a parameter value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.has_parameter.html#cf.Quantization.has_parameter" title="cf.Quantization.has_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></a></p></td>
+<td><p>Whether a parameter has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.set_parameter.html#cf.Quantization.set_parameter" title="cf.Quantization.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></p></td>
+<td><p>Set a parameter-valued term.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.parameters.html#cf.Quantization.parameters" title="cf.Quantization.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<td><p>Return all parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.set_parameters.html#cf.Quantization.set_parameters" title="cf.Quantization.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></p></td>
+<td><p>Set parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.clear_parameters.html#cf.Quantization.clear_parameters" title="cf.Quantization.clear_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></a></p></td>
+<td><p>Remove all parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.algorithm_parameters.html#cf.Quantization.algorithm_parameters" title="cf.Quantization.algorithm_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code></a></p></td>
+<td><p>Map CF quantization algorithms to CF algorithm parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.copy.html#cf.Quantization.copy" title="cf.Quantization.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.equals.html#cf.Quantization.equals" title="cf.Quantization.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.get_original_filenames.html#cf.Quantization.get_original_filenames" title="cf.Quantization.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.creation_commands.html#cf.Quantization.creation_commands" title="cf.Quantization.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the component.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_del_variable.html#cf.Quantization.nc_del_variable" title="cf.Quantization.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_get_variable.html#cf.Quantization.nc_get_variable" title="cf.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_has_variable.html#cf.Quantization.nc_has_variable" title="cf.Quantization.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_set_variable.html#cf.Quantization.nc_set_variable" title="cf.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_group_attributes.html#cf.Quantization.nc_group_attributes" title="cf.Quantization.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a></p></td>
+<td><p>Returns properties to write as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_clear_group_attributes.html#cf.Quantization.nc_clear_group_attributes" title="cf.Quantization.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a></p></td>
+<td><p>Removes properties to write as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_set_group_attribute.html#cf.Quantization.nc_set_group_attribute" title="cf.Quantization.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a></p></td>
+<td><p>Select a property to be written as a netCDF group attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_set_group_attributes.html#cf.Quantization.nc_set_group_attributes" title="cf.Quantization.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
+<td><p>Set properties to be written as netCDF group attributes.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_variable_groups.html#cf.Quantization.nc_variable_groups" title="cf.Quantization.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_set_variable_groups.html#cf.Quantization.nc_set_variable_groups" title="cf.Quantization.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.nc_clear_variable_groups.html#cf.Quantization.nc_clear_variable_groups" title="cf.Quantization.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.__bool__.html#cf.Quantization.__bool__" title="cf.Quantization.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.__deepcopy__.html#cf.Quantization.__deepcopy__" title="cf.Quantization.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization.__repr__.html#cf.Quantization.__repr__" title="cf.Quantization.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization.__str__.html#cf.Quantization.__str__" title="cf.Quantization.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization._docstring_special_substitutions.html#cf.Quantization._docstring_special_substitutions" title="cf.Quantization._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization._docstring_substitutions.html#cf.Quantization._docstring_substitutions" title="cf.Quantization._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Quantization._docstring_package_depth.html#cf.Quantization._docstring_package_depth" title="cf.Quantization._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Quantization._docstring_method_exclusions.html#cf.Quantization._docstring_method_exclusions" title="cf.Quantization._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-06-05.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

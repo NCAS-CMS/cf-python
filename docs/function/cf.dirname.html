@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -133,7 +133,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.dirname<a class="headerlink" href="#cf-dirname" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.dirname">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">dirname</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">normalise=False</em>, <em class="sig-param">uri=None</em>, <em class="sig-param">isdir=False</em>, <em class="sig-param">sep=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/functions.py#L2749-L2752"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.dirname" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">dirname</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">normalise=False</em>, <em class="sig-param">uri=None</em>, <em class="sig-param">isdir=False</em>, <em class="sig-param">sep=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/functions.py#L2746-L2749"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.dirname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the directory of a path.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
@@ -176,85 +176,82 @@ returned directory.</p>
 <span class="go">&#39;/data/archive&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:///data/archive</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">&#39;/data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;/data/archive/&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;model/file.nc&#39;</span><span class="p">)</span>
-<span class="go">&#39;model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">/data/archive/model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;model/file.nc&quot;</span><span class="p">),</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;/data/archive/model&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive/model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">/data/archive/model&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;/data/archive/model&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">)</span>
 <span class="go">&#39;..&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;/data&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file:///data&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="go">&#39;file://{/data}&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/data&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;/model/file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;/model/file.nc&quot;</span><span class="p">)</span>
 <span class="go">&#39;/model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;/model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;/model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;/model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;/model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;/model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;file:///model&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;/model/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;/model/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/model&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="go">&#39;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;https:///data/archive/file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;https:///data/archive/file.nc&quot;</span><span class="p">)</span>
 <span class="go">&#39;https:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;https:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;https:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;https:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;https:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;https:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;https:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;https:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;https:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">ValueError: Can&#39;t set uri=False for path=&#39;https:///data/archive/file.nc&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/file.nc&quot;</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/data/archive&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/../file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/../file.nc&quot;</span><span class="p">)</span>
 <span class="go">&#39;file:///data/archive/..&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file::///data&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;file::///data&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s1">&#39;file:///data/archive/../file.nc&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:///data&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;file:///data&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="s2">&quot;file:///data/archive/../file.nc&quot;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&#39;/data&#39;</span>
 </pre></div>
 </div>
@@ -270,7 +267,7 @@ returned directory.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

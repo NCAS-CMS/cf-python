@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domainancillary.py#L6-L34"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">node_count=None</em>, <em class="sig-param">part_node_count=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/domainancillary.py#L6-L34"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed
@@ -155,14 +155,12 @@ of the number of vertices of each cell.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
-<div><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
-the <a class="reference internal" href="../method/cf.DomainAncillary.set_properties.html#cf.DomainAncillary.set_properties" title="cf.DomainAncillary.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.DomainAncillary.set_property.html#cf.DomainAncillary.set_property" title="cf.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
-</div></blockquote>
+the <a class="reference internal" href="../method/cf.DomainAncillary.properties.html#cf.DomainAncillary.properties" title="cf.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> and <a class="reference internal" href="../method/cf.DomainAncillary.set_property.html#cf.DomainAncillary.set_property" title="cf.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'longitude'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -189,6 +187,16 @@ with the <a class="reference internal" href="../method/cf.DomainAncillary.set_ge
 <dt>interior_ring: <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code>, optional</dt><dd><p>Set the interior ring variable.</p>
 <p>The interior ring variable may also be set after
 initialisation with the <a class="reference internal" href="../method/cf.DomainAncillary.set_interior_ring.html#cf.DomainAncillary.set_interior_ring" title="cf.DomainAncillary.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a> method.</p>
+</dd>
+<dt>node_count: <code class="xref py py-obj docutils literal notranslate"><span class="pre">NodeCount</span></code>, optional</dt><dd><p>Set the node count variable for geometry
+bounds.</p>
+<p>The node count variable may also be set after
+initialisation with the <a class="reference internal" href="../method/cf.DomainAncillary.set_node_count.html#cf.DomainAncillary.set_node_count" title="cf.DomainAncillary.set_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_count</span></code></a> method.</p>
+</dd>
+<dt>part_node_count: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PartNodeCount</span></code>, optional</dt><dd><p>Set the part node count variable for geometry
+bounds.</p>
+<p>The part node count variable may also be set after
+initialisation with the <a class="reference internal" href="../method/cf.DomainAncillary.set_node_count.html#cf.DomainAncillary.set_node_count" title="cf.DomainAncillary.set_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_count</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a> instance.</p>
@@ -762,6 +770,24 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.get_quantization.html#cf.DomainAncillary.get_quantization" title="cf.DomainAncillary.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.get_quantize_on_write.html#cf.DomainAncillary.get_quantize_on_write" title="cf.DomainAncillary.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
@@ -1037,14 +1063,14 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_set_variable.html#cf.DomainAncillary.nc_set_variable" title="cf.DomainAncillary.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_clear_hdf5_chunksizes.html#cf.DomainAncillary.nc_clear_hdf5_chunksizes" title="cf.DomainAncillary.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_clear_dataset_chunksizes.html#cf.DomainAncillary.nc_clear_dataset_chunksizes" title="cf.DomainAncillary.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_hdf5_chunksizes.html#cf.DomainAncillary.nc_hdf5_chunksizes" title="cf.DomainAncillary.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_dataset_chunksizes.html#cf.DomainAncillary.nc_dataset_chunksizes" title="cf.DomainAncillary.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_set_hdf5_chunksizes.html#cf.DomainAncillary.nc_set_hdf5_chunksizes" title="cf.DomainAncillary.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_set_dataset_chunksizes.html#cf.DomainAncillary.nc_set_dataset_chunksizes" title="cf.DomainAncillary.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1493,6 +1519,15 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.unsafe_array.html#cf.DomainAncillary.unsafe_array" title="cf.DomainAncillary.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_clear_hdf5_chunksizes.html#cf.DomainAncillary.nc_clear_hdf5_chunksizes" title="cf.DomainAncillary.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_hdf5_chunksizes.html#cf.DomainAncillary.nc_hdf5_chunksizes" title="cf.DomainAncillary.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.nc_set_hdf5_chunksizes.html#cf.DomainAncillary.nc_set_hdf5_chunksizes" title="cf.DomainAncillary.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -1506,7 +1541,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

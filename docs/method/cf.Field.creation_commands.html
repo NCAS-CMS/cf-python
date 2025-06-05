@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -135,7 +135,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.creation_commands<a class="headerlink" href="#cf-field-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.creation_commands">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">representative_data=False</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em>, <em class="sig-param">name='field'</em>, <em class="sig-param">data_name='data'</em>, <em class="sig-param">header=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/field.py#L1554-L1833"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">representative_data=False</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em>, <em class="sig-param">name='field'</em>, <em class="sig-param">data_name='data'</em>, <em class="sig-param">header=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/field.py#L1513-L1787"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the field construct.</p>
 <p><strong>Construct keys</strong></p>
 <p>The <em>key</em> parameter of the output <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> commands is
@@ -189,17 +189,9 @@ command.</p>
 </dd>
 <dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance created by the
 returned commands.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='var1'</span></code></p>
-</dd>
-</dl>
 </dd>
 <dt>data_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the construct’s <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance created by
 the returned commands.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">name='data1'</span></code></p>
-</dd>
-</dl>
 </dd>
 <dt>header: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) output a comment describing the
 components. If False no such comment is returned.</p>
@@ -230,7 +222,7 @@ separate commands are returned as each element of a
 <span class="go">#</span>
 <span class="go"># field: specific_humidity</span>
 <span class="go">field = cf.Field()</span>
-<span class="go">field.set_properties({&#39;Conventions&#39;: &#39;CF-1.10&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
+<span class="go">field.set_properties({&#39;Conventions&#39;: &#39;CF-1.12&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
 <span class="go">field.nc_set_variable(&#39;q&#39;)</span>
 <span class="go">data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units=&#39;1&#39;, dtype=&#39;f8&#39;)</span>
 <span class="go">field.set_data(data)</span>
@@ -294,10 +286,12 @@ separate commands are returned as each element of a
 <span class="go">#</span>
 <span class="go"># field data axes</span>
 <span class="go">field.set_data_axes((&#39;domainaxis0&#39;, &#39;domainaxis1&#39;))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">creation_commands</span><span class="p">(</span><span class="n">representative_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">creation_commands</span><span class="p">(</span><span class="n">representative_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                          <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 <span class="go">    field = Field()</span>
-<span class="go">    field.set_properties({&#39;Conventions&#39;: &#39;CF-1.10&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
+<span class="go">    field.set_properties({&#39;Conventions&#39;: &#39;CF-1.12&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
 <span class="go">    field.nc_set_variable(&#39;q&#39;)</span>
 <span class="go">    data = &lt;Data(5, 8): [[0.007, ..., 0.013]] 1&gt;  # Representative data</span>
 <span class="go">    field.set_data(data)</span>
@@ -359,7 +353,7 @@ separate commands are returned as each element of a
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

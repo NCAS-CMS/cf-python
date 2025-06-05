@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -135,10 +135,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.nc_del_aggregated_data<a class="headerlink" href="#cf-data-nc-del-aggregated-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.nc_del_aggregated_data">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_del_aggregated_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/mixin/netcdf.py#L4616-L4668"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_del_aggregated_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_del_aggregated_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/mixin/netcdf.py#L4748-L4800"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_del_aggregated_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the netCDF aggregated_data terms.</p>
 <p>The aggregated data terms define the names of the fragment
-array variables, and are stored in a netCDF file in an
+array variables, as would be stored in a netCDF file in an
 “aggregated_data” attribute.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
@@ -161,20 +161,20 @@ and their corresponding fragment array variable names.</p>
 </dl>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_aggregated_data</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span>
-<span class="gp">... </span>     <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span>
-<span class="gp">... </span>     <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="s1">&#39;address&#39;</span><span class="p">}</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="s1">&#39;fragment_map&#39;</span><span class="p">,</span>
+<span class="gp">... </span>     <span class="s1">&#39;uris&#39;</span><span class="p">:</span> <span class="s1">&#39;fragment_uris&#39;</span><span class="p">,</span>
+<span class="gp">... </span>     <span class="s1">&#39;identifiers&#39;</span><span class="p">:</span> <span class="s1">&#39;fragment_identifiers&#39;</span><span class="p">}</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_aggregated_data</span><span class="p">()</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_aggregated_data</span><span class="p">()</span>
-<span class="go">{&#39;shape&#39;: &#39;shape&#39;,</span>
-<span class="go"> &#39;location&#39;: &#39;location&#39;,</span>
-<span class="go"> &#39;address&#39;: &#39;address&#39;}</span>
+<span class="go">{&#39;map&#39;: &#39;fragment_map&#39;,</span>
+<span class="go"> &#39;uris&#39;: &#39;fragment_uris&#39;,</span>
+<span class="go"> &#39;identifiers&#39;: &#39;fragment_identifiers&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_aggregated_data</span><span class="p">()</span>
-<span class="go">{&#39;shape&#39;: &#39;shape&#39;,</span>
-<span class="go"> &#39;location&#39;: &#39;location&#39;,</span>
-<span class="go"> &#39;address&#39;: &#39;address&#39;}</span>
+<span class="go">{&#39;map&#39;: &#39;fragment_map&#39;,</span>
+<span class="go"> &#39;uris&#39;: &#39;fragment_uris&#39;,</span>
+<span class="go"> &#39;identifiers&#39;: &#39;fragment_identifiers&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_aggregated_data</span><span class="p">()</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_aggregated_data</span><span class="p">()</span>
@@ -182,7 +182,7 @@ and their corresponding fragment array variable names.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_aggregated_data</span><span class="p">()</span>
 <span class="go">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_aggregated_data</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s1">&#39;shape: shape, location: location address: address&#39;</span>
+<span class="gp">... </span>    <span class="s1">&#39;map: fragment_map, uris: fragment_uris identifiers: fragment_idenfiers&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
@@ -198,7 +198,7 @@ and their corresponding fragment array variable names.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

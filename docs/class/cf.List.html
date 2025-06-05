@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.List.dump" href="../method/cf.List.dump.html" />
-    <link rel="prev" title="cf.Index.unsafe_array" href="../method/cf.Index.unsafe_array.html" />
+    <link rel="prev" title="cf.Index.nc_set_hdf5_chunksizes" href="../method/cf.Index.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -94,7 +94,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../method/cf.Index.unsafe_array.html" title="previous chapter">cf.Index.unsafe_array</a></li>
+      <li>Previous: <a href="../method/cf.Index.nc_set_hdf5_chunksizes.html" title="previous chapter">cf.Index.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cf.List.dump.html" title="next chapter">cf.List.dump</a></li>
   </ul></li>
   </ul></li>
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.List">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/list.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/list.py#L6-L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.List" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.list.List</span></code></p>
 <p>A list variable required to uncompress a gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
@@ -150,6 +150,9 @@ variable that gives the indices of the required points.</p>
 <a class="reference internal" href="../method/cf.List.nc_set_variable.html#cf.List.nc_set_variable" title="cf.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.List.nc_get_variable.html#cf.List.nc_get_variable" title="cf.List.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.List.nc_variable_groups.html#cf.List.nc_variable_groups" title="cf.List.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
 <a class="reference internal" href="../method/cf.List.nc_clear_variable_groups.html#cf.List.nc_clear_variable_groups" title="cf.List.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cf.List.nc_set_variable_groups.html#cf.List.nc_set_variable_groups" title="cf.List.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
 methods.</p>
+<p>The dataset chunks may be accessed with the
+<a class="reference internal" href="../method/cf.List.nc_dataset_chunksizes.html#cf.List.nc_dataset_chunksizes" title="cf.List.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>, <a class="reference internal" href="../method/cf.List.nc_set_dataset_chunksizes.html#cf.List.nc_set_dataset_chunksizes" title="cf.List.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_datset_chunksizes</span></code> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -162,7 +165,7 @@ property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.List.set_properties.html#cf.List.set_properties" title="cf.List.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.List.set_property.html#cf.List.set_property" title="cf.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'uncompression</span> <span class="pre">indices'}</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -605,6 +608,24 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.get_quantization.html#cf.List.get_quantization" title="cf.List.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.get_quantize_on_write.html#cf.List.get_quantize_on_write" title="cf.List.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
@@ -904,14 +925,14 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_set_variable.html#cf.List.nc_set_variable" title="cf.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_clear_hdf5_chunksizes.html#cf.List.nc_clear_hdf5_chunksizes" title="cf.List.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_clear_dataset_chunksizes.html#cf.List.nc_clear_dataset_chunksizes" title="cf.List.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_hdf5_chunksizes.html#cf.List.nc_hdf5_chunksizes" title="cf.List.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_dataset_chunksizes.html#cf.List.nc_dataset_chunksizes" title="cf.List.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_set_hdf5_chunksizes.html#cf.List.nc_set_hdf5_chunksizes" title="cf.List.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_set_dataset_chunksizes.html#cf.List.nc_set_dataset_chunksizes" title="cf.List.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1360,6 +1381,15 @@ for augmented assignments, modify the construct’s data in-place.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.unsafe_array.html#cf.List.unsafe_array" title="cf.List.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_clear_hdf5_chunksizes.html#cf.List.nc_clear_hdf5_chunksizes" title="cf.List.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.List.nc_hdf5_chunksizes.html#cf.List.nc_hdf5_chunksizes" title="cf.List.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.List.nc_set_hdf5_chunksizes.html#cf.List.nc_set_hdf5_chunksizes" title="cf.List.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -1373,7 +1403,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

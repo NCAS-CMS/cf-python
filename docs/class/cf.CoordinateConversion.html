@@ -27,8 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.CoordinateConversion.del_parameter" href="../method/cf.CoordinateConversion.del_parameter.html" />
-    <link rel="prev" title="cf.Bounds.unsafe_array" href="../method/cf.Bounds.unsafe_array.html" />
+    <link rel="next" title="cf.CoordinateConversion.dump" href="../method/cf.CoordinateConversion.dump.html" />
+    <link rel="prev" title="cf.Bounds.nc_set_hdf5_chunksizes" href="../method/cf.Bounds.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -94,8 +94,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../method/cf.Bounds.unsafe_array.html" title="previous chapter">cf.Bounds.unsafe_array</a></li>
-      <li>Next: <a href="../method/cf.CoordinateConversion.del_parameter.html" title="next chapter">cf.CoordinateConversion.del_parameter</a></li>
+      <li>Previous: <a href="../method/cf.Bounds.nc_set_hdf5_chunksizes.html" title="previous chapter">cf.Bounds.nc_set_hdf5_chunksizes</a></li>
+      <li>Next: <a href="../method/cf.CoordinateConversion.dump.html" title="next chapter">cf.CoordinateConversion.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CoordinateConversion">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CoordinateConversion</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">domain_ancillaries=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/coordinateconversion.py#L4-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CoordinateConversion</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">domain_ancillaries=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/coordinateconversion.py#L4-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -195,6 +195,21 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.dump.html#cf.CoordinateConversion.dump" title="cf.CoordinateConversion.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="parameter-terms">
 <h2>Parameter terms<a class="headerlink" href="#parameter-terms" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
@@ -276,6 +291,9 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.equals.html#cf.CoordinateConversion.equals" title="cf.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two instances are the same.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CoordinateConversion.creation_commands.html#cf.CoordinateConversion.creation_commands" title="cf.CoordinateConversion.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the component.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -316,7 +334,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

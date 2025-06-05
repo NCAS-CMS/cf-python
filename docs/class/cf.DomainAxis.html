@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.DomainAxis.identity" href="../method/cf.DomainAxis.identity.html" />
-    <link rel="prev" title="cf.DomainAncillary.unsafe_array" href="../method/cf.DomainAncillary.unsafe_array.html" />
+    <link rel="prev" title="cf.DomainAncillary.nc_set_hdf5_chunksizes" href="../method/cf.DomainAncillary.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
 
 
 
@@ -94,7 +94,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../method/cf.DomainAncillary.unsafe_array.html" title="previous chapter">cf.DomainAncillary.unsafe_array</a></li>
+      <li>Previous: <a href="../method/cf.DomainAncillary.nc_set_hdf5_chunksizes.html" title="previous chapter">cf.DomainAncillary.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cf.DomainAxis.identity.html" title="next chapter">cf.DomainAxis.identity</a></li>
   </ul></li>
   </ul></li>
@@ -134,7 +134,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAxis">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.17.0/cf/domainaxis.py#L6-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAxis</code><span class="sig-paren">(</span><em class="sig-param">size=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/domainaxis.py#L6-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainaxis.DomainAxis</span></code></p>
 <p>A domain axis construct of the CF data model.</p>
 <p>A domain axis construct specifies the number of points along an
@@ -154,12 +154,12 @@ the <a class="reference internal" href="../method/cf.DomainAxis.nc_set_dimension
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The size of the domain axis.</p>
-<p>The size may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.DomainAxis.set_size.html#cf.DomainAxis.set_size" title="cf.DomainAxis.set_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_size</span></code></a> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">size=192</span></code></p>
 </dd>
 </dl>
+<p>The size may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.DomainAxis.set_size.html#cf.DomainAxis.set_size" title="cf.DomainAxis.set_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_size</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a> instance.</p>
@@ -444,7 +444,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

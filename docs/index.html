@@ -45,7 +45,7 @@
 
 
 
-<h1 class="logo"><a href="#">cf 3.17.0</a></h1>
+<h1 class="logo"><a href="#">cf 3.18.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <style> .red {color:red} </style><style> .blue {color:blue} </style><style> .small {font-size:small} </style><section id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 3.17.0 for version 1.12 of the CF conventions.</p>
+<p>Version 3.18.0 for version 1.12 of the CF conventions.</p>
 <p>The Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package is an Earth Science data analysis library that
 is built on a complete implementation of the <a class="reference internal" href="introduction.html#cf-data-model"><span class="std std-ref">CF data model</span></a>.</p>
 <div class="contents local topic" id="contents">
@@ -144,6 +144,7 @@ is built on a complete implementation of the <a class="reference internal" href=
 </div>
 <section id="functionality">
 <h3><a class="toc-backref" href="#id6"><strong>Functionality</strong></a><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h3>
+<p>&lt;a href=”<a class="reference external" href="https://doi.org/10.5281/zenodo.14274886">https://doi.org/10.5281/zenodo.14274886</a>”&gt;&lt;img src=”<a class="reference external" href="https://zenodo.org/badge/DOI/https://doi.org/10.5281/zenodo.14274886">https://zenodo.org/badge/DOI/https://doi.org/10.5281/zenodo.14274886</a>” alt=”DOI”&gt;&lt;/a&gt;</p>
 <p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package implements the <a class="reference internal" href="introduction.html#cf-data-model"><span class="std std-ref">CF data model</span></a> for its internal
 data structures and so is able to process any CF-compliant dataset. It
 is not strict about CF-compliance, however, so that partially
@@ -169,13 +170,13 @@ file and inspecting it.</em></span><a class="headerlink" href="#id3" title="Perm
 </pre></div>
 </div>
 </div>
-<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its array
-manipulation and can:</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package can:</p>
 <ul class="simple">
 <li><p>read <a class="reference internal" href="introduction.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="introduction.html#term-domain-construct"><span class="xref std std-term">domain
 constructs</span></a> from netCDF, CDL, PP and UM datasets
 with a choice of netCDF backends,</p></li>
 <li><p>read files from OPeNDAP servers and S3 object stores,</p></li>
+<li><p>be fully flexible with respect to dataset chunking,</p></li>
 <li><p>create new field constructs in memory,</p></li>
 <li><p>write and append field constructs to netCDF datasets on disk,</p></li>
 <li><p>read, write, and manipulate UGRID mesh topologies,</p></li>
@@ -204,7 +205,9 @@ conservative and higher order patch recovery methods, including
 <li><p>apply convolution filters to field constructs,</p></li>
 <li><p>create running means from field constructs,</p></li>
 <li><p>apply differential operators to field constructs,</p></li>
-<li><p>create derived quantities (such as relative vorticity).</p></li>
+<li><p>create derived quantities (such as relative vorticity),</p></li>
+<li><p>read and write that data that are quantized to eliminate false
+precision.</p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -226,8 +229,9 @@ of plotting possibilities with example code.</p>
 <hr class="docutils" />
 <section id="performance">
 <h3><a class="toc-backref" href="#id8"><strong>Performance</strong></a><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
-<p>As of version 3.14.0 (released 2023-01-31), cf uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its data manipulations, which provides lazy,
-parallelised, and out-of-core computations of array operations.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.</p>
 </section>
 <hr class="docutils" />
 <section id="command-line-utilities">
@@ -382,7 +386,7 @@ from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-02.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
