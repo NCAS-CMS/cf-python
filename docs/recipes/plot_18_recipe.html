@@ -44,7 +44,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,7 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
@@ -133,7 +133,6 @@ to download the full example code</p>
 cover over a particular day), regrid them to the same resolution then
 calculate the correlation coefficient, to get a measure of the relationship
 between them.</p>
-<p>isort:skip_file</p>
 <ol class="arabic simple">
 <li><p>Import cf-python, cf-plot and other required packages:</p></li>
 </ol>
@@ -142,12 +141,6 @@ between them.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
-</pre></div>
-</div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/david/NCAS-CMS/cf-python/docs/source/recipes/plot_18_recipe.py&quot;</span>, line <span class="m">18</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;cfplot&#39;</span>
 </pre></div>
 </div>
 <p>2. Read the data in and unpack the Fields from FieldLists using indexing.
@@ -160,8 +153,8 @@ sourced from the Copernicus Land Monitoring Service which is described at:
 and the elevation data is the ‘NOAA NGDC GLOBE topo: elevation data’ dataset
 which can be sourced from the IRI Data Library, or details found, at:
 <a class="reference external" href="http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NGDC/.GLOBE/.topo/index.html">http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NGDC/.GLOBE/.topo/index.html</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">orog</span> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/1km_elevation.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">snow</span> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/snowcover&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">orog</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/1km_elevation.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/snowcover&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>3. Choose the day of pre-aggregated snow cover to investigate. We will
@@ -169,9 +162,9 @@ take the first datetime element corresponding to the first day from the
 datasets, 1st January 2024, but by changing the indexing you can explore
 other days by changing the index. We also get the string corresponding to
 the date, to reference later:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">snow_day</span> <span class="o">=</span> <span class="n">snow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">snow_day_dt</span> <span class="o">=</span> <span class="n">snow_day</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-<span class="n">snow_day_daystring</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">snow_day_dt</span><span class="o">.</span><span class="n">datetime_as_string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow_day</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow_day_dt</span></a> <span class="o">=</span> <a href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">snow_day</span><span class="o">.</span><span class="n">coordinate</span></a><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow_day_daystring</span></a> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="../attribute/cf.Data.datetime_as_string.html#cf.Data.datetime_as_string" title="cf.Data.datetime_as_string" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">snow_day_dt</span><span class="o">.</span><span class="n">datetime_as_string</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
 <p>4. Choose the region to consider to compare the relationship across,
@@ -180,12 +173,12 @@ same grid since we regrid to the same grid next and subspace to the same
 area for both datasets ready for comparison in the next steps. By changing
 the latitude and longitude points in the tuple below, you can change the
 area that is used:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">region_in_mid_uk</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">52.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">))</span>
-<span class="n">sub_orog</span> <span class="o">=</span> <span class="n">orog</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
-    <span class="n">longitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><span class="n">region_in_mid_uk</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">latitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><span class="n">region_in_mid_uk</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region_in_mid_uk</span></a> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">52.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">))</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_orog</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">orog</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
+    <span class="n">longitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region_in_mid_uk</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">latitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region_in_mid_uk</span></a><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="p">)</span>
-<span class="n">sub_snow</span> <span class="o">=</span> <span class="n">snow_day</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
-    <span class="n">longitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><span class="n">region_in_mid_uk</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">latitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><span class="n">region_in_mid_uk</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">snow_day</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
+    <span class="n">longitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region_in_mid_uk</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">latitude</span><span class="o">=</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="o">*</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">region_in_mid_uk</span></a><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -193,8 +186,8 @@ area that is used:</p>
 unitless fraction, but the values are in the tens, so we need to
 normalise these to all lie between 0 and 1 and change the units
 appropriately:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sub_snow</span> <span class="o">=</span> <span class="p">(</span><span class="n">sub_snow</span> <span class="o">-</span> <span class="n">sub_snow</span><span class="o">.</span><span class="n">minimum</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">sub_snow</span><span class="o">.</span><span class="n">range</span><span class="p">())</span>
-<span class="n">sub_snow</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a> <span class="o">=</span> <span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a> <span class="o">-</span> <a href="../method/cf.Field.minimum.html#cf.Field.minimum" title="cf.Field.minimum" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sub_snow</span><span class="o">.</span><span class="n">minimum</span></a><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><a href="../method/cf.Field.range.html#cf.Field.range" title="cf.Field.range" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sub_snow</span><span class="o">.</span><span class="n">range</span></a><span class="p">())</span>
+<a href="../method/cf.Field.override_units.html#cf.Field.override_units" title="cf.Field.override_units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sub_snow</span><span class="o">.</span><span class="n">override_units</span></a><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>6. Regrid the data so that they lie on the same grid and therefore each
@@ -202,12 +195,12 @@ array structure has values with corresponding geospatial points that
 can be statistically compared. Here the elevation field is regridded to the
 snow field since the snow is higher-resolution, but the other way round is
 possible by switching the field order:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">regridded_orog</span> <span class="o">=</span> <span class="n">sub_orog</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">sub_snow</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">regridded_orog</span></a> <span class="o">=</span> <a href="../method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sub_orog</span><span class="o">.</span><span class="n">regrids</span></a><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>7. Squeeze the snow data to remove the size 1 axes so we have arrays of
 the same dimensions for each of the two fields to compare:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sub_snow</span> <span class="o">=</span> <span class="n">sub_snow</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a> <span class="o">=</span> <a href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">sub_snow</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
 </pre></div>
 </div>
 <p>8. Finally, perform the statistical calculation by using the SciPy method
@@ -215,15 +208,18 @@ to find the Pearson correlation coefficient for the two arrays now they are
 in comparable form. Note we need to use ‘scipy.stats.mstats’ and not
 ‘scipy.stats’ for the ‘pearsonr’ method, to account for masked
 data in the array(s) properly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">coefficient</span> <span class="o">=</span> <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mstats.pearsonr.html#scipy.stats.mstats.pearsonr" title="scipy.stats.mstats.pearsonr" class="sphx-glr-backref-module-scipy-stats-mstats sphx-glr-backref-type-py-function"><span class="n">mstats</span><span class="o">.</span><span class="n">pearsonr</span></a><span class="p">(</span><span class="n">regridded_orog</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">sub_snow</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The Pearson correlation coefficient is: </span><span class="si">{</span><span class="n">coefficient</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats._result_classes.PearsonRResult.html#scipy.stats._result_classes.PearsonRResult" title="scipy.stats._stats_py.PearsonRResult" class="sphx-glr-backref-module-scipy-stats-_stats_py sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">coefficient</span></a> <span class="o">=</span> <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mstats.pearsonr.html#scipy.stats.mstats.pearsonr" title="scipy.stats.mstats.pearsonr" class="sphx-glr-backref-module-scipy-stats-mstats sphx-glr-backref-type-py-function"><span class="n">mstats</span><span class="o">.</span><span class="n">pearsonr</span></a><span class="p">(</span><a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">regridded_orog</span><span class="o">.</span><span class="n">array</span></a><span class="p">,</span> <a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">sub_snow</span><span class="o">.</span><span class="n">array</span></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The Pearson correlation coefficient is: </span><span class="si">{</span><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats._result_classes.PearsonRResult.html#scipy.stats._result_classes.PearsonRResult" title="scipy.stats._stats_py.PearsonRResult" class="sphx-glr-backref-module-scipy-stats-_stats_py sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">coefficient</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The Pearson correlation coefficient is: PearsonRResult(statistic=np.float64(0.3586727046764034), pvalue=np.float64(0.0))
 </pre></div>
 </div>
 <p>9. Make a final plot showing the two arrays side-by-side and quoting the
 determined Pearson correlation coefficient to illustrate the relationship
 and its strength visually. We use ‘gpos’ to position the plots in two
 columns and apply some specific axes ticks and labels for clarity.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ncas-cms.github.io/cf-plot/build/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span>
     <span class="n">rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>
@@ -234,15 +230,15 @@ columns and apply some specific axes ticks and labels for clarity.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html#matplotlib.pyplot.suptitle" title="matplotlib.pyplot.suptitle" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span></a><span class="p">(</span>
     <span class="p">(</span>
         <span class="s2">&quot;Snow cover compared to elevation for the same area of the UK &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;aggregated across</span><span class="se">\n</span><span class="s2"> day </span><span class="si">{</span><span class="n">snow_day_daystring</span><span class="si">}</span><span class="s2"> with correlation &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;aggregated across</span><span class="se">\n</span><span class="s2"> day </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">snow_day_daystring</span></a><span class="si">}</span><span class="s2"> with correlation &quot;</span>
         <span class="s2">&quot;coefficient (on the same grid) of &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coefficient</span><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> (4 s.f.)&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats._result_classes.PearsonRResult.html#scipy.stats._result_classes.PearsonRResult" title="scipy.stats._stats_py.PearsonRResult" class="sphx-glr-backref-module-scipy-stats-_stats_py sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">coefficient</span></a><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> (4 s.f.)&quot;</span>
     <span class="p">),</span>
     <span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span><span class="n">ocean_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lake_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">label_info</span> <span class="o">=</span> <span class="p">{</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/setvars.html#cfplot.setvars" title="cfplot.setvars" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span></a><span class="p">(</span><span class="n">ocean_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lake_color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label_info</span></a> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;xticklabels&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;3W&quot;</span><span class="p">,</span> <span class="s2">&quot;2W&quot;</span><span class="p">,</span> <span class="s2">&quot;1W&quot;</span><span class="p">),</span>
     <span class="s2">&quot;yticklabels&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;52N&quot;</span><span class="p">,</span> <span class="s2">&quot;53N&quot;</span><span class="p">,</span> <span class="s2">&quot;54N&quot;</span><span class="p">,</span> <span class="s2">&quot;55N&quot;</span><span class="p">),</span>
     <span class="s2">&quot;xticks&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
@@ -250,36 +246,36 @@ columns and apply some specific axes ticks and labels for clarity.</p>
 <span class="p">}</span>
 
 <span class="c1"># Plot the two contour plots as columns</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;wiki_2_0_reduced&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">regridded_orog</span><span class="p">,</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;wiki_2_0_reduced&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">regridded_orog</span></a><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Elevation (from 1km-resolution orography)&quot;</span><span class="p">,</span>
     <span class="n">colorbar_drawedges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">label_info</span><span class="p">,</span>
+    <span class="o">**</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label_info</span></a><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1"># Don&#39;t add extentions on the colourbar since it can only be 0 to 1 inclusive</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;neither&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;precip_11lev&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">sub_snow</span><span class="p">,</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;neither&quot;</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;precip_11lev&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sub_snow</span></a><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Snow cover extent (from satellite imagery)&quot;</span><span class="p">,</span>
     <span class="n">colorbar_drawedges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">label_info</span><span class="p">,</span>
+    <span class="o">**</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">label_info</span></a><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.001 seconds)</p>
+<img src="../_images/sphx_glr_plot_18_recipe_001.png" srcset="../_images/sphx_glr_plot_18_recipe_001.png" alt="Snow cover compared to elevation for the same area of the UK aggregated across  day 2024-01-01 with correlation coefficient (on the same grid) of 0.3587 (4 s.f.)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  16.503 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-18-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_18_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/f7824a9815ec7fb92885ab21b3289af9/plot_18_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_18_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/plot_18_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_18_recipe.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/e08d952ec670bf5bfdf854679e55a11d/plot_18_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_18_recipe.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -293,7 +289,7 @@ columns and apply some specific axes ticks and labels for clarity.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

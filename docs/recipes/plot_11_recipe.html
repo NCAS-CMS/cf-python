@@ -27,6 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using mask to plot Aerosol Optical Depth" href="plot_12_recipe.html" />
+    <link rel="prev" title="Calculating and plotting the relative vorticity" href="plot_10_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -75,10 +77,12 @@
 <script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -90,6 +94,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_10_recipe.html" title="previous chapter">Calculating and plotting the relative vorticity</a></li>
+      <li>Next: <a href="plot_12_recipe.html" title="next chapter">Using mask to plot Aerosol Optical Depth</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -136,9 +144,9 @@ the same.</p>
 <ol class="arabic simple">
 <li><p>Import cf-python and matplotlib.pyplot:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -186,7 +194,7 @@ ensures that the calculated mean is more accurate:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">global_avg_temp</span></a> <span class="o">=</span> <a href="../attribute/cf.Field.array.html#cf.Field.array" title="cf.Field.array" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">global_temperature</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">squeeze</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p>7. Create a normalisation function that maps the interval from the minimum to
+<p>7. Create a normalization function that maps the interval from the minimum to
 the maximum temperature to the interval [0, 1] for colouring:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="matplotlib.colors.Normalize" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">norm_global</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="matplotlib.colors.Normalize" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class"><span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.min.html#numpy.ma.MaskedArray.min" title="numpy.ma.MaskedArray.min" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-method"><span class="n">global_avg_temp</span><span class="o">.</span><span class="n">min</span></a><span class="p">(),</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.max.html#numpy.ma.MaskedArray.max" title="numpy.ma.MaskedArray.max" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-method"><span class="n">global_avg_temp</span><span class="o">.</span><span class="n">max</span></a><span class="p">())</span>
 </pre></div>
@@ -199,7 +207,7 @@ the maximum temperature to the interval [0, 1] for colouring:</p>
 </div>
 <p>9. Create the figure and the axes for the global plot. Loop over the selected
 years, plot a colored vertical stripe for each and remove the axes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig_global</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_global</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig_global</span></a><span class="p">,</span> <span class="n">ax_global</span> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.shape.html#numpy.ma.MaskedArray.shape" title="numpy.ma.MaskedArray.shape" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-property"><span class="n">global_avg_temp</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
     <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvspan.html#matplotlib.axes.Axes.axvspan" title="matplotlib.axes.Axes.axvspan" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_global</span><span class="o">.</span><span class="n">axvspan</span></a><span class="p">(</span>
@@ -220,7 +228,7 @@ a domain spanning 49.9 to 59.4 degrees north and -10.5 to 1.8 degrees east:</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="matplotlib.colors.Normalize" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">norm_uk</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="matplotlib.colors.Normalize" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class"><span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.min.html#numpy.ma.MaskedArray.min" title="numpy.ma.MaskedArray.min" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-method"><span class="n">uk_avg_temp</span><span class="o">.</span><span class="n">min</span></a><span class="p">(),</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.max.html#numpy.ma.MaskedArray.max" title="numpy.ma.MaskedArray.max" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-method"><span class="n">uk_avg_temp</span><span class="o">.</span><span class="n">max</span></a><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig_uk</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax_uk</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig_uk</span></a><span class="p">,</span> <span class="n">ax_uk</span> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ma.MaskedArray.shape.html#numpy.ma.MaskedArray.shape" title="numpy.ma.MaskedArray.shape" class="sphx-glr-backref-module-numpy-ma sphx-glr-backref-type-py-property"><span class="n">uk_avg_temp</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
     <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axvspan.html#matplotlib.axes.Axes.axvspan" title="matplotlib.axes.Axes.axvspan" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax_uk</span><span class="o">.</span><span class="n">axvspan</span></a><span class="p">(</span>
@@ -232,10 +240,10 @@ a domain spanning 49.9 to 59.4 degrees north and -10.5 to 1.8 degrees east:</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_11_recipe_002.png" srcset="../_images/sphx_glr_plot_11_recipe_002.png" alt="plot 11 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  17.264 seconds)</p>
+<img src="../_images/sphx_glr_plot_11_recipe_002.png" srcset="../_images/sphx_glr_plot_11_recipe_002.png" alt="plot 11 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  21.115 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-11-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_11_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_11_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_11_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_11_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_11_recipe.ipynb</span></code></a></p>
@@ -252,7 +260,7 @@ a domain spanning 49.9 to 59.4 degrees north and -10.5 to 1.8 degrees east:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

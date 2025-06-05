@@ -14,11 +14,6 @@
 
 
 
-
-
-
-
-
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -47,7 +42,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="../tutorial.html" />
+    <link rel="next" title="Calculating global mean temperature timeseries" href="plot_01_recipe.html" />
     <link rel="prev" title="Cheat Sheet" href="../cheat_sheet.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -66,7 +61,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -97,10 +92,12 @@
 <script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -113,7 +110,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../cheat_sheet.html" title="previous chapter"><strong>Cheat Sheet</strong></a></li>
-      <li>Next: <a href="../tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+      <li>Next: <a href="plot_01_recipe.html" title="next chapter">Calculating global mean temperature timeseries</a></li>
   </ul></li>
 </ul>
 </div>
@@ -148,7 +145,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="recipes-using-cf">
 <h1><strong>Recipes using cf</strong><a class="headerlink" href="#recipes-using-cf" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.18.0 for version 1.12 of the CF conventions.</p>
+<p>Version 3.17.0 for version 1.12 of the CF conventions.</p>
 <p>Click on the keywords below to filter the recipes according to their function:</p>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -192,10 +189,75 @@ document.addEventListener('DOMContentLoaded', function() {
     <button data-filter="regrid">Regrid</button>
     <button data-filter="subspace">Subspace</button>
     <button data-filter="mask">Mask</button>
-    <button data-filter="vectorplot">Vectorplot</button>
-    <button data-filter="subplot">Subplot</button>
     <button data-filter="stats">Statistical Operations</button>
-</div><div class="sphx-glr-thumbnails"></div><div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
+    <button data-filter="subplot">Subplot</button>
+    <button data-filter="vectorplot">Vectorplot</button>
+
+</div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer collapse lineplot" tooltip="Collapse, Lineplot"><img alt="Calculating global mean temperature timeseries" src="../_images/sphx_glr_plot_01_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_01_recipe.html#sphx-glr-recipes-plot-01-recipe-py"><span class="std std-ref">Calculating global mean temperature timeseries</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculating global mean temperature timeseries</div>
+</div><div class="sphx-glr-thumbcontainer collapse lineplot subspace" tooltip="Collapse, Lineplot, Subspace"><img alt="Calculating and plotting the global average temperature anomalies" src="../_images/sphx_glr_plot_02_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_02_recipe.html#sphx-glr-recipes-plot-02-recipe-py"><span class="std std-ref">Calculating and plotting the global average temperature anomalies</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculating and plotting the global average temperature anomalies</div>
+</div><div class="sphx-glr-thumbcontainer collapse contourmap" tooltip="Collapse, Contourmap"><img alt="Plotting global mean temperatures spatially" src="../_images/sphx_glr_plot_03_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_03_recipe.html#sphx-glr-recipes-plot-03-recipe-py"><span class="std std-ref">Plotting global mean temperatures spatially</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting global mean temperatures spatially</div>
+</div><div class="sphx-glr-thumbcontainer regrid" tooltip="Regrid"><img alt="Comparing two datasets with different resolutions using regridding" src="../_images/sphx_glr_plot_04_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_04_recipe.html#sphx-glr-recipes-plot-04-recipe-py"><span class="std std-ref">Comparing two datasets with different resolutions using regridding</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparing two datasets with different resolutions using regridding</div>
+</div><div class="sphx-glr-thumbcontainer subspace contourmap vectorplot" tooltip="Subspace, Contourmap, Vectorplot"><img alt="Plotting wind vectors overlaid on precipitation data" src="../_images/sphx_glr_plot_05_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_05_recipe.html#sphx-glr-recipes-plot-05-recipe-py"><span class="std std-ref">Plotting wind vectors overlaid on precipitation data</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting wind vectors overlaid on precipitation data</div>
+</div><div class="sphx-glr-thumbcontainer regrid contourmap" tooltip="Regrid, Contourmap"><img alt="Converting from rotated latitude-longitude to regular latitude-longitude" src="../_images/sphx_glr_plot_06_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_06_recipe.html#sphx-glr-recipes-plot-06-recipe-py"><span class="std std-ref">Converting from rotated latitude-longitude to regular latitude-longitude</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Converting from rotated latitude-longitude to regular latitude-longitude</div>
+</div><div class="sphx-glr-thumbcontainer aggregate lineplot subspace" tooltip="Aggregate, Lineplot, Subspace"><img alt="Plotting members of a model ensemble" src="../_images/sphx_glr_plot_07_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_07_recipe.html#sphx-glr-recipes-plot-07-recipe-py"><span class="std std-ref">Plotting members of a model ensemble</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting members of a model ensemble</div>
+</div><div class="sphx-glr-thumbcontainer collapse contourmap stats subplot" tooltip="Collapse, Contourmap, Statistical Operations, Subplot"><img alt="Plotting statistically significant temperature trends with stippling" src="../_images/sphx_glr_plot_08_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_08_recipe.html#sphx-glr-recipes-plot-08-recipe-py"><span class="std std-ref">Plotting statistically significant temperature trends with stippling</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting statistically significant temperature trends with stippling</div>
+</div><div class="sphx-glr-thumbcontainer histogram" tooltip="Histogram"><img alt="Plotting a joint histogram" src="../_images/sphx_glr_plot_09_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_09_recipe.html#sphx-glr-recipes-plot-09-recipe-py"><span class="std std-ref">Plotting a joint histogram</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting a joint histogram</div>
+</div><div class="sphx-glr-thumbcontainer subspace contourmap maths" tooltip=" Subspace, Contourmap, Mathematical Operations"><img alt="Calculating and plotting the relative vorticity" src="../_images/sphx_glr_plot_10_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_10_recipe.html#sphx-glr-recipes-plot-10-recipe-py"><span class="std std-ref">Calculating and plotting the relative vorticity</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculating and plotting the relative vorticity</div>
+</div><div class="sphx-glr-thumbcontainer subspace collapse" tooltip=" Subspace, Collapse"><img alt="Plotting the Warming Stripes" src="../_images/sphx_glr_plot_11_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_11_recipe.html#sphx-glr-recipes-plot-11-recipe-py"><span class="std std-ref">Plotting the Warming Stripes</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Plotting the Warming Stripes</div>
+</div><div class="sphx-glr-thumbcontainer contourmap mask" tooltip=" Contourmap, Mask"><img alt="Using mask to plot Aerosol Optical Depth" src="../_images/sphx_glr_plot_12_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_12_recipe.html#sphx-glr-recipes-plot-12-recipe-py"><span class="std std-ref">Using mask to plot Aerosol Optical Depth</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Using mask to plot Aerosol Optical Depth</div>
+</div><div class="sphx-glr-thumbcontainer subspace collapse contourmap lineplot" tooltip="Subspace, Collapse, Contourmap, Lineplot, Statistical Operations"><img alt="Calculate and plot the Niño 3.4 Index" src="../_images/sphx_glr_plot_13_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_13_recipe.html#sphx-glr-recipes-plot-13-recipe-py"><span class="std std-ref">Calculate and plot the Niño 3.4 Index</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculate and plot the Niño 3.4 Index</div>
+</div><div class="sphx-glr-thumbcontainer subspace collapse contourmap" tooltip="Subspace, Collapse, Contourmap, Statistical Operations"><img alt="Overlay Geopotential height contours over Temperature anomalies" src="../_images/sphx_glr_plot_14_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_14_recipe.html#sphx-glr-recipes-plot-14-recipe-py"><span class="std std-ref">Overlay Geopotential height contours over Temperature anomalies</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Overlay Geopotential height contours over Temperature anomalies</div>
+</div><div class="sphx-glr-thumbcontainer histogram subspace" tooltip="Histogram, Subspace, Subplot"><img alt="Resampling Land Use Flags to a Coarser Grid" src="../_images/sphx_glr_plot_15_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_15_recipe.html#sphx-glr-recipes-plot-15-recipe-py"><span class="std std-ref">Resampling Land Use Flags to a Coarser Grid</span></a></p>
+<div class="sphx-glr-thumbnail-title">Resampling Land Use Flags to a Coarser Grid</div>
+
+</div><div class="sphx-glr-thumbcontainer contourmap subspace subplot" tooltip="Contourmap, Subspace, Subplot"><img alt="Plotting contour subplots with different projections" src="../_images/sphx_glr_plot_16_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_16_recipe.html#sphx-glr-recipes-plot-16-recipe-py"><span class="std std-ref">Plotting contour subplots with different projections</span></a></p>
+<div class="sphx-glr-thumbnail-title">Plotting contour subplots with different projections</div>
+</div><div class="sphx-glr-thumbcontainer contourmap subspace subplot" tooltip="Contourmap, Subspace, Subplot"><img alt="Plotting contour subplots with different colour maps/scales" src="../_images/sphx_glr_plot_17_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_17_recipe.html#sphx-glr-recipes-plot-17-recipe-py"><span class="std std-ref">Plotting contour subplots with different colour maps/scales</span></a></p>
+<div class="sphx-glr-thumbnail-title">Plotting contour subplots with different colour maps/scales</div>
+</div><div class="sphx-glr-thumbcontainer regrid stats subplot" tooltip="Regrid, Statistical Operations, Stats"><img alt="Calculating the Pearson correlation coefficient between datasets" src="../_images/sphx_glr_plot_18_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_18_recipe.html#sphx-glr-recipes-plot-18-recipe-py"><span class="std std-ref">Calculating the Pearson correlation coefficient between datasets</span></a></p>
+<div class="sphx-glr-thumbnail-title">Calculating the Pearson correlation coefficient between datasets</div>
+</div><div class="sphx-glr-thumbcontainer collapse subspace subplot lineplot" tooltip="Collapse, Subspace, Subplot, Lineplot"><img alt="Plotting per-season trends in global sea surface temperature extrema" src="../_images/sphx_glr_plot_19_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_19_recipe.html#sphx-glr-recipes-plot-19-recipe-py"><span class="std std-ref">Plotting per-season trends in global sea surface temperature extrema</span></a></p>
+<div class="sphx-glr-thumbnail-title">Plotting per-season trends in global sea surface temperature extrema</div>
+</div><div class="sphx-glr-thumbcontainer subspace contourmap vectorplot maths mask" tooltip="Subspace, Contourmap, Vectorplot, Mathematical Operations, Mask"><img alt="Calculating and plotting the divergence of sea currents" src="../_images/sphx_glr_plot_20_recipe_thumb.png" />
+<p><a class="reference internal" href="plot_20_recipe.html#sphx-glr-recipes-plot-20-recipe-py"><span class="std std-ref">Calculating and plotting the divergence of sea currents</span></a></p>
+<div class="sphx-glr-thumbnail-title">Calculating and plotting the divergence of sea currents</div>
+
+</div></div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/recipes_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">recipes_python.zip</span></code></a></p>
 </div>
@@ -214,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

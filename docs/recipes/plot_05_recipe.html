@@ -27,6 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_06_recipe.html" />
+    <link rel="prev" title="Comparing two datasets with different resolutions using regridding" href="plot_04_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -75,10 +77,12 @@
 <script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -90,6 +94,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_04_recipe.html" title="previous chapter">Comparing two datasets with different resolutions using regridding</a></li>
+      <li>Next: <a href="plot_06_recipe.html" title="next chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -132,9 +140,9 @@ to download the full example code</p>
 <ol class="arabic simple">
 <li><p>Import cf-python and cf-plot:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -205,31 +213,31 @@ Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 0
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace with a date-time object and using <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/con.html">cfplot.con</a>. Here <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gopen.html">cfplot.gopen</a> is used to define the parts of the plot area, which is closed by <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gclose.html">cfplot.gclose</a>; <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/cscale.html">cfplot.cscale</a> is used to choose one of the colour maps amongst many available; <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/levs.html">cfplot.levs</a> is used to set the contour levels for precipitation data; and <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/vect.html">cfplot.vect</a> is used to plot the wind vectors for June 1995:</p></li>
+<li><p>Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace with a date-time object and using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here <a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to define the parts of the plot area, which is closed by <a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>; <a class="reference external" href="http://ajheaps.github.io/cf-plot/cscale.html">cfplot.cscale</a> is used to choose one of the colour maps amongst many available; <a class="reference external" href="http://ajheaps.github.io/cf-plot/levs.html">cfplot.levs</a> is used to set the contour levels for precipitation data; and <a class="reference external" href="http://ajheaps.github.io/cf-plot/vect.html">cfplot.vect</a> is used to plot the wind vectors for June 1995:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">june_95</span></a> <span class="o">=</span> <a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><span class="mi">1995</span><span class="p">)</span> <span class="o">&amp;</span> <a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;precip4_11lev&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+<a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;precip4_11lev&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
     <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">pre</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">june_95</span></a><span class="p">),</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;June 1995 monthly global precipitation&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span>
+<a href="https://ajheaps.github.io/cf-plot/vect.html#cfplot.vect" title="cfplot.vect" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">vect</span></a><span class="p">(</span>
     <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span></a><span class="o">=</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">u</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">june_95</span></a><span class="p">),</span>
     <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">v</span></a><span class="o">=</span><a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">v</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../class/cf.Query.html#cf.Query" title="cf.Query" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">june_95</span></a><span class="p">),</span>
     <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">scale</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span>
     <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_05_recipe_001.png" srcset="../_images/sphx_glr_plot_05_recipe_001.png" alt="plot 05 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.900 seconds)</p>
+<img src="../_images/sphx_glr_plot_05_recipe_001.png" srcset="../_images/sphx_glr_plot_05_recipe_001.png" alt="plot 05 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  6.138 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-05-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_05_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_05_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_05_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_05_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_05_recipe.ipynb</span></code></a></p>
@@ -246,7 +254,7 @@ Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 0
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

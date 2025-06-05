@@ -44,7 +44,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -77,7 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
@@ -132,7 +132,6 @@ to download the full example code</p>
 three categories in separate subplots to illustrate the importance of
 choosing a suitable one for given data. To avoid unintended bias and
 misrepresentation, or lack of accessibility, a careful choice must be made.</p>
-<p>isort:skip_file</p>
 <ol class="arabic simple">
 <li><p>Import cf-python and cf-plot:</p></li>
 </ol>
@@ -142,16 +141,10 @@ misrepresentation, or lack of accessibility, a careful choice must be made.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/david/NCAS-CMS/cf-python/docs/source/recipes/plot_17_recipe.py&quot;</span>, line <span class="m">17</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;cfplot&#39;</span>
-</pre></div>
-</div>
 <ol class="arabic simple" start="2">
 <li><p>Read the field in:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ggap.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ggap.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>3. Choose a set of predefined colour scales to view. These can be chosen
@@ -165,14 +158,14 @@ Note colour scale levels can be adjusted using ‘cscale’ and keywords such as
 cfp.cscale(&lt;cmap name&gt;, ncols=16, below=2, above=14)</p>
 <p>a. Perceptually uniform colour scales, with no zero value, see:
 <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/colour_scales.html#perceptually-uniform-colour-scales">https://ncas-cms.github.io/cf-plot/build/colour_scales.html#perceptually-uniform-colour-scales</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colour_scales_pu</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="s2">&quot;plasma&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_pu</span></a> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="s2">&quot;magma&quot;</span><span class="p">,</span> <span class="s2">&quot;plasma&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>b. NCAR Command Language colour scales enhanced to help with colour
 blindness, see:
 <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/colour_scales.html#ncar-command-language-enhanced-to-help-with-colour-blindness">https://ncas-cms.github.io/cf-plot/build/colour_scales.html#ncar-command-language-enhanced-to-help-with-colour-blindness</a>.
 These colour maps are better for accessibility.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colour_scales_ncl</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;posneg_1&quot;</span><span class="p">,</span> <span class="s2">&quot;GreenMagenta16&quot;</span><span class="p">,</span> <span class="s2">&quot;StepSeq25&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_ncl</span></a> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;posneg_1&quot;</span><span class="p">,</span> <span class="s2">&quot;GreenMagenta16&quot;</span><span class="p">,</span> <span class="s2">&quot;StepSeq25&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>c. Orography/bathymetry colour scales, see:
@@ -180,16 +173,16 @@ These colour maps are better for accessibility.</p>
 These are used to show the shape/contour of land masses, but bear in mind the
 data we show here is air temperature so doesn’t represent this and
 therefore it is not a good choice in this case:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colour_scales_ob</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wiki_1_0_2&quot;</span><span class="p">,</span> <span class="s2">&quot;wiki_2_0&quot;</span><span class="p">,</span> <span class="s2">&quot;wiki_2_0_reduced&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_ob</span></a> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wiki_1_0_2&quot;</span><span class="p">,</span> <span class="s2">&quot;wiki_2_0&quot;</span><span class="p">,</span> <span class="s2">&quot;wiki_2_0_reduced&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>4. We plot each category of colourmap in a given columns of the subplot,
 but given the ‘gpos’ function positions subplots from left to right, row by
 row from the top, we need to interleave the values in a list. We can use
 zip to do this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colour_scales_columns</span> <span class="o">=</span> <span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_columns</span></a> <span class="o">=</span> <span class="p">[</span>
     <span class="n">cscale</span>
-    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">colour_scales_pu</span><span class="p">,</span> <span class="n">colour_scales_ncl</span><span class="p">,</span> <span class="n">colour_scales_ob</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_pu</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_ncl</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_ob</span></a><span class="p">)</span>
     <span class="k">for</span> <span class="n">cscale</span> <span class="ow">in</span> <span class="n">category</span>
 <span class="p">]</span>
 </pre></div>
@@ -199,7 +192,7 @@ number of rows * number of columns = number of colour scales.
 Then we loop through all the different colour maps defined and plot
 as subplots, with each category in the same column, labelling each column
 with the colour scale category:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ncas-cms.github.io/cf-plot/build/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.suptitle.html#matplotlib.pyplot.suptitle" title="matplotlib.pyplot.suptitle" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span></a><span class="p">(</span>
     <span class="p">(</span>
         <span class="s2">&quot;Air temperature (K) at 850 mbar pressure shown in different &quot;</span>
@@ -207,44 +200,44 @@ with the colour scale category:</p>
     <span class="p">),</span>
     <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">colour_scale</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colour_scales_columns</span><span class="p">):</span>
-    <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="n">colour_scale</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scale</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scales_columns</span></a><span class="p">):</span>
+    <a href="https://ncas-cms.github.io/cf-plot/build/gpos.html#cfplot.gpos" title="cfplot.gpos" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <a href="https://ncas-cms.github.io/cf-plot/build/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scale</span></a><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
     <span class="c1"># For the topmost plots, label the column with the colour scale category</span>
     <span class="c1"># using the &#39;title&#39; argument, otherwise don&#39;t add a title.</span>
     <span class="c1"># Ensure the order the titles are written in corresponds to the</span>
     <span class="c1"># order unzipped in step 4, so the columns match up correctly.</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">set_title</span> <span class="o">=</span> <span class="s2">&quot;Perceptually uniform</span><span class="se">\n</span><span class="s2">colour maps&quot;</span>
-    <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">set_title</span> <span class="o">=</span> <span class="s2">&quot;NCL colour maps enhanced to </span><span class="se">\n</span><span class="s2">help with colour blindness&quot;</span>
-    <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">set_title</span> <span class="o">=</span> <span class="s2">&quot;Orography/bathymetry</span><span class="se">\n</span><span class="s2">colour maps&quot;</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">set_title</span></a> <span class="o">=</span> <span class="s2">&quot;Perceptually uniform</span><span class="se">\n</span><span class="s2">colour maps&quot;</span>
+    <span class="k">elif</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">set_title</span></a> <span class="o">=</span> <span class="s2">&quot;NCL colour maps enhanced to </span><span class="se">\n</span><span class="s2">help with colour blindness&quot;</span>
+    <span class="k">elif</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">set_title</span></a> <span class="o">=</span> <span class="s2">&quot;Orography/bathymetry</span><span class="se">\n</span><span class="s2">colour maps&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">set_title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">set_title</span></a> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">850</span><span class="p">),</span>
-        <span class="n">title</span><span class="o">=</span><span class="n">set_title</span><span class="p">,</span>
+    <a href="https://ncas-cms.github.io/cf-plot/build/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+        <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">f</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">850</span><span class="p">),</span>
+        <span class="n">title</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">set_title</span></a><span class="p">,</span>
         <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">axes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">colorbar_drawedges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">colorbar_title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Shown in &#39;</span><span class="si">{</span><span class="n">colour_scale</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+        <span class="n">colorbar_title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Shown in &#39;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">colour_scale</span></a><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
         <span class="n">colorbar_fraction</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
         <span class="n">colorbar_thick</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
         <span class="n">colorbar_fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+<a href="https://ncas-cms.github.io/cf-plot/build/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.001 seconds)</p>
+<img src="../_images/sphx_glr_plot_17_recipe_001.png" srcset="../_images/sphx_glr_plot_17_recipe_001.png" alt="Air temperature (K) at 850 mbar pressure shown in different categories of colour scale" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  7.351 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-17-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_17_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/ffae123bf6051d7c188574287d6d7f24/plot_17_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_17_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/plot_17_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_17_recipe.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../_downloads/c0d1a04cfbcbdd44ff201677f819d861/plot_17_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_17_recipe.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -258,7 +251,7 @@ with the colour scale category:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2025, NCAS | Page built on 2025-04-02.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

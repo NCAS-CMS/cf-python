@@ -27,6 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Resampling Land Use Flags to a Coarser Grid" href="plot_15_recipe.html" />
+    <link rel="prev" title="Calculate and plot the Niño 3.4 Index" href="plot_13_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -75,10 +77,12 @@
 <script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -90,6 +94,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_13_recipe.html" title="previous chapter">Calculate and plot the Niño 3.4 Index</a></li>
+      <li>Next: <a href="plot_15_recipe.html" title="next chapter">Resampling Land Use Flags to a Coarser Grid</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -135,66 +143,68 @@ during the 2018 boreal spring/summer season in the Northern Hemisphere.</p>
 <ol class="arabic simple">
 <li><p>Import cf-python and cf-plot:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
-</pre></div>
-</div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/david/NCAS-CMS/cf-python/docs/source/recipes/plot_14_recipe.py&quot;</span>, line <span class="m">14</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;cfplot&#39;</span>
+<span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Read and select the 200 hPa geopotential by index and look at its contents:</p></li>
+<li><p>Read and select the 200 hpa geopotential by index and look at its contents:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gp</span> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_z200.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">gp</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gp</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_z200.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gp</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: geopotential (ncvar%z)
+-----------------------------
+Data            : geopotential(long_name=time(252), long_name=latitude(721), long_name=longitude(1440)) m**2 s**-2
+Dimension coords: long_name=time(252) = [2000-01-01 00:00:00, ..., 2020-12-01 00:00:00] gregorian
+                : long_name=latitude(721) = [90.0, ..., -90.0] degrees_north
+                : long_name=longitude(1440) = [0.0, ..., 359.75] degrees_east
 </pre></div>
 </div>
 <p>3. Convert the geopotential data to geopotential height by dividing it by the
 acceleration due to gravity (approximated as 9.81 <span class="math notranslate nohighlight">\(m \cdot {s}^{-2}\)</span>):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gph</span> <span class="o">=</span> <span class="n">gp</span> <span class="o">/</span> <span class="mf">9.81</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph</span></a> <span class="o">=</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gp</span></a> <span class="o">/</span> <span class="mf">9.81</span>
 </pre></div>
 </div>
 <p>4. Subset the geopotential height to extract data specifically for July 2018,
 a significant month due to heat extremes and heavy rainfall:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gph_july</span> <span class="o">=</span> <span class="n">gph</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><span class="mi">2018</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph_july</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">gph</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><span class="mi">2018</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
 <li><p>Plot contour lines of this geopotential height for July 2018. Here:</p></li>
 </ol>
 <ul class="simple">
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gopen.html">cfplot.gopen</a> is used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
 define the parts of the plot area, which is closed by
-<a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gclose.html">cfplot.gclose</a>;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/mapset.html">cfplot.mapset</a> is used to
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to
 set the map projection to North Polar Stereographic;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/setvars.html">cfplot.setvars</a> is used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/setvars.html">cfplot.setvars</a> is used to
 set various attributes of the plot, like setting the thickness of the lines
 that represent continents;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/con.html">cfplot.con</a> plots the contour
-lines representing the 200 hPa geopotential height values without filling
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a> plots the contour
+lines representing the 200 hpa geopotential height values without filling
 between the contour lines (<code class="docutils literal notranslate"><span class="pre">fill=False</span></code>) and no colour bar
 (<code class="docutils literal notranslate"><span class="pre">colorbar=False</span></code>);</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/levs.html">cfplot.levs</a> is used to
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/levs.html">cfplot.levs</a> is used to
 specify two contour levels, 12000 and 12300 m, corresponding to the
 approximate polar-front jet and subtropical jet respectively;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/con.html">cfplot.con</a> is again used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a> is again used to
 plot the contour lines for polar-front jet and subtropical jet with a
 thicker line width;</p></li>
 <li><p><a class="reference external" href="https://scitools.org.uk/cartopy/docs/v0.15/matplotlib/geoaxes.html#cartopy.mpl.geoaxes.GeoAxes.stock_img">cfp.plotvars.mymap.stock_img()</a>
 then finally visualises the Earth’s surface in cf-plot’s
 <code class="docutils literal notranslate"><span class="pre">cfp.plotvars.mymap</span></code> plot object:</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span><span class="n">continent_thickness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/setvars.html#cfplot.setvars" title="cfplot.setvars" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span></a><span class="p">(</span><span class="n">continent_thickness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">gph_july</span><span class="p">,</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph_july</span></a><span class="p">,</span>
     <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">line_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -203,9 +213,9 @@ then finally visualises the Earth’s surface in cf-plot’s
     <span class="n">colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">12300</span><span class="p">])</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">gph_july</span><span class="p">,</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">12300</span><span class="p">])</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph_july</span></a><span class="p">,</span>
     <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
@@ -214,32 +224,40 @@ then finally visualises the Earth’s surface in cf-plot’s
 <span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">stock_img</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="6">
+<img src="../_images/sphx_glr_plot_14_recipe_001.png" srcset="../_images/sphx_glr_plot_14_recipe_001.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><ol class="arabic simple" start="6">
 <li><p>Read and select the 2-metre temperature by index and look at its contents:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t2m</span> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_t2m.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">t2m</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/ERA5_monthly_averaged_t2m.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Field: long_name=2 metre temperature (ncvar%t2m)
+------------------------------------------------
+Data            : long_name=2 metre temperature(long_name=time(996), long_name=latitude(721), long_name=longitude(1440)) K
+Dimension coords: long_name=time(996) = [1940-01-01 00:00:00, ..., 2022-12-01 00:00:00] gregorian
+                : long_name=latitude(721) = [90.0, ..., -90.0] degrees_north
+                : long_name=longitude(1440) = [0.0, ..., 359.75] degrees_east
 </pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li><p>Set the units from Kelvin to degrees Celsius:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t2m</span><span class="o">.</span><span class="n">Units</span> <span class="o">=</span> <a href="../class/cf.Units.html#cf.Units" title="cf.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cf</span><span class="o">.</span><span class="n">Units</span></a><span class="p">(</span><span class="s2">&quot;degreesC&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../attribute/cf.Field.Units.html#cf.Field.Units" title="cf.Field.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-attribute"><span class="n">t2m</span><span class="o">.</span><span class="n">Units</span></a> <span class="o">=</span> <a href="../class/cf.Units.html#cf.Units" title="cf.Units" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class"><span class="n">cf</span><span class="o">.</span><span class="n">Units</span></a><span class="p">(</span><span class="s2">&quot;degreesC&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="8">
 <li><p>Extract a subset for July across the years for <code class="docutils literal notranslate"><span class="pre">t2m</span></code>:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t2m_july</span> <span class="o">=</span> <span class="n">t2m</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.month.html#cf.month" title="cf.month" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">month</span></a><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>9. The 2-meter temperature climatology is then calculated for the month of
 July over the period from 1981 to 2010, which provides a baseline against
 which anomalies in later years are compared:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t2m_july_climatology</span> <span class="o">=</span> <span class="n">t2m_july</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july_climatology</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m_july</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
     <span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="mi">1981</span><span class="p">,</span> <span class="mi">2010</span><span class="p">))</span>
 <span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;T: mean&quot;</span><span class="p">)</span>
 </pre></div>
@@ -248,8 +266,8 @@ which anomalies in later years are compared:</p>
 relative to the climatological baseline (<code class="docutils literal notranslate"><span class="pre">t2m_july_climatology</span></code>). This
 indicates how much the temperatures for that month in that year deviated from
 the long-term average for July across the 1981-2010 period:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t2m_july_anomaly_2018</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">t2m_july</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><span class="mi">2018</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">-</span> <span class="n">t2m_july_climatology</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july_anomaly_2018</span></a> <span class="o">=</span> <span class="p">(</span>
+    <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">t2m_july</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><span class="mi">2018</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">-</span> <a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july_climatology</span></a>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -260,48 +278,48 @@ meteorological conditions, particularly abnormalities in the jet stream. To
 provide an insight into the atmospheric conditions, the temperature anomalies
 and the geopotential height contours are plotted using cf-plot. Here:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gopen.html">cfplot.gopen</a> is used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to
 define the parts of the plot area, which is closed by
-<a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gclose.html">cfplot.gclose</a>;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/mapset.html">cfplot.mapset</a> is used to
+<a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>;</p></li>
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/mapset.html">cfplot.mapset</a> is used to
 set the map projection to Robinson;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/setvars.html">cfplot.setvars</a> is used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/setvars.html">cfplot.setvars</a> is used to
 set various attributes of the plot, like setting the thickness of the lines
 that represent continents and master title properties;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/levs.html">cfplot.levs</a> is used to
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/levs.html">cfplot.levs</a> is used to
 specify the contour levels for temperature anomalies, starting from -2 to 2
 with an interval of 0.5;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/cscale.html">cfplot.cscale</a> is used to
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/cscale.html">cfplot.cscale</a> is used to
 choose one of the colour maps amongst many available;</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/con.html">cfplot.con</a> plots contour fill
+<li><p><a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a> plots contour fill
 of temperature anomalies without contour lines (<code class="docutils literal notranslate"><span class="pre">lines=False</span></code>);</p></li>
-<li><p><a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/levs.html">cfplot.levs()</a> is used to
+<li><p><a class="reference external" href="https://ajheaps.github.io/cf-plot/levs.html">cfplot.levs()</a> is used to
 reset contour levels to default after which the steps to plot the contour
-lines representing the 200 hPa geopotential height values, the approximate
+lines representing the 200 hpa geopotential height values, the approximate
 polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/mapset.html#cfplot.mapset" title="cfplot.mapset" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span></a><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/setvars.html#cfplot.setvars" title="cfplot.setvars" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span></a><span class="p">(</span>
     <span class="n">continent_thickness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
     <span class="n">master_title</span><span class="o">=</span><span class="s2">&quot;July 2018&quot;</span><span class="p">,</span>
     <span class="n">master_title_fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span>
     <span class="n">master_title_location</span><span class="o">=</span><span class="p">[</span><span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.83</span><span class="p">],</span>
 <span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;temp_19lev&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">t2m_july_anomaly_2018</span><span class="p">,</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/cscale.html#cfplot.cscale" title="cfplot.cscale" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span></a><span class="p">(</span><span class="s2">&quot;temp_19lev&quot;</span><span class="p">)</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t2m_july_anomaly_2018</span></a><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">colorbar_title</span><span class="o">=</span><span class="s2">&quot;Temperature anomaly relative to 1981-2010 ($\degree C$)&quot;</span><span class="p">,</span>
     <span class="n">colorbar_fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
     <span class="n">colorbar_thick</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">gph_july</span><span class="p">,</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph_july</span></a><span class="p">,</span>
     <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">line_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -310,9 +328,9 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
     <span class="n">colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">12300</span><span class="p">])</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">gph_july</span><span class="p">,</span>
+<a href="https://ajheaps.github.io/cf-plot/levs.html#cfplot.levs" title="cfplot.levs" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span></a><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="mi">12000</span><span class="p">,</span> <span class="mi">12300</span><span class="p">])</span>
+<a href="https://ajheaps.github.io/cf-plot/con.html#cfplot.con" title="cfplot.con" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">con</span></a><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gph_july</span></a><span class="p">,</span>
     <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
@@ -320,13 +338,13 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
     <span class="n">colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+<a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.001 seconds)</p>
+<img src="../_images/sphx_glr_plot_14_recipe_002.png" srcset="../_images/sphx_glr_plot_14_recipe_002.png" alt="plot 14 recipe" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  30.051 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-14-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_14_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_14_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_14_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_14_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_14_recipe.ipynb</span></code></a></p>
@@ -343,7 +361,7 @@ polar-front jet and subtropical jet from Step 5 are repeated:</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

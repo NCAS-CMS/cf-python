@@ -27,6 +27,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculating and plotting the relative vorticity" href="plot_10_recipe.html" />
+    <link rel="prev" title="Plotting statistically significant temperature trends with stippling" href="plot_08_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,7 +46,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.17.0</a></h1>
 
 
 
@@ -75,10 +77,12 @@
 <script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -90,6 +94,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
+      <li>Previous: <a href="plot_08_recipe.html" title="previous chapter">Plotting statistically significant temperature trends with stippling</a></li>
+      <li>Next: <a href="plot_10_recipe.html" title="next chapter">Calculating and plotting the relative vorticity</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -133,10 +141,10 @@ concentration and 2-metre temperature.</p>
 <ol class="arabic simple">
 <li><p>Import cf-python, numpy and matplotlib.pyplot:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -162,14 +170,14 @@ index and print the description to show properties of all constructs:</p>
 Field: mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air (ncvar%pm2p5)
 ---------------------------------------------------------------------------------
 Conventions = &#39;CF-1.6&#39;
-_FillValue = np.int16(-32767)
+_FillValue = -32767
 history = &#39;2023-05-02 11:17:49 GMT by grib_to_netcdf-2.25.1: /opt/ecmwf/mars-
            client/bin/grib_to_netcdf.bin -S param -o /cache/tmp/4e68aba0-50a9-
            4f06-947c-9fc7444b7838-adaptor.mars.internal-1683026269.508034-
            23606-13-tmp.nc /cache/tmp/4e68aba0-50a9-4f06-947c-9fc7444b7838-
            adaptor.mars.internal-1683026265.2095394-23606-10-tmp.grib&#39;
 long_name = &#39;Particulate matter d &lt;= 2.5 um&#39;
-missing_value = np.int16(-32767)
+missing_value = -32767
 standard_name = &#39;mass_concentration_of_pm2p5_ambient_aerosol_particles_in_air&#39;
 units = &#39;kg m**-3&#39;
 
@@ -204,14 +212,14 @@ Dimension coordinate: long_name=longitude
 Field: long_name=2 metre temperature (ncvar%t2m)
 ------------------------------------------------
 Conventions = &#39;CF-1.6&#39;
-_FillValue = np.int16(-32767)
+_FillValue = -32767
 history = &#39;2023-05-02 11:17:49 GMT by grib_to_netcdf-2.25.1: /opt/ecmwf/mars-
            client/bin/grib_to_netcdf.bin -S param -o /cache/tmp/4e68aba0-50a9-
            4f06-947c-9fc7444b7838-adaptor.mars.internal-1683026269.508034-
            23606-13-tmp.nc /cache/tmp/4e68aba0-50a9-4f06-947c-9fc7444b7838-
            adaptor.mars.internal-1683026265.2095394-23606-10-tmp.grib&#39;
 long_name = &#39;2 metre temperature&#39;
-missing_value = np.int16(-32767)
+missing_value = -32767
 units = &#39;K&#39;
 
 Data(long_name=time(6), long_name=latitude(241), long_name=longitude(480)) = [[[247.0076398602821, ..., 226.25710500984027]]] K
@@ -244,6 +252,9 @@ Dimension coordinate: long_name=longitude
 <a href="../method/cf.Field.get_property.html#cf.Field.get_property" title="cf.Field.get_property" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp_field</span><span class="o">.</span><span class="n">get_property</span></a><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;degC&#39;
+</pre></div>
+</div>
 <p>5. Digitize the PM2.5 mass concentration and 2-metre temperature fields.
 This step counts the number of values in each of the 10 equally sized bins
 spanning the range of the values. The <code class="docutils literal notranslate"><span class="pre">'return_bins=True'</span></code> argument makes
@@ -265,7 +276,7 @@ sure that the calculated bins are also returned:</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="8">
-<li><p>Calculate bin centres for PM2.5 and temperature bins:</p></li>
+<li><p>Calculate bin centers for PM2.5 and temperature bins:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bin_centers</span></a> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">pm25_bins</span></a><span class="p">]</span>
 <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bin_centers</span></a> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <a href="../class/cf.Data.html#cf.Data" title="cf.Data" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_bins</span></a><span class="p">]</span>
@@ -290,10 +301,10 @@ disables the scientific notation on the y-axis:</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_09_recipe_001.png" srcset="../_images/sphx_glr_plot_09_recipe_001.png" alt="Joint Histogram of PM2.5 and 2-metre Temperature" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.395 seconds)</p>
+<img src="../_images/sphx_glr_plot_09_recipe_001.png" srcset="../_images/sphx_glr_plot_09_recipe_001.png" alt="Joint Histogram of PM2.5 and 2-metre Temperature" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.643 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-09-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_09_recipe.py</span></code></p>
+<p><a class="reference download internal" download="" href="../_downloads/plot_09_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_09_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_09_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_09_recipe.ipynb</span></code></a></p>
@@ -310,7 +321,7 @@ disables the scientific notation on the y-axis:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
