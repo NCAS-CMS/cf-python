@@ -19,7 +19,7 @@ class Quantization(cfdm.Quantization):
     take the form ``software-name version version-string
     [(optional-information)]``.
 
-    The retained precision of the algorthm is defined with either the
+    The retained precision of the algorithm is defined with either the
     ``quantization_nsb`` or ``quantization_nsd`` parameter.
 
     For instance, the following parameters describe quantization via

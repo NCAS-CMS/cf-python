@@ -265,6 +265,23 @@ Miscellaneous data operations
    ~cf.Field.persist
    ~cf.Field.persist_metadata
  
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.get_quantization
+   ~cf.Field._set_quantization
+   ~cf.Field._del_quantization
+   ~cf.Field.get_quantize_on_write
+   ~cf.Field.set_quantize_on_write
+   ~cf.Field.del_quantize_on_write
+
 Metadata constructs
 -------------------
 

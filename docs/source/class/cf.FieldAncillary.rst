@@ -237,6 +237,23 @@ Data
    ~cf.FieldAncillary.has_bounds
    ~cf.FieldAncillary.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.get_quantization
+   ~cf.FieldAncillary._set_quantization
+   ~cf.FieldAncillary._del_quantization
+   ~cf.FieldAncillary.get_quantize_on_write
+   ~cf.FieldAncillary.set_quantize_on_write
+   ~cf.FieldAncillary.del_quantize_on_write
+
 Miscellaneous
 -------------
 

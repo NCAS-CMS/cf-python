@@ -234,6 +234,19 @@ Data
    ~cf.Index.has_bounds
    ~cf.Index.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Index.get_quantization
+   ~cf.Index.get_quantize_on_write
+
 Miscellaneous
 -------------
 

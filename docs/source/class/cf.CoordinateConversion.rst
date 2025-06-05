@@ -10,6 +10,18 @@ cf.CoordinateConversion
    :no-members:
    :no-inherited-members:
    
+Inspection
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CoordinateConversion.dump
+
 Parameter terms
 ---------------
 
@@ -58,6 +70,7 @@ Miscellaneous
 
    ~cf.CoordinateConversion.copy
    ~cf.CoordinateConversion.equals
+   ~cf.CoordinateConversion.creation_commands
 
 Special
 -------

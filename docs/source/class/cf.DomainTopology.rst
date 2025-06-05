@@ -262,6 +262,19 @@ Data
    ~cf.DomainTopology.has_bounds
    ~cf.DomainTopology.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainTopology.get_quantization
+   ~cf.DomainTopology.get_quantize_on_write
+
 Miscellaneous
 -------------
 
