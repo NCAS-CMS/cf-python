@@ -17,10 +17,11 @@
 - [ ] Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 
-- [ ] Ensure that the requirements on dependencies & their versions are
-  up-to-date and consistent in both the `requirements.txt` and in
-  `docs/source/installation.rst`; and in the `_requires` list and
-  `Version` checks in `cf/__init__.py`.
+- [ ] Ensure that the requirements on dependencies & their versions
+  are up-to-date and consistent in both the `requirements.txt` and in
+  `docs/source/installation.rst` (paying particular attention to
+  `cfdm`); and in the `_requires` list and `Version` checks in
+  `cf/__init__.py`.
 
 - [ ] Make sure that `README.md` is up to date.
 
