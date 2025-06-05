@@ -233,6 +233,19 @@ Data
    ~cf.Count.has_bounds
    ~cf.Count.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.get_quantization
+   ~cf.Count.get_quantize_on_write
+
 Miscellaneous
 -------------
 

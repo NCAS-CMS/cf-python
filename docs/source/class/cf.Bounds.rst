@@ -239,6 +239,19 @@ Data
    ~cf.Bounds.has_bounds
    ~cf.Bounds.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Bounds.get_quantization
+   ~cf.Bounds.get_quantize_on_write
+
 Miscellaneous
 -------------
 

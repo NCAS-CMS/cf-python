@@ -241,6 +241,7 @@ from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
 from .interiorring import InteriorRing
+from .quantization import Quantization
 from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds

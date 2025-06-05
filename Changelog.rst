@@ -3,6 +3,14 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
+* New quantization class: `cf.Quantization`
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
+* New quantization methods: `cf.Field.get_quantization`,
+  `cf.Field.get_quantize_on_write`, `cf.Field.set_quantize_on_write`,
+  `cf.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
 * New keyword parameter to `cf.write`: ``chunk_cache``
   (https://github.com/NCAS-CMS/cf-python/issues/871)
 * Read Zarr datasets with `cf.read`

@@ -6692,16 +6692,201 @@ The content of the new file is:
      4, 0, 5 ;
    }
 
-----
-   
 .. _Coordinate-subampling:
 
 Coordinate subsampling
 ^^^^^^^^^^^^^^^^^^^^^^
 
 `Lossy compression by coordinate subsampling`_ was introduced into the
-CF conventions at CF-1.9, but is not yet available in cfdm. It will be
-ready in a future 3.x.0 release.
+CF conventions at CF-1.10 for applications for which the coordinates
+can require considerably more storage than the data itself. Space may
+be saved in the netCDF file by storing a subsample of the coordinates
+that describe the data, and the uncompressed coordinate and auxiliary
+coordinate variables are reconstituted by interpolation, from the
+subsampled coordinate values to the domain of the data
+
+This is illustrated with the file ``subsampled.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+
+.. code-block:: console
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
+      
+   $ ncdump -h subsampled.nc 
+   netcdf subsampled {
+   dimensions:
+   	time = 2 ;
+   	lat = 18 ;
+   	lon = 12 ;
+   	tp_lat = 4 ;
+   	tp_lon = 5 ;
+   variables:
+   	float time(time) ;
+   		time:standard_name = "time" ;
+   		time:units = "days since 2000-01-01" ;
+   	float lat(tp_lat, tp_lon) ;
+   		lat:standard_name = "latitude" ;
+   		lat:units = "degrees_north" ;
+   		lat:bounds_tie_points = "lat_bounds" ;
+   	float lon(tp_lat, tp_lon) ;
+   		lon:standard_name = "longitude" ;
+   		lon:units = "degrees_east" ;
+   		lon:bounds_tie_points = "lon_bounds" ;
+   	float lat_bounds(tp_lat, tp_lon) ;
+   	float lon_bounds(tp_lat, tp_lon) ;
+   	int lat_indices(tp_lat) ;
+   		lat_indices:long_name = "Tie point indices for latitude dimension" ;
+   	int lon_indices(tp_lon) ;
+   		lon_indices:long_name = "Tie point indices for longitude dimension" ;
+   	int bilinear ;
+   		bilinear:interpolation_name = "bi_linear" ;
+   		bilinear:computational_precision = "64" ;
+   		bilinear:tie_point_mapping =
+		    "lat: lat_indices tp_lat lon: lon_indices tp_lon" ;
+   	float q(time, lat, lon) ;
+   		q:standard_name = "specific_humidity" ;
+   		q:units = "1" ;
+   		q:coordinate_interpolation = "lat: lon: bilinear" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.11" ;
+   }
+
+
+Reading and inspecting this file shows the latitude and longitude
+coordinates in uncompressed form, whilst their underlying arrays are
+still in subsampled representation described in the file:
+   
+.. code-block:: python
+   :caption: *Read a field construct from a dataset that has been
+             compressed by corodinate subsampling, and inspect
+             coordinates.*
+
+   >>> f = cf.read('subsampled.nc')[0]
+   >>> print(f)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(2), ncdim%lat(18), ncdim%lon(12)) 1
+   Dimension coords: time(2) = [2000-01-01 00:00:00, 2000-02-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(18), ncdim%lon(12)) = [[-85.0, ..., 85.0]] degrees_north
+                : longitude(ncdim%lat(18), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> lon = f.construct('longitude')
+   >>> lon
+   <AuxiliaryCoordinate: longitude(18, 12) degrees_east>
+   >>> lon.data.source()
+   <SubsampledArray(18, 12): >
+   >>> print(lon.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+   >>> lon.data.source().source()
+   <Data(4, 5): [[15.0, ..., 345.0]]>
+   >>> print(lon.data.source().source().array)
+   [[ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]]
+
+As with all other forms of compression, the field may be treated as if
+were not compressed:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> g = f[0, 6, :]
+   >>> print(g)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(1), ncdim%lat(1), ncdim%lon(12)) 1
+   Dimension coords: time(1) = [2000-01-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(1), ncdim%lon(12)) = [[-25.0, ..., -25.0]] degrees_north
+                   : longitude(ncdim%lat(1), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> print(g.construct('longitude').array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+
+
+The metadata that define the subsampling are contained within the
+coordinate's `Data` object:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> lon = f.construct('longitude')
+   >>> d = lon.data.source()
+   >>> d.get_tie_point_indices()
+   {0: <TiePointIndex: long_name=Tie point indices for latitude dimension(4) >,
+    1: <TiePointIndex: long_name=Tie point indices for longitude dimension(5) >}
+   >>> d.get_computational_precision()
+   '64'
+
+It is not yet, as of version 1.10.0.0, possible to write to disk a
+field construct with compression by coordinate subsampling.
+
+.. _Lossy-compression-via-quantization:
+
+Lossy compression via quantization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression via quantization`_ eliminates false precision,
+usually by rounding the least significant bits of floating-point
+mantissas to zeros, so that a subsequent compression on disk is more
+efficient. Quantization is described by the following parameters:
+
+* The ``algorithm`` parameter names a specific quantization algorithm.
+
+* The ``implementation`` parameter contains unstandardised text that
+  concisely conveys the algorithm provenance including the name of the
+  library or client that performed the quantization, the software
+  version, and any other information required to disambiguate the
+  source of the algorithm employed. The text must take the form
+  ``software-name version version-string [(optional-information)]``.
+
+* The retained precision of the algorithm is defined with either the
+  ``quantization_nsb`` or ``quantization_nsd`` parameter.
+
+If quantization has been applied to the data, then it may be described
+with in a `Quantization` object, accessed via the construct's
+`!get_quantization` method. To apply quantization at the time of
+writing the data to disk, use the construct's `!set_quantize_on_write`
+method:
+
+.. code-block:: python
+   :caption: *Lossy compression via quantization.*
+
+   >>> q, t = cf.read('file.nc')
+   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
+   >>> cf.write(t, 'quantized.nc')
+   >>> quantized = cf.read('quantized.nc')[0]
+   >>> c = quantized.get_quantization()
+   >>> c
+   <CF Quantization: _QuantizeBitGroomNumberOfSignificantDigits=1, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=1>
+   >>> c.parameters()
+   {'algorithm': 'bitgroom',
+    'implementation': 'libnetcdf version 4.9.4-development',
+    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(1),
+    'quantization_nsd': np.int64(1)}
+   >>> t[0, 0, 0].array
+   array([[[262.8]]])
+   >>> quantized[0, 0, 0].array
+   array([[[256.]]])
 
 ----
 

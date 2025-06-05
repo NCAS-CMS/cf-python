@@ -22,6 +22,7 @@ from . import (
     Flags,
     Index,
     List,
+    Quantization,
     mixin,
 )
 from .constants import masked as cf_masked
@@ -280,7 +281,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         instance._Domain = Domain
         instance._DomainAncillary = DomainAncillary
         instance._DomainAxis = DomainAxis
-        #        instance._Data = Data
+        instance._Quantization = Quantization
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray

@@ -116,6 +116,8 @@ of its array manipulation and can:
 * create running means from field constructs,
 * apply differential operators to field constructs,
 * create derived quantities (such as relative vorticity).
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Visualization
 =============

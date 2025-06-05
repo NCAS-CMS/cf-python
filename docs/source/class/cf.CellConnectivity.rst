@@ -261,6 +261,19 @@ Data
    ~cf.CellConnectivity.has_bounds
    ~cf.CellConnectivity.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellConnectivity.get_quantization
+   ~cf.CellConnectivity.get_quantize_on_write
+
 Miscellaneous
 -------------
 

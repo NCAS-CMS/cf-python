@@ -262,6 +262,19 @@ Data
    ~cf.CellMeasure.has_bounds
    ~cf.CellMeasure.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.get_quantization
+   ~cf.CellMeasure.get_quantize_on_write
+
 Miscellaneous
 -------------
 

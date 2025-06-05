@@ -306,6 +306,19 @@ Data
    ~cf.DomainAncillary.get_original_filenames
    ~cf.DomainAncillary.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.get_quantization
+   ~cf.DomainAncillary.get_quantize_on_write
+
 Miscellaneous
 -------------
 

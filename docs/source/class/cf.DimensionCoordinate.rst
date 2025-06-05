@@ -349,6 +349,19 @@ Cyclicity
    ~cf.DimensionCoordinate.anchor
    ~cf.DimensionCoordinate.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.get_quantization
+   ~cf.DimensionCoordinate.get_quantize_on_write
+
 Miscellaneous
 -------------
 

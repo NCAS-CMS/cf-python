@@ -342,6 +342,19 @@ Cyclicity
    ~cf.AuxiliaryCoordinate.get_original_filenames
    ~cf.AuxiliaryCoordinate.persist
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.get_quantization
+   ~cf.AuxiliaryCoordinate.get_quantize_on_write
+
 Miscellaneous
 -------------
 
