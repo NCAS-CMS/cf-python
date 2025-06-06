@@ -5653,11 +5653,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def override_units(self, units, inplace=False, i=False):
         """Override the data array units.
 
-        Not to be confused with setting the `Units` attribute to units
-        which are equivalent to the original units. This is different
-        because in this case the new units need not be equivalent to the
-        original ones and the data array elements will not be changed to
-        reflect the new units.
+        The new units need not be equivalent to the original ones, and
+        the data array elements will not be changed to reflect the new
+        units. Therefore, this method should only be used when it is
+        known that the data array values are correct but the units
+        have incorrectly encoded.
+
+        Not to be confused with changing to equivalent units with the
+        `to_units` method or the `Units`, `units`, or `calendar`
+        attributes. These approaches also convert the data to have the
+        new units.
+
+        .. seealso:: `override_calendar`, `to_units`, `Units`,
+                     `units`, `calendar`
 
         :Parameters:
 
@@ -5695,13 +5703,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
-        """Override the calendar of the data array elements.
+        """Override the calendar of date-time units.
 
-        Not to be confused with using the `change_calendar` method or
-        setting the `d.Units.calendar`. `override_calendar` is different
-        because the new calendar need not be equivalent to the original
-        ones and the data array elements will not be changed to reflect
-        the new units.
+        The new calendar need not be equivalent to the original one,
+        and the data array elements will not be changed to reflect the
+        new calendar. Therefore, this method should only be used when
+        it is known that the data array values are correct but the
+        calendar has been incorrectly encoded.
+
+        Not to be confused with changing to equivalent units with the
+        `to_units` method or the `Units`, `units`, or `calendar`
+        attributes. These approaches also convert the data to have the
+        new units.
+
+        .. seealso:: `override_units`, `to_units`, `Units`, `units`,
+                     `calendar`
 
         :Parameters:
 
@@ -7364,6 +7380,57 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
+
+    @_inplace_enabled(default=False)
+    def to_units(self, units, inplace=False):
+        """Change the data array units.
+
+        Changing the units will causes the data values to be changed
+        to match the new units, so the new units must be equivalent to
+        the existing ones.
+
+        Not to be confused with overriding the units with
+        `override_units`
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `override_units`, `override_calendar`, `Units`,
+                     `units`, `calendar`
+
+        :Parameters:
+
+            units: `str` or `Units`
+                The new units for the data array.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The new data, or `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2], 'km')
+        >>> e = d.to_units('metre')
+        >>> print(e.Units)
+        'metre'
+        >>> print(e.array)
+        [1000. 2000.]
+        >>> e.to_units('miles', inplace=True)
+        >>> print(e.Units)
+        'miles'
+        >>> print(e.array)
+        [0.62137119 1.24274238]
+        >>> e.to_units('degC')
+        Traceback (most recent call last)
+            ...
+        ValueError: Can't set Units to <Units: degC> that are not equivalent to the current units <Units: miles>. Consider using the override_units method instead.
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        d.Units = self._Units_class(units)
+        return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
