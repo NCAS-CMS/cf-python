@@ -121,7 +121,7 @@ Documentation for all versions of cf.
 * `version 0.9.4.1   <http://cfpython.bitbucket.io/docs/0.9.4.1/build/index.html>`_
 * `version 0.9.4     <http://cfpython.bitbucket.io/docs/0.9.4/build/index.html>`_ (2012-03-15)
 * `version 0.9.3.4   <http://cfpython.bitbucket.io/docs/0.9.3.4/build/index.html>`_
-* `version 0.9.3.3   <http://cfpython.bitbucket.io/docs/0.9.3.3/build/index.html>`_ (2018-02-08)
+* `version 0.9.3.3   <http://cfpython.bitbucket.io/docs/0.9.3.3/build/index.html>`_ (2012-02-08)
 * `version 0.9.3.2   <http://cfpython.bitbucket.io/docs/0.9.3.2/build/index.html>`_
 * `version 0.9.3.1   <http://cfpython.bitbucket.io/docs/0.9.3.1/build/index.html>`_
 * `version 0.9.2     <http://cfpython.bitbucket.io/docs/0.9.2/build/index.html>`_  (2011-08-26)
