@@ -106,6 +106,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.to_units
    ~cf.Bounds.override_units
    ~cf.Bounds.override_calendar
 

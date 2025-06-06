@@ -1,3 +1,13 @@
+Version NEXTVERSION
+--------------
+
+**2025-??-??**
+
+* New methods: `cf.Field.to_units`, `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+
+----
+
 Version 3.18.0
 --------------
 

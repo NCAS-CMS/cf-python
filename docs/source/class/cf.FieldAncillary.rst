@@ -105,6 +105,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.to_units
    ~cf.FieldAncillary.override_units
    ~cf.FieldAncillary.override_calendar
 

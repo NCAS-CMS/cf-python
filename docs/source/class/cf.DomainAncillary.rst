@@ -175,6 +175,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.to_units
    ~cf.DomainAncillary.override_units
    ~cf.DomainAncillary.override_calendar
 
