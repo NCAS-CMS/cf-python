@@ -4885,6 +4885,92 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
+    @_inplace_enabled(default=False)
+    def healpix_refinement_level(self, level=None, inplace=False):
+        """TODOHEALPIX"""
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        if not level:
+            # Level None or 0
+            return f
+        
+        key, healpix_index =f.coordinate("healpix_index", item=True, defualt=(None, None))
+
+        axis = f.domain_axis("healpix_index", key=True )
+
+        crs = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+ 
+        healpix_index_method = crs.coordinate_conversion.get_property(
+            "healpix_index_method", None
+        )
+        if healpix_index_method != "nested":
+            raise ValueError("TODOHEALPIX")
+
+        refinement_level = crs.coordinate_conversion.get_property(
+            "refinement_level", None
+        )
+        if refinement_level is None:
+            raise ValueError("TODOHEALPIX")
+        
+        if level > 0:
+            if level >  refinement_level:
+                raise ValueError("TODOHEALPIX")
+
+            level -= refinement_level
+        elif level < -refinement_level:
+            raise ValueError("TODOHEALPIX")
+        
+        refinement_level = crs.coordinate_conversion.set_property(
+            "refinement_level", refinement_level + level
+        )
+        N = -level * 4
+        
+        i = f.get_data_axes().index(axis)
+        f.data.coarsen(np.ma.mean, axes={i: N},
+                       trim_excess=True, inplace=True)
+
+        # Coarsen 1-d domain ancillary constructs that span the
+        # HEALPix dimension        
+        domain_ancillaries = f.domain_ancillaries(
+                filter_by_axis=(axis,), axis_mode="and", todict=True
+        )
+        for key, domain_ancillary in domain_ancillaries.items():
+            i = f.get_data_axes(key).index(axis)
+            domain_ancillary.data.coarsen(np.ma.mean, 
+                                          axes={i: N}, trim_excess=True,
+                                          inplace=True)
+
+        coarsened_metadata = domain_ancillaries
+        
+        # Coarsen 1-d cell measure constructs that spanq the HEALPix
+        # dimension
+        cell_measures = f.cell_measures(
+            filter_by_axis=(axis,), axis_mode="and", todict=True
+        )
+        for key, cell_measure in cell_measures.items():
+            i = f.get_data_axes(key).index(axis)
+            cell_measure.data.coarsen(np.sum, 
+                                      axes={i: N}, trim_excess=True,
+                                      inplace=True)
+
+        coarsened_metadata |= cell_measures
+        
+        # Remove all other metadata constructs that span the HEALPix
+        # dimension
+        for key in f.constructs(
+                filter_by_axis=(axis,), axis_mode="or", todict=True
+        ).values():
+            if key in coarsened_metadata:
+                continue
+
+            f.del_construct(key)
+
+        #TODOHEALPIX recreated healpix_idnex coordinates
+        healpix_index = healpix_index[::N]
+        f.set_construct(healpix_index, axes=axis, copy=False)
+            
+        return f
+            
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.
 
