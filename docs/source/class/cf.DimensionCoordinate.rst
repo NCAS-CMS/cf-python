@@ -196,6 +196,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.to_units
    ~cf.DimensionCoordinate.override_units
    ~cf.DimensionCoordinate.override_calendar
 
