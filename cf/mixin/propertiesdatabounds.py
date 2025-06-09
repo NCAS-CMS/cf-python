@@ -2188,10 +2188,9 @@ class PropertiesDataBounds(PropertiesData):
         it is known that the data array values are correct but the
         calendar has been incorrectly encoded.
 
-        Not to be confused with changing to equivalent units with the
-        `to_units` method or the `Units`, `units`, or `calendar`
-        attributes. These approaches also convert the data to have the
-        new units.
+        Not to be confused with changing to an equivalent calendar
+        with the `to_units` method or the `Units` or `calendar`
+        attributes.
 
         .. seealso:: `override_units`, `to_units`, `Units`, `units`,
                      `calendar`
@@ -3326,8 +3325,8 @@ class PropertiesDataBounds(PropertiesData):
         """Change the data array units.
 
         Changing the units will causes the data values to be changed
-        to match the new units, so the new units must be equivalent to
-        the existing ones.
+        to match the new units, therefore the new units must be
+        equivalent to the existing ones.
 
         Not to be confused with overriding the units with
         `override_units`
@@ -3352,20 +3351,22 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples**
 
-        >>> f.Units TODOUNITS
-        <Units: hPa>
-        >>> f.datum(0)
-        100000.0
-        >>> f.override_units('km')
-        >>> f.Units
-        <Units: km>
-        >>> f.datum(0)
-        100000.0
-        >>> f.override_units(Units('watts'))
-        >>> f.Units
-        <Units: watts>
-        >>> f.datum(0)
-        100000.0
+        >>> print(f.Units)
+        'km'
+        >>> print(f.array)
+        [1 2]
+        >>> g = f.to_units('metre')
+        >>> print(g.Units)
+        'metre'
+        >>> print(g.array)
+        [1000. 2000.]
+        >>> g.to_units('miles', inplace=True)
+        >>> print(g.array)
+        [0.62137119 1.24274238]
+        >>> g.to_units('degC')
+        Traceback (most recent call last)
+            ...
+        ValueError: Can't set Units to <Units: degC> that are not equivalent to the current units <Units: miles>. Consider using the override_units method instead.
 
         """
         return self._apply_superclass_data_oper(

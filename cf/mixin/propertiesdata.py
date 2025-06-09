@@ -4436,8 +4436,8 @@ class PropertiesData(Properties):
         """Change the data array units.
 
         Changing the units will causes the data values to be changed
-        to match the new units, so the new units must be equivalent to
-        the existing ones.
+        to match the new units, therefore the new units must be
+        equivalent to the existing ones.
 
         Not to be confused with overriding the units with
         `override_units`
@@ -5023,13 +5023,12 @@ class PropertiesData(Properties):
         it is known that the data array values are correct but the
         calendar has been incorrectly encoded.
 
-        Not to be confused with changing to equivalent units with the
-        `to_units` method or the `Units`, `units`, or `calendar`
-        attributes. These approaches also convert the data to have the
-        new units.
+        Not to be confused with changing to an equivalent calendar
+        with the `to_units` method or the `Units` or `calendar`
+        attributes.
 
-        .. seealso:: `override_units`, `to_units`, `units`,
-                     `Units`,`calendar`
+        .. seealso:: `override_units`, `to_units`, `units`, `Units`,
+                     `calendar`
 
         :Parameters:
 
@@ -5081,7 +5080,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
-        """Override the units. TODOUNITS
+        """Override the units.
 
         The new units need not be equivalent to the original ones, and
         the data array elements will not be changed to reflect the new
