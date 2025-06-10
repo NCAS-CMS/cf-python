@@ -1343,6 +1343,38 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
+    def coarsen(
+        self, reduction, axes, trim_excess=False, 
+        inplace=False,
+    ):
+        """TODOHEALPIX
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            TODOHEALPIX
+        
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                TODOHEALPIX of the data. If the operation was in-place
+                then `None` is returned.
+
+        **Examples**
+
+            TODOHEALPIX
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        dx = da.coarsen(reduction, axes, trim_excess=trim_excess=False)
+        d._set_dask(dx)
+        return d
+
+    @_inplace_enabled(default=False)
     def convolution_filter(
         self,
         window=None,

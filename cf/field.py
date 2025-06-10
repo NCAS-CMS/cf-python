@@ -4887,62 +4887,110 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     @_inplace_enabled(default=False)
     def healpix_refinement_level(self, level=None, inplace=False):
-        """TODOHEALPIX"""
+        """TODOHEALPIX
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            TODOHEALPIX
+        
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            TODOHEALPIX
+
+        **Examples**
+
+            TODOHEALPIX
+
+        """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if not level:
-            # Level None or 0
-            return f
-        
-        key, healpix_index =f.coordinate("healpix_index", item=True, defualt=(None, None))
+        key, healpix_index = f.coordinate(
+            "healpix_index", item=True, default=(None, None)
+        )
+        if healpix_index is None:
+            raise ValueError("TODOHEALPIX")
 
-        axis = f.domain_axis("healpix_index", key=True )
+        # Get the key of the HEALPix domain axis
+        axis = f.get_data_axes(key)[0]
 
-        crs = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+        cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+        if cr is None:
+            raise ValueError("TODOHEALPIX")
  
-        healpix_index_method = crs.coordinate_conversion.get_property(
+        healpix_index_method = cr.coordinate_conversion.get_property(
             "healpix_index_method", None
         )
+        if healpix_index_method is None:
+            raise ValueError("TODOHEALPIX")
+
         if healpix_index_method != "nested":
             raise ValueError("TODOHEALPIX")
 
-        refinement_level = crs.coordinate_conversion.get_property(
+        refinement_level = cr.coordinate_conversion.get_property(
             "refinement_level", None
         )
         if refinement_level is None:
             raise ValueError("TODOHEALPIX")
-        
-        if level > 0:
-            if level >  refinement_level:
+
+        # Parse 'level'
+        if not level:
+            # Level None or 0: Keep the current refinement level
+            return f
+
+        if level >= 0:
+            if level > refinement_level:
                 raise ValueError("TODOHEALPIX")
 
             level -= refinement_level
         elif level < -refinement_level:
             raise ValueError("TODOHEALPIX")
         
-        refinement_level = crs.coordinate_conversion.set_property(
-            "refinement_level", refinement_level + level
-        )
-        N = -level * 4
-        
-        i = f.get_data_axes().index(axis)
-        f.data.coarsen(np.ma.mean, axes={i: N},
-                       trim_excess=True, inplace=True)
+        # Find the coarsening factor
+        factor = 4 ** -level
 
-        # Coarsen 1-d domain ancillary constructs that span the
-        # HEALPix dimension        
+        # Create the healpix_index coordinates for the new refinement
+        # level
+        healpix = healpix.persist()
+        if healpix.data[0] % factor:
+            raise ValueError("TODOHEALPIX non-full first cell")
+
+        new_index = healpix_index[::factor].persist()
+        if (ttt % factor).any():
+            raise ValueError("TODOHEALPIX")
+        
+        if not (healpix.data.diff() >  0).all():
+            raise ValueError(
+                "TODOHEALPIX not strictly monotinically increaing"
+            )
+        
+        if not (healpix[factor-1::factor] - new_index == factor -1).all():
+            raise ValueError("TODOHEALPIX non-full cells")
+        
+        new_index //= factor
+                
+        # Coarsen the field data
+        i = f.get_data_axes().index(axis)
+        f.data.coarsen(np.ma.mean, axes={i: factor },
+                       inplace=True)
+
+        # Coarsen domain ancillary constructs that span the HEALPix
+        # dimension
         domain_ancillaries = f.domain_ancillaries(
                 filter_by_axis=(axis,), axis_mode="and", todict=True
         )
         for key, domain_ancillary in domain_ancillaries.items():
             i = f.get_data_axes(key).index(axis)
             domain_ancillary.data.coarsen(np.ma.mean, 
-                                          axes={i: N}, trim_excess=True,
+                                          axes={i: factor },
                                           inplace=True)
 
-        coarsened_metadata = domain_ancillaries
+        coarsened_construct_keys = domain_ancillaries
         
-        # Coarsen 1-d cell measure constructs that spanq the HEALPix
+        # Coarsen the cell measure constructs that span the HEALPix
         # dimension
         cell_measures = f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
@@ -4950,25 +4998,32 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for key, cell_measure in cell_measures.items():
             i = f.get_data_axes(key).index(axis)
             cell_measure.data.coarsen(np.sum, 
-                                      axes={i: N}, trim_excess=True,
+                                      axes={i: factor },
                                       inplace=True)
 
-        coarsened_metadata |= cell_measures
+        coarsened_construct_keys |= cell_measures
         
         # Remove all other metadata constructs that span the HEALPix
-        # dimension
+        # dimension, including the healpix_index coordinate construct.
         for key in f.constructs(
                 filter_by_axis=(axis,), axis_mode="or", todict=True
         ).values():
-            if key in coarsened_metadata:
-                continue
+            if key not in coarsened_construct_keys:
+                f.del_construct(key)
 
-            f.del_construct(key)
+        # Replace the HEALPix domain axis
+        domain_axis = f.domain_axis(axis)
+        domain_axis.set_size(f.data.shape[i])
+        f.set_construct(domain_axis, key=axis)
 
-        #TODOHEALPIX recreated healpix_idnex coordinates
-        healpix_index = healpix_index[::N]
-        f.set_construct(healpix_index, axes=axis, copy=False)
-            
+        # Set the healpix_index coordinates for the new refinement
+        # level
+        f.set_construct(new_index, axes=axis, copy=False)
+
+        # Set the new refinement level
+        cr.coordinate_conversion.set_property(
+            "refinement_level", refinement_level + level
+        )
         return f
             
     def histogram(self, digitized):
