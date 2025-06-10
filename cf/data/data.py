@@ -1344,7 +1344,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @_inplace_enabled(default=False)
     def coarsen(
-        self, reduction, axes, trim_excess=False, 
+        self,
+        reduction,
+        axes,
+        trim_excess=False,
         inplace=False,
     ):
         """TODOHEALPIX
@@ -1354,7 +1357,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Parameters:
 
             TODOHEALPIX
-        
+
             {{inplace: `bool`, optional}}
 
         :Returns:
@@ -1370,7 +1373,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        dx = da.coarsen(reduction, axes, trim_excess=trim_excess=False)
+        dx = da.coarsen(reduction, dx, axes, trim_excess=trim_excess)
         d._set_dask(dx)
         return d
 

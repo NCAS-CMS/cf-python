@@ -1,9 +1,8 @@
 import logging
 from numbers import Integral
 
-import numpy as np
 import dask.array as da
-
+import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 from dask.array.slicing import normalize_index
 from dask.base import is_dask_collection
@@ -298,11 +297,11 @@ class FieldDomain:
                 )
 
         # TODOHEALPIX see if there are any implied 1-d corodinates
-        try:        
+        try:
             self = self.create_1d_coordinates()
         except ValueError:
             pass
-            
+
         domain_axes = self.domain_axes(todict=True)
 
         # Initialise the index for each axis
@@ -2425,6 +2424,68 @@ class FieldDomain:
                 continue
 
         return out
+
+    def get_refinement_level(self, default=ValueError()):
+        """TODOHEALPIX
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            TODOHEALPIX
+
+        :Returns:
+
+            `int`
+                TODOHEALPIX
+
+        **Examples**
+
+            TODOHEALPIX
+
+        """
+        cr = self.coordinate_reference(
+            "grid_mapping_name:healpix", default=None
+        )
+        if cr is not None:
+            refinement_level = cr.coordinate_conversion.get_property(
+                "refinement_level", None
+            )
+            if refinement_level is not None:
+                return refinement_level
+
+        return self._default(default, "HEALPix refinement level has been set")
+
+    def get_healpix_order(self, default=ValueError()):
+        """TODOHEALPIX
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            TODOHEALPIX
+
+        :Returns:
+
+            `str`
+                TODOHEALPIX
+
+        **Examples**
+
+            TODOHEALPIX
+
+        """
+        cr = self.coordinate_reference(
+            "grid_mapping_name:healpix", default=None
+        )
+        if cr is not None:
+            healpix_order= cr.coordinate_conversion.get_property(
+                "healpix_order", None
+            )
+            if healpix_order is not None:
+                return healpix_order
+
+        return self._default(default, "HEALPix order has been set")
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
