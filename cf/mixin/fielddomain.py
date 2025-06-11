@@ -296,11 +296,9 @@ class FieldDomain:
                     f"non-negative integer. Got {halo!r}"
                 )
 
-        # TODOHEALPIX see if there are any implied 1-d corodinates
-        try:
-            self = self.create_1d_coordinates()
-        except ValueError:
-            pass
+        # Create any implied 1-d latitude and longitude coordinates
+        # (e.g. implied by HEALPix indices)
+        self = self.create_1d_latlon_coordinates()
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -1879,8 +1877,34 @@ class FieldDomain:
 
         return set(axes)
 
+    def to_ugrid(self):
+        """TODOHEALPIX"""        
+        if not self.is_healpix:
+            raise ValueError("TODOHEALPIX")
+        
+        f, (lat_key, lon_key) = self.create_1d_latlon_coordinates(key=True)
+
+        lat = f.construct(lat_key)
+        lon = f.construct(lon_key)
+        
+        bounds_lat = lat.bounds.to_dask_array()
+        bounds_lon = lon.bounds.to_dask_array()
+
+        _, lat_indices = np.unique(bounds_lat, return_inverse=True)
+        _, lon_indices = np.unique(bounds_lon, return_inverse=True)
+
+        nodes = lat_indices* lat_indices.size   + lon_indices 
+        nodes = nodes.reshape(bounds_lat.shape)
+
+        domain_topology = f._DomainToplogy(data=f._Data(nodes))
+        domain_topology.set_cell('face')
+        
+        axis = f.get_data_axes(keys[0])[0]
+        f.set_construct(domain_topology, axes=axis, copy=False)
+                            
+        
     @_inplace_enabled(default=False)
-    def create_1d_coordinates(self, persist=False, key=False, inplace=False):
+    def create_1d_latlon_coordinates(self, persist=False, key=False, inplace=False):
         """TODOHEALPIX.
 
         .. versionadded:: NEXTVERSION
@@ -1911,96 +1935,126 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        keys = ()
-
         crs = f.coordinate_reference("grid_mapping_name:healpix", default=None)
         if crs is None:
             if key:
-                return f, keys
+                return f, ()
 
             return f
 
-        # ------------------------------------------------------------
-        # Get the HEALPix indices as a Dask array
-        # ------------------------------------------------------------
-        c_key, healpix_index = f.coordinate(
-            "healpix_index", item=True, default=(None, None)
+        refinement_level = crs.coordinate_conversion.get_property(
+            "refinement_level", None
         )
-        if c_key is None:
-            raise ValueError("TODOHEALPIX")
+        if refinement_level is None:
+            if key:
+                return f, ()
 
-        dx = healpix_index.to_dask_array(
-            _force_mask_hardness=False, _force_to_memory=False
+            return f
+
+        healpix_order = crs.coordinate_conversion.get_property(
+            "healpix_order", None
         )
+        if healpix_order not in ("nested", "ring"):
+            if key:
+                return f, ()
+
+            return f
+
+        # Get the healpix_index oordinates and the key of the HEALPix
+        # domain axis
+         c_key, healpix_index = f.coordinate(
+            "healpix_index",
+            filter_by_naxes=(1,),
+            item=True,
+            default=(None, None),
+        )
+        if healpix_index is None:
+            if key:
+                return f, ()
+
+            return f
+        
+        axis = f.get_data_axes(key)[0]
 
         # ------------------------------------------------------------
         # Define functions to create latitudes and longitudes from
         # HEALPix indices
         # ------------------------------------------------------------
-        refinement_level = crs.coordinate_conversion.get_property(
-            "refinement_level", None
-        )
-        if refinement_level is None:
-            raise ValueError("TODOHEALPIX")
+        import healpix
+#        from astropy_healpix import HEALPix
 
-        healpix_index_method = crs.coordinate_conversion.get_property(
-            "healpix_index_method", None
-        )
-        if healpix_index_method is None:
-            raise ValueError("TODOHEALPIX")
+        nside = healpix.order2nside(refinement_level)
+#        hp = HEALPix(nside=nside, order=healpix_order)
+        nested = healpix_order=="nested"
+        
+        coord_func = partial(healpix.pix2ang, nside=nside, nest=nested, lonlat=True)
+        if nested:
+            bounds_func = healpix._chp.nest2ang_uv
+        else:
+            bounds_func = healpix._chp.ring2ang_uv
 
-        if healpix_index_method not in ("nested", "ring"):
-            raise ValueError("TODOHEALPIX")
+        bounds_func = partial(bounds_func , nside)
+        
+        def HEALPix_coordinates(a, lat=False, lon=False):
+            if lat:
+                pos = 1
+            elif lon:               
+                pos = 0
+                
+            coord_func(ipix=a)[pos]
+                
+#            return hp.healpix_to_lonlat(a)[1].degree
 
-        from astropy_healpix import HEALPix
-
-        hp = HEALPix(nside=2**refinement_level, order=healpix_index_method)
-
-        def HEALPix_lon_coordinates(a):
-            return hp.healpix_to_lonlat(a)[0].degree
-
-        def HEALPix_lat_coordinates(a):
-            return hp.healpix_to_lonlat(a)[1].degree
-
-        def HEALPix_lon_bounds(a):
-            return hp.boundaries_lonlat(a)[0].degree
-
-        def HEALPix_lat_bounds(a):
-            return hp.boundaries_lonlat(a)[1].degree
+        def HEALPix_bounds(a, lat=False, lon=False):
+            # Keep an eye on https://github.com/ntessore/healpix/issues/66
+            if lat:
+                pos = 1
+            elif lon:               
+                pos = 0
+                
+            bounds = np.empty((a.size, 4), dtype='float64')
+            
+            for i, (u, v) in enumerate((1, 0), (1,1), (0, 1), (0,0)):
+                b = bounds_func(a, u, v)[pos]
+                np.rad2deg(b, out=b)
+                bounds[:,i] = b
+              
+            return bounds
 
         # ------------------------------------------------------------
         # Create new latitude and longitude coordinates with bounds
         # ------------------------------------------------------------
-        meta = np.array((), dtype=np.dtype("float64"))
+        dx = healpix_index.to_dask_array()
+        meta = np.array((), dtype="float64")
 
         # Latitude coordinates
-        dx = dx.map_blocks(HEALPix_lat_coordinates, meta=meta)
+        dy = dx.map_blocks(HEALPix_coordinates, meta=meta, lat=True )
         lat = f._AuxiliaryCoordinate(
-            data=f._Data(dx, "degrees_north", copy=False),
+            data=f._Data(dy, "degrees_north", copy=False),
             properties={"standard_name": "latitude"},
             copy=False,
         )
 
         # Longitude coordinates
-        dx = dx.map_blocks(HEALPix_lon_coordinates, meta=meta)
+        dy = dx.map_blocks(HEALPix_coordinates, meta=meta, lon=True )
         lon = f._AuxiliaryCoordinate(
-            data=f._Data(dx, "degrees_east", copy=False),
+            data=f._Data(dy, "degrees_east", copy=False),
             properties={"standard_name": "longitude"},
             copy=False,
         )
 
         # Latitude bounds
-        dx = da.blockwise(
-            HEALPix_lat_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta
+        dy = da.blockwise(
+            HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta, lat=True )
         )
-        bounds = f._Bounds(data=dx)
+        bounds = f._Bounds(data=dy)
         lat.set_bounds(bounds)
 
         # Longitude bounds
-        dx = da.blockwise(
-            HEALPix_lon_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta
+        dy = da.blockwise(
+            HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta, lon=True )
         )
-        bounds = f._Bounds(data=dx)
+        bounds = f._Bounds(data=dy)
         lon.set_bounds(bounds)
 
         if persist:
@@ -2010,13 +2064,11 @@ class FieldDomain:
         # ------------------------------------------------------------
         # Set the new latitude and longitude coordinates
         # ------------------------------------------------------------
-        axis = f.get_domain_axes(c_key)[0]
         lat_key = f.set_construct(lat, axes=axis, copy=False)
         lon_key = f.set_construct(lon, axes=axis, copy=False)
-        keys = (lat_key, lon_key)
 
         if key:
-            return f, keys
+            return f, (lat_key, lon_key)
 
         return f
 
@@ -2479,7 +2531,7 @@ class FieldDomain:
             "grid_mapping_name:healpix", default=None
         )
         if cr is not None:
-            healpix_order= cr.coordinate_conversion.get_property(
+            healpix_order = cr.coordinate_conversion.get_property(
                 "healpix_order", None
             )
             if healpix_order is not None:
@@ -2548,6 +2600,8 @@ class FieldDomain:
         * An axis spanned by the domain topology construct of an
           unstructured grid.
 
+        * A HEALPix axis.
+
         * The axis with geometry cells.
 
         .. versionaddedd:: 3.16.3
@@ -2615,6 +2669,10 @@ class FieldDomain:
         if self.domain_topologies(
             filter_by_axis=(axis,), axis_mode="exact", todict=True
         ):
+            return True
+
+        # HEALPix
+        if f.coordinate("healpix_index", filter_by_axis=(axis,), axis_mode="exact", default=None):
             return True
 
         # Geometries

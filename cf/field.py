@@ -4886,8 +4886,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return out
 
     @_inplace_enabled(default=False)
-    def new_healpix_refinement_level(
-            self, level=None, reduction=np.ma.mean, check_coordinates=True, inplace=False
+    def healpix_decrease_refinement_level(
+        self,
+        level=None,
+        reduction=np.ma.mean,
+        check_healpix_index=True,
+        inplace=False,
     ):
         """TODOHEALPIX
 
@@ -4905,29 +4909,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-            TODOHEALPIX
+            >>> TODOHEALPIX
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # Get the healpix_index coordinates
+        # Get the healpix_index oordinates and the key of the HEALPix
+        # domain axis
         key, healpix_index = f.coordinate(
-            "healpix_index", item=True, default=(None, None)
+            "healpix_index",
+            filter_by_naxes=(1,),
+            item=True,
+            default=(None, None),
         )
         if healpix_index is None:
             raise ValueError(
-                "Can't change refinement level: HEALPix index coordinates "
+                "Can't decrease refinement level: HEALPix index coordinates "
                 "have not been set"
             )
 
-        # Get the key of the HEALPix domain axis
         axis = f.get_data_axes(key)[0]
 
+        # Parse the HEALPix coordinate reference
         cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
         if cr is None:
             raise ValueError(
-                "Can't change refinement level: HEALPix grid mapping has not "
-                "been set"
+                "Can't decrease refinement level: HEALPix grid mapping has "
+                "not been set"
             )
 
         healpix_order = cr.coordinate_conversion.get_property(
@@ -4935,21 +4943,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
         if healpix_order is None:
             raise ValueError(
-                "Can't change refinement level: HEALPix order has not "
+                "Can't decrease refinement level: HEALPix order has not "
                 "been set"
             )
 
         if healpix_order != "nested":
             raise ValueError(
-                "HEALPix order must be 'nested' for the refinement "
-                f"level to be changed. Got: {healpix_order!r}"
+                "Can't decrease refinement level: Must have a HEALPix order "
+                f"of 'nested'. Got: {healpix_order!r}"
             )
 
         refinement_level = cr.coordinate_conversion.get_property(
             "refinement_level", None
         )
         if refinement_level is None:
-            raise ValueError("HEALPix refinement level has been set")
+            raise ValueError(
+                "Can't decrease refinement level: HEALPix refinement level "
+                "has been set"
+            )
 
         # Parse 'level'
         if not level:
@@ -4958,71 +4969,77 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if level > 0:
             if level > refinement_level:
-                raise ValueError("TODOHEALPIX")
+                raise ValueError(
+                    "'level' keyword can't be larger than the current "
+                    f"refinement level {refinement_level}. Got: {level!r}"
+                )
 
             # Convert 'level' to a negative number
             level -= refinement_level
         elif level < -refinement_level:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "'level' keyword can't be less than minus the current "
+                f"refinement level {refinement_level}. Got: {level!r}"
+            )
 
-        # Find the coarsening factor, i.e. the ratio of the number of
-        # cells in the original grid to the number of cells in the new
-        # refinement level.
-        factor = 4**-level
+        # Find the number of cells at the original refinement level
+        # that are contained in one cell at the new refinement level.
+        ncells = 4**-level
 
-        if check_coordinates:
+        new_refinement_level = refinement_level + level
+
+        if check_healpix_index:
             data = healpix_index.data.persist()
-            if data[0] % factor:
-                raise ValueError("TODOHEALPIX non-full first cell")
-
-            #            new_data = data[::factor]
-            #            if (new_data % factor).any():
-            #                raise ValueError("TODOHEALPIX non-full cells")
-
             if not (data.diff() > 0).all():
                 raise ValueError(
-                    "TODOHEALPIX not strictly monotinically increaing"
+                    "Can't decrease refinement level: Nested HEALPix indices "
+                    "are not strictly monotonically increasing"
                 )
 
-            if (
-                data[factor - 1 :: factor] - data[::factor] != factor - 1
+            if (data[::ncells] % ncells).any() or (
+                data[ncells - 1 :: ncells] - data[::ncells] != ncells - 1
             ).any():
-                raise ValueError("TODOHEALPIX non-full cells")
+                raise ValueError(
+                    "Can't decrease refinemnent level: At least one cell at "
+                    f"the new refinement level ({new_refinement_level}) "
+                    f"contains fewer than {ncells} cells at the original "
+                    f"refinement level {refinement_level}"
+                )
 
             del data
 
         # Create the healpix_index coordinates for the new refinement
         # level
-        new_index = healpix_index[::factor] // factor
+        new_index = healpix_index[::ncells] // ncells
 
         # Coarsen the field data
         i = f.get_data_axes().index(axis)
         f.data.coarsen(
-            reduction, axes={i: factor}, trim_excess=False, inplace=True
+            reduction, axes={i: ncells}, trim_excess=False, inplace=True
         )
 
         # Coarsen domain ancillary constructs that span the HEALPix
-        # dimension
+        # axis
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
             i = f.get_data_axes(key).index(axis)
             domain_ancillary.data.coarsen(
-                np.ma.mean, axes={i: factor}, trim_excess=False, inplace=True
+                np.ma.mean, axes={i: ncells}, trim_excess=False, inplace=True
             )
 
-        # Coarsen the cell measure constructs that span the HEALPix
-        # dimension
+        # Coarsen cell measure constructs that span the HEALPix axis
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
             i = f.get_data_axes(key).index(axis)
             cell_measure.data.coarsen(
-                np.sum, axes={i: factor}, trim_excess=False, inplace=True
+                np.sum, axes={i: ncells}, trim_excess=False, inplace=True
             )
 
         # Remove all other metadata constructs that span the HEALPix
-        # dimension, including the healpix_index coordinate construct.
+        # axis, including the original healpix_index coordinate
+        # construct.
         for key in (
             f.constructs.filter_by_type("cell_measure", "domain_ancillary")
             .filter_by_axis(axis)
@@ -5031,21 +5048,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ):
             f.del_construct(key)
 
-        # Re-size the HEALPix domain axis
+        # Re-size the HEALPix axis
         domain_axis = f.domain_axis(axis)
         domain_axis.set_size(f.shape[i])
         f.set_construct(domain_axis, key=axis)
 
         # Set the healpix_index coordinates for the new refinement
         # level
-        f.set_construct(
-            new_index, axes=axis, copy=False, config={"no-op": True}
+        if new_index.construct_type == "dimension_coordinate":
+            # Convert indices to auxiliary coordinates
+            new_index = f._AuxiliaryCoordinate(source=new_index, copy=False)
+
+        f.set_construct(new_index, axes=axis, copy=False)
+
+        # Set the new refinement level
+        cr.coordinate_conversion.set_property(
+            "refinement_level", new_refinement_level
         )
 
-        # Set the new refinement level (note that 'level' is negative)
-        cr.coordinate_conversion.set_property(
-            "refinement_level", refinement_level + level
-        )
         return f
 
     def histogram(self, digitized):
@@ -7041,7 +7061,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # axes. Also delete the corresponding domain ancillaries.
             #
             # This is because missing domain ancillaries in a
-            # coordinate refernce are assumed to have the value zero,
+            # coordinate reference are assumed to have the value zero,
             # which is most likely inapproriate.
             # --------------------------------------------------------
             if remove_vertical_crs:
@@ -7098,7 +7118,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 # REMOVE all 2+ dimensional auxiliary coordinates
                 # which span this axis
-                #                c = auxiliary_coordinates.filter_by_naxes(gt(1), view=True)
                 c = f.auxiliary_coordinates(
                     filter_by_naxes=(gt(1),),
                     filter_by_axis=(axis,),
@@ -7113,14 +7132,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     f.del_construct(key)
 
-                # REMOVE all 1 dimensional auxiliary coordinates which
-                # span this axis and have different values in their
-                # data array and bounds.
+                # REMOVE all 1-d auxiliary coordinates which span this
+                # axis and have different values in their data array
+                # and bounds.
                 #
-                # KEEP, after changing their data arrays, all
-                # one-dimensional auxiliary coordinates which span
-                # this axis and have the same values in their data
-                # array and bounds.
+                # KEEP, after changing their data arrays, all 1-d
+                # auxiliary coordinates which span this axis and have
+                # the same values in their data array and bounds.
                 c = f.auxiliary_coordinates(
                     filter_by_axis=(axis,), axis_mode="exact", todict=True
                 )
