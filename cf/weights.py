@@ -1962,15 +1962,25 @@ class Weights(Container, cfdm.Container):
 
         """
         axis = f.healpix_axis()
+
         if axis is None:
             if auto:
                 return False
-
+            
             if domain_axis is None:
-                raise ValueError("No polygon cells")
+                raise ValueError("No HEALPix cells")
+            
+            raise ValueError(
+                "No HEALPix cells for "
+                f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
+            )
+
+        if domain_axis is not None and domain_axis != axis:
+            if auto:
+                return False
 
             raise ValueError(
-                "No polygon cells for "
+                "No HEALPix cells for "
                 f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
             )
 
@@ -1984,7 +1994,7 @@ class Weights(Container, cfdm.Container):
             )
 
         if not measure:
-            return False
+            return True # TODOHEALPIX
         
         if methods:
             weights[(axis,)] = "HEALPix equal area"
@@ -1993,18 +2003,27 @@ class Weights(Container, cfdm.Container):
         cr = f.coordinate_reference(
             "grid_mapping_name:healpix", default=None
         )
-        if auto:
-            return False
-
-        elif cr is None:
+        if cr is None:
             # No healpix grid mapping
-            return f
-        
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: No HEALPix grid mapping for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
+            )
+
         parameters = cr.coordinate_conversion.parameters()
         refinement_level = parameters.get("refinement_level")
         if refinement_level is None:
             # No refinement_level
-            return f
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: No HEALPix refinement_level for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
+            )
         
         if methods:
             weights[(axis,)] = "HEALPix equal area"
