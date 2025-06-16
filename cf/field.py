@@ -3647,7 +3647,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     ):
                         # Found area weights from UGRID/geometry cells
                         area_weights = True
-
+                    elif Weights.healpix_area(
+                        self,
+                        None,
+                        comp,
+                        weights_axes,
+                        measure=measure,
+                        radius=radius,
+                        great_circle=great_circle,
+                        methods=methods,
+                        auto=True,
+                    ):
+                        # Found area weights from HEALPix cells
+                        area_weights = True
+                        
                 if not area_weights:
                     raise ValueError(
                         "Can't create weights: Unable to find cell areas"
@@ -4938,9 +4951,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "not been set"
             )
 
-        healpix_order = cr.coordinate_conversion.get_property(
-            "healpix_order", None
-        )
+        parameters = cr.coordinate_conversion.parameters()        
+        healpix_order = parameters.get( "healpix_order")
         if healpix_order is None:
             raise ValueError(
                 "Can't decrease refinement level: HEALPix order has not "
@@ -4950,16 +4962,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if healpix_order != "nested":
             raise ValueError(
                 "Can't decrease refinement level: Must have a HEALPix order "
-                f"of 'nested'. Got: {healpix_order!r}"
+                f"of 'nested' for this operation. Got: {healpix_order!r}"
             )
 
-        refinement_level = cr.coordinate_conversion.get_property(
-            "refinement_level", None
-        )
+        refinement_level = parameters.get("refinement_level")
         if refinement_level is None:
             raise ValueError(
                 "Can't decrease refinement level: HEALPix refinement level "
-                "has been set"
+                "has not been set"
             )
 
         # Parse 'level'
@@ -4979,17 +4989,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         elif level < -refinement_level:
             raise ValueError(
                 "'level' keyword can't be less than minus the current "
-                f"refinement level {refinement_level}. Got: {level!r}"
+                f"refinement level of {refinement_level}. Got: {level!r}"
             )
 
-        # Find the number of cells at the original refinement level
-        # that are contained in one cell at the new refinement level.
+        # The number of cells at the original refinement level which are
+        # contained in one cell at the coarser refinement level
         ncells = 4**-level
 
         new_refinement_level = refinement_level + level
 
         if check_healpix_index:
-            data = healpix_index.data.persist()
             if not (data.diff() > 0).all():
                 raise ValueError(
                     "Can't decrease refinement level: Nested HEALPix indices "
@@ -5001,25 +5010,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ).any():
                 raise ValueError(
                     "Can't decrease refinemnent level: At least one cell at "
-                    f"the new refinement level ({new_refinement_level}) "
+                    f"the coarser refinement level ({new_refinement_level}) "
                     f"contains fewer than {ncells} cells at the original "
                     f"refinement level {refinement_level}"
                 )
-
-            del data
 
         # Create the healpix_index coordinates for the new refinement
         # level
         new_index = healpix_index[::ncells] // ncells
 
-        # Coarsen the field data
+        # Coarsen (with 'reduction') the field data
         i = f.get_data_axes().index(axis)
         f.data.coarsen(
             reduction, axes={i: ncells}, trim_excess=False, inplace=True
         )
 
-        # Coarsen domain ancillary constructs that span the HEALPix
-        # axis
+        # Coarsen (with np.ma.mean) the domain ancillary constructs
+        # that span the HEALPix axis
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5028,7 +5035,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 np.ma.mean, axes={i: ncells}, trim_excess=False, inplace=True
             )
 
-        # Coarsen cell measure constructs that span the HEALPix axis
+        # Coarsen (with np.sum) the cell measure constructs that span
+        # the HEALPix axis
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5041,17 +5049,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # axis, including the original healpix_index coordinate
         # construct.
         for key in (
-            f.constructs.filter_by_type("cell_measure", "domain_ancillary")
-            .filter_by_axis(axis)
-            .inverse_filter()
-            .filter_by_data(todict=True)
+            f.constructs.filter_by_axis(axis, axis_mode="and")
+                .filter_by_type("cell_measure", "domain_ancillary")
+                .inverse_filter(1)
+                .todict()
         ):
             f.del_construct(key)
 
         # Re-size the HEALPix axis
         domain_axis = f.domain_axis(axis)
         domain_axis.set_size(f.shape[i])
-        f.set_construct(domain_axis, key=axis)
 
         # Set the healpix_index coordinates for the new refinement
         # level

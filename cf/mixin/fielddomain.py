@@ -1885,8 +1885,10 @@ class FieldDomain:
             raise ValueError("TODOHEALPIX")
         
         f = _inplace_enabled_define_and_cleanup(self)
-        
-        f.create_1d_latlon_coordinates(('HEALPix',) inplace=True)
+
+        # If lat/lon coordinates do not exist, then derive them from
+        # the HEALPix indices.
+        f.create_latlon_coordinates(('HEALPix',) inplace=True)
         
         x = f.auxiliary_coordinate(
             "Y", filter_by_axis=(axis,), axis_mode="exact", default=None
@@ -1948,7 +1950,7 @@ class FieldDomain:
         return self.get_data_axes(key)[0]
         
     @_inplace_enabled(default=False)
-    def create_1d_latlon_coordinates(self, grid_type=None, inplace=False):
+    def create_latlon_coordinates(self, grid_type=None, inplace=False):
         """TODOHEALPIX.
 
         .. versionadded:: NEXTVERSION
@@ -1967,13 +1969,10 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if grid_type is None:
-            grid_type = ("HEALPix",)
-
         # ------------------------------------------------------------
         # HEALPix
         # ------------------------------------------------------------
-        if "HEALPix" in grid_type:
+        if grid_type is None or "HEALPix" in grid_type:
             cr = f.coordinate_reference(
                 "grid_mapping_name:healpix", default=None
             )
@@ -1982,16 +1981,16 @@ class FieldDomain:
                 return f
 
             parameters = cr.coordinate_conversion.parameters()
-            refinement_level = parameters.get("refinement_level")
-            if refinement_level is None:
-                # No refinement_level
-                return f
-    
             healpix_order = parameters.get("healpix_order")
-            if healpix_order not in ("nested", "ring"):
-                # No suitable healpix_order
+            if healpix_order not in ("nested", "ring", "nuniq"):
+                # Bad healpix_order
                 return f
-    
+
+            refinement_level = parameters.get("refinement_level")
+            if refinement_level is None and healpix_order in ("nested", "ring"):
+                # Missing refinement_level
+                return f
+
             c_key, healpix_index = f.coordinate(
                 "healpix_index",
                 filter_by_naxes=(1,),
@@ -1999,68 +1998,32 @@ class FieldDomain:
                 default=(None, None),
             )
             if healpix_index is None:
-                # No healpix_index coordinates
+                # Missing healpix_index coordinates
                 return f
-            
-            if f.coordinates('X', 'Y', filter_by_axis=(axis,), axis_mode="exact", todict=True):
-                # X and/or Y coordinates already exist, so don't create any.
-                return f
-            
+
             # Get the HEALPix axis
             axis = f.get_data_axes(key)[0]
 
+            if f.coordinates('X', 'Y', filter_by_axis=(axis,),
+                             axis_mode="exact", todict=True):
+                # X and/or Y coordinates already exist, so don't create any.
+                return f
+            
             # Define functions to create latitudes and longitudes from
             # HEALPix indices
-            import healpix
-    
-            nside = healpix.order2nside(refinement_level)
-            nested = healpix_order=="nested"
-            
-            coord_func = partial(healpix.pix2ang, nside=nside, nest=nested, lonlat=True)
-            if nested:
-                bounds_func = healpix._chp.nest2ang_uv
-            else:
-                bounds_func = healpix._chp.ring2ang_uv
-    
-            bounds_func = partial(bounds_func , nside)
-            
-            def HEALPix_coordinates(a, lat=False, lon=False):
-                if lat:
-                    pos = 1
-                elif lon:               
-                    pos = 0
-                    
-                coord_func(ipix=a)[pos]
-                    
-            def HEALPix_bounds(a, lat=False, lon=False):
-                # Keep an eye on
-                # https://github.com/ntessore/healpix/issues/66
-                if lat:
-                    pos = 1
-                elif lon:               
-                    pos = 0
-
-                bounds = np.empty((a.size, 4), dtype='float64')
-
-                # Vertex position  u, v
-                # ---------------  ----
-                # right            1, 0
-                # top              1, 1
-                # left             0, 1
-                # bottom           0, 0
-                for i, (u, v) in enumerate((1, 0), (1,1), (0, 1), (0,0)):
-                    b = bounds_func(a, u, v)[pos]
-                    np.rad2deg(b, out=b)
-                    bounds[:,i] = b
-                  
-                return bounds
+            import ../dask_utils import cf_HEALPix_coordinates, cf_HEALPix_bounds
     
             # Create new latitude and longitude coordinates with bounds
             dx = healpix_index.to_dask_array()
             meta = np.array((), dtype="float64")
     
             # Latitude coordinates
-            dy = dx.map_blocks(HEALPix_coordinates, meta=meta, lat=True )
+            dy = dx.map_blocks(
+                cf_HEALPix_coordinates, meta=meta,
+                healpix_order=healpix_order,
+                refinement_level=refinement_level,
+                lat=True
+            )
             lat = f._AuxiliaryCoordinate(
                 data=f._Data(dy, "degrees_north", copy=False),
                 properties={"standard_name": "latitude"},
@@ -2068,7 +2031,12 @@ class FieldDomain:
             )
     
             # Longitude coordinates
-            dy = dx.map_blocks(HEALPix_coordinates, meta=meta, lon=True )
+            dy = dx.map_blocks(
+                cf_HEALPix_coordinates, meta=meta,
+                healpix_order=healpix_order, 
+                refinement_level=refinement_level,
+                lon=True
+            )
             lon = f._AuxiliaryCoordinate(
                 data=f._Data(dy, "degrees_east", copy=False),
                 properties={"standard_name": "longitude"},
@@ -2077,14 +2045,20 @@ class FieldDomain:
     
             # Latitude bounds
             dy = da.blockwise(
-                HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta, lat=True )
+                cf_HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta,
+                healpix_order=healpix_order, 
+                refinement_level=refinement_level,
+                lat=True
             )
             bounds = f._Bounds(data=dy)
             lat.set_bounds(bounds)
     
             # Longitude bounds
             dy = da.blockwise(
-                HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta, lon=True )
+                cf_HEALPix_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta,
+                healpix_order=healpix_order, 
+                refinement_level=refinement_level,
+                lon=True
             )
             bounds = f._Bounds(data=dy)
             lon.set_bounds(bounds)
@@ -2093,6 +2067,8 @@ class FieldDomain:
             lat_key = f.set_construct(lat, axes=axis, copy=False)
             lon_key = f.set_construct(lon, axes=axis, copy=False)
             cr.set_coordinates((lat_key ,lon_key))
+
+            return f
 
         return f
 
@@ -2501,67 +2477,73 @@ class FieldDomain:
 
         return out
 
-    def get_refinement_level(self, default=ValueError()):
-        """TODOHEALPIX
-
-        .. versionadded:: NEXTVERSION
-
-        :Parameters:
-
-            TODOHEALPIX
-
-        :Returns:
-
-            `int`
-                TODOHEALPIX
-
-        **Examples**
-
-            TODOHEALPIX
-
-        """
-        cr = self.coordinate_reference(
-            "grid_mapping_name:healpix", default=None
-        )
-        if cr is not None:
-            refinement_level = cr.coordinate_conversion.get_property(
-                "refinement_level", None
-            )
-            if refinement_level is not None:
-                return refinement_level
-
-        return self._default(default, "HEALPix refinement level has been set")
-
-    def get_healpix_order(self, default=ValueError()):
-        """TODOHEALPIX
-
-        .. versionadded:: NEXTVERSION
-
-        :Parameters:
-
-            TODOHEALPIX
-
-        :Returns:
-
-            `str`
-                TODOHEALPIX
-
-        **Examples**
-
-            TODOHEALPIX
-
-        """
-        cr = self.coordinate_reference(
-            "grid_mapping_name:healpix", default=None
-        )
-        if cr is not None:
-            healpix_order = cr.coordinate_conversion.get_property(
-                "healpix_order", None
-            )
-            if healpix_order is not None:
-                return healpix_order
-
-        return self._default(default, "HEALPix order has been set")
+#    def get_refinement_level(self, default=ValueError()):
+#        """TODOHEALPIX
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        :Parameters:
+#
+#            TODOHEALPIX
+#
+#        :Returns:
+#
+#            `int`
+#                TODOHEALPIX
+#
+#        **Examples**
+#
+#            TODOHEALPIX
+#
+#        """
+#        cr = self.coordinate_reference(
+#            "grid_mapping_name:healpix", default=None
+#        )
+#        if cr is not None:
+#            refinement_level = cr.coordinate_conversion.get_property(
+#                "refinement_level", None
+#            )
+#            if refinement_level is not None:
+#                return refinement_level
+#
+#        if default is None:
+#            return
+#
+#        return self._default(default, "HEALPix refinement level has been set")
+#
+#    def get_healpix_order(self, default=ValueError()):
+#        """TODOHEALPIX
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        :Parameters:
+#
+#            TODOHEALPIX
+#
+#        :Returns:
+#
+#            `str`
+#                TODOHEALPIX
+#
+#        **Examples**
+#
+#            TODOHEALPIX
+#
+#        """
+#        cr = self.coordinate_reference(
+#            "grid_mapping_name:healpix", default=None
+#        )
+#        if cr is not None:
+#            healpix_order = cr.coordinate_conversion.get_property(
+#                "healpix_order", None
+#            )
+#            if healpix_order is not None:
+#                return healpix_order
+#
+#        if default is None:
+#            return
+#
+#        return self._default(default, "HEALPix order has been set")
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
@@ -2696,8 +2678,9 @@ class FieldDomain:
             return True
 
         # HEALPix
-        if f.coordinate("healpix_index", filter_by_axis=(axis,), axis_mode="exact", default=None):
-            return True
+        if f.coordinate("healpix_index", filter_by_axis=(axis,),
+                        axis_mode="exact", default=None):
+           return True
 
         # Geometries
         for aux in self.auxiliary_coordinates(

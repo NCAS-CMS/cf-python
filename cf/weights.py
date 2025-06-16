@@ -1968,7 +1968,7 @@ class Weights(Container, cfdm.Container):
                 return False
             
             if domain_axis is None:
-                raise ValueError("No HEALPix cells")
+                raise ValueError("No HEALPix axis")
             
             raise ValueError(
                 "No HEALPix cells for "
@@ -1993,13 +1993,6 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
-        if not measure:
-            return True # TODOHEALPIX
-        
-        if methods:
-            weights[(axis,)] = "HEALPix equal area"
-            return True
-
         cr = f.coordinate_reference(
             "grid_mapping_name:healpix", default=None
         )
@@ -2014,8 +2007,20 @@ class Weights(Container, cfdm.Container):
             )
 
         parameters = cr.coordinate_conversion.parameters()
+        
+        healpix_order = parameters.get("healpix_order")
+        if healpix_order not in ("nested'", "ring", "nuniq"):
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: Invalid HEALPix healpix_order for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis: "
+                f"{healpix_order!r}"
+            )
+
         refinement_level = parameters.get("refinement_level")
-        if refinement_level is None:
+        if refinement_level is None and healpix_order != "nuniq":
             # No refinement_level
             if auto:
                 return False
@@ -2025,19 +2030,50 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
         
-        if methods:
-            weights[(axis,)] = "HEALPix equal area"
-            return True
 
-        if radius is not None:
+        if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
+        # Weights for "nuniq" ordering
+        if  healpix_order == "nuniq":            
+            if methods:
+                weights[(axis,)] = "HEALPix Multi-Order Coverage"
+                return True
+            
+            healpix_index = f.coordinate(
+                "healpix_index", filter_by_axis=(axis,), exact=True
+                default=None
+            )
+            if healpix_index is None:
+                if auto:                    
+                    return False
+                
+                raise ValueError(
+                    "Can't create weights: TODOHEALPIX"
+                )        
+
+            area = self._healpix_nuniq_weights(healpix_index,
+                                             measure=measure, radius=radius)
+            if return_areas:
+                return area
+        
+            weights[(axis,)] =  area
+            weights_axes.add(axis)
+            return True
+
+        # Weights for "nested" or "ring" ordering
+        if methods:
+            return True
+            
+        if not measure:
+            return True
+
+        r2 = radius ** 2
         area = cf.Data.full(
-            shape,
-            4 * np.pi / (12 * (4 ** refinement_level)),
-            units="1"
+            (f.domain_axis(axis).get_size(),)
+            4 * np.pi * float(r2) / (12 * (4 ** refinement_level)),
+            units=r2.Units
         )
-        area = area * (radius ** 2)
 
         if return_areas:
             return area
@@ -2046,96 +2082,32 @@ class Weights(Container, cfdm.Container):
         weights_axes.add(axis)
         return True
 
+    def _healpix_nuniq_weights(self,
+                               healpix_index, measure=False, radius=None):
+        """TODOHEALPIX
         
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            TODOHEALPIX
         
-        from .units import Units
+        :Returns:
 
-        axis, aux_X, aux_Y, aux_Z, ugrid = cls._geometry_ugrid_cells(
-            f, domain_axis, "polygon", auto=auto
-        )
-
-        if axis is None:
-            if auto:
-                return False
-
-            if domain_axis is None:
-                raise ValueError("No polygon cells")
-
-            raise ValueError(
-                "No polygon cells for "
-                f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
-            )
-
-        if axis in weights_axes:
-            if auto:
-                return False
-
-            raise ValueError(
-                "Multiple weights specifications for "
-                f"{f.constructs.domain_axis_identity(axis)!r} axis"
-            )
-
-        x = aux_X.bounds.data
-        y = aux_Y.bounds.data
-
-        radians = Units("radians")
-        metres = Units("metres")
-
-        if x.Units.equivalent(radians) and y.Units.equivalent(radians):
-            if not great_circle:
-                raise ValueError(
-                    "Must set great_circle=True to allow the derivation of "
-                    "area weights from spherical polygons composed from "
-                    "great circle segments."
-                )
-
-            if methods:
-                weights[(axis,)] = "area spherical polygon"
-                return True
-
-            spherical = True
-            x.Units = radians
-        elif x.Units.equivalent(metres) and y.Units.equivalent(metres):
-            if methods:
-                weights[(axis,)] = "area plane polygon"
-                return True
-
-            spherical = False
+            `Data`
+                TODOHEALPIX
+        
+        """ 
+        from dask_utils import cf_HEALPix_nuniq_weights
+                
+        dx = healpix_index.to_dask_array()
+        dx = dx.map_blocks(cf_HEALPix_nuniq_weights,
+                           meta=np.array((), dtype="float64"),
+                           measure=measure, radius=radius)
+          
+        if measure:
+            units = radius.Units ** 2
         else:
-            return False
-
-        y.Units = x.Units
-        x = x.persist()
-        y = y.persist()
-
-        # Find the number of nodes per polygon
-        n_nodes = x.count(axis=-1, keepdims=False).array
-        if (y.count(axis=-1, keepdims=False) != n_nodes).any():
-            raise ValueError(
-                "Can't create area weights for "
-                f"{f.constructs.domain_axis_identity(axis)!r} axis: "
-                f"{aux_X!r} and {aux_Y!r} have inconsistent bounds "
-                "specifications"
-            )
-
-        if ugrid:
-            areas = cls._polygon_area_ugrid(f, x, y, n_nodes, spherical)
-        else:
-            areas = cls._polygon_area_geometry(
-                f, x, y, aux_X, aux_Y, n_nodes, spherical
-            )
-
-        del x, y, n_nodes
-
-        if not measure:
-            areas.override_units(Units("1"), inplace=True)
-        elif spherical:
-            areas = cls._spherical_area_measure(f, areas, aux_Z, radius)
-
-        if return_areas:
-            return areas
-
-        weights[(axis,)] = areas
-        weights_axes.add(axis)
-        return True
-
+            units = Units("1")
+            
+        return Data(dx, units=units, copy=False)
