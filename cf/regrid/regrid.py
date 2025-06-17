@@ -3,6 +3,7 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
+from pprint import pformat
 from typing import Any
 
 import dask.array as da
@@ -496,7 +497,7 @@ def regrid(
 
     if is_log_level_debug(logger):
         logger.debug(
-            f"Source Grid:\n{src_grid}\n\nDestination Grid:\n{dst_grid}\n"
+            f"\n{pformat(src_grid)}\n\n{pformat(dst_grid)}\n"
         )  # pragma: no cover
 
     conform_coordinates(src_grid, dst_grid)
@@ -720,7 +721,7 @@ def regrid(
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
-    update_data(src, regridded_data, src_grid)
+    update_data(src, regridded_data, src_grid, dst_grid)
 
     if coord_sys == "spherical" and dst_grid.is_grid:
         # Set the cyclicity of the longitude axis of the new field
@@ -1020,6 +1021,8 @@ def get_grid(
 
     .. versionadded:: 3.14.0
 
+    :Parameters:
+
         coord_sys: `str`
             The coordinate system of the source and destination grids.
 
@@ -1031,6 +1034,11 @@ def get_grid(
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.16.2
+
+    :Returns:
+
+        `Grid`
+            The grid definition.
 
     """
     if coord_sys == "spherical":
@@ -1124,6 +1132,13 @@ def spherical_grid(
             The grid definition.
 
     """
+    try:
+        # Try to convert a HEALPix grid to UGRID
+        f = f.healpix_to_ugrid()
+    except ValueError:
+        pass
+
+    print(f)
     data_axes = f.constructs.data_axes()
 
     dim_coords_1d = False
@@ -2970,7 +2985,7 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
             src.set_coordinate_reference(ref, parent=dst, strict=True)
 
 
-def update_data(src, regridded_data, src_grid):
+def update_data(src, regridded_data, src_grid, dst_grid):
     """Insert the regridded field data.
 
     .. versionadded:: 3.16.0
@@ -2989,6 +3004,11 @@ def update_data(src, regridded_data, src_grid):
         src_grid: `Grid`
             The definition of the source grid.
 
+        dst_grid: `Grid`
+            The definition of the destination grid.
+
+            .. versionadded:: NEXTVERSION
+
     :Returns:
 
         `None`
@@ -3004,6 +3024,20 @@ def update_data(src, regridded_data, src_grid):
         index = data_axes.index(src_grid.axis_keys[0])
         for axis in src_grid.axis_keys:
             data_axes.remove(axis)
+            for key, cm in src.cell_methods(todict=True).items():
+                if axis in cm.axes:
+                    # When regridding from one axis to two axes, we
+                    # can safely rename cell method's axis to 'area',
+                    # otherwise we have to delete the cell method to
+                    # allow the domain axis itself to be deleted.
+                    if (
+                        len(src_grid.axis_keys) == 1
+                        and len(dst_grid.axis_keys) == 2
+                    ):
+                        cm.change_axes({axis: "area"}, inplace=True)
+                    else:
+                        src.del_construct(key)
+
             src.del_construct(axis)
 
         data_axes[index:index] = src_grid.new_axis_keys

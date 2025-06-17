@@ -1,4 +1,5 @@
 import cfdm
+import numpy as np
 
 from .mixin_container import Container
 
@@ -635,8 +636,6 @@ class Weights(Container, cfdm.Container):
                 square metres.
 
         """
-        import numpy as np
-
         x_units = x.Units
         y_units = y.Units
 
@@ -798,8 +797,6 @@ class Weights(Container, cfdm.Container):
                 metres.
 
         """
-        import numpy as np
-
         y_units = y.Units
 
         n_nodes0 = n_nodes.item(0)
@@ -1259,7 +1256,6 @@ class Weights(Container, cfdm.Container):
                 units of radians.
 
         """
-        import numpy as np
 
         from .query import lt
 
@@ -1962,14 +1958,13 @@ class Weights(Container, cfdm.Container):
 
         """
         axis = f.healpix_axis()
-
         if axis is None:
             if auto:
                 return False
-            
+
             if domain_axis is None:
                 raise ValueError("No HEALPix axis")
-            
+
             raise ValueError(
                 "No HEALPix cells for "
                 f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
@@ -1993,9 +1988,7 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
-        cr = f.coordinate_reference(
-            "grid_mapping_name:healpix", default=None
-        )
+        cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
         if cr is None:
             # No healpix grid mapping
             if auto:
@@ -2007,9 +2000,8 @@ class Weights(Container, cfdm.Container):
             )
 
         parameters = cr.coordinate_conversion.parameters()
-        
         healpix_order = parameters.get("healpix_order")
-        if healpix_order not in ("nested'", "ring", "nuniq"):
+        if healpix_order not in ("nested", "ring", "nuniq"):
             if auto:
                 return False
 
@@ -2029,85 +2021,120 @@ class Weights(Container, cfdm.Container):
                 "Can't create weights: No HEALPix refinement_level for "
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
-        
 
         if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
-        # Weights for "nuniq" ordering
-        if  healpix_order == "nuniq":            
+        # Create weights for 'nuniq' ordering
+        if healpix_order == "nuniq":
             if methods:
                 weights[(axis,)] = "HEALPix Multi-Order Coverage"
                 return True
-            
+
             healpix_index = f.coordinate(
-                "healpix_index", filter_by_axis=(axis,), exact=True
-                default=None
+                "healpix_index",
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+                default=None,
             )
             if healpix_index is None:
-                if auto:                    
+                if auto:
                     return False
-                
-                raise ValueError(
-                    "Can't create weights: TODOHEALPIX"
-                )        
 
-            area = self._healpix_nuniq_weights(healpix_index,
-                                             measure=measure, radius=radius)
+                raise ValueError("Can't create weights: TODOHEALPIX")
+
+            if measure:
+                units = radius.Units**2
+            else:
+                units = "1"
+
+            from .dask_utils import cf_HEALPix_nuniq_weights
+
+            dx = healpix_index.to_dask_array()
+            dx = dx.map_blocks(
+                cf_HEALPix_nuniq_weights,
+                meta=np.array((), dtype="float64"),
+                measure=measure,
+                radius=radius,
+            )
+            area = f._Data(dx, units=units, copy=False)
+
+            #            area = cls._healpix_nuniq_weights(
+            #                f, healpix_index, measure=measure, radius=radius
+            #            )
             if return_areas:
                 return area
-        
-            weights[(axis,)] =  area
+
+            weights[(axis,)] = area
             weights_axes.add(axis)
             return True
 
-        # Weights for "nested" or "ring" ordering
+        # Still here? Then create weights for 'nested' or 'ring'
+        # ordering.
         if methods:
-            return True
-            
-        if not measure:
+            if measure:
+                weights[(axis,)] = "HEALPix equal area"
+
             return True
 
-        r2 = radius ** 2
-        area = cf.Data.full(
-            (f.domain_axis(axis).get_size(),)
-            4 * np.pi * float(r2) / (12 * (4 ** refinement_level)),
-            units=r2.Units
+        if not measure:
+            # Non-measure Weights are all equal, so no need to create any.
+            return True
+
+        r2 = radius**2
+        area = f._Data.full(
+            (f.domain_axis(axis).get_size(),),
+            np.pi * float(r2) / (3.0 * (4**refinement_level)),
+            units=r2.Units,
         )
 
         if return_areas:
             return area
-        
-        weights[(axis,)] =  area
+
+        weights[(axis,)] = area
         weights_axes.add(axis)
         return True
 
-    def _healpix_nuniq_weights(self,
-                               healpix_index, measure=False, radius=None):
-        """TODOHEALPIX
-        
-        .. versionadded:: NEXTVERSION
 
-        :Parameters:
-
-            TODOHEALPIX
-        
-        :Returns:
-
-            `Data`
-                TODOHEALPIX
-        
-        """ 
-        from dask_utils import cf_HEALPix_nuniq_weights
-                
-        dx = healpix_index.to_dask_array()
-        dx = dx.map_blocks(cf_HEALPix_nuniq_weights,
-                           meta=np.array((), dtype="float64"),
-                           measure=measure, radius=radius)
-          
-        if measure:
-            units = radius.Units ** 2
-        else:
-            units = Units("1")
-            
-        return Data(dx, units=units, copy=False)
+#    @classmethod
+#    def _healpix_nuniq_weights(
+#        self, f, healpix_index, measure=False, radius=None
+#    ):
+#        """TODOHEALPIX
+#
+#        .. versionadded:: NEXTVERSION
+#
+#        :Parameters:
+#
+#            f: `Field`
+#                The field for which the weights are being created.
+#
+#            healpix_index: `Coordinate`
+#                TODOHEALPIX
+#
+#            {{weights measure: `bool`, optional}}
+#
+#            {{radius: optional}}
+#
+#        :Returns:
+#
+#            `Data`
+#                TODOHEALPIX
+#
+#        """
+#        from .dask_utils import cf_HEALPix_nuniq_weights
+#
+#        dx = healpix_index.to_dask_array()
+#        dx = dx.map_blocks(
+#            cf_HEALPix_nuniq_weights,
+#            meta=np.array((), dtype="float64"),
+#            measure=measure,
+#            radius=radius,
+#        )
+#
+#        if measure:
+#            units = radius.Units**2
+#        else:
+#            units = "1"
+#
+#        return f._Data(dx, units=units, copy=False)

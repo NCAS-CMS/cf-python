@@ -10,6 +10,7 @@ from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 from .dimensioncoordinate import DimensionCoordinate
 from .domainaxis import DomainAxis
+from .domaintopology import DomainTopology
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
@@ -83,6 +84,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         instance._DomainAxis = DomainAxis
         instance._DimensionCoordinate = DimensionCoordinate
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._DomainTopology = DomainTopology
         return instance
 
     @property

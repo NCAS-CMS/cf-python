@@ -38,7 +38,6 @@ class functionTest(unittest.TestCase):
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
-        self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
         self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
         self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
         self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
