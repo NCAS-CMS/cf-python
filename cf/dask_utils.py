@@ -14,6 +14,8 @@ def cf_HEALPix_bounds(
 ):
     """Calculate HEALPix cell bounds.
 
+    Each cell has four vertices.
+    
     .. versionadded:: NEXTVERSION
 
     :Parameters:
@@ -45,8 +47,8 @@ def cf_HEALPix_bounds(
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
     if a.ndim != 1:
         raise ValueError(
-            "Can't calculate HEALPix cell bounds when "
-            f"healpix_index array has shape {a.shape}"
+            "Can only calculate HEALPix cell bounds when "
+            f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
     if lat:
@@ -59,7 +61,7 @@ def cf_HEALPix_bounds(
     else:
         bounds_func = healpix._chp.ring2ang_uv
 
-    # Define the cell vertices in an anticlockwise direction, as seen
+    # Define the cell vertices, in an anticlockwise direction as seen
     # from above.
     right = (1, 0)
     top = (1, 1)
@@ -71,12 +73,13 @@ def cf_HEALPix_bounds(
 
     if healpix_order == "nuniq":
         # nuniq
-        nsides, a = healpix.uniq2pix(a, nest=False)
-        nsides, index, inverse = np.unique(
-            nsides, return_index=True, return_inverse=True
+        orders, a = healpix.uniq2pix(a, nest=False)
+        orders, index, inverse = np.unique(
+            orders, return_index=True, return_inverse=True
         )
-        for nside, i in zip(nsides, index):
+        for order, i in zip(orders, index):
             level = np.where(inverse == inverse[i])[0]
+            nside=healpix.order2nside(order)
             for j, (u, v) in enumerate(vertices):
                 thetaphi = bounds_func(nside, a[level], u, v)
                 b[level, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
@@ -88,7 +91,7 @@ def cf_HEALPix_bounds(
             b[..., j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
 
     if not pos:
-        # Longitude bounds
+        # Make longitudee bounds in the range [0, 360)
         b[np.where(b >= 360)] -= 360.0
 
         # Bounds on the north or south pole come out with a longitude
@@ -162,6 +165,8 @@ def cf_HEALPix_coordinates(
 ):
     """Calculate HEALPix cell coordinates.
 
+    THe coordinates are in the centres of the cells.
+    
     .. versionadded:: NEXTVERSION
 
     :Parameters:
@@ -193,7 +198,7 @@ def cf_HEALPix_coordinates(
     if a.ndim != 1:
         raise ValueError(
             "Can't calculate HEALPix cell coordinates when "
-            f"healpix_index array has shape {a.shape}"
+            f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
     if lat:
@@ -205,19 +210,21 @@ def cf_HEALPix_coordinates(
         c = np.empty(a.shape, dtype="float64")
 
         nest = False
-        nsides, a = healpix.uniq2pix(a, nest=nest)
-        nsides, index, inverse = np.unique(
-            nsides, return_index=True, return_inverse=True
+        orders, a = healpix.uniq2pix(a, nest=nest)
+        orders, index, inverse = np.unique(
+            orders, return_index=True, return_inverse=True
         )
-        for nside, i in zip(nsides, index):
+        for order, i in zip(orders, index):
             level = np.where(inverse == inverse[i])[0]
+            nside=healpix.order2nside(order)
             c[level] = healpix.pix2ang(
                 nside=nside, ipix=a[level], nest=nest, lonlat=True
             )[pos]
     else:
         # nested or ring
+        nside=healpix.order2nside(refinement_level)
         c = healpix.pix2ang(
-            nside=healpix.order2nside(refinement_level),
+            nside=nside,
             ipix=a,
             nest=healpix_order == "nested",
             lonlat=True,
@@ -255,14 +262,15 @@ def cf_HEALPix_nuniq_weights(a, measure=False, radius=None):
     else:
         x = 1.0
 
-    nsides = healpix.uniq2pix(a)[0]
-    nsides, index, inverse = np.unique(
-        nsides, return_index=True, return_inverse=True
+    orders = healpix.uniq2pix(a)[0]
+    orders, index, inverse = np.unique(
+        orders, return_index=True, return_inverse=True
     )
 
     w = np.empty(a.shape, dtype="float64")
 
-    for nside, i in zip(nsides, index):
+    for order, i in zip(orders, index):
+        nside = healpix.order2nside(order)
         w = np.where(inverse == inverse[i], x / (nside**2), w)
 
     return w
