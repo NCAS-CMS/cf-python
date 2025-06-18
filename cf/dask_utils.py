@@ -135,21 +135,20 @@ def cf_HEALPix_change_order(
             An array containing the new HEALPix indices.
 
     """
-    nside = healpix.order2nside(refinement_level)
 
     if healpix_order == "nested":
         if new_healpix_order == "ring":
-            return healpix.nest2ring(nside, a)
+            return healpix.nest2ring(healpix.order2nside(refinement_level), a)
 
         if new_healpix_order == "nuniq":
-            return healpix._chp.nest2uniq(nside, a)
+            return healpix._chp.nest2uniq(refinement_level, a)
 
     elif healpix_order == "ring":
         if new_healpix_order == "nested":
-            return healpix.ring2nest(nside, a)
+            return healpix.ring2nest(healpix.order2nside(refinement_level), a)
 
         if new_healpix_order == "nuniq":
-            return healpix._chp.ring2uniq(nside, a)
+            return healpix._chp.ring2uniq(refinement_level, a)
 
     else:
         raise ValueError(

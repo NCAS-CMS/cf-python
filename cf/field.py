@@ -4914,8 +4914,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_inplace_enabled(default=False)
     def healpix_decrease_refinement_level(
         self,
-        level=None,
-        reduction=np.ma.mean,
+        level,
+        reduction=np.mean,
         check_healpix_index=True,
         inplace=False,
     ):
@@ -4926,6 +4926,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             TODOHEALPIX
+
+            level: `int` or `None`
 
             {{inplace: `bool`, optional}}
 
@@ -4941,9 +4943,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
+        # Try to change the order to nested, as that's the only order
+        # from which we can decrease the refinement level.
+        try:
+            f.healpix_change_order("nested", inplace=True)
+        except ValueError:
+            pass
+
         # Get the healpix_index oordinates and the key of the HEALPix
         # domain axis
-        key, healpix_index = f.coordinate(
+        hp_key, healpix_index = f.coordinate(
             "healpix_index",
             filter_by_naxes=(1,),
             item=True,
@@ -4955,7 +4964,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "coordinates have not been set"
             )
 
-        axis = f.get_data_axes(key)[0]
+        axis = f.get_data_axes(hp_key)[0]
 
         # Parse the HEALPix coordinate reference
         cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
@@ -4976,7 +4985,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if healpix_order != "nested":
             raise ValueError(
                 "Can't decrease HEALPix refinement level: Must have a "
-                "healpix_order of 'nested' for this operation. "
+                "healpix_order of 'nested' or 'ring' for this operation. "
                 f"Got: {healpix_order!r}"
             )
 
@@ -4988,15 +4997,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Parse 'level'
-        if not level:
-            # Level None or 0: Keep the current refinement level
+        if level is None:
+            # No change in refinement level
             return f
 
-        if level > 0:
+        if level >= 0:
             if level > refinement_level:
                 raise ValueError(
                     "'level' keyword can't be larger than the current "
-                    f"refinement level {refinement_level}. Got: {level!r}"
+                    f"refinement level ({refinement_level}). Got: {level!r}"
                 )
 
             # Convert 'level' to a negative number
@@ -5004,21 +5013,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         elif level < -refinement_level:
             raise ValueError(
                 "'level' keyword can't be less than minus the current "
-                f"refinement level of {refinement_level}. Got: {level!r}"
+                f"refinement level ({-refinement_level}). Got: {level!r}"
             )
+
+        new_refinement_level = refinement_level + level
+        if new_refinement_level == refinement_level:
+            # No change in refinement level
+            return f
 
         # The number of cells at the original refinement level which are
         # contained in one cell at the coarser refinement level
         ncells = 4**-level
-
-        new_refinement_level = refinement_level + level
 
         if check_healpix_index:
             d = healpix_index.data
             if not (d.diff() > 0).all():
                 raise ValueError(
                     "Can't decrease HEALPix refinement level: healpix_index "
-                    "cooridnates are not strictly monotonically increasing"
+                    "coordinates with 'nested' ordering are not strictly "
+                    "monotonically increasing"
                 )
 
             if (d[::ncells] % ncells).any() or (
@@ -5029,12 +5042,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "cell at the coarser refinement level "
                     f"({new_refinement_level}) contains fewer than {ncells} "
                     "cells at the original refinement level "
-                    f"{refinement_level}"
+                    f"({refinement_level})"
                 )
-
-        # Create the healpix_index coordinates for the new refinement
-        # level
-        new_index = healpix_index[::ncells] // ncells
 
         # Coarsen (using 'reduction') the field data. Note that using
         # the 'coarsen' technique only works for 'nested' HEALPix
@@ -5044,14 +5053,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             reduction, axes={i: ncells}, trim_excess=False, inplace=True
         )
 
-        # Coarsen (using np.ma.mean) the domain ancillary constructs
+        # Coarsen (using np.mean) the domain ancillary constructs
         # that span the HEALPix axis
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
             i = f.get_data_axes(key).index(axis)
             domain_ancillary.data.coarsen(
-                np.ma.mean, axes={i: ncells}, trim_excess=False, inplace=True
+                np.mean, axes={i: ncells}, trim_excess=False, inplace=True
             )
 
         # Coarsen (using np.sum) the cell measure constructs that span
@@ -5081,16 +5090,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Set the healpix_index coordinates for the new refinement
         # level
+        new_index = healpix_index[::ncells] // ncells
         if new_index.construct_type == "dimension_coordinate":
             # Convert indices to auxiliary coordinates
             new_index = f._AuxiliaryCoordinate(source=new_index, copy=False)
+            hp_key = None
 
-        f.set_construct(new_index, axes=axis, copy=False)
+        new_key = f.set_construct(new_index, axes=axis, key=hp_key, copy=False)
 
         # Set the new refinement level
-        cr.coordinate_conversion.set_property(
+        cr.coordinate_conversion.set_parameter(
             "refinement_level", new_refinement_level
         )
+        cr.set_coordinate(new_key)
 
         return f
 
@@ -6664,9 +6676,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = self
         else:
             f = self.copy()
-        print(f)
-        f.create_latlon_coordinates(inplace=True)
-        print(f)
+
+        f.create_latlon_coordinates(one_d=True, two_d=False, inplace=True)
+
         # Whether or not to create null bounds for null
         # collapses. I.e. if the collapse axis has size 1 and no
         # bounds, whether or not to create upper and lower bounds to
@@ -6760,7 +6772,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 for x in iterate_over:
                     a = f.domain_axis(x, key=True, default=None)
-                    print (a)
                     if a is None:
                         raise ValueError(msg.format(x))
 

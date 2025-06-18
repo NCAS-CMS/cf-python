@@ -298,7 +298,7 @@ class FieldDomain:
 
         # Create any implied 1-d latitude and longitude coordinates
         # (e.g. as implied by HEALPix indices)
-        self = self.create_latlon_coordinates()
+        self = self.create_latlon_coordinates(one_d=True, two_d=False)
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -1877,6 +1877,20 @@ class FieldDomain:
 
         return set(axes)
 
+    def healpix_axis(self):
+        """TODOHEALPIX.
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        key = self.coordinate(
+            "healpix_index", filter_by_naxes=(1,), key=True, default=None
+        )
+        if key is None:
+            return
+
+        return self.get_data_axes(key)[0]
+
     @_inplace_enabled(default=False)
     def healpix_change_order(self, new_healpix_order, inplace=False):
         """Change the ordering of HEALPix indices.
@@ -1945,8 +1959,11 @@ class FieldDomain:
             return f
 
         # Get the original HEALPix indices
-        healpix_index = f.coordinate(
-            "healpix_index", filter_by_naxes=(1,), default=None
+        hp_key, healpix_index = f.coordinate(
+            "healpix_index",
+            filter_by_naxes=(1,),
+            item=True,
+            default=(None, None),
         )
         if healpix_index is None:
             raise ValueError(
@@ -1964,6 +1981,16 @@ class FieldDomain:
         )
         healpix_index.set_data(dx, copy=False)
 
+        if healpix_index.construct_type == "dimension_coordinate":
+            # Convert indices to auxiliary coordinates
+            healpix_index = f._AuxiliaryCoordinate(
+                source=healpix_index, copy=False
+            )
+            axis = f.get_data_axes(hp_key)[0]
+            f.del_construct(hp_key)
+            new_key = f.set_construct(healpix_index, axes=axis, copy=False)
+            cr.set_coordinate(new_key)
+
         # Update the Coordinate Reference
         cr.coordinate_conversion.set_parameter(
             "healpix_order", new_healpix_order
@@ -1978,33 +2005,56 @@ class FieldDomain:
         """TODOHEALPIX"""
         axis = self.healpix_axis()
         if axis is None:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "Can't convert HEALPix to UGRID: There is no HEALPix domain "
+                "axis"
+            )
 
         f = _inplace_enabled_define_and_cleanup(self)
 
         # If lat/lon coordinates do not exist, then derive them from
         # the HEALPix indices.
-        f.create_latlon_coordinates(("HEALPix",), inplace=True)
+        f.create_latlon_coordinates(one_d=True, two_d=False, inplace=True)
 
-        x = f.auxiliary_coordinate(
-            "Y", filter_by_axis=(axis,), axis_mode="exact", default=None
+        x_key, x = f.auxiliary_coordinate(
+            "Y",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            item=True,
+            default=(None, None),
         )
-        y = f.auxiliary_coordinate(
-            "X", filter_by_axis=(axis,), axis_mode="exact", default=None
+        y_key, y = f.auxiliary_coordinate(
+            "X",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            item=True,
+            default=(None, None),
         )
         if x is None:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "Can't convert HEALPix to UGRID: Not able to find nor "
+                "create longitude coordinates"
+            )
 
         if y is None:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "Can't convert HEALPix to UGRID: Not able to find nor "
+                "create latitude coordinates"
+            )
 
         bounds_y = y.get_bounds(None)
         bounds_x = x.get_bounds(None)
         if bounds_y is None:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "Can't convert HEALPix to UGRID: No latitude coordinate "
+                "bounds"
+            )
 
         if bounds_x is None:
-            raise ValueError("TODOHEALPIX")
+            raise ValueError(
+                "Can't convert HEALPix to UGRID: No longitude coordinate "
+                "bounds"
+            )
 
         # Create a unique identifer for each node location
         bounds_y = bounds_y.to_dask_array()
@@ -2023,27 +2073,6 @@ class FieldDomain:
         )
         f.set_construct(domain_topology, axes=axis, copy=False)
 
-        # Upsdate the Coordinate Reference, either by deleting it, or
-        # converting it to 'latitude_longitude'.
-        key, cr = f.coordinate_reference(
-            "grid_mapping_name:healpix", item=True, default=(None, None)
-        )
-        if key is not None:
-            cc = cr.coordinate_conversion
-            cc.del_parameter("grid_mapping_name", None)
-            cc.del_parameter("healpix_order", None)
-            cc.del_parameter("refinement_level", None)
-            if cr.coordinate_conversion.parameters():
-                # The Coordinate Reference contains generic parameters
-                # (such as 'earth_radius'), so rename it.
-                cr.coordinate_conversion.set_parameter(
-                    "grid_mapping_name", "latitude_longitude"
-                )
-            else:
-                # The Coordinate Reference contains no generic
-                # parameters
-                f.del_construct(key)
-
         # Remove the HEALPix index coordinates
         f.del_construct(
             "healpix_index",
@@ -2056,24 +2085,38 @@ class FieldDomain:
             default=None,
         )
 
+        # Update the Coordinate Reference
+        cr_key, cr = f.coordinate_reference(
+            "grid_mapping_name:healpix", item=True, default=(None, None)
+        )
+        latlon = f.coordinate_reference(
+            "grid_mapping_name:latitude_longitude", default=None
+        )
+        if latlon is not None:
+            latlon.set_coordinates((y_key, x_key))
+            f.del_construct(cr_key)
+        elif cr is not None:
+            cc = cr.coordinate_conversion
+            cc.del_parameter("grid_mapping_name", None)
+            cc.del_parameter("healpix_order", None)
+            cc.del_parameter("refinement_level", None)
+            if cr.coordinate_conversion.parameters() or cr.datum.parameters():
+                # The Coordinate Reference contains generic coordinate
+                # conversion or datum parameters, so rename it as
+                # 'latitude_longitude'.
+                cr.coordinate_conversion.set_parameter(
+                    "grid_mapping_name", "latitude_longitude"
+                )
+                cr.set_coordinates((y_key, x_key))
+            else:
+                # The Coordinate Reference contains no generic
+                # parameters, so delete it.
+                f.del_construct(cr_key)
+
         return f
 
-    def healpix_axis(self):
-        """TODOHEALPIX.
-
-        .. versionadded:: NEXTVERSION
-
-        """
-        key = self.coordinate(
-            "healpix_index", filter_by_naxes=(1,), key=True, default=None
-        )
-        if key is None:
-            return
-
-        return self.get_data_axes(key)[0]
-
     @_inplace_enabled(default=False)
-    def create_latlon_coordinates(self, grid_type=None, inplace=False):
+    def create_latlon_coordinates(self, one_d=True, two_d=True, inplace=False):
         """TODOHEALPIX.
 
         .. versionadded:: NEXTVERSION
@@ -2092,17 +2135,39 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # ------------------------------------------------------------
-        # HEALPix
-        # ------------------------------------------------------------
-        if grid_type is None or "HEALPix" in grid_type:
-            cr = f.coordinate_reference(
-                "grid_mapping_name:healpix", default=None
-            )
-            if cr is None:
-                # No healpix grid mapping
-                return f
+        # Get all Coordinate References
+        identities = {
+            cr.identity(""): cr
+            for cr in f.coordinate_references(todict=True).values()
+        }
+        if not identities:
+            return f
 
+        # Keep only grid mappings
+        identities = {
+            identity: cr
+            for identity, cr in identities.items()
+            if identity.startswith("grid_mapping_name:")
+        }
+        if len(identities) > 2:
+            return f
+
+        # Remove a 'latitude_longitude' grid mapping
+        latlon_cr = identities.pop(
+            "grid_mapping_name:latitude_longitude", None
+        )
+        if not identities:
+            return f
+
+        # Still here? Then get the final grid mapping and calulate the
+        # lat/lon coordinates.
+        identity, cr = identities.popitem()
+
+        new_coords = False
+        if one_d and identity == "grid_mapping_name:healpix":
+            # --------------------------------------------------------
+            # HEALPix
+            # --------------------------------------------------------
             parameters = cr.coordinate_conversion.parameters()
             healpix_order = parameters.get("healpix_order")
             if healpix_order not in ("nested", "ring", "nuniq"):
@@ -2209,9 +2274,23 @@ class FieldDomain:
             # Set the new latitude and longitude coordinates
             lat_key = f.set_construct(lat, axes=axis, copy=False)
             lon_key = f.set_construct(lon, axes=axis, copy=False)
-            cr.set_coordinates((lat_key, lon_key))
 
-            return f
+            new_coords = True
+
+        elif two_d:
+            # --------------------------------------------------------
+            # Plane projection or rotated pole
+            # --------------------------------------------------------
+            pass
+
+        # ------------------------------------------------------------
+        # Update the approriate Coordinate Reference
+        # ------------------------------------------------------------
+        if new_coords:
+            if latlon_cr is not None:
+                latlon_cr.set_coordinates((lat_key, lon_key))
+            else:
+                cr.set_coordinates((lat_key, lon_key))
 
         return f
 

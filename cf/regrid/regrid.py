@@ -495,6 +495,8 @@ def regrid(
         ln_z=ln_z,
     )
 
+    
+    
     if is_log_level_debug(logger):
         logger.debug(
             f"\n{pformat(src_grid)}\n\n{pformat(dst_grid)}\n"
@@ -1134,11 +1136,11 @@ def spherical_grid(
     """
     try:
         # Try to convert a HEALPix grid to UGRID
-        f = f.healpix_to_ugrid()
+        f.healpix_to_ugrid(inplace=True)
     except ValueError:
-        pass
+        # Create any implied lat/lon coordinates
+        f.create_latlon_coordinates(inplace=True)
 
-    print(f)
     data_axes = f.constructs.data_axes()
 
     dim_coords_1d = False

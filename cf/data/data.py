@@ -1368,7 +1368,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-            TODOHEALPIX
+        >>> TODOHEALPIX
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
