@@ -15,7 +15,7 @@ def cf_HEALPix_bounds(
     """Calculate HEALPix cell bounds.
 
     Each cell has four vertices.
-    
+
     .. versionadded:: NEXTVERSION
 
     :Parameters:
@@ -79,7 +79,7 @@ def cf_HEALPix_bounds(
         )
         for order, i in zip(orders, index):
             level = np.where(inverse == inverse[i])[0]
-            nside=healpix.order2nside(order)
+            nside = healpix.order2nside(order)
             for j, (u, v) in enumerate(vertices):
                 thetaphi = bounds_func(nside, a[level], u, v)
                 b[level, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
@@ -166,7 +166,7 @@ def cf_HEALPix_coordinates(
     """Calculate HEALPix cell coordinates.
 
     THe coordinates are in the centres of the cells.
-    
+
     .. versionadded:: NEXTVERSION
 
     :Parameters:
@@ -216,13 +216,13 @@ def cf_HEALPix_coordinates(
         )
         for order, i in zip(orders, index):
             level = np.where(inverse == inverse[i])[0]
-            nside=healpix.order2nside(order)
+            nside = healpix.order2nside(order)
             c[level] = healpix.pix2ang(
                 nside=nside, ipix=a[level], nest=nest, lonlat=True
             )[pos]
     else:
         # nested or ring
-        nside=healpix.order2nside(refinement_level)
+        nside = healpix.order2nside(refinement_level)
         c = healpix.pix2ang(
             nside=nside,
             ipix=a,

@@ -495,8 +495,6 @@ def regrid(
         ln_z=ln_z,
     )
 
-    
-    
     if is_log_level_debug(logger):
         logger.debug(
             f"\n{pformat(src_grid)}\n\n{pformat(dst_grid)}\n"
