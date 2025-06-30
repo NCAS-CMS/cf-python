@@ -1,3 +1,22 @@
+Version NEXTVERSION
+--------------
+
+**2025-??-??**
+
+* New method: `cf.Field.create_latlon_coordinates`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+* New HEALPix methods: `cf.Field.healpix_axis`,
+  `cf.Field.healpix_change_order`,
+  `cf.Field.healpix_decrease_refinement_level`,
+  `cf.Field.healpix_to_ugrid`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+* New method: `cf.Data.coarsen`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+* New optional dependency: ``healpix>=2024.2``
+* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
+
+----
+
 Version 3.18.0
 --------------
 

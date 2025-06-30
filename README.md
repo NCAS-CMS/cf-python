@@ -89,6 +89,7 @@ of its array manipulation and can:
 * create new field constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, create, and manipulate UGRID mesh topologies,
+* read, write, and manipulate HEALPix grids,
 * read, write, and create coordinates defined by geometry cells,
 * read netCDF and CDL datasets containing hierarchical groups,
 * inspect field constructs,
@@ -105,11 +106,12 @@ of its array manipulation and can:
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
 * perform weighted statistical collapses on field constructs,
-  including those with geometry cells and UGRID mesh topologies,
+  including those with geometry cells, UGRID mesh topologies, and
+  HEALPix grids,
 * perform histogram, percentile and binning operations on field
   constructs,
-* regrid structured grid, mesh and DSG field constructs with
-  (multi-)linear, nearest neighbour, first- and second-order
+* regrid structured grid, UGRID, HEALPix, and DSG field constructs
+  with (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including 3-d
   regridding,
 * apply convolution filters to field constructs,

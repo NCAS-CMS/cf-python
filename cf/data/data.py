@@ -1350,28 +1350,83 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         trim_excess=False,
         inplace=False,
     ):
-        """TODOHEALPIX
+        """Coarsen the data.
+
+        Coarsen the data by applying the *reduction* function to
+        combine the elements within fixed-size neighborhoods.
 
         .. versionadded:: NEXTVERSION
 
         :Parameters:
 
-            TODOHEALPIX
+            reduction: function
+                The function with which to coarsen the data.
+
+            axes: `dict`
+                Define how to coarsening neighbourhood for each
+                axis. A dictionary key is an integer axis position,
+                with correponding value giving the non-negative
+                integer size of the coarsening neighbourhood for that
+                axis. Unspecified axes are not coarsened, which is
+                equivalent to providing a coarsening neighbourhood of
+                ``1``.
+
+                *Example:*
+                  Coarsen the axis in position 1 by combining every 4
+                  elements: ``{1: 4}``
+
+                *Example:*
+                  Coarsen the axis in position 0 by combining every 3
+                  elements, and the last axis by combining every 4
+                  elements: ``{0: 3, -1: 4}``
+
+            trim_excess: `bool`, optional
+                If True then do not return a partially-full
+                neighbourhood at the end of a coarsened axis. If False
+                (the default) then an exception is raised if there are
+                any partially-filled neighbourhoods.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
 
             `Data` or `None`
-                TODOHEALPIX of the data. If the operation was in-place
-                then `None` is returned.
+                The coarsened data, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        >>> TODOHEALPIX
+        >>> import numpy as np
+        >>> d = cf.Data(np.arange(24).reshape((4, 6)))
+        >>> print(d.array)
+        [[ 0  1  2  3  4  5]
+         [ 6  7  8  9 10 11]
+         [12 13 14 15 16 17]
+         [18 19 20 21 22 23]]
+        >>> e = d.coarsen(np.min, {0: 2, 1: 3})
+        >>> print(e.array)
+        [[ 0  3]
+         [12 15]]
+        >>> e = d.coarsen(np.max, {-1: 5}, trim_excess=True)
+        >>> print(e.array)
+        [[ 4]
+         [10]
+         [16]
+         [22]]
+        >>> e = d.coarsen(np.max, {-1: 5})
+        ValueError: Coarsening factors {1: 5} do not align with array shape (4, 6).
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
+        # Parse axes
+        ndim = self.ndim
+        for k in axes:
+            if k < -ndim or k > ndim:
+                raise ValueError("axis {k} is out of bounds for {ndim}-d data")
+
+        axes = {(k + ndim if k < 0 else k): v for k, v in axes.items()}
+
         dx = d.to_dask_array()
         dx = da.coarsen(reduction, dx, axes, trim_excess=trim_excess)
         d._set_dask(dx)

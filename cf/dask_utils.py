@@ -5,7 +5,6 @@ instance, as would be passed to `dask.array.map_blocks`.
 
 """
 
-import healpix
 import numpy as np
 
 
@@ -14,7 +13,10 @@ def cf_HEALPix_bounds(
 ):
     """Calculate HEALPix cell bounds.
 
-    Each cell has four vertices.
+    Latitude or longitude locations of the cell vertices are derived
+    from HEALPix indices.  Each cell has four bounds, which are
+    returned in an anticlockwise direction, as seen from above,
+    starting with the eastern-most vertex.
 
     .. versionadded:: NEXTVERSION
 
@@ -41,13 +43,28 @@ def cf_HEALPix_bounds(
     :Returns:
 
         `numpy.ndarray`
-            An array containing the HEALPix cell bounds.
+            A 2-d  array containing the HEALPix cell bounds.
+
+    **Examples**
+
+    >>> cf_HEALPix_bounds([0, 1, 2, 3], 'nested', 1, lat=True)
+    array([[19.47122063, 41.8103149 , 19.47122063,  0.        ],
+           [41.8103149 , 66.44353569, 41.8103149 , 19.47122063],
+           [41.8103149 , 66.44353569, 41.8103149 , 19.47122063],
+           [66.44353569, 90.        , 66.44353569, 41.8103149 ]])
+    >>> cf_HEALPix_bounds([0, 1, 2, 3], 'nested', 1, lon=True)
+    array([[67.5, 45. , 22.5, 45. ],
+           [90. , 90. , 45. , 67.5],
+           [45. ,  0. ,  0. , 22.5],
+           [90. , 45. ,  0. , 45. ]])
 
     """
+    import healpix
+
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
     if a.ndim != 1:
         raise ValueError(
-            "Can only calculate HEALPix cell bounds when "
+            "Can only calculate HEALPix cell bounds when the "
             f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
@@ -61,18 +78,19 @@ def cf_HEALPix_bounds(
     else:
         bounds_func = healpix._chp.ring2ang_uv
 
-    # Define the cell vertices, in an anticlockwise direction as seen
-    # from above.
+    # Define the cell vertices, in an anticlockwise direction, as seen
+    # from above, starting with the eastern-most vertex.
     right = (1, 0)
     top = (1, 1)
     left = (0, 1)
     bottom = (0, 0)
     vertices = (right, top, left, bottom)
 
+    # Initialise the output bounds array
     b = np.empty((a.size, 4), dtype="float64")
 
     if healpix_order == "nuniq":
-        # nuniq
+        # Create bounds for 'nuniq' cells
         orders, a = healpix.uniq2pix(a, nest=False)
         orders, index, inverse = np.unique(
             orders, return_index=True, return_inverse=True
@@ -84,22 +102,28 @@ def cf_HEALPix_bounds(
                 thetaphi = bounds_func(nside, a[level], u, v)
                 b[level, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
     else:
-        # nested or ring
+        # Create bounds for 'nested' or 'ring' cells
         nside = healpix.order2nside(refinement_level)
         for j, (u, v) in enumerate(vertices):
             thetaphi = bounds_func(nside, a, u, v)
             b[..., j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
 
     if not pos:
-        # Make longitudee bounds in the range [0, 360)
-        b[np.where(b >= 360)] -= 360.0
+        # Ensure that longitude bounds are less than 360
+        where_ge_360 = np.where(b >= 360)
+        if where_ge_360[0].size:
+            b[where_ge_360] -= 360.0
 
-        # Bounds on the north or south pole come out with a longitude
-        # of NaN, so replace these with a sensible value.
+        # Bounds on the north (south) pole come out with a longitude
+        # of NaN, so replace these with a sensible value, i.e. the
+        # longitude of the southern (northern) vertex.
+        #
+        # North pole
         i = np.argwhere(np.isnan(b[:, 1])).flatten()
         if i.size:
             b[i, 1] = b[i, 3]
 
+        # South pole
         i = np.argwhere(np.isnan(b[:, 3])).flatten()
         if i.size:
             b[i, 3] = b[i, 1]
@@ -111,6 +135,9 @@ def cf_HEALPix_change_order(
     a, healpix_order, new_healpix_order, refinement_level
 ):
     """Change the ordering of HEALPix indices.
+
+    Does not change the position of each cell in the array, but
+    redefines their indices according to the new ordering scheme.
 
     .. versionadded:: NEXTVERSION
 
@@ -137,7 +164,15 @@ def cf_HEALPix_change_order(
         `numpy.ndarray`
             An array containing the new HEALPix indices.
 
+    **Examples**
+
+    >>> cf_HEALPix_change_order([0, 1, 2, 3], 'nested', 'ring', 1)
+    array([13,  5,  4,  0])
+    >>> cf_HEALPix_change_order([0, 1, 2, 3], 'nuniq', 'ring', 1)
+    array([16, 17, 18, 19])
+
     """
+    import healpix
 
     if healpix_order == "nested":
         if new_healpix_order == "ring":
@@ -165,7 +200,7 @@ def cf_HEALPix_coordinates(
 ):
     """Calculate HEALPix cell coordinates.
 
-    THe coordinates are in the centres of the cells.
+    THe coordinates are for the cell centres.
 
     .. versionadded:: NEXTVERSION
 
@@ -192,12 +227,21 @@ def cf_HEALPix_coordinates(
     :Returns:
 
         `numpy.ndarray`
-            An array containing the HEALPix cell coordinates.
+            A 1-d array containing the HEALPix cell coordinates.
+
+    **Examples**
+
+    >>> cf_HEALPix_coordinates([0, 1, 2, 3], 'nested', 1, lat=True)
+    array([19.47122063, 41.8103149 , 41.8103149 , 66.44353569])
+    >>> cf_HEALPix_coordinates([0, 1, 2, 3], 'nested', 1, lon=True)
+    array([45. , 67.5, 22.5, 45. ])
 
     """
+    import healpix
+
     if a.ndim != 1:
         raise ValueError(
-            "Can't calculate HEALPix cell coordinates when "
+            "Can't calculate HEALPix cell coordinates when the "
             f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
@@ -207,6 +251,7 @@ def cf_HEALPix_coordinates(
         pos = 0
 
     if healpix_order == "nuniq":
+        # Create coordinates for 'nuniq' cells
         c = np.empty(a.shape, dtype="float64")
 
         nest = False
@@ -221,27 +266,36 @@ def cf_HEALPix_coordinates(
                 nside=nside, ipix=a[level], nest=nest, lonlat=True
             )[pos]
     else:
-        # nested or ring
+        # Create coordinates for 'nested' or 'ring' cells
+        nest = (healpix_order == "nested",)
         nside = healpix.order2nside(refinement_level)
         c = healpix.pix2ang(
             nside=nside,
             ipix=a,
-            nest=healpix_order == "nested",
+            nest=nest,
             lonlat=True,
         )[pos]
 
     return c
 
 
-def cf_HEALPix_nuniq_weights(a, measure=False, radius=None):
-    """Calculate HEALPix cell weights for 'nuniq' indices.
+def cf_HEALPix_nuniq_area_weights(a, measure=False, radius=None):
+    """Calculate HEALPix cell area weights for 'nuniq' indices.
+
+    For mathematical details, see section 4 of:
+
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High‐Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
 
     .. versionadded:: NEXTVERSION
 
     :Parameters:
 
         a: `numpy.ndarray`
-            The array of HEALPix indices.
+            The array of HEALPix 'nuniq' indices.
 
         measure: `bool`, optional
             If True then create weights that are actual cell areas, in
@@ -256,7 +310,18 @@ def cf_HEALPix_nuniq_weights(a, measure=False, radius=None):
         `numpy.ndarray`
             An array containing the HEALPix cell weights.
 
+    **Examples**
+
+    >>> cf_HEALPix_nuniq_weights([76, 77, 78, 79, 20, 21])
+    array([0.0625, 0.0625, 0.0625, 0.0625, 0.25  , 0.25  ])
+    >>> cf_HEALPix_nuniq_weights([76, 77, 78, 79, 20, 21],
+    ...                          measure=True, radius=6371000)
+    array([2.65658579e+12, 2.65658579e+12, 2.65658579e+12, 2.65658579e+12,
+           1.06263432e+13, 1.06263432e+13])
+
     """
+    import healpix
+
     if measure:
         x = np.pi * (radius**2) / 3.0
     else:
@@ -267,6 +332,7 @@ def cf_HEALPix_nuniq_weights(a, measure=False, radius=None):
         orders, return_index=True, return_inverse=True
     )
 
+    # Initialise the output weights array
     w = np.empty(a.shape, dtype="float64")
 
     for order, i in zip(orders, index):

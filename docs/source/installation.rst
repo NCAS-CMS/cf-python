@@ -268,6 +268,11 @@ environments for which these features are not required.
   must use a copy of the ``pyfive`` branch of the
   https://github.com/NCAS-CMS/PyActiveStorage repository.
 
+.. rubric:: HEALPix manipulations
+
+* `healpix <https://pypi.org/project/healpix>`_, version 2024.2 or
+  newer.
+
 ----
 
 .. _Tests:

@@ -3035,7 +3035,17 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(values[0], -999)
         self.assertEqual(counts[0], 5)
 
+    def test_Field_healpix_axis(self):
+        """Test Field.healpix_axis."""
+        f = cf.example_field(12)
+        key0 = f.healpix_axis()
+        key1 = f.auxiliary_coordinate(
+                "healpix_index",
+                filter_by_naxes=(1,),
+                key=True,
+                default=None)
 
+        self.assertEqual(key0, key1()x
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

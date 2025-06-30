@@ -4911,48 +4911,115 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    @_inplace_enabled(default=False)
     def healpix_decrease_refinement_level(
-        self,
-        level,
-        reduction=np.mean,
-        check_healpix_index=True,
-        inplace=False,
+        self, level, reduction, sort=True, check_healpix_index=True
     ):
-        """TODOHEALPIX
-
+        """Decrease the refinement level of a HEALPix grid.
+        
         .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_change_order`
 
         :Parameters:
 
-            TODOHEALPIX
-
             level: `int` or `None`
+                Specify the new refinement level. If a non-negative
+                integer then this explicitly defines the new
+                refinement level. If a negative integer then the new
+                refinement level is defined by the current refinement
+                level plus *level*. If `None` then the refinement
+                level is not changed.
 
-            {{inplace: `bool`, optional}}
+                *Example:*
+                  If the current refinement level is 10 then a new
+                  coarser refinment level of 8 can be specified by
+                  either ``8`` or ``-2``.
+        
+            reduction: function
+                The function used to calculate the values in the new
+                coarser cells from the original data defined on the
+                original finer cells.
+
+                *Example:*
+                  For an intensive field quantity (that does not
+                  depend on the size of the cells, such as
+                  "precipitation_flux" with units of kg m-2 s-1),
+                  ``np.mean`` may be appropriate. For an extensive
+                  field quantity (that depends on the size of the
+                  cells, such as "precipitation_amount" with units of
+                  kg m-2), ``np.sum`` may be appropriate.
+
+            sort: `bool`, optional
+                As a requirement of the coarsening algorithm, the
+                HEALPix indices are always automatically converted to
+                'nested' ordering, and if *sort* is True (the default)
+                then the HEALPix axis will also be sorted so that
+                these nested HEALPix indices are monotonically
+                increasing. Only set to False, which will speed up the
+                operation, if it is known that the HEALPix indices
+                expressed in their nested ordering are already
+                monotonically increasing.
+        
+            check_healpix_index: `bool`, optional
+                As a requirement of the coarsening algorithm, the
+                HEALPix indices are always automatically converted to
+                'nested' ordering, and if *sort* is True then the
+                HEALPix axis will also be sorted so that these nested
+                HEALPix indices are monotonically increasing. If
+                *check_healpix_indices* is True (the default) then it
+                will be checked that 1) the nested HEALPix indices are
+                strictly monotonically increasing, and 2) a cell at
+                the new coarser refinement level contains the maximum
+                possible number of cells at the original finer
+                refinement level.
+
+                .. warning:: Only set to False, which will speed up
+                             the operation, if it is known these
+                             conditions are met. If set to False and
+                             any of the conditions is not met then
+                             either an exception will be raised or,
+                             much worse, the operation will complete
+                             and return incorrect results.
 
         :Returns:
 
-            `{{class}}` or `None`
-                TODOHEALPIX
+            `Field`
+                A new field with a coarsened HEALPix grid.
 
         **Examples**
 
-        >>> TODOHEALPIX
+        >>> f = cf.example_field(12)
+        >>> f
+        <CF Field: air_temperature(time(2), healpix_index(48)) K>
+
+        Set the refinement level to 0:
+        
+        >>> g = f.healpix_decrease_refinement_level(0, np.mean)g
+        >>> g
+        <CF Field: air_temperature(time(2), healpix_index(12)) K>
+
+        Decrease the refinement level by 1:
+
+        >>> f.healpix_decrease_refinement_level(-1, np.mean)
+        <CF Field: air_temperature(time(2), healpix_index(12)) K>
+        >>> f.array[0, :4].mean()
+        np.float64(289.15)
+        >>> g.array[0, 0]
+        np.float64(289.15)
 
         """
-        f = _inplace_enabled_define_and_cleanup(self)
-
         # Try to change the order to nested, as that's the only order
-        # from which we can decrease the refinement level.
+        # from which we can change the refinement level.
         try:
-            f.healpix_change_order("nested", inplace=True)
-        except ValueError:
-            pass
+            f = self.healpix_change_order("nested", sort=sort)
+        except ValueError as error:
+            raise ValueError(
+                f"Can't decrease HEALPix refinement level: {error}"
+            )
 
-        # Get the healpix_index oordinates and the key of the HEALPix
+        # Get the healpix_index coordinates and the key of the HEALPix
         # domain axis
-        hp_key, healpix_index = f.coordinate(
+        hp_key, healpix_index = f.auxiliary_coordinate(
             "healpix_index",
             filter_by_naxes=(1,),
             item=True,
@@ -4960,8 +5027,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
         if healpix_index is None:
             raise ValueError(
-                "Can't decrease HEALPix refinement level: healpix_index "
-                "coordinates have not been set"
+                "Can't decrease HEALPix refinement level: There are no "
+                "healpix_index coordinates"
             )
 
         axis = f.get_data_axes(hp_key)[0]
@@ -4975,20 +5042,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         parameters = cr.coordinate_conversion.parameters()
-        healpix_order = parameters.get("healpix_order")
-        if healpix_order is None:
-            raise ValueError(
-                "Can't decrease HEALPix refinement level: healpix_order has "
-                "not been set"
-            )
-
-        if healpix_order != "nested":
-            raise ValueError(
-                "Can't decrease HEALPix refinement level: Must have a "
-                "healpix_order of 'nested' or 'ring' for this operation. "
-                f"Got: {healpix_order!r}"
-            )
-
         refinement_level = parameters.get("refinement_level")
         if refinement_level is None:
             raise ValueError(
@@ -5027,11 +5080,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if check_healpix_index:
             d = healpix_index.data
-            if not (d.diff() > 0).all():
+            if not sort and not (d.diff() > 0).all():
                 raise ValueError(
-                    "Can't decrease HEALPix refinement level: healpix_index "
-                    "coordinates with 'nested' ordering are not strictly "
-                    "monotonically increasing"
+                    "Can't decrease HEALPix refinement level: Nested "
+                    "healpix_index coordinates are not strictly "
+                    "monotonically increasing. Consider setting sort=True."
                 )
 
             if (d[::ncells] % ncells).any() or (
@@ -5039,22 +5092,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ).any():
                 raise ValueError(
                     "Can't decrease HEALPix refinement level: At least one "
-                    "cell at the coarser refinement level "
+                    "cell at the new coarser refinement level "
                     f"({new_refinement_level}) contains fewer than {ncells} "
-                    "cells at the original refinement level "
+                    "cells at the original finer refinement level "
                     f"({refinement_level})"
                 )
 
-        # Coarsen (using 'reduction') the field data. Note that using
-        # the 'coarsen' technique only works for 'nested' HEALPix
-        # ordering.
-        i = f.get_data_axes().index(axis)
+        # Coarsen (using the 'reduction' function) the field
+        # data. Note that using the 'coarsen' technique only works for
+        # 'nested' HEALPix ordering.
+        hp_iaxis = f.get_data_axes().index(axis)
         f.data.coarsen(
-            reduction, axes={i: ncells}, trim_excess=False, inplace=True
+            reduction, axes={hp_iaxis: ncells}, trim_excess=False, inplace=True
         )
 
-        # Coarsen (using np.mean) the domain ancillary constructs
-        # that span the HEALPix axis
+        # Coarsen the domain ancillary constructs that span the
+        # HEALPix axis. We're assuming that domain ancillary data are
+        # intensive (i.e. do not depend on the size of the cell), so
+        # we use np.mean for the reduction function.
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5063,8 +5118,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 np.mean, axes={i: ncells}, trim_excess=False, inplace=True
             )
 
-        # Coarsen (using np.sum) the cell measure constructs that span
-        # the HEALPix axis
+        # Coarsen the cell measure constructs that span the HEALPix
+        # axis. Cell measure data are extensive (i.e. depend on the
+        # size of the cell), so we use np.sum for the reduction
+        # function.
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5086,7 +5143,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Re-size the HEALPix axis
         domain_axis = f.domain_axis(axis)
-        domain_axis.set_size(f.shape[i])
+        domain_axis.set_size(f.shape[hp_iaxis])
 
         # Set the healpix_index coordinates for the new refinement
         # level

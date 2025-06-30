@@ -4684,6 +4684,29 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e._axes, d._axes[1:])
         self.assertEqual(e.nc_dataset_chunksizes(), chunks)
 
+    def test_Data_coarsen(self):
+        """Test Data.coarsen."""
+        d = cf.Data(np.arange(24).reshape((4, 6)))
+        a = d.array
+
+        self.assertIsNone(d.coarsen(np.min, axes={}, inplace=True))
+        self.assertEqual(d.shape, a.shape)
+        self.assertTrue((d.array == a).all())
+
+        e = d.coarsen(np.min, {0: 2, 1: 3})
+        self.assertIsInstance(e, cf.Data)
+        self.assertEqual(e.shape, (2, 2))
+        self.assertTrue((e.array == [[0, 3], [12, 15]]).all())
+
+        # Non-full caorsening neighbourhood with trim_excess=True
+        e = d.coarsen(np.max, {-1: 5}, trim_excess=True)
+        self.assertEqual(e.shape, (4, 1))
+        self.assertTrue((e.array == [[4], [10], [16], [22]]).all())
+
+        # Non-full caorsening neighbourhood with trim_excess=False
+        with self.assertRaises(ValueError):
+            d.coarsen(np.max, {-1: 5})
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

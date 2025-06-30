@@ -1922,7 +1922,7 @@ class Weights(Container, cfdm.Container):
         return_areas=False,
         methods=False,
     ):
-        """Creates area weights for polygon geometry cells.TODOHEALPIX
+        """Creates area weights for HEALPix cells.
 
         .. versionadded:: NEXTVERSION
 
@@ -1957,7 +1957,7 @@ class Weights(Container, cfdm.Container):
                 the weights are returned.
 
         """
-        axis = f.healpix_axis()
+        axis = f.healpix_axis(None)
         if axis is None:
             if auto:
                 return False
@@ -2041,27 +2041,26 @@ class Weights(Container, cfdm.Container):
                 if auto:
                     return False
 
-                raise ValueError("Can't create weights: TODOHEALPIX")
+                raise ValueError(
+                    "Can't create weights: Missing healpix_index coordinates"
+                )
 
             if measure:
                 units = radius.Units**2
             else:
                 units = "1"
 
-            from .dask_utils import cf_HEALPix_nuniq_weights
+            from .dask_utils import cf_HEALPix_nuniq_area_weights
 
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(
-                cf_HEALPix_nuniq_weights,
+                cf_HEALPix_nuniq_area_weights,
                 meta=np.array((), dtype="float64"),
                 measure=measure,
                 radius=radius,
             )
             area = f._Data(dx, units=units, copy=False)
 
-            #            area = cls._healpix_nuniq_weights(
-            #                f, healpix_index, measure=measure, radius=radius
-            #            )
             if return_areas:
                 return area
 
@@ -2094,47 +2093,3 @@ class Weights(Container, cfdm.Container):
         weights[(axis,)] = area
         weights_axes.add(axis)
         return True
-
-
-#    @classmethod
-#    def _healpix_nuniq_weights(
-#        self, f, healpix_index, measure=False, radius=None
-#    ):
-#        """TODOHEALPIX
-#
-#        .. versionadded:: NEXTVERSION
-#
-#        :Parameters:
-#
-#            f: `Field`
-#                The field for which the weights are being created.
-#
-#            healpix_index: `Coordinate`
-#                TODOHEALPIX
-#
-#            {{weights measure: `bool`, optional}}
-#
-#            {{radius: optional}}
-#
-#        :Returns:
-#
-#            `Data`
-#                TODOHEALPIX
-#
-#        """
-#        from .dask_utils import cf_HEALPix_nuniq_weights
-#
-#        dx = healpix_index.to_dask_array()
-#        dx = dx.map_blocks(
-#            cf_HEALPix_nuniq_weights,
-#            meta=np.array((), dtype="float64"),
-#            measure=measure,
-#            radius=radius,
-#        )
-#
-#        if measure:
-#            units = radius.Units**2
-#        else:
-#            units = "1"
-#
-#        return f._Data(dx, units=units, copy=False)

@@ -297,7 +297,8 @@ class FieldDomain:
                 )
 
         # Create any implied 1-d latitude and longitude coordinates
-        # (e.g. as implied by HEALPix indices)
+        # (e.g. as implied by HEALPix indices). Do not do this
+        # in-place.
         self = self.create_latlon_coordinates(one_d=True, two_d=False)
 
         domain_axes = self.domain_axes(todict=True)
@@ -1877,47 +1878,126 @@ class FieldDomain:
 
         return set(axes)
 
-    def healpix_axis(self):
-        """TODOHEALPIX.
+    def healpix_axis(self, default=ValueError()):
+        """Return the HEALPix axis identifier.
 
         .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_change_order`, `healpix_to_ugrid`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if an
+                HEALPix axis can not be found.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The identifier of the HEALPix domain axis construct.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Coord references: grid_mapping_name:healpix
+        >>> axis = f.healpix_axis()
+        >>> axis
+        'domainaxis1'
+        >>> f.constructs.domain_axis_identity(axis)
+        'healpix_index'
 
         """
         key = self.coordinate(
             "healpix_index", filter_by_naxes=(1,), key=True, default=None
         )
         if key is None:
-            return
+            if default is None:
+                return
+
+            return self._default(default, "There is no HEALPix axis")
 
         return self.get_data_axes(key)[0]
 
-    @_inplace_enabled(default=False)
-    def healpix_change_order(self, new_healpix_order, inplace=False):
+    def healpix_change_order(self, new_healpix_order, sort=False):
         """Change the ordering of HEALPix indices.
 
         .. versionadded:: NEXTVERSION
 
+        .. seealso:: `healpix_axis`
+
         :Parameters:
 
             new_healpix_order: `str`
-                The new HEALPix order to change to. One of
-                ``'nested'``, ``'ring'``, or ``'nuniq'``.
+                The new HEALPix order. One of ``'nested'``,
+                ``'ring'``, or ``'nuniq'``.
 
-            {{inplace: `bool`, optional}}
+            sort: `bool`, optional
+                If True then sort the HEALPix axis of the output
+                {{class}} so that the HEALPix indices are
+                monotonically increasing. If False (the default) then
+                don't do this.
 
         :Returns:
 
-            `{{class}}` or `None`
-                TODOHEALPIX An array containing the new HEALPix indices.
+            `{{class}}`
+                The {{class}} with the HEALPix indices redefined for
+                the new ordering.
 
         **Examples**
 
-        TODOHEALPIX
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Coord references: grid_mapping_name:healpix
+        >>> f.coordinate_reference('grid_mapping_name:healpix').coordinate_conversion.get_parameter('healpix_order')
+        'nested'
+        >>> print(f.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
+
+        >>> g = f.healpix_change_order('nuniq')
+        >>> print(g.coordinate('healpix_index').array)
+        [16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
+         40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63]
+
+        >>> g = f.healpix_change_order('ring')
+        >>> print(g.coordinate('healpix_index').array)
+        [13  5  4  0 15  7  6  1 17  9  8  2 19 11 10  3 28 20 27 12 30 22 21 14
+         32 24 23 16 34 26 25 18 44 37 36 29 45 39 38 31 46 41 40 33 47 43 42 35]
+
+        >>> g = f.healpix_change_order('ring', sort=True)
+        >>> print(g.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
+        >>> h = g.healpix_change_order('nested')
+        >>> print(h.coordinate('healpix_index').array)
+        [ 3  7 11 15  2  1  6  5 10  9 14 13 19  0 23  4 27  8 31 12 17 22 21 26
+         25 30 29 18 16 35 20 39 24 43 28 47 34 33 38 37 42 41 46 45 32 36 40 44]
+        >>> h = g.healpix_change_order('nested', sort=True)
+        >>> print(h.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
         from ..dask_utils import cf_HEALPix_change_order
 
-        f = _inplace_enabled_define_and_cleanup(self)
+        f = self.copy()
 
         if new_healpix_order not in ("nested", "ring", "nuniq"):
             raise ValueError(
@@ -1929,8 +2009,8 @@ class FieldDomain:
         cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
         if cr is None:
             raise ValueError(
-                "Can't change HEALPix order: HEALPix grid mapping has "
-                "not been set"
+                "Can't change HEALPix order: There is no HEALPix grid "
+                "mapping coordinate reference"
             )
 
         parameters = cr.coordinate_conversion.parameters()
@@ -1954,11 +2034,8 @@ class FieldDomain:
                 f"healpix_order 'nested' or 'ring'. Got {healpix_order!r}"
             )
 
-        if healpix_order == new_healpix_order:
-            # No change
-            return f
-
-        # Get the original HEALPix indices
+        # Get the original healpix_index coordinates and the key of
+        # the HEALPix domain axis
         hp_key, healpix_index = f.coordinate(
             "healpix_index",
             filter_by_naxes=(1,),
@@ -1967,43 +2044,96 @@ class FieldDomain:
         )
         if healpix_index is None:
             raise ValueError(
-                "Can't change HEALPix order: No healpix_index coordinates"
+                "Can't change HEALPix order: There are no "
+                "healpix_index coordinates"
             )
 
-        # Change the HEALPix indices
-        dx = healpix_index.to_dask_array()
-        dx = dx.map_blocks(
-            cf_HEALPix_change_order,
-            meta=np.array((), dtype="int64"),
-            healpix_order=healpix_order,
-            new_healpix_order=new_healpix_order,
-            refinement_level=refinement_level,
-        )
-        healpix_index.set_data(dx, copy=False)
+        axis = f.get_data_axes(hp_key)[0]
+
+        if healpix_order != new_healpix_order:
+            # Change the HEALPix indices
+            dx = healpix_index.to_dask_array()
+            dx = dx.map_blocks(
+                cf_HEALPix_change_order,
+                meta=np.array((), dtype="int64"),
+                healpix_order=healpix_order,
+                new_healpix_order=new_healpix_order,
+                refinement_level=refinement_level,
+            )
+            healpix_index.set_data(dx, copy=False)
+
+            # Update the Coordinate Reference
+            cr.coordinate_conversion.set_parameter(
+                "healpix_order", new_healpix_order
+            )
+            if new_healpix_order == "nuniq":
+                cr.coordinate_conversion.del_parameter(
+                    "refinement_level", None
+                )
 
         if healpix_index.construct_type == "dimension_coordinate":
-            # Convert indices to auxiliary coordinates
+            # Convert healpix_indices to auxiliary coordinates
             healpix_index = f._AuxiliaryCoordinate(
                 source=healpix_index, copy=False
             )
-            axis = f.get_data_axes(hp_key)[0]
             f.del_construct(hp_key)
-            new_key = f.set_construct(healpix_index, axes=axis, copy=False)
-            cr.set_coordinate(new_key)
+            hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
+            cr.set_coordinate(hp_key)
 
-        # Update the Coordinate Reference
-        cr.coordinate_conversion.set_parameter(
-            "healpix_order", new_healpix_order
-        )
-        if new_healpix_order == "nuniq":
-            cr.coordinate_conversion.del_parameter("refinement_level", None)
+        if sort:
+            # Sort the HEALPix axis so that the HEALPix indices are
+            # monotonically increasing
+            d = healpix_index.to_dask_array()
+            if not (d == da.arange(d.size)).all():
+                index = healpix_index.data.compute()
+                f = f.subspace(**{axis: np.argsort(index)})
 
         return f
 
     @_inplace_enabled(default=False)
     def healpix_to_ugrid(self, inplace=False):
-        """TODOHEALPIX"""
-        axis = self.healpix_axis()
+        """Convert a HEALPix domain to a UGRID domain.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `create_latlon_coordinates`, `healpix_axis`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The `{{class}}` converted to UGRID, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Coord references: grid_mapping_name:healpix
+        >>> print(f.healpix_to_ugrid())
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), ncdim%cell(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: latitude(ncdim%cell(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
+                        : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
+        Coord references: grid_mapping_name:latitude_longitude
+        Topologies      : cell:face(ncdim%cell(48), 4) = [[965, ..., 3074]]
+
+        """
+        axis = self.healpix_axis(None)
         if axis is None:
             raise ValueError(
                 "Can't convert HEALPix to UGRID: There is no HEALPix domain "
@@ -2056,7 +2186,7 @@ class FieldDomain:
                 "bounds"
             )
 
-        # Create a unique identifer for each node location
+        # Create a unique integer identifer for each node location
         bounds_y = bounds_y.to_dask_array()
         bounds_x = bounds_x.to_dask_array()
 
@@ -2116,21 +2246,75 @@ class FieldDomain:
         return f
 
     @_inplace_enabled(default=False)
-    def create_latlon_coordinates(self, one_d=True, two_d=True, inplace=False):
-        """TODOHEALPIX.
+    @_manage_log_level_via_verbosity
+    def create_latlon_coordinates(
+        self, one_d=True, two_d=True, inplace=False, verbose=None
+    ):
+        """Create latitude and longitude coordinates.
+
+        Creates any 1-d or 2-d latitude and longitude coordinate
+        constructs that are implied by the {{class}}, but are not
+        atually present as part of the {{class}}'s metadata. Such
+        coordinates may be created if there is an appropriate
+        non-latitude_longitude grid mapping coordinate reference
+        construct.
+
+        When it is not possible to create latitude and longitude
+        coordinates, the reason why will be reported if *verbose* is
+        at ``'INFO'`` or higher.
 
         .. versionadded:: NEXTVERSION
 
+        .. seealso:: `healpix_to_ugrid`
+
         :Parameters:
 
-            TODOHEALPIX
+            one_d: `bool`, optional`
+                If True (the default) then create 1-d latitude and
+                longitude coordinates, if possible. Otherwise do not
+                attempt this.
+
+            two_d: `bool`, optional`
+                If True (the default) then create 2-d latitude and
+                longitude coordinates, if possible. Otherwise do not
+                attempt this.
 
             {{inplace: `bool`, optional}}
+
+            {{verbose: `int` or `str` or `None`, optional}}
 
         :Returns:
 
             `{{class}}` or `None`
-                TODOHEALPIX
+                The {{class}} with new latitude and longitude
+                constructs, if any could be created. If none could be
+                created then a new, identical field is returned. If
+                the operation was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Coord references: grid_mapping_name:healpix
+        >>> g = f.create_latlon_coordinates()
+        >>> print(g)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), ncdim%cell(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(ncdim%cell(48)) = [0, ..., 47] 1
+                        : latitude(ncdim%cell(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
+                        : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
+        Coord references: grid_mapping_name:healpix
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2141,37 +2325,62 @@ class FieldDomain:
             for cr in f.coordinate_references(todict=True).values()
         }
         if not identities:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: "
+                    "There are no grid mapping coordinate references"
+                )  # pragma: no cover
+
             return f
 
-        # Keep only grid mappings
+        # Keep only those that are grid mappings
         identities = {
             identity: cr
             for identity, cr in identities.items()
             if identity.startswith("grid_mapping_name:")
         }
         if len(identities) > 2:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: There "
+                    "are more than two grid mapping coordinate references"
+                )  # pragma: no cover
+
             return f
 
-        # Remove a 'latitude_longitude' grid mapping
+        # Remove a 'latitude_longitude' grid mapping, if there is one.
         latlon_cr = identities.pop(
             "grid_mapping_name:latitude_longitude", None
         )
         if not identities:
+            # There is no non-latitude_longitude grid mapping
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: There "
+                    "is no non-latitude_longitude grid mapping coordinate "
+                    "reference"
+                )  # pragma: no cover
+
             return f
 
-        # Still here? Then get the final grid mapping and calulate the
-        # lat/lon coordinates.
+        # Still here? Then get the non-latitude_longitude grid mapping
+        # and calulate the lat/lon coordinates.
         identity, cr = identities.popitem()
 
         new_coords = False
         if one_d and identity == "grid_mapping_name:healpix":
             # --------------------------------------------------------
-            # HEALPix
+            # HEALPix 1-d coordinates
             # --------------------------------------------------------
             parameters = cr.coordinate_conversion.parameters()
             healpix_order = parameters.get("healpix_order")
             if healpix_order not in ("nested", "ring", "nuniq"):
-                # Bad healpix_order
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create 1-d latitude and longitude coordinates: "
+                        f"Invalid HEALPix order: {healpix_order!r}"
+                    )  # pragma: no cover
+
                 return f
 
             refinement_level = parameters.get("refinement_level")
@@ -2179,9 +2388,15 @@ class FieldDomain:
                 "nested",
                 "ring",
             ):
-                # Missing refinement_level
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create 1-d latitude and longitude coordinates: "
+                        "Missing HEALPix refinemnt level"
+                    )  # pragma: no cover
+
                 return f
 
+            # The the HEALPix indices
             key, healpix_index = f.coordinate(
                 "healpix_index",
                 filter_by_naxes=(1,),
@@ -2189,7 +2404,12 @@ class FieldDomain:
                 default=(None, None),
             )
             if healpix_index is None:
-                # Missing healpix_index coordinates
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create 1-d latitude and longitude coordinates: "
+                        "Missing healpix_index coordinates"
+                    )  # pragma: no cover
+
                 return f
 
             # Get the HEALPix axis
@@ -2202,7 +2422,13 @@ class FieldDomain:
                 axis_mode="exact",
                 todict=True,
             ):
-                # X and/or Y coordinates already exist, so don't create any.
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create 1-d latitude and longitude coordinates: "
+                        "1-d X or Y coordinates already exist for axis "
+                        f"{f.constructs.domain_axis_identity(axis)!r}"
+                    )  # pragma: no cover
+
                 return f
 
             # Define functions to create latitudes and longitudes from
@@ -2698,74 +2924,6 @@ class FieldDomain:
                 continue
 
         return out
-
-    #    def get_refinement_level(self, default=ValueError()):
-    #        """TODOHEALPIX
-    #
-    #        .. versionadded:: NEXTVERSION
-    #
-    #        :Parameters:
-    #
-    #            TODOHEALPIX
-    #
-    #        :Returns:
-    #
-    #            `int`
-    #                TODOHEALPIX
-    #
-    #        **Examples**
-    #
-    #            TODOHEALPIX
-    #
-    #        """
-    #        cr = self.coordinate_reference(
-    #            "grid_mapping_name:healpix", default=None
-    #        )
-    #        if cr is not None:
-    #            refinement_level = cr.coordinate_conversion.get_property(
-    #                "refinement_level", None
-    #            )
-    #            if refinement_level is not None:
-    #                return refinement_level
-    #
-    #        if default is None:
-    #            return
-    #
-    #        return self._default(default, "HEALPix refinement level has been set")
-    #
-    #    def get_healpix_order(self, default=ValueError()):
-    #        """TODOHEALPIX
-    #
-    #        .. versionadded:: NEXTVERSION
-    #
-    #        :Parameters:
-    #
-    #            TODOHEALPIX
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                TODOHEALPIX
-    #
-    #        **Examples**
-    #
-    #            TODOHEALPIX
-    #
-    #        """
-    #        cr = self.coordinate_reference(
-    #            "grid_mapping_name:healpix", default=None
-    #        )
-    #        if cr is not None:
-    #            healpix_order = cr.coordinate_conversion.get_property(
-    #                "healpix_order", None
-    #            )
-    #            if healpix_order is not None:
-    #                return healpix_order
-    #
-    #        if default is None:
-    #            return
-    #
-    #        return self._default(default, "HEALPix order has been set")
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
