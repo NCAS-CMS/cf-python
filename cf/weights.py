@@ -2057,7 +2057,7 @@ class Weights(Container, cfdm.Container):
                 cf_HEALPix_nuniq_area_weights,
                 meta=np.array((), dtype="float64"),
                 measure=measure,
-                radius=radius,
+                radius=radius.array,
             )
             area = f._Data(dx, units=units, copy=False)
 

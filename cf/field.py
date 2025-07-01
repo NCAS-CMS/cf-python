@@ -179,7 +179,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 _collapse_ddof_methods = set(("sd", "var"))
 
-_earth_radius = Data(6371229.0, "m")
+#_earth_radius = Data(6371229.0, "m")
 
 _relational_methods = (
     "__eq__",
@@ -2629,111 +2629,111 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return domain
 
-    def radius(self, default=None):
-        """Return the radius of a latitude-longitude plane defined in
-        spherical polar coordinates.
-
-        The radius is taken from the datums of any coordinate
-        reference constructs, but if and only if this is not possible
-        then a default value may be used instead.
-
-        .. versionadded:: 3.0.2
-
-        .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
-
-        :Parameters:
-
-            default: optional
-                The radius is taken from the datums of any coordinate
-                reference constructs, but if and only if this is not
-                possible then the value set by the *default* parameter
-                is used. May be set to any numeric scalar object,
-                including `numpy` and `Data` objects. The units of the
-                radius are assumed to be metres, unless specified by a
-                `Data` object. If the special value ``'earth'`` is
-                given then the default radius taken as 6371229
-                metres. If *default* is `None` an exception will be
-                raised if no unique datum can be found in the
-                coordinate reference constructs.
-
-                *Parameter example:*
-                  Five equivalent ways to set a default radius of
-                  6371200 metres: ``6371200``,
-                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
-                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
-                  'km')``.
-
-        :Returns:
-
-            `Data`
-                The radius of the sphere, in units of metres.
-
-        **Examples**
-
-        >>> f.radius()
-        <CF Data(): 6371178.98 m>
-
-        >>> g.radius()
-        ValueError: No radius found in coordinate reference constructs and no default provided
-        >>> g.radius('earth')
-        <CF Data(): 6371229.0 m>
-        >>> g.radius(1234)
-        <CF Data(): 1234.0 m>
-
-        """
-        radii = []
-        for cr in self.coordinate_references(todict=True).values():
-            r = cr.datum.get_parameter("earth_radius", None)
-            if r is not None:
-                r = Data.asdata(r)
-                if not r.Units:
-                    r.override_units("m", inplace=True)
-
-                if r.size != 1:
-                    radii.append(r)
-                    continue
-
-                got = False
-                for _ in radii:
-                    if r == _:
-                        got = True
-                        break
-
-                if not got:
-                    radii.append(r)
-
-        if len(radii) > 1:
-            raise ValueError(
-                "Multiple radii found from coordinate reference "
-                f"constructs: {radii!r}"
-            )
-
-        if not radii:
-            if default is None:
-                raise ValueError(
-                    "No radius found from coordinate reference constructs "
-                    "and no default provided"
-                )
-
-            if isinstance(default, str):
-                if default != "earth":
-                    raise ValueError(
-                        "The default radius must be numeric, 'earth', "
-                        "or None"
-                    )
-
-                return _earth_radius.copy()
-
-            r = Data.asdata(default).squeeze()
-        else:
-            r = Data.asdata(radii[0]).squeeze()
-
-        if r.size != 1:
-            raise ValueError(f"Multiple radii: {r!r}")
-
-        r.Units = Units("m")
-        r.dtype = float
-        return r
+#    def radius(self, default=None):
+#        """Return the radius of a latitude-longitude plane defined in
+#        spherical polar coordinates.
+#
+#        The radius is taken from the datums of any coordinate
+#        reference constructs, but if and only if this is not possible
+#        then a default value may be used instead.
+#
+#        .. versionadded:: 3.0.2
+#
+#        .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
+#
+#        :Parameters:
+#
+#            default: optional
+#                The radius is taken from the datums of any coordinate
+#                reference constructs, but if and only if this is not
+#                possible then the value set by the *default* parameter
+#                is used. May be set to any numeric scalar object,
+#                including `numpy` and `Data` objects. The units of the
+#                radius are assumed to be metres, unless specified by a
+#                `Data` object. If the special value ``'earth'`` is
+#                given then the default radius taken as 6371229
+#                metres. If *default* is `None` an exception will be
+#                raised if no unique datum can be found in the
+#                coordinate reference constructs.
+#
+#                *Parameter example:*
+#                  Five equivalent ways to set a default radius of
+#                  6371200 metres: ``6371200``,
+#                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
+#                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
+#                  'km')``.
+#
+#        :Returns:
+#
+#            `Data`
+#                The radius of the sphere, in units of metres.
+#
+#        **Examples**
+#
+#        >>> f.radius()
+#        <CF Data(): 6371178.98 m>
+#
+#        >>> g.radius()
+#        ValueError: No radius found in coordinate reference constructs and no default provided
+#        >>> g.radius('earth')
+#        <CF Data(): 6371229.0 m>
+#        >>> g.radius(1234)
+#        <CF Data(): 1234.0 m>
+#
+#        """
+#        radii = []
+#        for cr in self.coordinate_references(todict=True).values():
+#            r = cr.datum.get_parameter("earth_radius", None)
+#            if r is not None:
+#                r = Data.asdata(r)
+#                if not r.Units:
+#                    r.override_units("m", inplace=True)
+#
+#                if r.size != 1:
+#                    radii.append(r)
+#                    continue
+#
+#                got = False
+#                for _ in radii:
+#                    if r == _:
+#                        got = True
+#                        break
+#
+#                if not got:
+#                    radii.append(r)
+#
+#        if len(radii) > 1:
+#            raise ValueError(
+#                "Multiple radii found from coordinate reference "
+#                f"constructs: {radii!r}"
+#            )
+#
+#        if not radii:
+#            if default is None:
+#                raise ValueError(
+#                    "No radius found from coordinate reference constructs "
+#                    "and no default provided"
+#                )
+#
+#            if isinstance(default, str):
+#                if default != "earth":
+#                    raise ValueError(
+#                        "The default radius must be numeric, 'earth', "
+#                        "or None"
+#                    )
+#
+#                return _earth_radius.copy()
+#
+#            r = Data.asdata(default).squeeze()
+#        else:
+#            r = Data.asdata(radii[0]).squeeze()
+#
+#        if r.size != 1:
+#            raise ValueError(f"Multiple radii: {r!r}")
+#
+#        r.Units = Units("m")
+#        r.dtype = float
+#        return r
 
     def laplacian_xy(
         self, x_wrap=None, one_sided_at_boundary=False, radius=None
@@ -4915,7 +4915,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         self, level, reduction, sort=True, check_healpix_index=True
     ):
         """Decrease the refinement level of a HEALPix grid.
-        
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_change_order`
@@ -4934,7 +4934,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   If the current refinement level is 10 then a new
                   coarser refinment level of 8 can be specified by
                   either ``8`` or ``-2``.
-        
+
             reduction: function
                 The function used to calculate the values in the new
                 coarser cells from the original data defined on the
@@ -4959,7 +4959,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 operation, if it is known that the HEALPix indices
                 expressed in their nested ordering are already
                 monotonically increasing.
-        
+
             check_healpix_index: `bool`, optional
                 As a requirement of the coarsening algorithm, the
                 HEALPix indices are always automatically converted to
@@ -4993,7 +4993,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         <CF Field: air_temperature(time(2), healpix_index(48)) K>
 
         Set the refinement level to 0:
-        
+
         >>> g = f.healpix_decrease_refinement_level(0, np.mean)g
         >>> g
         <CF Field: air_temperature(time(2), healpix_index(12)) K>

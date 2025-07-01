@@ -78,6 +78,7 @@ class FieldTest(unittest.TestCase):
 
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
+    f12 = cf.example_field(12)
 
     def test_Field_creation_commands(self):
         for f in cf.example_fields():
@@ -3037,15 +3038,100 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_healpix_axis(self):
         """Test Field.healpix_axis."""
-        f = cf.example_field(12)
-        key0 = f.healpix_axis()
-        key1 = f.auxiliary_coordinate(
-                "healpix_index",
-                filter_by_naxes=(1,),
-                key=True,
-                default=None)
+        # HEALPix field
+        f = self.f12
 
-        self.assertEqual(key0, key1()x
+        key = f.auxiliary_coordinate("healpix_index", key=True)
+        axis = f.get_data_axes(key)[0]
+        self.assertEqual(f.healpix_axis(), axis)
+
+        # Non-HEALPix field
+        self.assertIsNone(self.f0.healpix_axis(None))
+        with self.assertRaises(ValueError):
+            self.f0.healpix_axis()
+
+    def test_Field_healpix_change_order(self):
+        """Test Field.healpix_change_order."""
+        # HEALPix field
+        f = self.f12
+
+        g = f.healpix_change_order("ring")
+        self.assertTrue(
+            (g.coordinate("healpix_index")[:4].array == [13, 5, 4, 0]).all()
+        )
+        h = g.healpix_change_order("nested")
+        self.assertTrue(
+            (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+        )
+        h = g.healpix_change_order("nuniq")
+        self.assertTrue(
+            (h.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
+        )
+
+        g = f.healpix_change_order("ring", sort=True)
+        self.assertTrue(
+            (g.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+        )
+        h = g.healpix_change_order("nested", sort=False)
+        self.assertTrue(
+            (h.coordinate("healpix_index")[:4].array == [3, 7, 11, 15]).all()
+        )
+        h = g.healpix_change_order("nested", sort=True)
+        self.assertTrue(
+            (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+        )
+
+        g = f.healpix_change_order("nuniq")
+        self.assertTrue(
+            (g.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
+        )
+
+        # Can't change from 'nuniq'
+        with self.assertRaises(ValueError):
+            g.healpix_change_order("nested")
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_change_order("ring")
+
+    def test_Field_healpix_to_ugrid(self):
+        """Test Field.healpix_to_ugrid."""
+        # HEALPix field
+        f = self.f12.copy()
+
+        u = f.healpix_to_ugrid()
+        self.assertEqual(len(u.domain_topologies()), 1)
+        self.assertEqual(len(u.auxiliary_coordinates()), 2)
+        self.assertTrue(
+            (
+                u.domain_topology()[:4].normalise().array
+                == [[6, 4, 2, 3], [7, 8, 4, 6], [4, 1, 0, 2], [8, 5, 1, 4]]
+            ).all()
+        )
+
+        self.assertIsNone(f.healpix_to_ugrid(inplace=True))
+        self.assertEqual(len(f.domain_topologies()), 1)
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_to_ugrid()
+
+    def test_Field_create_latlon_coordinates(self):
+        """Test Field.create_latlon_coordinates."""
+        # HEALPix field
+        f = self.f12.copy()
+        self.assertEqual(len(f.auxiliary_coordinates()), 1)
+        self.assertEqual(len(f.auxiliary_coordinates("healpix_index")), 1)
+
+        g = f.create_latlon_coordinates()
+        self.assertEqual(len(g.auxiliary_coordinates()), 3)
+        self.assertEqual(
+            len(g.auxiliary_coordinates("healpix_index", "X", "Y")), 3
+        )
+        self.assertIsNone(f.create_latlon_coordinates(inplace=True))
+        self.assertTrue(f.equals(g))
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

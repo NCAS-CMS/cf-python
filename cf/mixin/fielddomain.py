@@ -203,7 +203,7 @@ class FieldDomain:
                 return False
 
         return True
-
+    
     def _indices(self, config, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
@@ -2002,7 +2002,7 @@ class FieldDomain:
         if new_healpix_order not in ("nested", "ring", "nuniq"):
             raise ValueError(
                 "Can't change HEALPix order: new_healpix_order must be "
-                f"'nest', 'ring', or 'nuniq'. Got {new_healpix_order!r}"
+                f"'nested', 'ring', or 'nuniq'. Got {new_healpix_order!r}"
             )
 
         # Parse the HEALPix coordinate reference
@@ -2082,7 +2082,8 @@ class FieldDomain:
 
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
-            # monotonically increasing
+            # monotonically increasing. Test for the common case of
+            # already-ordered global nested indices.
             d = healpix_index.to_dask_array()
             if not (d == da.arange(d.size)).all():
                 index = healpix_index.data.compute()
@@ -3162,6 +3163,112 @@ class FieldDomain:
 
         return [self.domain_axis(x, key=True) for x in axes]
 
+    def radius(self, default=None):
+        """Return the radius of a latitude-longitude plane defined in
+        spherical polar coordinates.
+
+        The radius is taken from the datums of any coordinate
+        reference constructs, but if and only if this is not possible
+        then a default value may be used instead.
+
+        .. versionadded:: 3.0.2
+
+        .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
+
+        :Parameters:
+
+            default: optional
+                The radius is taken from the datums of any coordinate
+                reference constructs, but if and only if this is not
+                possible then the value set by the *default* parameter
+                is used. May be set to any numeric scalar object,
+                including `numpy` and `Data` objects. The units of the
+                radius are assumed to be metres, unless specified by a
+                `Data` object. If the special value ``'earth'`` is
+                given then the default radius taken as 6371229
+                metres. If *default* is `None` an exception will be
+                raised if no unique datum can be found in the
+                coordinate reference constructs.
+
+                *Parameter example:*
+                  Five equivalent ways to set a default radius of
+                  6371200 metres: ``6371200``,
+                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
+                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
+                  'km')``.
+
+        :Returns:
+
+            `Data`
+                The radius of the sphere, in units of metres.
+
+        **Examples**
+
+        >>> f.radius()
+        <CF Data(): 6371178.98 m>
+
+        >>> g.radius()
+        ValueError: No radius found in coordinate reference constructs and no default provided
+        >>> g.radius('earth')
+        <CF Data(): 6371229.0 m>
+        >>> g.radius(1234)
+        <CF Data(): 1234.0 m>
+
+        """
+        radii = []
+        for cr in self.coordinate_references(todict=True).values():
+            r = cr.datum.get_parameter("earth_radius", None)
+            if r is not None:
+                r = self._Data.asdata(r)
+                if not r.Units:
+                    r.override_units("m", inplace=True)
+
+                if r.size != 1:
+                    radii.append(r)
+                    continue
+
+                got = False
+                for _ in radii:
+                    if r == _:
+                        got = True
+                        break
+
+                if not got:
+                    radii.append(r)
+
+        if len(radii) > 1:
+            raise ValueError(
+                "Multiple radii found from coordinate reference "
+                f"constructs: {radii!r}"
+            )
+
+        if not radii:
+            if default is None:
+                raise ValueError(
+                    "No radius found from coordinate reference constructs "
+                    "and no default provided"
+                )
+
+            if isinstance(default, str):
+                if default != "earth":
+                    raise ValueError(
+                        "The default radius must be numeric, 'earth', "
+                        "or None"
+                    )
+
+                return self._Data(6371229.0, "m")
+
+            r = self._Data.asdata(default).squeeze()
+        else:
+            r = self._Data.asdata(radii[0]).squeeze()
+
+        if r.size != 1:
+            raise ValueError(f"Multiple radii: {r!r}")
+
+        r.Units = Units("m")
+        r.dtype = float
+        return r
+
     def replace_construct(
         self, *identity, new=None, copy=True, **filter_kwargs
     ):
@@ -3576,7 +3683,9 @@ class FieldDomain:
         for value in coordinate_reference.coordinates():
             if value in coordinates:
                 identity = coordinates[value].identity(strict=strict)
-                ckeys.append(self.coordinate(identity, key=True, default=None))
+                key = self.coordinate(identity, key=True, default=None)
+                if key is not None:
+                    ckeys.append(key)
 
         ref.clear_coordinates()
         ref.set_coordinates(ckeys)

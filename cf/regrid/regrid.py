@@ -131,6 +131,10 @@ class Grid:
     # The integer position in *coords* of a vertical coordinate. If
     # `None` then there are no vertical coordinates.
     z_index: Any = None
+    # TODOHEALPIX
+    original_domain: Any = None
+    # Whether or not the original domain is a HEALPix grid
+    original_healpix: bool = False
 
 
 def regrid(
@@ -338,7 +342,7 @@ def regrid(
     """
     if not inplace:
         src = src.copy()
-
+        
     spherical = coord_sys == "spherical"
     cartesian = not spherical
 
@@ -502,11 +506,23 @@ def regrid(
 
     conform_coordinates(src_grid, dst_grid)
 
-    if method in ("conservative_2nd", "patch"):
+    if method == "conservative":
+        if src_grid.original_healpix or dst_grid.original_healpix:
+            raise ValueError(
+                f"{method!r} regridding is not available for HEALPix grids"
+            )
+                  
+    elif method in ("conservative_2nd", "patch"):
+        if method == "conservative_2nd" and (src_grid.original_healpix or dst_grid.original_healpix):
+            raise ValueError(
+                f"{method!r} regridding is not available for HEALPix grids"
+            )
+                  
         if not (src_grid.dimensionality >= 2 and dst_grid.dimensionality >= 2):
             raise ValueError(
                 f"{method!r} regridding is not available for 1-d regridding"
             )
+              
     elif method in ("nearest_dtos", "nearest_stod"):
         if not has_coordinate_arrays(src_grid) and not has_coordinate_arrays(
             dst_grid
@@ -660,7 +676,7 @@ def regrid(
             dst_featureType=dst_grid.featureType,
             src_z=src_grid.z,
             dst_z=dst_grid.z,
-            ln_z=ln_z,
+            ln_z=ln_z, # TODOHEALPIX            
         )
     else:
         if weights_file is not None:
@@ -714,15 +730,15 @@ def regrid(
     # ----------------------------------------------------------------
     # Update the regridded metadata
     # ----------------------------------------------------------------
-    update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator)
+    cr_map = update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator)
 
-    update_coordinates(src, dst, src_grid, dst_grid)
+    update_coordinates(src, dst, src_grid, dst_grid, cr_map)
 
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
     update_data(src, regridded_data, src_grid, dst_grid)
-
+            
     if coord_sys == "spherical" and dst_grid.is_grid:
         # Set the cyclicity of the longitude axis of the new field
         key, x = src.dimension_coordinate("X", default=(None, None), item=True)
@@ -1132,6 +1148,11 @@ def spherical_grid(
             The grid definition.
 
     """
+    original_domain = f.copy()
+    
+    # Whether or not the original domain is a HEALPix grid
+    original_healpix = False
+    
     # Create any implied lat/lon coordinates in-place
     try:
         # Try to convert a HEALPix grid to a UGRID grid (which will
@@ -1139,6 +1160,8 @@ def spherical_grid(
         f.healpix_to_ugrid(inplace=True)
     except ValueError:
         f.create_latlon_coordinates(inplace=True)
+    else:
+        original_healpix = True
 
     data_axes = f.constructs.data_axes()
 
@@ -1442,6 +1465,8 @@ def spherical_grid(
         z=z,
         ln_z=ln_z,
         z_index=z_index,
+        original_domain=original_domain,
+        original_healpix=original_healpix,
     )
 
     set_grid_type(grid)
@@ -1459,8 +1484,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
     :Parameters:
 
         f: `Field` or `Domain`
-           The field or domain construct from which to get the
-           coordinates.
+            The field or domain construct from which to get the
+            coordinates.
 
         name: `str`
             A name to identify the grid.
@@ -1487,6 +1512,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             The grid definition.
 
     """
+    original_domain = f.copy()
+    
     if not axes:
         if name == "source":
             raise ValueError(
@@ -1670,6 +1697,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         z=z,
         ln_z=ln_z,
         z_index=z_index,
+        original_domain=original_domain    
     )
 
     set_grid_type(grid)
@@ -2754,7 +2782,7 @@ def get_mask(f, grid):
     return mask
 
 
-def update_coordinates(src, dst, src_grid, dst_grid):
+def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
     """Update the regrid axis coordinates.
 
     Replace the existing coordinate constructs that span the regridding
@@ -2775,17 +2803,25 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         dst: `Field` or `Domain`
             The field or domain containing the destination grid.
 
-        src_grid: `Grid` or `Mesh`
+        src_grid: `Grid`
             The definition of the source grid.
 
-        dst_grid: `Grid` or `Mesh`
+        dst_grid: `Grid`
             The definition of the destination grid.
+
+        cr_map `dict`
+            TODOHEALPIX
 
     :Returns:
 
         `None`
 
     """
+    if dst_grid.original_domain is not None:
+        dst = dst_grid.original_domain
+
+    dst_grid_is_mesh = dst_grid.is_mesh and not dst_grid.original_healpix
+        
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
@@ -2803,7 +2839,7 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         todict=True,
     ):
         src.del_construct(key)
-
+        
     # Domain axes
     src_domain_axes = src.domain_axes(todict=True)
     dst_domain_axes = dst.domain_axes(todict=True)
@@ -2840,11 +2876,18 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
     ).items():
         axes = [axis_map[axis] for axis in dst_data_axes[key]]
-        src.set_construct(coord, axes=axes)
+        coord_key = src.set_construct(coord, axes=axes)
+
+        # Update the coordinates in new source coordinate references
+        for dst_cr_key, src_cr_key in cr_map.items():
+            dst_cr = dst.coordinate_reference(dst_cr_key)
+            if key in dst_cr.coordinates():
+                src_cr = src.coordinate_reference(src_cr_key)
+                src_cr.set_coordinate(coord_key)
 
     # Copy domain topology and cell connectivity constructs from the
     # destination grid
-    if dst_grid.is_mesh:
+    if dst_grid_is_mesh:
         for key, topology in dst.constructs(
             filter_by_type=("domain_topology", "cell_connectivity"),
             filter_by_axis=dst_axis_keys,
@@ -2879,9 +2922,13 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
 
     :Returns:
 
-        `None`
+        `dict`
+            TODOHEALPIX
 
     """
+    if dst_grid.original_domain is not None:
+        dst = dst_grid.original_domain
+
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
@@ -2974,17 +3021,25 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
 
     # ----------------------------------------------------------------
     # Copy selected coordinate references from the destination grid
+    #
+    # Define the mapping of destination corodinate references to
+    # source coordinate references
     # ----------------------------------------------------------------
+    cr_map = {}
+    
     dst_data_axes = dst.constructs.data_axes()
-
-    for ref in dst.coordinate_references(todict=True).values():
+    for dst_key, ref in dst.coordinate_references(todict=True).items():
         axes = set()
         for c_key in ref.coordinates():
             axes.update(dst_data_axes[c_key])
-
+            
         if axes and set(axes).issubset(dst_axis_keys):
-            src.set_coordinate_reference(ref, parent=dst, strict=True)
-
+            src_cr = ref.copy()
+            src_cr.clear_coordinates()
+            src_key = src.set_construct(src_cr)
+            cr_map[dst_key] = src_key
+            
+    return cr_map
 
 def update_data(src, regridded_data, src_grid, dst_grid):
     """Insert the regridded field data.

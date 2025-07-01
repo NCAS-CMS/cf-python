@@ -1,11 +1,14 @@
 from math import prod
+from numbers import Integral
 
 import cfdm
 import numpy as np
 
 from . import mixin
 from .auxiliarycoordinate import AuxiliaryCoordinate
+from .bounds import Bounds
 from .constructs import Constructs
+from .coordinatereference import CoordinateReference
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 from .dimensioncoordinate import DimensionCoordinate
@@ -79,7 +82,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def __new__(cls, *args, **kwargs):
         """Creates a new Domain instance."""
         instance = super().__new__(cls)
+        instance._Bounds = Bounds
         instance._Constructs = Constructs
+        instance._CoordinateReference = CoordinateReference
         instance._Data = Data
         instance._DomainAxis = DomainAxis
         instance._DimensionCoordinate = DimensionCoordinate
@@ -153,12 +158,12 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
     @classmethod
     def create_regular(cls, x_args, y_args, bounds=True):
-        """
-        Create a new domain with the regular longitudes and latitudes.
+        """Create a new domain with the regular longitudes and latitudes.
 
         .. versionadded:: 3.15.1
 
-        .. seealso:: `cf.DimensionCoordinate.create_regular`
+        .. seealso:: `cf.DimensionCoordinate.create_regular`,
+                     `cf.Domain.create_healpix`
 
         :Parameters:
 
@@ -182,7 +187,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples**
 
-        >>> import cf
         >>> domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
         >>> domain.dump()
         --------
@@ -256,6 +260,137 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             longitude, axes=[domain_axis_longitude], copy=False
         )
         domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
+
+        return domain
+
+    @classmethod
+    def create_healpix(
+        cls, refinement_level, healpix_order="nested", radius=None
+    ):
+        """Create a new global HEALPix domain.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `cf.Domain.create_regular`
+
+        :Parameters:
+
+            TODOHEALPIX
+
+            radius: optional
+                Specify the radius of the latitude-longitude plane
+                defined in spherical polar coordinates. May be set to
+                any numeric scalar object, including `numpy` and
+                `Data` objects. The units of the radius are assumed to
+                be metres, unless specified by a `Data` object. If the
+                special value ``'earth'`` is given then the radius
+                taken as 6371229 metres. If `None` (the default) then
+                no radius is set.
+
+                *Example:*
+                  Equivalent ways to set a radius of 6371229 metres:
+                  ``6371229``, ``numpy.array(6371229)``,
+                  ``cf.Data(6371229)``, ``cf.Data(6371229, 'm')``,
+                  ``cf.Data(6371.229, 'km')``, ``'earth'``.
+
+        :Returns:
+
+            `Domain`
+                The newly created HEALPix domain.
+
+        **Examples**
+
+        >>> d = cf.Domain.create_healpix(4)
+        >>> d.dump()
+        --------
+        Domain:
+        --------
+        Domain Axis: healpix_index(3072)
+
+        Auxiliary coordinate: healpix_index
+            standard_name = 'healpix_index'
+            units = '1'
+            Data(healpix_index(3072)) = [0, ..., 3071] 1
+
+        Coordinate reference: grid_mapping_name:healpix
+            Coordinate conversion:grid_mapping_name = healpix
+            Coordinate conversion:healpix_order = nested
+            Coordinate conversion:refinement_level = 4
+            Auxiliary Coordinate: healpix_index
+
+        >>> d = cf.Domain.create_healpix(8, "nuniq", radius=6371000)
+        >>> d.dump()
+        --------
+        Domain:
+        --------
+        Domain Axis: healpix_index(786432)
+
+        Auxiliary coordinate: healpix_index
+            standard_name = 'healpix_index'
+            units = '1'
+            Data(healpix_index(786432)) = [262144, ..., 1048575] 1
+
+        Coordinate reference: grid_mapping_name:healpix
+            Coordinate conversion:grid_mapping_name = healpix
+            Coordinate conversion:healpix_order = nuniq
+            Datum:earth_radius = 6371000.0
+            Auxiliary Coordinate: healpix_index
+
+        """
+        import dask.array as da
+
+        if not isinstance(refinement_level, Integral) or refinement_level < 0:
+            raise ValueError(
+                "'refinement_level' must be a non-negative integer. "
+                f"Got: {refinement_level!r}"
+            )
+
+        nuniq = healpix_order == "nuniq"
+        if nuniq:
+            healpix_order = "nested"
+        elif healpix_order not in ("nested", "ring"):
+            raise ValueError(
+                "'healpix_order' must be 'nested', 'ring', or 'nuniq'. "
+                f"Got: {healpix_order!r}"
+            )
+
+        domain = Domain()
+
+        # domain_axis: ncdim%cell
+        ncells = 12 * (4**refinement_level)
+        d = domain._DomainAxis(ncells)
+        d.nc_set_dimension("cell")
+        axis = domain.set_construct(d, copy=False)
+
+        # auxiliary_coordinate: healpix_index
+        c = domain._AuxiliaryCoordinate()
+        c.set_properties({"standard_name": "healpix_index"})
+        c.nc_set_variable("healpix_index")
+        c.set_data(Data(da.arange(ncells), units="1"), copy=False)
+        key = domain.set_construct(c, axes=axis, copy=False)
+
+        # coordinate_reference: grid_mapping_name:healpix
+        cr = domain._CoordinateReference()
+        cr.nc_set_variable("healpix")
+        cr.set_coordinates({key})
+
+        if radius is not None:
+            radius = domain.radius(default=radius)
+            cr.datum.set_parameter("earth_radius", radius.datum())
+
+        cr.coordinate_conversion.set_parameters(
+            {
+                "grid_mapping_name": "healpix",
+                "healpix_order": healpix_order,
+                "refinement_level": refinement_level,
+            }
+        )
+
+        domain.set_construct(cr)
+
+        if nuniq:
+            # Change from nested to nuniq order
+            domain = domain.healpix_change_order("nuniq")
 
         return domain
 
