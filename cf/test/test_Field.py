@@ -965,10 +965,11 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.radius()
 
-        for default in ("earth", cf.field._earth_radius):
+        earth_radius = cf.Data(6371229, "m")
+        for default in ("earth", earth_radius):
             r = f.radius(default=default)
             self.assertEqual(r.Units, cf.Units("m"))
-            self.assertEqual(r, cf.field._earth_radius)
+            self.assertEqual(r, earth_radius)
 
         a = cf.Data(1234, "m")
         for default in (
@@ -1160,6 +1161,7 @@ class FieldTest(unittest.TestCase):
 
         x = f.dimension_coordinate("X")
         x[...] = np.arange(0, 360, 40)
+        x.set_property("long_name", "grid_longitude")
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
@@ -1441,6 +1443,55 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.indices(grid_longitude=cf.wo(-180, 180))
 
+        # Multiple conditions for one axis
+        axis = f.get_data_axes("grid_longitude")[0]
+
+        indices = f.indices(
+            **{"grid_longitude": cf.wi(0, 360), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 4))
+        self.assertTrue((x == [40, 120, 200, 240]).all())
+
+        indices = f.indices(
+            **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 2))
+        self.assertTrue((x == [40, 120]).all())
+
+        indices = f.indices(
+            "envelope", **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 3))
+        self.assertTrue((x == [40, 80, 120]).all())
+
+        indices = f.indices(
+            "full", **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 9))
+        self.assertTrue((x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all())
+
+        indices = f.indices(
+            **{
+                "grid_longitude": cf.wi(50, 350),
+                axis: [1, 2, 3, 4, 5, 6, 7],
+                "long_name=grid_longitude": slice(1, None, 2),
+            }
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        print(x)
+        self.assertEqual(g.shape, (1, 10, 3))
+        self.assertTrue((x == [120, 200, 280]).all())
+
+        cf.log_level(1)
         # 2-d
         lon = f.construct("longitude").array
         lon = np.transpose(lon)
@@ -2926,12 +2977,12 @@ class FieldTest(unittest.TestCase):
     def test_Field_subspace_ugrid(self):
         f = cf.read(self.ugrid_global)[0]
 
-        with self.assertRaises(ValueError):
-            # Can't specify 2 conditions for 1 axis
-            g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
-
         g = f.subspace(X=cf.wi(40, 70))
         g = g.subspace(Y=cf.wi(-20, 30))
+        self.assertTrue(g.aux("X").data.range() < 30)
+        self.assertTrue(g.aux("Y").data.range() < 50)
+
+        g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
         self.assertTrue(g.aux("X").data.range() < 30)
         self.assertTrue(g.aux("Y").data.range() < 50)
 
@@ -3130,6 +3181,19 @@ class FieldTest(unittest.TestCase):
         )
         self.assertIsNone(f.create_latlon_coordinates(inplace=True))
         self.assertTrue(f.equals(g))
+
+    def test_Field_subspace_healpix(self):
+        """Test Field.subspace for HEALPix"""
+        f = self.f12
+        g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
+        self.assertTrue(np.allclose(g.aux("healpix_index"), [0, 22, 35]))
+        g.create_latlon_coordinates(inplace=True)
+        self.assertTrue(np.allclose(g.aux("X"), [45.0, 67.5, 45.0]))
+        self.assertTrue(
+            np.allclose(
+                g.aux("Y"), [19.47122063449069, 0.0, -19.47122063449069]
+            )
+        )
 
 
 if __name__ == "__main__":

@@ -9,12 +9,12 @@ import numpy as np
 
 
 def cf_HEALPix_bounds(
-    a, healpix_order, refinement_level=None, lat=False, lon=False
+    a, index_scheme, refinement_level=None, lat=False, lon=False
 ):
     """Calculate HEALPix cell bounds.
 
     Latitude or longitude locations of the cell vertices are derived
-    from HEALPix indices.  Each cell has four bounds, which are
+    from HEALPix indices.x Each cell has four bounds, which are
     returned in an anticlockwise direction, as seen from above,
     starting with the eastern-most vertex.
 
@@ -25,14 +25,16 @@ def cf_HEALPix_bounds(
         a: `numpy.ndarray`
             The array of HEALPix indices.
 
-        healpix_order: `str`
-            One of ``'nested'``, ``'ring'``, or ``'nuniq'``.
+        index_scheme: `str`
+            The HEALPix indexing scheme. One of ``'nested'``,
+            ``'ring'``, or ``'nuniq'``.
 
         refinement_level: `int` or `None`, optional
             For a ``'nested'`` or ``'ring'`` ordered grid, the
             refinement level of the grid within the HEALPix hierarchy,
-            starting at 0 for the base tesselation with 12 cells.
-            Ignored for a ``'nuniq'`` ordered grid.
+            starting at 0 for the base tesselation with 12 cells. Set
+            to `None` for a ``'nuniq'`` ordered grid, for which the
+            refinement level is ignored.
 
         lat: `bool`, optional
             If True then return latitude bounds.
@@ -73,7 +75,7 @@ def cf_HEALPix_bounds(
     elif lon:
         pos = 0
 
-    if healpix_order == "nested":
+    if index_scheme == "nested":
         bounds_func = healpix._chp.nest2ang_uv
     else:
         bounds_func = healpix._chp.ring2ang_uv
@@ -89,7 +91,7 @@ def cf_HEALPix_bounds(
     # Initialise the output bounds array
     b = np.empty((a.size, 4), dtype="float64")
 
-    if healpix_order == "nuniq":
+    if index_scheme == "nuniq":
         # Create bounds for 'nuniq' cells
         orders, a = healpix.uniq2pix(a, nest=False)
         orders, index, inverse = np.unique(
@@ -132,7 +134,7 @@ def cf_HEALPix_bounds(
 
 
 def cf_HEALPix_change_order(
-    a, healpix_order, new_healpix_order, refinement_level
+    a, index_scheme, new_index_scheme, refinement_level
 ):
     """Change the ordering of HEALPix indices.
 
@@ -146,13 +148,13 @@ def cf_HEALPix_change_order(
         a: `numpy.ndarray`
             The array of HEALPix indices.
 
-        healpix_order: `str`
-            The original HEALPix order. One of ``'nested'`` or
-            ``'ring'``.
+        index_scheme: `str`
+            The original HEALPix indexing scheme. One of ``'nested'``
+            or ``'ring'``.
 
-        new_healpix_order: `str`
-            The new HEALPix order to change to. One of ``'nested'``,
-            ``'ring'``, or ``'nuniq'``.
+        new_index_scheme: `str`
+            The new HEALPix indexing scheme to change to. One of
+            ``'nested'``, ``'ring'``, or ``'nuniq'``.
 
         refinement_level: `int`
             The refinement level of the original grid within the
@@ -174,29 +176,29 @@ def cf_HEALPix_change_order(
     """
     import healpix
 
-    if healpix_order == "nested":
-        if new_healpix_order == "ring":
+    if index_scheme == "nested":
+        if new_index_scheme == "ring":
             return healpix.nest2ring(healpix.order2nside(refinement_level), a)
 
-        if new_healpix_order == "nuniq":
+        if new_index_scheme == "nuniq":
             return healpix._chp.nest2uniq(refinement_level, a)
 
-    elif healpix_order == "ring":
-        if new_healpix_order == "nested":
+    elif index_scheme == "ring":
+        if new_index_scheme == "nested":
             return healpix.ring2nest(healpix.order2nside(refinement_level), a)
 
-        if new_healpix_order == "nuniq":
+        if new_index_scheme == "nuniq":
             return healpix._chp.ring2uniq(refinement_level, a)
 
     else:
         raise ValueError(
             "Can't change HEALPix order: Can only change from HEALPix "
-            f"order 'nested' or 'ring'. Got {healpix_order!r}"
+            f"order 'nested' or 'ring'. Got {index_scheme!r}"
         )
 
 
 def cf_HEALPix_coordinates(
-    a, healpix_order, refinement_level=None, lat=False, lon=False
+    a, index_scheme, refinement_level=None, lat=False, lon=False
 ):
     """Calculate HEALPix cell coordinates.
 
@@ -209,8 +211,9 @@ def cf_HEALPix_coordinates(
         a: `numpy.ndarray`
             The array of HEALPix indices.
 
-        healpix_order: `str`
-            One of ``'nested'``, ``'ring'``, or ``'nuniq'``.
+        index_scheme: `str`
+            The HEALPix indexing scheme. One of ``'nested'``,
+            ``'ring'``, or ``'nuniq'``.
 
         refinement_level: `int` or `None`, optional
             For a ``'nested'`` or ``'ring'`` ordered grid, the
@@ -250,7 +253,7 @@ def cf_HEALPix_coordinates(
     elif lon:
         pos = 0
 
-    if healpix_order == "nuniq":
+    if index_scheme == "nuniq":
         # Create coordinates for 'nuniq' cells
         c = np.empty(a.shape, dtype="float64")
 
@@ -267,7 +270,7 @@ def cf_HEALPix_coordinates(
             )[pos]
     else:
         # Create coordinates for 'nested' or 'ring' cells
-        nest = (healpix_order == "nested",)
+        nest = (index_scheme == "nested",)
         nside = healpix.order2nside(refinement_level)
         c = healpix.pix2ang(
             nside=nside,

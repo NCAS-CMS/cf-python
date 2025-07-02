@@ -2000,19 +2000,19 @@ class Weights(Container, cfdm.Container):
             )
 
         parameters = cr.coordinate_conversion.parameters()
-        healpix_order = parameters.get("healpix_order")
-        if healpix_order not in ("nested", "ring", "nuniq"):
+        index_scheme = parameters.get("index_scheme")
+        if index_scheme not in ("nested", "ring", "nuniq"):
             if auto:
                 return False
 
             raise ValueError(
-                "Can't create weights: Invalid HEALPix healpix_order for "
+                "Can't create weights: Invalid HEALPix index_scheme for "
                 f"{f.constructs.domain_axis_identity(axis)!r} axis: "
-                f"{healpix_order!r}"
+                f"{index_scheme!r}"
             )
 
         refinement_level = parameters.get("refinement_level")
-        if refinement_level is None and healpix_order != "nuniq":
+        if refinement_level is None and index_scheme != "nuniq":
             # No refinement_level
             if auto:
                 return False
@@ -2025,8 +2025,8 @@ class Weights(Container, cfdm.Container):
         if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
-        # Create weights for 'nuniq' ordering
-        if healpix_order == "nuniq":
+        # Create weights for 'nuniq' indexed cells
+        if index_scheme == "nuniq":
             if methods:
                 weights[(axis,)] = "HEALPix Multi-Order Coverage"
                 return True
@@ -2069,7 +2069,7 @@ class Weights(Container, cfdm.Container):
             return True
 
         # Still here? Then create weights for 'nested' or 'ring'
-        # ordering.
+        # indexed cells.
         if methods:
             if measure:
                 weights[(axis,)] = "HEALPix equal area"

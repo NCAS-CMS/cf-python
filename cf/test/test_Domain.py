@@ -486,6 +486,33 @@ class DomainTest(unittest.TestCase):
         d2.cyclic("X", iscyclic=False)
         self.assertTrue(d2.iscyclic("X"))
 
+    def test_Domain_create_healpix(self):
+        """Test Domain.create_healpix."""
+        d = cf.Domain.create_healpix(0)
+        self.assertEqual(len(d.constructs), 3)
+        self.assertEqual(len(d.domain_axes()), 1)
+        self.assertEqual(len(d.auxiliary_coordinates()), 1)
+        self.assertEqual(len(d.coordinate_references()), 1)
+
+        self.assertTrue(
+            (d.auxiliary_coordinate().array == np.arange(12)).all()
+        )
+
+        d = cf.Domain.create_healpix(0, "nuniq")
+        self.assertTrue(
+            (d.auxiliary_coordinate().array == np.arange(4, 16)).all()
+        )
+        self.assertIsNone(
+            d.coordinate_reference().datum.get_parameter("earth_radius", None)
+        )
+
+        for radius in (1000, cf.Data(1, "km")):
+            d = cf.Domain.create_healpix(0, "ring", radius=radius)
+            self.assertEqual(
+                d.coordinate_reference().datum.get_parameter("earth_radius"),
+                1000,
+            )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -131,10 +131,11 @@ class Grid:
     # The integer position in *coords* of a vertical coordinate. If
     # `None` then there are no vertical coordinates.
     z_index: Any = None
-    # TODOHEALPIX
-    original_domain: Any = None
-    # Whether or not the original domain is a HEALPix grid
-    original_healpix: bool = False
+    # The original field/domain before any transformations are applied
+    # (such as creating lat/lon cooridnates, or converting to UGRID).
+    domain: Any = None
+    # Whether or not the field/original domain is a HEALPix grid
+    healpix: bool = False
 
 
 def regrid(
@@ -342,7 +343,7 @@ def regrid(
     """
     if not inplace:
         src = src.copy()
-        
+
     spherical = coord_sys == "spherical"
     cartesian = not spherical
 
@@ -507,22 +508,24 @@ def regrid(
     conform_coordinates(src_grid, dst_grid)
 
     if method == "conservative":
-        if src_grid.original_healpix or dst_grid.original_healpix:
+        if src_grid.healpix or dst_grid.healpix:
             raise ValueError(
                 f"{method!r} regridding is not available for HEALPix grids"
             )
-                  
+
     elif method in ("conservative_2nd", "patch"):
-        if method == "conservative_2nd" and (src_grid.original_healpix or dst_grid.original_healpix):
+        if method == "conservative_2nd" and (
+            src_grid.healpix or dst_grid.healpix
+        ):
             raise ValueError(
                 f"{method!r} regridding is not available for HEALPix grids"
             )
-                  
+
         if not (src_grid.dimensionality >= 2 and dst_grid.dimensionality >= 2):
             raise ValueError(
                 f"{method!r} regridding is not available for 1-d regridding"
             )
-              
+
     elif method in ("nearest_dtos", "nearest_stod"):
         if not has_coordinate_arrays(src_grid) and not has_coordinate_arrays(
             dst_grid
@@ -669,14 +672,15 @@ def regrid(
             start_index=start_index,
             src_axes=src_axes,
             dst_axes=dst_axes,
-            dst=dst,
+            dst=dst_grid.domain,
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
             src_featureType=src_grid.featureType,
             dst_featureType=dst_grid.featureType,
             src_z=src_grid.z,
             dst_z=dst_grid.z,
-            ln_z=ln_z, # TODOHEALPIX            
+            ln_z=ln_z,
+            dst_healpix=dst_grid.healpix,
         )
     else:
         if weights_file is not None:
@@ -730,7 +734,9 @@ def regrid(
     # ----------------------------------------------------------------
     # Update the regridded metadata
     # ----------------------------------------------------------------
-    cr_map = update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator)
+    cr_map = update_non_coordinates(
+        src, dst, src_grid, dst_grid, regrid_operator
+    )
 
     update_coordinates(src, dst, src_grid, dst_grid, cr_map)
 
@@ -738,7 +744,7 @@ def regrid(
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
     update_data(src, regridded_data, src_grid, dst_grid)
-            
+
     if coord_sys == "spherical" and dst_grid.is_grid:
         # Set the cyclicity of the longitude axis of the new field
         key, x = src.dimension_coordinate("X", default=(None, None), item=True)
@@ -1148,11 +1154,11 @@ def spherical_grid(
             The grid definition.
 
     """
-    original_domain = f.copy()
-    
-    # Whether or not the original domain is a HEALPix grid
-    original_healpix = False
-    
+    domain = f.copy()
+
+    # Whether or not the original field/domain is a HEALPix grid
+    healpix = False
+
     # Create any implied lat/lon coordinates in-place
     try:
         # Try to convert a HEALPix grid to a UGRID grid (which will
@@ -1161,7 +1167,7 @@ def spherical_grid(
     except ValueError:
         f.create_latlon_coordinates(inplace=True)
     else:
-        original_healpix = True
+        healpix = True
 
     data_axes = f.constructs.data_axes()
 
@@ -1465,8 +1471,8 @@ def spherical_grid(
         z=z,
         ln_z=ln_z,
         z_index=z_index,
-        original_domain=original_domain,
-        original_healpix=original_healpix,
+        domain=domain,
+        healpix=healpix,
     )
 
     set_grid_type(grid)
@@ -1512,8 +1518,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             The grid definition.
 
     """
-    original_domain = f.copy()
-    
+    domain = f.copy()
+
     if not axes:
         if name == "source":
             raise ValueError(
@@ -1697,7 +1703,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         z=z,
         ln_z=ln_z,
         z_index=z_index,
-        original_domain=original_domain    
+        domain=domain,
     )
 
     set_grid_type(grid)
@@ -2810,18 +2816,23 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
             The definition of the destination grid.
 
         cr_map `dict`
-            TODOHEALPIX
+
+            The mapping of destination coordinate reference identities
+            to source coordinate reference identities, as output by
+            `update_non_coordinates`.
 
     :Returns:
 
         `None`
 
     """
-    if dst_grid.original_domain is not None:
-        dst = dst_grid.original_domain
+    dst = dst_grid.domain
 
-    dst_grid_is_mesh = dst_grid.is_mesh and not dst_grid.original_healpix
-        
+    # An HEALPix grid is converted to UGRID for the regridding, but we
+    # want the original HEALPic metadata to be copied to the regridded
+    # source field, rather than the UGRID view of it.
+    dst_grid_is_mesh = dst_grid.is_mesh and not dst_grid.healpix
+
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
@@ -2839,7 +2850,7 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
         todict=True,
     ):
         src.del_construct(key)
-        
+
     # Domain axes
     src_domain_axes = src.domain_axes(todict=True)
     dst_domain_axes = dst.domain_axes(todict=True)
@@ -2923,11 +2934,12 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
     :Returns:
 
         `dict`
-            TODOHEALPIX
+            The mapping of destination coordinate reference identities
+            to source coordinate reference identities.
 
     """
-    if dst_grid.original_domain is not None:
-        dst = dst_grid.original_domain
+    #    if dst_grid.domain is not None:
+    dst = dst_grid.domain
 
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
@@ -3022,24 +3034,25 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
     # ----------------------------------------------------------------
     # Copy selected coordinate references from the destination grid
     #
-    # Define the mapping of destination corodinate references to
+    # Define the mapping of destination coordinate references to
     # source coordinate references
     # ----------------------------------------------------------------
     cr_map = {}
-    
+
     dst_data_axes = dst.constructs.data_axes()
     for dst_key, ref in dst.coordinate_references(todict=True).items():
         axes = set()
         for c_key in ref.coordinates():
             axes.update(dst_data_axes[c_key])
-            
+
         if axes and set(axes).issubset(dst_axis_keys):
             src_cr = ref.copy()
             src_cr.clear_coordinates()
             src_key = src.set_construct(src_cr)
             cr_map[dst_key] = src_key
-            
+
     return cr_map
+
 
 def update_data(src, regridded_data, src_grid, dst_grid):
     """Insert the regridded field data.

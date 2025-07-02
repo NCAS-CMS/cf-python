@@ -38,6 +38,7 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertIsNone(self.r.src_z)
         self.assertIsNone(self.r.dst_z)
         self.assertFalse(self.r.ln_z)
+        self.assertFalse(self.r.dst_healpix)
 
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)

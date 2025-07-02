@@ -203,7 +203,7 @@ class FieldDomain:
                 return False
 
         return True
-    
+
     def _indices(self, config, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
@@ -296,10 +296,10 @@ class FieldDomain:
                     f"non-negative integer. Got {halo!r}"
                 )
 
-        # Create any implied 1-d latitude and longitude coordinates
-        # (e.g. as implied by HEALPix indices). Do not do this
-        # in-place.
-        self = self.create_latlon_coordinates(one_d=True, two_d=False)
+        # Create any implied latitude and longitude coordinates
+        # (e.g. as implied by a non-latitude_longitude grid mapping
+        # coordinate reference). Do not do this in-place.
+        self = self.create_latlon_coordinates()
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -375,15 +375,10 @@ class FieldDomain:
             n_items = len(constructs)
             n_axes = len(canonical_axes)
 
-            if n_items > n_axes:
-                if n_axes == 1:
-                    a = "axis"
-                else:
-                    a = "axes"
-
+            if n_axes > 1 and n_items > n_axes:
                 raise ValueError(
                     f"Error: Can't specify {n_items} conditions for "
-                    f"{n_axes} {a}: {points}. Consider applying the "
+                    f"{n_axes} axes: {points}. Consider applying the "
                     "conditions separately."
                 )
 
@@ -402,150 +397,217 @@ class FieldDomain:
                 # ----------------------------------------------------
                 # 1-d construct
                 # ----------------------------------------------------
-                ind = None
-
                 axis = item_axes[0]
-                item = constructs[0]
-                value = points[0]
-                identity = identities[0]
+                size = domain_axes[axis].get_size()
 
-                if debug:
-                    logger.debug(
-                        f"  {n_items} 1-d constructs: {constructs!r}\n"
-                        f"  item         = {item!r}\n"
-                        f"  axis         = {axis!r}\n"
-                        f"  value        = {value!r}\n"
-                        f"  identity     = {identity!r}"
-                    )  # pragma: no cover
+                ind0 = None
+                index0 = None
 
-                if isinstance(value, (list, slice, tuple, np.ndarray)):
-                    # 1-d CASE 1: Value is already an index, e.g. [0],
-                    #             [7,4,2], slice(0,4,2),
-                    #             numpy.array([2,4,7]),
-                    #             [True,False,True]
-                    if debug:
-                        logger.debug("  1-d CASE 1:")  # pragma: no cover
-
-                    index = value
-
-                    if envelope or full:
-                        # Set ind
-                        size = domain_axes[axis].get_size()
-                        ind = (np.arange(size)[value],)
-                        # Placeholder which will be overwritten later
-                        index = None
-
-                elif (
-                    item is not None
-                    and isinstance(value, Query)
-                    and value.operator in ("wi", "wo")
-                    and item.construct_type == "dimension_coordinate"
-                    and self.iscyclic(axis)
+                for item, value, identity in zip(
+                    constructs, points, identities
                 ):
-                    # 1-d CASE 2: Axis is cyclic and subspace
-                    #             criterion is a 'within' or 'without'
-                    #             Query instance
                     if debug:
-                        logger.debug("  1-d CASE 2:")  # pragma: no cover
+                        logger.debug(
+                            f"  axis         = {axis!r}\n"
+                            f"  item         = {item!r}\n"
+                            f"  value        = {value!r}\n"
+                            f"  identity     = {identity!r}"
+                        )  # pragma: no cover
 
-                    size = item.size
-                    if item.increasing:
-                        anchor = value.value[0]
-                    else:
-                        anchor = value.value[1]
+                    ind = None
 
-                    item = item.persist()
-                    parameters = {}
-                    item = item.anchor(anchor, parameters=parameters)
-                    n = np.roll(np.arange(size), parameters["shift"], 0)
-                    if value.operator == "wi":
-                        n = n[item == value]
-                        if not n.size:
-                            raise ValueError(
-                                f"No indices found from: {identity}={value!r}"
-                            )
+                    if isinstance(value, (list, slice, tuple, np.ndarray)):
+                        # 1-d CASE 1: Value is already an index,
+                        #             e.g. [0], [7,4,2], slice(0,4,2),
+                        #             numpy.array([2,4,7]),
+                        #             [True,False,True]
+                        if debug:
+                            logger.debug("  1-d CASE 1:")  # pragma: no cover
 
-                        start = n[0]
-                        stop = n[-1] + 1
-                    else:
-                        # "wo" operator
-                        n = n[item == wi(*value.value)]
-                        if n.size == size:
-                            raise ValueError(
-                                f"No indices found from: {identity}={value!r}"
-                            )
+                        index = value
 
-                        if n.size:
-                            start = n[-1] + 1
-                            stop = start - n.size
+                        if envelope or full:
+                            # Set ind
+                            ind = np.zeros((size,), bool)
+                            ind[index] = True
+                            # Placeholder to be overwritten later
+                            index = None
+
+                        if n_items > 1 and index is not None:
+                            # Convert 'index' to a boolean array
+                            i = np.zeros((size,), bool)
+                            i[index] = True
+                            index = i
+
+                    elif (
+                        item is not None
+                        and isinstance(value, Query)
+                        and value.operator in ("wi", "wo")
+                        and item.construct_type == "dimension_coordinate"
+                        and self.iscyclic(axis)
+                    ):
+                        # 1-d CASE 2: Axis is cyclic and subspace
+                        #             criterion is a 'within' or
+                        #             'without' Query instance
+                        if debug:
+                            logger.debug("  1-d CASE 2:")  # pragma: no cover
+
+                        size = item.size
+                        if item.increasing:
+                            anchor = value.value[0]
                         else:
-                            start = size - parameters["shift"]
-                            stop = start + size
-                            if stop > size:
-                                stop -= size
+                            anchor = value.value[1]
 
-                    index = slice(start, stop, 1)
+                        item = item.persist()
+                        parameters = {}
+                        item = item.anchor(anchor, parameters=parameters)
+                        n = np.roll(np.arange(size), parameters["shift"], 0)
+                        if value.operator == "wi":
+                            n = n[item == value]
+                            if not n.size:
+                                raise ValueError(
+                                    "No indices found from: "
+                                    f"{identity}={value!r}"
+                                )
 
-                    if full:
-                        # Set ind
-                        try:
-                            index = normalize_slice(index, size, cyclic=True)
-                        except IndexError:
-                            # Index is not a cyclic slice
-                            ind = (np.arange(size)[index],)
+                            start = n[0]
+                            stop = n[-1] + 1
                         else:
-                            # Index is a cyclic slice
-                            ind = (
-                                np.arange(size)[
+                            # "wo" operator
+                            n = n[item == wi(*value.value)]
+                            if n.size == size:
+                                raise ValueError(
+                                    "No indices found from: "
+                                    f"{identity}={value!r}"
+                                )
+
+                            if n.size:
+                                start = n[-1] + 1
+                                stop = start - n.size
+                            else:
+                                start = size - parameters["shift"]
+                                stop = start + size
+                                if stop > size:
+                                    stop -= size
+
+                        index = slice(start, stop, 1)
+
+                        if envelope or full:
+                            # Set ind
+                            try:
+                                index = normalize_slice(
+                                    index, size, cyclic=True
+                                )
+                            except IndexError:
+                                # Index is not a cyclic slice
+                                ind = np.zeros((size,), bool)
+                                ind[index] = True
+                                # np.arange(size)[index]
+                            else:
+                                # Index is a cyclic slice
+                                if n_items > 1:
+                                    raise ValueError(
+                                        "Error: Can't specify multiple "
+                                        "conditions for a single axis when "
+                                        f"one of those condtions ({value!r}) "
+                                        "is effectively a cyclic slice: "
+                                        f"{index}. Consider applying the "
+                                        "conditions separately."
+                                    )
+
+                                ind = np.zeros((size,), bool)
+                                ind[
                                     np.arange(
                                         index.start, index.stop, index.step
                                     )
-                                ],
-                            )
+                                ] = True
 
-                        # Placeholder which will be overwritten later
-                        index = None
+                            # Placeholder to be overwritten later
+                            index = None
 
-                elif item is not None:
-                    # 1-d CASE 3: All other 1-d cases
-                    if debug:
-                        logger.debug("  1-d CASE 3:")  # pragma: no cover
+                        if n_items > 1 and index is not None:
+                            # Convert 'index' to a boolean array
+                            i = np.zeros((size,), bool)
+                            i[index] = True
+                            index = i
 
-                    index = item == value
+                    elif item is not None:
+                        # 1-d CASE 3: All other 1-d cases
+                        if debug:
+                            logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    # Performance: Convert the 1-d 'index' to a numpy
-                    #              array of bool.
-                    #
-                    # This is because Dask can be *very* slow at
-                    # instantiation time when the 'index' is a Dask
-                    # array, in which case contents of 'index' are
-                    # unknown.
-                    index = np.asanyarray(index)
+                        index = item == value
 
-                    if envelope or full:
-                        # Set ind
+                        # Performance: Convert the 1-d 'index' to a
+                        #              numpy array of bool.
+                        #
+                        # This is because Dask can be *very* slow at
+                        # instantiation time when the 'index' is a
+                        # Dask array, in which case contents of
+                        # 'index' are unknown.
                         index = np.asanyarray(index)
-                        if np.ma.isMA(index):
-                            ind = np.ma.where(index)
-                        else:
-                            ind = np.where(index)
 
-                        # Placeholder which will be overwritten later
-                        index = None
+                        if envelope or full:
+                            # Set ind
+                            index = np.asanyarray(index)
+                            if np.ma.isMA(index):
+                                ind = np.ma.where(index)[0]
+                            else:
+                                ind = np.where(index)[0]
+
+                            # Placeholder to be overwritten later
+                            index = None
+
+                        if n_items > 1 and ind is not None:
+                            # Convert 'ind' to a boolean array (note
+                            # that 'index' is already a boolean
+                            # array)
+                            i = np.zeros((size,), bool)
+                            i[ind] = True
+                            ind = i
+
                     else:
-                        # Convert bool to int, to save memory.
-                        size = domain_axes[axis].get_size()
-                        index = normalize_index(index, (size,))[0]
-                else:
-                    raise ValueError(
-                        "Could not find a unique construct with identity "
-                        f"{identity!r} from which to infer the indices."
-                    )
+                        raise ValueError(
+                            "Could not find a unique construct with identity "
+                            f"{identity!r} from which to infer the indices."
+                        )
 
-                if debug:
-                    logger.debug(
-                        f"    index      = {index}\n    ind        = {ind}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"    index      = {index}\n    ind        = {ind}"
+                        )  # pragma: no cover
+
+                    if n_items > 1:
+                        # Update the 'ind0' and 'index0' boolean
+                        # arrays with the latest 'ind' and 'index'
+                        if ind is not None:
+                            # Note that 'index' must be None when
+                            # 'ind' is not None, so no need to update
+                            # 'index0' in this case.
+                            if ind0 is None:
+                                ind0 = ind
+                            else:
+                                ind0 &= ind
+                        else:
+                            if index0 is None:
+                                index0 = index
+                            else:
+                                index0 &= index
+
+                # Finalise 'ind' and 'index'
+                if n_items > 1:
+                    if ind0 is not None:
+                        ind = ind0
+
+                    if index0 is not None:
+                        index = index0
+
+                if ind is not None:
+                    ind = normalize_index(ind, (size,))[0]
+                    ind = (ind,)
+
+                if index is not None and getattr(index, "dtype", None) == bool:
+                    index = normalize_index(index, (size,))[0]
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -1928,7 +1990,7 @@ class FieldDomain:
 
         return self.get_data_axes(key)[0]
 
-    def healpix_change_order(self, new_healpix_order, sort=False):
+    def healpix_change_order(self, new_index_scheme, sort=False):
         """Change the ordering of HEALPix indices.
 
         .. versionadded:: NEXTVERSION
@@ -1937,8 +1999,8 @@ class FieldDomain:
 
         :Parameters:
 
-            new_healpix_order: `str`
-                The new HEALPix order. One of ``'nested'``,
+            new_index_scheme: `str`
+                The new HEALPix indexing scheme. One of ``'nested'``,
                 ``'ring'``, or ``'nuniq'``.
 
             sort: `bool`, optional
@@ -1965,7 +2027,7 @@ class FieldDomain:
                         : height(1) = [1.5] m
         Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
         Coord references: grid_mapping_name:healpix
-        >>> f.coordinate_reference('grid_mapping_name:healpix').coordinate_conversion.get_parameter('healpix_order')
+        >>> f.coordinate_reference('grid_mapping_name:healpix').coordinate_conversion.get_parameter('index_scheme')
         'nested'
         >>> print(f.coordinate('healpix_index').array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
@@ -1999,10 +2061,10 @@ class FieldDomain:
 
         f = self.copy()
 
-        if new_healpix_order not in ("nested", "ring", "nuniq"):
+        if new_index_scheme not in ("nested", "ring", "nuniq"):
             raise ValueError(
-                "Can't change HEALPix order: new_healpix_order must be "
-                f"'nested', 'ring', or 'nuniq'. Got {new_healpix_order!r}"
+                "Can't change HEALPix order: new_index_scheme must be "
+                f"'nested', 'ring', or 'nuniq'. Got {new_index_scheme!r}"
             )
 
         # Parse the HEALPix coordinate reference
@@ -2022,16 +2084,16 @@ class FieldDomain:
                 "has not been set"
             )
 
-        healpix_order = parameters.get("healpix_order")
-        if healpix_order is None:
+        index_scheme = parameters.get("index_scheme")
+        if index_scheme is None:
             raise ValueError(
-                "Can't change HEALPix order: healpix_order has not been set"
+                "Can't change HEALPix order: index_scheme has not been set"
             )
 
-        if healpix_order not in ("nested", "ring"):
+        if index_scheme not in ("nested", "ring"):
             raise ValueError(
                 "Can't change HEALPix order: Can only change from "
-                f"healpix_order 'nested' or 'ring'. Got {healpix_order!r}"
+                f"index_scheme 'nested' or 'ring'. Got {index_scheme!r}"
             )
 
         # Get the original healpix_index coordinates and the key of
@@ -2050,29 +2112,29 @@ class FieldDomain:
 
         axis = f.get_data_axes(hp_key)[0]
 
-        if healpix_order != new_healpix_order:
+        if index_scheme != new_index_scheme:
             # Change the HEALPix indices
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(
                 cf_HEALPix_change_order,
                 meta=np.array((), dtype="int64"),
-                healpix_order=healpix_order,
-                new_healpix_order=new_healpix_order,
+                index_scheme=index_scheme,
+                new_index_scheme=new_index_scheme,
                 refinement_level=refinement_level,
             )
             healpix_index.set_data(dx, copy=False)
 
             # Update the Coordinate Reference
             cr.coordinate_conversion.set_parameter(
-                "healpix_order", new_healpix_order
+                "index_scheme", new_index_scheme
             )
-            if new_healpix_order == "nuniq":
+            if new_index_scheme == "nuniq":
                 cr.coordinate_conversion.del_parameter(
                     "refinement_level", None
                 )
 
         if healpix_index.construct_type == "dimension_coordinate":
-            # Convert healpix_indices to auxiliary coordinates
+            # Convert healpix indices to auxiliary coordinates
             healpix_index = f._AuxiliaryCoordinate(
                 source=healpix_index, copy=False
             )
@@ -2229,7 +2291,7 @@ class FieldDomain:
         elif cr is not None:
             cc = cr.coordinate_conversion
             cc.del_parameter("grid_mapping_name", None)
-            cc.del_parameter("healpix_order", None)
+            cc.del_parameter("index_scheme", None)
             cc.del_parameter("refinement_level", None)
             if cr.coordinate_conversion.parameters() or cr.datum.parameters():
                 # The Coordinate Reference contains generic coordinate
@@ -2374,18 +2436,18 @@ class FieldDomain:
             # HEALPix 1-d coordinates
             # --------------------------------------------------------
             parameters = cr.coordinate_conversion.parameters()
-            healpix_order = parameters.get("healpix_order")
-            if healpix_order not in ("nested", "ring", "nuniq"):
+            index_scheme = parameters.get("index_scheme")
+            if index_scheme not in ("nested", "ring", "nuniq"):
                 if is_log_level_info(logger):
                     logger.info(
                         "Can't create 1-d latitude and longitude coordinates: "
-                        f"Invalid HEALPix order: {healpix_order!r}"
+                        f"Invalid HEALPix order: {index_scheme!r}"
                     )  # pragma: no cover
 
                 return f
 
             refinement_level = parameters.get("refinement_level")
-            if refinement_level is None and healpix_order in (
+            if refinement_level is None and index_scheme in (
                 "nested",
                 "ring",
             ):
@@ -2444,7 +2506,7 @@ class FieldDomain:
             dy = dx.map_blocks(
                 cf_HEALPix_coordinates,
                 meta=meta,
-                healpix_order=healpix_order,
+                index_scheme=index_scheme,
                 refinement_level=refinement_level,
                 lat=True,
             )
@@ -2458,7 +2520,7 @@ class FieldDomain:
             dy = dx.map_blocks(
                 cf_HEALPix_coordinates,
                 meta=meta,
-                healpix_order=healpix_order,
+                index_scheme=index_scheme,
                 refinement_level=refinement_level,
                 lon=True,
             )
@@ -2476,7 +2538,7 @@ class FieldDomain:
                 "i",
                 new_axes={"j": 4},
                 meta=meta,
-                healpix_order=healpix_order,
+                index_scheme=index_scheme,
                 refinement_level=refinement_level,
                 lat=True,
             )
@@ -2491,7 +2553,7 @@ class FieldDomain:
                 "i",
                 new_axes={"j": 4},
                 meta=meta,
-                healpix_order=healpix_order,
+                index_scheme=index_scheme,
                 refinement_level=refinement_level,
                 lon=True,
             )
@@ -3173,7 +3235,7 @@ class FieldDomain:
 
         .. versionadded:: 3.0.2
 
-        .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
+        .. seealso:: `bin`, `cell_area`, `collapse`
 
         :Parameters:
 
@@ -3683,12 +3745,13 @@ class FieldDomain:
         for value in coordinate_reference.coordinates():
             if value in coordinates:
                 identity = coordinates[value].identity(strict=strict)
-                key = self.coordinate(identity, key=True, default=None)
-                if key is not None:
-                    ckeys.append(key)
+                ckey = self.coordinate(identity, key=True, default=None)
+                if ckey is not None:
+                    ckeys.append(ckey)
 
         ref.clear_coordinates()
-        ref.set_coordinates(ckeys)
+        if ckeys:
+            ref.set_coordinates(ckeys)
 
         coordinate_conversion = coordinate_reference.coordinate_conversion
 
