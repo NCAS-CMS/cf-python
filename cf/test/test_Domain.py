@@ -498,7 +498,7 @@ class DomainTest(unittest.TestCase):
             (d.auxiliary_coordinate().array == np.arange(12)).all()
         )
 
-        d = cf.Domain.create_healpix(0, "nuniq")
+        d = cf.Domain.create_healpix(0, "nested_unique")
         self.assertTrue(
             (d.auxiliary_coordinate().array == np.arange(4, 16)).all()
         )

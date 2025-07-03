@@ -265,7 +265,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
     @classmethod
     def create_healpix(
-        cls, refinement_level, index_scheme="nested", radius=None
+        cls, refinement_level, indexing_scheme="nested", radius=None
     ):
         """Create a new global HEALPix domain.
 
@@ -281,9 +281,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 12 cells. The number of cells in the global HEALPix
                 grid is :math:`(12 \times 4^refinement_level)`.
 
-            index_scheme: `str`
+            indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the
-                default), ``'ring'``, or ``'nuniq'``.
+                default), ``'ring'``, or ``'nested_unique'``.
 
             radius: optional
                 Specify the radius of the latitude-longitude plane
@@ -322,11 +322,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Coordinate reference: grid_mapping_name:healpix
             Coordinate conversion:grid_mapping_name = healpix
-            Coordinate conversion:index_scheme = nested
+            Coordinate conversion:indexing_scheme = nested
             Coordinate conversion:refinement_level = 4
             Auxiliary Coordinate: healpix_index
 
-        >>> d = cf.Domain.create_healpix(8, "nuniq", radius=6371000)
+        >>> d = cf.Domain.create_healpix(8, "nested_unique", radius=6371000)
         >>> d.dump()
         --------
         Domain:
@@ -340,7 +340,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Coordinate reference: grid_mapping_name:healpix
             Coordinate conversion:grid_mapping_name = healpix
-            Coordinate conversion:index_scheme = nuniq
+            Coordinate conversion:indexing_scheme = nested_unique
             Datum:earth_radius = 6371000.0
             Auxiliary Coordinate: healpix_index
 
@@ -353,13 +353,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 f"Got: {refinement_level!r}"
             )
 
-        nuniq = index_scheme == "nuniq"
-        if nuniq:
-            index_scheme = "nested"
-        elif index_scheme not in ("nested", "ring"):
+        nested_unique = indexing_scheme == "nested_unique"
+        if nested_unique:
+            indexing_scheme = "nested"
+        elif indexing_scheme not in ("nested", "ring"):
             raise ValueError(
-                "'index_scheme' must be 'nested', 'ring', or 'nuniq'. "
-                f"Got: {index_scheme!r}"
+                "'indexing_scheme' must be 'nested', 'ring', or 'nested_unique'. "
+                f"Got: {indexing_scheme!r}"
             )
 
         domain = Domain()
@@ -389,16 +389,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         cr.coordinate_conversion.set_parameters(
             {
                 "grid_mapping_name": "healpix",
-                "index_scheme": index_scheme,
+                "indexing_scheme": indexing_scheme,
                 "refinement_level": refinement_level,
             }
         )
 
         domain.set_construct(cr)
 
-        if nuniq:
-            # Change from 'nested' to 'nuniq' indexing scheme
-            domain = domain.healpix_change_order("nuniq")
+        if nested_unique:
+            # Change from 'nested' to 'nested_unique' indexing scheme
+            domain = domain.healpix_indexing_scheme("nested_unique")
 
         return domain
 

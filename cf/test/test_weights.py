@@ -336,6 +336,22 @@ class WeightsTest(unittest.TestCase):
         ):
             f.weights("area")
 
+    def test_weights_healpix(self):
+        """Test HEALPix weights."""
+        # HEALPix grid with Multi-Order Coverage (a combination of
+        # refinement level 1 and 2 cells)
+        f = cf.example_field(13)
+
+        w = f.weights(components=True)[(1,)].array
+        self.assertTrue(np.allclose(w[:16], 1 / (4**2)))
+        self.assertTrue(np.allclose(w[16:], 1 / (4**1)))
+
+        w = f.weights(measure=True, components=True)[(1,)].array
+        radius = f.radius()
+        x = 4 * np.pi * (radius**2) / 12
+        self.assertTrue(np.allclose(w[:16], x / (4**2)))
+        self.assertTrue(np.allclose(w[16:], x / (4**1)))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

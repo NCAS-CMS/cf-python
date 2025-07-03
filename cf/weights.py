@@ -2000,19 +2000,19 @@ class Weights(Container, cfdm.Container):
             )
 
         parameters = cr.coordinate_conversion.parameters()
-        index_scheme = parameters.get("index_scheme")
-        if index_scheme not in ("nested", "ring", "nuniq"):
+        indexing_scheme = parameters.get("indexing_scheme")
+        if indexing_scheme not in ("nested", "ring", "nested_unique"):
             if auto:
                 return False
 
             raise ValueError(
-                "Can't create weights: Invalid HEALPix index_scheme for "
+                "Can't create weights: Invalid HEALPix indexing_scheme for "
                 f"{f.constructs.domain_axis_identity(axis)!r} axis: "
-                f"{index_scheme!r}"
+                f"{indexing_scheme!r}"
             )
 
         refinement_level = parameters.get("refinement_level")
-        if refinement_level is None and index_scheme != "nuniq":
+        if refinement_level is None and indexing_scheme != "nested_unique":
             # No refinement_level
             if auto:
                 return False
@@ -2025,8 +2025,8 @@ class Weights(Container, cfdm.Container):
         if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
-        # Create weights for 'nuniq' indexed cells
-        if index_scheme == "nuniq":
+        # Create weights for 'nested_unique' indexed cells
+        if indexing_scheme == "nested_unique":
             if methods:
                 weights[(axis,)] = "HEALPix Multi-Order Coverage"
                 return True
@@ -2047,17 +2047,20 @@ class Weights(Container, cfdm.Container):
 
             if measure:
                 units = radius.Units**2
+                r = radius.array
             else:
                 units = "1"
+                r = None
 
-            from .dask_utils import cf_HEALPix_nuniq_area_weights
+            from .dask_utils import cf_healpix_weights
 
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(
-                cf_HEALPix_nuniq_area_weights,
+                cf_healpix_weights,
                 meta=np.array((), dtype="float64"),
+                indexing_scheme="nested_unique",
                 measure=measure,
-                radius=radius.array,
+                radius=r,
             )
             area = f._Data(dx, units=units, copy=False)
 

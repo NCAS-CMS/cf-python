@@ -271,7 +271,11 @@ environments for which these features are not required.
 .. rubric:: HEALPix manipulations
 
 * `healpix <https://pypi.org/project/healpix>`_, version 2024.2 or
-  newer.
+  newer. This package is not required to read and write HEALPix
+  datasets, but may be needed for particular manipulations with
+  HEALPix grids, such as creating latitude and longitude coordinates,
+  regridding, some changes to the refinement level, and some
+  collapses.
 
 ----
 

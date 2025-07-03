@@ -3101,49 +3101,55 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.f0.healpix_axis()
 
-    def test_Field_healpix_change_order(self):
-        """Test Field.healpix_change_order."""
+    def test_Field_healpix_indexing_scheme(self):
+        """Test Field.healpix_indexing_scheme."""
         # HEALPix field
         f = self.f12
 
-        g = f.healpix_change_order("ring")
+        # Null change
+        g = f.healpix_indexing_scheme("nested")
+        self.assertTrue(g.equals(f))
+
+        g = f.healpix_indexing_scheme("ring")
         self.assertTrue(
             (g.coordinate("healpix_index")[:4].array == [13, 5, 4, 0]).all()
         )
-        h = g.healpix_change_order("nested")
+        h = g.healpix_indexing_scheme("nested")
         self.assertTrue(
             (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
         )
-        h = g.healpix_change_order("nuniq")
+        h = g.healpix_indexing_scheme("nested_unique")
         self.assertTrue(
             (h.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
         )
 
-        g = f.healpix_change_order("ring", sort=True)
+        g = f.healpix_indexing_scheme("ring", sort=True)
         self.assertTrue(
             (g.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
         )
-        h = g.healpix_change_order("nested", sort=False)
+        h = g.healpix_indexing_scheme("nested", sort=False)
         self.assertTrue(
             (h.coordinate("healpix_index")[:4].array == [3, 7, 11, 15]).all()
         )
-        h = g.healpix_change_order("nested", sort=True)
+        h = g.healpix_indexing_scheme("nested", sort=True)
         self.assertTrue(
             (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
         )
 
-        g = f.healpix_change_order("nuniq")
+        g = f.healpix_indexing_scheme("nested_unique")
         self.assertTrue(
             (g.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
         )
+        h = g.healpix_indexing_scheme("nested_unique")
+        self.assertTrue(h.equals(g))
 
-        # Can't change from 'nuniq'
+        # Can't change from 'nested_unique' to 'nested'
         with self.assertRaises(ValueError):
-            g.healpix_change_order("nested")
+            g.healpix_indexing_scheme("nested")
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):
-            self.f0.healpix_change_order("ring")
+            self.f0.healpix_indexing_scheme("ring")
 
     def test_Field_healpix_to_ugrid(self):
         """Test Field.healpix_to_ugrid."""
@@ -3162,6 +3168,10 @@ class FieldTest(unittest.TestCase):
 
         self.assertIsNone(f.healpix_to_ugrid(inplace=True))
         self.assertEqual(len(f.domain_topologies()), 1)
+
+        self.assertEqual(len(u.coordinate_references()), 1)
+        cr = u.coordinate_reference()
+        self.assertEqual(cr.identity(), "grid_mapping_name:latitude_longitude")
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):
@@ -3194,6 +3204,49 @@ class FieldTest(unittest.TestCase):
                 g.aux("Y"), [19.47122063449069, 0.0, -19.47122063449069]
             )
         )
+
+    def test_Field_healpix_decrease_refinement_level(self):
+        """Test Field.healpix_decrease_refinement_level"""
+        f = self.f12
+        g = f.healpix_decrease_refinement_level(0, np.mean)
+        self.assertTrue(g.shape, (2, 12))
+        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+
+        g = f.healpix_decrease_refinement_level(-1, np.mean)
+        self.assertTrue(g.shape, (2, 12))
+        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+
+        f = f.healpix_indexing_scheme("ring")
+        g = f.healpix_decrease_refinement_level(0, np.mean)
+        self.assertTrue(g.shape, (2, 12))
+        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+        with self.assertRaises(ValueError):
+            f.healpix_decrease_refinement_level(0, np.mean, conform=False)
+
+        f = f.healpix_indexing_scheme("ring", sort=True)
+        f = f.healpix_indexing_scheme("nested")
+
+        g = f.healpix_decrease_refinement_level(0, np.mean, conform=True)
+        self.assertTrue(g.shape, (2, 12))
+        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+
+        with self.assertRaises(ValueError):
+            f.healpix_decrease_refinement_level(0, np.mean, conform=False)
+
+        # Bad results when check_healpix_index=False
+        h = f.healpix_decrease_refinement_level(
+            0, np.mean, conform=False, check_healpix_index=False
+        )
+        self.assertFalse((h.coord("healpix_index") == np.arange(12)).all())
+
+        # Can't change refinment level for a 'nested_unique' field
+        f13 = cf.example_field(13)
+        with self.assertRaises(ValueError):
+            f13.healpix_decrease_refinement_level(0, np.mean)
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_decrease_refinement_level(0, np.mean)
 
 
 if __name__ == "__main__":
