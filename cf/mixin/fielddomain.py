@@ -1999,14 +1999,16 @@ class FieldDomain:
 
         :Parameters:
 
-            new_indexing_scheme: `str`
+            new_indexing_scheme: `str` or `None`
                 The new HEALPix indexing scheme. One of ``'nested'``,
-                ``'ring'``, or ``'nested_unique'``.
+                ``'ring'``, ``'nested_unique'``, or `None`. If `None`
+                then the indexing scheme is unchanged.
 
             sort: `bool`, optional
                 If True then sort the HEALPix axis of the output so
-                that its HEALPix indices are monotonically
-                increasing. If False (the default) then don't do this.
+                that its HEALPix indices are monotonically increasing,
+                including when the indexing scheme is unchanged. If
+                False (the default) then don't do this.
 
         :Returns:
 
@@ -2060,15 +2062,15 @@ class FieldDomain:
 
         f = self.copy()
 
-        if new_indexing_scheme not in ("nested", "ring", "nested_unique"):
+        valid_indexing_schemes = ("nested", "ring", "nested_unique")
+        if new_indexing_scheme not in valid_indexing_schemes + (None,):
             raise ValueError(
                 "Can't change HEALPix index scheme: new_indexing_scheme "
-                "keyword must be 'nested', 'ring', or 'nested_unique'. "
+                f"keyword must be None or one of {valid_indexing_schemes!r}. "
                 f"Got {new_indexing_scheme!r}"
             )
 
-        # Get the original healpix_index coordinates and the key of
-        # the HEALPix domain axis
+        # Get the original healpix_index coordinates
         hp_key, healpix_index = f.coordinate(
             "healpix_index",
             filter_by_naxes=(1,),
@@ -2090,37 +2092,62 @@ class FieldDomain:
             )
 
         parameters = cr.coordinate_conversion.parameters()
-        refinement_level = parameters.get("refinement_level")
         indexing_scheme = parameters.get("indexing_scheme")
-
         if indexing_scheme is None:
             raise ValueError(
                 "Can't change HEALPix indexing scheme: indexing_scheme has "
                 "not been set in the HEALPix grid mapping coordinate reference"
             )
 
-        if indexing_scheme not in ("nested", "ring", "nested_unique"):
+        if indexing_scheme not in valid_indexing_schemes:
             raise ValueError(
-                f"Can't change HEALPix indexing scheme: Invalid "
-                f"indexing_scheme: {indexing_scheme!r}"
+                "Can't change HEALPix indexing scheme: indexing_scheme in "
+                "the HEALPix grid mapping coordinate reference must be one "
+                f"of {valid_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
-        if indexing_scheme == "nested_unique":
-            if new_indexing_scheme != "nested_unique":
+        if (
+            new_indexing_scheme is not None
+            and new_indexing_scheme != indexing_scheme
+        ):
+            refinement_level = parameters.get("refinement_level")
+            if (
+                indexing_scheme in ("nested", "ring")
+                and refinement_level is None
+            ):
                 raise ValueError(
                     "Can't change HEALPix indexing scheme from "
-                    f"'nested_unique' to {new_indexing_scheme!r}"
+                    f"{indexing_scheme!r} to {new_indexing_scheme!r} when "
+                    "refinement_level has not been set in the HEALPix grid "
+                    "mapping coordinate reference"
                 )
-        elif refinement_level is None:
-            raise ValueError(
-                "Can't change HEALPix indexing scheme from "
-                f"{indexing_scheme!r} when refinement_level has not been set "
-                "in the HEALPix grid mapping coordinate reference"
+
+            # Update the Coordinate Reference
+            cr.coordinate_conversion.set_parameter(
+                "indexing_scheme", new_indexing_scheme
             )
+            if new_indexing_scheme == "nested_unique":
+                cr.coordinate_conversion.del_parameter("refinement_level")
+            elif indexing_scheme == "nested_unique":
+                # Set the refinement level for the new indexing
+                # scheme. This is the largest integer, N, for which
+                # 2**(2(N+1)) <= healpix_index[0] (see "Efficient data
+                # structures for masks on 2D grids". M. Reinecke and
+                # E. Hivon. A&A, 580 (2015) A132. DOI:
+                # https://doi.org/10.1051/0004-6361/201526549)
+                #
+                # It doesn't matter if there are in fact multiple
+                # refinement levels, as this will get trapped as an
+                # exception when 'cf_healpix_indexing_scheme' is
+                # executed.
+                from math import log2
 
-        axis = f.get_data_axes(hp_key)[0]
+                cr.coordinate_conversion.set_parameter(
+                    "refinement_level",
+                    int(log2(int(healpix_index.data.first_element())) // 2)
+                    - 1,
+                )
 
-        if indexing_scheme != new_indexing_scheme:
             # Change the HEALPix indices
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(
@@ -2132,12 +2159,8 @@ class FieldDomain:
             )
             healpix_index.set_data(dx, copy=False)
 
-            # Update the Coordinate Reference
-            cr.coordinate_conversion.set_parameter(
-                "indexing_scheme", new_indexing_scheme
-            )
-            if new_indexing_scheme == "nested_unique":
-                cr.coordinate_conversion.del_parameter("refinement_level")
+        # Get the identifier fo the HEALPix domain axis
+        axis = f.get_data_axes(hp_key)[0]
 
         # Ensure that healpix indices are auxiliary coordinates
         if healpix_index.construct_type == "dimension_coordinate":
@@ -2151,11 +2174,14 @@ class FieldDomain:
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
             # monotonically increasing. Test for the common case of
-            # already-ordered global nested indices (which is fast
-            # compared to do doing any sorting).
-            d = healpix_index.to_dask_array()
-            if not (d == da.arange(d.size)).all():
-                index = healpix_index.data.compute()
+            # already-ordered global nested or ring indices (which is
+            # a fast test compared to do doing any actual sorting).
+            hp = healpix_index
+            if not (
+                indexing_scheme in ("nested", "ring")
+                and (hp == da.arange(hp.size, chunks=hp.data.chunks)).all()
+            ):
+                index = hp.data.compute()
                 f = f.subspace(**{axis: np.argsort(index)})
 
         return f

@@ -2828,8 +2828,8 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
     """
     dst = dst_grid.domain
 
-    # An HEALPix grid is converted to UGRID for the regridding, but we
-    # want the original HEALPic metadata to be copied to the regridded
+    # A HEALPix grid is converted to UGRID for the regridding, but we
+    # want the original HEALPix metadata to be copied to the regridded
     # source field, rather than the UGRID view of it.
     dst_grid_is_mesh = dst_grid.is_mesh and not dst_grid.healpix
 

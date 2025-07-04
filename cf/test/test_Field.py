@@ -79,6 +79,7 @@ class FieldTest(unittest.TestCase):
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
     f12 = cf.example_field(12)
+    f13 = cf.example_field(13)
 
     def test_Field_creation_commands(self):
         for f in cf.example_fields():
@@ -1487,7 +1488,6 @@ class FieldTest(unittest.TestCase):
         )
         g = f[indices]
         x = g.dimension_coordinate("X").array
-        print(x)
         self.assertEqual(g.shape, (1, 10, 3))
         self.assertTrue((x == [120, 200, 280]).all())
 
@@ -3107,6 +3107,10 @@ class FieldTest(unittest.TestCase):
         f = self.f12
 
         # Null change
+        g = f.healpix_indexing_scheme(None)
+        self.assertTrue(g.equals(f))
+
+        # Null change
         g = f.healpix_indexing_scheme("nested")
         self.assertTrue(g.equals(f))
 
@@ -3143,9 +3147,17 @@ class FieldTest(unittest.TestCase):
         h = g.healpix_indexing_scheme("nested_unique")
         self.assertTrue(h.equals(g))
 
-        # Can't change from 'nested_unique' to 'nested'
+        # Can change from 'nested_unique' to 'nested' with a single
+        # refinement level
+        g = f.healpix_indexing_scheme("nested_unique")
+        h = g.healpix_indexing_scheme("nested")
+        self.assertTrue(h.equals(f, ignore_data_type=True))
+
+        # Can't change from 'nested_unique' to 'nested' with multiple
+        # refinement level (error comes at comute time)
+        g = self.f13.healpix_indexing_scheme("nested")
         with self.assertRaises(ValueError):
-            g.healpix_indexing_scheme("nested")
+            g.auxiliary_coordinate("healpix_index").array
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):
@@ -3240,9 +3252,8 @@ class FieldTest(unittest.TestCase):
         self.assertFalse((h.coord("healpix_index") == np.arange(12)).all())
 
         # Can't change refinment level for a 'nested_unique' field
-        f13 = cf.example_field(13)
         with self.assertRaises(ValueError):
-            f13.healpix_decrease_refinement_level(0, np.mean)
+            self.f13.healpix_decrease_refinement_level(0, np.mean)
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):

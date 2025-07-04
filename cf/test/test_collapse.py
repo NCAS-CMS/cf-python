@@ -792,9 +792,13 @@ class Field_collapseTest(unittest.TestCase):
                     g.array
 
     def test_Field_collapse_HEALPix(self):
-        """Test HEALpix collapses."""
+        """Test HEALPix collapses."""
         f0 = cf.example_field(12)
         f1 = cf.example_field(13)
+
+        g0 = f0.collapse("area: mean", weights=False)
+        g1 = f1.collapse("area: mean", weights=False)
+        self.assertFalse(np.allclose(g0, g1))
 
         g0 = f0.collapse("area: mean", weights=True)
         g1 = f1.collapse("area: mean", weights=True)

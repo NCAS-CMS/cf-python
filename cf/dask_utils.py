@@ -156,17 +156,20 @@ def cf_healpix_indexing_scheme(
             The array of HEALPix indices.
 
         indexing_scheme: `str`
-            The original HEALPix indexing scheme. One of ``'nested'``
-            or ``'ring'``.
+            The original HEALPix indexing scheme. One of ``'nested'``,
+            ``'ring'``, or ``'nested_unique'``.
 
         new_indexing_scheme: `str`
             The new HEALPix indexing scheme to change to. One of
             ``'nested'``, ``'ring'``, or ``'nested_unique'``.
 
-        refinement_level: `int`
+        refinement_level: `int` or `None`
             The refinement level of the original grid within the
             HEALPix hierarchy, starting at 0 for the base tesselation
-            with 12 cells.
+            with 12 cells. Must be an `int` *indexing_scheme* for
+            ``'nested'`` or, ``'ring'``, but ignored for
+            *indexing_scheme* ``'nested_unique'`` (in which case
+            *refinement_level* may be `None`).
 
     :Returns:
 
@@ -177,8 +180,10 @@ def cf_healpix_indexing_scheme(
 
     >>> cf_healpix_indexing_scheme([0, 1, 2, 3], 'nested', 'ring', 1)
     array([13,  5,  4,  0])
-    >>> cf_healpix_indexing_scheme([0, 1, 2, 3], 'nested_unique', 'ring', 1)
+    >>> cf_healpix_indexing_scheme([0, 1, 2, 3], 'nested', 'nested_unique', 1)
     array([16, 17, 18, 19])
+    >>> cf_healpix_indexing_scheme([16, 17, 18, 19], 'nested_unique', 'nest', None)
+    array([0, 1, 2, 3])
 
     """
     if new_indexing_scheme == indexing_scheme:
@@ -209,13 +214,22 @@ def cf_healpix_indexing_scheme(
             return healpix._chp.ring2uniq(refinement_level, a)
 
     elif indexing_scheme == "nested_unique":
-        raise ValueError(
-            "Can't change HEALPix scheme from 'nested_unique' to "
-            f"{new_indexing_scheme!r}"
-        )
+        if new_indexing_scheme in ("nested", "ring"):
+            nest = new_indexing_scheme == "nested"
+            order, a = healpix.uniq2pix(a, nest=nest)
 
-    else:
-        raise ValueError(f"Invalid HEALPix scheme: {indexing_scheme!r}")
+            refinement_levels = np.unique(order)
+            if refinement_levels.size > 1:
+                raise ValueError(
+                    "Can't change HEALPix indexing scheme from "
+                    f"'nested_unique' to {new_indexing_scheme!r} when the "
+                    "HEALPix indices span multiple refinement levels (at "
+                    f"least levels {refinement_levels.tolist()})"
+                )
+
+            return a
+
+    raise ValueError("Failed to change the HEALPix indexing scheme")
 
 
 def cf_healpix_coordinates(
