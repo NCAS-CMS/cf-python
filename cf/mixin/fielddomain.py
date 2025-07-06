@@ -1940,62 +1940,10 @@ class FieldDomain:
 
         return set(axes)
 
-    def healpix_axis(self, default=ValueError()):
-        """Return the HEALPix axis identifier.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `healpix_indexing_scheme`, `healpix_to_ugrid`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if an
-                HEALPix axis can not be found.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `str`
-                The identifier of the HEALPix domain axis construct.
-
-        **Examples**
-
-        >>> f = cf.example_field(12)
-        >>> print(f)
-        Field: air_temperature (ncvar%tas)
-        ----------------------------------
-        Data            : air_temperature(time(2), healpix_index(48)) K
-        Cell methods    : time(2): mean area: mean
-        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
-                        : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
-        Coord references: grid_mapping_name:healpix
-        >>> axis = f.healpix_axis()
-        >>> axis
-        'domainaxis1'
-        >>> f.constructs.domain_axis_identity(axis)
-        'healpix_index'
-
-        """
-        key = self.coordinate(
-            "healpix_index", filter_by_naxes=(1,), key=True, default=None
-        )
-        if key is None:
-            if default is None:
-                return
-
-            return self._default(default, "There is no HEALPix axis")
-
-        return self.get_data_axes(key)[0]
-
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
         """Change the indexing scheme of HEALPix indices.
 
         .. versionadded:: NEXTVERSION
-
-        .. seealso:: `healpix_axis`
 
         :Parameters:
 
@@ -2192,7 +2140,7 @@ class FieldDomain:
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `create_latlon_coordinates`, `healpix_axis`
+        .. seealso:: `create_latlon_coordinates`
 
         :Parameters:
 
@@ -2229,7 +2177,7 @@ class FieldDomain:
         Topologies      : cell:face(ncdim%cell(48), 4) = [[965, ..., 3074]]
 
         """
-        axis = self.healpix_axis(None)
+        axis = self.domain_axis("healpix_index", key=True, default=None)
         if axis is None:
             raise ValueError(
                 "Can't convert HEALPix to UGRID: There is no HEALPix domain "
@@ -2313,7 +2261,7 @@ class FieldDomain:
 
         from ..healpix_utils import del_healpix_coordinate_reference
 
-        del_healpix_coordinate_reference(f, axis=axis)
+        del_healpix_coordinate_reference(f)
 
         return f
 

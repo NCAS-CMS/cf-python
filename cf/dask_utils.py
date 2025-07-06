@@ -30,11 +30,11 @@ def cf_healpix_bounds(
             ``'ring'``, or ``'nested_unique'``.
 
         refinement_level: `int` or `None`, optional
-            For a ``'nested'`` or ``'ring'`` ordered grid, the
+            For a ``'nested'`` or ``'ring'`` indexed grid, the
             refinement level of the grid within the HEALPix hierarchy,
             starting at 0 for the base tesselation with 12 cells. Set
-            to `None` for a ``'nested_unique'`` ordered grid, for which the
-            refinement level is ignored.
+            to `None` for a ``'nested_unique'`` indexed grid, for
+            which the refinement level is ignored.
 
         lat: `bool`, optional
             If True then return latitude bounds.
@@ -100,7 +100,8 @@ def cf_healpix_bounds(
 
     if indexing_scheme == "nested_unique":
         # Create bounds for 'nested_unique' cells
-        orders, a = healpix.uniq2pix(a, nest=False)
+        nest = False
+        orders, a = healpix.uniq2pix(a, nest=nest)
         orders, index, inverse = np.unique(
             orders, return_index=True, return_inverse=True
         )
@@ -138,6 +139,98 @@ def cf_healpix_bounds(
             b[i, 3] = b[i, 1]
 
     return b
+
+
+def cf_healpix_coordinates(
+    a, indexing_scheme, refinement_level=None, lat=False, lon=False
+):
+    """Calculate HEALPix cell coordinates.
+
+    THe coordinates are for the cell centres.
+
+    .. versionadded:: NEXTVERSION
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array of HEALPix indices.
+
+        indexing_scheme: `str`
+            The HEALPix indexing scheme. One of ``'nested'``,
+            ``'ring'``, or ``'nested_unique'``.
+
+        refinement_level: `int` or `None`, optional
+            For a ``'nested'`` or ``'ring'`` indexed grid, the
+            refinement level of the grid within the HEALPix hierarchy,
+            starting at 0 for the base tesselation with 12 cells.
+            Ignored for a ``'nested_unique'`` indexed grid.
+
+        lat: `bool`, optional
+            If True then return latitude coordinates.
+
+        lon: `bool`, optional
+            If True then return longitude coordinates.
+
+    :Returns:
+
+        `numpy.ndarray`
+            A 1-d array containing the HEALPix cell coordinates.
+
+    **Examples**
+
+    >>> cf_healpix_coordinates([0, 1, 2, 3], 'nested', 1, lat=True)
+    array([19.47122063, 41.8103149 , 41.8103149 , 66.44353569])
+    >>> cf_healpix_coordinates([0, 1, 2, 3], 'nested', 1, lon=True)
+    array([45. , 67.5, 22.5, 45. ])
+
+    """
+    try:
+        import healpix
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install healpix (e.g. from "
+            "https://pypi.org/project/healpix) to allow the calculation "
+            "of latitude/longitude coordinates for a HEALPix grid"
+        )
+
+    if a.ndim != 1:
+        raise ValueError(
+            "Can't calculate HEALPix cell coordinates when the "
+            f"healpix_index array has one dimension. Got shape {a.shape}"
+        )
+
+    if lat:
+        pos = 1
+    elif lon:
+        pos = 0
+
+    if indexing_scheme == "nested_unique":
+        # Create coordinates for 'nested_unique' cells
+        c = np.empty(a.shape, dtype="float64")
+
+        nest = False
+        orders, a = healpix.uniq2pix(a, nest=nest)
+        orders, index, inverse = np.unique(
+            orders, return_index=True, return_inverse=True
+        )
+        for order, i in zip(orders, index):
+            level = np.where(inverse == inverse[i])[0]
+            nside = healpix.order2nside(order)
+            c[level] = healpix.pix2ang(
+                nside=nside, ipix=a[level], nest=nest, lonlat=True
+            )[pos]
+    else:
+        # Create coordinates for 'nested' or 'ring' cells
+        nest = (indexing_scheme == "nested",)
+        nside = healpix.order2nside(refinement_level)
+        c = healpix.pix2ang(
+            nside=nside,
+            ipix=a,
+            nest=nest,
+            lonlat=True,
+        )[pos]
+
+    return c
 
 
 def cf_healpix_indexing_scheme(
@@ -230,98 +323,6 @@ def cf_healpix_indexing_scheme(
             return a
 
     raise ValueError("Failed to change the HEALPix indexing scheme")
-
-
-def cf_healpix_coordinates(
-    a, indexing_scheme, refinement_level=None, lat=False, lon=False
-):
-    """Calculate HEALPix cell coordinates.
-
-    THe coordinates are for the cell centres.
-
-    .. versionadded:: NEXTVERSION
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array of HEALPix indices.
-
-        indexing_scheme: `str`
-            The HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nested_unique'``.
-
-        refinement_level: `int` or `None`, optional
-            For a ``'nested'`` or ``'ring'`` ordered grid, the
-            refinement level of the grid within the HEALPix hierarchy,
-            starting at 0 for the base tesselation with 12 cells.
-            Ignored for a ``'nested_unique'`` ordered grid.
-
-        lat: `bool`, optional
-            If True then return latitude coordinates.
-
-        lon: `bool`, optional
-            If True then return longitude coordinates.
-
-    :Returns:
-
-        `numpy.ndarray`
-            A 1-d array containing the HEALPix cell coordinates.
-
-    **Examples**
-
-    >>> cf_healpix_coordinates([0, 1, 2, 3], 'nested', 1, lat=True)
-    array([19.47122063, 41.8103149 , 41.8103149 , 66.44353569])
-    >>> cf_healpix_coordinates([0, 1, 2, 3], 'nested', 1, lon=True)
-    array([45. , 67.5, 22.5, 45. ])
-
-    """
-    try:
-        import healpix
-    except ImportError as e:
-        raise ImportError(
-            f"{e}. Must install healpix (e.g. from "
-            "https://pypi.org/project/healpix) to allow the calculation "
-            "of latitude/longitude coordinates for a HEALPix grid"
-        )
-
-    if a.ndim != 1:
-        raise ValueError(
-            "Can't calculate HEALPix cell coordinates when the "
-            f"healpix_index array has one dimension. Got shape {a.shape}"
-        )
-
-    if lat:
-        pos = 1
-    elif lon:
-        pos = 0
-
-    if indexing_scheme == "nested_unique":
-        # Create coordinates for 'nested_unique' cells
-        c = np.empty(a.shape, dtype="float64")
-
-        nest = False
-        orders, a = healpix.uniq2pix(a, nest=nest)
-        orders, index, inverse = np.unique(
-            orders, return_index=True, return_inverse=True
-        )
-        for order, i in zip(orders, index):
-            level = np.where(inverse == inverse[i])[0]
-            nside = healpix.order2nside(order)
-            c[level] = healpix.pix2ang(
-                nside=nside, ipix=a[level], nest=nest, lonlat=True
-            )[pos]
-    else:
-        # Create coordinates for 'nested' or 'ring' cells
-        nest = (indexing_scheme == "nested",)
-        nside = healpix.order2nside(refinement_level)
-        c = healpix.pix2ang(
-            nside=nside,
-            ipix=a,
-            nest=nest,
-            lonlat=True,
-        )[pos]
-
-    return c
 
 
 def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):

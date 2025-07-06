@@ -1957,7 +1957,7 @@ class Weights(Container, cfdm.Container):
                 the weights are returned.
 
         """
-        axis = f.healpix_axis(None)
+        axis = f.domain_axis("healpix_index", key=True, default=None)
         if axis is None:
             if auto:
                 return False

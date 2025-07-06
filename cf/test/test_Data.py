@@ -4686,7 +4686,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_coarsen(self):
         """Test Data.coarsen."""
-        d = cf.Data(np.arange(24).reshape((4, 6)))
+        d = cf.Data(np.arange(24).reshape((4, 6)), chunks=(3, 3))
         a = d.array
 
         self.assertIsNone(d.coarsen(np.min, axes={}, inplace=True))

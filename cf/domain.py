@@ -271,7 +271,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `cf.Domain.create_regular`
+        .. seealso:: `cf.Domain.create_regular`,
+                     `cf.Domain.create_latlon_coordinates`
 
         :Parameters:
 
@@ -343,6 +344,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             Coordinate conversion:indexing_scheme = nested_unique
             Datum:earth_radius = 6371000.0
             Auxiliary Coordinate: healpix_index
+        >>> d = cf.Domain.create_healpix(4)
+        >>> d.create_latlon_coordinates(inplace=True)
+        >>> print(d)
+        Auxiliary coords: healpix_index(ncdim%cell(3072)) = [0, ..., 3071] 1
+                        : latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
+                        : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
+        Coord references: grid_mapping_name:healpix
 
         """
         import dask.array as da

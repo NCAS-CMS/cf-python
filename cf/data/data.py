@@ -1413,7 +1413,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [10]
          [16]
          [22]]
-        >>> e = d.coarsen(np.max, {-1: 5})
+        >>> e = d.coarsen(np.max, {-1: 5}, trim_excess=False)
         ValueError: Coarsening factors {1: 5} do not align with array shape (4, 6).
 
         """
@@ -1425,6 +1425,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if k < -ndim or k > ndim:
                 raise ValueError("axis {k} is out of bounds for {ndim}-d data")
 
+        # Make sure all axes are non-negative
         axes = {(k + ndim if k < 0 else k): v for k, v in axes.items()}
 
         dx = d.to_dask_array()

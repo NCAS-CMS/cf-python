@@ -3087,20 +3087,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(values[0], -999)
         self.assertEqual(counts[0], 5)
 
-    def test_Field_healpix_axis(self):
-        """Test Field.healpix_axis."""
-        # HEALPix field
-        f = self.f12
-
-        key = f.auxiliary_coordinate("healpix_index", key=True)
-        axis = f.get_data_axes(key)[0]
-        self.assertEqual(f.healpix_axis(), axis)
-
-        # Non-HEALPix field
-        self.assertIsNone(self.f0.healpix_axis(None))
-        with self.assertRaises(ValueError):
-            self.f0.healpix_axis()
-
     def test_Field_healpix_indexing_scheme(self):
         """Test Field.healpix_indexing_scheme."""
         # HEALPix field
@@ -3204,21 +3190,43 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.create_latlon_coordinates(inplace=True))
         self.assertTrue(f.equals(g))
 
+        g = self.f12.healpix_indexing_scheme("nested_unique")
+        g.create_latlon_coordinates(inplace=True)
+        for c in ("latitude", "longitude"):
+            self.assertTrue(
+                g.auxiliary_coordinate(c).equals(f.auxiliary_coordinate(c))
+            )
+
+        # Check a Multi-Order Coverage grid
+        m = self.f13
+        m = m.create_latlon_coordinates()
+
+        l1 = f
+        l2 = cf.Domain.create_healpix(2)
+        l2.create_latlon_coordinates(inplace=True)
+
+        for c in ("latitude", "longitude"):
+            mc = m.auxiliary_coordinate(c)
+            self.assertTrue(mc[:16].equals(l2.auxiliary_coordinate(c)[:16]))
+            self.assertTrue(mc[16:].equals(l1.auxiliary_coordinate(c)[4:]))
+
     def test_Field_subspace_healpix(self):
-        """Test Field.subspace for HEALPix"""
+        """Test Field.subspace for HEALPix grids"""
         f = self.f12
         g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
-        self.assertTrue(np.allclose(g.aux("healpix_index"), [0, 22, 35]))
+        self.assertTrue(
+            np.allclose(g.coordinate("healpix_index"), [0, 22, 35])
+        )
         g.create_latlon_coordinates(inplace=True)
-        self.assertTrue(np.allclose(g.aux("X"), [45.0, 67.5, 45.0]))
+        self.assertTrue(np.allclose(g.coordinate("X"), [45.0, 67.5, 45.0]))
         self.assertTrue(
             np.allclose(
-                g.aux("Y"), [19.47122063449069, 0.0, -19.47122063449069]
+                g.coordinate("Y"), [19.47122063449069, 0.0, -19.47122063449069]
             )
         )
 
     def test_Field_healpix_decrease_refinement_level(self):
-        """Test Field.healpix_decrease_refinement_level"""
+        """Test Field.healpix_decrease_refinement_level."""
         f = self.f12
         g = f.healpix_decrease_refinement_level(0, np.mean)
         self.assertTrue(g.shape, (2, 12))

@@ -7233,12 +7233,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             # Remove a HEALPix coordinate reference
             # --------------------------------------------------------
-            axis = f.healpix_axis(None)
-            domain_axis = collapse_axes.get(axis)
+            healpix_axis = f.domain_axis(
+                "healpix_index", key=True, default=None
+            )
+            domain_axis = collapse_axes.get(healpix_axis)
             if domain_axis is not None and domain_axis.get_size() > 1:
                 from .healpix_utils import del_healpix_coordinate_reference
 
-                del_healpix_coordinate_reference(f, axis=axis)
+                del_healpix_coordinate_reference(f)
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,
