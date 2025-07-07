@@ -2629,112 +2629,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return domain
 
-    #    def radius(self, default=None):
-    #        """Return the radius of a latitude-longitude plane defined in
-    #        spherical polar coordinates.
-    #
-    #        The radius is taken from the datums of any coordinate
-    #        reference constructs, but if and only if this is not possible
-    #        then a default value may be used instead.
-    #
-    #        .. versionadded:: 3.0.2
-    #
-    #        .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
-    #
-    #        :Parameters:
-    #
-    #            default: optional
-    #                The radius is taken from the datums of any coordinate
-    #                reference constructs, but if and only if this is not
-    #                possible then the value set by the *default* parameter
-    #                is used. May be set to any numeric scalar object,
-    #                including `numpy` and `Data` objects. The units of the
-    #                radius are assumed to be metres, unless specified by a
-    #                `Data` object. If the special value ``'earth'`` is
-    #                given then the default radius taken as 6371229
-    #                metres. If *default* is `None` an exception will be
-    #                raised if no unique datum can be found in the
-    #                coordinate reference constructs.
-    #
-    #                *Parameter example:*
-    #                  Five equivalent ways to set a default radius of
-    #                  6371200 metres: ``6371200``,
-    #                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
-    #                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
-    #                  'km')``.
-    #
-    #        :Returns:
-    #
-    #            `Data`
-    #                The radius of the sphere, in units of metres.
-    #
-    #        **Examples**
-    #
-    #        >>> f.radius()
-    #        <CF Data(): 6371178.98 m>
-    #
-    #        >>> g.radius()
-    #        ValueError: No radius found in coordinate reference constructs and no default provided
-    #        >>> g.radius('earth')
-    #        <CF Data(): 6371229.0 m>
-    #        >>> g.radius(1234)
-    #        <CF Data(): 1234.0 m>
-    #
-    #        """
-    #        radii = []
-    #        for cr in self.coordinate_references(todict=True).values():
-    #            r = cr.datum.get_parameter("earth_radius", None)
-    #            if r is not None:
-    #                r = Data.asdata(r)
-    #                if not r.Units:
-    #                    r.override_units("m", inplace=True)
-    #
-    #                if r.size != 1:
-    #                    radii.append(r)
-    #                    continue
-    #
-    #                got = False
-    #                for _ in radii:
-    #                    if r == _:
-    #                        got = True
-    #                        break
-    #
-    #                if not got:
-    #                    radii.append(r)
-    #
-    #        if len(radii) > 1:
-    #            raise ValueError(
-    #                "Multiple radii found from coordinate reference "
-    #                f"constructs: {radii!r}"
-    #            )
-    #
-    #        if not radii:
-    #            if default is None:
-    #                raise ValueError(
-    #                    "No radius found from coordinate reference constructs "
-    #                    "and no default provided"
-    #                )
-    #
-    #            if isinstance(default, str):
-    #                if default != "earth":
-    #                    raise ValueError(
-    #                        "The default radius must be numeric, 'earth', "
-    #                        "or None"
-    #                    )
-    #
-    #                return _earth_radius.copy()
-    #
-    #            r = Data.asdata(default).squeeze()
-    #        else:
-    #            r = Data.asdata(radii[0]).squeeze()
-    #
-    #        if r.size != 1:
-    #            raise ValueError(f"Multiple radii: {r!r}")
-    #
-    #        r.Units = Units("m")
-    #        r.dtype = float
-    #        return r
-
     def laplacian_xy(
         self, x_wrap=None, one_sided_at_boundary=False, radius=None
     ):
@@ -4948,25 +4842,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   either ``8`` or ``-2``.
 
             reduction: function
-                The function used to calculate, from the data on the
-                original finer cells, the values in the new coarser
+                The function used to calculate the values in the new
+                coarser cells, from the data on the original finer
                 cells.
 
                 *Example:*
                   For an intensive field quantity (that does not
                   depend on the size of the cells, such as
-                  "sea_ice_amount" with units of kg m-2), ``np.mean``
-                  may be appropriate. For an extensive field quantity
-                  (that depends on the size of the cells, such as
-                  "sea_ice_mass" with units of kg), ``np.sum`` may be
-                  appropriate.
+                  "sea_ice_amount" with units of kg m-2), `np.mean`
+                  might be appropriate. For an extensive field
+                  quantity (that depends on the size of the cells,
+                  such as "sea_ice_mass" with units of kg), `np.sum`
+                  might be appropriate.
 
             conform: `bool`, optional
-                If True (the default) the HEALPix grid is converted to
-                a form suitable for having its refinement level
-                changed, i.e. the indexing scheme is changed to
-                'nested' and the HEALPix axis is sorted so that the
-                nested HEALPix indices are monotonically
+                If True (the default) the HEALPix grid is
+                automatically converted to a form suitable for having
+                its refinement level changed, i.e. the indexing scheme
+                is changed to 'nested' and the HEALPix axis is sorted
+                so that the nested HEALPix indices are monotonically
                 increasing. If False then either an exeption is raised
                 if the HEALPix indexing scheme is not already
                 'nested', or else the HEALPix axis is not sorted.
@@ -4977,11 +4871,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                           sorted montonically.
 
             check_healpix_index: `bool`, optional
-
                 If True (the default) then it will be checked (after
                 the HEALPix grid has been conformed, if *conform* is
-                True) that 1. the nested HEALPix indices are strictly
-                monotonically increasing, and 2. every cell at the new
+                True) that a) the nested HEALPix indices are strictly
+                monotonically increasing, and b) every cell at the new
                 coarser refinement level contains the maximum possible
                 number of cells at the original finer refinement
                 level. If either condition is not met then an
@@ -5064,8 +4957,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             cr = f.coordinate_reference("grid_mapping_name:healpix")
         elif indexing_scheme != "nested":
             raise ValueError(
-                "Can't decrease HEALPix refinement level: indexing_scheme in "
-                "the HEALPix grid mapping coordinate reference is "
+                "Can't decrease HEALPix refinement level: indexing_scheme "
+                "in the HEALPix grid mapping coordinate reference is "
                 f"{indexing_scheme!r}, and not 'nested'. "
                 "Consider setting conform=True"
             )
@@ -5095,8 +4988,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # No change in refinement level
             return f
 
-        # Get the number of cells at the original refinement level which are
-        # contained in one cell at the coarser refinement level
+        # Get the number of cells at the original refinement level
+        # which are contained in one cell at the coarser refinement
+        # level
         ncells = 4**-level
 
         # Get the healpix_index coordinates
@@ -5135,6 +5029,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "cells at the original finer refinement level "
                     f"({refinement_level})"
                 )
+
+        # Whether or not to Create lat/lon coordinates for the
+        # coarsened grid
+        create_coarsened_latlon = bool(
+            f.coordinates(
+                "latitude",
+                "longitude",
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+            )
+        )
 
         # Coarsen (using the 'reduction' function) the field
         # data. Note that using the 'coarsen' technique only works for
@@ -5197,6 +5102,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "refinement_level", new_refinement_level
         )
         cr.set_coordinate(new_key)
+
+        # Create lat/lon coordinates for the coarsened grid if they
+        # exist in the original grid
+        if create_coarsened_latlon:
+            f.create_latlon_coordinates(inplace=True)
 
         return f
 
@@ -7202,7 +7112,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             #
             # This is because missing domain ancillaries in a
             # coordinate reference are assumed to have the value zero,
-            # which is most likely inapproriate.
+            # which is most likely inappropriate.
             # --------------------------------------------------------
             if remove_vertical_crs:
                 for ref_key, ref in f.coordinate_references(
@@ -7238,9 +7148,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             domain_axis = collapse_axes.get(healpix_axis)
             if domain_axis is not None and domain_axis.get_size() > 1:
-                from .healpix_utils import del_healpix_coordinate_reference
+                from .healpix_utils import _del_healpix_coordinate_reference
 
-                del_healpix_coordinate_reference(f)
+                _del_healpix_coordinate_reference(f)
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,

@@ -2707,6 +2707,60 @@ def seasons(n=4, start=12):
     return out
 
 
+def heapix_contains(f, lat, lon):
+    """TODOHEALPIX"""
+    from collections.abc import Iterable
+
+    try:
+        import healpix
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install healpix (e.g. from "
+            "https://pypi.org/project/healpix) to allow the calculation "
+            "TODOHEALPIX of latitude/longitude coordinate bounds for a HEALPix grid"
+        )
+
+    if not isinstance(lat, Iterable):
+        lat = (lat,)
+
+    if not isinstance(lon, Iterable):
+        lon = (lon,)
+
+    cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+    cc = cr.coordinate_conversion.parameters()
+    indexing_scheme = cc.get("indexing_scheme")
+    order = cc.get("refinement_level")
+
+    if indexing_scheme in ("nested", "ring"):
+        nest = indexing_scheme == "nested"
+        nside = healpix.order2nside(order)
+        print(nside, lon, lat, nest)
+        index = healpix.ang2pix(nside, lon, lat, nest=nest, lonlat=True)
+
+    elif indexing_scheme == "nested_unique":
+        healpix_index = f.coordinate(
+            "healpix_index", filter_by_naxes=(1,), default=None
+        )
+        if healpix_index is None:
+            raise ValueError("TODOHEALPIX hjscdjhdscjdsj")
+
+        index = []
+        orders = healpix.uniq2pix(healpix_index.array, nest=True)[0]
+        orders = np.unique(orders)
+        for order in orders:
+            nside = healpix.order2nside(order)
+            nested_pix = healpix.ang2pix(
+                nside, lon, lat, nest=True, lonlat=True
+            )
+            i = healpix.pix2uniq(order, nested_pix, nest=True)
+            index.extend(i.tolist())
+
+    else:
+        raise ValueError("TODOHEALPIX 1ooooooooooooooooo1")
+
+    return set(index)
+
+
 # --------------------------------------------------------------------
 # Deprecated functions
 # --------------------------------------------------------------------

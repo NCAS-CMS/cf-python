@@ -1,7 +1,7 @@
 """General functions useful for HEALPix functionality."""
 
 
-def del_healpix_coordinate_reference(f):
+def _del_healpix_coordinate_reference(f):
     """Remove a healpix grid mapping coordinate reference construct.
 
     A new latitude_longitude grid mapping coordinate reference will be

@@ -564,6 +564,28 @@ _docstring_substitution_definitions = {
                 If True then do not perform the regridding, rather
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
+    # HEALPix indexing schemes
+    "{{HEALPix indexing schemes}}": """The "nested" scheme indexes the pixels inside a single
+                coarser refinement level cell with consecutive
+                indices. The "ring" scheme indexes the pixels moving
+                down from the north to the south pole along each
+                isolatitude ring. When the HEALPix axis is ordered
+                with monotonically increasing indices, each type of
+                indexing scheme is optmised for different types of
+                operation. For instance, the "ring" scheme is
+                optimised for Fourier transforms with spherical
+                harmonics; and the "nested" scheme is optimised for
+                geographical nearest-neighbour operations such as
+                decreasing the refinement level.
+
+                For a Multi-Order Coverage (MOC), where pixels with
+                different refinment levels are stored in the same
+                array, the indexing scheme has a unique index for each
+                cell at each refinement level. The "nested_unique"
+                scheme for an MOC indexes pixels within each
+                refinement level with the nested scheme, but
+                geographically close pixels at different refinement
+                levels do not have close indices.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

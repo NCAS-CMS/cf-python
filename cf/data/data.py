@@ -1365,26 +1365,25 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             axes: `dict`
                 Define how to coarsening neighbourhood for each
                 axis. A dictionary key is an integer axis position,
-                with correponding value giving the non-negative
-                integer size of the coarsening neighbourhood for that
-                axis. Unspecified axes are not coarsened, which is
-                equivalent to providing a coarsening neighbourhood of
-                ``1``.
+                with correponding value giving the integer size of the
+                coarsening neighbourhood for that axis. Unspecified
+                axes are not coarsened, which is equivalent to
+                providing a coarsening neighbourhood of ``1``.
 
                 *Example:*
                   Coarsen the axis in position 1 by combining every 4
                   elements: ``{1: 4}``
 
                 *Example:*
-                  Coarsen the axis in position 0 by combining every 3
+                  Coarsen the first axis by combining every 3
                   elements, and the last axis by combining every 4
                   elements: ``{0: 3, -1: 4}``
 
             trim_excess: `bool`, optional
-                If True then do not return a partially-full
-                neighbourhood at the end of a coarsened axis. If False
-                (the default) then an exception is raised if there are
-                any partially-filled neighbourhoods.
+                If True then omit a partially-full neighbourhood at
+                the end of a coarsened axis. If False (the default)
+                then an exception is raised if there are any
+                partially-filled neighbourhoods.
 
             {{inplace: `bool`, optional}}
 

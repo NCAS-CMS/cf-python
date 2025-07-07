@@ -9,7 +9,12 @@ import numpy as np
 
 
 def cf_healpix_bounds(
-    a, indexing_scheme, refinement_level=None, lat=False, lon=False
+    a,
+    indexing_scheme,
+    refinement_level=None,
+    lat=False,
+    lon=False,
+    pole_longitude=None,
 ):
     """Calculate HEALPix cell bounds.
 
@@ -42,6 +47,13 @@ def cf_healpix_bounds(
         lon: `bool`, optional
             If True then return longitude bounds.
 
+        pole_longitude: `None` or number
+            The longitude of coordinate bounds that lie exactly on the
+            north or south pole. If `None` (the default) then the
+            longitudes of such a point will be identical to its
+            opposite vertex. If set to a number, then the longitudes
+            of such points will all be that value.
+
     :Returns:
 
         `numpy.ndarray`
@@ -55,19 +67,25 @@ def cf_healpix_bounds(
            [41.8103149 , 66.44353569, 41.8103149 , 19.47122063],
            [66.44353569, 90.        , 66.44353569, 41.8103149 ]])
     >>> cf_healpix_bounds([0, 1, 2, 3], 'nested', 1, lon=True)
-    array([[67.5, 45. , 22.5, 45. ],
-           [90. , 90. , 45. , 67.5],
-           [45. ,  0. ,  0. , 22.5],
-           [90. , 45. ,  0. , 45. ]])
+    array([[45. , 22.5, 45. , 67.5],
+           [90. , 45. , 67.5, 90. ],
+           [ 0. ,  0. , 22.5, 45. ],
+           [45. ,  0. , 45. , 90. ]])
+    >>> cf_healpix_bounds([0, 1, 2, 3], 'nested', 1, lon=True,
+    ...                   pole_longitude=3.14159)
+    array([[45.     , 22.5    , 45.     , 67.5    ],
+           [90.     , 45.     , 67.5    , 90.     ],
+           [ 0.     ,  0.     , 22.5    , 45.     ],
+           [ 3.14159,  0.     , 45.     , 90.     ]])
 
     """
     try:
         import healpix
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install healpix (e.g. from "
-            "https://pypi.org/project/healpix) to allow the calculation "
-            "of latitude/longitude coordinate bounds for a HEALPix grid"
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to allow the calculation of latitude/longitude coordinate "
+            "bounds for a HEALPix grid"
         )
 
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
@@ -82,26 +100,26 @@ def cf_healpix_bounds(
     elif lon:
         pos = 0
 
-    if indexing_scheme == "nested":
-        bounds_func = healpix._chp.nest2ang_uv
-    else:
+    if indexing_scheme == "ring":
         bounds_func = healpix._chp.ring2ang_uv
+    else:
+        bounds_func = healpix._chp.nest2ang_uv
 
     # Define the cell vertices, in an anticlockwise direction, as seen
-    # from above, starting with the eastern-most vertex.
-    right = (1, 0)
-    top = (1, 1)
-    left = (0, 1)
-    bottom = (0, 0)
-    vertices = (right, top, left, bottom)
+    # from above, starting with the northern-most vertex.
+    east = (1, 0)
+    north = (1, 1)
+    west = (0, 1)
+    south = (0, 0)
+    vertices = (north, west, south, east)
 
     # Initialise the output bounds array
     b = np.empty((a.size, 4), dtype="float64")
 
     if indexing_scheme == "nested_unique":
         # Create bounds for 'nested_unique' cells
-        nest = False
-        orders, a = healpix.uniq2pix(a, nest=nest)
+        #        nest = False
+        orders, a = healpix.uniq2pix(a, nest=True)
         orders, index, inverse = np.unique(
             orders, return_index=True, return_inverse=True
         )
@@ -124,19 +142,29 @@ def cf_healpix_bounds(
         if where_ge_360[0].size:
             b[where_ge_360] -= 360.0
 
-        # Bounds on the north (south) pole come out with a longitude
-        # of NaN, so replace these with a sensible value, i.e. the
-        # longitude of the southern (northern) vertex.
-        #
+        # A vertex on the north (south) pole comes out with a
+        # longitude of NaN, so replace these with a sensible value,
+        # i.e. the longitude of the southern-most (northern-most)
+        # vertex.
+
         # North pole
-        i = np.argwhere(np.isnan(b[:, 1])).flatten()
+        longitude = pole_longitude
+        north = 0
+        south = 2
+        i = np.argwhere(np.isnan(b[:, north])).flatten()
         if i.size:
-            b[i, 1] = b[i, 3]
+            if pole_longitude is None:
+                longitude = b[i, south]
+
+            b[i, north] = longitude
 
         # South pole
-        i = np.argwhere(np.isnan(b[:, 3])).flatten()
+        i = np.argwhere(np.isnan(b[:, south])).flatten()
         if i.size:
-            b[i, 3] = b[i, 1]
+            if pole_longitude is None:
+                longitude = b[i, north]
+
+            b[i, south] = longitude
 
     return b
 
@@ -188,9 +216,9 @@ def cf_healpix_coordinates(
         import healpix
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install healpix (e.g. from "
-            "https://pypi.org/project/healpix) to allow the calculation "
-            "of latitude/longitude coordinates for a HEALPix grid"
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to allow the calculation of latitude/longitude coordinates "
+            "for a HEALPix grid"
         )
 
     if a.ndim != 1:
@@ -208,8 +236,7 @@ def cf_healpix_coordinates(
         # Create coordinates for 'nested_unique' cells
         c = np.empty(a.shape, dtype="float64")
 
-        nest = False
-        orders, a = healpix.uniq2pix(a, nest=nest)
+        orders, a = healpix.uniq2pix(a, nest=True)
         orders, index, inverse = np.unique(
             orders, return_index=True, return_inverse=True
         )
@@ -217,7 +244,7 @@ def cf_healpix_coordinates(
             level = np.where(inverse == inverse[i])[0]
             nside = healpix.order2nside(order)
             c[level] = healpix.pix2ang(
-                nside=nside, ipix=a[level], nest=nest, lonlat=True
+                nside=nside, ipix=a[level], nest=True, lonlat=True
             )[pos]
     else:
         # Create coordinates for 'nested' or 'ring' cells
@@ -287,24 +314,25 @@ def cf_healpix_indexing_scheme(
         import healpix
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install healpix (e.g. from "
-            "https://pypi.org/project/healpix) to allow the changing of "
-            "the HEALPix index scheme"
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to allow the changing of the HEALPix index scheme"
         )
 
     if indexing_scheme == "nested":
         if new_indexing_scheme == "ring":
-            return healpix.nest2ring(healpix.order2nside(refinement_level), a)
+            nside = healpix.order2nside(refinement_level)
+            return healpix.nest2ring(nside, a)
 
         if new_indexing_scheme == "nested_unique":
-            return healpix._chp.nest2uniq(refinement_level, a)
+            return healpix.pix2uniq(refinement_level, a, nest=True)
 
     elif indexing_scheme == "ring":
         if new_indexing_scheme == "nested":
-            return healpix.ring2nest(healpix.order2nside(refinement_level), a)
+            nside = healpix.order2nside(refinement_level)
+            return healpix.ring2nest(nside, a)
 
         if new_indexing_scheme == "nested_unique":
-            return healpix._chp.ring2uniq(refinement_level, a)
+            return healpix.pix2uniq(refinement_level, a, nest=False)
 
     elif indexing_scheme == "nested_unique":
         if new_indexing_scheme in ("nested", "ring"):
@@ -371,9 +399,8 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
         import healpix
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install healpix (e.g. from "
-            "https://pypi.org/project/healpix) to allow the calculation "
-            "of cell area weights for a HEALPix grid"
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to allow the calculation of cell area weights for a HEALPix grid"
         )
 
     if indexing_scheme != "nested_unique":
@@ -387,7 +414,7 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     else:
         x = 1.0
 
-    orders = healpix.uniq2pix(a)[0]
+    orders = healpix.uniq2pix(a, nest=True)[0]
     orders, index, inverse = np.unique(
         orders, return_index=True, return_inverse=True
     )

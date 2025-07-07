@@ -1644,6 +1644,7 @@ class FieldTest(unittest.TestCase):
         f.set_construct(lat_2d_coord, axes=axes, copy=False)
 
         for mode in ("compress", "full", "envelope"):
+            print(repr(lon_2d_coord.bounds))
             indices = f.indices(mode, aux_x=cf.contains(160.1))
             g = f[indices]
             if mode == "full":
@@ -3102,33 +3103,33 @@ class FieldTest(unittest.TestCase):
 
         g = f.healpix_indexing_scheme("ring")
         self.assertTrue(
-            (g.coordinate("healpix_index")[:4].array == [13, 5, 4, 0]).all()
+            np.allclose(g.coordinate("healpix_index")[:4], [13, 5, 4, 0])
         )
         h = g.healpix_indexing_scheme("nested")
         self.assertTrue(
-            (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+            np.allclose(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
         h = g.healpix_indexing_scheme("nested_unique")
         self.assertTrue(
-            (h.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
+            np.allclose(h.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
 
         g = f.healpix_indexing_scheme("ring", sort=True)
         self.assertTrue(
-            (g.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+            np.allclose(g.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
         h = g.healpix_indexing_scheme("nested", sort=False)
         self.assertTrue(
-            (h.coordinate("healpix_index")[:4].array == [3, 7, 11, 15]).all()
+            np.allclose(h.coordinate("healpix_index")[:4], [3, 7, 11, 15])
         )
         h = g.healpix_indexing_scheme("nested", sort=True)
         self.assertTrue(
-            (h.coordinate("healpix_index")[:4].array == [0, 1, 2, 3]).all()
+            np.allclose(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
 
         g = f.healpix_indexing_scheme("nested_unique")
         self.assertTrue(
-            (g.coordinate("healpix_index")[:4].array == [16, 17, 18, 19]).all()
+            np.allclose(g.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
         h = g.healpix_indexing_scheme("nested_unique")
         self.assertTrue(h.equals(g))
@@ -3157,12 +3158,26 @@ class FieldTest(unittest.TestCase):
         u = f.healpix_to_ugrid()
         self.assertEqual(len(u.domain_topologies()), 1)
         self.assertEqual(len(u.auxiliary_coordinates()), 2)
+
+        topology = u.domain_topology().normalise().array
+        self.assertEqual(np.unique(topology).size, 53)
         self.assertTrue(
-            (
-                u.domain_topology()[:4].normalise().array
-                == [[6, 4, 2, 3], [7, 8, 4, 6], [4, 1, 0, 2], [8, 5, 1, 4]]
-            ).all()
+            np.allclose(
+                topology[:4],
+                [
+                    [14, 11, 13, 16],
+                    [21, 14, 16, 20],
+                    [8, 7, 11, 14],
+                    [9, 8, 14, 21],
+                ],
+            )
         )
+
+        # North pole
+        self.assertTrue(np.allclose(topology[3:16:4, 0], 9))
+
+        # South pole
+        self.assertTrue(np.allclose(topology[32:48:4, 2], 3))
 
         self.assertIsNone(f.healpix_to_ugrid(inplace=True))
         self.assertEqual(len(f.domain_topologies()), 1)
@@ -3177,7 +3192,9 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_create_latlon_coordinates(self):
         """Test Field.create_latlon_coordinates."""
+        # ------------------------------------------------------------
         # HEALPix field
+        # ------------------------------------------------------------
         f = self.f12.copy()
         self.assertEqual(len(f.auxiliary_coordinates()), 1)
         self.assertEqual(len(f.auxiliary_coordinates("healpix_index")), 1)
@@ -3197,11 +3214,31 @@ class FieldTest(unittest.TestCase):
                 g.auxiliary_coordinate(c).equals(f.auxiliary_coordinate(c))
             )
 
+        # pole_longitude
+        f = self.f12
+        g = f.create_latlon_coordinates()
+        longitude = g.auxiliary_coordinate("X").bounds.array
+        # North pole
+        self.assertTrue(
+            np.allclose(longitude[3:16:4, 0], longitude[3:16:4, 2])
+        )
+        # South pole
+        self.assertTrue(
+            np.allclose(longitude[32:48:4, 2], longitude[32:48:4, 0])
+        )
+
+        g = f.create_latlon_coordinates(pole_longitude=3.14)
+        longitude = g.auxiliary_coordinate("X").bounds.array
+        # North pole
+        self.assertTrue(np.allclose(longitude[3:16:4, 0], 3.14))
+        # South pole
+        self.assertTrue(np.allclose(longitude[32:48:4, 2], 3.14))
+
         # Check a Multi-Order Coverage grid
         m = self.f13
         m = m.create_latlon_coordinates()
 
-        l1 = f
+        l1 = self.f12.create_latlon_coordinates()
         l2 = cf.Domain.create_healpix(2)
         l2.create_latlon_coordinates(inplace=True)
 
@@ -3210,9 +3247,14 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(mc[:16].equals(l2.auxiliary_coordinate(c)[:16]))
             self.assertTrue(mc[16:].equals(l1.auxiliary_coordinate(c)[4:]))
 
-    def test_Field_subspace_healpix(self):
+    def test_Field_healpix_subspace(self):
         """Test Field.subspace for HEALPix grids"""
         f = self.f12
+
+        index = [47, 3, 2, 0]
+        g = f.subspace(healpix_index=index)
+        self.assertTrue(np.allclose(g.coordinate("healpix_index"), index))
+
         g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
         self.assertTrue(
             np.allclose(g.coordinate("healpix_index"), [0, 22, 35])
@@ -3230,16 +3272,16 @@ class FieldTest(unittest.TestCase):
         f = self.f12
         g = f.healpix_decrease_refinement_level(0, np.mean)
         self.assertTrue(g.shape, (2, 12))
-        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+        self.assertTrue(np.allclose(g.coord("healpix_index"), np.arange(12)))
 
         g = f.healpix_decrease_refinement_level(-1, np.mean)
         self.assertTrue(g.shape, (2, 12))
-        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+        self.assertTrue(np.allclose(g.coord("healpix_index"), np.arange(12)))
 
         f = f.healpix_indexing_scheme("ring")
         g = f.healpix_decrease_refinement_level(0, np.mean)
         self.assertTrue(g.shape, (2, 12))
-        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+        self.assertTrue(np.allclose(g.coord("healpix_index"), np.arange(12)))
         with self.assertRaises(ValueError):
             f.healpix_decrease_refinement_level(0, np.mean, conform=False)
 
@@ -3248,7 +3290,14 @@ class FieldTest(unittest.TestCase):
 
         g = f.healpix_decrease_refinement_level(0, np.mean, conform=True)
         self.assertTrue(g.shape, (2, 12))
-        self.assertTrue((g.coord("healpix_index") == np.arange(12)).all())
+        self.assertTrue(np.allclose(g.coord("healpix_index"), np.arange(12)))
+
+        # Check that lat/lon coords get created when they're present
+        # in the original field
+        f = f.create_latlon_coordinates()
+        g = f.healpix_decrease_refinement_level(0, np.mean)
+        self.assertEqual(g.auxiliary_coordinate("latitude"), (12,))
+        self.assertEqual(g.auxiliary_coordinate("longitude"), (12,))
 
         with self.assertRaises(ValueError):
             f.healpix_decrease_refinement_level(0, np.mean, conform=False)
@@ -3257,7 +3306,7 @@ class FieldTest(unittest.TestCase):
         h = f.healpix_decrease_refinement_level(
             0, np.mean, conform=False, check_healpix_index=False
         )
-        self.assertFalse((h.coord("healpix_index") == np.arange(12)).all())
+        self.assertFalse(np.allclose(h.coord("healpix_index"), np.arange(12)))
 
         # Can't change refinment level for a 'nested_unique' field
         with self.assertRaises(ValueError):

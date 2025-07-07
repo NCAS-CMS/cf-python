@@ -372,12 +372,12 @@ class FieldDomain:
                 zip(*axes_key_construct_value_id)
             )
 
-            n_items = len(constructs)
+            n_constructs = len(constructs)
             n_axes = len(canonical_axes)
 
-            if n_axes > 1 and n_items > n_axes:
+            if n_axes > 1 and n_constructs > n_axes:
                 raise ValueError(
-                    f"Error: Can't specify {n_items} conditions for "
+                    f"Error: Can't specify {n_constructs} conditions for "
                     f"{n_axes} axes: {points}. Consider applying the "
                     "conditions separately."
                 )
@@ -403,6 +403,10 @@ class FieldDomain:
                 ind0 = None
                 index0 = None
 
+                # Loop round each condition for this axis. When there
+                # are multiple conditions, each iteration produces a
+                # 1-d Boolean array, and the axis selection is the
+                # logical AND of these arrays.
                 for item, value, identity in zip(
                     constructs, points, identities
                 ):
@@ -433,7 +437,7 @@ class FieldDomain:
                             # Placeholder to be overwritten later
                             index = None
 
-                        if n_items > 1 and index is not None:
+                        if n_constructs > 1 and index is not None:
                             # Convert 'index' to a boolean array
                             i = np.zeros((size,), bool)
                             i[index] = True
@@ -505,7 +509,7 @@ class FieldDomain:
                                 # np.arange(size)[index]
                             else:
                                 # Index is a cyclic slice
-                                if n_items > 1:
+                                if n_constructs > 1:
                                     raise ValueError(
                                         "Error: Can't specify multiple "
                                         "conditions for a single axis when "
@@ -525,7 +529,7 @@ class FieldDomain:
                             # Placeholder to be overwritten later
                             index = None
 
-                        if n_items > 1 and index is not None:
+                        if n_constructs > 1 and index is not None:
                             # Convert 'index' to a boolean array
                             i = np.zeros((size,), bool)
                             i[index] = True
@@ -558,7 +562,7 @@ class FieldDomain:
                             # Placeholder to be overwritten later
                             index = None
 
-                        if n_items > 1 and ind is not None:
+                        if n_constructs > 1 and ind is not None:
                             # Convert 'ind' to a boolean array (note
                             # that 'index' is already a boolean
                             # array)
@@ -577,7 +581,7 @@ class FieldDomain:
                             f"    index      = {index}\n    ind        = {ind}"
                         )  # pragma: no cover
 
-                    if n_items > 1:
+                    if n_constructs > 1:
                         # Update the 'ind0' and 'index0' boolean
                         # arrays with the latest 'ind' and 'index'
                         if ind is not None:
@@ -595,7 +599,7 @@ class FieldDomain:
                                 index0 &= index
 
                 # Finalise 'ind' and 'index'
-                if n_items > 1:
+                if n_constructs > 1:
                     if ind0 is not None:
                         ind = ind0
 
@@ -622,7 +626,7 @@ class FieldDomain:
                 # ----------------------------------------------------
                 if debug:
                     logger.debug(
-                        f"  {n_items} N-d constructs: {constructs!r}\n"
+                        f"  {n_constructs} N-d constructs: {constructs!r}\n"
                         f"  {len(points)} points        : {points!r}\n"
                     )  # pragma: no cover
 
@@ -694,7 +698,7 @@ class FieldDomain:
                 # outside of the cell. This could happen if the cells
                 # are not rectilinear (e.g. for curvilinear latitudes
                 # and longitudes arrays).
-                if n_items == constructs[0].ndim == len(bounds) == 2:
+                if n_constructs == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
                         if isinstance(v, Query) and v.iscontains():
@@ -1952,6 +1956,8 @@ class FieldDomain:
                 ``'ring'``, ``'nested_unique'``, or `None`. If `None`
                 then the indexing scheme is unchanged.
 
+                {{HEALPix indexing schemes}}
+
             sort: `bool`, optional
                 If True then sort the HEALPix axis of the output so
                 that its HEALPix indices are monotonically increasing,
@@ -2187,8 +2193,12 @@ class FieldDomain:
         f = _inplace_enabled_define_and_cleanup(self)
 
         # If lat/lon coordinates do not exist, then derive them from
-        # the HEALPix indices.
-        f.create_latlon_coordinates(one_d=True, two_d=False, inplace=True)
+        # the HEALPix indices. It's important to set pole_longitude to
+        # something arbitrarily other than None so that the polar
+        # vertex comes out as a single node in the domain topology.
+        f.create_latlon_coordinates(
+            one_d=True, two_d=False, pole_longitude=0, inplace=True
+        )
 
         x_key, x = f.auxiliary_coordinate(
             "Y",
@@ -2259,16 +2269,21 @@ class FieldDomain:
             default=None,
         )
 
-        from ..healpix_utils import del_healpix_coordinate_reference
+        from ..healpix_utils import _del_healpix_coordinate_reference
 
-        del_healpix_coordinate_reference(f)
+        _del_healpix_coordinate_reference(f)
 
         return f
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def create_latlon_coordinates(
-        self, one_d=True, two_d=True, inplace=False, verbose=None
+        self,
+        one_d=True,
+        two_d=True,
+        pole_longitude=None,
+        inplace=False,
+        verbose=None,
     ):
         """Create latitude and longitude coordinates.
 
@@ -2290,14 +2305,22 @@ class FieldDomain:
         :Parameters:
 
             one_d: `bool`, optional`
-                If True (the default) then create 1-d latitude and
-                longitude coordinates, if possible. Otherwise do not
-                attempt this.
+                If True (the default) then attempt to create 1-d
+                latitude and longitude coordinates, if
+                possible. Otherwise do not attempt this.
 
             two_d: `bool`, optional`
-                If True (the default) then create 2-d latitude and
-                longitude coordinates, if possible. Otherwise do not
-                attempt this.
+                If True (the default) then attempt to create 2-d
+                latitude and longitude coordinates, if
+                possible. Otherwise do not attempt this.
+
+            pole_longitude: `None` or number
+                The longitude of coordinates, or coordinate bounds,
+                that lie exactly on the north or south pole. If `None`
+                (the default) then the longitudes of such points will
+                vary according to the alogrithm being used to create
+                them. If set to a number, then the longitudes of such
+                points will all be that value.
 
             {{inplace: `bool`, optional}}
 
@@ -2514,6 +2537,7 @@ class FieldDomain:
                 indexing_scheme=indexing_scheme,
                 refinement_level=refinement_level,
                 lon=True,
+                pole_longitude=pole_longitude,
             )
             bounds = f._Bounds(data=dy)
             lon.set_bounds(bounds)

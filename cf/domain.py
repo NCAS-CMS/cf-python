@@ -269,6 +269,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     ):
         """Create a new global HEALPix domain.
 
+        The HEALPix axis of the new Domain is ordered so that the
+        HEALPix indices are monotonically increasing.
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.Domain.create_regular`,
@@ -285,6 +288,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the
                 default), ``'ring'``, or ``'nested_unique'``.
+
+                {{HEALPix indexing schemes}}
 
             radius: optional
                 Specify the radius of the latitude-longitude plane
@@ -332,22 +337,22 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         --------
         Domain:
         --------
-        Domain Axis: healpix_index(786432)
+        Domain Axis: healpix_index(3072)
 
         Auxiliary coordinate: healpix_index
             standard_name = 'healpix_index'
             units = '1'
-            Data(healpix_index(786432)) = [262144, ..., 1048575] 1
+            Data(healpix_index(3072)) = [1024, ..., 4095] 1
 
         Coordinate reference: grid_mapping_name:healpix
             Coordinate conversion:grid_mapping_name = healpix
             Coordinate conversion:indexing_scheme = nested_unique
             Datum:earth_radius = 6371000.0
             Auxiliary Coordinate: healpix_index
-        >>> d = cf.Domain.create_healpix(4)
+
         >>> d.create_latlon_coordinates(inplace=True)
         >>> print(d)
-        Auxiliary coords: healpix_index(ncdim%cell(3072)) = [0, ..., 3071] 1
+        Auxiliary coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095] 1
                         : latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
                         : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
         Coord references: grid_mapping_name:healpix
@@ -366,8 +371,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             indexing_scheme = "nested"
         elif indexing_scheme not in ("nested", "ring"):
             raise ValueError(
-                "'indexing_scheme' must be 'nested', 'ring', or 'nested_unique'. "
-                f"Got: {indexing_scheme!r}"
+                "'indexing_scheme' must be 'nested', 'ring', or '"
+                f"nested_unique'. Got: {indexing_scheme!r}"
             )
 
         domain = Domain()

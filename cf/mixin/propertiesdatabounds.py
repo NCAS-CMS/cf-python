@@ -960,8 +960,8 @@ class PropertiesDataBounds(PropertiesData):
                 return data.copy()
 
         raise AttributeError(
-            "Can't get lower bounds when there are no bounds nor coordinate "
-            "data"
+            f"Can't get lower bounds from {self!r} when there are no bounds "
+            "nor coordinate data"
         )
 
     @property
