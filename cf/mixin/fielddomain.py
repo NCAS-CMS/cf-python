@@ -332,6 +332,10 @@ class FieldDomain:
                         f"defined by {identity!r}"
                     )
 
+            if callable(value):
+                print ('value=', value)
+                value = value(self)
+                
             if axes in parsed:
                 # The axes are the same as an existing key
                 parsed[axes].append((axes, key, construct, value, identity))
@@ -428,9 +432,6 @@ class FieldDomain:
 
                     ind = None
 
-                    if callable(value):
-                        value = value(self) #  TODOHEALPIX
-                    
                     if isinstance(value, (list, slice, tuple, np.ndarray)):
                         # 1-d CASE 1: Value is already an index,
                         #             e.g. [0], [7,4,2], slice(0,4,2),
@@ -549,7 +550,6 @@ class FieldDomain:
                             index = i
 
                     elif item is not None:
-                        print (9999999, value, callable(value))
                         # 1-d CASE 3: All other 1-d cases
                         if debug:
                             logger.debug("  1-d CASE 3:")  # pragma: no cover

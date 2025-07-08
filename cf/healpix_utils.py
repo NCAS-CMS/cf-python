@@ -1,16 +1,28 @@
 """General functions useful for HEALPix functionality."""
 
+from functools import  partial
 import numpy as np
 import dask.array as da
 
 def _healpix_info(f):
-    """TODOHEALPIX
+    """Get information about the HEALPix axis, if there is one.
 
+    .. versionadded:: NEXTVERSION
+    
+    :Parameters:
 
+        f: `Field` or `Domain`
+            The field or domain.
+    
+    :Returns:
 
-    >>> _healpix_info(f)
-    {}
+        `dict`
+            The information about the HEALPix axis. The dictionary
+            will be empty if there is no HEALPix axis.
 
+    **Examples**
+
+    >>> f = cf.example_field(12)
     >>> _healpix_info(f)
     {'coordinate_reference_key': 'coordinatereference0',
      'grid_mapping_name:healpix': <CF CoordinateReference: grid_mapping_name:healpix>,
@@ -20,20 +32,19 @@ def _healpix_info(f):
      'coordinate_key': 'auxiliarycoordinate0',
      'healpix_index': <CF AuxiliaryCoordinate: healpix_index(48) 1>}
 
-"""
+    """
     info = {}
     
-    # Parse the HEALPix coordinate reference
     cr_key, cr = f.coordinate_reference("grid_mapping_name:healpix",
                                         item=True, default=(None, None))    
     if cr is not None:
         info['coordinate_reference_key'] = cr_key
         info['grid_mapping_name:healpix'] = cr
         parameters = cr.coordinate_conversion.parameters() 
-        for p in ('indexing_scheme','refinement_level'):
-            value = parameters.get(p)
+        for param in ('indexing_scheme','refinement_level'):
+            value = parameters.get(param)
             if value is not None:
-                info[p] = value
+                info[param] = value
         
     hp_key, healpix_index = f.coordinate(
         "healpix_index",
@@ -48,25 +59,13 @@ def _healpix_info(f):
     
     return info
 
-def contains_latlon(lat, lon, f=None):
 
-    def latlon(lat, lon, f):
-        if _healpix_info(f):
-            return  _healpix_contains_latlon(lat, lon, f)
-            
-        if _ugrid_info(f):
-            return _ugrid_contains_latlon(lat, lon, f)
-
-        raise ValueError("Can only use with discretet axes")
-
-    if f is None:
-        return partial(latlon, lat=lat, lon=lon)
-
-    return latlon(lat, lon, f)
-
-
-def _healpix_contains_latlon(lat, lon, f):
+def _healpix_contains_latlon(f, lat, lon):
     """TODOHEALPIX"""
+
+    hp = _healpix_info(f)
+    if not hp:
+        raise ValueError("TODOHEALPIX")
 
     try:
         import healpix
@@ -77,10 +76,6 @@ def _healpix_contains_latlon(lat, lon, f):
             "latitude/longitude locations for a HEALPix grid"
         )
     
-    hp = _healpix_info(f)
-    if not hp:
-        raise ValueError("TODOHEALPIX")
-
     healpix_index = hp.get('healpix_index')
     if healpix_index is None:
         raise ValueError("TODOHEALPIX")

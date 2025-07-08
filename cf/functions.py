@@ -3318,6 +3318,27 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
+def contains_latlon(lat, lon, f=None):
+    """TODOHEALPIX"""
+    def latlon(f, lat, lon):
+        if f.coordinate("healpix_index", filter_by_naxes=(1,) default=None):
+            # HEALPix
+            from .healpix_utils import _healpix_contains_latlon
+            
+            return _healpix_contains_latlon(f, lat, lon)
+            
+        if f.domain_topologies(todict=True):
+            # UGRID
+            return _ugrid_contains_latlon(f, lat, lon)
+
+        raise ValueError("Can only use with discretet axes")
+
+    if f is None:
+        return partial(latlon, lat=lat, lon=lon)
+
+    return latlon(f, lat, lon)
+
+
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
