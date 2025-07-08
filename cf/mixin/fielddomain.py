@@ -546,10 +546,14 @@ class FieldDomain:
                             index = i
 
                     elif item is not None:
+                        print (9999999, value, callable(value))
                         # 1-d CASE 3: All other 1-d cases
                         if debug:
                             logger.debug("  1-d CASE 3:")  # pragma: no cover
-
+                            
+                        if callable(value):
+                            value = value(self) # case 1? TODOHEALPIX
+                    
                         index = item == value
 
                         # Performance: Convert the 1-d 'index' to a

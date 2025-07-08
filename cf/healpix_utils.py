@@ -52,10 +52,12 @@ def contains_latlon(lat, lon, f=None):
 
     def latlon(lat, lon, f):
         if _healpix_info(f):
-            return  _healpix_indices(lat, lon, f):
+            return  _healpix_contains_latlon(lat, lon, f)
             
         if _ugrid_info(f):
-            return _ugrid_indices(lat, lon, f):
+            return _ugrid_contains_latlon(lat, lon, f)
+
+        raise ValueError("Can only use with discretet axes")
 
     if f is None:
         return partial(latlon, lat=lat, lon=lon)
@@ -63,7 +65,7 @@ def contains_latlon(lat, lon, f=None):
     return latlon(lat, lon, f)
 
 
-def _healpix_indices(lat, lon, f):
+def _healpix_contains_latlon(lat, lon, f):
     """TODOHEALPIX"""
 
     try:
@@ -71,8 +73,8 @@ def _healpix_indices(lat, lon, f):
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to TODOHEALPIX allow the calculation of latitude/longitude coordinate "
-            "bounds for a HEALPix grid"
+            "to allow the calculation of which cells contain "
+            "latitude/longitude locations for a HEALPix grid"
         )
     
     hp = _healpix_info(f)
