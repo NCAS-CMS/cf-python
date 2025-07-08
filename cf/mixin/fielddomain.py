@@ -428,6 +428,9 @@ class FieldDomain:
 
                     ind = None
 
+                    if callable(value):
+                        value = value(self) #  TODOHEALPIX
+                    
                     if isinstance(value, (list, slice, tuple, np.ndarray)):
                         # 1-d CASE 1: Value is already an index,
                         #             e.g. [0], [7,4,2], slice(0,4,2),
@@ -551,9 +554,6 @@ class FieldDomain:
                         if debug:
                             logger.debug("  1-d CASE 3:")  # pragma: no cover
                             
-                        if callable(value):
-                            value = value(self) # case 1? TODOHEALPIX
-                    
                         index = item == value
 
                         # Performance: Convert the 1-d 'index' to a
