@@ -1,7 +1,121 @@
 """General functions useful for HEALPix functionality."""
 
+import numpy as np
+import dask.array as da
 
-def _del_healpix_coordinate_reference(f):
+def _healpix_info(f):
+    """TODOHEALPIX
+
+
+
+    >>> _healpix_info(f)
+    {}
+
+    >>> _healpix_info(f)
+    {'coordinate_reference_key': 'coordinatereference0',
+     'grid_mapping_name:healpix': <CF CoordinateReference: grid_mapping_name:healpix>,
+     'indexing_scheme': 'nested',
+     'refinement_level': 1,
+     'axis_key': 'domainaxis1',
+     'coordinate_key': 'auxiliarycoordinate0',
+     'healpix_index': <CF AuxiliaryCoordinate: healpix_index(48) 1>}
+
+"""
+    info = {}
+    
+    # Parse the HEALPix coordinate reference
+    cr_key, cr = f.coordinate_reference("grid_mapping_name:healpix",
+                                        item=True, default=(None, None))    
+    if cr is not None:
+        info['coordinate_reference_key'] = cr_key
+        info['grid_mapping_name:healpix'] = cr
+        parameters = cr.coordinate_conversion.parameters() 
+        for p in ('indexing_scheme','refinement_level'):
+            value = parameters.get(p)
+            if value is not None:
+                info[p] = value
+        
+    hp_key, healpix_index = f.coordinate(
+        "healpix_index",
+        filter_by_naxes=(1,),
+        item=True,
+        default=(None, None),
+    )
+    if healpix_index is not None:
+        info['axis_key'] = f.get_data_axes(hp_key)[0]        
+        info['coordinate_key'] = hp_key
+        info['healpix_index'] = healpix_index
+    
+    return info
+
+def contains_latlon(lat, lon, f=None):
+
+    def latlon(lat, lon, f):
+        if _healpix_info(f):
+            return  _healpix_indices(lat, lon, f):
+            
+        if _ugrid_info(f):
+            return _ugrid_indices(lat, lon, f):
+
+    if f is None:
+        return partial(latlon, lat=lat, lon=lon)
+
+    return latlon(lat, lon, f)
+
+
+def _healpix_indices(lat, lon, f):
+    """TODOHEALPIX"""
+
+    try:
+        import healpix
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to TODOHEALPIX allow the calculation of latitude/longitude coordinate "
+            "bounds for a HEALPix grid"
+        )
+    
+    hp = _healpix_info(f)
+    if not hp:
+        raise ValueError("TODOHEALPIX")
+
+    healpix_index = hp.get('healpix_index')
+    if healpix_index is None:
+        raise ValueError("TODOHEALPIX")
+
+    indexing_scheme = hp.get("indexing_scheme")
+    if indexing_scheme is None:
+        raise ValueError("TODOHEALPIX")    
+          
+    if indexing_scheme == 'nested_unique':
+        index = []
+        healpix_index = healpix_index.array
+        orders = healpix.uniq2pix(healpix_index, nest=True)[0]
+        orders = np.unique(orders)
+        for order in orders:
+            nside = healpix.order2nside(order) 
+            pix = healpix.ang2pix(nside, lon, lat, nest=True, lonlat=True)
+            pix = np.unique(pix)
+            pix = healpix._chp.nest2uniq(order, pix, pix)
+            index.append(da.where(da.isin(healpix_index, pix))[0])
+
+        index = da.unique(da.concatenate(index, axis=0))
+    else:
+        refinement_level = hp.get("refinement_level")
+        if refinement_level is None:
+            raise ValueError("TODOHEALPIX")
+    
+        nest = indexing_scheme == 'nested'
+        nside = healpix.order2nside(refinement_level)
+        pix = healpix.ang2pix(nside, lon, lat, nest=nest, lonlat=True)
+        pix = np.unique(pix)
+        index = da.where(da.isin(healpix_index, pix))[0]
+
+    return index.compute()
+
+
+    
+def del_healpix_coordinate_reference(f):
     """Remove a healpix grid mapping coordinate reference construct.
 
     A new latitude_longitude grid mapping coordinate reference will be

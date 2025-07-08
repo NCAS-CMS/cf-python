@@ -35,11 +35,11 @@ def cf_healpix_bounds(
             ``'ring'``, or ``'nested_unique'``.
 
         refinement_level: `int` or `None`, optional
-            For a ``'nested'`` or ``'ring'`` indexed grid, the
-            refinement level of the grid within the HEALPix hierarchy,
-            starting at 0 for the base tesselation with 12 cells. Set
-            to `None` for a ``'nested_unique'`` indexed grid, for
-            which the refinement level is ignored.
+            The refinement level of the grid within the HEALPix
+            hierarchy, starting at 0 for the base tesselation with 12
+            cells. Must be an `int` for *indexing_scheme* ``'nested'``
+            or ``'ring'``, but is ignored for ``'nested_unique'`` (in
+            which case *refinement_level* may be `None`).
 
         lat: `bool`, optional
             If True then return latitude bounds.
@@ -118,17 +118,13 @@ def cf_healpix_bounds(
 
     if indexing_scheme == "nested_unique":
         # Create bounds for 'nested_unique' cells
-        #        nest = False
         orders, a = healpix.uniq2pix(a, nest=True)
-        orders, index, inverse = np.unique(
-            orders, return_index=True, return_inverse=True
-        )
-        for order, i in zip(orders, index):
-            level = np.where(inverse == inverse[i])[0]
+        for order in np.unique(orders):
             nside = healpix.order2nside(order)
+            indices = np.where(orders == order)[0]
             for j, (u, v) in enumerate(vertices):
-                thetaphi = bounds_func(nside, a[level], u, v)
-                b[level, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+                thetaphi = bounds_func(nside, a[indices], u, v)
+                b[indices, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
     else:
         # Create bounds for 'nested' or 'ring' cells
         nside = healpix.order2nside(refinement_level)
@@ -188,10 +184,11 @@ def cf_healpix_coordinates(
             ``'ring'``, or ``'nested_unique'``.
 
         refinement_level: `int` or `None`, optional
-            For a ``'nested'`` or ``'ring'`` indexed grid, the
-            refinement level of the grid within the HEALPix hierarchy,
-            starting at 0 for the base tesselation with 12 cells.
-            Ignored for a ``'nested_unique'`` indexed grid.
+            The refinement level of the grid within the HEALPix
+            hierarchy, starting at 0 for the base tesselation with 12
+            cells. Must be an `int` for *indexing_scheme* ``'nested'``
+            or ``'ring'``, but is ignored for ``'nested_unique'`` (in
+            which case *refinement_level* may be `None`).
 
         lat: `bool`, optional
             If True then return latitude coordinates.
@@ -237,14 +234,11 @@ def cf_healpix_coordinates(
         c = np.empty(a.shape, dtype="float64")
 
         orders, a = healpix.uniq2pix(a, nest=True)
-        orders, index, inverse = np.unique(
-            orders, return_index=True, return_inverse=True
-        )
-        for order, i in zip(orders, index):
-            level = np.where(inverse == inverse[i])[0]
+        for order in np.unique(orders):
             nside = healpix.order2nside(order)
-            c[level] = healpix.pix2ang(
-                nside=nside, ipix=a[level], nest=True, lonlat=True
+            indices = np.where(orders == order)[0]
+            c[indices] = healpix.pix2ang(
+                nside=nside, ipix=a[indices], nest=True, lonlat=True
             )[pos]
     else:
         # Create coordinates for 'nested' or 'ring' cells
@@ -261,7 +255,7 @@ def cf_healpix_coordinates(
 
 
 def cf_healpix_indexing_scheme(
-    a, indexing_scheme, new_indexing_scheme, refinement_level
+    a, indexing_scheme, new_indexing_scheme, refinement_level=None
 ):
     """Change the ordering of HEALPix indices.
 
@@ -283,13 +277,12 @@ def cf_healpix_indexing_scheme(
             The new HEALPix indexing scheme to change to. One of
             ``'nested'``, ``'ring'``, or ``'nested_unique'``.
 
-        refinement_level: `int` or `None`
-            The refinement level of the original grid within the
-            HEALPix hierarchy, starting at 0 for the base tesselation
-            with 12 cells. Must be an `int` *indexing_scheme* for
-            ``'nested'`` or, ``'ring'``, but ignored for
-            *indexing_scheme* ``'nested_unique'`` (in which case
-            *refinement_level* may be `None`).
+        refinement_level: `int` or `None`, optional
+            The refinement level of the grid within the HEALPix
+            hierarchy, starting at 0 for the base tesselation with 12
+            cells. Must be an `int` for *indexing_scheme* ``'nested'``
+            or ``'ring'``, but is ignored for ``'nested_unique'`` (in
+            which case *refinement_level* may be `None`).
 
     :Returns:
 
@@ -377,8 +370,8 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
             units of the square of the radius units.
 
         radius: number, optional
-            The radius of the sphere, in units of length. Must be set
-            if *measure * is True, otherwise ignored.
+            The radius of the sphere. Must be set if *measure * is
+            True, otherwise ignored.
 
     :Returns:
 
@@ -408,7 +401,7 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
             "cf_healpix_weights: Can only calulate weights for the "
             "'nested_unique' indexing scheme"
         )
-
+    
     if measure:
         x = np.pi * (radius**2) / 3.0
     else:

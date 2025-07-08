@@ -365,3 +365,6 @@ def detail(self, message, *args, **kwargs):
 
 
 logging.Logger.detail = detail
+
+
+from .healpix_utils import *

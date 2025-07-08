@@ -1644,7 +1644,6 @@ class FieldTest(unittest.TestCase):
         f.set_construct(lat_2d_coord, axes=axes, copy=False)
 
         for mode in ("compress", "full", "envelope"):
-            print(repr(lon_2d_coord.bounds))
             indices = f.indices(mode, aux_x=cf.contains(160.1))
             g = f[indices]
             if mode == "full":
