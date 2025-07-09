@@ -36,7 +36,7 @@ def cf_healpix_bounds(
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
-            hierarchy, starting at 0 for the base tesselation with 12
+            hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for ``'nested_unique'`` (in
             which case *refinement_level* may be `None`).
@@ -185,7 +185,7 @@ def cf_healpix_coordinates(
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
-            hierarchy, starting at 0 for the base tesselation with 12
+            hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for ``'nested_unique'`` (in
             which case *refinement_level* may be `None`).
@@ -279,7 +279,7 @@ def cf_healpix_indexing_scheme(
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
-            hierarchy, starting at 0 for the base tesselation with 12
+            hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for ``'nested_unique'`` (in
             which case *refinement_level* may be `None`).
@@ -401,7 +401,7 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
             "cf_healpix_weights: Can only calulate weights for the "
             "'nested_unique' indexing scheme"
         )
-    
+
     if measure:
         x = np.pi * (radius**2) / 3.0
     else:

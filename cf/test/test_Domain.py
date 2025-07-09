@@ -391,6 +391,14 @@ class DomainTest(unittest.TestCase):
             np.allclose(latitude_specific.array - y_points_specific, 0)
         )
 
+        # Size 1 X axis
+        d = cf.Domain.create_regular((-180, 180, 360), (-90, 90, 18))
+        self.assertEqual(d.size, 10)
+        self.assertTrue(d.cyclic())
+        x = d.coordinate("X")
+        self.assertTrue(np.allclose(x, 0))
+        self.assertTrue(np.allclose(x.bounds, [-180, 180]))
+
     def test_Domain_del_construct(self):
         """Test the `del_construct` Domain method."""
         # Test a domain without cyclic axes. These are equivalent tests to

@@ -281,9 +281,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             refinement_level: `int`
                 The refinement level of the grid within the HEALPix
-                hierarchy, starting at 0 for the base tesselation with
-                12 cells. The number of cells in the global HEALPix
-                grid is :math:`(12 \times 4^refinement_level)`.
+                hierarchy, starting at 0 for the base tessellation
+                with 12 cells. The number of cells in the global
+                HEALPix grid is :math:`(12 \times
+                4^refinement_level)`.
 
             indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the

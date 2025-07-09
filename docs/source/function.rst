@@ -101,6 +101,7 @@ Condition constructors
    :template: function.rst
 
    cf.contains
+   cf.contains_latlon
    cf.cellsize
    cf.cellgt
    cf.cellge

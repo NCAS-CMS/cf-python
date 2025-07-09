@@ -300,7 +300,8 @@ class FieldDomain:
         # implied by a non-latitude_longitude grid mapping coordinate
         # reference). This is so that latitude and longitude kwarg
         # selections can work, even if the actual latitude and
-        # longitude coordinates are not part of the metadata.
+        # longitude coordinates are not currently part of the
+        # metadata.
         #
         # Do not do this in-place.
         self = self.create_latlon_coordinates()
@@ -333,9 +334,8 @@ class FieldDomain:
                     )
 
             if callable(value):
-                print ('value=', value)
                 value = value(self)
-                
+
             if axes in parsed:
                 # The axes are the same as an existing key
                 parsed[axes].append((axes, key, construct, value, identity))
@@ -412,7 +412,7 @@ class FieldDomain:
                 index0 = None
 
                 # Loop round the conditions for this axis.
-                #                
+                #
                 # When there are multiple conditions, each iteration
                 # produces a 1-d Boolean array, and the axis selection
                 # is the logical AND of these arrays.
@@ -553,7 +553,7 @@ class FieldDomain:
                         # 1-d CASE 3: All other 1-d cases
                         if debug:
                             logger.debug("  1-d CASE 3:")  # pragma: no cover
-                            
+
                         index = item == value
 
                         # Performance: Convert the 1-d 'index' to a
@@ -2029,12 +2029,12 @@ class FieldDomain:
 
         """
         from ..dask_utils import cf_healpix_indexing_scheme
-        from ..healpix_utils import _healpix_info
-        
+        from ..healpix import healpix_info
+
         f = self.copy()
 
-        hp = _healpix_info(f)
-        
+        hp = healpix_info(f)
+
         valid_indexing_schemes = ("nested", "ring", "nested_unique")
         if new_indexing_scheme not in valid_indexing_schemes + (None,):
             raise ValueError(
@@ -2044,7 +2044,7 @@ class FieldDomain:
             )
 
         # Get the healpix_index coordinates
-        healpix_index = hp.get('healpix_index')
+        healpix_index = hp.get("healpix_index")
         if healpix_index is None:
             raise ValueError(
                 "Can't change HEALPix index scheme: There are no "
@@ -2052,32 +2052,9 @@ class FieldDomain:
             )
 
         # Get the healpix_index axis
-        axis  = hp['axis_key']
-        
-        # Get the healpix_index coordinates
-#        hp_key, healpix_index = f.coordinate(
-#            "healpix_index",
-#            filter_by_naxes=(1,),
-#            item=True,
-#            default=(None, None),
-#        )
- #       if healpix_index is None:
- #           raise ValueError(
-#                "Can't change HEALPix index scheme: There are no "
-#                "healpix_index coordinates"
-#            )
-
-#        # Parse the HEALPix coordinate reference
-#        cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
-#        if cr is None:
-#            raise ValueError(
-#                "Can't change HEALPix index scheme: There is no HEALPix grid "
-#                "mapping coordinate reference"
-#            )
+        axis = hp["axis_key"]
 
         indexing_scheme = hp.get("indexing_scheme")
-#        parameters = cr.coordinate_conversion.parameters()
-#        indexing_scheme = parameters.get("indexing_scheme")
         if indexing_scheme is None:
             raise ValueError(
                 "Can't change HEALPix indexing scheme: indexing_scheme has "
@@ -2095,7 +2072,6 @@ class FieldDomain:
             new_indexing_scheme is not None
             and new_indexing_scheme != indexing_scheme
         ):
-                #            refinement_level = parameters.get("refinement_level")
             refinement_level = hp.get("refinement_level")
             if (
                 indexing_scheme in ("nested", "ring")
@@ -2148,15 +2124,12 @@ class FieldDomain:
             )
             healpix_index.set_data(dx, copy=False)
 
-#        # Get the identifier for the HEALPix domain axis
-#        axis = f.get_data_axes(hp_key)[0]
-
         # Ensure that healpix indices are auxiliary coordinates
         if healpix_index.construct_type == "dimension_coordinate":
             healpix_index = f._AuxiliaryCoordinate(
                 source=healpix_index, copy=False
             )
-            f.del_construct(hp['coordinate_key'])
+            f.del_construct(hp["coordinate_key"])
             hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
             cr.set_coordinate(hp_key)
 
@@ -2218,12 +2191,11 @@ class FieldDomain:
         Topologies      : cell:face(ncdim%cell(48), 4) = [[965, ..., 3074]]
 
         """
-        from ..healpix_utils import del_healpix_coordinate_reference, _healpix_info
+        from ..healpix import del_healpix_coordinate_reference, healpix_info
 
-        hp = _healpix_info(self)
+        hp = healpix_info(self)
 
-        axis = hp.get('axis_key')
-#        axis = self.domain_axis("healpix_index", key=True, default=None)
+        axis = hp.get("axis_key")
         if axis is None:
             raise ValueError(
                 "Can't convert HEALPix to UGRID: There is no HEALPix domain "
@@ -2299,16 +2271,7 @@ class FieldDomain:
         f.set_construct(domain_topology, axes=axis, copy=False)
 
         # Remove the HEALPix index coordinates
-        f.del_construct(hp['coordinate_key'])
-#            "healpix_index",
-#            filter_by_type=(
-#                "auxiliary_coordinate",
-#                "dimension_coordinate",
-#            ),
-#            filter_by_axis=(axis,),
-#            axis_mode="exact",
-#            default=None,
-#        )
+        f.del_construct(hp["coordinate_key"])
 
         # Remove the HEALPix coordinate reference
         del_healpix_coordinate_reference(f)
@@ -2322,6 +2285,7 @@ class FieldDomain:
         one_d=True,
         two_d=True,
         pole_longitude=None,
+        overwrite=False,
         inplace=False,
         verbose=None,
     ):
@@ -2335,8 +2299,9 @@ class FieldDomain:
         construct.
 
         When it is not possible to create latitude and longitude
-        coordinates, the reason why will be reported if *verbose* is
-        at ``'INFO'`` or higher.
+        coordinates, the reason why will be reported if the log level
+        at ``2``/``'INFO'`` or higher (as set by `cf.log_level` or the
+        *verbose* parameter).
 
         .. versionadded:: NEXTVERSION
 
@@ -2361,6 +2326,13 @@ class FieldDomain:
                 vary according to the alogrithm being used to create
                 them. If set to a number, then the longitudes of such
                 points will all be that value.
+
+            overwrite: `bool`, optional
+                If True then remove any existing latitude and
+                longitude coordinates, prior to attempting to create
+                new ones. If False (the default) then if any latitude
+                and longitude coordinates already exist, new ones will
+                not be created.
 
             {{inplace: `bool`, optional}}
 
@@ -2402,6 +2374,29 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
+        # See if there are any existing latitude/longutude coordinates
+        latlon_coordinates = {
+            key: c
+            for key, c in f.coordinates(todict=True).items()
+            if c.Units.islatitude or c.Units.islongitude
+        }
+        if latlon_coordinates:
+            if overwrite:
+                # Remove existing latitude/longutude coordinates
+                # before carrying on
+                for key in latlon_coordinates:
+                    f.del_construct(key)
+            else:
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create latitude and longitude coordinates: "
+                        "overwrite=False and latitude and/or longitude "
+                        "coordinates already exist: "
+                        f"{', '.join(map(repr, latlon_coordinates.values()))}"
+                    )  # pragma: no cover
+
+                return f
+
         # Get all Coordinate References in a dictionary
         identities = {
             cr.identity(""): cr
@@ -2422,14 +2417,6 @@ class FieldDomain:
             for identity, cr in identities.items()
             if identity.startswith("grid_mapping_name:")
         }
-        if len(identities) > 2:
-            if is_log_level_info(logger):
-                logger.info(
-                    "Can't create latitude and longitude coordinates: There "
-                    "are more than two grid mapping coordinate references"
-                )  # pragma: no cover
-
-            return f
 
         # Remove a 'latitude_longitude' grid mapping from the
         # dictionary
@@ -2447,6 +2434,16 @@ class FieldDomain:
 
             return f
 
+        if len(identities) > 1:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: There "
+                    "is more than one non-latitude_longitude grid mapping "
+                    "coordinate reference"
+                )  # pragma: no cover
+
+            return f
+
         # Still here? Then get the non-latitude_longitude grid mapping
         # and calulate the lat/lon coordinates.
         identity, cr = identities.popitem()
@@ -2456,13 +2453,11 @@ class FieldDomain:
             # --------------------------------------------------------
             # HEALPix 1-d coordinates
             # --------------------------------------------------------
-            from ..healpix_utils import _healpix_info
+            from ..healpix import healpix_info
 
-            hp = _healpix_info(f)
-            
-#            parameters = cr.coordinate_conversion.parameters()
-#            indexing_scheme = parameters.get("indexing_scheme")
-            indexing_scheme = hp.get('indexing_scheme')
+            hp = healpix_info(f)
+
+            indexing_scheme = hp.get("indexing_scheme")
             if indexing_scheme not in ("nested", "ring", "nested_unique"):
                 if is_log_level_info(logger):
                     logger.info(
@@ -2472,7 +2467,6 @@ class FieldDomain:
 
                 return f
 
-#            refinement_level = parameters.get("refinement_level")
             refinement_level = hp.get("refinement_level")
             if refinement_level is None and indexing_scheme in (
                 "nested",
@@ -2486,15 +2480,8 @@ class FieldDomain:
 
                 return f
 
-            # The the HEALPix indices
-            key, healpix_index = f.coordinate(
-                "healpix_index",
-                filter_by_naxes=(1,),
-                item=True,
-                default=(None, None),
-            )
-#            if healpix_index is None:
-            if hp.get('healpix_index') is None:
+            healpix_index = hp.get("healpix_index")
+            if healpix_index is None:
                 if is_log_level_info(logger):
                     logger.info(
                         "Can't create 1-d latitude and longitude coordinates: "
@@ -2503,25 +2490,7 @@ class FieldDomain:
 
                 return f
 
-            # Get the HEALPix axis
-            axis = hp['axis_key']
-#            axis = f.get_data_axes(key)[0]
-
-            if f.coordinates(
-                "X",
-                "Y",
-                filter_by_axis=(axis,),
-                axis_mode="exact",
-                todict=True,
-            ):
-                if is_log_level_info(logger):
-                    logger.info(
-                        "Can't create 1-d latitude and longitude coordinates: "
-                        "1-d X or Y coordinates already exist for axis "
-                        f"{f.constructs.domain_axis_identity(axis)!r}"
-                    )  # pragma: no cover
-
-                return f
+            axis = hp["axis_key"]
 
             # Define functions to create latitudes and longitudes from
             # HEALPix indices
@@ -3151,11 +3120,14 @@ class FieldDomain:
             return True
 
         # HEALPix
-        if self.coordinate(
-            "healpix_index",
-            filter_by_axis=(axis,),
-            axis_mode="exact",
-            default=None,
+        if (
+            self.coordinate(
+                "healpix_index",
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            is not None
         ):
             return True
 

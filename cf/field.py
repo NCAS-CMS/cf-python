@@ -7148,7 +7148,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             domain_axis = collapse_axes.get(healpix_axis)
             if domain_axis is not None and domain_axis.get_size() > 1:
-                from .healpix_utils import del_healpix_coordinate_reference
+                from .healpix import del_healpix_coordinate_reference
 
                 del_healpix_coordinate_reference(f)
 
@@ -13267,7 +13267,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         latitude-longitude grid, including other HEALPix grids, UGRID
         meshes and DSG feature types. This is done internally by
         converting HEALPix grids to UGRID meshes and carrying out a
-        UGRID regridding.
+        UGRID regridding. See also
+        `healpix_decrease_refinement_level`.
 
         **DSG feature types**
 
@@ -13291,7 +13292,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 1.0.4
 
-        .. seealso:: `regridc`
+        .. seealso:: `regridc`, `healpix_decrease_refinement_level`
 
         :Parameters:
 

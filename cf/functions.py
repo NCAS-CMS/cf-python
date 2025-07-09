@@ -3319,24 +3319,115 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 
 
 def contains_latlon(lat, lon, f=None):
-    """TODOHEALPIX"""
-    def latlon(f, lat, lon):
-        if f.coordinate("healpix_index", filter_by_naxes=(1,) default=None):
-            # HEALPix
-            from .healpix_utils import _healpix_contains_latlon
-            
-            return _healpix_contains_latlon(f, lat, lon)
-            
-        if f.domain_topologies(todict=True):
-            # UGRID
-            return _ugrid_contains_latlon(f, lat, lon)
+    """Return indices of cells containing latitude-longitude locations.
 
-        raise ValueError("Can only use with discretet axes")
+    The cells must be defined by a discrete axis that has, or could
+    hav, 1-d latitude and longitude coordinates. At present, only
+    HEALPix axes are supported.
+
+    If a single latitude is given then it is paired with each
+    longitude, and if a single longitude is given then it is paired
+    with each latitude. If multiple latitudes and multiple longitudes
+    are provided then they are paired element-wise.
+
+    A cell index appears at most onxce in the output, even if that cell
+    contains more than one of the given latitude-longitude locations.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.contains`
+
+    :Parameters:
+
+        lat: (sequence of) number
+            The latitude(s), in degrees north, for which to find the
+            cell indices. Must be in the range [-90, 90].
+
+        lon: (sequence of) number
+            The longitude(s), in degrees east, for which to find the
+            cell indices.
+
+        f: `Field` or `Domain` or `None`, optional
+            The Field or Domain containing the UGRID or HEALPix
+            grid.
+
+            If `None` (the default) then a callable function is
+            returned, which when called with an argument of *f*
+            returns the indices, i.e ``contains_latlon(lat, lon, f)``
+            is equivalent to ``contains_latlon(lat, lon)(f)``. This
+            new function may be used as a condition in the `subspace`
+            and `indices` methods of *f*, since such conditions may be
+            functions that take the calling Field or Domain construct
+            as an argument. For instance,
+            ``f.subspace(X=contains_latlon(0, 45)`` is equivalent to
+            ``f.subspace(X=contains_latlon(0, 45, f)``.
+
+        `numpy.ndarray` or function
+            Indices for the discrete axis that contain the
+            latitude-longitude locations, or if *f* is `None`, a
+            function that will return those indices.
+
+    **Examples**
+
+    >>> f = cf.example_field(12)
+    >>> print(f)
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(48)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+    Coord references: grid_mapping_name:healpix
+    >>> cf.contains_latlon(20, 90, f)
+    array([23])
+    >>> cf.contains_latlon(-70, 90, f)
+    array([36])
+    >>> cf.contains_latlon(20, 90, f)
+    array([23])
+    >>> cf.contains_latlon([-70, 20], 90, f)
+    array([23, 36])
+    >>> cf.contains_latlon([-70, 20], [90, 280], f)
+    array([31, 36])
+    >>> cf.contains_latlon([-70, 20], [90, 280])(f)
+    array([31, 36])
+    >>> cf.contains_latlon(20, [280, 280.001], f)
+    array([31])
+
+    >>> func = cf.contains_latlon(20, [280, 280.001])
+    >>> func(f)
+    array([31])
+
+    """
+
+    def _contains_latlon(lat, lon, f):
+        if f.coordinate("healpix_index", filter_by_naxes=(1,), default=None):
+            # HEALPix
+            from .healpix import _healpix_contains_latlon
+
+            return _healpix_contains_latlon(lat, lon, f)
+
+        if f.domain_topologies(todict=True):
+            # UGRID - not coded up, yet.
+            pass
+            # from .ugrid import _ugrid_contains_latlon
+            # return _ugrid_contains_latlon(lat, lon, f)
+
+        raise ValueError(
+            "'contains_latlon' can only calculate indices for a "
+            "HEALPix axis"
+        )
+
+    if np.abs(lat).max() > 90:
+        raise ValueError(
+            "Can't find cell locations: All latitudes must be in "
+            f"the range [-90, 90]. Got: {lat}"
+        )
 
     if f is None:
-        return partial(latlon, lat=lat, lon=lon)
+        return partial(_contains_latlon, lat, lon)
 
-    return latlon(f, lat, lon)
+    return _contains_latlon(lat, lon, f)
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
