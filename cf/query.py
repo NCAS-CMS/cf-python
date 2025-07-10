@@ -1921,9 +1921,9 @@ def contains(value, units=None):
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `cf.contains_latlon`, `cf.cellsize`, `cf.cellge`,
-                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
-                 `cf.cellwi`, `cf.cellwo`, `cf.Query.iscontains`
+    .. seealso:: `cf.locate`, `cf.cellsize`, `cf.cellge`, `cf.cellgt`,
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
+                 `cf.cellwo`, `cf.Query.iscontains`
 
     :Parameters:
 

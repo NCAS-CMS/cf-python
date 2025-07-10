@@ -9,21 +9,12 @@ import numpy as np
 
 import cf
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
     import esmpy
-
-    esmpy_imported = True
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 all_methods = (
     "linear",

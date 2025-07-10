@@ -3266,13 +3266,13 @@ class FieldTest(unittest.TestCase):
             )
         )
 
-        g = f.subspace(healpix_index=cf.contains_latlon(20, 46))
+        g = f.subspace(healpix_index=cf.locate(20, 46))
         self.assertEqual(g.coordinate("healpix_index").array, 0)
 
-        g = f.subspace(healpix_index=cf.contains_latlon(20, 1))
+        g = f.subspace(healpix_index=cf.locate(20, 1))
         self.assertEqual(g.coordinate("healpix_index").array, 19)
 
-        g = f.subspace(healpix_index=cf.contains_latlon(20, [1, 46]))
+        g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
         self.assertTrue(np.allclose(g.coordinate("healpix_index"), [0, 19]))
 
     def test_Field_healpix_decrease_refinement_level(self):

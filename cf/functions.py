@@ -3318,11 +3318,11 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
-def contains_latlon(lat, lon, f=None):
+def locate(lat, lon, f=None):
     """Return indices of cells containing latitude-longitude locations.
 
     The cells must be defined by a discrete axis that has, or could
-    hav, 1-d latitude and longitude coordinates. At present, only
+    have, 1-d latitude and longitude coordinates. At present, only
     HEALPix axes are supported.
 
     If a single latitude is given then it is paired with each
@@ -3353,14 +3353,14 @@ def contains_latlon(lat, lon, f=None):
 
             If `None` (the default) then a callable function is
             returned, which when called with an argument of *f*
-            returns the indices, i.e ``contains_latlon(lat, lon, f)``
-            is equivalent to ``contains_latlon(lat, lon)(f)``. This
+            returns the indices, i.e ``contains(lat, lon, f)``
+            is equivalent to ``contains(lat, lon)(f)``. This
             new function may be used as a condition in the `subspace`
             and `indices` methods of *f*, since such conditions may be
             functions that take the calling Field or Domain construct
             as an argument. For instance,
-            ``f.subspace(X=contains_latlon(0, 45)`` is equivalent to
-            ``f.subspace(X=contains_latlon(0, 45, f)``.
+            ``f.subspace(X=locate(0, 45)`` is equivalent to
+            ``f.subspace(X=locate(0, 45, f)``.
 
         `numpy.ndarray` or function
             Indices for the discrete axis that contain the
@@ -3379,55 +3379,51 @@ def contains_latlon(lat, lon, f=None):
                     : height(1) = [1.5] m
     Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
     Coord references: grid_mapping_name:healpix
-    >>> cf.contains_latlon(20, 90, f)
+    >>> cf.locate(20, 90, f)
     array([23])
-    >>> cf.contains_latlon(-70, 90, f)
+    >>> cf.locate(-70, 90, f)
     array([36])
-    >>> cf.contains_latlon(20, 90, f)
-    array([23])
-    >>> cf.contains_latlon([-70, 20], 90, f)
+    >>> cf.locate([-70, 20], 90, f)
     array([23, 36])
-    >>> cf.contains_latlon([-70, 20], [90, 280], f)
+    >>> cf.locate([-70, 20], [90, 280], f)
     array([31, 36])
-    >>> cf.contains_latlon([-70, 20], [90, 280])(f)
+    >>> cf.locate([-70, 20], [90, 280])(f)
     array([31, 36])
-    >>> cf.contains_latlon(20, [280, 280.001], f)
+    >>> cf.locate(20, [280, 280.001], f)
     array([31])
-
-    >>> func = cf.contains_latlon(20, [280, 280.001])
+    >>> func = cf.locate(20, [280, 280.001])
     >>> func(f)
     array([31])
 
     """
 
-    def _contains_latlon(lat, lon, f):
+    def _locate(lat, lon, f):
         if f.coordinate("healpix_index", filter_by_naxes=(1,), default=None):
             # HEALPix
-            from .healpix import _healpix_contains_latlon
+            from .healpix import _healpix_locate
 
-            return _healpix_contains_latlon(lat, lon, f)
+            return _healpix_locate(lat, lon, f)
+
+        raise ValueError(
+            "'locate' can only calculate indices for a HEALPix axis"
+        )
 
         if f.domain_topologies(todict=True):
             # UGRID - not coded up, yet.
             pass
-            # from .ugrid import _ugrid_contains_latlon
-            # return _ugrid_contains_latlon(lat, lon, f)
-
-        raise ValueError(
-            "'contains_latlon' can only calculate indices for a "
-            "HEALPix axis"
-        )
+            # from .ugrid import _ugrid_locate
+            # return _ugrid_locate(lat, lon, f)
 
     if np.abs(lat).max() > 90:
         raise ValueError(
-            "Can't find cell locations: All latitudes must be in "
-            f"the range [-90, 90]. Got: {lat}"
+            "Can't find cell locations: Latitudes must be in the range "
+            f"[-90, 90]. Got: {lat}"
         )
 
     if f is None:
-        return partial(_contains_latlon, lat, lon)
+        return partial(_locate, lat, lon)
 
-    return _contains_latlon(lat, lon, f)
+    return _locate(lat, lon, f)
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):

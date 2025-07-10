@@ -4,7 +4,7 @@ import dask.array as da
 import numpy as np
 
 
-def _healpix_contains_latlon(lat, lon, f):
+def _healpix_locate(lat, lon, f):
     """Return indices of cells containing latitude-longitude locations.
 
     The cells must be defined by a HEALPix grid.
@@ -19,7 +19,7 @@ def _healpix_contains_latlon(lat, lon, f):
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cf.contains_latlon`
+    .. seealso:: `cf.locate`
 
     :Parameters:
 
@@ -47,8 +47,7 @@ def _healpix_contains_latlon(lat, lon, f):
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to allow the calculation of which HEALPix cells contain "
-            "latitude-longitude locations"
+            "to allow the location of HEALPix cells"
         )
 
     hp = healpix_info(f)
@@ -56,15 +55,15 @@ def _healpix_contains_latlon(lat, lon, f):
     healpix_index = hp.get("healpix_index")
     if healpix_index is None:
         raise ValueError(
-            "Can't find HEALPix cell locations: There are no healpix_index "
+            "Can't locate HEALPix cells: There are no healpix_index "
             "coordinates"
         )
 
     indexing_scheme = hp.get("indexing_scheme")
     if indexing_scheme is None:
         raise ValueError(
-            "Can't find HEALPix cell locations: indexing_scheme has "
-            "not been set in the HEALPix grid mapping coordinate reference"
+            "Can't locate HEALPix cells: indexing_scheme has not been set "
+            "in the HEALPix grid mapping coordinate reference"
         )
 
     if indexing_scheme == "nested_unique":
@@ -78,11 +77,12 @@ def _healpix_contains_latlon(lat, lon, f):
             # indices of the cells that contain the lat-lon points.
             nside = healpix.order2nside(order)
             pix = healpix.ang2pix(nside, lon, lat, nest=True, lonlat=True)
+            # Remove duplicates
             pix = np.unique(pix)
             # Convert back to HEALPix nested_unique indices
             pix = healpix._chp.nest2uniq(order, pix, pix)
-            # Find where these HEALPix nested_unique indices are
-            # located in the original healpix_index coordinates
+            # Find where these HEALPix indices are located in the
+            # healpix_index coordinates
             index.append(da.where(da.isin(healpix_index, pix))[0])
 
         index = da.unique(da.concatenate(index, axis=0))
@@ -91,16 +91,16 @@ def _healpix_contains_latlon(lat, lon, f):
         refinement_level = hp.get("refinement_level")
         if refinement_level is None:
             raise ValueError(
-                "Can't find HEALPix cell locations: refinement_level has "
-                "not been set in the HEALPix grid mapping coordinate "
-                "reference"
+                "Can't locate HEALPix cells: refinement_level has not been "
+                "set in the HEALPix grid mapping coordinate reference"
             )
 
         # Find the HEALPix indices of the cells that contain the
         # lat-lon points
-        nside = healpix.order2nside(refinement_level)
         nest = indexing_scheme == "nested"
+        nside = healpix.order2nside(refinement_level)
         pix = healpix.ang2pix(nside, lon, lat, nest=nest, lonlat=True)
+        # Remove duplicates
         pix = np.unique(pix)
         # Find where these HEALPix indices are located in the
         # healpix_index coordinates

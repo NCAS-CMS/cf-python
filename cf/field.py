@@ -5030,14 +5030,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"({refinement_level})"
                 )
 
-        # Whether or not to Create lat/lon coordinates for the
-        # coarsened grid
+        # Whether or not to create lat/lon coordinates for the
+        # coarsened grid. Only do so if the original grid has lat/lon
+        # coordinates.
         create_coarsened_latlon = bool(
             f.coordinates(
                 "latitude",
                 "longitude",
                 filter_by_axis=(axis,),
                 axis_mode="exact",
+                todict=True,
             )
         )
 
@@ -5103,9 +5105,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
         cr.set_coordinate(new_key)
 
-        # Create lat/lon coordinates for the coarsened grid if they
-        # exist in the original grid
         if create_coarsened_latlon:
+            # Create lat/lon coordinates for the coarsened grid
             f.create_latlon_coordinates(inplace=True)
 
         return f
@@ -13013,6 +13014,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
           the positional arguments), but because the indices may not be
           acting along orthogonal dimensions, some missing data may still
           need to be inserted into the field construct's data.
+
+        * If a condition is a given as a callable function, then it is
+          replaced with the output of it being called with the field
+          as its ony argument. For instance,
+          ``f.subspace(X=cf.locate(30, 180))`` is equivalent to
+          ``f.subspace(X=cf.locate(30, 180)(f))``.
 
         **Subspacing by index**
 

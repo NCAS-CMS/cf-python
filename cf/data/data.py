@@ -1418,13 +1418,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # Parse axes
+        # Parse axes, making sure that all axes are non-negative.
         ndim = self.ndim
         for k in axes:
             if k < -ndim or k > ndim:
                 raise ValueError("axis {k} is out of bounds for {ndim}-d data")
 
-        # Make sure all axes are non-negative
         axes = {(k + ndim if k < 0 else k): v for k, v in axes.items()}
 
         dx = d.to_dask_array()

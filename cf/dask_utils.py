@@ -139,28 +139,22 @@ def cf_healpix_bounds(
             b[where_ge_360] -= 360.0
 
         # A vertex on the north (south) pole comes out with a
-        # longitude of NaN, so replace these with a sensible value,
-        # i.e. the longitude of the southern-most (northern-most)
-        # vertex.
-
-        # North pole
-        longitude = pole_longitude
+        # longitude of NaN, so replace these with a sensible value:
+        # Either the constant 'pole_longitude', or else the longitude
+        # of the southern-most (northern-most) vertex.
         north = 0
         south = 2
-        i = np.argwhere(np.isnan(b[:, north])).flatten()
-        if i.size:
+        for pole, vertex in ((north, south), (south, north)):
+            indices = np.argwhere(np.isnan(b[:, pole])).flatten()
+            if not indices.size:
+                continue
+
             if pole_longitude is None:
-                longitude = b[i, south]
+                longitude = b[indices, vertex]
+            else:
+                longitude = pole_longitude
 
-            b[i, north] = longitude
-
-        # South pole
-        i = np.argwhere(np.isnan(b[:, south])).flatten()
-        if i.size:
-            if pole_longitude is None:
-                longitude = b[i, north]
-
-            b[i, south] = longitude
+            b[indices, pole] = longitude
 
     return b
 
