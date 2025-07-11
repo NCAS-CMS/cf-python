@@ -6,6 +6,7 @@ instance, as would be passed to `dask.array.map_blocks`.
 """
 
 import numpy as np
+from cfdm.data.dask_utils import cfdm_to_memory
 
 
 def cf_healpix_bounds(
@@ -88,6 +89,8 @@ def cf_healpix_bounds(
             "bounds for a HEALPix grid"
         )
 
+    a = cfdm_to_memory(a)
+
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
     if a.ndim != 1:
         raise ValueError(
@@ -138,19 +141,19 @@ def cf_healpix_bounds(
         if where_ge_360[0].size:
             b[where_ge_360] -= 360.0
 
-        # A vertex on the north (south) pole comes out with a
-        # longitude of NaN, so replace these with a sensible value:
+        # Vertices on the north or south pole come out with a
+        # longitude of NaN, so replace these with sensible values:
         # Either the constant 'pole_longitude', or else the longitude
-        # of the southern-most (northern-most) vertex.
+        # of the cell vertex that is opposite the vertex on the pole.
         north = 0
         south = 2
-        for pole, vertex in ((north, south), (south, north)):
+        for pole, replacement in ((north, south), (south, north)):
             indices = np.argwhere(np.isnan(b[:, pole])).flatten()
             if not indices.size:
                 continue
 
             if pole_longitude is None:
-                longitude = b[indices, vertex]
+                longitude = b[indices, replacement]
             else:
                 longitude = pole_longitude
 
@@ -212,9 +215,11 @@ def cf_healpix_coordinates(
             "for a HEALPix grid"
         )
 
+    a = cfdm_to_memory(a)
+
     if a.ndim != 1:
         raise ValueError(
-            "Can't calculate HEALPix cell coordinates when the "
+            "Can only calculate HEALPix cell coordinates when the "
             f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
@@ -236,7 +241,7 @@ def cf_healpix_coordinates(
             )[pos]
     else:
         # Create coordinates for 'nested' or 'ring' cells
-        nest = (indexing_scheme == "nested",)
+        nest = indexing_scheme == "nested"
         nside = healpix.order2nside(refinement_level)
         c = healpix.pix2ang(
             nside=nside,
@@ -304,6 +309,8 @@ def cf_healpix_indexing_scheme(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
             "to allow the changing of the HEALPix index scheme"
         )
+
+    a = cfdm_to_memory(a)
 
     if indexing_scheme == "nested":
         if new_indexing_scheme == "ring":
@@ -395,6 +402,8 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
             "cf_healpix_weights: Can only calulate weights for the "
             "'nested_unique' indexing scheme"
         )
+
+    a = cfdm_to_memory(a)
 
     if measure:
         x = np.pi * (radius**2) / 3.0

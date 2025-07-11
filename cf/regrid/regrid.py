@@ -497,20 +497,7 @@ def regrid(
 
     conform_coordinates(src_grid, dst_grid)
 
-    if method == "conservative":
-        if src_grid.healpix or dst_grid.healpix:
-            raise ValueError(
-                f"{method!r} regridding is not available for HEALPix grids"
-            )
-
-    elif method in ("conservative_2nd", "patch"):
-        if method == "conservative_2nd" and (
-            src_grid.healpix or dst_grid.healpix
-        ):
-            raise ValueError(
-                f"{method!r} regridding is not available for HEALPix grids"
-            )
-
+    if method in ("conservative_2nd", "patch"):
         if not (src_grid.dimensionality >= 2 and dst_grid.dimensionality >= 2):
             raise ValueError(
                 f"{method!r} regridding is not available for 1-d regridding"

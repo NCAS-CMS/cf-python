@@ -4945,8 +4945,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "reference"
             )
 
-        # Make sure that we have a nested indexing scheme
         if conform:
+            # Make sure that we have 'nested' indexing scheme with
+            # ordered HEALPix indices
             try:
                 f = f.healpix_indexing_scheme("nested", sort=True)
             except ValueError as error:
@@ -6819,12 +6820,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if debug:
                 logger.debug(
-                    f"    axes                    = {axes}"
-                )  # pragma: no cover
-                logger.debug(
-                    f"    method                  = {method}"
-                )  # pragma: no cover
-                logger.debug(
+                    f"    axes                    = {axes}\n"
+                    f"    method                  = {method}\n"
                     f"    collapse_axes_all_sizes = {collapse_axes_all_sizes}"
                 )  # pragma: no cover
 
@@ -13266,7 +13263,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Data defined on UGRID face or node cells may be regridded to
         any other latitude-longitude grid, including other UGRID
-        meshes and DSG feature types.
+        meshes and DSG feature types. Note that for conservative
+        regridding, a cell edge is assumed to be the great circle arc
+        that connects its two vertices.
 
         **HEALPix grids**
 
@@ -13274,7 +13273,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         latitude-longitude grid, including other HEALPix grids, UGRID
         meshes and DSG feature types. This is done internally by
         converting HEALPix grids to UGRID meshes and carrying out a
-        UGRID regridding. See also
+        UGRID regridding. This means that for conservative regridding,
+        a cell edge is assumed to be the great circle arc that
+        connects its two vertices, which is certainly not true for
+        HEALPix cells. However, the errors are likely to be small,
+        particularly at higher resolutions. See also
         `healpix_decrease_refinement_level`.
 
         **DSG feature types**

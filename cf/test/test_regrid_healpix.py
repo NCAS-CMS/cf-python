@@ -70,9 +70,6 @@ class RegridMeshTest(unittest.TestCase):
             # Loop over whether or not to use the destination grid
             # masked points
             for method in all_methods:
-                if method in ("conservative", "conservative_2nd"):
-                    continue
-
                 x = src.regrids(dst, method=method)
                 y = src.regrids(dst_ugrid, method=method)
                 a = x.array
@@ -84,11 +81,6 @@ class RegridMeshTest(unittest.TestCase):
 
                 # Check that the result is a HEALPix grid
                 self.assertTrue(cf.healpix.healpix_info(x))
-
-        # Methods that don't currently work
-        for method in ("conservative", "conservative_2nd"):
-            with self.assertRaises(ValueError):
-                src.regrids(dst, method=method)
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_from_healpix(self):
@@ -110,9 +102,6 @@ class RegridMeshTest(unittest.TestCase):
             # Loop over whether or not to use the destination grid
             # masked points
             for method in all_methods:
-                if method in ("conservative", "conservative_2nd"):
-                    continue
-
                 x = src.regrids(dst, method=method)
                 y = src_ugrid.regrids(dst, method=method)
                 a = x.array
@@ -121,11 +110,6 @@ class RegridMeshTest(unittest.TestCase):
 
                 if np.ma.isMA(a):
                     self.assertTrue((b.mask == a.mask).all())
-
-        # Methods that don't currently work
-        for method in ("conservative", "conservative_2nd"):
-            with self.assertRaises(ValueError):
-                src.regrids(dst, method=method)
 
 
 if __name__ == "__main__":

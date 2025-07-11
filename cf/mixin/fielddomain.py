@@ -2114,7 +2114,9 @@ class FieldDomain:
                 )
 
             # Change the HEALPix indices
-            dx = healpix_index.to_dask_array()
+            dx = healpix_index.data.to_dask_array(
+                _force_mask_hardness=False, _force_to_memory=False
+            )
             dx = dx.map_blocks(
                 cf_healpix_indexing_scheme,
                 meta=np.array((), dtype="int64"),
@@ -2254,8 +2256,8 @@ class FieldDomain:
             )
 
         # Create a unique integer identifer for each node location
-        bounds_y = bounds_y.to_dask_array()
-        bounds_x = bounds_x.to_dask_array()
+        bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
+        bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
 
         _, y_indices = np.unique(bounds_y, return_inverse=True)
         _, x_indices = np.unique(bounds_x, return_inverse=True)
@@ -2474,8 +2476,10 @@ class FieldDomain:
             ):
                 if is_log_level_info(logger):
                     logger.info(
-                        "Can't create 1-d latitude and longitude coordinates: "
-                        "Missing HEALPix refinemnt level"
+                        "Can't create 1-d latitude and longitude coordinates "
+                        "from {indexing_scheme!r} HEALPix indices: "
+                        "refinement_indexing_scheme has not been set in the "
+                        "HEALPix grid mapping coordinate reference"
                     )  # pragma: no cover
 
                 return f
@@ -2497,7 +2501,9 @@ class FieldDomain:
             from ..dask_utils import cf_healpix_bounds, cf_healpix_coordinates
 
             # Create new latitude and longitude coordinates with bounds
-            dx = healpix_index.to_dask_array()
+            dx = healpix_index.data.to_dask_array(
+                _force_mask_hardness=False, _force_to_memory=False
+            )
             meta = np.array((), dtype="float64")
 
             # Latitude coordinates
