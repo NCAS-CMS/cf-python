@@ -655,6 +655,7 @@ def regrid(
             dst=dst,
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
+            dst_mesh_location=dst_grid.mesh_location,
             src_featureType=src_grid.featureType,
             dst_featureType=dst_grid.featureType,
             src_z=src_grid.z,
@@ -2142,9 +2143,10 @@ def create_esmpy_mesh(grid, mask=None):
             The `esmpy.Mesh` derived from *grid*.
 
     """
+    destination =  grid.name == 'destination'
     if grid.mesh_location != "face":
         raise ValueError(
-            f"Can't regrid {'from' if grid.name == 'source' else 'to'} "
+            f"Can't regrid {'to' if destination else 'from'} "
             f"a {grid.name} grid of UGRID {grid.mesh_location!r} cells"
         )
 
@@ -2153,80 +2155,107 @@ def create_esmpy_mesh(grid, mask=None):
     else:
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
-
-    # Create an empty esmpy.Mesh
-    esmpy_mesh = esmpy.Mesh(
-        parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
-    )
-
-    element_conn = grid.domain_topology.normalise().array
-    element_count = element_conn.shape[0]
-    element_types = np.ma.count(element_conn, axis=1)
-    element_conn = np.ma.compressed(element_conn)
-
-    # Element coordinates
-    if grid.coords:
-        try:
-            element_coords = [c.array for c in grid.coords]
-        except AttributeError:
-            # The coordinate constructs have no data
-            element_coords = None
-        else:
-            element_coords = np.stack(element_coords, axis=-1)
+    
+    if destination and weights_chunks > 1:
+        chunks = chunk_indices((normalize_chunks(size // weights_chunks, (size,)),))
     else:
-        element_coords = None
+        chunks = (None,)
+        
+    meshes = []
+    for chunk in chunks:
 
-    node_ids, index = np.unique(element_conn, return_index=True)
-    node_coords = [b.data.compressed().array[index] for b in grid.bounds]
-    node_coords = np.stack(node_coords, axis=-1)
-    node_count = node_ids.size
-    node_owners = np.zeros(node_count)
+        # Create an empty esmpy.Mesh
+        esmpy_mesh = esmpy.Mesh(
+            parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
+        )
 
-    # Make sure that node IDs are >= 1, as needed by newer versions of
-    # esmpy.
-    min_id = node_ids.min()
-    if min_id < 1:
-        node_ids = node_ids + min_id + 1
+        domain_topology = grid.domain_topology
+        if chunk is not None:
+            domain_topology = domain_topology[chunk]
+                    
+        #        element_conn = grid.domain_topology.normalise().array
+        element_conn = domain_topology.normalise().array
+        element_count = element_conn.shape[0]
+        element_types = np.ma.count(element_conn, axis=1)
+        element_conn = np.ma.compressed(element_conn)
+    
+        # Element coordinates
+        if grid.coords:
+            grid_coords = grid.coords
+            if chunk is not None:
+                grid_coords = [c[chunk] for b in grid.coords]
+                
+            try:
+                element_coords = [c.array for c in grid_coords]
+            except AttributeError:
+                # The coordinate constructs have no data
+                element_coords = None
+            else:
+                element_coords = np.stack(element_coords, axis=-1)
+        else:
+            element_coords = None
+    
+        grid_bounds = grid.bounds
+        if chunk is not  None:
+            grid_bounds = [b[chunk] for b in grid.bounds]
 
-    # Add nodes. This must be done before `add_elements`.
-    esmpy_mesh.add_nodes(
-        node_count=node_count,
-        node_ids=node_ids,
-        node_coords=node_coords,
-        node_owners=node_owners,
-    )
+        node_ids, index = np.unique(element_conn, return_index=True)
+        node_coords = [
+            b.data.compressed().array[index] for b in grid_bounds
+        ]
+        node_coords = np.stack(node_coords, axis=-1)
+        node_count = node_ids.size
+        node_owners = np.zeros(node_count)
+    
+        # Make sure that node IDs are >= 1, as needed by newer versions of
+        # esmpy.
+        min_id = node_ids.min()
+        if min_id < 1:
+            node_ids = node_ids + min_id + 1
+    
+        # Add nodes. This must be done before `add_elements`.
+        esmpy_mesh.add_nodes(
+            node_count=node_count,
+            node_ids=node_ids,
+            node_coords=node_coords,
+            node_owners=node_owners,
+        )
+    
+        # Mask
+        if mask is not None:
+            if mask.dtype != bool:
+                raise ValueError(
+                    "'mask' must be None or a Boolean array. "
+                    f"Got: dtype={mask.dtype}"
+                )
+    
+            # Note: 'mask' has True/False for masked/unmasked elements,
+            #       but the esmpy mask requires 0/1 for masked/unmasked
+            #       elements.
+            mask = np.invert(mask).astype("int32")
+            if mask.all():
+                # There are no masked elements
+                mask = None
+    
+        # Add elements. This must be done after `add_nodes`.
+        #
+        # Note: The element_ids should start at 1, since when writing the
+        #       weights to a file, these ids are used for the column
+        #       indices.
+        esmpy_mesh.add_elements(
+            element_count=element_count,
+            element_ids=np.arange(1, element_count + 1),
+            element_types=element_types,
+            element_conn=element_conn,
+            element_mask=mask,
+            element_area=None,
+            element_coords=element_coords,
+        )
 
-    # Mask
-    if mask is not None:
-        if mask.dtype != bool:
-            raise ValueError(
-                "'mask' must be None or a Boolean array. "
-                f"Got: dtype={mask.dtype}"
-            )
-
-        # Note: 'mask' has True/False for masked/unmasked elements,
-        #       but the esmpy mask requires 0/1 for masked/unmasked
-        #       elements.
-        mask = np.invert(mask).astype("int32")
-        if mask.all():
-            # There are no masked elements
-            mask = None
-
-    # Add elements. This must be done after `add_nodes`.
-    #
-    # Note: The element_ids should start at 1, since when writing the
-    #       weights to a file, these ids are used for the column
-    #       indices.
-    esmpy_mesh.add_elements(
-        element_count=element_count,
-        element_ids=np.arange(1, element_count + 1),
-        element_types=element_types,
-        element_conn=element_conn,
-        element_mask=mask,
-        element_area=None,
-        element_coords=element_coords,
-    )
-    return esmpy_mesh
+        meshes.append(mesh)
+        
+#    return esmpy_mesh
+    return meshes
 
 
 def create_esmpy_locstream(grid, mask=None):
