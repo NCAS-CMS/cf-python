@@ -79,6 +79,9 @@ class Grid:
     # The shape of the regridding axes, in the same order as the
     # 'axis_keys' attribute. E.g. (96, 73) or (1243,)
     shape: tuple = None
+    # The shape of the regridding axes in `esmpy` order. E.g. (73, 96)
+    # or (1243,)
+    esmpy_shape: tuple = None
     # The regrid axis coordinates, in the order expected by
     # `esmpy`. If the coordinates are 2-d (or more) then the axis
     # order of each coordinate object must be as expected by `esmpy`.
@@ -154,6 +157,7 @@ def regrid(
     min_weight=None,
     weights_file=None,
     return_esmpy_regrid_operator=False,
+    weights_partitions=1,
     inplace=False,
 ):
     """Regrid a field to a new spherical or Cartesian grid.
@@ -322,6 +326,20 @@ def regrid(
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.16.2
+
+        weights_partitions: `int`, optional
+
+            If set to an integer greater than 1, then weights will be
+            calculated separately for this amount of independent
+            non-overlapping parittions of the destination grid, before
+            being combined to into the final weights array. This makes
+            no difference to the result, but will reduce the memory
+            needed to calulate the weights by a factor approximately
+            equal to number of partitions, which is should be enough
+            to allow weights for even very large grids to be calcuated
+            on machines with modest amounts of RAM.
+
+            .. versionadded:: NEXTVERSION
 
     :Returns:
 
@@ -566,7 +584,19 @@ def regrid(
                 dst_mask = None
 
         # Create the destination esmpy.Grid
-        dst_esmpy_grid = create_esmpy_grid(dst_grid, grid_dst_mask)
+        if dst_grid.is_mesh:
+            dst_esmpy_grids = create_esmpy_mesh(
+                dst_grid, grid_dst_mask, weights_partitions
+            )
+        elif dst_grid.is_locstream:
+            dst_esmpy_grids = create_esmpy_locstream(
+                dst_grid, grid_dst_mask, weights_partitions
+            )
+        else:
+            dst_esmpy_grids = create_esmpy_grid(
+                dst_grid, grid_dst_mask, weights_partitions
+            )
+
         del grid_dst_mask
 
         # Create a mask for the source grid
@@ -591,27 +621,35 @@ def regrid(
                 grid_src_mask = src_mask
 
         # Create the source esmpy.Grid
-        src_esmpy_grid = create_esmpy_grid(src_grid, grid_src_mask)
-        del grid_src_mask
+        if src_grid.is_mesh:
+            src_esmpy_grids = create_esmpy_mesh(
+                src_grid, grid_src_mask, weights_partitions
+            )
+        elif src_grid.is_locstream:
+            src_esmpy_grids = create_esmpy_locstream(
+                src_grid, grid_src_mask, weights_partitions
+            )
+        else:
+            src_esmpy_grids = create_esmpy_grid(
+                src_grid, grid_src_mask, weights_partitions
+            )
 
-        if is_log_level_debug(logger):
-            logger.debug(
-                f"Source ESMF Grid:\n{src_esmpy_grid}\n\nDestination ESMF Grid:\n{dst_esmpy_grid}\n"
-            )  # pragma: no cover
+        del grid_src_mask
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
         # Create regrid weights
         weights, row, col, start_index, from_file = create_esmpy_weights(
             method,
-            src_esmpy_grid,
-            dst_esmpy_grid,
+            src_esmpy_grids,
+            dst_esmpy_grids,
             src_grid=src_grid,
             dst_grid=dst_grid,
             ignore_degenerate=ignore_degenerate,
             quarter=src_grid.dummy_size_2_dimension,
             esmpy_regrid_operator=esmpy_regrid_operator,
             weights_file=weights_file,
+            weights_partitions=weights_partitions,
         )
 
         if return_esmpy_regrid_operator:
@@ -680,6 +718,14 @@ def regrid(
         #       zero weights.
         regrid_operator.tosparse()
         return regrid_operator
+
+    from scipy.sparse import issparse
+
+    if issparse(regrid_operator.weights) and is_log_level_debug(logger):
+        logger.debug(
+            f"Sparse weights: {regrid_operator.weights!r}\n"
+            f"        {regrid_operator.weights.__dict__}"
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Still here? Then do the regridding
@@ -1415,6 +1461,7 @@ def spherical_grid(
         n_regrid_axes=n_regrid_axes,
         dimensionality=regridding_dimensionality,
         shape=shape,
+        esmpy_shape=shape[::-1],
         coords=coords,
         bounds=get_bounds(method, coords, mesh_location),
         cyclic=cyclic,
@@ -1632,6 +1679,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
     is_locstream = bool(featureType)
     is_grid = not is_mesh and not is_locstream
 
+    shape = tuple(axis_sizes)
+
     grid = Grid(
         name=name,
         coord_sys="Cartesian",
@@ -1641,7 +1690,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         axes=axis_keys,
         n_regrid_axes=n_regrid_axes,
         dimensionality=regridding_dimensionality,
-        shape=tuple(axis_sizes),
+        shape=shape,
+        esmpy_shape=shape,
         coords=coords,
         bounds=bounds,
         cyclic=cyclic,
@@ -1869,8 +1919,8 @@ def esmpy_initialise():
     return esmpy.Manager(debug=bool(regrid_logging()))
 
 
-def create_esmpy_grid(grid, mask=None):
-    """Create an `esmpy.Grid` or `esmpy.Mesh`.
+def create_esmpy_grid(grid, mask=None, weights_partitions=1):
+    """Create an `esmpy.Grid`.
 
     .. versionadded:: 3.14.0
 
@@ -1887,21 +1937,11 @@ def create_esmpy_grid(grid, mask=None):
 
     :Returns:
 
-        `esmpy.Grid` or `esmpy.Mesh`
-            The `esmpy.Grid` or `esmpy.Mesh` derived from *grid*.
+        `esmpy.Grid`
+            The `esmpy.Grid` derived from *grid*.
 
     """
-    if grid.is_mesh:
-        # Create an `esmpy.Mesh`
-        return create_esmpy_mesh(grid, mask)
-
-    if grid.is_locstream:
-        # Create an `esmpy.LocStream`
-        return create_esmpy_locstream(grid, mask)
-
     # Create an `esmpy.Grid`
-    coords = grid.coords
-    bounds = grid.bounds
     cyclic = grid.cyclic
 
     num_peri_dims = 0
@@ -1918,209 +1958,236 @@ def create_esmpy_grid(grid, mask=None):
         spherical = False
         coord_sys = esmpy.CoordSys.CART
 
-    # Parse coordinates for the esmpy.Grid, and get its shape.
-    n_axes = len(coords)
-    coords = [np.asanyarray(c) for c in coords]
-    shape = [None] * n_axes
-    for dim, c in enumerate(coords[:]):
-        ndim = c.ndim
-        if ndim == 1:
-            # 1-d
-            shape[dim] = c.size
-            c = c.reshape([c.size if i == dim else 1 for i in range(n_axes)])
-        elif ndim == 2:
-            # 2-d lat or lon
-            shape[:ndim] = c.shape
-            if n_axes == 3:
-                c = c.reshape(c.shape + (1,))
-        elif ndim == 3:
-            # 3-d Z
-            shape[:ndim] = c.shape
-        else:
-            raise ValueError(
-                f"Can't create an esmpy.Grid from coordinates with {ndim} "
-                f"dimensions: {c!r}"
-            )
+    for partition in partitions(grid, weights_partitions):
+        coords = grid.coords[:]
+        bounds = grid.bounds[:]
 
-        coords[dim] = c
+        if partition is not None:
+            ndim = coords[-1].ndim
+            if ndim == 1:
+                coords[-1] = coords[-1][partition]
+                if bounds:
+                    bounds[-1] = bounds[-1][partition]
+            else:
+                coords = [c[partition] for c in coords]
+                if bounds:
+                    bounds = [b[partition] for b in bounds]
 
-    # Parse bounds for the esmpy.Grid
-    if bounds:
-        bounds = [np.asanyarray(b) for b in bounds]
-
-        if spherical:
-            bounds[lat] = np.clip(bounds[lat], -90, 90)
-            if not contiguous_bounds(bounds[lat]):
+        # Parse coordinates for the esmpy.Grid, and get its shape.
+        coords = [np.asanyarray(c) for c in coords]
+        n_axes = len(coords)
+        shape = [None] * n_axes
+        for dim, c in enumerate(coords[:]):
+            ndim = c.ndim
+            if ndim == 1:
+                # 1-d
+                shape[dim] = c.size
+                c = c.reshape(
+                    [c.size if i == dim else 1 for i in range(n_axes)]
+                )
+            elif ndim == 2:
+                # 2-d lat or lon
+                shape[:ndim] = c.shape
+                if n_axes == 3:
+                    c = c.reshape(c.shape + (1,))
+            elif ndim == 3:
+                # 3-d Z
+                shape[:ndim] = c.shape
+            else:
                 raise ValueError(
-                    f"The {grid.name} latitude coordinates must have "
-                    f"contiguous, non-overlapping bounds for {grid.method} "
-                    "regridding."
+                    "Can't create an esmpy.Grid from coordinates with "
+                    f"{ndim} dimensions: {c!r}"
                 )
 
-            if not contiguous_bounds(bounds[lon], cyclic=cyclic, period=360):
-                raise ValueError(
-                    f"The {grid.name} longitude coordinates must have "
-                    f"contiguous, non-overlapping bounds for {grid.method} "
-                    "regridding."
-                )
-        else:
-            # Cartesian
-            for b in bounds:
-                if not contiguous_bounds(b):
+            coords[dim] = c
+
+        # Parse bounds for the esmpy.Grid
+        if bounds:
+            bounds = [np.asanyarray(b) for b in bounds]
+
+            if spherical:
+                bounds[lat] = np.clip(bounds[lat], -90, 90)
+                if not contiguous_bounds(bounds[lat]):
                     raise ValueError(
-                        f"The {grid.name} coordinates must have contiguous, "
-                        "non-overlapping bounds for "
+                        f"The {grid.name} latitude coordinates must have "
+                        "contiguous, non-overlapping bounds for "
                         f"{grid.method} regridding."
                     )
 
-        # Convert each bounds to a grid with no repeated values
-        for dim, b in enumerate(bounds[:]):
-            ndim = b.ndim
-            if ndim == 2:
-                # Bounds for 1-d coordinates.
-                #
-                # E.g. if the esmpy.Grid is (X, Y) then for non-cyclic
-                #      bounds <CF Bounds: longitude(96, 2)
-                #      degrees_east> we create a new bounds array with
-                #      shape (97, 1); and for non-cyclic bounds <CF
-                #      Bounds: latitude(73, 2) degrees_north> we
-                #      create a new bounds array with shape (1,
-                #      74). When multiplied, these arrays would create
-                #      the 2-d (97, 74) bounds grid expected by
-                #      esmpy.Grid.
-                #
-                #      Note that if the X axis were cyclic, then its
-                #      new bounds array would have shape (96, 1).
-                if spherical and cyclic and dim == lon:
-                    tmp = b[:, 0]
-                else:
-                    n = b.shape[0]
-                    tmp = np.empty((n + 1,), dtype=b.dtype)
-                    tmp[:n] = b[:, 0]
-                    tmp[n] = b[-1, 1]
+                if not contiguous_bounds(
+                    bounds[lon], cyclic=cyclic, period=360
+                ):
+                    raise ValueError(
+                        f"The {grid.name} longitude coordinates must have "
+                        "contiguous, non-overlapping bounds for "
+                        f"{grid.method} regridding."
+                    )
+            else:
+                # Cartesian
+                for b in bounds:
+                    if not contiguous_bounds(b):
+                        raise ValueError(
+                            f"The {grid.name} coordinates must have "
+                            "contiguous, non-overlapping bounds for "
+                            f"{grid.method} regridding."
+                        )
 
-                tmp = tmp.reshape(
-                    [tmp.size if i == dim else 1 for i in range(n_axes)]
-                )
-            elif ndim == 3:
-                # Bounds for 2-d coordinates
-                #
-                # E.g. if the esmpy.Grid is (X, Y) then for bounds <CF
-                #      Bounds: latitude(96, 73, 2) degrees_north> with
-                #      a non-cyclic X axis, we create a new bounds
-                #      array with shape (97, 74).
-                #
-                #      Note that if the X axis were cyclic, then the
-                #      new bounds array would have shape (96, 74).
-                n, m = b.shape[:2]
-                if spherical and cyclic:
-                    tmp = np.empty((n, m + 1), dtype=b.dtype)
-                    tmp[:, :m] = b[:, :, 0]
-                    if dim == lon:
-                        tmp[:, m] = b[:, -1, 0]
+            # Convert each bounds to a grid with no repeated values
+            for dim, b in enumerate(bounds[:]):
+                ndim = b.ndim
+                if ndim == 2:
+                    # Bounds for 1-d coordinates.
+                    #
+                    # E.g. if the esmpy.Grid is (X, Y) then for
+                    #      non-cyclic bounds <CF Bounds: longitude(96,
+                    #      2) degrees_east> we create a new bounds
+                    #      array with shape (97, 1); and for
+                    #      non-cyclic bounds <CF Bounds: latitude(73,
+                    #      2) degrees_north> we create a new bounds
+                    #      array with shape (1, 74). When multiplied,
+                    #      these arrays would create the 2-d (97, 74)
+                    #      bounds grid expected by esmpy.Grid.
+                    #
+                    #      Note that if the X axis were cyclic, then its
+                    #      new bounds array would have shape (96, 1).
+                    if spherical and cyclic and dim == lon:
+                        tmp = b[:, 0]
                     else:
-                        tmp[:, m] = b[:, -1, 1]
-                else:
-                    tmp = np.empty((n + 1, m + 1), dtype=b.dtype)
-                    tmp[:n, :m] = b[:, :, 0]
-                    tmp[:n, m] = b[:, -1, 1]
-                    tmp[n, :m] = b[-1, :, 3]
-                    tmp[n, m] = b[-1, -1, 2]
+                        n = b.shape[0]
+                        tmp = np.empty((n + 1,), dtype=b.dtype)
+                        tmp[:n] = b[:, 0]
+                        tmp[n] = b[-1, 1]
 
-                if n_axes == 3:
-                    tmp = tmp.reshape(tmp.shape + (1,))
+                    tmp = tmp.reshape(
+                        [tmp.size if i == dim else 1 for i in range(n_axes)]
+                    )
+                elif ndim == 3:
+                    # Bounds for 2-d coordinates
+                    #
+                    # E.g. if the esmpy.Grid is (X, Y) then for bounds
+                    #      <CF Bounds: latitude(96, 73, 2)
+                    #      degrees_north> with a non-cyclic X axis, we
+                    #      create a new bounds array with shape (97,
+                    #      74).
+                    #
+                    #      Note that if the X axis were cyclic, then
+                    #      the new bounds array would have shape (96,
+                    #      74).
+                    n, m = b.shape[:2]
+                    if spherical and cyclic:
+                        tmp = np.empty((n, m + 1), dtype=b.dtype)
+                        tmp[:, :m] = b[:, :, 0]
+                        if dim == lon:
+                            tmp[:, m] = b[:, -1, 0]
+                        else:
+                            tmp[:, m] = b[:, -1, 1]
+                    else:
+                        tmp = np.empty((n + 1, m + 1), dtype=b.dtype)
+                        tmp[:n, :m] = b[:, :, 0]
+                        tmp[:n, m] = b[:, -1, 1]
+                        tmp[n, :m] = b[-1, :, 3]
+                        tmp[n, m] = b[-1, -1, 2]
 
-            elif ndim == 4:
-                # Bounds for 3-d coordinates
-                raise ValueError(
-                    f"Can't do {grid.method} 3-d {grid.coord_sys} regridding "
-                    f"with {grid.coord_sys} 3-d coordinates "
-                    f"{coords[z].identity!r}."
+                    if n_axes == 3:
+                        tmp = tmp.reshape(tmp.shape + (1,))
+
+                elif ndim == 4:
+                    # Bounds for 3-d coordinates
+                    raise ValueError(
+                        f"Can't do {grid.method} 3-d {grid.coord_sys} "
+                        f"regridding with {grid.coord_sys} 3-d coordinates "
+                        f"{coords[z].identity!r}."
+                    )
+
+                bounds[dim] = tmp
+
+        # Define the esmpy.Grid stagger locations. For details see
+        #
+        # 2-d:
+        # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc2d
+        #
+        # 3-d:
+        # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc3d
+        if bounds:
+            if n_axes == 3:
+                staggerlocs = [
+                    esmpy.StaggerLoc.CENTER_VCENTER,
+                    esmpy.StaggerLoc.CORNER_VFACE,
+                ]
+            else:
+                staggerlocs = [
+                    esmpy.StaggerLoc.CORNER,
+                    esmpy.StaggerLoc.CENTER,
+                ]
+        else:
+            if n_axes == 3:
+                staggerlocs = [esmpy.StaggerLoc.CENTER_VCENTER]
+            else:
+                staggerlocs = [esmpy.StaggerLoc.CENTER]
+
+        # Create an empty esmpy.Grid
+        esmpy_grid = esmpy.Grid(
+            max_index=np.array(shape, dtype="int32"),
+            coord_sys=coord_sys,
+            num_peri_dims=num_peri_dims,
+            periodic_dim=periodic_dim,
+            staggerloc=staggerlocs,
+        )
+
+        # Populate the esmpy.Grid centres
+        for dim, c in enumerate(coords):
+            if n_axes == 3:
+                grid_centre = esmpy_grid.get_coords(
+                    dim, staggerloc=esmpy.StaggerLoc.CENTER_VCENTER
+                )
+            else:
+                grid_centre = esmpy_grid.get_coords(
+                    dim, staggerloc=esmpy.StaggerLoc.CENTER
                 )
 
-            bounds[dim] = tmp
+            grid_centre[...] = c
 
-    # Define the esmpy.Grid stagger locations. For details see
-    #
-    # 2-d:
-    # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc2d
-    #
-    # 3-d:
-    # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node5.html#fig:gridstaggerloc3d
-    if bounds:
-        if n_axes == 3:
-            staggerlocs = [
-                esmpy.StaggerLoc.CENTER_VCENTER,
-                esmpy.StaggerLoc.CORNER_VFACE,
-            ]
-        else:
-            staggerlocs = [esmpy.StaggerLoc.CORNER, esmpy.StaggerLoc.CENTER]
-    else:
-        if n_axes == 3:
-            staggerlocs = [esmpy.StaggerLoc.CENTER_VCENTER]
-        else:
-            staggerlocs = [esmpy.StaggerLoc.CENTER]
+        # Populate the esmpy.Grid corners
+        if bounds:
+            if n_axes == 3:
+                staggerloc = esmpy.StaggerLoc.CORNER_VFACE
+            else:
+                staggerloc = esmpy.StaggerLoc.CORNER
 
-    # Create an empty esmpy.Grid
-    esmpy_grid = esmpy.Grid(
-        max_index=np.array(shape, dtype="int32"),
-        coord_sys=coord_sys,
-        num_peri_dims=num_peri_dims,
-        periodic_dim=periodic_dim,
-        staggerloc=staggerlocs,
-    )
+            for dim, b in enumerate(bounds):
+                grid_corner = esmpy_grid.get_coords(dim, staggerloc=staggerloc)
+                grid_corner[...] = b
 
-    # Populate the esmpy.Grid centres
-    for dim, c in enumerate(coords):
-        if n_axes == 3:
-            grid_centre = esmpy_grid.get_coords(
-                dim, staggerloc=esmpy.StaggerLoc.CENTER_VCENTER
-            )
-        else:
-            grid_centre = esmpy_grid.get_coords(
-                dim, staggerloc=esmpy.StaggerLoc.CENTER
-            )
-
-        grid_centre[...] = c
-
-    # Populate the esmpy.Grid corners
-    if bounds:
-        if n_axes == 3:
-            staggerloc = esmpy.StaggerLoc.CORNER_VFACE
-        else:
-            staggerloc = esmpy.StaggerLoc.CORNER
-
-        for dim, b in enumerate(bounds):
-            grid_corner = esmpy_grid.get_coords(dim, staggerloc=staggerloc)
-            grid_corner[...] = b
-
-    # Add an esmpy.Grid mask
-    if mask is not None:
-        if mask.dtype != bool:
-            raise ValueError(
-                "'mask' must be None or a Boolean array. Got: "
-                f"dtype={mask.dtype}"
-            )
-
-        if not mask.any():
-            mask = None
-
+        # Add an esmpy.Grid mask
         if mask is not None:
-            grid_mask = esmpy_grid.add_item(esmpy.GridItem.MASK)
-            if len(grid.coords) == 2 and mask.ndim == 1:
-                # esmpy grid has a dummy size 1 dimension, so we need to
-                # include this in the mask as well.
-                mask = np.expand_dims(mask, 1)
+            if mask.dtype != bool:
+                raise ValueError(
+                    "'mask' must be None or a Boolean array. Got: "
+                    f"dtype={mask.dtype}"
+                )
 
-            # Note: 'mask' has True/False for masked/unmasked
-            #       elements, but the esmpy mask requires 0/1 for
-            #       masked/unmasked elements.
-            grid_mask[...] = np.invert(mask).astype("int32")
+            if partition is not None:
+                mask = mask[partition]
 
-    return esmpy_grid
+            if not mask.any():
+                mask = None
+
+            if mask is not None:
+                grid_mask = esmpy_grid.add_item(esmpy.GridItem.MASK)
+                if len(grid.coords) == 2 and mask.ndim == 1:
+                    # esmpy grid has a dummy size 1 dimension, so we
+                    # need to include this in the mask as well.
+                    mask = np.expand_dims(mask, 1)
+
+                # Note: 'mask' has True/False for masked/unmasked
+                #       elements, but the esmpy mask requires 0/1 for
+                #       masked/unmasked elements.
+                grid_mask[...] = np.invert(mask).astype("int32")
+
+        yield esmpy_grid
 
 
-def create_esmpy_mesh(grid, mask=None):
+def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
     """Create an `esmpy.Mesh`.
 
     .. versionadded:: 3.16.0
@@ -2143,10 +2210,9 @@ def create_esmpy_mesh(grid, mask=None):
             The `esmpy.Mesh` derived from *grid*.
 
     """
-    destination =  grid.name == 'destination'
     if grid.mesh_location != "face":
         raise ValueError(
-            f"Can't regrid {'to' if destination else 'from'} "
+            f"Can't regrid {'from' if grid.name == 'source' else 'to'} "
             f"a {grid.name} grid of UGRID {grid.mesh_location!r} cells"
         )
 
@@ -2155,36 +2221,28 @@ def create_esmpy_mesh(grid, mask=None):
     else:
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
-    
-    if destination and weights_chunks > 1:
-        chunks = chunk_indices((normalize_chunks(size // weights_chunks, (size,)),))
-    else:
-        chunks = (None,)
-        
-    meshes = []
-    for chunk in chunks:
 
-        # Create an empty esmpy.Mesh
+    for partition in partitions(grid, weights_partitions):
+        # Create an empty esmpy.Mesh for this partition
         esmpy_mesh = esmpy.Mesh(
             parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
         )
 
         domain_topology = grid.domain_topology
-        if chunk is not None:
-            domain_topology = domain_topology[chunk]
-                    
-        #        element_conn = grid.domain_topology.normalise().array
+        if partition is not None:
+            domain_topology = domain_topology[partition]
+
         element_conn = domain_topology.normalise().array
         element_count = element_conn.shape[0]
         element_types = np.ma.count(element_conn, axis=1)
         element_conn = np.ma.compressed(element_conn)
-    
+
         # Element coordinates
         if grid.coords:
             grid_coords = grid.coords
-            if chunk is not None:
-                grid_coords = [c[chunk] for b in grid.coords]
-                
+            if partition is not None:
+                grid_coords = [c[partition] for c in grid.coords]
+
             try:
                 element_coords = [c.array for c in grid_coords]
             except AttributeError:
@@ -2194,25 +2252,23 @@ def create_esmpy_mesh(grid, mask=None):
                 element_coords = np.stack(element_coords, axis=-1)
         else:
             element_coords = None
-    
+
         grid_bounds = grid.bounds
-        if chunk is not  None:
-            grid_bounds = [b[chunk] for b in grid.bounds]
+        if partition is not None:
+            grid_bounds = [b[partition] for b in grid.bounds]
 
         node_ids, index = np.unique(element_conn, return_index=True)
-        node_coords = [
-            b.data.compressed().array[index] for b in grid_bounds
-        ]
+        node_coords = [b.data.compressed().array[index] for b in grid_bounds]
         node_coords = np.stack(node_coords, axis=-1)
         node_count = node_ids.size
         node_owners = np.zeros(node_count)
-    
+
         # Make sure that node IDs are >= 1, as needed by newer versions of
         # esmpy.
         min_id = node_ids.min()
         if min_id < 1:
             node_ids = node_ids + min_id + 1
-    
+
         # Add nodes. This must be done before `add_elements`.
         esmpy_mesh.add_nodes(
             node_count=node_count,
@@ -2220,7 +2276,7 @@ def create_esmpy_mesh(grid, mask=None):
             node_coords=node_coords,
             node_owners=node_owners,
         )
-    
+
         # Mask
         if mask is not None:
             if mask.dtype != bool:
@@ -2228,7 +2284,10 @@ def create_esmpy_mesh(grid, mask=None):
                     "'mask' must be None or a Boolean array. "
                     f"Got: dtype={mask.dtype}"
                 )
-    
+
+            if partition is not None:
+                mask = mask[partition]
+
             # Note: 'mask' has True/False for masked/unmasked elements,
             #       but the esmpy mask requires 0/1 for masked/unmasked
             #       elements.
@@ -2236,7 +2295,7 @@ def create_esmpy_mesh(grid, mask=None):
             if mask.all():
                 # There are no masked elements
                 mask = None
-    
+
         # Add elements. This must be done after `add_nodes`.
         #
         # Note: The element_ids should start at 1, since when writing the
@@ -2252,13 +2311,10 @@ def create_esmpy_mesh(grid, mask=None):
             element_coords=element_coords,
         )
 
-        meshes.append(mesh)
-        
-#    return esmpy_mesh
-    return meshes
+        yield esmpy_mesh
 
 
-def create_esmpy_locstream(grid, mask=None):
+def create_esmpy_locstream(grid, mask=None, weights_partitions=1):
     """Create an `esmpy.LocStream`.
 
     .. versionadded:: 3.16.2
@@ -2289,54 +2345,63 @@ def create_esmpy_locstream(grid, mask=None):
         coord_sys = esmpy.CoordSys.CART
         keys = ("ESMF:X", "ESMF:Y", "ESMF:Z")
 
-    # Create an empty esmpy.LocStream
-    location_count = grid.shape[0]
-    esmpy_locstream = esmpy.LocStream(
-        location_count=location_count,
-        coord_sys=coord_sys,
-        name=grid.featureType,
-    )
+    for partition in partitions(grid, weights_partitions):
+        coords = grid.coords
+        if partition is not None:
+            coords = [c[partition] for c in grid.coords]
 
-    # Add coordinates (must be of type float64)
-    for coord, key in zip(grid.coords, keys):
-        esmpy_locstream[key] = coord.array.astype(float)
+        # Create an empty esmpy.LocStream
+        location_count = coords[0].size
+        esmpy_locstream = esmpy.LocStream(
+            location_count=location_count,
+            coord_sys=coord_sys,
+            name=grid.featureType,
+        )
 
-    # Add mask (always required, and must be of type int32)
-    if mask is not None:
-        if mask.dtype != bool:
-            raise ValueError(
-                "'mask' must be None or a Boolean array. "
-                f"Got: dtype={mask.dtype}"
-            )
+        # Add coordinates (must be of type float64)
+        for coord, key in zip(coords, keys):
+            esmpy_locstream[key] = coord.array.astype(float)
 
-        # Note: 'mask' has True/False for masked/unmasked elements,
-        #       but the esmpy mask requires 0/1 for masked/unmasked
-        #       elements.
-        mask = np.invert(mask).astype("int32")
-        if mask.size == 1:
-            # Make sure that there's a mask element for each point in
-            # the locstream (rather than a scalar that applies to all
-            # elements).
-            mask = np.full((location_count,), mask, dtype="int32")
-    else:
-        # No masked points
-        mask = np.full((location_count,), 1, dtype="int32")
+        # Add mask (always required, and must be of type int32)
+        if mask is not None:
+            if mask.dtype != bool:
+                raise ValueError(
+                    "'mask' must be None or a Boolean array. "
+                    f"Got: dtype={mask.dtype}"
+                )
 
-    esmpy_locstream["ESMF:Mask"] = mask
+            if partition is not None:
+                mask = mask[partition]
 
-    return esmpy_locstream
+            # Note: 'mask' has True/False for masked/unmasked elements,
+            #       but the esmpy mask requires 0/1 for masked/unmasked
+            #       elements.
+            mask = np.invert(mask).astype("int32")
+            if mask.size == 1:
+                # Make sure that there's a mask element for each point in
+                # the locstream (rather than a scalar that applies to all
+                # elements).
+                mask = np.full((location_count,), mask, dtype="int32")
+        else:
+            # No masked points
+            mask = np.full((location_count,), 1, dtype="int32")
+
+        esmpy_locstream["ESMF:Mask"] = mask
+
+        yield esmpy_locstream
 
 
 def create_esmpy_weights(
     method,
-    src_esmpy_grid,
-    dst_esmpy_grid,
+    src_esmpy_grids,
+    dst_esmpy_grids,
     src_grid,
     dst_grid,
     ignore_degenerate,
     quarter=False,
     esmpy_regrid_operator=None,
     weights_file=None,
+    weights_partitions=1,
 ):
     """Create the `esmpy` regridding weights.
 
@@ -2347,10 +2412,10 @@ def create_esmpy_weights(
         method: `str`
             The regridding method.
 
-        src_esmpy_grid: `esmpy.Grid`
+        src_esmpy_grids: sequence of `esmpy.Grid`
             The source grid.
 
-        dst_esmpy_grid: `esmpy.Grid`
+        dst_esmpy_gridss: sequence of `esmpy.Grid`
             The destination grid.
 
         src_grid: `Grid`
@@ -2415,7 +2480,22 @@ def create_esmpy_weights(
                    otherwise `False`.
 
     """
+    debug = is_log_level_debug(logger)
+
     start_index = 1
+
+    src_esmpy_grids = tuple(src_esmpy_grids)
+    if len(src_esmpy_grids) != 1:
+        raise ValueError(
+            "There must be exactly one source grid partition. "
+            f"Got {len(src_esmpy_grids)}"
+        )
+
+    src_esmpy_grid = src_esmpy_grids[0]
+    if debug:
+        logger.debug(
+            f"Source ESMF Grid:\n{src_esmpy_grid}\n\n"
+        )  # pragma: no cover
 
     compute_weights = True
     if esmpy_regrid_operator is None and weights_file is not None:
@@ -2453,76 +2533,126 @@ def create_esmpy_weights(
         src_esmpy_field = esmpy.Field(
             src_esmpy_grid, name="src", meshloc=src_meshloc
         )
-        dst_esmpy_field = esmpy.Field(
-            dst_esmpy_grid, name="dst", meshloc=dst_meshloc
-        )
 
-        mask_values = np.array([0], dtype="int32")
+        src_size = src_esmpy_field.data.size
+        src_rank = src_esmpy_grid.rank
 
-        # Create the esmpy.Regrid operator
-        r = esmpy.Regrid(
-            src_esmpy_field,
-            dst_esmpy_field,
-            regrid_method=esmpy_methods.get(method),
-            unmapped_action=esmpy.UnmappedAction.IGNORE,
-            ignore_degenerate=bool(ignore_degenerate),
-            src_mask_values=mask_values,
-            dst_mask_values=mask_values,
-            norm_type=esmpy.api.constants.NormType.FRACAREA,
-            factors=True,
-        )
+        partitioned_dst_grid = weights_partitions > 1
+        if partitioned_dst_grid:
+            from scipy.sparse import csr_array, vstack
 
-        weights = r.get_weights_dict(deep_copy=True)
-        row = weights["row_dst"]
-        col = weights["col_src"]
-        weights = weights["weights"]
+        w = []
+        for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
+            if debug:
+                logger.debug(
+                    f"Destination ESMF Grid (partition {i}):\n"
+                    f"{dst_esmpy_grid}\n"
+                )  # pragma: no cover
 
-        if quarter:
-            # The weights were created with a dummy size 2 dimension
-            # such that the weights for each dummy axis element are
-            # identical. The duplicate weights need to be removed.
-            #
-            # To do this, only retain the indices that correspond to
-            # the top left quarter of the weights matrix in dense
-            # form. I.e. if w is the NxM dense form of the weights (N,
-            # M both even), then this is equivalent to w[:N//2,
-            # :M//2].
-            index = np.where(
-                (row <= dst_esmpy_field.data.size // 2)
-                & (col <= src_esmpy_field.data.size // 2)
+            dst_esmpy_field = esmpy.Field(
+                dst_esmpy_grid, name="dst", meshloc=dst_meshloc
             )
-            weights = weights[index]
-            row = row[index]
-            col = col[index]
+
+            dst_size = dst_esmpy_field.data.size
+            dst_rank = dst_esmpy_grid.rank
+
+            mask_values = np.array([0], dtype="int32")
+
+            # Create the esmpy.Regrid operator
+            r = esmpy.Regrid(
+                src_esmpy_field,
+                dst_esmpy_field,
+                regrid_method=esmpy_methods.get(method),
+                unmapped_action=esmpy.UnmappedAction.IGNORE,
+                ignore_degenerate=bool(ignore_degenerate),
+                src_mask_values=mask_values,
+                dst_mask_values=mask_values,
+                norm_type=esmpy.api.constants.NormType.FRACAREA,
+                factors=True,
+            )
+
+            weights = r.get_weights_dict(deep_copy=True)
+            row = weights["row_dst"]
+            col = weights["col_src"]
+            weights = weights["weights"]
+
+            ESMF_unmapped_action = r.unmapped_action
+            ESMF_ignore_degenerate = int(r.ignore_degenerate)
+
+            # Destroy esmpy objects that are no longer needed
+            dst_esmpy_grid.destroy()
+            dst_esmpy_field.destroy()
+            r.dstfield.grid.destroy()
+            r.dstfield.destroy()
+            r.destroy()
+
+            if quarter:
+                # The weights were created with a dummy size 2
+                # dimension such that the weights for each dummy axis
+                # element are identical. The duplicate weights need to
+                # be removed.
+                #
+                # To do this, only retain the indices that correspond
+                # to the top left quarter of the weights matrix in
+                # dense form. I.e. if w is the NxM dense form of the
+                # weights (N, M both even), then this is equivalent to
+                # w[:N//2, :M//2].
+                index = np.where(
+                    (row <= dst_size // 2) & (col <= src_size // 2)
+                )
+                weights = weights[index]
+                row = row[index]
+                col = col[index]
+                del index
+
+            if partitioned_dst_grid:
+                # The destination grid has been partitioned. Create
+                # the sparse weights array for this partition.
+                row -= 1
+                col -= 1
+                w.append(
+                    csr_array(
+                        (weights, (row, col)), shape=[dst_size, src_size]
+                    )
+                )
+
+        # Destroy esmpy objects that are no longer needed
+        src_esmpy_field.destroy()
+        r.srcfield.grid.destroy()
+        r.srcfield.destroy()
+
+        if partitioned_dst_grid:
+            # The destination grid has been partitioned. Concatenate
+            # the sparse weights arrays for all partitions.
+            weights = vstack(w)
+            dst_size = weights.shape[0]
+            row = None
+            col = None
+            del w
 
         if weights_file is not None:
             # Write the weights to a netCDF file (copying the
             # dimension and variable names and structure of a weights
             # file created by ESMF).
+            from cfdm import integer_dtype
             from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
+            from scipy.sparse import issparse
 
             from .. import __version__
 
-            if (
-                max(dst_esmpy_field.data.size, src_esmpy_field.data.size)
-                <= np.iinfo("int32").max
-            ):
-                i_dtype = "i4"
+            if issparse(weights):
+                # 'weights' is a CSR sparse array, so we have to infer
+                # the row and column arrays from it.
+                weights_data = weights.data
+                row, col = weights.tocoo().coords
+                if start_index:
+                    row += start_index
+                    col += start_index
             else:
-                i_dtype = "i8"
+                weights_data = weights
 
-            upper_bounds = src_esmpy_grid.upper_bounds
-            if len(upper_bounds) > 1:
-                upper_bounds = upper_bounds[0]
-
-            src_shape = tuple(upper_bounds)
-
-            upper_bounds = dst_esmpy_grid.upper_bounds
-            if len(upper_bounds) > 1:
-                upper_bounds = upper_bounds[0]
-
-            dst_shape = tuple(upper_bounds)
+            i_dtype = integer_dtype(max(dst_size, src_size))
 
             regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
             if src_grid.ln_z:
@@ -2533,34 +2663,34 @@ def create_esmpy_weights(
 
                 nc.title = (
                     f"Regridding weights from source {src_grid.type} "
-                    f"with shape {src_shape} to destination "
-                    f"{dst_grid.type} with shape {dst_shape}"
+                    f"with shape {src_grid.esmpy_shape} to destination "
+                    f"{dst_grid.type} with shape {dst_grid.esmpy_shape}"
                 )
                 nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
                 nc.history = f"Created at {datetime.now()}"
                 nc.regrid_method = regrid_method
-                nc.ESMF_unmapped_action = r.unmapped_action
-                nc.ESMF_ignore_degenerate = int(r.ignore_degenerate)
+                nc.ESMF_unmapped_action = ESMF_unmapped_action
+                nc.ESMF_ignore_degenerate = ESMF_ignore_degenerate
 
-                nc.createDimension("n_s", weights.size)
-                nc.createDimension("src_grid_rank", src_esmpy_grid.rank)
-                nc.createDimension("dst_grid_rank", dst_esmpy_grid.rank)
+                nc.createDimension("n_s", weights_data.size)
+                nc.createDimension("src_grid_rank", src_rank)
+                nc.createDimension("dst_grid_rank", dst_rank)
 
                 v = nc.createVariable(
                     "src_grid_dims", i_dtype, ("src_grid_rank",)
                 )
                 v.long_name = "Source grid shape"
-                v[...] = src_shape
+                v[...] = src_grid.esmpy_shape
 
                 v = nc.createVariable(
                     "dst_grid_dims", i_dtype, ("dst_grid_rank",)
                 )
                 v.long_name = "Destination grid shape"
-                v[...] = dst_shape
+                v[...] = dst_grid.esmpy_shape
 
-                v = nc.createVariable("S", weights.dtype, ("n_s",))
+                v = nc.createVariable("S", weights_data.dtype, ("n_s",))
                 v.long_name = "Weights values"
-                v[...] = weights
+                v[...] = weights_data
 
                 v = nc.createVariable("row", i_dtype, ("n_s",), zlib=True)
                 v.long_name = "Destination/row indices"
@@ -2574,19 +2704,15 @@ def create_esmpy_weights(
 
                 nc.close()
 
+            if issparse(weights):
+                row = None
+                col = None
+
     if esmpy_regrid_operator is None:
-        # Destroy esmpy objects (the esmpy.Grid objects exist even if
-        # we didn't create any weights using esmpy.Regrid).
+        # Destroy esmpy objects that are no longer needed
         src_esmpy_grid.destroy()
-        dst_esmpy_grid.destroy()
-        if compute_weights:
-            src_esmpy_field.destroy()
-            dst_esmpy_field.destroy()
-            r.srcfield.grid.destroy()
-            r.srcfield.destroy()
-            r.dstfield.grid.destroy()
-            r.dstfield.destroy()
-            r.destroy()
+        for dst_esmpy_grid in dst_esmpy_grids:
+            dst_esmpy_grid.destroy()
     else:
         # Make the Regrid instance available via the
         # 'esmpy_regrid_operator' list
@@ -3161,3 +3287,52 @@ def set_grid_type(grid):
         grid.type = f"UGRID {grid.mesh_location} mesh"
     elif grid.is_locstream:
         grid.type = f"DSG {grid.featureType}"
+
+
+def partitions(grid, weights_partitions):
+    """Partitions of the grid.
+
+    Each partition is returned as a slice index to the cell
+    coordiantes, which my be used to create the actual partition of
+    the grid.
+
+    Only destinaton grids are allowed to be partitioned.
+
+    When there is a single partition that spans the entire grid, then
+    the speical value of `None` is used.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`,
+                 `create_esmpy_locstream`
+
+    :Parameters:
+
+        grid: `Grid`
+            The definition of the source or destination grid.
+
+        weights_partitions: `int`
+            The number of partitions to split the grid into. Only tthe
+            "last" dimension is partitioned.
+
+    :Returns:
+
+        generator or `tuple`
+            The partition specifications, or a `tuple` containing
+            `None` if there is only one partition.
+
+    """
+    if weights_partitions > 1 and grid.name == "destination":
+        from math import ceil
+
+        from cfdm.data.utils import chunk_indices
+        from dask.array.core import normalize_chunks
+
+        shape = grid.coords[-1].shape
+        size = ceil(shape[-1] / weights_partitions)
+
+        return chunk_indices(
+            normalize_chunks(shape[:-1] + (size,), shape=shape)
+        )
+
+    return (None,)

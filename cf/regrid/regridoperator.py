@@ -50,6 +50,7 @@ class RegridOperator(mixin_Container, Container):
         src_z=None,
         dst_z=None,
         ln_z=False,
+        _dst_mask_adjusted=False,
     ):
         """**Initialisation**
 
@@ -224,12 +225,29 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("src_z", src_z, copy=False)
         self._set_component("dst_z", dst_z, copy=False)
         self._set_component("ln_z", bool(ln_z), copy=False)
+        self._set_component(
+            "_dst_mask_adjusted", bool(_dst_mask_adjusted), copy=False
+        )
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
         return (
             f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
         )
+
+    @property
+    def _dst_mask_adjusted(self):
+        """Whether or not the destination grid mask has been adjusted.
+
+        Whether or not the destination grid mask has been set to True
+        where the weights for destination grid points are all zero.
+
+        See `tosparse` for details.
+
+        .. versionadded:: NEXTVERSION
+
+        """
+        return self._get_component("_dst_mask_adjusted")
 
     @property
     def col(self):
@@ -549,6 +567,7 @@ class RegridOperator(mixin_Container, Container):
             src_z=self.src_z,
             dst_z=self.dst_z,
             ln_z=self.ln_z,
+            _dst_mask_adjusted=self._dst_mask_adjusted,
         )
 
     @_display_or_return
@@ -706,75 +725,78 @@ class RegridOperator(mixin_Container, Container):
             `None`
 
         """
-        weights = self.weights
-        row = self.row
-        col = self.col
-        if weights is not None and row is None and col is None:
-            # Weights are already in sparse array format
-            return
-
         from math import prod
 
-        from scipy.sparse import csr_array
+        from scipy.sparse import csr_array, issparse
 
-        start_index = self.start_index
-        col_start_index = None
-        row_start_index = None
-
-        if weights is None:
-            weights_file = self.weights_file
-            if weights_file is not None:
-                # Read the weights from the weights file
-                from cfdm.data.locks import netcdf_lock
-                from netCDF4 import Dataset
-
-                with netcdf_lock:
-                    nc = Dataset(weights_file, "r")
-                    weights = nc.variables["S"][...]
-                    row = nc.variables["row"][...]
-                    col = nc.variables["col"][...]
-
-                    try:
-                        col_start_index = nc.variables["col"].start_index
-                    except AttributeError:
-                        col_start_index = 1
-
-                    try:
-                        row_start_index = nc.variables["row"].start_index
-                    except AttributeError:
-                        row_start_index = 1
-
-                    nc.close()
-            else:
-                raise ValueError(
-                    "Conversion to sparse array format requires at least "
-                    "one of the 'weights' or 'weights_file' attributes to "
-                    "be set"
-                )
-
-        # Convert to sparse array format
-        if col_start_index:
-            col = col - col_start_index
-        elif start_index:
-            col = col - start_index
-
-        if row_start_index:
-            row = row - row_start_index
-        elif start_index:
-            row = row - start_index
-
-        src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
 
-        weights = csr_array((weights, (row, col)), shape=[dst_size, src_size])
+        weights = self.weights
+        if not issparse(weights):
+            row = self.row
+            col = self.col
+            start_index = self.start_index
+            col_start_index = None
+            row_start_index = None
 
-        self._set_component("weights", weights, copy=False)
-        self._set_component("row", None, copy=False)
-        self._set_component("col", None, copy=False)
-        del row, col
+            if weights is None:
+                weights_file = self.weights_file
+                if weights_file is not None:
+                    # Read the weights from the weights file
+                    from cfdm.data.locks import netcdf_lock
+                    from netCDF4 import Dataset
 
-        # Set the destination grid mask to True where the weights for
-        # destination grid points are all zero
+                    with netcdf_lock:
+                        nc = Dataset(weights_file, "r")
+                        weights = nc.variables["S"][...]
+                        row = nc.variables["row"][...]
+                        col = nc.variables["col"][...]
+
+                        try:
+                            col_start_index = nc.variables["col"].start_index
+                        except AttributeError:
+                            col_start_index = 1
+
+                        try:
+                            row_start_index = nc.variables["row"].start_index
+                        except AttributeError:
+                            row_start_index = 1
+
+                        nc.close()
+                else:
+                    raise ValueError(
+                        "Conversion to sparse array format requires at least "
+                        "one of the 'weights' or 'weights_file' attributes to "
+                        "be set"
+                    )
+
+            # Convert to sparse array format
+            if col_start_index:
+                col = col - col_start_index
+            elif start_index:
+                col = col - start_index
+
+            if row_start_index:
+                row = row - row_start_index
+            elif start_index:
+                row = row - start_index
+
+            src_size = prod(self.src_shape)
+            weights = csr_array(
+                (weights, (row, col)), shape=[dst_size, src_size]
+            )
+
+            self._set_component("weights", weights, copy=False)
+            self._set_component("row", None, copy=False)
+            self._set_component("col", None, copy=False)
+            del row, col
+
+        if self._dst_mask_adjusted:
+            # The destination grid mask has already been adjusted
+            return
+
+        # Still here? Then set the destination grid mask to True where
+        # the weights for destination grid points are all zero.
         dst_mask = self.dst_mask
         if dst_mask is not None:
             if dst_mask.dtype != bool or dst_mask.shape != self.dst_shape:
@@ -807,3 +829,4 @@ class RegridOperator(mixin_Container, Container):
             dst_mask = dst_mask.reshape(self.dst_shape)
 
         self._set_component("dst_mask", dst_mask, copy=False)
+        self._set_component("_dst_mask_adjusted", True, copy=False)

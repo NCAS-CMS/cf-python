@@ -12970,6 +12970,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ln_z=None,
         verbose=None,
         return_esmpy_regrid_operator=False,
+        weights_partitions=1,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13307,6 +13308,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            weights_partitions=weights_partitions,
             inplace=inplace,
         )
 
@@ -13331,6 +13333,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         return_esmpy_regrid_operator=False,
+        weights_partitions=1,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13602,6 +13605,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            weights_partitions=weights_partitions,
             inplace=inplace,
         )
 
