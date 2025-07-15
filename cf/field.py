@@ -13335,7 +13335,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ln_z=None,
         return_esmpy_regrid_operator=False,
         dst_grid_partitions=1,
-            verbose=None,
+        verbose=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,

@@ -162,218 +162,205 @@ def regrid(
 ):
     """Regrid a field to a new spherical or Cartesian grid.
 
-        This is a worker function primarily intended to be called by
-        `cf.Field.regridc` and `cf.Field.regrids`.
+    This is a worker function primarily intended to be called by
+    `cf.Field.regridc` and `cf.Field.regrids`.
 
-        .. versionadded:: 3.14.0
+    .. versionadded:: 3.14.0
 
-        .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`,
-                     `cf.data.dask_regrid.regrid`.
+    .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`,
+                 `cf.data.dask_regrid.regrid`.
 
-        :Parameters:
+    :Parameters:
 
-            coord_sys: `str`
-                The name of the coordinate system of the source and
-                destination grids. Either ``'spherical'`` or
-                ``'Cartesian'``.
+        coord_sys: `str`
+            The name of the coordinate system of the source and
+            destination grids. Either ``'spherical'`` or
+            ``'Cartesian'``.
 
-            src: `Field`
-                The source field to be regridded.
+        src: `Field`
+            The source field to be regridded.
 
-            dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
-                The definition of the destination grid.
+        dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
+            The definition of the destination grid.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            method: `str`
-                Specify which interpolation method to use during
-                regridding. This parameter must be set unless *dst* is a
-                `RegridOperator`, when the *method* is ignored.
+        method: `str`
+            Specify which interpolation method to use during
+            regridding. This parameter must be set unless *dst* is a
+            `RegridOperator`, when the *method* is ignored.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            src_cyclic: `None` or `bool`, optional
-                For spherical regridding, specifies whether or not the
-                source grid longitude axis is cyclic.
+        src_cyclic: `None` or `bool`, optional
+            For spherical regridding, specifies whether or not the
+            source grid longitude axis is cyclic.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            dst_cyclic: `None` or `bool`, optional
-                For spherical regridding, specifies whether or not the
-                destination grid longitude axis is cyclic.
+        dst_cyclic: `None` or `bool`, optional
+            For spherical regridding, specifies whether or not the
+            destination grid longitude axis is cyclic.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            use_src_mask: `bool`, optional
-                Whether or not to use the source grid mask.
+        use_src_mask: `bool`, optional
+            Whether or not to use the source grid mask.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            use_dst_mask: `bool`, optional
-                Whether or not to use the source grid mask.
+        use_dst_mask: `bool`, optional
+            Whether or not to use the source grid mask.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            src_axes: `dict` or sequence or `None`, optional
-                Define the source grid axes to be regridded.
+        src_axes: `dict` or sequence or `None`, optional
+            Define the source grid axes to be regridded.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            dst_axes: `dict` or sequence or `None`, optional
-                Define the destination grid axes to be regridded.
+        dst_axes: `dict` or sequence or `None`, optional
+            Define the destination grid axes to be regridded.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
-                Ignored for Cartesian regridding.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
+            Ignored for Cartesian regridding.
 
-            axes: sequence, optional
-                Define the axes to be regridded for the source grid and,
-                if *dst* is a `Field` or `Domain`, the destination
-                grid. Ignored for spherical regridding.
+        axes: sequence, optional
+            Define the axes to be regridded for the source grid and,
+            if *dst* is a `Field` or `Domain`, the destination
+            grid. Ignored for spherical regridding.
 
-                See `cf.Field.regridc` for details.
+            See `cf.Field.regridc` for details.
 
-            ignore_degenerate: `bool`, optional
-                Whether or not to  ignore degenerate cells.
+        ignore_degenerate: `bool`, optional
+            Whether or not to  ignore degenerate cells.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
-                Ignored for Cartesian regridding.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
+            Ignored for Cartesian regridding.
 
-            return_operator: `bool`, optional
-                If True then do not perform the regridding, rather return
-                the `RegridOperator` instance that defines the regridding
-                operation, and which can be used in subsequent calls.
+        return_operator: `bool`, optional
+            If True then do not perform the regridding, rather return
+            the `RegridOperator` instance that defines the regridding
+            operation, and which can be used in subsequent calls.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            check_coordinates: `bool`, optional
-                Whether or not to check the regrid operator source grid
-                coordinates. Ignored unless *dst* is a `RegridOperator`.
+        check_coordinates: `bool`, optional
+            Whether or not to check the regrid operator source grid
+            coordinates. Ignored unless *dst* is a `RegridOperator`.
 
-                If True and then the source grid coordinates defined by
-                the regrid operator are checked for compatibility against
-                those of the *src* field. By default this check is not
-                carried out. See the *dst* parameter for details.
+            If True and then the source grid coordinates defined by
+            the regrid operator are checked for compatibility against
+            those of the *src* field. By default this check is not
+            carried out. See the *dst* parameter for details.
 
-                If False then only the computationally cheap tests are
-                performed (checking that the coordinate system, cyclicity
-                and grid shape are the same).
+            If False then only the computationally cheap tests are
+            performed (checking that the coordinate system, cyclicity
+            and grid shape are the same).
 
-            inplace: `bool`, optional
-                If True then modify *src* in-place and return `None`.
+        inplace: `bool`, optional
+            If True then modify *src* in-place and return `None`.
 
-            return_esmpy_regrid_operator: `bool`, optional
-                If True then *src* is not regridded, but the
-                `esmpy.Regrid` instance for the operation is returned
-                instead. This is useful for checking that the field has
-                been regridded correctly.
+        return_esmpy_regrid_operator: `bool`, optional
+            If True then *src* is not regridded, but the
+            `esmpy.Regrid` instance for the operation is returned
+            instead. This is useful for checking that the field has
+            been regridded correctly.
 
-            weights_file: `str` or `None`, optional
-                Provide a netCDF file that contains, or will contain, the
-                regridding weights.
+        weights_file: `str` or `None`, optional
+            Provide a netCDF file that contains, or will contain, the
+            regridding weights.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-                .. versionadded:: 3.15.2
+            .. versionadded:: 3.15.2
 
-            src_z: optional
-                The identity of the source grid vertical coordinates used
-                to calculate the weights. If `None` then no vertical axis
-                is identified, and in the spherical case regridding will
-                be 2-d.
+        src_z: optional
+            The identity of the source grid vertical coordinates used
+            to calculate the weights. If `None` then no vertical axis
+            is identified, and in the spherical case regridding will
+            be 2-d.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-                .. versionadded:: 3.16.2
+            .. versionadded:: 3.16.2
 
-            dst_z: optional
-                The identity of the destination grid vertical coordinates
-                used to calculate the weights. If `None` then no vertical
-                axis is identified, and in the spherical case regridding
-                will be 2-d.
+        dst_z: optional
+            The identity of the destination grid vertical coordinates
+            used to calculate the weights. If `None` then no vertical
+            axis is identified, and in the spherical case regridding
+            will be 2-d.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-                .. versionadded:: 3.16.2
+            .. versionadded:: 3.16.2
 
-            z: optional
-                The *z* parameter is a convenience that may be used to
-                replace both *src_z* and *dst_z* when they would contain
-                identical values.
+        z: optional
+            The *z* parameter is a convenience that may be used to
+            replace both *src_z* and *dst_z* when they would contain
+            identical values.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-                .. versionadded:: 3.16.2
+            .. versionadded:: 3.16.2
 
-            ln_z: `bool` or `None`, optional
-                Whether or not the weights are to be calculated with the
-                natural logarithm of vertical coordinates.
+        ln_z: `bool` or `None`, optional
+            Whether or not the weights are to be calculated with the
+            natural logarithm of vertical coordinates.
 
-                See `cf.Field.regrids` (for spherical regridding) or
-                `cf.Field.regridc` (for Cartesian regridding) for details.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
-                .. versionadded:: 3.16.2
+            .. versionadded:: 3.16.2
 
-            dst_grid_partitions: `int`, optional
-                Reduce the memory requirement of the weights calculation
-                by calculating weights separately for non-overlapping
-                partitions of the destination grid, and then combining the
-                weights from each partition to create the final weights
-                matrix. The number of partitions is given by
-                *dst_grid_partitions*, whose default value is 1 (i.e. one
-                partition for the entire grid).
+        dst_grid_partitions: `int` or `str`, optional
+            Calculating the weights matrix for grids with very large
+            numbers of grid points can potentially require more memory
+            than is available. However, this memory requirement can be
+            greatly reduced by calculating weights separately for
+            non-overlapping partitions of the destination grid, and
+            then combining the weights from each partition to create
+            the final weights matrix. The more partitions there are,
+            the smaller the memory requirement for the weights
+            calculations will be, at the expense of the weights
+            calculations taking longer.
 
-                The amount of memory reduction will vary on a case-by-case
-                basis, but will always be proportional to the number of
-                partitions, whilst the time taken to calculate the final
-                weights matrix is inversely proportional to the number of
-                partitions.
+            The *dst_grid_partitions* parameter sets the number of
+            destination grid partitions for the weights
+            calculations. The default value is ``1``, i.e. one
+            partition for the entire grid, that maximises memory usage
+            and minimises the weights calculation time. If the string
+            ``'maximum'`` is given then the largest possible number of
+            partitions of the destination grid will be used. A
+            positive integer specifies the exact number of partitions,
+            capped by the maximum allowed.
 
-                The number of partitions makes no difference to the
-                final weights matrix, and hence no difference to the
-                regridded result.
+            .. versionadded:: NEXTVERSION
 
-                Only the slowest moving regridding dimension is
-                partitioned (either the Y or Z dimension, for 2-d or
-                3-d spherical regridding respectively).
+    :Returns:
 
-                Any postitve integer may be given, but the number of
-                partitions will always be less than or equal to the
-                size of the slowest moving regridding dimension, which
-                is either the Y or Z dimension, for 2-d or 3-d
-                spherical regridding respectively.
+        `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
+            The regridded field construct; or `None` if the operation
+            was in-place; or the regridding operator if
+            *return_operator* is True.
 
-                Any postitve integer may be given, but the number of
-                partitions will always be less than or equal to the
-                size of the slowest moving regridding dimension, which
-                is the first of the axes given by *axes* or
-                *dst_axes*.
-
-                .. versionadded:: NEXTVERSION
-
-        :Returns:
-
-            `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
-                The regridded field construct; or `None` if the operation
-                was in-place; or the regridding operator if
-                *return_operator* is True.
-
-                If *return_esmpy_regrid_operator* is True then *src* is
-                not regridded, but the `esmpy.Regrid` instance for the
-                operation is returned instead.
+            If *return_esmpy_regrid_operator* is True then *src* is
+            not regridded, but the `esmpy.Regrid` instance for the
+            operation is returned instead.
 
     """
     debug = is_log_level_debug(logger)
@@ -737,7 +724,7 @@ def regrid(
         #       zero weights.
         if regrid_operator.weights_file is None:
             regrid_operator.tosparse()
-            
+
         if debug:
             logger.debug(
                 f"Sparse weights: {regrid_operator.weights!r}\n"
@@ -2594,7 +2581,7 @@ def create_esmpy_weights(
         src_size = src_esmpy_field.data.size
         src_rank = src_esmpy_grid.rank
 
-        partitioned_dst_grid = dst_grid_partitions > 1
+        partitioned_dst_grid = dst_grid_partitions != 1
         if partitioned_dst_grid:
             from scipy.sparse import csr_array, vstack
 
@@ -3389,8 +3376,7 @@ def partitions(grid, grid_partitions):
             specification is a tuple of `slice` objects.
 
     """
-    grid_partitions = int(grid_partitions)
-    if grid.name == "source" or grid.dummy_size_2_dimension or grid_partitions <= 1 :
+    if       grid.name == "source" or grid.dummy_size_2_dimension:
         return (None,)
 
     from math import ceil
@@ -3399,6 +3385,13 @@ def partitions(grid, grid_partitions):
     from dask.array.core import normalize_chunks
 
     shape = grid.coords[-1].shape
-    size = ceil(shape[-1] / grid_partitions)
-
+    
+    if grid_partitions == 'maximum':
+        size = 1
+    else:
+        if grid_partitions <= 1:
+            return (None,)
+            
+        size = ceil(shape[-1] / grid_partitions)
+        
     return chunk_indices(normalize_chunks(shape[:-1] + (size,), shape=shape))
