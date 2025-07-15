@@ -12970,7 +12970,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ln_z=None,
         verbose=None,
         return_esmpy_regrid_operator=False,
-        weights_partitions=1,
+        dst_grid_partitions=1,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13308,12 +13308,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
-            weights_partitions=weights_partitions,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
     def regridc(
         self,
         dst,
@@ -13333,7 +13334,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         return_esmpy_regrid_operator=False,
-        weights_partitions=1,
+        dst_grid_partitions=1,
+            verbose=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13605,7 +13607,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
-            weights_partitions=weights_partitions,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 

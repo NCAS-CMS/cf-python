@@ -5,6 +5,8 @@ from cfdm import Container
 
 from ..decorators import _display_or_return
 from ..functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_METHOD
+from ..functions import atol as cf_atol
+from ..functions import rtol as cf_rtol
 from ..mixin_container import Container as mixin_Container
 
 
@@ -193,6 +195,8 @@ class RegridOperator(mixin_Container, Container):
                 .. versionadded:: 3.16.2
 
         """
+        from scipy.sparse import issparse
+
         super().__init__()
 
         if weights is None and weights_file is None:
@@ -228,6 +232,10 @@ class RegridOperator(mixin_Container, Container):
         self._set_component(
             "_dst_mask_adjusted", bool(_dst_mask_adjusted), copy=False
         )
+
+        if issparse(weights):
+            # Make sure that the destination mask has been adjusted
+            self.tosparse()
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -625,6 +633,37 @@ class RegridOperator(mixin_Container, Container):
             string.append(f"{attr}: {getattr(self, attr)!r}")
 
         return "\n".join(string)
+
+    def equal_weights(self, other, rtol=None, atol=None):
+        """TODOREGRID
+
+        :Parameters:
+
+            {{rtol: number, optional}}
+
+            {{atol: number, optional}}
+
+        :Returns:
+
+           `bool`
+
+        """
+        if atol is None:
+            atol = cf_atol()
+
+        if rtol is None:
+            rtol = cf_rtol()
+
+        self.tosparse()
+        other.tosparse()
+        w0 = self.weights
+        w1 = other.weights
+
+        return (
+            (w0.indices == w1.indices).all()
+            and (w0.indptr == w1.indptr).all()
+            and np.allclose(w0.data, w1.data, rtol=rtol, atol=atol)
+        )
 
     def get_parameter(self, parameter, *default):
         """Return a regrid operation parameter.

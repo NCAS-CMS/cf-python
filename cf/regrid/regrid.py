@@ -157,202 +157,227 @@ def regrid(
     min_weight=None,
     weights_file=None,
     return_esmpy_regrid_operator=False,
-    weights_partitions=1,
+    dst_grid_partitions=1,
     inplace=False,
 ):
     """Regrid a field to a new spherical or Cartesian grid.
 
-    This is a worker function primarily intended to be called by
-    `cf.Field.regridc` and `cf.Field.regrids`.
+        This is a worker function primarily intended to be called by
+        `cf.Field.regridc` and `cf.Field.regrids`.
 
-    .. versionadded:: 3.14.0
+        .. versionadded:: 3.14.0
 
-    .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`,
-                 `cf.data.dask_regrid.regrid`.
+        .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`,
+                     `cf.data.dask_regrid.regrid`.
 
-    :Parameters:
+        :Parameters:
 
-        coord_sys: `str`
-            The name of the coordinate system of the source and
-            destination grids. Either ``'spherical'`` or
-            ``'Cartesian'``.
+            coord_sys: `str`
+                The name of the coordinate system of the source and
+                destination grids. Either ``'spherical'`` or
+                ``'Cartesian'``.
 
-        src: `Field`
-            The source field to be regridded.
+            src: `Field`
+                The source field to be regridded.
 
-        dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
-            The definition of the destination grid.
+            dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
+                The definition of the destination grid.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        method: `str`
-            Specify which interpolation method to use during
-            regridding. This parameter must be set unless *dst* is a
-            `RegridOperator`, when the *method* is ignored.
+            method: `str`
+                Specify which interpolation method to use during
+                regridding. This parameter must be set unless *dst* is a
+                `RegridOperator`, when the *method* is ignored.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        src_cyclic: `None` or `bool`, optional
-            For spherical regridding, specifies whether or not the
-            source grid longitude axis is cyclic.
+            src_cyclic: `None` or `bool`, optional
+                For spherical regridding, specifies whether or not the
+                source grid longitude axis is cyclic.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        dst_cyclic: `None` or `bool`, optional
-            For spherical regridding, specifies whether or not the
-            destination grid longitude axis is cyclic.
+            dst_cyclic: `None` or `bool`, optional
+                For spherical regridding, specifies whether or not the
+                destination grid longitude axis is cyclic.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        use_src_mask: `bool`, optional
-            Whether or not to use the source grid mask.
+            use_src_mask: `bool`, optional
+                Whether or not to use the source grid mask.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        use_dst_mask: `bool`, optional
-            Whether or not to use the source grid mask.
+            use_dst_mask: `bool`, optional
+                Whether or not to use the source grid mask.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        src_axes: `dict` or sequence or `None`, optional
-            Define the source grid axes to be regridded.
+            src_axes: `dict` or sequence or `None`, optional
+                Define the source grid axes to be regridded.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        dst_axes: `dict` or sequence or `None`, optional
-            Define the destination grid axes to be regridded.
+            dst_axes: `dict` or sequence or `None`, optional
+                Define the destination grid axes to be regridded.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
-            Ignored for Cartesian regridding.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
+                Ignored for Cartesian regridding.
 
-        axes: sequence, optional
-            Define the axes to be regridded for the source grid and,
-            if *dst* is a `Field` or `Domain`, the destination
-            grid. Ignored for spherical regridding.
+            axes: sequence, optional
+                Define the axes to be regridded for the source grid and,
+                if *dst* is a `Field` or `Domain`, the destination
+                grid. Ignored for spherical regridding.
 
-            See `cf.Field.regridc` for details.
+                See `cf.Field.regridc` for details.
 
-        ignore_degenerate: `bool`, optional
-            Whether or not to  ignore degenerate cells.
+            ignore_degenerate: `bool`, optional
+                Whether or not to  ignore degenerate cells.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
-            Ignored for Cartesian regridding.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
+                Ignored for Cartesian regridding.
 
-        return_operator: `bool`, optional
-            If True then do not perform the regridding, rather return
-            the `RegridOperator` instance that defines the regridding
-            operation, and which can be used in subsequent calls.
+            return_operator: `bool`, optional
+                If True then do not perform the regridding, rather return
+                the `RegridOperator` instance that defines the regridding
+                operation, and which can be used in subsequent calls.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-        check_coordinates: `bool`, optional
-            Whether or not to check the regrid operator source grid
-            coordinates. Ignored unless *dst* is a `RegridOperator`.
+            check_coordinates: `bool`, optional
+                Whether or not to check the regrid operator source grid
+                coordinates. Ignored unless *dst* is a `RegridOperator`.
 
-            If True and then the source grid coordinates defined by
-            the regrid operator are checked for compatibility against
-            those of the *src* field. By default this check is not
-            carried out. See the *dst* parameter for details.
+                If True and then the source grid coordinates defined by
+                the regrid operator are checked for compatibility against
+                those of the *src* field. By default this check is not
+                carried out. See the *dst* parameter for details.
 
-            If False then only the computationally cheap tests are
-            performed (checking that the coordinate system, cyclicity
-            and grid shape are the same).
+                If False then only the computationally cheap tests are
+                performed (checking that the coordinate system, cyclicity
+                and grid shape are the same).
 
-        inplace: `bool`, optional
-            If True then modify *src* in-place and return `None`.
+            inplace: `bool`, optional
+                If True then modify *src* in-place and return `None`.
 
-        return_esmpy_regrid_operator: `bool`, optional
-            If True then *src* is not regridded, but the
-            `esmpy.Regrid` instance for the operation is returned
-            instead. This is useful for checking that the field has
-            been regridded correctly.
+            return_esmpy_regrid_operator: `bool`, optional
+                If True then *src* is not regridded, but the
+                `esmpy.Regrid` instance for the operation is returned
+                instead. This is useful for checking that the field has
+                been regridded correctly.
 
-        weights_file: `str` or `None`, optional
-            Provide a netCDF file that contains, or will contain, the
-            regridding weights.
+            weights_file: `str` or `None`, optional
+                Provide a netCDF file that contains, or will contain, the
+                regridding weights.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.15.2
+                .. versionadded:: 3.15.2
 
-        src_z: optional
-            The identity of the source grid vertical coordinates used
-            to calculate the weights. If `None` then no vertical axis
-            is identified, and in the spherical case regridding will
-            be 2-d.
+            src_z: optional
+                The identity of the source grid vertical coordinates used
+                to calculate the weights. If `None` then no vertical axis
+                is identified, and in the spherical case regridding will
+                be 2-d.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.16.2
+                .. versionadded:: 3.16.2
 
-        dst_z: optional
-            The identity of the destination grid vertical coordinates
-            used to calculate the weights. If `None` then no vertical
-            axis is identified, and in the spherical case regridding
-            will be 2-d.
+            dst_z: optional
+                The identity of the destination grid vertical coordinates
+                used to calculate the weights. If `None` then no vertical
+                axis is identified, and in the spherical case regridding
+                will be 2-d.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.16.2
+                .. versionadded:: 3.16.2
 
-        z: optional
-            The *z* parameter is a convenience that may be used to
-            replace both *src_z* and *dst_z* when they would contain
-            identical values.
+            z: optional
+                The *z* parameter is a convenience that may be used to
+                replace both *src_z* and *dst_z* when they would contain
+                identical values.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.16.2
+                .. versionadded:: 3.16.2
 
-        ln_z: `bool` or `None`, optional
-            Whether or not the weights are to be calculated with the
-            natural logarithm of vertical coordinates.
+            ln_z: `bool` or `None`, optional
+                Whether or not the weights are to be calculated with the
+                natural logarithm of vertical coordinates.
 
-            See `cf.Field.regrids` (for spherical regridding) or
-            `cf.Field.regridc` (for Cartesian regridding) for details.
+                See `cf.Field.regrids` (for spherical regridding) or
+                `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: 3.16.2
+                .. versionadded:: 3.16.2
 
-        weights_partitions: `int`, optional
+            dst_grid_partitions: `int`, optional
+                Reduce the memory requirement of the weights calculation
+                by calculating weights separately for non-overlapping
+                partitions of the destination grid, and then combining the
+                weights from each partition to create the final weights
+                matrix. The number of partitions is given by
+                *dst_grid_partitions*, whose default value is 1 (i.e. one
+                partition for the entire grid).
 
-            If set to an integer greater than 1, then weights will be
-            calculated separately for this amount of independent
-            non-overlapping parittions of the destination grid, before
-            being combined to into the final weights array. This makes
-            no difference to the result, but will reduce the memory
-            needed to calulate the weights by a factor approximately
-            equal to number of partitions, which is should be enough
-            to allow weights for even very large grids to be calcuated
-            on machines with modest amounts of RAM.
+                The amount of memory reduction will vary on a case-by-case
+                basis, but will always be proportional to the number of
+                partitions, whilst the time taken to calculate the final
+                weights matrix is inversely proportional to the number of
+                partitions.
 
-            .. versionadded:: NEXTVERSION
+                The number of partitions makes no difference to the
+                final weights matrix, and hence no difference to the
+                regridded result.
 
-    :Returns:
+                Only the slowest moving regridding dimension is
+                partitioned (either the Y or Z dimension, for 2-d or
+                3-d spherical regridding respectively).
 
-        `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
-            The regridded field construct; or `None` if the operation
-            was in-place; or the regridding operator if
-            *return_operator* is True.
+                Any postitve integer may be given, but the number of
+                partitions will always be less than or equal to the
+                size of the slowest moving regridding dimension, which
+                is either the Y or Z dimension, for 2-d or 3-d
+                spherical regridding respectively.
 
-            If *return_esmpy_regrid_operator* is True then *src* is
-            not regridded, but the `esmpy.Regrid` instance for the
-            operation is returned instead.
+                Any postitve integer may be given, but the number of
+                partitions will always be less than or equal to the
+                size of the slowest moving regridding dimension, which
+                is the first of the axes given by *axes* or
+                *dst_axes*.
+
+                .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `Field` or `None` or `RegridOperator` or `esmpy.Regrid`
+                The regridded field construct; or `None` if the operation
+                was in-place; or the regridding operator if
+                *return_operator* is True.
+
+                If *return_esmpy_regrid_operator* is True then *src* is
+                not regridded, but the `esmpy.Regrid` instance for the
+                operation is returned instead.
 
     """
+    debug = is_log_level_debug(logger)
+
     if not inplace:
         src = src.copy()
 
@@ -512,7 +537,7 @@ def regrid(
         ln_z=ln_z,
     )
 
-    if is_log_level_debug(logger):
+    if debug:
         logger.debug(
             f"Source Grid:\n{src_grid}\n\nDestination Grid:\n{dst_grid}\n"
         )  # pragma: no cover
@@ -586,15 +611,15 @@ def regrid(
         # Create the destination esmpy.Grid
         if dst_grid.is_mesh:
             dst_esmpy_grids = create_esmpy_mesh(
-                dst_grid, grid_dst_mask, weights_partitions
+                dst_grid, grid_dst_mask, dst_grid_partitions
             )
         elif dst_grid.is_locstream:
             dst_esmpy_grids = create_esmpy_locstream(
-                dst_grid, grid_dst_mask, weights_partitions
+                dst_grid, grid_dst_mask, dst_grid_partitions
             )
         else:
             dst_esmpy_grids = create_esmpy_grid(
-                dst_grid, grid_dst_mask, weights_partitions
+                dst_grid, grid_dst_mask, dst_grid_partitions
             )
 
         del grid_dst_mask
@@ -622,17 +647,11 @@ def regrid(
 
         # Create the source esmpy.Grid
         if src_grid.is_mesh:
-            src_esmpy_grids = create_esmpy_mesh(
-                src_grid, grid_src_mask, weights_partitions
-            )
+            src_esmpy_grids = create_esmpy_mesh(src_grid, grid_src_mask)
         elif src_grid.is_locstream:
-            src_esmpy_grids = create_esmpy_locstream(
-                src_grid, grid_src_mask, weights_partitions
-            )
+            src_esmpy_grids = create_esmpy_locstream(src_grid, grid_src_mask)
         else:
-            src_esmpy_grids = create_esmpy_grid(
-                src_grid, grid_src_mask, weights_partitions
-            )
+            src_esmpy_grids = create_esmpy_grid(src_grid, grid_src_mask)
 
         del grid_src_mask
 
@@ -649,7 +668,7 @@ def regrid(
             quarter=src_grid.dummy_size_2_dimension,
             esmpy_regrid_operator=esmpy_regrid_operator,
             weights_file=weights_file,
-            weights_partitions=weights_partitions,
+            dst_grid_partitions=dst_grid_partitions,
         )
 
         if return_esmpy_regrid_operator:
@@ -716,12 +735,20 @@ def regrid(
         # Note: The `RegridOperator.tosparse` method will also set
         #       'dst_mask' to False for destination points with all
         #       zero weights.
-        regrid_operator.tosparse()
+        if regrid_operator.weights_file is None:
+            regrid_operator.tosparse()
+            
+        if debug:
+            logger.debug(
+                f"Sparse weights: {regrid_operator.weights!r}\n"
+                f"        {regrid_operator.weights.__dict__}"
+            )  # pragma: no cover
+
         return regrid_operator
 
     from scipy.sparse import issparse
 
-    if issparse(regrid_operator.weights) and is_log_level_debug(logger):
+    if debug and issparse(regrid_operator.weights):
         logger.debug(
             f"Sparse weights: {regrid_operator.weights!r}\n"
             f"        {regrid_operator.weights.__dict__}"
@@ -1691,7 +1718,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         n_regrid_axes=n_regrid_axes,
         dimensionality=regridding_dimensionality,
         shape=shape,
-        esmpy_shape=shape,
+        esmpy_shape=shape[::-1],
         coords=coords,
         bounds=bounds,
         cyclic=cyclic,
@@ -1919,7 +1946,7 @@ def esmpy_initialise():
     return esmpy.Manager(debug=bool(regrid_logging()))
 
 
-def create_esmpy_grid(grid, mask=None, weights_partitions=1):
+def create_esmpy_grid(grid, mask=None, grid_partitions=1):
     """Create an `esmpy.Grid`.
 
     .. versionadded:: 3.14.0
@@ -1941,6 +1968,8 @@ def create_esmpy_grid(grid, mask=None, weights_partitions=1):
             The `esmpy.Grid` derived from *grid*.
 
     """
+    debug = is_log_level_debug(logger)
+
     # Create an `esmpy.Grid`
     cyclic = grid.cyclic
 
@@ -1958,17 +1987,26 @@ def create_esmpy_grid(grid, mask=None, weights_partitions=1):
         spherical = False
         coord_sys = esmpy.CoordSys.CART
 
-    for partition in partitions(grid, weights_partitions):
+    for i, partition in enumerate(partitions(grid, grid_partitions)):
         coords = grid.coords[:]
         bounds = grid.bounds[:]
 
         if partition is not None:
+            if debug:
+                logger.debug(
+                    f"Partition {i} index: {partition}"
+                )  # pragma: no cover
+
             ndim = coords[-1].ndim
             if ndim == 1:
+                # Each coordinate spans a different axis, and we're
+                # only partitioning the axis of the last coordinate in
+                # the list.
                 coords[-1] = coords[-1][partition]
                 if bounds:
                     bounds[-1] = bounds[-1][partition]
             else:
+                # All coordinates spans the same axes
                 coords = [c[partition] for c in coords]
                 if bounds:
                     bounds = [b[partition] for b in bounds]
@@ -2167,7 +2205,7 @@ def create_esmpy_grid(grid, mask=None, weights_partitions=1):
                 )
 
             if partition is not None:
-                mask = mask[partition]
+                mask = mask[..., *partition]
 
             if not mask.any():
                 mask = None
@@ -2187,7 +2225,7 @@ def create_esmpy_grid(grid, mask=None, weights_partitions=1):
         yield esmpy_grid
 
 
-def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
+def create_esmpy_mesh(grid, mask=None, grid_partitions=1):
     """Create an `esmpy.Mesh`.
 
     .. versionadded:: 3.16.0
@@ -2210,6 +2248,8 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
             The `esmpy.Mesh` derived from *grid*.
 
     """
+    debug = is_log_level_debug(logger)
+
     if grid.mesh_location != "face":
         raise ValueError(
             f"Can't regrid {'from' if grid.name == 'source' else 'to'} "
@@ -2222,7 +2262,7 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
 
-    for partition in partitions(grid, weights_partitions):
+    for i, partition in enumerate(partitions(grid, grid_partitions)):
         # Create an empty esmpy.Mesh for this partition
         esmpy_mesh = esmpy.Mesh(
             parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
@@ -2230,6 +2270,11 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
 
         domain_topology = grid.domain_topology
         if partition is not None:
+            if debug:
+                logger.debug(
+                    f"Partition {i} index: {partition}"
+                )  # pragma: no cover
+
             domain_topology = domain_topology[partition]
 
         element_conn = domain_topology.normalise().array
@@ -2241,6 +2286,7 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
         if grid.coords:
             grid_coords = grid.coords
             if partition is not None:
+                # All coordinates spans the same axis
                 grid_coords = [c[partition] for c in grid.coords]
 
             try:
@@ -2255,6 +2301,7 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
 
         grid_bounds = grid.bounds
         if partition is not None:
+            # All coordinates spans the same axis
             grid_bounds = [b[partition] for b in grid.bounds]
 
         node_ids, index = np.unique(element_conn, return_index=True)
@@ -2286,6 +2333,7 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
                 )
 
             if partition is not None:
+                # The mask spans the same axis as the coordinates
                 mask = mask[partition]
 
             # Note: 'mask' has True/False for masked/unmasked elements,
@@ -2314,7 +2362,7 @@ def create_esmpy_mesh(grid, mask=None, weights_partitions=1):
         yield esmpy_mesh
 
 
-def create_esmpy_locstream(grid, mask=None, weights_partitions=1):
+def create_esmpy_locstream(grid, mask=None, grid_partitions=1):
     """Create an `esmpy.LocStream`.
 
     .. versionadded:: 3.16.2
@@ -2337,6 +2385,8 @@ def create_esmpy_locstream(grid, mask=None, weights_partitions=1):
             The `esmpy.LocStream` derived from *grid*.
 
     """
+    debug = is_log_level_debug(logger)
+
     if grid.coord_sys == "spherical":
         coord_sys = esmpy.CoordSys.SPH_DEG
         keys = ("ESMF:Lon", "ESMF:Lat", "ESMF:Radius")
@@ -2345,9 +2395,15 @@ def create_esmpy_locstream(grid, mask=None, weights_partitions=1):
         coord_sys = esmpy.CoordSys.CART
         keys = ("ESMF:X", "ESMF:Y", "ESMF:Z")
 
-    for partition in partitions(grid, weights_partitions):
+    for i, partition in enumerate(partitions(grid, grid_partitions)):
         coords = grid.coords
         if partition is not None:
+            if debug:
+                logger.debug(
+                    f"Partition {i} index: {partition}"
+                )  # pragma: no cover
+
+            # All coordinates spans the same axis
             coords = [c[partition] for c in grid.coords]
 
         # Create an empty esmpy.LocStream
@@ -2371,6 +2427,7 @@ def create_esmpy_locstream(grid, mask=None, weights_partitions=1):
                 )
 
             if partition is not None:
+                # The mask spans the same axis as the coordinates
                 mask = mask[partition]
 
             # Note: 'mask' has True/False for masked/unmasked elements,
@@ -2401,7 +2458,7 @@ def create_esmpy_weights(
     quarter=False,
     esmpy_regrid_operator=None,
     weights_file=None,
-    weights_partitions=1,
+    dst_grid_partitions=1,
 ):
     """Create the `esmpy` regridding weights.
 
@@ -2537,7 +2594,7 @@ def create_esmpy_weights(
         src_size = src_esmpy_field.data.size
         src_rank = src_esmpy_grid.rank
 
-        partitioned_dst_grid = weights_partitions > 1
+        partitioned_dst_grid = dst_grid_partitions > 1
         if partitioned_dst_grid:
             from scipy.sparse import csr_array, vstack
 
@@ -2623,7 +2680,8 @@ def create_esmpy_weights(
 
         if partitioned_dst_grid:
             # The destination grid has been partitioned. Concatenate
-            # the sparse weights arrays for all partitions.
+            # the sparse weights arrays for all destination grid
+            # partitions.
             weights = vstack(w)
             dst_size = weights.shape[0]
             row = None
@@ -2637,22 +2695,25 @@ def create_esmpy_weights(
             from cfdm import integer_dtype
             from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
-            from scipy.sparse import issparse
 
             from .. import __version__
 
-            if issparse(weights):
+            from_file = True
+
+            if partitioned_dst_grid:
                 # 'weights' is a CSR sparse array, so we have to infer
                 # the row and column arrays from it.
                 weights_data = weights.data
                 row, col = weights.tocoo().coords
                 if start_index:
+                    # 'row' and 'col' are currently zero-based
                     row += start_index
                     col += start_index
             else:
                 weights_data = weights
 
-            i_dtype = integer_dtype(max(dst_size, src_size))
+            row = row.astype(integer_dtype(dst_size), copy=False)
+            col = col.astype(integer_dtype(src_size), copy=False)
 
             regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
             if src_grid.ln_z:
@@ -2677,34 +2738,38 @@ def create_esmpy_weights(
                 nc.createDimension("dst_grid_rank", dst_rank)
 
                 v = nc.createVariable(
-                    "src_grid_dims", i_dtype, ("src_grid_rank",)
+                    "src_grid_dims", col.dtype, ("src_grid_rank",)
                 )
                 v.long_name = "Source grid shape"
                 v[...] = src_grid.esmpy_shape
 
                 v = nc.createVariable(
-                    "dst_grid_dims", i_dtype, ("dst_grid_rank",)
+                    "dst_grid_dims", row.dtype, ("dst_grid_rank",)
                 )
                 v.long_name = "Destination grid shape"
                 v[...] = dst_grid.esmpy_shape
 
-                v = nc.createVariable("S", weights_data.dtype, ("n_s",))
+                v = nc.createVariable(
+                    "S", weights_data.dtype, ("n_s",), zlib=True
+                )
                 v.long_name = "Weights values"
                 v[...] = weights_data
 
-                v = nc.createVariable("row", i_dtype, ("n_s",), zlib=True)
+                v = nc.createVariable("row", row.dtype, ("n_s",), zlib=True)
                 v.long_name = "Destination/row indices"
                 v.start_index = start_index
                 v[...] = row
 
-                v = nc.createVariable("col", i_dtype, ("n_s",), zlib=True)
+                v = nc.createVariable("col", col.dtype, ("n_s",), zlib=True)
                 v.long_name = "Source/col indices"
                 v.start_index = start_index
                 v[...] = col
 
                 nc.close()
 
-            if issparse(weights):
+            if partitioned_dst_grid:
+                # Reset 'row' and 'col' to None, because 'weights' is
+                # already a sparse array.
                 row = None
                 col = None
 
@@ -3289,17 +3354,17 @@ def set_grid_type(grid):
         grid.type = f"DSG {grid.featureType}"
 
 
-def partitions(grid, weights_partitions):
+def partitions(grid, grid_partitions):
     """Partitions of the grid.
 
-    Each partition is returned as a slice index to the cell
-    coordiantes, which my be used to create the actual partition of
-    the grid.
+    Each partition is defined as an index to cell coordinates, which
+    may be used to create the actual partition of the grid.
 
-    Only destinaton grids are allowed to be partitioned.
+    Only a destinaton grid without a dummy size 2 dimension can be
+    partitioned.
 
     When there is a single partition that spans the entire grid, then
-    the speical value of `None` is used.
+    the special value of `None` is used.
 
     .. versionadded:: NEXTVERSION
 
@@ -3311,28 +3376,29 @@ def partitions(grid, weights_partitions):
         grid: `Grid`
             The definition of the source or destination grid.
 
-        weights_partitions: `int`
-            The number of partitions to split the grid into. Only tthe
-            "last" dimension is partitioned.
+        grid_partitions: `int`
+            The number of partitions to split the grid into. Only the
+            last (i.e. slowest moving) dimension in `esmpy` order is
+            partitioned.
 
     :Returns:
 
         generator or `tuple`
             The partition specifications, or a `tuple` containing
-            `None` if there is only one partition.
+            `None` if there is only one partition. Each partition
+            specification is a tuple of `slice` objects.
 
     """
-    if weights_partitions > 1 and grid.name == "destination":
-        from math import ceil
+    grid_partitions = int(grid_partitions)
+    if grid.name == "source" or grid.dummy_size_2_dimension or grid_partitions <= 1 :
+        return (None,)
 
-        from cfdm.data.utils import chunk_indices
-        from dask.array.core import normalize_chunks
+    from math import ceil
 
-        shape = grid.coords[-1].shape
-        size = ceil(shape[-1] / weights_partitions)
+    from cfdm.data.utils import chunk_indices
+    from dask.array.core import normalize_chunks
 
-        return chunk_indices(
-            normalize_chunks(shape[:-1] + (size,), shape=shape)
-        )
+    shape = grid.coords[-1].shape
+    size = ceil(shape[-1] / grid_partitions)
 
-    return (None,)
+    return chunk_indices(normalize_chunks(shape[:-1] + (size,), shape=shape))
