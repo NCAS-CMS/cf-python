@@ -564,6 +564,28 @@ _docstring_substitution_definitions = {
                 If True then do not perform the regridding, rather
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
+    # dst_grid_partitions
+    "{{dst_grid_partitions: `int` or `str`, optional}}": """rdst_grid_partitions: `int` or `str`, optional
+            Calculating the weights matrix for grids with very large
+            numbers of grid points can potentially require more memory
+            than is available. However, this memory requirement can be
+            greatly reduced by calculating weights separately for
+            non-overlapping partitions of the destination grid, and
+            then combining the weights from each partition to create
+            the final weights matrix. The more partitions there are,
+            the smaller the memory requirement for the weights
+            calculations will be, at the expense of the weights
+            calculations taking longer.
+
+            The *dst_grid_partitions* parameter sets the number of
+            destination grid partitions for the weights
+            calculations. The default value is ``1``, i.e. one
+            partition for the entire grid, that maximises memory usage
+            and minimises the weights calculation time. If the string
+            ``'maximum'`` is given then the largest possible number of
+            partitions of the destination grid will be used. A
+            positive integer specifies the exact number of partitions,
+            capped by the maximum allowed.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

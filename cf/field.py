@@ -13215,6 +13215,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.16.2
 
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                .. versionadded:: NEXTVERSION
+
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
 
@@ -13514,6 +13518,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{return_esmpy_regrid_operator: `bool`, optional}}
 
                 .. versionadded:: 3.16.2
+
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                .. versionadded:: NEXTVERSION
+
+            {{verbose: `int` or `str` or `None`, optional}}
+
+                .. versionadded:: NEXTVERSION
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.

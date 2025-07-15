@@ -328,26 +328,15 @@ def regrid(
             .. versionadded:: 3.16.2
 
         dst_grid_partitions: `int` or `str`, optional
-            Calculating the weights matrix for grids with very large
-            numbers of grid points can potentially require more memory
-            than is available. However, this memory requirement can be
-            greatly reduced by calculating weights separately for
-            non-overlapping partitions of the destination grid, and
-            then combining the weights from each partition to create
-            the final weights matrix. The more partitions there are,
-            the smaller the memory requirement for the weights
-            calculations will be, at the expense of the weights
-            calculations taking longer.
+            The number of destination grid partitions for the weights
+            calculations. If the string ``'maximum'`` is given then
+            the largest possible number of partitions of the
+            destination grid will be used. A positive integer
+            specifies the exact number of partitions, capped by the
+            maximum allowed.
 
-            The *dst_grid_partitions* parameter sets the number of
-            destination grid partitions for the weights
-            calculations. The default value is ``1``, i.e. one
-            partition for the entire grid, that maximises memory usage
-            and minimises the weights calculation time. If the string
-            ``'maximum'`` is given then the largest possible number of
-            partitions of the destination grid will be used. A
-            positive integer specifies the exact number of partitions,
-            capped by the maximum allowed.
+            See `cf.Field.regrids` (for spherical regridding) or
+            `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: NEXTVERSION
 
@@ -3363,10 +3352,11 @@ def partitions(grid, grid_partitions):
         grid: `Grid`
             The definition of the source or destination grid.
 
-        grid_partitions: `int`
+        grid_partitions: `int` or `str`
             The number of partitions to split the grid into. Only the
             last (i.e. slowest moving) dimension in `esmpy` order is
-            partitioned.
+            partitioned. If ``'maximum'`` then the maximum possible
+            number of partitions is defined.
 
     :Returns:
 
@@ -3376,7 +3366,7 @@ def partitions(grid, grid_partitions):
             specification is a tuple of `slice` objects.
 
     """
-    if       grid.name == "source" or grid.dummy_size_2_dimension:
+    if grid.name == "source" or grid.dummy_size_2_dimension:
         return (None,)
 
     from math import ceil
@@ -3385,13 +3375,13 @@ def partitions(grid, grid_partitions):
     from dask.array.core import normalize_chunks
 
     shape = grid.coords[-1].shape
-    
-    if grid_partitions == 'maximum':
+
+    if grid_partitions == "maximum":
         size = 1
     else:
         if grid_partitions <= 1:
             return (None,)
-            
+
         size = ceil(shape[-1] / grid_partitions)
-        
+
     return chunk_indices(normalize_chunks(shape[:-1] + (size,), shape=shape))
