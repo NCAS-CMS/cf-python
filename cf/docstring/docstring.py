@@ -74,7 +74,11 @@ _docstring_substitution_definitions = {
         weights with the source data. (Note that whilst the `esmpy`
         package is also able to create the regridded data from its
         weights, this feature can't be integrated with the `dask`
-        framework that underpins the field's data.)""",
+        framework that underpins the field's data.)
+
+        The calculation of weights for large grids can have a very
+        high memory requirement, but this can be reduced by setting
+        the *dst_grid_partitions* parameter.""",
     # regrid Logging
     "{{regrid Logging}}": """**Logging**
 

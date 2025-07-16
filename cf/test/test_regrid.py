@@ -31,21 +31,12 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
-    import esmpy
-
-    esmpy_imported = True
+    import esmpy  # noqa: F401
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 all_methods = (
     "linear",
@@ -780,12 +771,14 @@ class RegridTest(unittest.TestCase):
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertTrue(os.path.isfile(tmpfile))
-        self.assertIsNone(r.weights_file)
+        self.assertEqual(r.weights_file, tmpfile)
+        self.assertIsNotNone(r.weights)
 
         r = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertEqual(r.weights_file, tmpfile)
+        self.assertIsNone(r.weights)
 
         # Can't provide weights_file when dst is a RegridOperator
         with self.assertRaises(ValueError):

@@ -42,6 +42,14 @@ class RegridOperatorTest(unittest.TestCase):
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
 
+    def test_RegridOperator_equal_weights(self):
+        r = self.r
+        r.tosparse()
+        r1 = r.copy()
+        self.assertTrue(r.equal_weights(r1))
+        r1.weights.data += 0.1
+        self.assertFalse(r.equal_weights(r1))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

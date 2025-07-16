@@ -541,6 +541,10 @@ class RegridOperator(mixin_Container, Container):
                 The deep copy.
 
         """
+        weights = self.weights
+        if weights is not None:
+            weights = weights.copy()
+
         row = self.row
         if row is not None:
             row = row.copy()
@@ -550,7 +554,7 @@ class RegridOperator(mixin_Container, Container):
             col = col.copy()
 
         return type(self)(
-            self.weights.copy(),
+            weights,
             row,
             col,
             method=self.method,
@@ -635,9 +639,12 @@ class RegridOperator(mixin_Container, Container):
         return "\n".join(string)
 
     def equal_weights(self, other, rtol=None, atol=None):
-        """TODOREGRID
+        """Whether two regrid operators have identical weights.
 
         :Parameters:
+
+            other: `RegridOperator`
+                The other regrid operator to compare.
 
             {{rtol: number, optional}}
 
@@ -646,6 +653,8 @@ class RegridOperator(mixin_Container, Container):
         :Returns:
 
            `bool`
+               True if the regrid operators have identical weights,
+               otherwise False.
 
         """
         if atol is None:
@@ -656,12 +665,14 @@ class RegridOperator(mixin_Container, Container):
 
         self.tosparse()
         other.tosparse()
+
         w0 = self.weights
         w1 = other.weights
-
         return (
-            (w0.indices == w1.indices).all()
-            and (w0.indptr == w1.indptr).all()
+            w0.shape == w1.shape
+            and w0.data.shape == w1.data.shape
+            and np.array_equal(w0.indices, w1.indices)
+            and np.array_equal(w0.indptr, w1.indptr)
             and np.allclose(w0.data, w1.data, rtol=rtol, atol=atol)
         )
 
