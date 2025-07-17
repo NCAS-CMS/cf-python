@@ -638,6 +638,35 @@ class RegridOperator(mixin_Container, Container):
 
         return "\n".join(string)
 
+    def equal_dst_mask(self, other):
+        """Whether two regrid operators have identical destination masks.
+
+        :Parameters:
+
+            other: `RegridOperator`
+                The other regrid operator to compare.
+
+        :Returns:
+
+           `bool`
+               True if the regrid operators have destination masks,
+               otherwise False.
+
+        """
+        self.tosparse()
+        other.tosparse()
+
+        m0 = self.dst_mask
+        m1 = other.dst_mask
+
+        if m0 is None and m1 is None:
+            return True
+
+        if m0 is None or m1 is None:
+            return False
+
+        return np.array_equal(m0, m1)
+
     def equal_weights(self, other, rtol=None, atol=None):
         """Whether two regrid operators have identical weights.
 

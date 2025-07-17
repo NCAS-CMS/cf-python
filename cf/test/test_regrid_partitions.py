@@ -84,6 +84,7 @@ class RegridPartitionsTest(unittest.TestCase):
                             dst, dst_grid_partitions=n, **kwargs
                         )
                         self.assertTrue(r0.equal_weights(r1))
+                        self.assertTrue(r0.equal_dst_mask(r1))
 
         # ------------------------------------------------------------
         # Destination grid defined by 2-d lats and lons
@@ -125,6 +126,7 @@ class RegridPartitionsTest(unittest.TestCase):
             for n in (2, 3, "maximum"):
                 r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                 self.assertTrue(r0.equal_weights(r1))
+                self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_partitions_cannot_partition(self):
@@ -169,6 +171,7 @@ class RegridPartitionsTest(unittest.TestCase):
                     for n in (2,):
                         r1 = src.regridc(dst, dst_grid_partitions=n, **kwargs)
                         self.assertTrue(r0.equal_weights(r1))
+                        self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_mesh_to_mesh(self):
@@ -189,6 +192,7 @@ class RegridPartitionsTest(unittest.TestCase):
                 for n in (2,):
                     r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                     self.assertTrue(r0.equal_weights(r1))
+                    self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_mesh_to_grid(self):
@@ -210,6 +214,7 @@ class RegridPartitionsTest(unittest.TestCase):
                     for n in (2,):
                         r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                         self.assertTrue(r0.equal_weights(r1))
+                        self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_grid_to_mesh(self):
@@ -231,6 +236,7 @@ class RegridPartitionsTest(unittest.TestCase):
                     for n in (2,):
                         r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                         self.assertTrue(r0.equal_weights(r1))
+                        self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_grid_to_featureType_3d(self):
@@ -256,6 +262,7 @@ class RegridPartitionsTest(unittest.TestCase):
                 for n in (2,):
                     r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                     self.assertTrue(r0.equal_weights(r1))
+                    self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_grid_to_featureType_2d(self):
@@ -282,6 +289,7 @@ class RegridPartitionsTest(unittest.TestCase):
                 for n in (2,):
                     r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                     self.assertTrue(r0.equal_weights(r1))
+                    self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_partitions_mesh_to_featureType_2d(self):
@@ -307,6 +315,7 @@ class RegridPartitionsTest(unittest.TestCase):
                 for n in (2,):
                     r1 = src.regrids(dst, dst_grid_partitions=n, **kwargs)
                     self.assertTrue(r0.equal_weights(r1))
+                    self.assertTrue(r0.equal_dst_mask(r1))
 
 
 if __name__ == "__main__":

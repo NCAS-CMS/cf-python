@@ -43,12 +43,23 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
 
     def test_RegridOperator_equal_weights(self):
-        r = self.r
-        r.tosparse()
-        r1 = r.copy()
-        self.assertTrue(r.equal_weights(r1))
+        r0 = self.r
+        r1 = r0.copy()
+        self.assertTrue(r0.equal_weights(r1))
         r1.weights.data += 0.1
-        self.assertFalse(r.equal_weights(r1))
+        self.assertFalse(r0.equal_weights(r1))
+
+    def test_RegridOperator_equal_dst_mask(self):
+        r0 = self.r.copy()
+        r1 = r0.copy()
+        self.assertTrue(r0.equal_dst_mask(r1))
+        mask = [True, False]
+        r0._set_component("dst_mask", mask)
+        self.assertFalse(r0.equal_dst_mask(r1))
+        r1._set_component("dst_mask", mask)
+        self.assertTrue(r0.equal_dst_mask(r1))
+        r1._set_component("dst_mask", mask[::-1])
+        self.assertFalse(r0.equal_dst_mask(r1))
 
 
 if __name__ == "__main__":
