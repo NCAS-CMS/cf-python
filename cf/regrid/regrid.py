@@ -3,13 +3,14 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
+from time import time
 from typing import Any
 
 import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug
 
-from ..functions import DeprecationError, regrid_logging
+from ..functions import DeprecationError, regrid_logging, free_memory
 from ..units import Units
 from .regridoperator import RegridOperator
 
@@ -734,8 +735,9 @@ def regrid(
 
         if debug:
             logger.debug(
-                f"Sparse weights: {regrid_operator.weights!r}\n"
-                f"        {regrid_operator.weights.__dict__}"
+                "Weights matrix for all partitions:\n"
+                f"{regrid_operator.weights!r}\n"
+                f"{regrid_operator.weights.__dict__}"
             )  # pragma: no cover
 
         return regrid_operator
@@ -1249,7 +1251,7 @@ def spherical_grid(
                         f"The {name} latitude and longitude coordinates "
                         "are 2-d but the X and Y axes could not be identified "
                         "from dimension coordinates nor from the "
-                        f"{'src_axes' if name == 'source' else 'dst_axes'!r}"
+                        f"{'src_axes' if name == 'source' else 'dst_axes'!r} "
                         "parameter"
                     )
 
@@ -2615,6 +2617,7 @@ def create_esmpy_weights(
 
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
             if debug:
+                start_time = time()
                 logger.debug(
                     f"Destination ESMF Grid (partition {i}):\n"
                     f"{dst_esmpy_grid}\n"
@@ -2693,6 +2696,13 @@ def create_esmpy_weights(
                 )
                 row = None
                 col = None
+
+            if debug:
+                logger.debug(
+                    f"Time taken to calculate weights for partition {i}: "
+                    f"{time() - start_time} s\n"
+                    f"Free memory: {free_memory()/(2**30)} GiB\n"
+                )  # pragma: no cover
 
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
