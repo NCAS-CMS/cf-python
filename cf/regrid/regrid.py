@@ -2728,6 +2728,12 @@ def create_esmpy_weights(
             dst_size = weights.shape[0]
             del w
 
+            if debug:
+                logger.debug(
+                    "Free memory after final weights matrix creation: "
+                    f"{free_memory()/(2**30)} GiB\n"
+                )  # pragma: no cover
+
         if weights_file is not None:
             # Write the weights to a netCDF file (copying the
             # dimension and variable names and structure of a weights
