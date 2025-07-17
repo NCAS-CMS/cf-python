@@ -382,14 +382,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
-        debug = is_log_level_debug(logger)
-
-        if debug:
-            logger.debug(
-                self.__class__.__name__ + ".__getitem__"
-            )  # pragma: no cover
-            logger.debug(f"    input indices = {indices}")  # pragma: no cover
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -436,12 +428,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             findices = ancillary_mask + indices
         else:
             findices = indices
-
-        if debug:
-            logger.debug(f"    shape    = {shape}")  # pragma: no cover
-            logger.debug(f"    indices  = {indices}")  # pragma: no cover
-            logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
-            logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = data[tuple(findices)]
 
@@ -495,11 +481,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-
-                if debug:
-                    logger.debug(
-                        f"    dice = {tuple(dice)}"
-                    )  # pragma: no cover
 
                 # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.

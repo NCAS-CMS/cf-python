@@ -82,13 +82,6 @@ class PropertiesDataBounds(PropertiesData):
             findices = tuple(indices)
 
         cname = self.__class__.__name__
-        if is_log_level_debug(logger):
-            logger.debug(
-                f"{cname}.__getitem__: shape    = {self.shape}\n"
-                f"{cname}.__getitem__: indices2 = {indices2}\n"
-                f"{cname}.__getitem__: indices  = {indices}\n"
-                f"{cname}.__getitem__: findices = {findices}"
-            )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
@@ -132,12 +125,6 @@ class PropertiesDataBounds(PropertiesData):
                     findices[1] = [
                         mask.insert_dimension(-1) for mask in findices[1]
                     ]
-
-                if is_log_level_debug(logger):
-                    logger.debug(
-                        f"{self.__class__.__name__}.__getitem__: findices for "
-                        f"bounds = {tuple(findices)}"
-                    )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
 

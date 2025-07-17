@@ -10,7 +10,7 @@ import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug
 
-from ..functions import DeprecationError, regrid_logging, free_memory
+from ..functions import DeprecationError, free_memory, regrid_logging
 from ..units import Units
 from .regridoperator import RegridOperator
 
@@ -684,7 +684,7 @@ def regrid(
             src_grid.coords.pop()
             if src_grid.bounds:
                 src_grid.bounds.pop()
-
+        print (33)
         # Create regrid operator
         regrid_operator = RegridOperator(
             weights,
@@ -726,20 +726,23 @@ def regrid(
             src, src_grid, regrid_operator, check_coordinates=check_coordinates
         )
 
+    print (44)
     if return_operator:
         # Note: The `RegridOperator.tosparse` method will also set
         #       'dst_mask' to False for destination points with all
         #       zero weights.
         if regrid_operator.weights_file is None:
+            print (45)
             regrid_operator.tosparse()
 
+        print (46)
         if debug:
             logger.debug(
-                "Weights matrix for all partitions:\n"
+                "Sparse weights array for all partitions:\n"
                 f"{regrid_operator.weights!r}\n"
                 f"{regrid_operator.weights.__dict__}"
             )  # pragma: no cover
-
+        print (47)
         return regrid_operator
 
     from scipy.sparse import issparse
@@ -1998,7 +2001,7 @@ def create_esmpy_grid(grid, mask=None, grid_partitions=1):
         if partition is not None:
             if debug:
                 logger.debug(
-                    f"Partition {i} index: {partition}"
+                    f"Partition {i}: Index: {partition}"
                 )  # pragma: no cover
 
             ndim = coords[-1].ndim
@@ -2564,8 +2567,9 @@ def create_esmpy_weights(
 
     src_esmpy_grid = src_esmpy_grids[0]
     if debug:
+        klass = src_esmpy_grid.__class__.__name__
         logger.debug(
-            f"Source ESMF Grid:\n{src_esmpy_grid}\n\n"
+            f"Source ESMF {src_esmpy_grid}\n\n"
         )  # pragma: no cover
 
     compute_weights = True
@@ -2615,14 +2619,21 @@ def create_esmpy_weights(
             # each destination grid partition
             w = []
 
+
+        if debug:
+            start_time0 = time()
+
+        # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
             if debug:
-                start_time = time()
+                klass = dst_esmpy_grid.__class__.__name__
                 logger.debug(
-                    f"Destination ESMF Grid (partition {i}):\n"
-                    f"{dst_esmpy_grid}\n"
+                    f"Partition {i}: Time taken to create destination ESMF "
+                    f"{klass}: {time() - start_time0} s\n"
+                    f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
-
+                start_time = time()
+                
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
             )
@@ -2649,6 +2660,12 @@ def create_esmpy_weights(
             row = weights["row_dst"]
             col = weights["col_src"]
             weights = weights["weights"]
+
+            if debug:
+                logger.debug(
+                    f"Partition {i}: Time taken by esmpy.Regrid: "
+                    f"{time() - start_time} s"
+                )  # pragma: no cover
 
             ESMF_unmapped_action = r.unmapped_action
             ESMF_ignore_degenerate = int(r.ignore_degenerate)
@@ -2689,46 +2706,57 @@ def create_esmpy_weights(
                 # the sparse weights array for this partition.
                 row -= 1
                 col -= 1
-                w.append(
-                    csr_array(
-                        (weights, (row, col)), shape=[dst_size, src_size]
-                    )
+                weights = csr_array(
+                    (weights, (row, col)), shape=[dst_size, src_size]
                 )
+                w.append(weights)
+                
                 row = None
                 col = None
+                
                 if debug:
                     logger.debug(
-                        f"Sparse weights array for partition {i}: {w[-1]!r}\n"
+                        f"Partition {i}: Sparse weights array: {weights!r}"
                     )  # pragma: no cover
-
+                    print (weights.indptr.dtype,weights.indices.dtype)
+                    
             if debug:
                 logger.debug(
-                    f"Time taken to calculate weights for partition {i}: "
-                    f"{time() - start_time} s\n"
-                    f"Free memory: {free_memory()/(2**30)} GiB\n"
+                    f"Partition {i}: Total time taken to calculate weights: "
+                    f"{time() - start_time0} s\n"
+                    f"Partition {i}: Free memory after weights calculation: "
+                    f"{free_memory()/(2**30)} GiB\n"
                 )  # pragma: no cover
-
+                start_time0 = time()
+        print (11)
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
             src_esmpy_grid.destroy()
+            print (12)
             src_esmpy_field.destroy()
+            print (13)
             r.srcfield.grid.destroy()
+            print (14)
             r.srcfield.destroy()
-
+            print (15)
+        print (22)
         if partitioned_dst_grid:
             # The destination grid has been partitioned, so
             # concatenate the sparse weights arrays for all
             # destination grid partitions.
-            weights = vstack(w)
-
-            # Cast indptr and indices as 32-bit integers, if possible.
-            weights.indptr = weights.indptr.astype(
-                integer_dtype(dst_size), copy=False
-            )
-            weights.indices = weights.indices.astype(
-                integer_dtype(src_size), copy=False
-            )
-
+            if debug:
+                start_time = time()
+                logger.debug(
+                    "Starting concatenation of sparse weights arrays for "
+                    "all partitions ..."
+                )  # pragma: no cover
+            
+            weights = vstack(w, format="csr")
+            if debug:
+                logger.debug(
+                    f"... finished in {time() - start_time} s"
+                )  # pragma: no cover
+                
             dst_size = weights.shape[0]
             del w
 
