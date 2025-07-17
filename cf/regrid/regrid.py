@@ -2696,6 +2696,10 @@ def create_esmpy_weights(
                 )
                 row = None
                 col = None
+                if debug:
+                    logger.debug(
+                        f"Sparse weights array for partition {i}: {w[-1]!r}\n"
+                    )  # pragma: no cover
 
             if debug:
                 logger.debug(
