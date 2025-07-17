@@ -2569,7 +2569,7 @@ def create_esmpy_weights(
     if debug:
         klass = src_esmpy_grid.__class__.__name__
         logger.debug(
-            f"Source ESMF {src_esmpy_grid}\n\n"
+            f"Source ESMF {src_esmpy_grid}\n"
         )  # pragma: no cover
 
     compute_weights = True
@@ -2628,8 +2628,8 @@ def create_esmpy_weights(
             if debug:
                 klass = dst_esmpy_grid.__class__.__name__
                 logger.debug(
-                    f"Partition {i}: Time taken to create destination ESMF "
-                    f"{klass}: {time() - start_time0} s\n"
+                    f"Partition {i}: Time taken to create ESMF {klass}: "
+                    f"{time() - start_time0} s\n"
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
                 start_time = time()
