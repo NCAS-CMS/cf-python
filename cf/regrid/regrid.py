@@ -746,6 +746,9 @@ def regrid(
             
         return regrid_operator
 
+    # ----------------------------------------------------------------
+    # Still here? Then do the regridding
+    # ----------------------------------------------------------------
     from scipy.sparse import issparse
 
     if debug and issparse(regrid_operator.weights):
@@ -754,9 +757,6 @@ def regrid(
             f"        {regrid_operator.weights.__dict__}"
         )  # pragma: no cover
 
-    # ----------------------------------------------------------------
-    # Still here? Then do the regridding
-    # ----------------------------------------------------------------
     if src_grid.n_regrid_axes == dst_grid.n_regrid_axes:
         regridded_axis_sizes = {
             src_iaxis: (dst_size,)
@@ -764,6 +764,7 @@ def regrid(
                 src_grid.axis_indices, dst_grid.shape
             )
         }
+        
     elif src_grid.n_regrid_axes == 1:
         # Fewer source grid axes than destination grid axes (e.g. mesh
         # regridded to lat/lon).
@@ -2581,7 +2582,8 @@ def create_esmpy_weights(
         if debug:
             start_time0 = time()
             logger.debug(
-                "Free memory before calculation of all weights: "
+                "Calculating weights ...\n\n"
+                "Free memory before calculation of weights: "
                 f"{free_memory()/(2**30)} GiB\n"
             )  # pragma: no cover
             
@@ -2677,9 +2679,10 @@ def create_esmpy_weights(
 
             if debug:
                 logger.debug(
-                    f"Partition {i}: Time taken by esmpy.Regrid: "
+                    f"Partition {i}: Time taken by ESMF to create weights: "
                     f"{time() - start_time} s"
                 )  # pragma: no cover
+                start_time = time()
 
             ESMF_unmapped_action = r.unmapped_action
             ESMF_ignore_degenerate = int(r.ignore_degenerate)
@@ -2730,7 +2733,7 @@ def create_esmpy_weights(
                 
                 if debug:
                     logger.debug(
-                        f"Partition {i}: Time taken by create sparse weights "
+                        f"Partition {i}: Time taken to create sparse weights "
                         f"array: {time() - start_time} s\n"
                         f"Partition {i}: Sparse weights array: {weights!r}"
                     )  # pragma: no cover
@@ -2742,17 +2745,14 @@ def create_esmpy_weights(
                     f"{free_memory()/(2**30)} GiB\n"
                 )  # pragma: no cover
                 start_time = time()
+                
         print (11)
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
             src_esmpy_grid.destroy()
-            print (12)
             src_esmpy_field.destroy()
-            print (13)
             r.srcfield.grid.destroy()
-            print (14)
             r.srcfield.destroy()
-            print (15)
         print (22)
         if partitioned_dst_grid:
             # The destination grid has been partitioned, so
@@ -2765,6 +2765,7 @@ def create_esmpy_weights(
                     f"{time() - start_time} s\n"
                     f"Free memory after concatenation of sparse weights "
                     f"arrays: {free_memory()/(2**30)} GiB\n"
+                    f"Sparse weights array for all partitions: {weights!r}\n"
                 ) # pragma: no
                 start_time = time()
 
