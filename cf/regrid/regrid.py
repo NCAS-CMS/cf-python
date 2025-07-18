@@ -2571,21 +2571,20 @@ def create_esmpy_weights(
             row = None
             col = None
 
-#
-#    compute_weights = True
-#    if esmpy_regrid_operator is None and weights_file is not None:
-#        from os.path import isfile
-#
-#        if isfile(weights_file):
-#            # The regridding weights and indices will be read from a
-#            # file
-#            compute_weights = False
-#            weights = None
-#            row = None
-#            col = None
-#
+    if esmpy_regrid_operator is not None:
+        # If we're returning the esmpy regrid operator, we need to
+        # create it by computing the weights.
+        compute_weights = True
+            
     from_file = True
-    if compute_weights or esmpy_regrid_operator is not None:
+    if compute_weights: # or esmpy_regrid_operator is not None:
+        if debug:
+            start_time0 = time()
+            logger.debug(
+                "Free memory before calculation of all weights: "
+                f"{free_memory()/(2**30)} GiB\n"
+            )  # pragma: no cover
+            
         # Create the weights using ESMF
         from_file = False
 
@@ -2634,17 +2633,16 @@ def create_esmpy_weights(
             # each destination grid partition
             w = []
 
-
-        if debug:
-            start_time0 = time()
-
         # Loop round destination grid partitions
+        if debug:
+            start_time = time()
+            
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
             if debug:
                 klass = dst_esmpy_grid.__class__.__name__
                 logger.debug(
                     f"Partition {i}: Time taken to create ESMF {klass}: "
-                    f"{time() - start_time0} s\n"
+                    f"{time() - start_time} s\n"
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
                 start_time = time()
@@ -2732,18 +2730,18 @@ def create_esmpy_weights(
                 
                 if debug:
                     logger.debug(
+                        f"Partition {i}: Time taken by create sparse weights "
+                        f"array: {time() - start_time} s\n"
                         f"Partition {i}: Sparse weights array: {weights!r}"
                     )  # pragma: no cover
-                    print (weights.indptr.dtype,weights.indices.dtype)
+                    start_time = time()
                     
             if debug:
                 logger.debug(
-                    f"Partition {i}: Total time taken to calculate weights: "
-                    f"{time() - start_time0} s\n"
                     f"Partition {i}: Free memory after weights calculation: "
                     f"{free_memory()/(2**30)} GiB\n"
                 )  # pragma: no cover
-                start_time0 = time()
+                start_time = time()
         print (11)
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
@@ -2760,27 +2758,26 @@ def create_esmpy_weights(
             # The destination grid has been partitioned, so
             # concatenate the sparse weights arrays for all
             # destination grid partitions.
-            if debug:
-                start_time = time()
-                logger.debug(
-                    "Starting concatenation of sparse weights arrays for "
-                    "all partitions ..."
-                )  # pragma: no cover
-            
             weights = vstack(w, format="csr")
             if debug:
                 logger.debug(
-                    f"... finished in {time() - start_time} s"
-                )  # pragma: no cover
-                
+                    f"Time taken to concatenate sparse weights arrays: "
+                    f"{time() - start_time} s\n"
+                    f"Free memory after concatenation of sparse weights "
+                    f"arrays: {free_memory()/(2**30)} GiB\n"
+                ) # pragma: no
+                start_time = time()
+
             dst_size = weights.shape[0]
             del w
 
-            if debug:
-                logger.debug(
-                    "Free memory after final weights matrix creation: "
-                    f"{free_memory()/(2**30)} GiB\n"
-                )  # pragma: no cover
+        if debug:
+            logger.debug(
+                "Total time taken to calculate all weights: "
+                f"{time() - start_time0} s\n"
+                "Free memory after calculation of all weights: "
+                f"{free_memory()/(2**30)} GiB\n"
+            )  # pragma: no cover
 
         if weights_file is not None:
             # Write the weights to a netCDF file (copying the
@@ -2863,6 +2860,15 @@ def create_esmpy_weights(
                 print(7)
                 nc.close()
                 print(8)
+                if debug:
+                    logger.debug(
+                        f"Time taken to create weights file {weights_file}: "
+                        f"{time() - start_time} s\n"
+                        f"Free memory after creation of weights file: "
+                        f"{free_memory()/(2**30)} GiB\n"
+                    )  # pragma: no cover
+                    start_time = time()
+
             if partitioned_dst_grid:
                 # Reset 'row' and 'col' to None, because 'weights' is
                 # already a sparse array.
