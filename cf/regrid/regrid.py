@@ -2770,18 +2770,20 @@ def create_esmpy_weights(
             # Write the weights to a netCDF file (copying the
             # dimension and variable names and structure of a weights
             # file created by ESMF).
+            print (0)
             from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
 
             from .. import __version__
 
             from_file = True
-
+            print (1)
             if partitioned_dst_grid:
                 # 'weights' is a CSR sparse array, so we have to infer
                 # the row and column arrays from it.
                 weights_data = weights.data
                 row, col = weights.tocoo().coords
+                print(2)
                 if start_index:
                     # 'row' and 'col' come out of `tocoo().coords` as
                     # zero-based values
@@ -2790,6 +2792,7 @@ def create_esmpy_weights(
             else:
                 weights_data = weights
 
+            print(3)
             regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
             if src_grid.ln_z:
                 regrid_method += f", ln {src_grid.method} in vertical"
@@ -2827,21 +2830,23 @@ def create_esmpy_weights(
                 v = nc.createVariable(
                     "S", weights_data.dtype, ("n_s",), zlib=True
                 )
+                print(4)
                 v.long_name = "Weights values"
                 v[...] = weights_data
-
+                print(5)
                 v = nc.createVariable("row", row.dtype, ("n_s",), zlib=True)
                 v.long_name = "Destination/row indices"
                 v.start_index = start_index
                 v[...] = row
+                print(6)
 
                 v = nc.createVariable("col", col.dtype, ("n_s",), zlib=True)
                 v.long_name = "Source/col indices"
                 v.start_index = start_index
                 v[...] = col
-
+                print(7)
                 nc.close()
-
+                print(8)
             if partitioned_dst_grid:
                 # Reset 'row' and 'col' to None, because 'weights' is
                 # already a sparse array.
@@ -2852,7 +2857,7 @@ def create_esmpy_weights(
         # Make the Regrid instance available via the
         # 'esmpy_regrid_operator' list
         esmpy_regrid_operator.append(r)
-
+    print(99)
     return weights, row, col, start_index, from_file
 
 
