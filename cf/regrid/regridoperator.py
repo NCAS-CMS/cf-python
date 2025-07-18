@@ -850,13 +850,13 @@ class RegridOperator(mixin_Container, Container):
                     )
 
             # Convert to sparse array format
-            if col_start_index:
-                col = col - col_start_index
+            if col_start_index is not None:
+                col -= col_start_index
             elif start_index:
                 col = col - start_index
 
-            if row_start_index:
-                row = row - row_start_index
+            if row_start_index is not None:
+                row -= row_start_index
             elif start_index:
                 row = row - start_index
 

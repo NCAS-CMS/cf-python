@@ -14,21 +14,11 @@ from ..functions import DeprecationError, free_memory, regrid_logging
 from ..units import Units
 from .regridoperator import RegridOperator
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
     import esmpy
-
-    esmpy_imported = True
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
-
-        esmpy_imported = True
-    except ImportError:
-        pass
+    esmpy_imported = False
 
 logger = logging.getLogger(__name__)
 
@@ -2630,13 +2620,14 @@ def create_esmpy_weights(
 
         if partitioned_dst_grid:
             from scipy.sparse import csr_array, vstack
-
+            
             # Initialise the list of the sparse weights arrays for
             # each destination grid partition
             w = []
 
         # Loop round destination grid partitions
         if debug:
+            import tracemalloc                        
             start_time = time()
             
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
@@ -2680,7 +2671,7 @@ def create_esmpy_weights(
             if debug:
                 logger.debug(
                     f"Partition {i}: Time taken by ESMF to create weights: "
-                    f"{time() - start_time} s"
+                    f"{time() - start_time} s\n"
                 )  # pragma: no cover
                 start_time = time()
 
@@ -2727,9 +2718,7 @@ def create_esmpy_weights(
                     (weights, (row, col)), shape=[dst_size, src_size]
                 )
                 w.append(weights)
-                
-                row = None
-                col = None
+                del row, col
                 
                 if debug:
                     logger.debug(
@@ -2795,16 +2784,15 @@ def create_esmpy_weights(
             if partitioned_dst_grid:
                 # 'weights' is a CSR sparse array, so we have to infer
                 # the row and column arrays from it.
-                weights_data = weights.data
-                row, col = weights.tocoo().coords
-                print(2)
+                row, col = weights.tocoo(copy=False).coords
+                print(2.0)
+                weights =  weights.data
+                print(2.1)
                 if start_index:
                     # 'row' and 'col' come out of `tocoo().coords` as
                     # zero-based values
                     row += start_index
                     col += start_index
-            else:
-                weights_data = weights
 
             print(3)
             regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
@@ -2825,7 +2813,7 @@ def create_esmpy_weights(
                 nc.ESMF_unmapped_action = ESMF_unmapped_action
                 nc.ESMF_ignore_degenerate = ESMF_ignore_degenerate
 
-                nc.createDimension("n_s", weights_data.size)
+                nc.createDimension("n_s", weights.size)
                 nc.createDimension("src_grid_rank", src_rank)
                 nc.createDimension("dst_grid_rank", dst_rank)
 
@@ -2842,22 +2830,28 @@ def create_esmpy_weights(
                 v[...] = dst_grid.esmpy_shape
 
                 v = nc.createVariable(
-                    "S", weights_data.dtype, ("n_s",), zlib=True
+                    "S", weights.dtype, ("n_s",), zlib=True
                 )
                 print(4)
                 v.long_name = "Weights values"
-                v[...] = weights_data
+                v[...] = weights
+                nc.sync()
+                del weights
                 print(5)
                 v = nc.createVariable("row", row.dtype, ("n_s",), zlib=True)
                 v.long_name = "Destination/row indices"
                 v.start_index = start_index
                 v[...] = row
+                nc.sync()
+                del row
                 print(6)
 
                 v = nc.createVariable("col", col.dtype, ("n_s",), zlib=True)
                 v.long_name = "Source/col indices"
                 v.start_index = start_index
                 v[...] = col
+                nc.sync()
+                del col
                 print(7)
                 nc.close()
                 print(8)
@@ -2870,11 +2864,12 @@ def create_esmpy_weights(
                     )  # pragma: no cover
                     start_time = time()
 
-            if partitioned_dst_grid:
-                # Reset 'row' and 'col' to None, because 'weights' is
-                # already a sparse array.
-                row = None
-                col = None
+#            if partitioned_dst_grid:
+#                # Reset 'row' and 'col' to None, because 'weights' is
+#                # already a sparse array.
+            weights = None
+            row = None
+            col = None
 
     if esmpy_regrid_operator is not None:
         # Make the Regrid instance available via the
