@@ -731,18 +731,19 @@ def regrid(
         # Note: The `RegridOperator.tosparse` method will also set
         #       'dst_mask' to False for destination points with all
         #       zero weights.
-#        if regrid_operator.weights_file is None:
-        print (45)
-        regrid_operator.tosparse()
-
-        print (46)
-        if debug:
-            logger.debug(
-                "Sparse weights array for all partitions:\n"
-                f"{regrid_operator.weights!r}\n"
-                f"{regrid_operator.weights.__dict__}"
-            )  # pragma: no cover
+        if regrid_operator.weights is not None:
+            print (45)
+            regrid_operator.tosparse()
+            
+            print (46)
+            if debug:
+                logger.debug(
+                    "Sparse weights array for all partitions:\n"
+                    f"{regrid_operator.weights!r}\n"
+                    f"{regrid_operator.weights.__dict__}"
+                )  # pragma: no cover
         print (47)
+            
         return regrid_operator
 
     from scipy.sparse import issparse
