@@ -406,6 +406,9 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     a = cfdm_to_memory(a)
 
     if measure:
+        # Surface area of sphere is 4*pi*(r**2)
+        # Number of HEALPix cells at refinement level N is 12*(4**N)
+        # => Area of one cell is pi*(r**2)/(3*(4**N))
         x = np.pi * (radius**2) / 3.0
     else:
         x = 1.0
@@ -419,7 +422,6 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     w = np.empty(a.shape, dtype="float64")
 
     for order, i in zip(orders, index):
-        nside = healpix.order2nside(order)
-        w = np.where(inverse == inverse[i], x / (nside**2), w)
+        w = np.where(inverse == inverse[i], x / (4**order), w)
 
     return w
