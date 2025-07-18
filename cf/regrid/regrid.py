@@ -2558,21 +2558,7 @@ def create_esmpy_weights(
     debug = is_log_level_debug(logger)
 
     start_index = 1
-
-    src_esmpy_grids = tuple(src_esmpy_grids)
-    if len(src_esmpy_grids) != 1:
-        raise ValueError(
-            "There must be exactly one source grid partition. "
-            f"Got {len(src_esmpy_grids)}"
-        )
-
-    src_esmpy_grid = src_esmpy_grids[0]
-    if debug:
-        klass = src_esmpy_grid.__class__.__name__
-        logger.debug(
-            f"Source ESMF {src_esmpy_grid}\n"
-        )  # pragma: no cover
-
+    
     compute_weights = True
     if esmpy_regrid_operator is None and weights_file is not None:
         from os.path import isfile
@@ -2585,6 +2571,19 @@ def create_esmpy_weights(
             row = None
             col = None
 
+#
+#    compute_weights = True
+#    if esmpy_regrid_operator is None and weights_file is not None:
+#        from os.path import isfile
+#
+#        if isfile(weights_file):
+#            # The regridding weights and indices will be read from a
+#            # file
+#            compute_weights = False
+#            weights = None
+#            row = None
+#            col = None
+#
     from_file = True
     if compute_weights or esmpy_regrid_operator is not None:
         # Create the weights using ESMF
@@ -2605,6 +2604,21 @@ def create_esmpy_weights(
             dst_meshloc = esmpy.api.constants.MeshLoc.NODE
         elif not dst_mesh_location:
             dst_meshloc = None
+
+        src_esmpy_grids = tuple(src_esmpy_grids)
+        if len(src_esmpy_grids) != 1:
+            raise ValueError(
+                "There must be exactly one source grid partition. "
+                f"Got {len(src_esmpy_grids)}"
+            )
+
+        # Create source esmpy field
+        src_esmpy_grid = src_esmpy_grids[0]
+        if debug:
+            klass = src_esmpy_grid.__class__.__name__
+            logger.debug(
+                f"Source ESMF {src_esmpy_grid}\n"
+            )  # pragma: no cover
 
         src_esmpy_field = esmpy.Field(
             src_esmpy_grid, name="src", meshloc=src_meshloc
@@ -2635,6 +2649,7 @@ def create_esmpy_weights(
                 )  # pragma: no cover
                 start_time = time()
                 
+            # Create destination esmpy field
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
             )
