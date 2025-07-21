@@ -1,3 +1,14 @@
+Version NEXTVERSION
+--------------
+
+**2025-??-??**
+
+* New methods to allow changing units in a chain: `cf.Field.to_units`,
+  `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/874)
+
+----
+
 Version 3.18.0
 --------------
 

@@ -130,6 +130,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainTopology.to_units
    ~cf.DomainTopology.override_units
    ~cf.DomainTopology.override_calendar
 
