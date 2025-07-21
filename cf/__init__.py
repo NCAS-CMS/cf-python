@@ -217,7 +217,8 @@ else:
     _minimum_vn = "2025.5.1"
     if Version(distributed.__version__) < Version(_minimum_vn):
         raise ValueError(
-            f"Bad distributed version: cf requires distributed>={_minimum_vn}. "
+            "Bad distributed version: cf requires "
+            f"distributed>={_minimum_vn}. "
             f"Got {distributed.__version__} at {distributed.__file__}"
         )
 
