@@ -7384,7 +7384,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def to_units(self, units, inplace=False):
         """Change the data array units.
 
-        Changing the units will causes the data values to be changed
+        Changing the units causes the data values to be changed
         to match the new units, therefore the new units must be
         equivalent to the existing ones.
 
