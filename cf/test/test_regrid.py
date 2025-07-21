@@ -803,7 +803,6 @@ class RegridTest(unittest.TestCase):
         r = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
-        r.dump()
         self.assertEqual(r.weights_file, tmpfile)
         self.assertIsNone(r.weights)
 

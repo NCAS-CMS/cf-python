@@ -558,9 +558,7 @@ def _regrid(
             print (22.1)
             indices = weights.indices
             data = weights.data
-#            pos_data = weights.data >= min_weight
-            print (22.2, len(indptr) - 1)
-            dst_mask_copied=False
+            pos_data = weights.data >= min_weight
             import time
             s = time.time()
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
@@ -572,16 +570,8 @@ def _regrid(
                 if not count_nonzero(mask):
                     continue
 
-#                if where(  (mask) & (pos_data[i0:i1])   )[0].size:
-                if where(  data[i0:i1][mask] >= min_weight  )[0].size:
-#                    if not dst_mask_copied:
-#                        dst_mask_copied = True
-#                        if dst_mask is None:
-#                            dst_size = weights.shape[0]
-#                            dst_mask = np.zeros((dst_size,), dtype=bool)
-#                        else:
-#                            dst_mask = dst_mask.copy()
-                    print ('MASKING j=', j)
+                if where(  (mask) & (pos_data[i0:i1])   )[0].size:
+#                if where(  data[i0:i1][mask] >= min_weight  )[0].size:
                     dst_mask[j] = True
             print(33)
             del indptr #, pos_data
