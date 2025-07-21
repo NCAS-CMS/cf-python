@@ -532,6 +532,7 @@ def _regrid(
             del indptr
 
         elif method in ("linear", "bilinear"):
+            print (11)
             # 2) Linear methods:
             #
             # Mask out any row j that contains at least one positive
@@ -544,7 +545,7 @@ def _regrid(
                 dst_mask = np.zeros((dst_size,), dtype=bool)
             else:
                 dst_mask = dst_mask.copy()
-
+            print(22)
             # Note: It is much more efficient to access
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
@@ -563,7 +564,7 @@ def _regrid(
 
                 if where((mask) & (pos_data[i0:i1]))[0].size:
                     dst_mask[j] = True
-
+            print(33)
             del indptr, pos_data
 
         elif method == "nearest_dtos":
@@ -618,13 +619,15 @@ def _regrid(
     # Regrid the data by calculating the dot product of the weights
     # matrix with the source data
     # ----------------------------------------------------------------
+    print(44)
     a = np.ma.getdata(a)
+    print(55)
     a = weights.dot(a)
-
+    print(66)
     if dst_mask is not None:
         a = np.ma.array(a)
         a[dst_mask] = np.ma.masked
-
+    print(77)
     return a, src_mask, dst_mask, weights
 
 
@@ -660,7 +663,7 @@ def regrid_weights(operator, dst_dtype=None):
     from math import prod
     print('IN    regrid_weights')
     operator.tosparse()
-    print('done tosprase()')
+
     weights = operator.weights
     if dst_dtype is not None and weights.dtype != dst_dtype:
         # Convert weights to have the same dtype as the regridded data
@@ -670,5 +673,5 @@ def regrid_weights(operator, dst_dtype=None):
     if dst_mask is not None:
         # Convert dst_mask to a 1-d array
         dst_mask = dst_mask.reshape((prod(operator.dst_shape),))
-    print (112)
+    print ('DONE    regrid_weights')
     return weights, dst_mask
