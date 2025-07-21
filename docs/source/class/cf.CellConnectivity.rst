@@ -129,6 +129,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellConnectivity.to_units
    ~cf.CellConnectivity.override_units
    ~cf.CellConnectivity.override_calendar
 

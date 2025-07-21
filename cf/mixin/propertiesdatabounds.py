@@ -2167,17 +2167,18 @@ class PropertiesDataBounds(PropertiesData):
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of date-time units.
 
-        The new calendar **need not** be equivalent to the original one
-        and the data array elements will not be changed to reflect the new
-        units. Therefore, this method should only be used when it is known
-        that the data array values are correct but the calendar has been
-        incorrectly encoded.
+        The new calendar need not be equivalent to the original one,
+        and the data array elements will not be changed to reflect the
+        new calendar. Therefore, this method should only be used when
+        it is known that the data array values are correct but the
+        calendar has been incorrectly encoded.
 
-        Not to be confused with setting the `calendar` or `Units`
-        attributes to a calendar which is equivalent to the original
-        calendar
+        Not to be confused with changing to an equivalent calendar
+        with the `to_units` method or the `Units` or `calendar`
+        attributes.
 
-        .. seealso:: `calendar`, `override_units`, `units`, `Units`
+        .. seealso:: `override_units`, `to_units`, `Units`, `units`,
+                     `calendar`
 
         :Parameters:
 
@@ -2190,13 +2191,21 @@ class PropertiesDataBounds(PropertiesData):
 
         :Returns:
 
-        TODO
+            `{{class}}` or `None`
+                The construct with data converted to the new units, or
+                `None` if the operation was in-place.
 
         **Examples**
 
-        TODO
-
+        >>> f.Units
+        <Units: days since 2020-02-28>
+        >>> print(f.array)
+        1
         >>> g = f.override_calendar('noleap')
+        >>> g.Units
+        <Units: days since 2020-02-28 noleap>
+        >>> print(f.array)
+        1
 
         """
         return self._apply_superclass_data_oper(
@@ -2214,16 +2223,19 @@ class PropertiesDataBounds(PropertiesData):
     def override_units(self, units, inplace=False, i=False):
         """Override the units.
 
-        The new units need not be equivalent to the original ones, and the
-        data array elements will not be changed to reflect the new
-        units. Therefore, this method should only be used when it is known
-        that the data array values are correct but the units have
-        incorrectly encoded.
+        The new units need not be equivalent to the original ones, and
+        the data array elements will not be changed to reflect the new
+        units. Therefore, this method should only be used when it is
+        known that the data array values are correct but the units
+        have incorrectly encoded.
 
-        Not to be confused with setting the `units` or `Units` attribute
-        to units which are equivalent to the original units.
+        Not to be confused with changing to equivalent units with the
+        `to_units` method or the `Units`, `units`, or `calendar`
+        attributes. These approaches also convert the data values to conform
+        with the new units.
 
-        .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
+        .. seealso:: `override_calendar`, `to_units`, `Units`,
+                     `units`, `calendar`
 
         :Parameters:
 
@@ -2236,7 +2248,9 @@ class PropertiesDataBounds(PropertiesData):
 
         :Returns:
 
-                TODO
+            `{{class}}` or `None`
+                The construct with data converted to the new units, or
+                `None` if the operation was in-place.
 
         **Examples**
 
@@ -3289,6 +3303,64 @@ class PropertiesDataBounds(PropertiesData):
             bounds=bounds,
             inplace=inplace,
             i=i,
+        )
+
+    @_inplace_enabled(default=False)
+    def to_units(self, units, inplace=False):
+        """Change the data array units.
+
+        Changing the units causes the data values to be changed
+        to match the new units, therefore the new units must be
+        equivalent to the existing ones.
+
+        Not to be confused with overriding the units with
+        `override_units`
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `override_units`, `override_calendar`, `Units`,
+                     `units`, `calendar`
+
+        :Parameters:
+
+            units: `str` or `Units`
+                The new units for the data array.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with data converted to the new units, or
+                `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> print(f.Units)
+        'km'
+        >>> print(f.array)
+        [1 2]
+        >>> g = f.to_units('metre')
+        >>> print(g.Units)
+        'metre'
+        >>> print(g.array)
+        [1000. 2000.]
+        >>> g.to_units('miles', inplace=True)
+        >>> print(g.array)
+        [0.62137119 1.24274238]
+        >>> g.to_units('degC')
+        Traceback (most recent call last)
+            ...
+        ValueError: Can't set Units to <Units: degC> that are not equivalent to the current units <Units: miles>. Consider using the override_units method instead.
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "to_units",
+            (units,),
+            bounds=True,
+            interior_ring=False,
+            inplace=inplace,
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")

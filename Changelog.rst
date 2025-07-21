@@ -1,9 +1,11 @@
-Version 3.NEXTVERSION
---------------
+Version NEXTVERSION
 
 **2025-??-??**
 
-* Allow regridding for very large grid. New keyword parameter to
+* New methods to allow changing units in a chain: `cf.Field.to_units`,
+  `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/874)
+* Allow regridding for very large grids. New keyword parameter to
   `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
   (https://github.com/NCAS-CMS/cf-python/issues/878)
 

@@ -42,6 +42,7 @@ Units
    ~cf.Data.get_units
    ~cf.Data.has_units
    ~cf.Data.set_units
+   ~cf.Data.to_units
    ~cf.Data.override_units
    ~cf.Data.del_calendar
    ~cf.Data.get_calendar
