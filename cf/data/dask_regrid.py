@@ -564,9 +564,10 @@ def _regrid(
             import time
             s = time.time()
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-                if not divmod (j, 1000)[1]:
+                if not divmod (j, 100000)[1]:
                     print (f"{j}: {time.time() - s} s")
                     s = time.time()
+                    
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
@@ -637,11 +638,8 @@ def _regrid(
     # Regrid the data by calculating the dot product of the weights
     # matrix with the source data
     # ----------------------------------------------------------------
-    print(44)
     a = np.ma.getdata(a)
-    print(55)
     a = weights.dot(a)
-    print(66)
     if dst_mask is not None:
         a = np.ma.array(a)
         a[dst_mask] = np.ma.masked
