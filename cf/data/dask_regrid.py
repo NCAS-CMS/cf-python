@@ -559,7 +559,7 @@ def _regrid(
             indices = weights.indices
             data = weights.data
 #            pos_data = weights.data >= min_weight
-            print (22.2, indptr.size - 1)
+            print (22.2, len(indptr) - 1)
             dst_mask_copied=False
             import time
             s = time.time()
