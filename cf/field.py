@@ -13597,7 +13597,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_cyclic=False,
             dst_cyclic=False,
             use_src_mask=use_src_mask,
-            use_dst_mask=use_dst_mask,
+            use_dst_mask=use_dst_mask,            
             axes=axes,
             ignore_degenerate=ignore_degenerate,
             return_operator=return_operator,

@@ -440,9 +440,10 @@ _docstring_substitution_definitions = {
 
                 **Performance**
 
-                The computation of the weights can be much more costly
-                than the regridding itself, in which case reading
-                pre-calculated weights can improve performance.
+                The computation of the weights can take much longer,
+                and take much more memory, than the regridding itself,
+                in which case reading pre-calculated weights can
+                improve performance.
 
                 Ignored if *dst* is a `RegridOperator`.""",
     # aggregated_units
@@ -590,7 +591,12 @@ _docstring_substitution_definitions = {
             ``'maximum'`` is given then the largest possible number of
             partitions of the destination grid will be used. A
             positive integer specifies the exact number of partitions,
-            capped by the maximum allowed.""",
+            capped by the maximum allowed.
+
+            Note that if setting *dst_grid_partitions* is a necessity
+            in allow the regridding to work, then it is worth
+            considering storing the weights in file via the
+            *weights_file* parameter.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

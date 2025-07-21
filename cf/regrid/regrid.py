@@ -726,6 +726,11 @@ def regrid(
                     f"{regrid_operator.weights!r}\n"
                     f"{regrid_operator.weights.__dict__}"
                 )  # pragma: no cover
+                print(
+                    regrid_operator.weights.data.size,
+                    regrid_operator.weights.indptr.size,
+                    regrid_operator.weights.indices.size,
+                )
 
         return regrid_operator
 

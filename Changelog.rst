@@ -1,3 +1,14 @@
+Version 3.NEXTVERSION
+--------------
+
+**2025-??-??**
+
+* Allow regridding for very large grid. New keyword parameter to
+  `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
+  (https://github.com/NCAS-CMS/cf-python/issues/878)
+
+----
+
 Version 3.18.0
 --------------
 
