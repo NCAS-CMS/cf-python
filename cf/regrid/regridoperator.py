@@ -817,8 +817,8 @@ class RegridOperator(mixin_Container, Container):
             start_index = self.start_index
             col_start_index = None
             row_start_index = None
-            
-            if weights is None:                
+
+            if weights is None:
                 weights_file = self.weights_file
                 if weights_file is not None:
                     # Read the weights from the weights file
@@ -866,7 +866,7 @@ class RegridOperator(mixin_Container, Container):
                 (weights, (row, col)), shape=[dst_size, src_size]
             )
             del row, col
-            
+
             self._set_component("weights", weights, copy=False)
             self._set_component("row", None, copy=False)
             self._set_component("col", None, copy=False)

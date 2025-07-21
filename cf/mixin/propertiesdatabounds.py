@@ -1,7 +1,7 @@
 import logging
 
 import numpy as np
-from cfdm import is_log_level_debug, is_log_level_info
+from cfdm import is_log_level_info
 
 from ..data import Data
 from ..decorators import (
@@ -80,8 +80,6 @@ class PropertiesDataBounds(PropertiesData):
             findices = tuple(auxiliary_mask) + tuple(indices)
         else:
             findices = tuple(indices)
-
-        cname = self.__class__.__name__
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:

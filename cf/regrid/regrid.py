@@ -418,7 +418,7 @@ def regrid(
         if method in ("conservative_2nd", "nearest_dtos"):
             raise ValueError(
                 f"Can't use destination grid partitioning for {method!r} "
-                "regridding. Got dst_grid_partitions={dst_grid_partitions!r}"
+                f"regridding. Got dst_grid_partitions={dst_grid_partitions!r}"
             )
 
         if return_esmpy_regrid_operator:
@@ -638,8 +638,8 @@ def regrid(
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
-        partitioned_dst_grid = (
-            partitions(dst_grid, dst_grid_partitions, return_n=True) > 1
+        dst_grid_partitions = partitions(
+            dst_grid, dst_grid_partitions, return_n=True
         )
 
         # Create regrid weights
@@ -653,7 +653,7 @@ def regrid(
             quarter=src_grid.dummy_size_2_dimension,
             esmpy_regrid_operator=esmpy_regrid_operator,
             weights_file=weights_file,
-            partitioned_dst_grid=partitioned_dst_grid,
+            dst_grid_partitions=dst_grid_partitions,
         )
 
         if return_esmpy_regrid_operator:
@@ -719,14 +719,14 @@ def regrid(
     if return_operator:
         if regrid_operator.weights is not None:
             regrid_operator.tosparse()
-            
+
             if debug:
                 logger.debug(
                     "Sparse weights array for all partitions:\n"
                     f"{regrid_operator.weights!r}\n"
                     f"{regrid_operator.weights.__dict__}"
                 )  # pragma: no cover
-            
+
         return regrid_operator
 
     # ----------------------------------------------------------------
@@ -747,7 +747,7 @@ def regrid(
                 src_grid.axis_indices, dst_grid.shape
             )
         }
-        
+
     elif src_grid.n_regrid_axes == 1:
         # Fewer source grid axes than destination grid axes (e.g. mesh
         # regridded to lat/lon).
@@ -2453,7 +2453,7 @@ def create_esmpy_weights(
     quarter=False,
     esmpy_regrid_operator=None,
     weights_file=None,
-    partitioned_dst_grid=False,
+    dst_grid_partitions=1,
 ):
     """Create the `esmpy` regridding weights.
 
@@ -2508,33 +2508,41 @@ def create_esmpy_weights(
 
             .. versionadded:: 3.15.2
 
-        partitioned_dst_grid: `bool`, optional
-            Whether or not the destination grid has been partitioned.
+        dst_grid_partitions: `int`, optional
+            The number of destination grid partitions.
 
             .. versionadded:: NEXTVERSION
 
     :Returns:
 
         5-`tuple`
+
             * weights: Either the 1-d `numpy` array of the regridding
-                   weights. Or `None` if the regridding weights are to
-                   be read from a file.
-            * row: The 1-d `numpy` array of the row indices of the
-                   regridding weights in the dense weights matrix,
+                   weights. Or a CSR sparse array of the regridding
+                   weights. Or `None` if the weights are to be read
+                   from, or written to, a file.
+
+            * row: The 1-d `numpy` array of the destination/row
+                   indices of the weights in the dense weights matrix,
                    which has J rows and I columns, where J and I are
                    the total number of cells in the destination and
-                   source grids respectively. The start index is 1. Or
-                   `None` if the indices are to be read from a file.
-            * col: The 1-d `numpy` array of column indices of the
-                   regridding weights in the dense weights matrix,
-                   which has J rows and I columns, where J and I are
-                   the total number of cells in the destination and
-                   source grids respectively. The start index is 1. Or
-                   `None` if the indices are to be read from a file.
+                   source grids respectively. Or `None` if *weights*
+                   is a CSR sparse array, or the weights are to be
+                   read from a file.
+
+            * col: The 1-d `numpy` array of source/column indices of
+                   the weights in the dense weights matrix, which has
+                   J rows and I columns, where J and I are the total
+                   number of cells in the destination and source grids
+                   respectively. Or `None` if *weights* is a CSR
+                   sparse array, or the weights are to be read from a
+                   file.
+
             * start_index: The non-negative integer start index of the
                    row and column indices.
-            * from_file: `True` if the weights were read from a file,
-                   otherwise `False`.
+
+            * from_file: `True` if the weights were read from, or
+                   written to, a file. Otherwise `False`.
 
     """
     from cfdm import integer_dtype
@@ -2542,7 +2550,7 @@ def create_esmpy_weights(
     debug = is_log_level_debug(logger)
 
     start_index = 1
-    
+
     compute_weights = True
     if esmpy_regrid_operator is None and weights_file is not None:
         from os.path import isfile
@@ -2559,17 +2567,20 @@ def create_esmpy_weights(
         # If we're returning the esmpy regrid operator, we need to
         # create it by computing the weights.
         compute_weights = True
-            
+
     from_file = True
-    if compute_weights: # or esmpy_regrid_operator is not None:
+    if compute_weights:  # or esmpy_regrid_operator is not None:
+        partitioned_dst_grid = dst_grid_partitions > 1
         if debug:
             start_time0 = time()
             logger.debug(
                 "Calculating weights ...\n\n"
                 "Free memory before calculation of weights: "
-                f"{free_memory()/(2**30)} GiB\n"
+                f"{free_memory() / (2**30)} GiB\n\n"
+                "Number of destination grid partitions: "
+                f"{dst_grid_partitions}\n"
             )  # pragma: no cover
-            
+
         # Create the weights using ESMF
         from_file = False
 
@@ -2599,9 +2610,8 @@ def create_esmpy_weights(
         # Create source esmpy field
         src_esmpy_grid = src_esmpy_grids[0]
         if debug:
-            klass = src_esmpy_grid.__class__.__name__
             logger.debug(
-                f"Source ESMF {src_esmpy_grid}\n"
+                f"Source ESMF {src_esmpy_grid.__class__.__name__}\n"
             )  # pragma: no cover
 
         src_esmpy_field = esmpy.Field(
@@ -2613,26 +2623,25 @@ def create_esmpy_weights(
 
         if partitioned_dst_grid:
             from scipy.sparse import csr_array, vstack
-            
+
             # Initialise the list of the sparse weights arrays for
             # each destination grid partition
             w = []
 
         # Loop round destination grid partitions
         if debug:
-            import tracemalloc                        
-            start_time = time()
-            
+            start_time = time()  # pragma: no cover
+
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
             if debug:
-                klass = dst_esmpy_grid.__class__.__name__
                 logger.debug(
-                    f"Partition {i}: Time taken to create ESMF {klass}: "
+                    f"Partition {i}: Time taken to create ESMF "
+                    f"{dst_esmpy_grid.__class__.__name__}: "
                     f"{time() - start_time} s\n"
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
-                start_time = time()
-                
+                start_time = time()  # pragma: no cover
+                print(dst_esmpy_grid.size[0])
             # Create destination esmpy field
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
@@ -2666,7 +2675,7 @@ def create_esmpy_weights(
                     f"Partition {i}: Time taken by ESMF to create weights: "
                     f"{time() - start_time} s\n"
                 )  # pragma: no cover
-                start_time = time()
+                start_time = time()  # pragma: no cover
 
             ESMF_unmapped_action = r.unmapped_action
             ESMF_ignore_degenerate = int(r.ignore_degenerate)
@@ -2712,7 +2721,7 @@ def create_esmpy_weights(
                 )
                 w.append(weights)
                 del row, col
-                
+
                 if debug:
                     logger.debug(
                         f"Partition {i}: Time taken to create sparse weights "
@@ -2720,14 +2729,14 @@ def create_esmpy_weights(
                         f"Partition {i}: Sparse weights array: {weights!r}"
                     )  # pragma: no cover
                     start_time = time()
-                    
+
             if debug:
                 logger.debug(
                     f"Partition {i}: Free memory after weights calculation: "
-                    f"{free_memory()/(2**30)} GiB\n"
+                    f"{free_memory() / (2**30)} GiB\n"
                 )  # pragma: no cover
-                start_time = time()
-                
+                start_time = time()  # pragma: no cover
+
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
             src_esmpy_grid.destroy()
@@ -2749,17 +2758,17 @@ def create_esmpy_weights(
                     f"Time taken to concatenate sparse weights arrays: "
                     f"{time() - start_time} s\n"
                     f"Free memory after concatenation of sparse weights "
-                    f"arrays: {free_memory()/(2**30)} GiB\n"
+                    f"arrays: {free_memory() / (2**30)} GiB\n"
                     f"Sparse weights array for all partitions: {weights!r}\n"
-                ) # pragma: no
-                start_time = time()
+                )  # pragma: no
+                start_time = time()  # pragma: no cover
 
         if debug:
             logger.debug(
                 "Total time taken to calculate all weights: "
                 f"{time() - start_time0} s\n"
                 "Free memory after calculation of all weights: "
-                f"{free_memory()/(2**30)} GiB\n"
+                f"{free_memory() / (2**30)} GiB\n"
             )  # pragma: no cover
 
         if weights_file is not None:
@@ -2767,7 +2776,7 @@ def create_esmpy_weights(
             # dimension and variable names and structure of a weights
             # file created by ESMF).
             #
-            # Be careful with memory, by using `netCDF4.Dataset.sync`
+            # Be careful with memory by using `netCDF4.Dataset.sync`
             # and `del`, because the weights may be large, and keeping
             # copies of them in memory may not be possible.
             from cfdm.data.locks import netcdf_lock
@@ -2778,10 +2787,10 @@ def create_esmpy_weights(
             from_file = True
 
             if partitioned_dst_grid:
-                # 'weights' is a CSR sparse array, so we have to infer
-                # the row and column arrays from it.
+                # 'weights' is a CSR sparse array, so we have to get
+                # from it 'row', 'col', and weights as a numpy array.
                 row, col = weights.tocoo(copy=False).coords
-                weights =  weights.data
+                weights = weights.data
                 if start_index:
                     # 'row' and 'col' come out of `tocoo().coords` as
                     # zero-based values
@@ -2822,9 +2831,7 @@ def create_esmpy_weights(
                 v.long_name = "Destination grid shape"
                 v[...] = dst_grid.esmpy_shape
 
-                v = nc.createVariable(
-                    "S", weights.dtype, ("n_s",), zlib=True
-                )
+                v = nc.createVariable("S", weights.dtype, ("n_s",), zlib=True)
 
                 v.long_name = "Weights values"
                 v[...] = weights
@@ -2852,16 +2859,16 @@ def create_esmpy_weights(
                         f"Time taken to create weights file {weights_file}: "
                         f"{time() - start_time} s\n"
                         f"Free memory after creation of weights file: "
-                        f"{free_memory()/(2**30)} GiB\n"
+                        f"{free_memory() / (2**30)} GiB\n"
                     )  # pragma: no cover
-                    start_time = time()
-            
+                    start_time = time()  # pragma: no cover
+
             weights = None
             row = None
             col = None
 
     if esmpy_regrid_operator is not None:
-        # Make the Regrid instance available via the
+        # Make the `esmpy.Regrid` instance available via the
         # 'esmpy_regrid_operator' list
         esmpy_regrid_operator.append(r)
 
@@ -3506,7 +3513,8 @@ def partitions(grid, grid_partitions, return_n=False):
 
             return (None,)
 
-        # Somewhere in the range [1, maximum] number of partitions
+        # Partition size: Somewhere in the range [1, maximum number of
+        # partitions]
         size = ceil(shape[-1] / grid_partitions)
 
     if return_n:

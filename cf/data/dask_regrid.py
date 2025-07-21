@@ -507,10 +507,10 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
             data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
@@ -529,10 +529,7 @@ def _regrid(
                 w[mask] = 0
                 data[i0:i1] = w
 
-            del indptr
-
         elif method in ("linear", "bilinear"):
-            print ('LINEAR MASK')
             # 2) Linear methods:
             #
             # Mask out any row j that contains at least one positive
@@ -550,19 +547,14 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
             where = np.where
             indptr = weights.indptr
             indices = weights.indices
             data = weights.data
-#            import time
-#            s = time.time()
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-#                if not divmod (j, 1000)[1]:
-#                    print (f"{j}: {time.time() - s} s")
-#                    s = time.time()
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
@@ -588,10 +580,10 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
@@ -600,8 +592,6 @@ def _regrid(
                     dst_mask[j] = True
                 elif n_masked:
                     weights.data[np.arange(i0, i1)[mask]] = 0
-
-            del indptr
 
         elif method in (
             "patch",

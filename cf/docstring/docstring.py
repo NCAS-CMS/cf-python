@@ -569,17 +569,18 @@ _docstring_substitution_definitions = {
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
     # dst_grid_partitions
-    "{{dst_grid_partitions: `int` or `str`, optional}}": """rdst_grid_partitions: `int` or `str`, optional
-            Calculating the weights matrix for grids with very large
-            numbers of grid points can potentially require more memory
-            than is available. However, this memory requirement can be
-            greatly reduced by calculating weights separately for
+    "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional
+            Calculating the weights matrix for grids with a very large
+            number of source and or destination grid points can
+            potentially require more memory than is
+            available. However, the memory requirement can be greatly
+            reduced by calculating weights separately for
             non-overlapping partitions of the destination grid, and
             then combining the weights from each partition to create
             the final weights matrix. The more partitions there are,
             the smaller the memory requirement for the weights
-            calculations will be, at the expense of the weights
-            calculations taking longer.
+            calculations, at the expense of the weights calculations
+            taking longer.
 
             The *dst_grid_partitions* parameter sets the number of
             destination grid partitions for the weights

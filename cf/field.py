@@ -13198,6 +13198,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{dst_grid_partitions: `int` or `str`, optional}}
 
+                The maximum possible number of partitions is equal to
+                the size of the destination grid Y axis for 2-d
+                regridding, or the Z axis for 3-d regridding.
+
                 .. versionadded:: NEXTVERSION
 
             axis_order: sequence, optional
@@ -13501,6 +13505,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: 3.16.2
 
             {{dst_grid_partitions: `int` or `str`, optional}}
+
+                Partitioning is only available for 2-d or 3-d
+                regridding. The maximum possible number of partitions
+                is equal to the size of the first of the destination
+                grid axes specified by the *axes* parameter.
 
                 .. versionadded:: NEXTVERSION
 
