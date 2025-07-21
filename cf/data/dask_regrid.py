@@ -658,9 +658,9 @@ def regrid_weights(operator, dst_dtype=None):
 
     """
     from math import prod
-
+    print('IN    regrid_weights')
     operator.tosparse()
-
+    print('done tosprase()')
     weights = operator.weights
     if dst_dtype is not None and weights.dtype != dst_dtype:
         # Convert weights to have the same dtype as the regridded data
@@ -670,5 +670,5 @@ def regrid_weights(operator, dst_dtype=None):
     if dst_mask is not None:
         # Convert dst_mask to a 1-d array
         dst_mask = dst_mask.reshape((prod(operator.dst_shape),))
-
+    print (112)
     return weights, dst_mask
