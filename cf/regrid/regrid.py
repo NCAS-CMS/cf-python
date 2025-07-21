@@ -674,7 +674,7 @@ def regrid(
             src_grid.coords.pop()
             if src_grid.bounds:
                 src_grid.bounds.pop()
-        print (33)
+
         # Create regrid operator
         regrid_operator = RegridOperator(
             weights,
@@ -716,23 +716,16 @@ def regrid(
             src, src_grid, regrid_operator, check_coordinates=check_coordinates
         )
 
-    print (44)
     if return_operator:
-        # Note: The `RegridOperator.tosparse` method will also set
-        #       'dst_mask' to False for destination points with all
-        #       zero weights.
         if regrid_operator.weights is not None:
-            print (45)
             regrid_operator.tosparse()
             
-            print (46)
             if debug:
                 logger.debug(
                     "Sparse weights array for all partitions:\n"
                     f"{regrid_operator.weights!r}\n"
                     f"{regrid_operator.weights.__dict__}"
                 )  # pragma: no cover
-        print (47)
             
         return regrid_operator
 
@@ -2735,19 +2728,22 @@ def create_esmpy_weights(
                 )  # pragma: no cover
                 start_time = time()
                 
-        print (11)
         if esmpy_regrid_operator is None:
             # Destroy esmpy objects that are no longer needed
             src_esmpy_grid.destroy()
             src_esmpy_field.destroy()
             r.srcfield.grid.destroy()
             r.srcfield.destroy()
-        print (22)
+
         if partitioned_dst_grid:
             # The destination grid has been partitioned, so
             # concatenate the sparse weights arrays for all
             # destination grid partitions.
             weights = vstack(w, format="csr")
+            dst_size = weights.shape[0]
+            row = None
+            col = None
+            del w
             if debug:
                 logger.debug(
                     f"Time taken to concatenate sparse weights arrays: "
@@ -2757,9 +2753,6 @@ def create_esmpy_weights(
                     f"Sparse weights array for all partitions: {weights!r}\n"
                 ) # pragma: no
                 start_time = time()
-
-            dst_size = weights.shape[0]
-            del w
 
         if debug:
             logger.debug(
@@ -2773,6 +2766,10 @@ def create_esmpy_weights(
             # Write the weights to a netCDF file (copying the
             # dimension and variable names and structure of a weights
             # file created by ESMF).
+            #
+            # Be careful with memory, by using `netCDF4.Dataset.sync`
+            # and `del`, because the weights may be large, and keeping
+            # copies of them in memory may not be possible.
             print (0)
             from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
@@ -2785,16 +2782,13 @@ def create_esmpy_weights(
                 # 'weights' is a CSR sparse array, so we have to infer
                 # the row and column arrays from it.
                 row, col = weights.tocoo(copy=False).coords
-                print(2.0)
                 weights =  weights.data
-                print(2.1)
                 if start_index:
                     # 'row' and 'col' come out of `tocoo().coords` as
                     # zero-based values
                     row += start_index
                     col += start_index
 
-            print(3)
             regrid_method = f"{src_grid.coord_sys} {src_grid.method}"
             if src_grid.ln_z:
                 regrid_method += f", ln {src_grid.method} in vertical"
@@ -2832,19 +2826,18 @@ def create_esmpy_weights(
                 v = nc.createVariable(
                     "S", weights.dtype, ("n_s",), zlib=True
                 )
-                print(4)
+
                 v.long_name = "Weights values"
                 v[...] = weights
                 nc.sync()
                 del weights
-                print(5)
+
                 v = nc.createVariable("row", row.dtype, ("n_s",), zlib=True)
                 v.long_name = "Destination/row indices"
                 v.start_index = start_index
                 v[...] = row
                 nc.sync()
                 del row
-                print(6)
 
                 v = nc.createVariable("col", col.dtype, ("n_s",), zlib=True)
                 v.long_name = "Source/col indices"
@@ -2852,9 +2845,9 @@ def create_esmpy_weights(
                 v[...] = col
                 nc.sync()
                 del col
-                print(7)
+
                 nc.close()
-                print(8)
+
                 if debug:
                     logger.debug(
                         f"Time taken to create weights file {weights_file}: "
@@ -2863,10 +2856,7 @@ def create_esmpy_weights(
                         f"{free_memory()/(2**30)} GiB\n"
                     )  # pragma: no cover
                     start_time = time()
-
-#            if partitioned_dst_grid:
-#                # Reset 'row' and 'col' to None, because 'weights' is
-#                # already a sparse array.
+            
             weights = None
             row = None
             col = None
@@ -2875,7 +2865,7 @@ def create_esmpy_weights(
         # Make the Regrid instance available via the
         # 'esmpy_regrid_operator' list
         esmpy_regrid_operator.append(r)
-    print(99)
+
     return weights, row, col, start_index, from_file
 
 
