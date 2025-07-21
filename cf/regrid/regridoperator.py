@@ -817,10 +817,11 @@ class RegridOperator(mixin_Container, Container):
             start_index = self.start_index
             col_start_index = None
             row_start_index = None
-
-            if weights is None:
+            
+            if weights is None:                
                 weights_file = self.weights_file
                 if weights_file is not None:
+                    print('reading file ....')
                     # Read the weights from the weights file
                     from cfdm.data.locks import netcdf_lock
                     from netCDF4 import Dataset
@@ -848,7 +849,7 @@ class RegridOperator(mixin_Container, Container):
                         "one of the 'weights' or 'weights_file' attributes to "
                         "be set"
                     )
-
+                print ('file read into RAM')
             # Convert to sparse array format
             if col_start_index is not None:
                 col -= col_start_index
@@ -861,10 +862,11 @@ class RegridOperator(mixin_Container, Container):
                 row = row - start_index
 
             src_size = prod(self.src_shape)
+            print('starting csr_array')
             weights = csr_array(
                 (weights, (row, col)), shape=[dst_size, src_size]
             )
-
+            print('done csr_array')
             self._set_component("weights", weights, copy=False)
             self._set_component("row", None, copy=False)
             self._set_component("col", None, copy=False)
