@@ -3,6 +3,9 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* New methods to allow changing units in a chain: `cf.Field.to_units`,
+  `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/874)
 * New method: `cf.Field.create_latlon_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New HEALPix methods: `cf.Field.healpix_decrease_refinement_level`,

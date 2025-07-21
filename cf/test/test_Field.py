@@ -3087,6 +3087,24 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(values[0], -999)
         self.assertEqual(counts[0], 5)
 
+    def test_Field_to_units(self):
+        """Test Field.to_units."""
+        f = cf.example_field(0)
+        f = f[0, :2]
+
+        g = f.to_units("g/kg")
+        self.assertIsInstance(f, g.__class__)
+        self.assertEqual(g.Units, cf.Units("g/kg"))
+        self.assertTrue(np.allclose(g.array, [7.0, 34.0]))
+
+        self.assertIsNone(g.to_units("1", inplace=True))
+        self.assertEqual(g.Units, cf.Units("1"))
+        self.assertTrue(np.allclose(g.array, [0.007, 0.034]))
+
+        # Non-equivalent units
+        with self.assertRaises(ValueError):
+            g.to_units("degC")
+
     def test_Field_healpix_indexing_scheme(self):
         """Test Field.healpix_indexing_scheme."""
         # HEALPix field

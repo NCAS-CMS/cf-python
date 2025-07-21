@@ -4684,6 +4684,23 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e._axes, d._axes[1:])
         self.assertEqual(e.nc_dataset_chunksizes(), chunks)
 
+    def test_Data_to_units(self):
+        """Test cf.Data.to_units."""
+        d = cf.Data([1, 2], "km")
+        e = d.to_units("m")
+
+        self.assertIsInstance(e, d.__class__)
+        self.assertEqual(e.Units, cf.Units("m"))
+        self.assertTrue(np.allclose(e.array, [1000.0, 2000.0]))
+
+        self.assertIsNone(e.to_units("miles", inplace=True))
+        self.assertEqual(e.Units, cf.Units("miles"))
+        self.assertTrue(np.allclose(e.array, [0.62137119, 1.24274238]))
+
+        # Non-equivalent units
+        with self.assertRaises(ValueError):
+            e.to_units("degC")
+
     def test_Data_coarsen(self):
         """Test Data.coarsen."""
         d = cf.Data(np.arange(24).reshape((4, 6)), chunks=(3, 3))
