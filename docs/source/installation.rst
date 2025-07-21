@@ -196,6 +196,8 @@ Required
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1.
 
+* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1.
+
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
