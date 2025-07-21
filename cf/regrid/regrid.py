@@ -2770,14 +2770,13 @@ def create_esmpy_weights(
             # Be careful with memory, by using `netCDF4.Dataset.sync`
             # and `del`, because the weights may be large, and keeping
             # copies of them in memory may not be possible.
-            print (0)
             from cfdm.data.locks import netcdf_lock
             from netCDF4 import Dataset
 
             from .. import __version__
 
             from_file = True
-            print (1)
+
             if partitioned_dst_grid:
                 # 'weights' is a CSR sparse array, so we have to infer
                 # the row and column arrays from it.

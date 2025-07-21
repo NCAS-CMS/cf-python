@@ -532,6 +532,7 @@ def _regrid(
             del indptr
 
         elif method in ("linear", "bilinear"):
+            print ('LINEAR MASK')
             # 2) Linear methods:
             #
             # Mask out any row j that contains at least one positive
@@ -553,26 +554,21 @@ def _regrid(
             #       faster than 'np.any' and 'np.all'.
             count_nonzero = np.count_nonzero
             where = np.where
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
             data = weights.data
-            pos_data = weights.data >= min_weight
-            import time
-            s = time.time()
+#            import time
+#            s = time.time()
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
-                if not divmod (j, 100000)[1]:
-                    print (f"{j}: {time.time() - s} s")
-                    s = time.time()
-                    
+#                if not divmod (j, 1000)[1]:
+#                    print (f"{j}: {time.time() - s} s")
+#                    s = time.time()
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
 
-                if where(  (mask) & (pos_data[i0:i1])   )[0].size:
-#                if where(  data[i0:i1][mask] >= min_weight  )[0].size:
+                if where(data[i0:i1][mask] >= min_weight)[0].size:
                     dst_mask[j] = True
-
-            del indptr #, pos_data
 
         elif method == "nearest_dtos":
             # 3) Nearest neighbour dtos method:
