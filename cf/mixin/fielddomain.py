@@ -1998,18 +1998,22 @@ class FieldDomain:
                         : height(1) = [1.5] m
         Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
         Coord references: grid_mapping_name:healpix
-        >>> f.coordinate_reference('grid_mapping_name:healpix').coordinate_conversion.get_parameter('indexing_scheme')
+        >>> f.healpix_info()['indexing_scheme']
         'nested'
         >>> print(f.coordinate('healpix_index').array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         >>> g = f.healpix_indexing_scheme('nested_unique')
+        >>> g.healpix_info()['indexing_scheme']
+        'nested_unique'
         >>> print(g.coordinate('healpix_index').array)
         [16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
          40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63]
 
         >>> g = f.healpix_indexing_scheme('ring')
+        >>> g.healpix_info()['indexing_scheme']
+        'ring'
         >>> print(g.coordinate('healpix_index').array)
         [13  5  4  0 15  7  6  1 17  9  8  2 19 11 10  3 28 20 27 12 30 22 21 14
          32 24 23 16 34 26 25 18 44 37 36 29 45 39 38 31 46 41 40 33 47 43 42 35]
@@ -2028,44 +2032,43 @@ class FieldDomain:
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
-        from ..dask_utils import cf_healpix_indexing_scheme
-        from ..healpix import healpix_info
-
         f = self.copy()
 
-        hp = healpix_info(f)
+        hp = f.healpix_info()
 
         valid_indexing_schemes = ("nested", "ring", "nested_unique")
         if new_indexing_scheme not in valid_indexing_schemes + (None,):
             raise ValueError(
-                "Can't change HEALPix index scheme: new_indexing_scheme "
-                f"keyword must be None or one of {valid_indexing_schemes!r}. "
-                f"Got {new_indexing_scheme!r}"
+                f"Can't change HEALPix index scheme of {f!r}: "
+                "new_indexing_scheme keyword must be None or one of "
+                f"{valid_indexing_schemes!r}. Got {new_indexing_scheme!r}"
             )
 
         # Get the healpix_index coordinates
         healpix_index = hp.get("healpix_index")
         if healpix_index is None:
             raise ValueError(
-                "Can't change HEALPix index scheme: There are no "
+                f"Can't change HEALPix index scheme of {f!r}: There are no "
                 "healpix_index coordinates"
             )
 
         # Get the healpix_index axis
-        axis = hp["axis_key"]
+        axis = hp["domain_axis_key"]
 
         indexing_scheme = hp.get("indexing_scheme")
         if indexing_scheme is None:
             raise ValueError(
-                "Can't change HEALPix indexing scheme: indexing_scheme has "
-                "not been set in the HEALPix grid mapping coordinate reference"
+                f"Can't change HEALPix indexing scheme of {f!r}: "
+                "indexing_scheme has not been set in the HEALPix grid "
+                "mapping coordinate reference"
             )
 
         if indexing_scheme not in valid_indexing_schemes:
             raise ValueError(
-                "Can't change HEALPix indexing scheme: indexing_scheme in "
-                "the HEALPix grid mapping coordinate reference must be one "
-                f"of {valid_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"Can't change HEALPix indexing scheme of {f!r}: "
+                "indexing_scheme in the HEALPix grid mapping coordinate "
+                f"reference must be one of {valid_indexing_schemes!r}. "
+                f"Got {indexing_scheme!r}"
             )
 
         if (
@@ -2078,7 +2081,7 @@ class FieldDomain:
                 and refinement_level is None
             ):
                 raise ValueError(
-                    "Can't change HEALPix indexing scheme from "
+                    f"Can't change HEALPix indexing scheme of {f!r} from "
                     f"{indexing_scheme!r} to {new_indexing_scheme!r} when "
                     "refinement_level has not been set in the HEALPix grid "
                     "mapping coordinate reference"
@@ -2114,17 +2117,9 @@ class FieldDomain:
                 )
 
             # Change the HEALPix indices
-            dx = healpix_index.data.to_dask_array(
-                _force_mask_hardness=False, _force_to_memory=False
-            )
-            dx = dx.map_blocks(
-                cf_healpix_indexing_scheme,
-                meta=np.array((), dtype="int64"),
-                indexing_scheme=indexing_scheme,
-                new_indexing_scheme=new_indexing_scheme,
-                refinement_level=refinement_level,
-            )
-            healpix_index.set_data(dx, copy=False)
+            from ..healpix import _healpix_indexing_scheme
+
+            _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme)
 
         # Ensure that healpix indices are auxiliary coordinates
         if healpix_index.construct_type == "dimension_coordinate":
@@ -2149,6 +2144,38 @@ class FieldDomain:
                 f = f.subspace(**{axis: np.argsort(index)})
 
         return f
+
+    def healpix_info(self):
+        """Get information about the HEALPix grid, if there is one.
+
+        .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `dict`
+                The information about the HEALPix axis. The dictionary
+                will be empty if there is no HEALPix axis.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> f.healpix_info()
+        {'coordinate_reference_key': 'coordinatereference0',
+         'grid_mapping_name:healpix': <CF CoordinateReference: grid_mapping_name:healpix>,
+         'indexing_scheme': 'nested',
+         'refinement_level': 1,
+         'domain_axis_key': 'domainaxis1',
+         'coordinate_key': 'auxiliarycoordinate0',
+         'healpix_index': <CF AuxiliaryCoordinate: healpix_index(48) 1>}
+
+        >>> f = cf.example_field(0)
+        >>> healpix_info(f)
+        {}
+
+        """
+        from ..healpix import healpix_info
+
+        return healpix_info(self)
 
     @_inplace_enabled(default=False)
     def healpix_to_ugrid(self, inplace=False):
@@ -2193,11 +2220,11 @@ class FieldDomain:
         Topologies      : cell:face(ncdim%cell(48), 4) = [[965, ..., 3074]]
 
         """
-        from ..healpix import del_healpix_coordinate_reference, healpix_info
+        from ..healpix import del_healpix_coordinate_reference
 
-        hp = healpix_info(self)
+        hp = self.healpix_info()
 
-        axis = hp.get("axis_key")
+        axis = hp.get("domain_axis_key")
         if axis is None:
             raise ValueError(
                 "Can't convert HEALPix to UGRID: There is no HEALPix domain "
@@ -2327,7 +2354,7 @@ class FieldDomain:
                 (the default) then the longitudes of such points will
                 vary according to the alogrithm being used to create
                 them. If set to a number, then the longitudes of such
-                points will all be that value.
+                points will all be given that value.
 
             overwrite: `bool`, optional
                 If True then remove any existing latitude and
@@ -2450,36 +2477,35 @@ class FieldDomain:
         # and calulate the lat/lon coordinates.
         identity, cr = identities.popitem()
 
+        # Initialize the flag that tells us if any new coordinates
+        # were created
         new_coords = False
+
         if one_d and identity == "grid_mapping_name:healpix":
             # --------------------------------------------------------
-            # HEALPix 1-d coordinates
+            # HEALPix: 1-d lat/lon coordinates
             # --------------------------------------------------------
-            from ..healpix import healpix_info
-
-            hp = healpix_info(f)
+            hp = f.healpix_info()
 
             indexing_scheme = hp.get("indexing_scheme")
             if indexing_scheme not in ("nested", "ring", "nested_unique"):
                 if is_log_level_info(logger):
                     logger.info(
-                        "Can't create 1-d latitude and longitude coordinates: "
-                        f"Invalid HEALPix index scheme: {indexing_scheme!r}"
+                        "Can't create 1-d latitude and longitude coordinates "
+                        f"for {f!r}: Invalid HEALPix index scheme: "
+                        f"{indexing_scheme!r}"
                     )  # pragma: no cover
 
                 return f
 
             refinement_level = hp.get("refinement_level")
-            if refinement_level is None and indexing_scheme in (
-                "nested",
-                "ring",
-            ):
+            if refinement_level is None and indexing_scheme != "nested_unique":
                 if is_log_level_info(logger):
                     logger.info(
                         "Can't create 1-d latitude and longitude coordinates "
-                        "from {indexing_scheme!r} HEALPix indices: "
-                        "refinement_indexing_scheme has not been set in the "
-                        "HEALPix grid mapping coordinate reference"
+                        f"for {f!r} from {indexing_scheme!r} HEALPix indices: "
+                        "refinement_level has not been set in the HEALPix "
+                        "grid mapping coordinate reference"
                     )  # pragma: no cover
 
                 return f
@@ -2488,87 +2514,18 @@ class FieldDomain:
             if healpix_index is None:
                 if is_log_level_info(logger):
                     logger.info(
-                        "Can't create 1-d latitude and longitude coordinates: "
-                        "Missing healpix_index coordinates"
+                        "Can't create 1-d latitude and longitude coordinates "
+                        f"for {f!r}: Missing healpix_index coordinates"
                     )  # pragma: no cover
 
                 return f
 
-            axis = hp["axis_key"]
+            # Create the new lat/lon coordinates
+            from ..healpix import _healpix_create_latlon_coordinates
 
-            # Define functions to create latitudes and longitudes from
-            # HEALPix indices
-            from ..dask_utils import cf_healpix_bounds, cf_healpix_coordinates
-
-            # Create new latitude and longitude coordinates with bounds
-            dx = healpix_index.data.to_dask_array(
-                _force_mask_hardness=False, _force_to_memory=False
+            lat_key, lon_key = _healpix_create_latlon_coordinates(
+                f, hp, pole_longitude
             )
-            meta = np.array((), dtype="float64")
-
-            # Latitude coordinates
-            dy = dx.map_blocks(
-                cf_healpix_coordinates,
-                meta=meta,
-                indexing_scheme=indexing_scheme,
-                refinement_level=refinement_level,
-                lat=True,
-            )
-            lat = f._AuxiliaryCoordinate(
-                data=f._Data(dy, "degrees_north", copy=False),
-                properties={"standard_name": "latitude"},
-                copy=False,
-            )
-
-            # Longitude coordinates
-            dy = dx.map_blocks(
-                cf_healpix_coordinates,
-                meta=meta,
-                indexing_scheme=indexing_scheme,
-                refinement_level=refinement_level,
-                lon=True,
-            )
-            lon = f._AuxiliaryCoordinate(
-                data=f._Data(dy, "degrees_east", copy=False),
-                properties={"standard_name": "longitude"},
-                copy=False,
-            )
-
-            # Latitude bounds
-            dy = da.blockwise(
-                cf_healpix_bounds,
-                "ij",
-                dx,
-                "i",
-                new_axes={"j": 4},
-                meta=meta,
-                indexing_scheme=indexing_scheme,
-                refinement_level=refinement_level,
-                lat=True,
-            )
-            bounds = f._Bounds(data=dy)
-            lat.set_bounds(bounds)
-
-            # Longitude bounds
-            dy = da.blockwise(
-                cf_healpix_bounds,
-                "ij",
-                dx,
-                "i",
-                new_axes={"j": 4},
-                meta=meta,
-                indexing_scheme=indexing_scheme,
-                refinement_level=refinement_level,
-                lon=True,
-                pole_longitude=pole_longitude,
-            )
-            bounds = f._Bounds(data=dy)
-            lon.set_bounds(bounds)
-
-            # Set the new latitude and longitude coordinates
-            lat_key = f.set_construct(lat, axes=axis, copy=False)
-            lon_key = f.set_construct(lon, axes=axis, copy=False)
-
             new_coords = True
 
         elif two_d:

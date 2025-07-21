@@ -579,7 +579,7 @@ _docstring_substitution_definitions = {
                 decreasing the refinement level.
 
                 For a Multi-Order Coverage (MOC), where pixels with
-                different refinment levels are stored in the same
+                different refinement levels are stored in the same
                 array, the indexing scheme has a unique index for each
                 cell at each refinement level. The "nested_unique"
                 scheme for an MOC indexes pixels within each

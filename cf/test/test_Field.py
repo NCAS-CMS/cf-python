@@ -3334,7 +3334,7 @@ class FieldTest(unittest.TestCase):
         )
         self.assertFalse(np.allclose(h.coord("healpix_index"), np.arange(12)))
 
-        # Can't change refinment level for a 'nested_unique' field
+        # Can't change refinement level for a 'nested_unique' field
         with self.assertRaises(ValueError):
             self.f13.healpix_decrease_refinement_level(0, np.mean)
 
