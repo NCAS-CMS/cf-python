@@ -5,5 +5,6 @@ cfdm>=1.12.2.0, <1.12.3.0
 psutil>=0.6.0
 cfunits>=3.3.7
 dask>=2025.5.1
+distributed>=2025.5.1
 packaging>=20.0
 scipy>=1.10.0
