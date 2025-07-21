@@ -540,11 +540,11 @@ def _regrid(
             # corresponds to a masked source grid cell i. Such a row
             # corresponds to a destination grid cell that intersects
             # at least one masked source grid cell.
-#            dst_size = weights.shape[0]
-#            if dst_mask is None:
-#                dst_mask = np.zeros((dst_size,), dtype=bool)
-#            else:
-#                dst_mask = dst_mask.copy()
+            dst_size = weights.shape[0]
+            if dst_mask is None:
+                dst_mask = np.zeros((dst_size,), dtype=bool)
+            else:
+                dst_mask = dst_mask.copy()
             print(22)
             # Note: It is much more efficient to access
             #       'weights.indptr', 'weights.indices', and
@@ -557,26 +557,33 @@ def _regrid(
             indptr = weights.indptr.tolist()
             print (22.1)
             indices = weights.indices
-            pos_data = weights.data >= min_weight
-            print (22.2)
+            data = weights.data
+#            pos_data = weights.data >= min_weight
+            print (22.2, indptr.size - 1)
             dst_mask_copied=False
+            import time
+            s = time.time()
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
+                if not divmod (j, 1000)[1]:
+                    print (f"{j}: {time.time() - s} s")
+                    s = time.time()
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
 
-                if where((mask) & (pos_data[i0:i1]))[0].size:
-                    if not dst_mask_copied:
-                        dst_mask_copied = True
-                        if dst_mask is None:
-                            dst_size = weights.shape[0]
-                            dst_mask = np.zeros((dst_size,), dtype=bool)
-                        else:
-                            dst_mask = dst_mask.copy()
-
+#                if where(  (mask) & (pos_data[i0:i1])   )[0].size:
+                if where(  data[i0:i1][mask] >= min_weight  )[0].size:
+#                    if not dst_mask_copied:
+#                        dst_mask_copied = True
+#                        if dst_mask is None:
+#                            dst_size = weights.shape[0]
+#                            dst_mask = np.zeros((dst_size,), dtype=bool)
+#                        else:
+#                            dst_mask = dst_mask.copy()
+                    print ('MASKING j=', j)
                     dst_mask[j] = True
             print(33)
-            del indptr, pos_data
+            del indptr #, pos_data
 
         elif method == "nearest_dtos":
             # 3) Nearest neighbour dtos method:
