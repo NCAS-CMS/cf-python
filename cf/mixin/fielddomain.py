@@ -1963,6 +1963,16 @@ class FieldDomain:
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
         """Change the indexing scheme of HEALPix indices.
 
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
+
+        M. Reinecke and E. Hivon: Efficient data structures for masks
+        on 2D grids. A&A, 580 (2015)
+        A132. https://doi.org/10.1051/0004-6361/201526549
+
         .. versionadded:: NEXTVERSION
 
         :Parameters:
@@ -2135,18 +2145,24 @@ class FieldDomain:
             # monotonically increasing. Test for the common case of
             # already-ordered global nested or ring indices (which is
             # a fast test compared to do doing any actual sorting).
-            hp = healpix_index
+            h = healpix_index
             if not (
                 indexing_scheme in ("nested", "ring")
-                and (hp == da.arange(hp.size, chunks=hp.data.chunks)).all()
+                and (h == da.arange(h.size, chunks=h.data.chunks)).all()
             ):
-                index = hp.data.compute()
+                index = h.data.compute()
                 f = f.subspace(**{axis: np.argsort(index)})
 
         return f
 
     def healpix_info(self):
         """Get information about the HEALPix grid, if there is one.
+
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
 
         .. versionadded:: NEXTVERSION
 
@@ -2180,6 +2196,12 @@ class FieldDomain:
     @_inplace_enabled(default=False)
     def healpix_to_ugrid(self, inplace=False):
         """Convert a HEALPix domain to a UGRID domain.
+
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
 
         .. versionadded:: NEXTVERSION
 
@@ -2236,8 +2258,8 @@ class FieldDomain:
         # If lat/lon coordinates do not exist, then derive them from
         # the HEALPix indices. It's important to set pole_longitude to
         # something other than None (it doesn't matter what) so that
-        # the polar vertices come out as a single node in the domain
-        # topology.
+        # the north and south polar vertices come out as a single node
+        # in the domain topology.
         f.create_latlon_coordinates(
             one_d=True, two_d=False, pole_longitude=0, inplace=True
         )
@@ -2485,48 +2507,49 @@ class FieldDomain:
             # --------------------------------------------------------
             # HEALPix: 1-d lat/lon coordinates
             # --------------------------------------------------------
-            hp = f.healpix_info()
+            # hp = f.healpix_info()
 
-            indexing_scheme = hp.get("indexing_scheme")
-            if indexing_scheme not in ("nested", "ring", "nested_unique"):
-                if is_log_level_info(logger):
-                    logger.info(
-                        "Can't create 1-d latitude and longitude coordinates "
-                        f"for {f!r}: Invalid HEALPix index scheme: "
-                        f"{indexing_scheme!r}"
-                    )  # pragma: no cover
-
-                return f
-
-            refinement_level = hp.get("refinement_level")
-            if refinement_level is None and indexing_scheme != "nested_unique":
-                if is_log_level_info(logger):
-                    logger.info(
-                        "Can't create 1-d latitude and longitude coordinates "
-                        f"for {f!r} from {indexing_scheme!r} HEALPix indices: "
-                        "refinement_level has not been set in the HEALPix "
-                        "grid mapping coordinate reference"
-                    )  # pragma: no cover
-
-                return f
-
-            healpix_index = hp.get("healpix_index")
-            if healpix_index is None:
-                if is_log_level_info(logger):
-                    logger.info(
-                        "Can't create 1-d latitude and longitude coordinates "
-                        f"for {f!r}: Missing healpix_index coordinates"
-                    )  # pragma: no cover
-
-                return f
+            # indexing_scheme = hp.get("indexing_scheme")
+            # if indexing_scheme not in ("nested", "ring", "nested_unique"):
+            #    if is_log_level_info(logger):
+            #        logger.info(
+            #            "Can't create 1-d latitude and longitude coordinates "
+            #            f"for {f!r}: Invalid HEALPix index scheme: "
+            #            f"{indexing_scheme!r}"
+            #        )  # pragma: no cover
+            #
+            #    return f
+            #
+            # if (
+            #    "refinement_level" not in hp
+            #    and indexing_scheme != "nested_unique"
+            # ):
+            #    if is_log_level_info(logger):
+            #        logger.info(
+            #            "Can't create 1-d latitude and longitude coordinates "
+            #            f"for {f!r} from {indexing_scheme!r} HEALPix indices: "
+            #            "refinement_level has not been set in the HEALPix "
+            #            "grid mapping coordinate reference"
+            #        )  # pragma: no cover
+            #
+            #    return f
+            #
+            # if "healpix_index" not in hp:
+            #    if is_log_level_info(logger):
+            #        logger.info(
+            #            "Can't create 1-d latitude and longitude coordinates "
+            #            f"for {f!r}: Missing healpix_index coordinates"
+            #        )  # pragma: no cover
+            #
+            #    return f
 
             # Create the new lat/lon coordinates
             from ..healpix import _healpix_create_latlon_coordinates
 
             lat_key, lon_key = _healpix_create_latlon_coordinates(
-                f, hp, pole_longitude
+                f, pole_longitude
             )
-            new_coords = True
+            new_coords = lat_key is not None
 
         elif two_d:
             # --------------------------------------------------------

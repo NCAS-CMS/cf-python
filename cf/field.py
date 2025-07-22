@@ -4824,8 +4824,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Decreasing the refinement level coarsens the horizontal grid
         to a lower-level HEALPix grid by combining, using the
-        *reduction* function, all cells that lie inside each larger
-        cell at the new refinement level.
+        *reduction* function, all original cells that lie inside each
+        larger cell at the new refinement level.
+
+        The operation requires that each larger cell at the new
+        refinement level either contains no original cells (in which
+        case that new cell is not included in the output), or is
+        completely covered by original cells. It is not allowed for a
+        larger cell to be only partially covered by original
+        cells. For instance, if the original refinement level is 10
+        and the new refinement level is 8, then each output cell will
+        be the combination of 16 (:math:`=4^(10-8)`) original cells.
+
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
 
         .. versionadded:: NEXTVERSION
 
@@ -4944,7 +4959,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = self.copy()
 
-        # Get HEALPix info
+        # Get the HEALPix info
         hp = f.healpix_info()
 
         indexing_scheme = hp.get("indexing_scheme")
@@ -4973,7 +4988,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"Can't decrease HEALPix refinement level: {error}"
                 )
 
-            # Re-get HEALPix info
+            # Re-get the HEALPix info
             hp = f.healpix_info()
         elif indexing_scheme != "nested":
             raise ValueError(
@@ -5027,7 +5042,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if check_healpix_index:
             d = healpix_index.data
-            if not conform and not (d.diff() > 0).all():
+            if not (d.diff() > 0).all():
                 raise ValueError(
                     "Can't decrease HEALPix refinement level: Nested "
                     "healpix_index coordinates are not strictly "
@@ -5058,9 +5073,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         )
 
-        # Coarsen (using the 'reduction' function) the field
-        # data. Note that using the 'coarsen' technique only works for
-        # 'nested' HEALPix ordering.
+        # Coarsen the field data using the 'reduction' function.
+        #
+        # Note: Using 'Data.coarsen' only works because a) we have
+        #       'nested' HEALPix ordering, and b) each coarser cell
+        #       contains the maximum possible number of original
+        #       cells.
         f.data.coarsen(
             reduction, axes={iaxis: ncells}, trim_excess=False, inplace=True
         )

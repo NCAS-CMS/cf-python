@@ -1,54 +1,22 @@
-"""General functions useful for HEALPix functionality."""
+"""HEALPix functionality."""
+
+import logging
 
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_info
+
+logger = logging.getLogger(__name__)
 
 
-def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
-    """Change the indexing scheme of HEALPix indices.
-
-    .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.healpix_indexing_scheme`
-
-    :Parameters:
-
-        healpix_index: `Coordinate`
-            The healpix_index coordinates, which will be updated
-            in-place.
-
-        hp: `dict`
-            The HEALPix info dictionary.
-
-        new_indexing_scheme: `str`
-            The new indexing scheme.
-
-    :Returns:
-
-        `None`
-
-    """
-    from .dask_utils import cf_healpix_indexing_scheme
-
-    indexing_scheme = hp["indexing_scheme"]
-    refinement_level = hp.get("refinement_level")
-
-    # Change the HEALPix indices
-    dx = healpix_index.data.to_dask_array(
-        _force_mask_hardness=False, _force_to_memory=False
-    )
-    dx = dx.map_blocks(
-        cf_healpix_indexing_scheme,
-        meta=np.array((), dtype="int64"),
-        indexing_scheme=indexing_scheme,
-        new_indexing_scheme=new_indexing_scheme,
-        refinement_level=refinement_level,
-    )
-    healpix_index.set_data(dx, copy=False)
-
-
-def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
+def _healpix_create_latlon_coordinates(f, pole_longitude):
     """Create latitude and longitude coordinates for a HEALPix grid.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
 
     .. versionadded:: NEXTVERSION
 
@@ -60,9 +28,6 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
             The Field or Domain containing the HEALPix grid, which
             will be updated in-place.
 
-        hp: `dict`
-            The HEALPix info dictionary.
-
         pole_longitude: `None` or number
             The longitude of coordinates, or coordinate bounds, that
             lie exactly on the north or south pole. If `None` then the
@@ -73,24 +38,54 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
 
     :Returns:
 
-        `str`, `str`
+        (`str`, `str`) or (`None`, `None`)
             The keys of the new latitude and longitude coordinate
-            constructs.
+            constructs, or `None` if the coordinates could not be
+            created.
 
     """
-    from .dask_utils import cf_healpix_bounds, cf_healpix_coordinates
+    from .data.dask_utils import cf_healpix_bounds, cf_healpix_coordinates
 
-    healpix_index = hp["healpix_index"]
-    indexing_scheme = hp["indexing_scheme"]
+    hp = f.healpix_info()
+
+    indexing_scheme = hp.get("indexing_scheme")
+    if indexing_scheme not in ("nested", "ring", "nested_unique"):
+        if is_log_level_info(logger):
+            logger.info(
+                "Can't create 1-d latitude and longitude coordinates for "
+                f"{f!r}: Invalid HEALPix index scheme: {indexing_scheme!r}"
+            )  # pragma: no cover
+
+        return (None, None)
+
     refinement_level = hp.get("refinement_level")
+    if refinement_level is None and indexing_scheme != "nested_unique":
+        if is_log_level_info(logger):
+            logger.info(
+                "Can't create 1-d latitude and longitude coordinates for "
+                f"{f!r}: refinement_level has not been set in the HEALPix "
+                "grid mapping coordinate reference"
+            )  # pragma: no cover
 
-    # Create new latitude and longitude coordinates with bounds
+        return (None, None)
+
+    healpix_index = hp.get("healpix_index")
+    if healpix_index is None:
+        if is_log_level_info(logger):
+            logger.info(
+                "Can't create 1-d latitude and longitude coordinates for "
+                f"{f!r}: Missing healpix_index coordinates"
+            )  # pragma: no cover
+
+        return (None, None)
+
+    # Get the Dask array of HEALPix indices
     dx = healpix_index.data.to_dask_array(
         _force_mask_hardness=False, _force_to_memory=False
     )
     meta = np.array((), dtype="float64")
 
-    # Latitude coordinates
+    # Create latitude coordinates
     dy = dx.map_blocks(
         cf_healpix_coordinates,
         meta=meta,
@@ -104,7 +99,7 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
         copy=False,
     )
 
-    # Longitude coordinates
+    # Create longitude coordinates
     dy = dx.map_blocks(
         cf_healpix_coordinates,
         meta=meta,
@@ -118,7 +113,7 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
         copy=False,
     )
 
-    # Latitude bounds
+    # Create latitude bounds
     dy = da.blockwise(
         cf_healpix_bounds,
         "ij",
@@ -133,7 +128,7 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
     bounds = f._Bounds(data=dy)
     lat.set_bounds(bounds)
 
-    # Longitude bounds
+    # Create longitude bounds
     dy = da.blockwise(
         cf_healpix_bounds,
         "ij",
@@ -157,18 +152,71 @@ def _healpix_create_latlon_coordinates(f, hp, pole_longitude):
     return lat_key, lon_key
 
 
-def _healpix_locate(lat, lon, f):
-    """Return indices of cells containing latitude-longitude locations.
+def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
+    """Change the indexing scheme of HEALPix indices.
 
-    The cells must be defined by a HEALPix grid.
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_indexing_scheme`
+
+    :Parameters:
+
+        healpix_index: `Coordinate`
+            The healpix_index coordinates, which will be updated
+            in-place.
+
+        hp: `dict`
+            The HEALPix info dictionary.
+
+        new_indexing_scheme: `str`
+            The new indexing scheme.
+
+    :Returns:
+
+        `None`
+
+    """
+    from .data.dask_utils import cf_healpix_indexing_scheme
+
+    indexing_scheme = hp["indexing_scheme"]
+    refinement_level = hp.get("refinement_level")
+
+    # Change the HEALPix indices
+    dx = healpix_index.data.to_dask_array(
+        _force_mask_hardness=False, _force_to_memory=False
+    )
+    dx = dx.map_blocks(
+        cf_healpix_indexing_scheme,
+        meta=np.array((), dtype="int64"),
+        indexing_scheme=indexing_scheme,
+        new_indexing_scheme=new_indexing_scheme,
+        refinement_level=refinement_level,
+    )
+    healpix_index.set_data(dx, copy=False)
+
+
+def _healpix_locate(lat, lon, f):
+    """Locate HEALPix cells containing latitude-longitude locations.
 
     If a single latitude is given then it is paired with each
     longitude, and if a single longitude is given then it is paired
     with each latitude. If multiple latitudes and multiple longitudes
     are provided then they are paired element-wise.
 
-    A cell index appears at most onxce in the output, even if that cell
-    contains more than one of the given latitude-longitude locations.
+    If a cell contains more than one of the given latitude-longitude
+    locations then that cell's index appears only once in the output.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
 
     .. versionadded:: NEXTVERSION
 
@@ -192,7 +240,9 @@ def _healpix_locate(lat, lon, f):
 
         `numpy.ndarray`
             Indices for the HEALPix axis that contain the
-            latitude-longitude locations.
+            latitude-longitude locations. Note that these indices
+            identify locations along the HEALPix axis, and are not the
+            HEALPix indices defined by the indexing scheme.
 
     """
     try:
@@ -208,15 +258,15 @@ def _healpix_locate(lat, lon, f):
     healpix_index = hp.get("healpix_index")
     if healpix_index is None:
         raise ValueError(
-            "Can't locate HEALPix cells: There are no healpix_index "
-            "coordinates"
+            f"Can't locate HEALPix cells for {f!r}: There are no "
+            "healpix_index coordinates"
         )
 
     indexing_scheme = hp.get("indexing_scheme")
     if indexing_scheme is None:
         raise ValueError(
-            "Can't locate HEALPix cells: indexing_scheme has not been set "
-            "in the HEALPix grid mapping coordinate reference"
+            f"Can't locate HEALPix cells for {f!r}: indexing_scheme has "
+            "not been set in the HEALPix grid mapping coordinate reference"
         )
 
     if indexing_scheme == "nested_unique":
@@ -244,8 +294,9 @@ def _healpix_locate(lat, lon, f):
         refinement_level = hp.get("refinement_level")
         if refinement_level is None:
             raise ValueError(
-                "Can't locate HEALPix cells: refinement_level has not been "
-                "set in the HEALPix grid mapping coordinate reference"
+                f"Can't locate HEALPix cells for {f!r}: refinement_level "
+                "has not been set in the HEALPix grid mapping coordinate "
+                "reference"
             )
 
         # Find the HEALPix indices of the cells that contain the

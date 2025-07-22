@@ -2052,7 +2052,7 @@ class Weights(Container, cfdm.Container):
                 units = "1"
                 r = None
 
-            from .dask_utils import cf_healpix_weights
+            from .data.dask_utils import cf_healpix_weights
 
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(
@@ -2080,7 +2080,7 @@ class Weights(Container, cfdm.Container):
             return True
 
         if not measure:
-            # Non-measure Weights are all equal, so no need to create any.
+            # Weights are all equal, so no need to create any.
             return True
 
         r2 = radius**2

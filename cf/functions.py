@@ -3321,17 +3321,20 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 def locate(lat, lon, f=None):
     """Return indices of cells containing latitude-longitude locations.
 
-    The cells must be defined by a discrete axis that has, or could
-    have, 1-d latitude and longitude coordinates. At present, only
-    HEALPix axes are supported.
+    The cells must be defined by a discrete axis that either has 1-d
+    latitude and longitude coordinates, or else those coordinates are
+    implied by the axis definition (as is the case for a HEALPix
+    axis).
+
+    At present, only a HEALPix axis is supported.
 
     If a single latitude is given then it is paired with each
     longitude, and if a single longitude is given then it is paired
     with each latitude. If multiple latitudes and multiple longitudes
     are provided then they are paired element-wise.
 
-    A cell index appears at most onxce in the output, even if that cell
-    contains more than one of the given latitude-longitude locations.
+    If a cell contains more than one of the given latitude-longitude
+    locations then that cell's index appears only once in the output.
 
     .. versionadded:: NEXTVERSION
 
@@ -3353,14 +3356,14 @@ def locate(lat, lon, f=None):
 
             If `None` (the default) then a callable function is
             returned, which when called with an argument of *f*
-            returns the indices, i.e ``contains(lat, lon, f)``
-            is equivalent to ``contains(lat, lon)(f)``. This
-            new function may be used as a condition in the `subspace`
-            and `indices` methods of *f*, since such conditions may be
+            returns the indices, i.e ``cf.contains(lat, lon, f)`` is
+            equivalent to ``cf.contains(lat, lon)(f)``. This new
+            function may be used as a condition in the `subspace` and
+            `indices` methods of *f*, since such conditions may be
             functions that take the calling Field or Domain construct
-            as an argument. For instance,
-            ``f.subspace(X=locate(0, 45)`` is equivalent to
-            ``f.subspace(X=locate(0, 45, f)``.
+            as an argument. For instance, ``f.subspace(X=cf.locate(0,
+            45)`` is equivalent to ``f.subspace(X=cf.locate(0, 45,
+            f)``.
 
         `numpy.ndarray` or function
             Indices for the discrete axis that contain the
@@ -3405,7 +3408,8 @@ def locate(lat, lon, f=None):
             return _healpix_locate(lat, lon, f)
 
         raise ValueError(
-            "'locate' can only calculate indices for a HEALPix axis"
+            f"Can't find cell locations for {f!r}: Can only find locations "
+            "for HEALPix cells"
         )
 
         if f.domain_topologies(todict=True):
@@ -3414,10 +3418,21 @@ def locate(lat, lon, f=None):
             # from .ugrid import _ugrid_locate
             # return _ugrid_locate(lat, lon, f)
 
+        if f.domain_topologies(todict=True):
+            # Geometries - not coded up, yet.
+            pass
+            # from .geometry import _geometry_locate
+            # return _geometry_locate(lat, lon, f)
+
+        raise ValueError(
+            f"Can't find cell locations for {f!r}: Can only find locations "
+            "for UGRID, HEALPix, and geometry cells"
+        )
+
     if np.abs(lat).max() > 90:
         raise ValueError(
-            "Can't find cell locations: Latitudes must be in the range "
-            f"[-90, 90]. Got: {lat}"
+            f"Can't find cell locations for {f!r}: Latitudes must be in "
+            f"the range [-90, 90]. Got: {lat}"
         )
 
     if f is None:
