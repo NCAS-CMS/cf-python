@@ -382,6 +382,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
+        # REVIEW: the debug statements don't seem necessary anymore (the code has worked for years!), and they just clutter things up when verbose=-1
         if indices is Ellipsis:
             return self.copy()
 
@@ -13597,7 +13598,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_cyclic=False,
             dst_cyclic=False,
             use_src_mask=use_src_mask,
-            use_dst_mask=use_dst_mask,            
+            use_dst_mask=use_dst_mask,
             axes=axes,
             ignore_degenerate=ignore_degenerate,
             return_operator=return_operator,
