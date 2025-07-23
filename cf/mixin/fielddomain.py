@@ -2252,11 +2252,11 @@ class FieldDomain:
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # If lat/lon coordinates do not exist, then derive them from
-        # the HEALPix indices. It's important to set pole_longitude to
-        # something other than None (it doesn't matter what) so that
-        # the north and south polar vertices come out as a single node
-        # in the domain topology.
+        # If 1-d lat/lon coordinates do not exist, then derive them
+        # from the HEALPix indices. Setting the pole_longitude to
+        # something other than None - it doesn't matter what - ensures
+        # that the north (south) polar vertex comes out as a single
+        # node in the domain topology.
         f.create_latlon_coordinates(
             one_d=True, two_d=False, pole_longitude=0, inplace=True
         )
@@ -2301,7 +2301,8 @@ class FieldDomain:
                 "bounds"
             )
 
-        # Create a unique integer identifer for each node location
+        # Create the Domain Topology construct, by creating a unique
+        # integer identifer for each node location.
         bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
         bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
 
@@ -2310,11 +2311,10 @@ class FieldDomain:
 
         nodes = y_indices * y_indices.size + x_indices
 
-        # Create the Domain Topology construct
         domain_topology = f._DomainTopology(data=f._Data(nodes))
         domain_topology.set_cell("face")
         domain_topology.set_property(
-            "long_name", "UGRID topology derived from HEALPix"
+            "long_name", "UGRID domain topology derived from HEALPix"
         )
         f.set_construct(domain_topology, axes=axis, copy=False)
 
