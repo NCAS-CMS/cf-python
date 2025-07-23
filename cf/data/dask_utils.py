@@ -818,39 +818,46 @@ def cf_healpix_indexing_scheme(
 
     a = cfdm_to_memory(a)
 
-    if indexing_scheme == "nested":
-        if new_indexing_scheme == "ring":
-            nside = healpix.order2nside(refinement_level)
-            return healpix.nest2ring(nside, a)
+    match indexing_scheme:
+        case "nested":
+            match new_indexing_scheme:
+                case "ring":
+                    nside = healpix.order2nside(refinement_level)
+                    return healpix.nest2ring(nside, a)
 
-        if new_indexing_scheme == "nested_unique":
-            return healpix.pix2uniq(refinement_level, a, nest=True)
+                case "nested_unique":
+                    return healpix.pix2uniq(refinement_level, a, nest=True)
 
-    elif indexing_scheme == "ring":
-        if new_indexing_scheme == "nested":
-            nside = healpix.order2nside(refinement_level)
-            return healpix.ring2nest(nside, a)
+        case "ring":
+            match new_indexing_scheme:
+                case "nested":
+                    nside = healpix.order2nside(refinement_level)
+                    return healpix.ring2nest(nside, a)
 
-        if new_indexing_scheme == "nested_unique":
-            return healpix.pix2uniq(refinement_level, a, nest=False)
+                case "nested_unique":
+                    return healpix.pix2uniq(refinement_level, a, nest=False)
 
-    elif indexing_scheme == "nested_unique":
-        if new_indexing_scheme in ("nested", "ring"):
-            nest = new_indexing_scheme == "nested"
-            order, a = healpix.uniq2pix(a, nest=nest)
+        case "nested_unique":
+            match new_indexing_scheme:
+                case "nested" | "ring":
+                    nest = new_indexing_scheme == "nested"
+                    order, a = healpix.uniq2pix(a, nest=nest)
 
-            refinement_levels = np.unique(order)
-            if refinement_levels.size > 1:
-                raise ValueError(
-                    "Can't change HEALPix indexing scheme from "
-                    f"'nested_unique' to {new_indexing_scheme!r} when the "
-                    "HEALPix indices span multiple refinement levels (at "
-                    f"least levels {refinement_levels.tolist()})"
-                )
+                    refinement_levels = np.unique(order)
+                    if refinement_levels.size > 1:
+                        raise ValueError(
+                            "Can't change HEALPix indexing scheme from "
+                            f"'nested_unique' to {new_indexing_scheme!r} "
+                            "when the HEALPix indices span multiple "
+                            "refinement levels (at least levels "
+                            f"{refinement_levels.tolist()})"
+                        )
 
-            return a
+                    return a
 
-    raise ValueError("Failed to change the HEALPix indexing scheme")
+    raise RuntimeError(
+        "cf_healpix_indexing_scheme: Failed during Dask computation"
+    )
 
 
 def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):

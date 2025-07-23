@@ -3319,26 +3319,28 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 
 
 def locate(lat, lon, f=None):
-    """Return indices of cells containing latitude-longitude locations.
+    """Locate cells containing latitude-longitude locations.
 
     The cells must be defined by a discrete axis that either has 1-d
     latitude and longitude coordinates, or else those coordinates are
     implied by the axis definition (as is the case for a HEALPix
-    axis).
+    axis). At present, only HEALPix grids are supported.
 
-    At present, only a HEALPix axis is supported.
+    Returns the discrete axis indices of the cells containing the
+    latitude-longitude locations.
 
     If a single latitude is given then it is paired with each
     longitude, and if a single longitude is given then it is paired
     with each latitude. If multiple latitudes and multiple longitudes
     are provided then they are paired element-wise.
 
-    If a cell contains more than one of the given latitude-longitude
-    locations then that cell's index appears only once in the output.
+    If a cell contains more than one of the latitude-longitude
+    locations, then that cell's index appears only once in the output.
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cf.contains`
+    .. seealso:: `cf.contains`, `cf.Field.subspace`,
+                 `cf.Field.indices`
 
     :Parameters:
 
@@ -3401,7 +3403,10 @@ def locate(lat, lon, f=None):
     """
 
     def _locate(lat, lon, f):
-        if f.coordinate("healpix_index", filter_by_naxes=(1,), default=None):
+        healpix = f.coordinate(
+            "healpix_index", filter_by_naxes=(1,), default=None
+        )
+        if healpix:
             # HEALPix
             from .healpix import _healpix_locate
 
@@ -3409,16 +3414,23 @@ def locate(lat, lon, f=None):
 
         raise ValueError(
             f"Can't find cell locations for {f!r}: Can only find locations "
-            "for HEALPix cells"
+            "for HEALPix cells (at present)"
         )
 
-        if f.domain_topologies(todict=True):
+        ugrid = f.domain_topologies(todict=True)
+        if ugrid:
             # UGRID - not coded up, yet.
             pass
             # from .ugrid import _ugrid_locate
             # return _ugrid_locate(lat, lon, f)
 
-        if f.domain_topologies(todict=True):
+        geometry = any(
+            aux.get_geometry(False)
+            for aux in f.auxiliary_coordinates(
+                filter_by_naxes=(1,), todict=True
+            ).values()
+        )
+        if geometry:
             # Geometries - not coded up, yet.
             pass
             # from .geometry import _geometry_locate
@@ -3426,7 +3438,7 @@ def locate(lat, lon, f=None):
 
         raise ValueError(
             f"Can't find cell locations for {f!r}: Can only find locations "
-            "for UGRID, HEALPix, and geometry cells"
+            "for UGRID, HEALPix, or geometry cells"
         )
 
     if np.abs(lat).max() > 90:

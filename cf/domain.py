@@ -361,6 +361,14 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         import dask.array as da
 
+        from .healpix import HEALPix_indexing_schemes
+
+        if indexing_scheme not in HEALPix_indexing_schemes:
+            raise ValueError(
+                "Can't create HEALPix Domain: 'indexing_scheme' must be one "
+                f"of {HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+            )
+
         if not isinstance(refinement_level, Integral) or refinement_level < 0:
             raise ValueError(
                 "'refinement_level' must be a non-negative integer. "
@@ -368,13 +376,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             )
 
         nested_unique = indexing_scheme == "nested_unique"
-        if nested_unique:
-            indexing_scheme = "nested"
-        elif indexing_scheme not in ("nested", "ring"):
-            raise ValueError(
-                "'indexing_scheme' must be 'nested', 'ring', or '"
-                f"nested_unique'. Got: {indexing_scheme!r}"
-            )
 
         domain = Domain()
         ncells = 12 * (4**refinement_level)
@@ -388,7 +389,15 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         c = domain._AuxiliaryCoordinate()
         c.set_properties({"standard_name": "healpix_index"})
         c.nc_set_variable("healpix_index")
-        c.set_data(Data(da.arange(ncells), units="1"), copy=False)
+
+        # Create the healpix_index data
+        if nested_unique:
+            i0 = 4 ** (refinement_level + 1)
+        else:
+            i0 = 0
+
+        c.set_data(Data(da.arange(i0, i0 + ncells), units="1"), copy=False)
+
         key = domain.set_construct(c, axes=axis, copy=False)
 
         # coordinate_reference: grid_mapping_name:healpix
@@ -404,15 +413,14 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             {
                 "grid_mapping_name": "healpix",
                 "indexing_scheme": indexing_scheme,
-                "refinement_level": refinement_level,
             }
         )
+        if not nested_unique:
+            cr.coordinate_conversion.set_parameter(
+                "refinement_level", refinement_level
+            )
 
         domain.set_construct(cr)
-
-        if nested_unique:
-            # Change from 'nested' to 'nested_unique' indexing scheme
-            domain = domain.healpix_indexing_scheme("nested_unique")
 
         return domain
 

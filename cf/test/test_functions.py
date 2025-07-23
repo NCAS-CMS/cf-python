@@ -438,12 +438,12 @@ class functionTest(unittest.TestCase):
         self.assertEqual(cf.locate(-70, 90, f), 36)
         self.assertEqual(cf.locate(20, [280, 280.001], f), 31)
 
-        self.assertTrue(np.allclose(cf.locate([-70, 20], 90, f), [23, 36]))
+        self.assertTrue(np.array_equal(cf.locate([-70, 20], 90, f), [23, 36]))
         self.assertTrue(
-            np.allclose(cf.locate([-70, 20], [90, 280], f), [31, 36])
+            np.array_equal(cf.locate([-70, 20], [90, 280], f), [31, 36])
         )
         self.assertTrue(
-            np.allclose(cf.locate([-70, 20], [90, 280])(f), [31, 36])
+            np.array_equal(cf.locate([-70, 20], [90, 280])(f), [31, 36])
         )
 
         # Bad latitudes

@@ -8,6 +8,8 @@ from cfdm import is_log_level_info
 
 logger = logging.getLogger(__name__)
 
+HEALPix_indexing_schemes = ("nested", "ring", "nested_unique")
+
 
 def _healpix_create_latlon_coordinates(f, pole_longitude):
     """Create latitude and longitude coordinates for a HEALPix grid.
@@ -49,11 +51,13 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
     hp = f.healpix_info()
 
     indexing_scheme = hp.get("indexing_scheme")
-    if indexing_scheme not in ("nested", "ring", "nested_unique"):
+    if indexing_scheme not in HEALPix_indexing_schemes:
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
-                f"{f!r}: Invalid HEALPix index scheme: {indexing_scheme!r}"
+                f"{f!r}: indexing_scheme in the healpix grid mapping "
+                "coordinate reference must be one of "
+                f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )  # pragma: no cover
 
         return (None, None)
@@ -63,7 +67,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
-                f"{f!r}: refinement_level has not been set in the HEALPix "
+                f"{f!r}: refinement_level has not been set in the healpix "
                 "grid mapping coordinate reference"
             )  # pragma: no cover
 
@@ -204,6 +208,9 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
 def _healpix_locate(lat, lon, f):
     """Locate HEALPix cells containing latitude-longitude locations.
 
+    Returns the discrete axis indices of the cells containing the
+    latitude-longitude locations.
+
     If a single latitude is given then it is paired with each
     longitude, and if a single longitude is given then it is paired
     with each latitude. If multiple latitudes and multiple longitudes
@@ -253,7 +260,7 @@ def _healpix_locate(lat, lon, f):
             "to allow the location of HEALPix cells"
         )
 
-    hp = healpix_info(f)
+    hp = f.healpix_info()
 
     healpix_index = hp.get("healpix_index")
     if healpix_index is None:
@@ -266,7 +273,7 @@ def _healpix_locate(lat, lon, f):
     if indexing_scheme is None:
         raise ValueError(
             f"Can't locate HEALPix cells for {f!r}: indexing_scheme has "
-            "not been set in the HEALPix grid mapping coordinate reference"
+            "not been set in the healpix grid mapping coordinate reference"
         )
 
     if indexing_scheme == "nested_unique":
@@ -289,13 +296,13 @@ def _healpix_locate(lat, lon, f):
             index.append(da.where(da.isin(healpix_index, pix))[0])
 
         index = da.unique(da.concatenate(index, axis=0))
-    else:
+    elif indexing_scheme in ("nested", "ring"):
         # nested or ring indexing scheme
         refinement_level = hp.get("refinement_level")
         if refinement_level is None:
             raise ValueError(
                 f"Can't locate HEALPix cells for {f!r}: refinement_level "
-                "has not been set in the HEALPix grid mapping coordinate "
+                "has not been set in the healpix grid mapping coordinate "
                 "reference"
             )
 
@@ -309,6 +316,12 @@ def _healpix_locate(lat, lon, f):
         # Find where these HEALPix indices are located in the
         # healpix_index coordinates
         index = da.where(da.isin(healpix_index, pix))[0]
+    else:
+        raise ValueError(
+            f"Can't locate HEALPix cells for {f!r}: indexing_scheme in the "
+            "healpix grid mapping coordinate reference must be one of "
+            f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+        )
 
     # Return the cell locations as a numpy array of element indices
     return index.compute()

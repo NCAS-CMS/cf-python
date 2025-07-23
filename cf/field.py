@@ -4966,7 +4966,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if indexing_scheme is None:
             raise ValueError(
                 "Can't decrease HEALPix refinement level: indexing_scheme "
-                "has not been set in the HEALPix grid mapping coordinate "
+                "has not been set in the healpix grid mapping coordinate "
                 "reference"
             )
 
@@ -4974,7 +4974,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         if refinement_level is None:
             raise ValueError(
                 "Can't decrease HEALPix refinement level: refinement_level "
-                "has not been set in the HEALPix grid mapping coordinate "
+                "has not been set in the healpix grid mapping coordinate "
                 "reference"
             )
 
@@ -4993,7 +4993,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         elif indexing_scheme != "nested":
             raise ValueError(
                 "Can't decrease HEALPix refinement level: indexing_scheme "
-                "in the HEALPix grid mapping coordinate reference is "
+                "in the healpix grid mapping coordinate reference is "
                 f"{indexing_scheme!r}, and not 'nested'. "
                 "Consider setting conform=True"
             )

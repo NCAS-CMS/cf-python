@@ -2042,16 +2042,17 @@ class FieldDomain:
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
+        from ..healpix import HEALPix_indexing_schemes
+
         f = self.copy()
 
         hp = f.healpix_info()
 
-        valid_indexing_schemes = ("nested", "ring", "nested_unique")
-        if new_indexing_scheme not in valid_indexing_schemes + (None,):
+        if new_indexing_scheme not in HEALPix_indexing_schemes + (None,):
             raise ValueError(
                 f"Can't change HEALPix index scheme of {f!r}: "
                 "new_indexing_scheme keyword must be None or one of "
-                f"{valid_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+                f"{HEALPix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
             )
 
         # Get the healpix_index coordinates
@@ -2069,16 +2070,16 @@ class FieldDomain:
         if indexing_scheme is None:
             raise ValueError(
                 f"Can't change HEALPix indexing scheme of {f!r}: "
-                "indexing_scheme has not been set in the HEALPix grid "
+                "indexing_scheme has not been set in the healpix grid "
                 "mapping coordinate reference"
             )
 
-        if indexing_scheme not in valid_indexing_schemes:
+        if indexing_scheme not in HEALPix_indexing_schemes:
             raise ValueError(
                 f"Can't change HEALPix indexing scheme of {f!r}: "
-                "indexing_scheme in the HEALPix grid mapping coordinate "
-                f"reference must be one of {valid_indexing_schemes!r}. "
-                f"Got {indexing_scheme!r}"
+                "indexing_scheme in the healpix grid mapping coordinate "
+                "reference must be one of "
+                f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
         if (
@@ -2093,7 +2094,7 @@ class FieldDomain:
                 raise ValueError(
                     f"Can't change HEALPix indexing scheme of {f!r} from "
                     f"{indexing_scheme!r} to {new_indexing_scheme!r} when "
-                    "refinement_level has not been set in the HEALPix grid "
+                    "refinement_level has not been set in the healpix grid "
                     "mapping coordinate reference"
                 )
 
@@ -2112,12 +2113,8 @@ class FieldDomain:
                 #
                 # It doesn't matter if there are in fact multiple
                 # refinement levels in the grid, as this will get
-                # trapped as an exception when
-                # `cf_healpix_indexing_scheme` is executed.
-                #
-                # M. Reinecke and E. Hivon: Efficient data structures
-                # for masks on 2D grids. A&A, 580 (2015) A132.
-                # https://doi.org/10.1051/0004-6361/201526549
+                # trapped as an exception when the lazy calculations
+                # are computed.
                 from math import log2
 
                 cr.coordinate_conversion.set_parameter(
@@ -2507,43 +2504,6 @@ class FieldDomain:
             # --------------------------------------------------------
             # HEALPix: 1-d lat/lon coordinates
             # --------------------------------------------------------
-            # hp = f.healpix_info()
-
-            # indexing_scheme = hp.get("indexing_scheme")
-            # if indexing_scheme not in ("nested", "ring", "nested_unique"):
-            #    if is_log_level_info(logger):
-            #        logger.info(
-            #            "Can't create 1-d latitude and longitude coordinates "
-            #            f"for {f!r}: Invalid HEALPix index scheme: "
-            #            f"{indexing_scheme!r}"
-            #        )  # pragma: no cover
-            #
-            #    return f
-            #
-            # if (
-            #    "refinement_level" not in hp
-            #    and indexing_scheme != "nested_unique"
-            # ):
-            #    if is_log_level_info(logger):
-            #        logger.info(
-            #            "Can't create 1-d latitude and longitude coordinates "
-            #            f"for {f!r} from {indexing_scheme!r} HEALPix indices: "
-            #            "refinement_level has not been set in the HEALPix "
-            #            "grid mapping coordinate reference"
-            #        )  # pragma: no cover
-            #
-            #    return f
-            #
-            # if "healpix_index" not in hp:
-            #    if is_log_level_info(logger):
-            #        logger.info(
-            #            "Can't create 1-d latitude and longitude coordinates "
-            #            f"for {f!r}: Missing healpix_index coordinates"
-            #        )  # pragma: no cover
-            #
-            #    return f
-
-            # Create the new lat/lon coordinates
             from ..healpix import _healpix_create_latlon_coordinates
 
             lat_key, lon_key = _healpix_create_latlon_coordinates(

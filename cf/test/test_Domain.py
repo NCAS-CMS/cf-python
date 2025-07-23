@@ -506,12 +506,24 @@ class DomainTest(unittest.TestCase):
             (d.auxiliary_coordinate().array == np.arange(12)).all()
         )
 
+        self.assertEqual(
+            d.coordinate_reference().coordinate_conversion.get_parameter(
+                "refinement_level"
+            ),
+            0,
+        )
+
         d = cf.Domain.create_healpix(0, "nested_unique")
         self.assertTrue(
             (d.auxiliary_coordinate().array == np.arange(4, 16)).all()
         )
         self.assertIsNone(
             d.coordinate_reference().datum.get_parameter("earth_radius", None)
+        )
+        self.assertIsNone(
+            d.coordinate_reference().coordinate_conversion.get_parameter(
+                "refinement_level", None
+            )
         )
 
         for radius in (1000, cf.Data(1, "km")):
