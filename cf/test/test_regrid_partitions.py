@@ -129,6 +129,10 @@ class RegridPartitionsTest(unittest.TestCase):
                 self.assertTrue(r0.equal_dst_mask(r1))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_Field_regrids_partitions_3d_grid_to_grid(self):
+        self.assertFalse(cf.regrid_logging())
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_partitions_cannot_partition(self):
         src = self.src_grid
         dst = self.dst_grid

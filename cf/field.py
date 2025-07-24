@@ -13198,9 +13198,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{dst_grid_partitions: `int` or `str`, optional}}
 
-                The maximum possible number of partitions is equal to
-                the size of the destination grid Y axis for 2-d
-                regridding, or the Z axis for 3-d regridding.
+                The maximum number of partitions, Nmax, depends on the
+                nature of the destination grid: If the Z axis is being
+                regridded, Nmax = the size of the Z axis. For a 2-d
+                structured grid, Nmax = the size of the Y axis. For a
+                UGRID, HEALPix, or DSG grid, Nmax = the size of the
+                horizontal discrete axis.
 
                 .. versionadded:: NEXTVERSION
 
@@ -13507,9 +13510,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{dst_grid_partitions: `int` or `str`, optional}}
 
                 Partitioning is only available for 2-d or 3-d
-                regridding. The maximum possible number of partitions
-                is equal to the size of the first of the destination
-                grid axes specified by the *axes* parameter.
+                regridding. The maximum number of partitions is the
+                size of the first of the destination grid axes
+                specified by the *axes* parameter.
 
                 .. versionadded:: NEXTVERSION
 
@@ -13597,7 +13600,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_cyclic=False,
             dst_cyclic=False,
             use_src_mask=use_src_mask,
-            use_dst_mask=use_dst_mask,            
+            use_dst_mask=use_dst_mask,
             axes=axes,
             ignore_degenerate=ignore_degenerate,
             return_operator=return_operator,

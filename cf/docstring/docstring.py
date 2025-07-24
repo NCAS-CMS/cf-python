@@ -586,17 +586,25 @@ _docstring_substitution_definitions = {
             The *dst_grid_partitions* parameter sets the number of
             destination grid partitions for the weights
             calculations. The default value is ``1``, i.e. one
-            partition for the entire grid, that maximises memory usage
-            and minimises the weights calculation time. If the string
-            ``'maximum'`` is given then the largest possible number of
-            partitions of the destination grid will be used. A
-            positive integer specifies the exact number of partitions,
-            capped by the maximum allowed.
+            partition for the entire destination grid, maximising
+            memory usage and minimising the calculation time. If the
+            string ``'maximum'`` is given then the largest possible
+            number of partitions of the destination grid will be used,
+            minimising memory usage and maximising the calculation
+            time. A positive integer specifies the exact number of
+            partitions, capped by the maximum allowed, allowing the
+            balance between memory usage and calculation time to be
+            adjusted.
 
-            Note that if setting *dst_grid_partitions* is a necessity
-            in allow the regridding to work, then it is worth
-            considering storing the weights in file via the
-            *weights_file* parameter.""",
+            The actual number of destination grid partitions, and
+            their sizes and shapes, is displayed when ``'DEBUG'``
+            logging is activated. See *verbose* for details.
+
+            .. note:: If setting *dst_grid_partitions* is required for
+                      the regridding to work, then it is worth
+                      considering storing the weights in a file for
+                      fast future access, via the *weights_file*
+                      parameter.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

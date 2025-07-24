@@ -726,11 +726,6 @@ def regrid(
                     f"{regrid_operator.weights!r}\n"
                     f"{regrid_operator.weights.__dict__}"
                 )  # pragma: no cover
-                print(
-                    regrid_operator.weights.data.size,
-                    regrid_operator.weights.indptr.size,
-                    regrid_operator.weights.indices.size,
-                )
 
         return regrid_operator
 
@@ -1984,11 +1979,13 @@ def create_esmpy_grid(grid, mask=None, grid_partitions=1):
         spherical = False
         coord_sys = esmpy.CoordSys.CART
 
+    # Create the esmpy.Grid for each partition
     for i, partition in enumerate(partitions(grid, grid_partitions)):
         coords = grid.coords[:]
         bounds = grid.bounds[:]
 
         if partition is not None:
+            # Subspace the coordinates for this partition
             if debug:
                 logger.debug(
                     f"Partition {i}: Index: {partition}"
@@ -2262,33 +2259,37 @@ def create_esmpy_mesh(grid, mask=None, grid_partitions=1):
         # Cartesian
         coord_sys = esmpy.CoordSys.CART
 
+    # Create the esmpy.Mesh for each partition
     for i, partition in enumerate(partitions(grid, grid_partitions)):
-        # Create an empty esmpy.Mesh for this partition
+        # Initialise the esmpy.Mesh
         esmpy_mesh = esmpy.Mesh(
             parametric_dim=2, spatial_dim=2, coord_sys=coord_sys
         )
 
+        grid_coords = grid.coords
+        grid_bounds = grid.bounds
         domain_topology = grid.domain_topology
         if partition is not None:
+            # Subspace the coordinates and domain topology for this
+            # partition
             if debug:
                 logger.debug(
                     f"Partition {i} index: {partition}"
                 )  # pragma: no cover
 
+            # All coordinates and the domain topology span the same
+            # discrete axis
+            grid_coords = [c[partition] for c in grid_coords]
+            grid_bounds = [b[partition] for b in grid_bounds]
             domain_topology = domain_topology[partition]
 
-        element_conn = domain_topology.normalise().array
+        element_conn = domain_topology.normalise(start_index=0).array
         element_count = element_conn.shape[0]
         element_types = np.ma.count(element_conn, axis=1)
         element_conn = np.ma.compressed(element_conn)
 
         # Element coordinates
-        grid_coords = grid.coords
         if grid_coords:
-            if partition is not None:
-                # All coordinates span the same discrete axis
-                grid_coords = [c[partition] for c in grid_coords]
-
             try:
                 element_coords = [c.array for c in grid_coords]
             except AttributeError:
@@ -2299,22 +2300,15 @@ def create_esmpy_mesh(grid, mask=None, grid_partitions=1):
         else:
             element_coords = None
 
-        grid_bounds = grid.bounds
-        if partition is not None:
-            # All coordinates span the same discrete axis
-            grid_bounds = [b[partition] for b in grid_bounds]
-
         node_ids, index = np.unique(element_conn, return_index=True)
         node_coords = [b.data.compressed().array[index] for b in grid_bounds]
         node_coords = np.stack(node_coords, axis=-1)
         node_count = node_ids.size
-        node_owners = np.zeros(node_count)
+        node_owners = np.zeros(node_count, "int32")
 
-        # Make sure that node IDs are >= 1, as needed by newer versions of
-        # esmpy.
-        min_id = node_ids.min()
-        if min_id < 1:
-            node_ids = node_ids + min_id + 1
+        # esmpy requires that node IDs are >= 1 (they're currently >=
+        # 0 due to using 'start_index=0' above)
+        node_ids += 1
 
         # Add nodes. This must be done before `add_elements`.
         esmpy_mesh.add_nodes(
@@ -2399,9 +2393,11 @@ def create_esmpy_locstream(grid, mask=None, grid_partitions=1):
         coord_sys = esmpy.CoordSys.CART
         keys = ("ESMF:X", "ESMF:Y", "ESMF:Z")
 
+    # Create the esmpy.LocStream for each partition
     for i, partition in enumerate(partitions(grid, grid_partitions)):
         coords = grid.coords
         if partition is not None:
+            # Subspace the coordinates for this partition
             if debug:
                 logger.debug(
                     f"Partition {i} index: {partition}"
@@ -2633,10 +2629,10 @@ def create_esmpy_weights(
             # each destination grid partition
             w = []
 
-        # Loop round destination grid partitions
         if debug:
             start_time = time()  # pragma: no cover
 
+        # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
             if debug:
                 logger.debug(
@@ -2646,7 +2642,7 @@ def create_esmpy_weights(
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
-                print(dst_esmpy_grid.size[0])
+
             # Create destination esmpy field
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
@@ -3451,8 +3447,7 @@ def set_grid_type(grid):
 def partitions(grid, grid_partitions, return_n=False):
     """Partitions of the grid.
 
-    Each partition is defined as an index to cell coordinates, which
-    may be used to create the actual partition of the grid.
+    Each partition is defined as an index to cell coordinates.
 
     Only a destinaton grid without a dummy size 2 dimension can be
     partitioned.
@@ -3480,10 +3475,17 @@ def partitions(grid, grid_partitions, return_n=False):
 
         generator or `tuple` or `int`
             The partition specifications. Each partition specification
-            is a tuple of `slice` objects. When there is a single
-            partition that spans the entire grid, then the special
-            value of ``(None,)`` is returned. If *return_n* is True
-            then the number of partitions will be returned.
+            is a tuple of `slice` objects. Each of these tuples
+            contains a slice for each axis of the coordinate
+            constructs, i.e. for N-d coordinates, each tuple has N
+            elements.
+
+            When there is a single partition that spans the entire
+            grid, then the special value of ``(None,)`` is
+            returned.
+
+            If *return_n* is True then the integer number of
+            partitions will be returned, instead.
 
     """
     if (
@@ -3518,8 +3520,8 @@ def partitions(grid, grid_partitions, return_n=False):
 
             return (None,)
 
-        # Partition size: Somewhere in the range [1, maximum number of
-        # partitions]
+        # Set the partition size to somewhere in the range [1, maximum
+        # number of partitions]
         size = ceil(shape[-1] / grid_partitions)
 
     if return_n:
