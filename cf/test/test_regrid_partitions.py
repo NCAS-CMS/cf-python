@@ -137,10 +137,12 @@ class RegridPartitionsTest(unittest.TestCase):
         src = self.src_grid
         dst = self.dst_grid
         for n in (2, "maximum"):
+            # Can't partition for particular regrid methods
             for method in invalid_methods:
                 with self.assertRaises(ValueError):
                     src.regrids(dst, method=method, dst_grid_partitions=n)
 
+            # Can't partition when return_esmpy_regrid_operator=True
             with self.assertRaises(ValueError):
                 src.regrids(
                     dst,
