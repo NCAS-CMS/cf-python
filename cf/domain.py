@@ -272,6 +272,12 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         The HEALPix axis of the new Domain is ordered so that the
         HEALPix indices are monotonically increasing.
 
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.Domain.create_regular`,
@@ -371,8 +377,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         if not isinstance(refinement_level, Integral) or refinement_level < 0:
             raise ValueError(
-                "'refinement_level' must be a non-negative integer. "
-                f"Got: {refinement_level!r}"
+                "Can't create HEALPix Domain: 'refinement_level' must be a "
+                f"non-negative integer. Got: {refinement_level!r}"
             )
 
         nested_unique = indexing_scheme == "nested_unique"
@@ -392,11 +398,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         # Create the healpix_index data
         if nested_unique:
-            i0 = 4 ** (refinement_level + 1)
+            index0 = 4 ** (refinement_level + 1)
         else:
-            i0 = 0
+            index0 = 0
 
-        c.set_data(Data(da.arange(i0, i0 + ncells), units="1"), copy=False)
+        c.set_data(
+            Data(da.arange(index0, index0 + ncells), units="1"), copy=False
+        )
 
         key = domain.set_construct(c, axes=axis, copy=False)
 

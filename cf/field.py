@@ -2452,8 +2452,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Specify the radius used for calculating the areas of
                 cells defined in spherical polar coordinates. The
                 radius is that which would be returned by this call of
-                the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See `cf.Field.radius` for
+                the field construct's `radius` method:
+                ``f.radius(default=radius)``. See `radius` for
                 details.
 
                 By default *radius* is ``'earth'`` which means that if
