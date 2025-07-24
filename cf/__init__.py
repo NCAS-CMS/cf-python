@@ -210,6 +210,19 @@ else:
         )
 
 try:
+    import distributed
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "2025.5.1"
+    if Version(distributed.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            "Bad distributed version: cf requires "
+            f"distributed>={_minimum_vn}. "
+            f"Got {distributed.__version__} at {distributed.__file__}"
+        )
+
+try:
     import scipy
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
