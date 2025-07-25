@@ -638,6 +638,7 @@ def regrid(
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
+        # Convert dst_grid_partitions to a number
         dst_grid_partitions = partitions(
             dst_grid, dst_grid_partitions, return_n=True
         )
@@ -3447,7 +3448,9 @@ def set_grid_type(grid):
 def partitions(grid, grid_partitions, return_n=False):
     """Partitions of the grid.
 
-    Each partition is defined as an index to cell coordinates.
+    Each partition is defined as an index to cell coordinates. Only
+    the last (left-most) dimension in esmpy order is partitioned. Note
+    that the coordinates storded in `grid.coords` are in esmpy order.
 
     Only a destinaton grid without a dummy size 2 dimension can be
     partitioned.

@@ -617,6 +617,7 @@ def _regrid(
     # ----------------------------------------------------------------
     a = np.ma.getdata(a)
     a = weights.dot(a)
+
     if dst_mask is not None:
         a = np.ma.array(a)
         a[dst_mask] = np.ma.masked
