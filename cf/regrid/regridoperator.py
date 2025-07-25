@@ -687,16 +687,17 @@ class RegridOperator(mixin_Container, Container):
 
         """
         if atol is None:
-            atol = cf_atol()
+            atol = float(cf_atol())
 
         if rtol is None:
-            rtol = cf_rtol()
+            rtol = float(cf_rtol())
 
         self.tosparse()
         other.tosparse()
 
         w0 = self.weights
         w1 = other.weights
+
         return (
             w0.shape == w1.shape
             and w0.data.shape == w1.data.shape

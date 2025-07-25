@@ -2811,12 +2811,20 @@ def create_esmpy_weights(
                     f"with shape {src_grid.esmpy_shape} to destination "
                     f"{dst_grid.type} with shape {dst_grid.esmpy_shape}"
                 )
+                nc.comment = "See https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc for information on the dataset structure"
                 nc.source = f"cf v{__version__}, esmpy v{esmpy.__version__}"
                 nc.history = f"Created at {datetime.now()}"
-                nc.regrid_method = regrid_method
+                nc.map_method = regrid_method
+                nc.domain_a = src_grid.type
+                nc.domain_b = dst_grid.type
                 nc.ESMF_unmapped_action = ESMF_unmapped_action
                 nc.ESMF_ignore_degenerate = ESMF_ignore_degenerate
 
+                # The number of source cells
+                nc.createDimension("n_a", src_size)
+                # The number of destination cells
+                nc.createDimension("n_b", dst_size)
+                # The number of entries in the regridding matrix
                 nc.createDimension("n_s", weights.size)
                 nc.createDimension("src_grid_rank", src_rank)
                 nc.createDimension("dst_grid_rank", dst_rank)
@@ -2834,21 +2842,28 @@ def create_esmpy_weights(
                 v[...] = dst_grid.esmpy_shape
 
                 v = nc.createVariable("S", weights.dtype, ("n_s",), zlib=True)
-
-                v.long_name = "Weights values"
+                v.long_name = (
+                    "The weight for each entry in the regridding matrix"
+                )
                 v[...] = weights
                 nc.sync()
                 del weights
 
                 v = nc.createVariable("row", row.dtype, ("n_s",), zlib=True)
-                v.long_name = "Destination/row indices"
+                v.long_name = (
+                    "The position in the destination grid for each entry "
+                    "in the weight matrix"
+                )
                 v.start_index = start_index
                 v[...] = row
                 nc.sync()
                 del row
 
                 v = nc.createVariable("col", col.dtype, ("n_s",), zlib=True)
-                v.long_name = "Source/col indices"
+                v.long_name = (
+                    "The position in the source grid for each entry "
+                    "in the regridding matrix"
+                )
                 v.start_index = start_index
                 v[...] = col
                 nc.sync()
