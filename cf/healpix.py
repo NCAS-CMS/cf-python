@@ -31,12 +31,11 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
             will be updated in-place.
 
         pole_longitude: `None` or number
-            The longitude of coordinates, or coordinate bounds, that
-            lie exactly on the north or south pole. If `None` then the
-            longitudes of such points will vary according to the
-            alogrithm being used to create them. If set to a number,
-            then the longitudes of such points will all be given that
-            value.
+            The longitude of coordinate bounds that lie exactly on the
+            north (south) pole. If `None` then the longitude of such a
+            vertex will be the same as the south (north) vertex of the
+            same cell. If set to a number, then the longitudes of such
+            vertices will all be given that value.
 
     :Returns:
 
@@ -164,6 +163,10 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
     Fast Analysis of Data Distributed on the Sphere. The Astrophysical
     Journal, 2005, 622 (2), pp.759-771.
     https://dx.doi.org/10.1086/427976
+
+    M. Reinecke and E. Hivon: Efficient data structures for masks on
+    2D grids. A&A, 580 (2015)
+    A132. https://doi.org/10.1051/0004-6361/201526549
 
     .. versionadded:: NEXTVERSION
 
@@ -384,7 +387,7 @@ def del_healpix_coordinate_reference(f):
     return cr
 
 
-def healpix_info(f):
+ def healpix_info(f):
     """Get information about the HEALPix grid, if there is one.
 
     .. versionadded:: NEXTVERSION
@@ -397,8 +400,32 @@ def healpix_info(f):
     :Returns:
 
         `dict`
-            The information about the HEALPix axis. The dictionary
-            will be empty if there is no HEALPix axis.
+            The information about the HEALPix axis, with some or all
+            of the following dictionary keys:
+
+            * ``'coordinate_reference_key'``: The construct key of the
+                                              healpix coordinate
+                                              reference construct.
+    
+            * ``'grid_mapping_name:healpix'``: The healpix coordinate
+                                               reference construct.
+
+            * ``'indexing_scheme'``: The HEALPix indexing scheme.
+    
+            * ``'refinement_level'``: The refinement level of the
+                                      HEALPix grid.
+
+            * ``'domain_axis_key'``: The construct key of the HEALPix
+                                     domain axis construct.
+    
+            * ``'coordinate_key'``: The construct key of the
+                                    healpix_index coordinate
+                                    construct.
+
+            * ``'healpix_index'``: The healpix_index coordinate
+                                   construct.
+
+            The dictionary will be empty if there is no HEALPix axis.
 
     **Examples**
 

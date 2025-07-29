@@ -3321,13 +3321,14 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 def locate(lat, lon, f=None):
     """Locate cells containing latitude-longitude locations.
 
-    The cells must be defined by a discrete axis that either has 1-d
-    latitude and longitude coordinates, or else those coordinates are
-    implied by the axis definition (as is the case for a HEALPix
-    axis). At present, only HEALPix grids are supported.
+    The cells must be defined by a discrete axis that has 1-d latitude
+    and longitude coordinate constructs, or for which it is possible
+    to create 1-d latitude and longitude coordinate constructs (as is
+    the case for a HEALPix axis). At present, only a HEALPix axis is
+    supported.
 
-    Returns the discrete axis indices of the cells containing the
-    latitude-longitude locations.
+    Returns the indices of the discrete axis for the cells containing
+    the latitude-longitude locations.
 
     If a single latitude is given then it is paired with each
     longitude, and if a single longitude is given then it is paired
@@ -3421,8 +3422,6 @@ def locate(lat, lon, f=None):
         if ugrid:
             # UGRID - not coded up, yet.
             pass
-            # from .ugrid import _ugrid_locate
-            # return _ugrid_locate(lat, lon, f)
 
         geometry = any(
             aux.get_geometry(False)
@@ -3433,8 +3432,6 @@ def locate(lat, lon, f=None):
         if geometry:
             # Geometries - not coded up, yet.
             pass
-            # from .geometry import _geometry_locate
-            # return _geometry_locate(lat, lon, f)
 
         raise ValueError(
             f"Can't find cell locations for {f!r}: Can only find locations "

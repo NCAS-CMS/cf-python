@@ -2969,6 +2969,12 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.dimension_to_auxiliary("Y", inplace=True))
         self.assertIsNone(g.auxiliary_to_dimension("Y", inplace=True))
 
+        f = self.f12.copy()
+        g = f.auxiliary_to_dimension("healpix_index")
+        h = g.dimension_to_auxiliary("healpix_index")
+        self.assertFalse(f.equals(g))
+        self.assertTrue(f.equals(h))
+
         f = cf.read("geometry_1.nc")[0]
 
         with self.assertRaises(ValueError):

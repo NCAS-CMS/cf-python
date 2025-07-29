@@ -1624,8 +1624,15 @@ class FieldDomain:
 
         axis = f.get_data_axes(key)
         dim = f._DimensionCoordinate(source=aux)
-        f.set_construct(dim, axes=axis)
+        dim_key = f.set_construct(dim, axes=axis, copy=False)
+
+        # Update Coordinates listed in Coordinate References
+        for cr in f.coordinate_references().values():
+            if key in cr.coordinates():
+                cr.set_coordinate(dim_key)
+
         f.del_construct(key)
+
         return f
 
     def del_coordinate_reference(
@@ -2130,12 +2137,7 @@ class FieldDomain:
 
         # Ensure that healpix indices are auxiliary coordinates
         if healpix_index.construct_type == "dimension_coordinate":
-            healpix_index = f._AuxiliaryCoordinate(
-                source=healpix_index, copy=False
-            )
-            f.del_construct(hp["coordinate_key"])
-            hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
-            cr.set_coordinate(hp_key)
+            f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
@@ -2166,8 +2168,37 @@ class FieldDomain:
         :Returns:
 
             `dict`
-                The information about the HEALPix axis. The dictionary
-                will be empty if there is no HEALPix axis.
+
+                The information about the HEALPix axis, with some or
+                all of the following dictionary keys:
+
+                * ``'coordinate_reference_key'``: The construct key of
+                                                  the healpix
+                                                  coordinate reference
+                                                  construct.
+        
+                * ``'grid_mapping_name:healpix'``: The healpix
+                                                   coordinate
+                                                   reference
+                                                   construct.
+    
+                * ``'indexing_scheme'``: The HEALPix indexing scheme.
+        
+                * ``'refinement_level'``: The refinement level of the
+                                          HEALPix grid.
+    
+                * ``'domain_axis_key'``: The construct key of the
+                                         HEALPix domain axis
+                                         construct.
+        
+                * ``'coordinate_key'``: The construct key of the
+                                        healpix_index coordinate
+                                        construct.
+    
+                * ``'healpix_index'``: The healpix_index coordinate
+                                       construct.
+    
+                The dictionary will be empty if there is no HEALPix axis.
 
         **Examples**
 
@@ -2445,7 +2476,7 @@ class FieldDomain:
 
                 return f
 
-        # Get all Coordinate References in a dictionary
+        # Store all of the Coordinate References in a dictionary ...
         identities = {
             cr.identity(""): cr
             for cr in f.coordinate_references(todict=True).values()
@@ -2459,7 +2490,7 @@ class FieldDomain:
 
             return f
 
-        # Keep only those that are grid mappings
+        # ... keeping only those that are grid mappings
         identities = {
             identity: cr
             for identity, cr in identities.items()
@@ -2467,12 +2498,11 @@ class FieldDomain:
         }
 
         # Remove a 'latitude_longitude' grid mapping from the
-        # dictionary
+        # dictionary, saving it for later.
         latlon_cr = identities.pop(
             "grid_mapping_name:latitude_longitude", None
         )
         if not identities:
-            # There is no non-latitude_longitude grid mapping
             if is_log_level_info(logger):
                 logger.info(
                     "Can't create latitude and longitude coordinates: There "
@@ -2492,17 +2522,17 @@ class FieldDomain:
 
             return f
 
-        # Still here? Then get the non-latitude_longitude grid mapping
-        # and calulate the lat/lon coordinates.
+        # Still here? Then get the unique non-latitude_longitude grid
+        # mapping, and use it to calculate the lat/lon coordinates.
         identity, cr = identities.popitem()
 
         # Initialize the flag that tells us if any new coordinates
-        # were created
+        # have been created
         new_coords = False
 
         if one_d and identity == "grid_mapping_name:healpix":
             # --------------------------------------------------------
-            # HEALPix: 1-d lat/lon coordinates
+            # 1-d lat/lon coordinates: HEALPix
             # --------------------------------------------------------
             from ..healpix import _healpix_create_latlon_coordinates
 
@@ -2728,8 +2758,15 @@ class FieldDomain:
 
         axis = f.get_data_axes(key)
         aux = f._AuxiliaryCoordinate(source=dim)
-        f.set_construct(aux, axes=axis)
+        aux_key = f.set_construct(aux, axes=axis, copy=False)
+
+        # Update Coordinates listed in Coordinate References
+        for cr in f.coordinate_references().values():
+            if key in cr.coordinates():
+                cr.set_coordinate(aux_key)
+
         f.del_construct(key)
+
         return f
 
     @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")

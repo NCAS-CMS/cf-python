@@ -517,10 +517,10 @@ def cf_healpix_bounds(
 
         pole_longitude: `None` or number
             The longitude of coordinate bounds that lie exactly on the
-            north or south pole. If `None` (the default) then the
-            longitudes of such a point will be identical to its
-            opposite vertex. If set to a number, then the longitudes
-            of such points will all be that value.
+            north (south) pole. If `None` then the longitude of such a
+            vertex will be the same as the south (north) vertex of the
+            same cell. If set to a number, then the longitudes of such
+            vertices will all be given that value.
 
     :Returns:
 
@@ -581,12 +581,13 @@ def cf_healpix_bounds(
     else:
         bounds_func = healpix._chp.nest2ang_uv
 
-    # Define the cell vertices, in an anticlockwise direction, as seen
-    # from above, starting with the northern-most vertex.
-    east = (1, 0)
+    # Define the cell vertices in an anticlockwise direction, as seen
+    # from above, starting with the northern-most vertex. Each vertex
+    # is defined in the form needed by `bounds_func`.
     north = (1, 1)
     west = (0, 1)
     south = (0, 0)
+    east = (1, 0)
     vertices = (north, west, south, east)
 
     # Initialise the output bounds array
