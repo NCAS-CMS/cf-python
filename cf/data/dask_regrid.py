@@ -513,7 +513,6 @@ def _regrid(
             indptr = weights.indptr
             indices = weights.indices
             data = weights.data
-            # REVIEW: The above change saves a lot of memory, and only slow things down a little bit
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
                 n_masked = count_nonzero(mask)
@@ -555,7 +554,6 @@ def _regrid(
             indptr = weights.indptr
             indices = weights.indices
             data = weights.data
-            # REVIEW: The above changes save a lot of memory, and only slow things down a little bit
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
@@ -587,7 +585,6 @@ def _regrid(
             count_nonzero = np.count_nonzero
             indptr = weights.indptr
             indices = weights.indices
-            # REVIEW: The above change saves a lot of memory, and only slow things down a little bit
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
                 n_masked = count_nonzero(mask)

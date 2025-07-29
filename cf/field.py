@@ -382,7 +382,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
-        # REVIEW: the debug statements don't seem necessary anymore (the code has worked for years!), and they just clutter things up when verbose=-1
         if indices is Ellipsis:
             return self.copy()
 

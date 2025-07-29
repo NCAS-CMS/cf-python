@@ -42,7 +42,6 @@ class PropertiesDataBounds(PropertiesData):
         x.__getitem__(indices) <==> x[indices]
 
         """
-        # REVIEW: the debug statements don't seem necessary anymore (the code has worked for years!), and they just clutter things up when verbose=-1
         if indices is Ellipsis:
             return self.copy()
 
