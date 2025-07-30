@@ -470,3 +470,16 @@ def healpix_info(f):
         info["healpix_index"] = healpix_index
 
     return info
+
+
+def healpix_max_refinement_level():
+    """TODOHEALPIX"""
+    try:
+        import healpix
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to find the HEALPix maximum refinement level"
+        )
+
+    return healpix.nside2order(healpix._chp.NSIDE_MAX)

@@ -1,6 +1,7 @@
 import logging
 from dataclasses import dataclass
 from functools import reduce
+from numbers import Integral
 from operator import mul as operator_mul
 
 import cfdm
@@ -4844,7 +4845,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `healpix_indexing_scheme`
+        .. seealso:: `healpix_increase_refinement_level`,
+                     `healpix_info`, `healpix_indexing_scheme`,
+                     `healpix_to_ugrid`
 
         :Parameters:
 
@@ -5036,10 +5039,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "healpix_index coordinates"
             )
 
-        # Get the HEALPix axis
-        axis = hp["domain_axis_key"]
-        iaxis = f.get_data_axes().index(axis)
-
         if check_healpix_index:
             d = healpix_index.data
             if not (d.diff() > 0).all():
@@ -5060,10 +5059,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     f"({refinement_level})"
                 )
 
-        # Whether or not to create lat/lon coordinates for the
-        # coarsened grid. Only do so if the original grid has lat/lon
-        # coordinates.
-        create_coarsened_latlon = bool(
+        # Get the HEALPix axis
+        axis = hp["domain_axis_key"]
+        iaxis = f.get_data_axes().index(axis)
+
+        # Whether or not to create lat/lon coordinates for the new
+        # refinement level. Only do so if the original grid has
+        # lat/lon coordinates.
+        create_latlon = bool(
             f.coordinates(
                 "latitude",
                 "longitude",
@@ -5082,6 +5085,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f.data.coarsen(
             reduction, axes={iaxis: ncells}, trim_excess=False, inplace=True
         )
+
+        # Re-size the HEALPix axis
+        domain_axis = f.domain_axis(axis)
+        domain_axis.set_size(f.shape[iaxis])
 
         # Coarsen the domain ancillary constructs that span the
         # HEALPix axis. We're assuming that domain ancillary data are
@@ -5118,34 +5125,314 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ):
             f.del_construct(key)
 
-        # Re-size the HEALPix axis
-        domain_axis = f.domain_axis(axis)
-        domain_axis.set_size(f.shape[iaxis])
-
-        # Set the healpix_index coordinates for the new refinement
+        # Create the healpix_index coordinates for the new refinement
         # level
-        new_index = healpix_index[::ncells] // ncells
-        if new_index.construct_type == "dimension_coordinate":
-            # Convert indices to auxiliary coordinates
-            new_index = f._AuxiliaryCoordinate(source=new_index, copy=False)
-            hp_key = None
-        else:
-            hp_key = hp["coordinate_key"]
+        if healpix_index.construct_type == "dimension_coordinate":
+            # Ensure that healpix indices are auxiliary coordinates
+            healpix_index = f._AuxiliaryCoordinate(
+                source=healpix_index, copy=False
+            )
 
-        new_key = f.set_construct(new_index, axes=axis, key=hp_key, copy=False)
+        healpix_index = healpix_index[::ncells] // ncells
+        hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
 
-        # Set the new refinement level
+        # Update the healpix Coordinate Reference
         cr = hp.get("grid_mapping_name:healpix")
         cr.coordinate_conversion.set_parameter(
             "refinement_level", new_refinement_level
         )
-        cr.set_coordinate(new_key)
+        cr.set_coordinate(hp_key)
 
-        if create_coarsened_latlon:
-            # Create lat/lon coordinates for the coarsened grid
-            f.create_latlon_coordinates(inplace=True)
+        if create_latlon:
+            # Create lat/lon coordinates for the new refinement level
+            f.create_latlon_coordinates(two_d=False, inplace=True)
 
         return f
+
+    # 00000
+
+    def healpix_increase_refinement_level(self, level, conserve):
+        """Decrease the refinement level of a HEALPix grid.
+
+        Decreasing the refinement level coarsens the horizontal grid
+        to a lower-level HEALPix grid by combining, using the
+        *reduction* function, all original cells that lie inside each
+        larger cell at the new refinement level.
+
+        The operation requires that each larger cell at the new
+        refinement level either contains no original cells (in which
+        case that new cell is not included in the output), or is
+        completely covered by original cells. It is not allowed for a
+        larger cell to be only partially covered by original
+        cells. For instance, if the original refinement level is 10
+        and the new refinement level is 8, then each output cell will
+        be the combination of 16 (:math:`=4^(10-8)`) original cells.
+
+        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_decrease_refinement_level`,
+                     `healpix_info`, `healpix_indexing_scheme`,
+                     `healpix_to_ugrid`
+
+        :Parameters:
+
+            level: `int` or `None`
+                Specify the new refinement level as an integer greater
+                than or equal to the current refinement level, or if
+                `None` then the refinement level is not changed.
+
+            reduction: function
+                The function used to calculate the values in the new
+                coarser cells, from the data on the original finer
+                cells.
+
+                *Example:*
+                  For an intensive field quantity (that does not
+                  depend on the size of the cells, such as
+                  "sea_ice_amount" with units of kg m-2), `np.mean`
+                  might be appropriate.
+
+                *Example:*
+                  For an extensive field quantity (that depends on the
+                  size of the cells, such as "sea_ice_mass" with units
+                  of kg), `np.sum` might be appropriate.
+
+        :Returns:
+
+            `Field`
+                A new Field with a coarsened TODOHEALPIX  HEALPix grid.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> f
+        <CF Field: air_temperature(time(2), healpix_index(48)) K>
+        >>> f.healpix_info()['refinement_level']
+        1
+
+        Set the refinement level to 0:
+
+        >>> g = f.healpix_decrease_refinement_level(0, np.mean)
+        >>> g
+        <CF Field: air_temperature(time(2), healpix_index(12)) K>
+        >>> g.healpix_info()['refinement_level']
+        0
+
+        Decrease the refinement level by 1, showing that every four
+        cells in the orginal field correspond to one cell at the lower
+        level:
+
+        >>> g = f.healpix_decrease_refinement_level(-1, np.mean)
+        <CF Field: air_temperature(time(2), healpix_index(12)) K>
+        >>> g.healpix_info()['refinement_level']
+        0
+        >>> np.mean(g.array[0, 0])
+        np.float64(289.15)
+        >>> f.healpix_info()['refinement_level']
+        1
+        >>> np.mean(f.array[0, :4])
+        np.float64(289.15)
+
+        """
+        from .data.dask_utils import cf_healpix_func, cf_healpix_funcy
+        from .healpix import healpix_max_refinement_level
+
+        try:
+            f = self.healpix_indexing_scheme("nested", sort=False)
+        except ValueError as error:
+            raise ValueError(
+                f"Can't increase HEALPix refinement level: {error}"
+            )
+
+        # Get the HEALPix info
+        hp = f.healpix_info()
+        refinement_level = hp["refinement_level"]
+
+        # Parse 'level'
+        if level is None:
+            # No change in refinement level
+            return f
+
+        if (
+            not isinstance(level, Integral)
+            or level < refinement_level
+            or level > healpix_max_refinement_level()
+        ):
+            raise ValueError(
+                "Can't increase refinement level: 'level' keyword must be "
+                "an integer greater than or equal to the current refinement "
+                f"level of {refinement_level}, and less than or equal to "
+                f"{healpix_max_refinement_level()}. Got {level!r}"
+            )
+
+        if level == refinement_level:
+            # No change in refinement level
+            return f
+
+        # Get the number of cells at the new refinement level which
+        # are contained in one cell at the original refinement level
+        ncells = 4 ** (level - refinement_level)
+
+        # Get the HEALPix axis
+        axis = hp["domain_axis_key"]
+        try:
+            iaxis = f.get_data_axes().index(axis)
+        except ValueError:
+            # Field data doesn't span the HEALPix axis, so insert it
+            # (note that it must be size 1, given that the Field data
+            # doen't span it).
+            f.insert_dimension(axis, -1, inplace=True)
+            iaxis = f.get_data_axes().index(axis)
+
+        # Whether or not to create lat/lon coordinates for the new
+        # refinement level. Only do so if the original grid has
+        # lat/lon coordinates.
+        create_latlon = bool(
+            f.coordinates(
+                "latitude",
+                "longitude",
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+                todict=True,
+            )
+        )
+
+        conserve_integral = conserve == "integral"
+
+        dx = f.data.to_dask_array(_force_mask_hardness=False)
+
+        if conserve_integral:
+            dtype = np.dtype("float64")
+        else:
+            dtype = dx.dtype
+
+        chunks = list(dx.chunks)
+        chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
+
+        dx = dx.map_blocks(
+            cf_healpix_func,
+            chunks=tuple(chunks),
+            dtype=dtype,
+            meta=np.array((), dtype=dtype),
+            ncells=ncells,
+            iaxis=iaxis,
+            conserve_integral=conserve_integral,
+        )
+
+        # Re-size the HEALPix axis
+        domain_axis = f.domain_axis(axis)
+        domain_axis.set_size(dx.shape[iaxis])
+
+        f.set_data(dx, copy=False)
+
+        # Increase the refinement level of domain ancillary constructs
+        # that span the HEALPix axis. We're assuming that domain
+        # ancillary data are intensive (i.e. do not depend on the size
+        # of the cell), so we use conserve_integral=False.
+        meta = np.array((), dtype=dtype)
+        for key, domain_ancillary in f.domain_ancillaries(
+            filter_by_axis=(axis,), axis_mode="and", todict=True
+        ).items():
+            iaxis = f.get_data_axes(key).index(axis)
+            dx = domain_ancillary.data.to_dask_array(
+                _force_mask_hardness=False
+            )
+            dtype = dx.dtype
+            chunks = list(dx.chunks)
+            chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
+            dx = dx.map_blocks(
+                cf_healpix_func,
+                chunks=tuple(chunks),
+                dtype=dtype,
+                meta=meta,
+                ncells=ncells,
+                iaxis=iaxis,
+                conserve_integral=False,
+            )
+            domain_ancillary.set_data(dx, copy=False)
+
+        # Increase the refinement level of cell measure constructs
+        # that span the HEALPix axis. Cell measure data are extensive
+        # (i.e. depend on the size of the cell), so we use
+        # conserve_integral=True.
+        dtype = np.dtype("float64")
+        meta = np.array((), dtype=dtype)
+        for key, cell_measure in f.cell_measures(
+            filter_by_axis=(axis,), axis_mode="and", todict=True
+        ).items():
+            iaxis = f.get_data_axes(key).index(axis)
+            dx = cell_measure.data.to_dask_array(_force_mask_hardness=False)
+            chunks = list(dx.chunks)
+            chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
+            dx = dx.map_blocks(
+                cf_healpix_func,
+                chunks=tuple(chunks),
+                dtype=dtype,
+                meta=meta,
+                ncells=ncells,
+                iaxis=iaxis,
+                conserve_integral=True,
+            )
+            cell_measure.set_data(dx, copy=False)
+
+        # Remove all other metadata constructs that span the HEALPix
+        # axis (including the original healpix_index coordinate
+        # construct, and any lat/lon coordinate constructs that span
+        # the HEALPix axis)
+        for key in (
+            f.constructs.filter_by_axis(axis, axis_mode="and")
+            .filter_by_type("cell_measure", "domain_ancillary")
+            .inverse_filter(1)
+            .todict()
+        ):
+            f.del_construct(key)
+
+        # Create the healpix_index coordinates for the new refinement
+        # level
+        healpix_index = hp["healpix_index"]
+        if healpix_index.construct_type == "dimension_coordinate":
+            # Ensure that healpix indices are auxiliary coordinates
+            healpix_index = f._AuxiliaryCoordinate(
+                source=healpix_index, copy=False
+            )
+
+        dx = healpix_index.data.to_dask_array(_force_mask_hardness=False)
+
+        dtype = cfdm.integer_dtype(12 * (4**level) - 1)
+        if dx.dtype != dtype:
+            dx = dx.astype(dtype, copy=False)
+
+        chunks = [(np.array(dx.chunks[0]) * ncells).tolist()]
+
+        dx = dx.map_blocks(
+            cf_healpix_funcy,
+            chunks=tuple(chunks),
+            dtype=dtype,
+            meta=np.array((), dtype=dtype),
+            ncells=ncells,
+        )
+
+        healpix_index.set_data(dx, copy=False)
+        hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
+
+        # Update the healpix Coordinate Reference
+        cr = hp.get("grid_mapping_name:healpix")
+        cr.coordinate_conversion.set_parameter("refinement_level", level)
+        cr.set_coordinate(hp_key)
+
+        if create_latlon:
+            # Create lat/lon coordinates for the new refinement level
+            f.create_latlon_coordinates(two_d=False, inplace=True)
+
+        return f
+
+    # 999999
 
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.

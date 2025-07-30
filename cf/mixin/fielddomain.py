@@ -1982,6 +1982,8 @@ class FieldDomain:
 
         .. versionadded:: NEXTVERSION
 
+        .. seealso:: `healpix_info`, `healpix_to_ugrid`
+
         :Parameters:
 
             new_indexing_scheme: `str` or `None`
@@ -2233,7 +2235,7 @@ class FieldDomain:
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `create_latlon_coordinates`
+        .. seealso:: `healpix_info`, `create_latlon_coordinates`
 
         :Parameters:
 

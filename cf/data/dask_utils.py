@@ -465,6 +465,64 @@ def cf_filled(a, fill_value=None):
     return np.ma.filled(a, fill_value=fill_value)
 
 
+def cf_healpix_func(a, ncells, iaxis, conserve_integral):
+    """Calculate HEALPix cell bounds.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    """
+    if conserve_integral:
+        a = a / ncells
+
+    iaxis = iaxis + 1
+    a = np.expand_dims(a, iaxis)
+
+    shape = list(a.shape)
+    shape[iaxis] = ncells
+
+    a = np.broadcast_to(a, shape, subok=True)
+    a = a.reshape(
+        shape[: iaxis - 1]
+        + [shape[iaxis - 1] * shape[iaxis]]
+        + shape[iaxis + 1 :]
+    )
+
+    return a
+
+
+def cf_healpix_funcy(a, ncells):
+    """Calculate HEALPix cell bounds.
+
+    For instance, when going from refinement level 1 to refinement
+    level 2, if *a* is ``(2, 23, 17)`` then it will transformed to
+    ``(8, 9, 10, 11, 92, 93, 94, 95, 68, 69, 70, 71)`` where
+    ``8=2*ncells, 9=2*ncells+1, ..., 71=17*ncells+3``, and where
+    ``ncells`` is the number of cells at refinement level 2 that lie
+    inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    """
+    # PERFORMANCE: This function can use a lot of memory when 'a'
+    #              and/or 'ncells' are large.
+
+    a = a * ncells
+    a = np.expand_dims(a, -1)
+    a = np.broadcast_to(a, (a.size, ncells), subok=True).copy()
+    a += np.arange(ncells)
+    a = a.flatten()
+
+    return a
+
+
 def cf_healpix_bounds(
     a,
     indexing_scheme,
