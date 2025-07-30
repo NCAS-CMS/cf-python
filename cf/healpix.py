@@ -473,7 +473,26 @@ def healpix_info(f):
 
 
 def healpix_max_refinement_level():
-    """TODOHEALPIX"""
+    """Return the maxium permitted HEALPix refinement level.
+
+    The maximum refinement level is the highest refiniment level for
+    which all of its HEALPix indices are representable as double
+    precision integers.
+    
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+        
+    :Returns:
+
+        `int`
+            The maxium permitted HEALPix refinement level.
+
+    """
     try:
         import healpix
     except ImportError as e:

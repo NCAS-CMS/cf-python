@@ -465,64 +465,6 @@ def cf_filled(a, fill_value=None):
     return np.ma.filled(a, fill_value=fill_value)
 
 
-def cf_healpix_func(a, ncells, iaxis, conserve_integral):
-    """Calculate HEALPix cell bounds.
-
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    """
-    if conserve_integral:
-        a = a / ncells
-
-    iaxis = iaxis + 1
-    a = np.expand_dims(a, iaxis)
-
-    shape = list(a.shape)
-    shape[iaxis] = ncells
-
-    a = np.broadcast_to(a, shape, subok=True)
-    a = a.reshape(
-        shape[: iaxis - 1]
-        + [shape[iaxis - 1] * shape[iaxis]]
-        + shape[iaxis + 1 :]
-    )
-
-    return a
-
-
-def cf_healpix_funcy(a, ncells):
-    """Calculate HEALPix cell bounds.
-
-    For instance, when going from refinement level 1 to refinement
-    level 2, if *a* is ``(2, 23, 17)`` then it will transformed to
-    ``(8, 9, 10, 11, 92, 93, 94, 95, 68, 69, 70, 71)`` where
-    ``8=2*ncells, 9=2*ncells+1, ..., 71=17*ncells+3``, and where
-    ``ncells`` is the number of cells at refinement level 2 that lie
-    inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
-
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    """
-    # PERFORMANCE: This function can use a lot of memory when 'a'
-    #              and/or 'ncells' are large.
-
-    a = a * ncells
-    a = np.expand_dims(a, -1)
-    a = np.broadcast_to(a, (a.size, ncells), subok=True).copy()
-    a += np.arange(ncells)
-    a = a.flatten()
-
-    return a
-
-
 def cf_healpix_bounds(
     a,
     indexing_scheme,
@@ -549,6 +491,8 @@ def cf_healpix_bounds(
     A132. https://doi.org/10.1051/0004-6361/201526549
 
     .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.create_latlon_coordinates`
 
     :Parameters:
 
@@ -713,6 +657,8 @@ def cf_healpix_coordinates(
 
     .. versionadded:: NEXTVERSION
 
+    .. seealso:: `cf.Field.create_latlon_coordinates`
+
     :Parameters:
 
         a: `numpy.ndarray`
@@ -801,6 +747,120 @@ def cf_healpix_coordinates(
     return c
 
 
+def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
+    """Increase the HEALPix refinement level.
+
+    Array elements are broadcast to cells of a higher refinement
+    level. For an extensive quantity (that depends on the size of the
+    cells, such as "sea_ice_mass" with units of kg), the new values
+    are reduced so that they are consistent with the new smaller cell
+    areas. For an intensive quantity (that does not depend on the size
+    of the cells, such as "sea_ice_amount" with units of kg m-2), the
+    values are not changed.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_increase_refinement_level`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array.
+
+        ncells: `int`
+            The number of cells at the new refinement level which are
+            contained in one cell at the original refinement level
+
+        iaxis: `int`
+            The position of the HEALPix axis in the array dimensions.
+
+        quantity: `str`
+            Whether the array values represent intensive or extensive
+            quantities, specified with ``'intensive'`` and
+            ``'extensive'`` respectively.
+
+    :Returns:
+
+        `numpy.ndarray`
+         TODOHEALPIX
+
+    """
+    a = cfdm_to_memory(a)
+
+    if quantity == "extensive":
+        a = a / ncells
+
+    iaxis = iaxis + 1
+    a = np.expand_dims(a, iaxis)
+
+    shape = list(a.shape)
+    shape[iaxis] = ncells
+
+    a = np.broadcast_to(a, shape, subok=True)
+    a = a.reshape(
+        shape[: iaxis - 1]
+        + [shape[iaxis - 1] * shape[iaxis]]
+        + shape[iaxis + 1 :]
+    )
+
+    return a
+
+
+def cf_healpix_increase_refinement_indices(a, ncells):
+    """Calculate HEALPix cell bounds.TODOHEALPIX
+
+    For instance, when going from refinement level 1 to refinement
+    level 2, if *a* is ``(2, 23, 17)`` then it will be transformed to
+    ``(8, 9, 10, 11, 92, 93, 94, 95, 68, 69, 70, 71)`` where
+    ``8=2*ncells, 9=2*ncells+1, ..., 71=17*ncells+3``, and where
+    ``ncells`` is the number of cells at refinement level 2 that lie
+    inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_increase_refinement_level`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array of HEALPix nested indices.
+
+        ncells: `int`
+            The number of cells at the new refinement level which are
+            contained in one cell at the original refinement level
+
+    :Returns:
+
+        `numpy.ndarray`
+         TODOHEALPIX
+
+    """
+    # PERFORMANCE: This function can use a lot of memory when 'a'
+    #              and/or 'ncells' are large.
+
+    a = cfdm_to_memory(a)
+
+    a = a * ncells
+    a = np.expand_dims(a, -1)
+    a = np.broadcast_to(a, (a.size, ncells), subok=True).copy()
+    a += np.arange(ncells)
+    a = a.flatten()
+
+    return a
+
+
 def cf_healpix_indexing_scheme(
     a, indexing_scheme, new_indexing_scheme, refinement_level=None
 ):
@@ -820,6 +880,8 @@ def cf_healpix_indexing_scheme(
     A132. https://doi.org/10.1051/0004-6361/201526549
 
     .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_indexing_scheme`
 
     :Parameters:
 
@@ -933,6 +995,8 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     A132. https://doi.org/10.1051/0004-6361/201526549
 
     .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.weights.Weights.healpix_area`
 
     :Parameters:
 
