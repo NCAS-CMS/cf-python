@@ -2176,28 +2176,28 @@ class FieldDomain:
                                                   the healpix
                                                   coordinate reference
                                                   construct.
-        
+
                 * ``'grid_mapping_name:healpix'``: The healpix
                                                    coordinate
                                                    reference
                                                    construct.
-    
+
                 * ``'indexing_scheme'``: The HEALPix indexing scheme.
-        
+
                 * ``'refinement_level'``: The refinement level of the
                                           HEALPix grid.
-    
+
                 * ``'domain_axis_key'``: The construct key of the
                                          HEALPix domain axis
                                          construct.
-        
+
                 * ``'coordinate_key'``: The construct key of the
                                         healpix_index coordinate
                                         construct.
-    
+
                 * ``'healpix_index'``: The healpix_index coordinate
                                        construct.
-    
+
                 The dictionary will be empty if there is no HEALPix axis.
 
         **Examples**
@@ -2370,12 +2370,11 @@ class FieldDomain:
     ):
         """Create latitude and longitude coordinates.
 
-        Creates any 1-d or 2-d latitude and longitude coordinate
-        constructs that are implied by the {{class}}, but are not
-        atually present as part of the {{class}}'s metadata. Such
-        coordinates may be created if there is an appropriate
-        non-latitude_longitude grid mapping coordinate reference
-        construct.
+        Creates 1-d or 2-d latitude and longitude coordinate
+        constructs that are implied by the {{class}} coordinate
+        reference constructs. By default (or if *overwrite* is False),
+        new coordinates are only created if the {{class}} metadata
+        doesn't already include any latitude or longitude coordinates.
 
         When it is not possible to create latitude and longitude
         coordinates, the reason why will be reported if the log level
@@ -2402,7 +2401,7 @@ class FieldDomain:
                 The longitude of coordinates, or coordinate bounds,
                 that lie exactly on the north or south pole. If `None`
                 (the default) then the longitudes of such points will
-                vary according to the alogrithm being used to create
+                vary according to the algorithm being used to create
                 them. If set to a number, then the longitudes of such
                 points will all be given that value.
 
@@ -2476,7 +2475,8 @@ class FieldDomain:
 
                 return f
 
-        # Store all of the Coordinate References in a dictionary ...
+        # Store all of the grid mapping Coordinate References in a
+        # dictionary
         identities = {
             cr.identity(""): cr
             for cr in f.coordinate_references(todict=True).values()
@@ -2490,15 +2490,14 @@ class FieldDomain:
 
             return f
 
-        # ... keeping only those that are grid mappings
         identities = {
             identity: cr
             for identity, cr in identities.items()
             if identity.startswith("grid_mapping_name:")
         }
 
-        # Remove a 'latitude_longitude' grid mapping from the
-        # dictionary, saving it for later.
+        # Remove a 'latitude_longitude' grid mapping (if there is one)
+        # from the dictionary, saving it for later.
         latlon_cr = identities.pop(
             "grid_mapping_name:latitude_longitude", None
         )
@@ -2522,35 +2521,42 @@ class FieldDomain:
 
             return f
 
+        # ------------------------------------------------------------
         # Still here? Then get the unique non-latitude_longitude grid
         # mapping, and use it to calculate the lat/lon coordinates.
+        # ------------------------------------------------------------
         identity, cr = identities.popitem()
 
         # Initialize the flag that tells us if any new coordinates
         # have been created
         new_coords = False
 
-        if one_d and identity == "grid_mapping_name:healpix":
+        if one_d:
             # --------------------------------------------------------
-            # 1-d lat/lon coordinates: HEALPix
+            # 1-d lat/lon coordinates
             # --------------------------------------------------------
-            from ..healpix import _healpix_create_latlon_coordinates
+            if identity == "grid_mapping_name:healpix":
+                # ----------------------------------------------------
+                # HEALPix
+                # ----------------------------------------------------
+                from ..healpix import _healpix_create_latlon_coordinates
 
-            lat_key, lon_key = _healpix_create_latlon_coordinates(
-                f, pole_longitude
-            )
-            new_coords = lat_key is not None
+                lat_key, lon_key = _healpix_create_latlon_coordinates(
+                    f, pole_longitude
+                )
+                new_coords = lat_key is not None
 
         elif two_d:
             # --------------------------------------------------------
-            # Plane projection or rotated pole
+            # 2-d lat/lon coordinates
             # --------------------------------------------------------
             pass  # Add some code here!
 
-        # ------------------------------------------------------------
-        # Update coordinate references
-        # ------------------------------------------------------------
         if new_coords:
+            # --------------------------------------------------------
+            # Update the approrpriate coordinate reference with the
+            # new coordinate keys
+            # --------------------------------------------------------
             if latlon_cr is not None:
                 latlon_cr.set_coordinates((lat_key, lon_key))
             else:
@@ -3103,14 +3109,11 @@ class FieldDomain:
             return True
 
         # HEALPix
-        if (
-            self.coordinate(
-                "healpix_index",
-                filter_by_axis=(axis,),
-                axis_mode="exact",
-                default=None,
-            )
-            is not None
+        if self.coordinates(
+            "healpix_index",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            todict=True,
         ):
             return True
 

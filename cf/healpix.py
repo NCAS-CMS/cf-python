@@ -387,7 +387,7 @@ def del_healpix_coordinate_reference(f):
     return cr
 
 
- def healpix_info(f):
+def healpix_info(f):
     """Get information about the HEALPix grid, if there is one.
 
     .. versionadded:: NEXTVERSION
@@ -406,18 +406,18 @@ def del_healpix_coordinate_reference(f):
             * ``'coordinate_reference_key'``: The construct key of the
                                               healpix coordinate
                                               reference construct.
-    
+
             * ``'grid_mapping_name:healpix'``: The healpix coordinate
                                                reference construct.
 
             * ``'indexing_scheme'``: The HEALPix indexing scheme.
-    
+
             * ``'refinement_level'``: The refinement level of the
                                       HEALPix grid.
 
             * ``'domain_axis_key'``: The construct key of the HEALPix
                                      domain axis construct.
-    
+
             * ``'coordinate_key'``: The construct key of the
                                     healpix_index coordinate
                                     construct.
