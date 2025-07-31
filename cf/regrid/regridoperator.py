@@ -50,7 +50,6 @@ class RegridOperator(mixin_Container, Container):
         src_z=None,
         dst_z=None,
         ln_z=False,
-        dst_healpix=False,
     ):
         """**Initialisation**
 
@@ -125,8 +124,7 @@ class RegridOperator(mixin_Container, Container):
                 Use keyword parameters instead.
 
             dst: `Field` or `Domain`
-                The definition of the destination grid from which the
-                weights were calculated.
+                The definition of the destination grid.
 
             dst_axes: `dict` or sequence or `None`, optional
                 The destination grid axes to be regridded.
@@ -193,11 +191,6 @@ class RegridOperator(mixin_Container, Container):
 
                 .. versionadded:: 3.16.2
 
-            dst_healpix: `bool`, optional
-                Whether or not the destination grid is HEALPix grid.
-
-                .. versionadded:: NEXTVERSION
-
         """
         super().__init__()
 
@@ -231,7 +224,6 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("src_z", src_z, copy=False)
         self._set_component("dst_z", dst_z, copy=False)
         self._set_component("ln_z", bool(ln_z), copy=False)
-        self._set_component("dst_healpix", bool(dst_healpix), copy=False)
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
@@ -329,15 +321,6 @@ class RegridOperator(mixin_Container, Container):
 
         """
         return self._get_component("dst_mesh_location")
-
-    @property
-    def dst_healpix(self):
-        """Whether or not the destination grid is HEALPix grid.
-
-        .. versionadded:: NEXTVERSION
-
-        """
-        return self._get_component("dst_healpix")
 
     @property
     def dst_shape(self):
@@ -566,7 +549,6 @@ class RegridOperator(mixin_Container, Container):
             src_z=self.src_z,
             dst_z=self.dst_z,
             ln_z=self.ln_z,
-            dst_healpix=self.dst_healpix,
         )
 
     @_display_or_return

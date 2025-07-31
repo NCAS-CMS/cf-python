@@ -46,15 +46,16 @@ class RegridMeshTest(unittest.TestCase):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cf.log_level("DISABLE")
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
         # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
-    def test_Field_regrid_to_healpix(self):
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    def test_Field_regrid_mesh_to_healpix(self):
         # Check that UGRID -> healpix is the same as UGRID -> UGRUD
         self.assertFalse(cf.regrid_logging())
 
@@ -82,8 +83,8 @@ class RegridMeshTest(unittest.TestCase):
                 # Check that the result is a HEALPix grid
                 self.assertTrue(cf.healpix.healpix_info(x))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
-    def test_Field_regrid_from_healpix(self):
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    def test_Field_regrid_healpix_to_mesh(self):
         # Check that healpix -> UGRID is the same as UGRID -> UGRUD
         self.assertFalse(cf.regrid_logging())
 

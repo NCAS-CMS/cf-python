@@ -83,13 +83,15 @@ class Grid:
     cyclic: Any = None
     # The regridding method.
     method: str = ""
-    # If True then, for 1-d regridding, the esmpy weights are generated
-    # for a 2-d grid for which one of the dimensions is a size 2 dummy
-    # dimension.
+    # If True then, for 1-d regridding, the esmpy weights are
+    # generated for a 2-d grid for which one of the dimensions is a
+    # size 2 dummy dimension.
     dummy_size_2_dimension: bool = False
     # Whether or not the grid is a structured grid.
     is_grid: bool = False
-    # Whether or not the grid is a UGRID mesh.
+    # Whether or not the grid is a UGRID mesh (after any
+    # transformations are applied, such as converting HEALPix to
+    # UGRID).
     is_mesh: bool = False
     # Whether or not the grid is a location stream.
     is_locstream: bool = False
@@ -122,10 +124,8 @@ class Grid:
     # `None` then there are no vertical coordinates.
     z_index: Any = None
     # The original field/domain before any transformations are applied
-    # (such as creating lat/lon cooridnates, or converting to UGRID).
+    # (such as creating lat/lon coordinates, or converting to UGRID).
     domain: Any = None
-    # Whether or not the field/original domain is a HEALPix grid
-    healpix: bool = False
 
 
 def regrid(
@@ -593,7 +593,8 @@ def regrid(
 
         if is_log_level_debug(logger):
             logger.debug(
-                f"Source ESMF Grid:\n{src_esmpy_grid}\n\nDestination ESMF Grid:\n{dst_esmpy_grid}\n"
+                f"Source ESMF Grid:\n{src_esmpy_grid}\n\n"
+                f"Destination ESMF Grid:\n{dst_esmpy_grid}\n"
             )  # pragma: no cover
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
@@ -657,7 +658,6 @@ def regrid(
             src_z=src_grid.z,
             dst_z=dst_grid.z,
             ln_z=ln_z,
-            dst_healpix=dst_grid.healpix,
         )
     else:
         if weights_file is not None:
@@ -846,7 +846,7 @@ def spherical_coords_to_domain(
     elif coords["lat"].ndim == 2:
         message = (
             "When 'dst' is a sequence containing 2-d latitude and longitude "
-            "coordinate constructs, 'dst_axes' must be dictionary with at "
+            "coordinate constructs, 'dst_axes' must be a dictionary with at "
             "least the keys {'X': 0, 'Y': 1} or {'X': 1, 'Y': 0}. "
             f"Got: {dst_axes!r}"
         )
@@ -1133,9 +1133,6 @@ def spherical_grid(
     """
     domain = f.copy()
 
-    # Whether or not the original field/domain is a HEALPix grid
-    healpix = False
-
     # Create any implied lat/lon coordinates in-place
     try:
         # Try to convert a HEALPix grid to a UGRID grid (which will
@@ -1143,8 +1140,6 @@ def spherical_grid(
         f.healpix_to_ugrid(inplace=True)
     except ValueError:
         f.create_latlon_coordinates(inplace=True)
-    else:
-        healpix = True
 
     data_axes = f.constructs.data_axes()
 
@@ -1289,7 +1284,7 @@ def spherical_grid(
         and (x_size == 1 or y_size == 1)
     ):
         raise ValueError(
-            f"Neither the X nor Y dimensions of the {name} field"
+            f"Neither the X nor Y dimensions of the {name} field "
             f"{f!r} can be of size 1 for spherical {method!r} regridding."
         )
 
@@ -1449,7 +1444,6 @@ def spherical_grid(
         ln_z=ln_z,
         z_index=z_index,
         domain=domain,
-        healpix=healpix,
     )
 
     set_grid_type(grid)
@@ -2793,7 +2787,6 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
             The definition of the destination grid.
 
         cr_map `dict`
-
             The mapping of destination coordinate reference identities
             to source coordinate reference identities, as output by
             `update_non_coordinates`.
@@ -2804,11 +2797,6 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
 
     """
     dst = dst_grid.domain
-
-    # A HEALPix grid is converted to UGRID for the regridding, but we
-    # want the original HEALPix metadata to be copied to the regridded
-    # source field, rather than the UGRID view of it.
-    dst_grid_is_mesh = dst_grid.is_mesh and not dst_grid.healpix
 
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
@@ -2875,15 +2863,14 @@ def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
 
     # Copy domain topology and cell connectivity constructs from the
     # destination grid
-    if dst_grid_is_mesh:
-        for key, topology in dst.constructs(
-            filter_by_type=("domain_topology", "cell_connectivity"),
-            filter_by_axis=dst_axis_keys,
-            axis_mode="exact",
-            todict=True,
-        ).items():
-            axes = [axis_map[axis] for axis in dst_data_axes[key]]
-            src.set_construct(topology, axes=axes)
+    for key, topology in dst.constructs(
+        filter_by_type=("domain_topology", "cell_connectivity"),
+        filter_by_axis=dst_axis_keys,
+        axis_mode="exact",
+        todict=True,
+    ).items():
+        axes = [axis_map[axis] for axis in dst_data_axes[key]]
+        src.set_construct(topology, axes=axes)
 
 
 def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
@@ -2915,7 +2902,6 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
             to source coordinate reference identities.
 
     """
-    #    if dst_grid.domain is not None:
     dst = dst_grid.domain
 
     src_axis_keys = src_grid.axis_keys

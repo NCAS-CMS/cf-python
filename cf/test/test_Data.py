@@ -4592,7 +4592,9 @@ class DataTest(unittest.TestCase):
         d = cf.Data(array)
         e = d.masked_values(1.1)
         ea = e.array
-        a = np.ma.masked_values(array, 1.1, rtol=cf.rtol(), atol=cf.atol())
+        a = np.ma.masked_values(
+            array, 1.1, rtol=float(cf.rtol()), atol=float(cf.atol())
+        )
         self.assertTrue(np.isclose(ea, a).all())
         self.assertTrue((ea.mask == a.mask).all())
         self.assertIsNone(d.masked_values(1.1, inplace=True))

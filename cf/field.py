@@ -4823,19 +4823,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Decrease the refinement level of a HEALPix grid.
 
-        Decreasing the refinement level coarsens the horizontal grid
-        to a lower-level HEALPix grid by combining, using the
-        *reduction* function, all original cells that lie inside each
-        larger cell at the new refinement level.
+        Decreasing the refinement level reduces the resolution of the
+        HEALPix grid by combining, using the *reduction* function,
+        data from the original cells that lie inside each larger cell
+        at the new lower refinement level.
 
-        The operation requires that each larger cell at the new
+        The operation requires that each larger cell at the lower
         refinement level either contains no original cells (in which
         case that new cell is not included in the output), or is
         completely covered by original cells. It is not allowed for a
         larger cell to be only partially covered by original
         cells. For instance, if the original refinement level is 10
         and the new refinement level is 8, then each output cell will
-        be the combination of 16 (:math:`=4^(10-8)`) original cells.
+        be the combination of :math:`16\equiv 4^(10-8)`) original
+        cells.
 
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
@@ -4878,11 +4879,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 automatically converted to a form suitable for having
                 its refinement level changed, i.e. the indexing scheme
                 is changed to 'nested' and the HEALPix axis is sorted
-                so that the nested HEALPix indices are strictly
-                monotonically increasing. If False then either an
-                exeption is raised if the HEALPix indexing scheme is
-                not already 'nested', or else the HEALPix axis is not
-                sorted.
+                so that the nested HEALPix indices are monotonically
+                increasing. If False then either an exeption is raised
+                if the HEALPix indexing scheme is not already
+                'nested', or else the HEALPix axis is not sorted.
 
                 .. note:: Setting to False will speed up the operation
                           when the HEALPix indexing scheme is already
@@ -4892,15 +4892,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_healpix_index: `bool`, optional
                 If True (the default) then the following conditions
                 will be checked before the creation of the new Field
-                (but after the HEALPix grid has been conformed, if
+                (but after the HEALPix grid has been conformed, when
                 *conform* is True):
 
                 1. The nested HEALPix indices are strictly
-                   monotonically increasing
+                   monotonically increasing.
 
-                2. Every cell at the new coarser refinement level
+                2. Every cell at the new lower refinement level
                    contains the maximum possible number of cells at
-                   the original finer refinement level.
+                   the original refinement level.
 
                 If True and any of these conditions is not met, then an
                 exception is raised.
@@ -4919,7 +4919,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field`
-                A new Field with a coarsened HEALPix grid.
+                A new Field with the new HEALPix grid.
 
         **Examples**
 
@@ -5132,14 +5132,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def healpix_increase_refinement_level(self, level, quantity):
         """Increase the refinement level of a HEALPix grid.
 
-        Data are broadcast to cells of at the higher refinement
-        level. For an extensive field quantity (that depends on the
-        size of the cells, such as "sea_ice_mass" with units of kg),
-        the new values are reduced so that they are consistent with
-        the new smaller cell areas. For an intensive field quantity
-        (that does not depend on the size of the cells, such as
-        "sea_ice_amount" with units of kg m-2), the broadcast values
-        are not changed.
+        Increasing the refinement level increases the resolution of
+        the HEALPix grid by broadcasting data from each original cell
+        to all of the new smaller cells at the new higher refinement
+        level lie inside it.
+
+        For an extensive field quantity (that depends on the size of
+        the cells, such as "sea_ice_mass" with units of kg), the
+        broadcast values are reduced to be consistent with the new
+        smaller cell areas. For an intensive field quantity (that does
+        not depend on the size of the cells, such as "sea_ice_amount"
+        with units of kg m-2), the broadcast values are not changed.
 
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
@@ -5168,7 +5171,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field`
-                A new Field with a coarsened TODOHEALPIX  HEALPix grid.
+                A new Field with the new HEALPix grid.
 
         **Examples**
 
