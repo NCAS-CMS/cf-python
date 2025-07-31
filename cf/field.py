@@ -12754,6 +12754,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
+        * Multiple criteria may be specified for the same domain axis.
+
         * Subspace criteria may be provided for size 1 domain axes that
           are not spanned by the field construct's data.
 
