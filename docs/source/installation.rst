@@ -194,7 +194,10 @@ Required
 
 * `numpy <http://www.numpy.org>`_, versions 2.0.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, version 2025.5.1.
+* `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
+
+* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1 or
+  newer.
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
 

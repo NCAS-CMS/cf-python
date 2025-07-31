@@ -18,8 +18,9 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
-* New optional dependency: ``healpix>=2025.1``
 * Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
+* New dependency: ``distributed>=2025.5.1``
+* New optional dependency: ``healpix>=2025.1``
 
 ----
 
