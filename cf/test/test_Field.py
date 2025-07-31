@@ -3295,6 +3295,12 @@ class FieldTest(unittest.TestCase):
         g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
         self.assertTrue(np.array_equal(g.coordinate("healpix_index"), [0, 19]))
 
+        f = f.healpix_indexing_scheme("ring")
+        g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index"), [13, 12])
+        )
+
     def test_Field_healpix_decrease_refinement_level(self):
         """Test Field.healpix_decrease_refinement_level."""
         f = self.f12

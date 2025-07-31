@@ -1970,10 +1970,6 @@ class FieldDomain:
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
         """Change the indexing scheme of HEALPix indices.
 
-        The data are not reordered, only the "healpix_index"
-        coordinate values are changed, along with parameters of the
-        "healpix" grid mapping Coordinate reference.
-
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
         Discretization and Fast Analysis of Data Distributed on the
@@ -1998,10 +1994,10 @@ class FieldDomain:
                 {{HEALPix indexing schemes}}
 
             sort: `bool`, optional
-                If True then sort the HEALPix axis of the output so
-                that its HEALPix indices are monotonically increasing,
-                including when the indexing scheme is unchanged. If
-                False (the default) then don't do this.
+                If True then re-order the HEALPix axis of the output
+                so that its HEALPix indices are monotonically
+                increasing, including when the indexing scheme is
+                unchanged. If False (the default) then don't do this.
 
         :Returns:
 

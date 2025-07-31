@@ -4824,9 +4824,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Decrease the refinement level of a HEALPix grid.
 
         Decreasing the refinement level reduces the resolution of the
-        HEALPix grid by combining, using the *reduction* function,
-        data from the original cells that lie inside each larger cell
-        at the new lower refinement level.
+        HEALPix grid by combining, using the *reduction* function, the
+        Field data from the original cells that lie inside each larger
+        cell at the new lower refinement level.
 
         The operation requires that each larger cell at the lower
         refinement level either contains no original cells (in which
@@ -4864,15 +4864,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cells.
 
                 *Example:*
-                  For an intensive field quantity (that does not
-                  depend on the size of the cells, such as
+                  For an intensive field quantity (i.e. one that does
+                  not depend on the size of the cells, such as
                   "sea_ice_amount" with units of kg m-2), `np.mean`
                   might be appropriate.
 
                 *Example:*
-                  For an extensive field quantity (that depends on the
-                  size of the cells, such as "sea_ice_mass" with units
-                  of kg), `np.sum` might be appropriate.
+                  For an extensive field quantity (i.e. one that
+                  depends on the size of the cells, such as
+                  "sea_ice_mass" with units of kg), `np.sum` might be
+                  appropriate.
 
             conform: `bool`, optional
                 If True (the default) the HEALPix grid is
@@ -4998,8 +4999,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             or level > refinement_level
         ):
             raise ValueError(
-                f"Can't decrease refinement level of {f!r}: "
-                "'level' keyword must be a non-negative integer less than "
+                f"Can't decrease HEALPix refinement level of {f!r}: "
+                "'level' must be a non-negative integer less than "
                 "or equal to the current refinement level of "
                 f"{refinement_level}. Got {level!r}"
             )
@@ -5009,7 +5010,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return f
 
         # Get the number of cells at the original refinement level
-        # which are contained in one cell at the coarser refinement
+        # which are contained in one cell at the lower refinement
         # level
         ncells = 4 ** (refinement_level - level)
 
@@ -5133,16 +5134,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Increase the refinement level of a HEALPix grid.
 
         Increasing the refinement level increases the resolution of
-        the HEALPix grid by broadcasting data from each original cell
-        to all of the new smaller cells at the new higher refinement
-        level lie inside it.
+        the HEALPix grid by broadcasting the Field data from each
+        original cell to all of the new smaller cells at the new
+        higher refinement level that lie inside it.
 
-        For an extensive field quantity (that depends on the size of
-        the cells, such as "sea_ice_mass" with units of kg), the
-        broadcast values are reduced to be consistent with the new
-        smaller cell areas. For an intensive field quantity (that does
-        not depend on the size of the cells, such as "sea_ice_amount"
-        with units of kg m-2), the broadcast values are not changed.
+        For an extensive field quantity (i.e. one that depends on the
+        size of the cells, such as "sea_ice_mass" with units of kg),
+        the broadcast values are reduced to be consistent with the new
+        smaller cell areas. For an intensive field quantity (i.e. one
+        that does not depend on the size of the cells, such as
+        "sea_ice_amount" with units of kg m-2), the broadcast values
+        are not changed.
 
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
@@ -5249,10 +5251,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             or level > healpix_max_refinement_level()
         ):
             raise ValueError(
-                f"Can't increase refinement level of {f!r}: "
-                "'level' keyword must be an integer greater than or equal "
-                f"to the current refinement level of {refinement_level}, and "
-                f"less than or equal to {healpix_max_refinement_level()}. "
+                f"Can't increase HEALPix refinement level of {f!r}: "
+                "'level' must be an integer greater than or equal to the "
+                f"current refinement level of {refinement_level}, and less "
+                f"than or equal to {healpix_max_refinement_level()}. "
                 f"Got {level!r}"
             )
 
@@ -5264,12 +5266,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         valid_quantities = ("intensive", "extensive")
         if quantity not in valid_quantities:
             raise ValueError(
-                f"Can't increase refinement level of {f!r}: "
+                f"Can't increase HEALPix refinement level of {f!r}: "
                 f"'quantity' keyword must be one of {valid_quantities}. "
                 f"Got {quantity!r}"
             )
 
-        # Get the number of cells at the new refinement level which
+        # Get the number of cells at the higher refinement level which
         # are contained in one cell at the original refinement level
         ncells = 4 ** (level - refinement_level)
 

@@ -3324,8 +3324,8 @@ def locate(lat, lon, f=None):
     """Locate cells containing latitude-longitude locations.
 
     The cells must be defined by a discrete axis that has 1-d latitude
-    and longitude coordinate constructs, or for which it is possible
-    to create 1-d latitude and longitude coordinate constructs (as is
+    and longitude coordinate, or for which it is possible to create
+    1-d latitude and longitude coordinates from other metadata (as is
     the case for a HEALPix axis). At present, only a HEALPix axis is
     supported.
 
@@ -3360,15 +3360,13 @@ def locate(lat, lon, f=None):
             grid.
 
             If `None` (the default) then a callable function is
-            returned, which when called with an argument of *f*
-            returns the indices, i.e ``cf.contains(lat, lon, f)`` is
-            equivalent to ``cf.contains(lat, lon)(f)``. This new
-            function may be used as a condition in the `subspace` and
-            `indices` methods of *f*, since such conditions may be
-            functions that take the calling Field or Domain construct
-            as an argument. For instance, ``f.subspace(X=cf.locate(0,
-            45)`` is equivalent to ``f.subspace(X=cf.locate(0, 45,
-            f)``.
+            returned, which when called with A Field as its argument
+            returns the indices for that field, i.e ``cf.contains(lat,
+            lon, f)`` is equivalent to ``cf.contains(lat,
+            lon)(f)``. This returned function may be used as a
+            condition in a Field's `subspace` and `indices` methods,
+            since, for instance, ``f.subspace(X=cf.locate(0, 45))`` is
+            equivalent to ``f.subspace(X=cf.locate(0, 45, f))``.
 
         `numpy.ndarray` or function
             Indices for the discrete axis that contain the
