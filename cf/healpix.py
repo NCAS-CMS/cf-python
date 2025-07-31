@@ -478,7 +478,7 @@ def healpix_max_refinement_level():
     The maximum refinement level is the highest refiniment level for
     which all of its HEALPix indices are representable as double
     precision integers.
-    
+
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
     Fast Analysis of Data Distributed on the Sphere. The Astrophysical
@@ -486,7 +486,7 @@ def healpix_max_refinement_level():
     https://dx.doi.org/10.1086/427976
 
     .. versionadded:: NEXTVERSION
-        
+
     :Returns:
 
         `int`

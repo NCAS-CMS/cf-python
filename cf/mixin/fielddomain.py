@@ -1970,6 +1970,10 @@ class FieldDomain:
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
         """Change the indexing scheme of HEALPix indices.
 
+        The data are not reordered, only the "healpix_index"
+        coordinate values are changed, along with parameters of the
+        "healpix" grid mapping Coordinate reference.
+
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
         Discretization and Fast Analysis of Data Distributed on the
@@ -2045,7 +2049,7 @@ class FieldDomain:
         >>> print(h.coordinate('healpix_index').array)
         [ 3  7 11 15  2  1  6  5 10  9 14 13 19  0 23  4 27  8 31 12 17 22 21 26
          25 30 29 18 16 35 20 39 24 43 28 47 34 33 38 37 42 41 46 45 32 36 40 44]
-        >>> h = g.healpix_indexing_scheme('nested', sort=True)
+        >>> h = g.healpix_indexing_scheme(None, sort=True)
         >>> print(h.coordinate('healpix_index').array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
@@ -2071,9 +2075,6 @@ class FieldDomain:
                 f"Can't change HEALPix index scheme of {f!r}: There are no "
                 "healpix_index coordinates"
             )
-
-        # Get the healpix_index axis
-        axis = hp["domain_axis_key"]
 
         indexing_scheme = hp.get("indexing_scheme")
         if indexing_scheme is None:
@@ -2115,21 +2116,9 @@ class FieldDomain:
             if new_indexing_scheme == "nested_unique":
                 cr.coordinate_conversion.del_parameter("refinement_level")
             elif indexing_scheme == "nested_unique":
-                # Set the refinement level for the new indexing
-                # scheme. This is the largest integer, N, for which
-                # 2**(2(N+1)) <= healpix_index[0]. Therefore N =
-                # int(log2(healpix_index[0]) // 2 - 1)
-                #
-                # It doesn't matter if there are in fact multiple
-                # refinement levels in the grid, as this will get
-                # trapped as an exception when the lazy calculations
-                # are computed.
-                from math import log2
-
-                cr.coordinate_conversion.set_parameter(
-                    "refinement_level",
-                    int(log2(int(healpix_index.data.first_element())) // 2)
-                    - 1,
+                raise ValueError(
+                    f"Can't change HEALPix indexing scheme of {f!r} from "
+                    f"{indexing_scheme!r} to {new_indexing_scheme!r}"
                 )
 
             # Change the HEALPix indices
@@ -2145,14 +2134,15 @@ class FieldDomain:
             # Sort the HEALPix axis so that the HEALPix indices are
             # monotonically increasing. Test for the common case of
             # already-ordered global nested or ring indices (which is
-            # a fast test compared to do doing any actual sorting).
+            # a relatively fast compared to do doing any actual
+            # sorting and subspacing).
             h = healpix_index
             if not (
                 indexing_scheme in ("nested", "ring")
                 and (h == da.arange(h.size, chunks=h.data.chunks)).all()
             ):
                 index = h.data.compute()
-                f = f.subspace(**{axis: np.argsort(index)})
+                f = f.subspace(**{hp["domain_axis_key"]: np.argsort(index)})
 
         return f
 

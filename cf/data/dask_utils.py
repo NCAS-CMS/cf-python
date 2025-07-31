@@ -748,15 +748,15 @@ def cf_healpix_coordinates(
 
 
 def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
-    """Increase the HEALPix refinement level.
+    """Increase the refinement level of a HEALPix array.
 
-    Array elements are broadcast to cells of a higher refinement
-    level. For an extensive quantity (that depends on the size of the
+    Data are broadcast to cells of at the higher refinement level. For
+    an extensive field quantity (that depends on the size of the
     cells, such as "sea_ice_mass" with units of kg), the new values
     are reduced so that they are consistent with the new smaller cell
-    areas. For an intensive quantity (that does not depend on the size
-    of the cells, such as "sea_ice_amount" with units of kg m-2), the
-    values are not changed.
+    areas. For an intensive field quantity (that does not depend on
+    the size of the cells, such as "sea_ice_amount" with units of kg
+    m-2), the broadcast values are not changed.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -788,7 +788,7 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
     :Returns:
 
         `numpy.ndarray`
-         TODOHEALPIX
+            The array at the new refinement level.
 
     """
     a = cfdm_to_memory(a)
@@ -813,7 +813,7 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
 
 
 def cf_healpix_increase_refinement_indices(a, ncells):
-    """Calculate HEALPix cell bounds.TODOHEALPIX
+    """Increase the refinement level of HEALPix indices
 
     For instance, when going from refinement level 1 to refinement
     level 2, if *a* is ``(2, 23, 17)`` then it will be transformed to
@@ -844,7 +844,7 @@ def cf_healpix_increase_refinement_indices(a, ncells):
     :Returns:
 
         `numpy.ndarray`
-         TODOHEALPIX
+            The array at the new refinement level.
 
     """
     # PERFORMANCE: This function can use a lot of memory when 'a'

@@ -5173,6 +5173,8 @@ class PropertiesData(Properties):
 
             {{balance: `bool`, optional}}
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `{{class}}` or `None`

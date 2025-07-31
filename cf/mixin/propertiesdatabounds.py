@@ -3681,6 +3681,8 @@ class PropertiesDataBounds(PropertiesData):
                 If True (the default) then rechunk an interior ring
                 array, if one exists.
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `{{class}}` or `None`
