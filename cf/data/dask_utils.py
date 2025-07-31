@@ -641,9 +641,7 @@ def cf_healpix_bounds(
 def cf_healpix_coordinates(
     a, indexing_scheme, refinement_level=None, lat=False, lon=False
 ):
-    """Calculate HEALPix cell coordinates.
-
-    THe coordinates are the cell centres.
+    """Calculate HEALPix cell centre coordinates.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -721,28 +719,36 @@ def cf_healpix_coordinates(
     elif lon:
         pos = 0
 
-    if indexing_scheme == "nested_unique":
-        # Create coordinates for 'nested_unique' cells
-        c = np.empty(a.shape, dtype="float64")
+    match indexing_scheme:
+        case "nested_unique":
+            # Create coordinates for 'nested_unique' cells
+            c = np.empty(a.shape, dtype="float64")
 
-        nest = True
-        orders, a = healpix.uniq2pix(a, nest=nest)
-        for order in np.unique(orders):
-            nside = healpix.order2nside(order)
-            indices = np.where(orders == order)[0]
-            c[indices] = healpix.pix2ang(
-                nside=nside, ipix=a[indices], nest=nest, lonlat=True
+            nest = True
+            orders, a = healpix.uniq2pix(a, nest=nest)
+            for order in np.unique(orders):
+                nside = healpix.order2nside(order)
+                indices = np.where(orders == order)[0]
+                c[indices] = healpix.pix2ang(
+                    nside=nside, ipix=a[indices], nest=nest, lonlat=True
+                )[pos]
+
+        case "nested" | "ring":
+            # Create coordinates for 'nested' or 'ring' cells
+            nest = indexing_scheme == "nested"
+            nside = healpix.order2nside(refinement_level)
+            c = healpix.pix2ang(
+                nside=nside,
+                ipix=a,
+                nest=nest,
+                lonlat=True,
             )[pos]
-    else:
-        # Create coordinates for 'nested' or 'ring' cells
-        nest = indexing_scheme == "nested"
-        nside = healpix.order2nside(refinement_level)
-        c = healpix.pix2ang(
-            nside=nside,
-            ipix=a,
-            nest=nest,
-            lonlat=True,
-        )[pos]
+
+        case _:
+            raise ValueError(
+                "Can't calculate HEALPix cell coordinates: Unknown "
+                f"'indexing_scheme': {indexing_scheme!r}"
+            )
 
     return c
 
@@ -975,6 +981,12 @@ def cf_healpix_indexing_scheme(
                         )
 
                     return a
+
+        case _:
+            raise ValueError(
+                "Can't calculate HEALPix cell coordinates: Unknown "
+                f"'indexing_scheme': {indexing_scheme!r}"
+            )
 
     raise RuntimeError(
         "cf_healpix_indexing_scheme: Failed during Dask computation"

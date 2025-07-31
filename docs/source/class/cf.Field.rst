@@ -386,6 +386,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Field.copy
+   ~cf.Field.create_latlon_coordinates
    ~cf.Field.compute_vertical_coordinates
    ~cf.Field.dataset_compliance
    ~cf.Field.equals
@@ -713,6 +714,22 @@ Regridding operations
 
    ~cf.Field.regridc
    ~cf.Field.regrids
+   ~cf.Field.healpix_decrease_refinement_level
+   ~cf.Field.healpix_increase_refinement_level
+
+HEALPix grids
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.healpix_info
+   ~cf.Field.healpix_indexing_scheme
+   ~cf.Field.healpix_to_ugrid
+   ~cf.Field.healpix_decrease_refinement_level
+   ~cf.Field.healpix_increase_refinement_level
 
 Date-time operations
 --------------------

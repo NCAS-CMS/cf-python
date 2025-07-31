@@ -22,7 +22,8 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cf.Field.create_latlon_coordinates`
+    .. seealso:: `cf.Field.create_latlon_coordinates`,
+                 `cf.Field.healpix_to_ugrid`
 
     :Parameters:
 
@@ -31,11 +32,12 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
             will be updated in-place.
 
         pole_longitude: `None` or number
-            The longitude of coordinate bounds that lie exactly on the
-            north (south) pole. If `None` then the longitude of such a
-            vertex will be the same as the south (north) vertex of the
-            same cell. If set to a number, then the longitudes of such
-            vertices will all be given that value.
+            The longitude of HEALPix coordinate bounds that lie
+            exactly on the north (south) pole. If `None` then the
+            longitude of such a vertex will be the same as the south
+            (north) vertex of the same cell. If set to a number, then
+            the longitudes of such vertices will all be given that
+            value.
 
     :Returns:
 
@@ -273,58 +275,63 @@ def _healpix_locate(lat, lon, f):
         )
 
     indexing_scheme = hp.get("indexing_scheme")
-    if indexing_scheme is None:
-        raise ValueError(
-            f"Can't locate HEALPix cells for {f!r}: indexing_scheme has "
-            "not been set in the healpix grid mapping coordinate reference"
-        )
+    match indexing_scheme:
+        case "nested_unique":
+            # nested_unique indexing scheme
+            index = []
+            healpix_index = healpix_index.array
+            orders = healpix.uniq2pix(healpix_index, nest=True)[0]
+            orders = np.unique(orders)
+            for order in orders:
+                # For this refinement level, find the HEALPix nested
+                # indices of the cells that contain the lat-lon
+                # points.
+                nside = healpix.order2nside(order)
+                pix = healpix.ang2pix(nside, lon, lat, nest=True, lonlat=True)
+                # Remove duplicate indices
+                pix = np.unique(pix)
+                # Convert back to HEALPix nested_unique indices
+                pix = healpix._chp.nest2uniq(order, pix, pix)
+                # Find where these HEALPix indices are located in the
+                # healpix_index coordinates
+                index.append(da.where(da.isin(healpix_index, pix))[0])
 
-    if indexing_scheme == "nested_unique":
-        # nested_unique indexing scheme
-        index = []
-        healpix_index = healpix_index.array
-        orders = healpix.uniq2pix(healpix_index, nest=True)[0]
-        orders = np.unique(orders)
-        for order in orders:
-            # For this refinement level, find the HEALPix nested
-            # indices of the cells that contain the lat-lon points.
-            nside = healpix.order2nside(order)
-            pix = healpix.ang2pix(nside, lon, lat, nest=True, lonlat=True)
+            index = da.unique(da.concatenate(index, axis=0))
+
+        case "nested" | "ring":
+            # nested or ring indexing scheme
+            refinement_level = hp.get("refinement_level")
+            if refinement_level is None:
+                raise ValueError(
+                    f"Can't locate HEALPix cells for {f!r}: refinement_level "
+                    "has not been set in the healpix grid mapping coordinate "
+                    "reference"
+                )
+
+            # Find the HEALPix indices of the cells that contain the
+            # lat-lon points
+            nest = indexing_scheme == "nested"
+            nside = healpix.order2nside(refinement_level)
+            pix = healpix.ang2pix(nside, lon, lat, nest=nest, lonlat=True)
             # Remove duplicate indices
             pix = np.unique(pix)
-            # Convert back to HEALPix nested_unique indices
-            pix = healpix._chp.nest2uniq(order, pix, pix)
             # Find where these HEALPix indices are located in the
             # healpix_index coordinates
-            index.append(da.where(da.isin(healpix_index, pix))[0])
+            index = da.where(da.isin(healpix_index, pix))[0]
 
-        index = da.unique(da.concatenate(index, axis=0))
-    elif indexing_scheme in ("nested", "ring"):
-        # nested or ring indexing scheme
-        refinement_level = hp.get("refinement_level")
-        if refinement_level is None:
+        case None:
             raise ValueError(
-                f"Can't locate HEALPix cells for {f!r}: refinement_level "
-                "has not been set in the healpix grid mapping coordinate "
+                f"Can't locate HEALPix cells for {f!r}: indexing_scheme has "
+                "not been set in the healpix grid mapping coordinate "
                 "reference"
             )
 
-        # Find the HEALPix indices of the cells that contain the
-        # lat-lon points
-        nest = indexing_scheme == "nested"
-        nside = healpix.order2nside(refinement_level)
-        pix = healpix.ang2pix(nside, lon, lat, nest=nest, lonlat=True)
-        # Remove duplicate indices
-        pix = np.unique(pix)
-        # Find where these HEALPix indices are located in the
-        # healpix_index coordinates
-        index = da.where(da.isin(healpix_index, pix))[0]
-    else:
-        raise ValueError(
-            f"Can't locate HEALPix cells for {f!r}: indexing_scheme in the "
-            "healpix grid mapping coordinate reference must be one of "
-            f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
-        )
+        case _:
+            raise ValueError(
+                f"Can't locate HEALPix cells for {f!r}: indexing_scheme in "
+                "the healpix grid mapping coordinate reference must be one "
+                f"of {HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+            )
 
     # Return the cell locations as a numpy array of element indices
     return index.compute()
@@ -333,8 +340,8 @@ def _healpix_locate(lat, lon, f):
 def del_healpix_coordinate_reference(f):
     """Remove a healpix grid mapping coordinate reference construct.
 
-    A new latitude_longitude grid mapping coordinate reference will be
-    created in-place, if required, to store any generic coordinate
+    If required, a new latitude_longitude grid mapping coordinate
+    reference will be created in-place to store any generic coordinate
     conversion or datum parameters found in the healpix grid mapping
     coordinate reference.
 
@@ -498,7 +505,7 @@ def healpix_max_refinement_level():
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to find the HEALPix maximum refinement level"
+            "to find the maximum HEALPix refinement level"
         )
 
     return healpix.nside2order(healpix._chp.NSIDE_MAX)

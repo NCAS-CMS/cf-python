@@ -2259,7 +2259,8 @@ class FieldDomain:
         Auxiliary coords: latitude(ncdim%cell(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
                         : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
         Coord references: grid_mapping_name:latitude_longitude
-        Topologies      : cell:face(ncdim%cell(48), 4) = [[965, ..., 3074]]
+        Topologies      : cell:face(ncdim%cell(48), 4) = [[774, ..., 3267]]
+
 
         """
         from ..healpix import del_healpix_coordinate_reference
@@ -2269,8 +2270,8 @@ class FieldDomain:
         axis = hp.get("domain_axis_key")
         if axis is None:
             raise ValueError(
-                "Can't convert HEALPix to UGRID: There is no HEALPix domain "
-                "axis"
+                f"Can't convert {self!r} from HEALPix to UGRID: There is no "
+                "HEALPix domain axis"
             )
 
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2281,7 +2282,7 @@ class FieldDomain:
         # that the north (south) polar vertex comes out as a single
         # node in the domain topology.
         f.create_latlon_coordinates(
-            one_d=True, two_d=False, pole_longitude=0, inplace=True
+            two_d=False, pole_longitude=0, inplace=True
         )
 
         x_key, x = f.auxiliary_coordinate(
@@ -2300,28 +2301,28 @@ class FieldDomain:
         )
         if x is None:
             raise ValueError(
-                "Can't convert HEALPix to UGRID: Not able to find (or "
-                "create) longitude coordinates"
+                f"Can't convert {f!r} from HEALPix to UGRID: Not able to "
+                "find (nor create) longitude coordinates"
             )
 
         if y is None:
             raise ValueError(
-                "Can't convert HEALPix to UGRID: Not able to find (or "
-                "create) latitude coordinates"
+                f"Can't convert {f!r} from HEALPix to UGRID: Not able to "
+                "find (or create) latitude coordinates"
             )
 
         bounds_y = y.get_bounds(None)
         bounds_x = x.get_bounds(None)
         if bounds_y is None:
             raise ValueError(
-                "Can't convert HEALPix to UGRID: No latitude coordinate "
-                "bounds"
+                f"Can't convert {f!r} from HEALPix to UGRID: No latitude "
+                "coordinate bounds"
             )
 
         if bounds_x is None:
             raise ValueError(
-                "Can't convert HEALPix to UGRID: No longitude coordinate "
-                "bounds"
+                f"Can't convert {f!r} from HEALPix to UGRID: No longitude "
+                "coordinate bounds"
             )
 
         # Create the Domain Topology construct, by creating a unique
