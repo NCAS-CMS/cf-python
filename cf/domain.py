@@ -278,6 +278,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
         https://dx.doi.org/10.1086/427976
 
+        M. Reinecke and E. Hivon: Efficient data structures for masks
+        on 2D grids. A&A, 580 (2015)
+        A132. https://doi.org/10.1051/0004-6361/201526549
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.Domain.create_regular`,
@@ -339,7 +343,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             Coordinate conversion:refinement_level = 4
             Auxiliary Coordinate: healpix_index
 
-        >>> d = cf.Domain.create_healpix(8, "nested_unique", radius=6371000)
+        >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
         >>> d.dump()
         --------
         Domain:

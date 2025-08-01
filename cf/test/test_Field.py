@@ -3304,23 +3304,56 @@ class FieldTest(unittest.TestCase):
     def test_Field_healpix_decrease_refinement_level(self):
         """Test Field.healpix_decrease_refinement_level."""
         f = self.f12
-        g = f.healpix_decrease_refinement_level(0, np.mean)
+
+        g = f.healpix_decrease_refinement_level(0, "mean")
         self.assertTrue(
             np.array_equal(g.coord("healpix_index"), np.arange(12))
         )
 
+        for method, first_value in zip(
+            (
+                "maximum",
+                "mean",
+                "minimum",
+                "standard_deviation",
+                "variance",
+                "sum",
+                "median",
+            ),
+            (293.5, 289.15, 285.3, 3.44201976, 11.8475, 1156.6, 288.9),
+        ):
+            g = f.healpix_decrease_refinement_level(0, method)
+            self.assertTrue(np.allclose(g[0, 0], first_value))
+
+        # Bad methods
+        for method in ("point", "range", "bad method", 3.14):
+            with self.assertRaises(ValueError):
+                f.healpix_decrease_refinement_level(0, method)
+
+        def range_func(a, axis=None):
+            return np.max(a, axis=axis) - np.min(a, axis=axis)
+
+        g = f.healpix_decrease_refinement_level(0, "range", range_func)
+        self.assertTrue(np.allclose(g[0, 0], 8.2))
+
+        def my_mean(a, axis=None):
+            return np.mean(a, axis=axis)
+
+        g = f.healpix_decrease_refinement_level(0, "mean", my_mean)
+        self.assertTrue(np.allclose(g[0, 0], 289.15))
+
         f = f.healpix_indexing_scheme("ring")
-        g = f.healpix_decrease_refinement_level(0, np.mean)
+        g = f.healpix_decrease_refinement_level(0, "maximum")
         self.assertTrue(
             np.array_equal(g.coord("healpix_index"), np.arange(12))
         )
         with self.assertRaises(ValueError):
-            f.healpix_decrease_refinement_level(0, np.mean, conform=False)
+            f.healpix_decrease_refinement_level(0, "maximum", conform=False)
 
         f = f.healpix_indexing_scheme("ring", sort=True)
         f = f.healpix_indexing_scheme("nested")
 
-        g = f.healpix_decrease_refinement_level(0, np.mean, conform=True)
+        g = f.healpix_decrease_refinement_level(0, "mean", conform=True)
         self.assertTrue(
             np.array_equal(g.coord("healpix_index"), np.arange(12))
         )
@@ -3328,7 +3361,7 @@ class FieldTest(unittest.TestCase):
         # Check that lat/lon coords get created when they're present
         # in the original field
         f = f.create_latlon_coordinates()
-        g = f.healpix_decrease_refinement_level(0, np.mean)
+        g = f.healpix_decrease_refinement_level(0, "mean")
         self.assertEqual(g.auxiliary_coordinate("latitude"), (12,))
         self.assertEqual(g.auxiliary_coordinate("longitude"), (12,))
 
@@ -3337,7 +3370,7 @@ class FieldTest(unittest.TestCase):
 
         # Bad results when check_healpix_index=False
         h = f.healpix_decrease_refinement_level(
-            0, np.mean, conform=False, check_healpix_index=False
+            0, "mean", conform=False, check_healpix_index=False
         )
         self.assertFalse(
             np.array_equal(h.coord("healpix_index"), np.arange(12))
@@ -3371,7 +3404,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.array.shape, (2, 192))
 
         # Check selected data values for intensive and extensive
-        # increases
+        # quantities
         n = 4 ** (2 - 1)
         for i in (0, 1, 24, 46, 47):
             self.assertTrue(
@@ -3383,6 +3416,19 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(
                 np.allclose(g[:, i * n : (i + 1) * n], f[:, i : i + 1] / n)
             )
+
+        # Cached values
+        f.coordinate("healpix_index").data._del_cached_elements()
+        g = f.healpix_increase_refinement_level(29, "intensive")
+        self.assertEqual(
+            g.coordinate("healpix_index").data._get_cached_elements(), {}
+        )
+        _ = str(f.coordinate("healpix_index").data)  # Create cached elements
+        g = f.healpix_increase_refinement_level(29, "intensive")
+        self.assertEqual(
+            g.coordinate("healpix_index").data._get_cached_elements(),
+            {0: 0, 1: 1, -1: 3458764513820540927},
+        )
 
         # Bad 'quantity' parameter
         with self.assertRaises(ValueError):

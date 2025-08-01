@@ -578,14 +578,17 @@ _docstring_substitution_definitions = {
                 geographical nearest-neighbour operations such as
                 decreasing the refinement level.
 
-                For a Multi-Order Coverage (MOC), where pixels with
-                different refinement levels are stored in the same
-                array, the indexing scheme has a unique index for each
-                cell at each refinement level. The "nested_unique"
-                scheme for an MOC indexes pixels within each
-                refinement level with the nested scheme, but
-                geographically close pixels at different refinement
-                levels do not have close indices.""",
+                A Multi-Order Coverage (MOC) has pixels with different
+                refinement levels stored in the same array. The
+                "nested_unique" scheme for an MOC has a unique index
+                for each cell at each refinement level, such that
+                within each refinement level a nested-type scheme is
+                employed. In the "nested_unique" scheme, pixels at
+                different refinement levels inside a single coarser
+                refinement level cell can have widely different
+                indices. For each refinment level *n*, the
+                "nested_unique" indices are in the range
+                :math:`4^{(n+1)}, ..., 4^{(n+2)}-1`.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

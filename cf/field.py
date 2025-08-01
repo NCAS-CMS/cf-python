@@ -4819,24 +4819,40 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return out
 
     def healpix_decrease_refinement_level(
-        self, level, reduction, conform=True, check_healpix_index=True
+        self,
+        level,
+        method,
+        reduction=None,
+        conform=True,
+        check_healpix_index=True,
     ):
-        """Decrease the refinement level of a HEALPix grid.
+        r"""Decrease the refinement level of a HEALPix grid.
 
         Decreasing the refinement level reduces the resolution of the
-        HEALPix grid by combining, using the *reduction* function, the
-        Field data from the original cells that lie inside each larger
-        cell at the new lower refinement level.
+        HEALPix grid by combining, using the given *method*, the Field
+        data from the original cells that lie inside each larger cell
+        at the new lower refinement level.
 
-        The operation requires that each larger cell at the lower
-        refinement level either contains no original cells (in which
-        case that new cell is not included in the output), or is
-        completely covered by original cells. It is not allowed for a
-        larger cell to be only partially covered by original
-        cells. For instance, if the original refinement level is 10
-        and the new refinement level is 8, then each output cell will
-        be the combination of :math:`16\equiv 4^(10-8)`) original
-        cells.
+        A new cell method is added, when appropriate, to describe the
+        reduction.
+
+        The operation requires that a new larger cell at the lower
+        refinement level either
+
+        * contains no original cells, in which case that larger cell
+          is not included in the output,
+
+        or
+
+        * is completely covered by original cells.
+
+        It is not allowed for a larger cell to be only partially
+        covered by original cells. For instance, if the original
+        refinement level is 10 and the new refinement level is 8, then
+        each output cell will be the combination of :math:`16\equiv
+        4^(10-8)`) original cells, and if a larger cell contains at
+        least one but fewer than 16 original cells then an exception
+        is raised (assuming that *check_healpix_index* is True).
 
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
@@ -4858,64 +4874,92 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 refinement level, or if `None` then the refinement
                 level is not changed.
 
-            reduction: function
-                The function used to calculate the values in the new
-                coarser cells, from the data on the original finer
-                cells.
+            method: `str`
+                The method used to calculate the values in the new
+                larger cells, from the data on the original
+                cells. Must be one of the CF standardised cell
+                methods: ``'maximum'``, ``'maximum_absolute_value'``,
+                ``'mean'``, ``'mean_absolute_value'``,
+                ``'mean_of_upper_decile'``, ``'median'``,
+                ``'mid_range'``, ``'minimum'``,
+                ``'minimum_absolute_value'``, ``'mode'``, ``'range'``,
+                ``'root_mean_square'``, ``'standard_deviation'``,
+                ``'sum'``, ``'sum_of_squares'``, ``'variance'``.
 
                 *Example:*
                   For an intensive field quantity (i.e. one that does
                   not depend on the size of the cells, such as
-                  "sea_ice_amount" with units of kg m-2), `np.mean`
-                  might be appropriate.
+                  "sea_ice_amount" with units of kg m-2), a method of
+                  ``'mean'`` might be appropriate.
 
                 *Example:*
                   For an extensive field quantity (i.e. one that
                   depends on the size of the cells, such as
-                  "sea_ice_mass" with units of kg), `np.sum` might be
-                  appropriate.
+                  "sea_ice_mass" with units of kg), a method of
+                  ``'sum'`` might be appropriate.
+
+            reduction: function or `None`, optional
+                The function used to calculate the values in the new
+                larger cells, from the data on the original cells. The
+                function must calculate the quantity defined by the
+                *method* parameter, take an array of values as its
+                first argument, and have an *axis* keyword that
+                specifies which axis of the array is the HEALPix axis.
+
+                For some methods there are default *reduction*
+                functions, which are used when *reduction* is `None`
+                (the default):
+
+                ========================  ===================
+                *method*                  Default *reduction*
+                ========================  ===================
+                ``'maximum'``             `np.max`
+                ``'mean'``                `np.mean`
+                ``'median'``              `np.median`
+                ``'minimum'``             `np.min`
+                ``'standard_deviation'``  `np.std`
+                ``'sum'``                 `np.sum`
+                ``'variance'``            `np.var`
+                ========================  ===================
 
             conform: `bool`, optional
-                If True (the default) the HEALPix grid is
+                If True (the default) then the HEALPix grid is
                 automatically converted to a form suitable for having
                 its refinement level changed, i.e. the indexing scheme
                 is changed to 'nested' and the HEALPix axis is sorted
                 so that the nested HEALPix indices are monotonically
-                increasing. If False then either an exeption is raised
-                if the HEALPix indexing scheme is not already
+                increasing. If False then either an exception is
+                raised if the HEALPix indexing scheme is not already
                 'nested', or else the HEALPix axis is not sorted.
 
                 .. note:: Setting to False will speed up the operation
                           when the HEALPix indexing scheme is already
                           nested and the HEALPix axis is already
-                          sorted montonically.
+                          sorted monotonically.
 
             check_healpix_index: `bool`, optional
                 If True (the default) then the following conditions
                 will be checked before the creation of the new Field
-                (but after the HEALPix grid has been conformed, when
+                (and after the HEALPix grid has been conformed, when
                 *conform* is True):
 
                 1. The nested HEALPix indices are strictly
                    monotonically increasing.
 
                 2. Every cell at the new lower refinement level
-                   contains the maximum possible number of cells at
-                   the original refinement level.
-
-                If True and any of these conditions is not met, then an
-                exception is raised.
+                   contains zero or the maximum possible number of
+                   cells at the original refinement level.
 
                 If False then these checks are not carried out.
 
                 .. warning:: Only set to False, which will speed up
-                             the operation, if it is known in advance
-                             that these conditions are already met. If
-                             set to False and any of the conditions is
-                             not met then either an exception will be
-                             raised or, much worse, the operation will
-                             complete and return incorrect data
-                             values.
+                             the operation, when it is known in
+                             advance that these conditions are already
+                             met. If set to False and any of the
+                             conditions are not met then either an
+                             exception will be raised or, much worse,
+                             the operation could complete and return
+                             incorrect data values.
 
         :Returns:
 
@@ -4935,19 +4979,88 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         that lie in one cell of the lower refinement leve1) in the
         orginal field correspond to one cell at the lower level:
 
-        >>> g = f.healpix_decrease_refinement_level(0, np.mean)
-        <CF Field: air_temperature(time(2), healpix_index(12)) K>
+        >>> g = f.healpix_decrease_refinement_level(0, 'maximum')
+        >>> print(g)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(12)) K
+        Cell methods    : time(2): mean area: mean area: maximum
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(12)) = [0, ..., 11] 1
+        Coord references: grid_mapping_name:healpix
         >>> g.healpix_info()['refinement_level']
         0
-        >>> np.mean(g.array[0, 0])
-        np.float64(289.15)
-        >>> f.healpix_info()['refinement_level']
-        1
-        >>> np.mean(f.array[0, :4])
-        np.float64(289.15)
+        >>> print(f[0, :4].array)
+        [[291.5 293.5 285.3 286.3]]
+        >>> print(g[0, 0].array)
+        [[293.5]]
+
+        >>> import numpy as np
+        >>> def range_func(a, axis=None):
+        ...     return np.max(a, axis=axis) - np.min(a, axis=axis)
+        ...
+        >>> g = f.healpix_decrease_refinement_level(0, 'range', range_func)
+        >>> print(g)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(12)) K
+        Cell methods    : time(2): mean area: mean area: range
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: healpix_index(healpix_index(12)) = [0, ..., 11] 1
+        Coord references: grid_mapping_name:healpix
+        >>> print(g[0, 0].array)
+        [[8.2]]
 
         """
+        from .constants import cell_methods
+
+        # "point" is not a valid cell method after a reduction
+        cell_methods = cell_methods.copy()
+        cell_methods.remove("point")
+
         f = self.copy()
+
+        # Parse 'method'
+        if method not in cell_methods:
+            raise ValueError(
+                f"Can't decrease HEALPix refinement level of {f!r}: "
+                "'method' is not one of the standardised CF cell methods "
+                f"{sorted(cell_methods)}. Got: {method!r}"
+            )
+
+        # Parse 'reduction'
+        if reduction is None:
+            # Infer 'reduction' function from 'method'
+            match method:
+                case "maximum":
+                    reduction = np.max
+                case "minimum":
+                    reduction = np.min
+                case "mean":
+                    reduction = np.mean
+                case "standard_deviation":
+                    reduction = np.std
+                case "variance":
+                    reduction = np.var
+                case "sum":
+                    reduction = np.sum
+                case "median":
+                    reduction = np.median
+                case _:
+                    raise ValueError(
+                        f"Can't decrease HEALPix refinement level of {f!r}: "
+                        "Must provide a 'reduction' function for "
+                        f"method={method!r}"
+                    )
+
+        elif not callable(reduction):
+            raise ValueError(
+                f"Can't decrease HEALPix refinement level of {f!r}: "
+                f"'reduction' must be callable. Got: {reduction!r} of type "
+                f"{type(reduction)}"
+            )
 
         # Get the HEALPix info
         hp = f.healpix_info()
@@ -5036,10 +5149,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ).any():
                 raise ValueError(
                     f"Can't decrease HEALPix refinement level of {f!r}: "
-                    "At least one cell at the new coarser refinement level "
-                    f"({level}) contains fewer than {ncells} "
-                    "cells at the original finer refinement level "
-                    f"({refinement_level})"
+                    "At least one cell at the new lower refinement level "
+                    f"({level}) contains fewer than {ncells} cells at the "
+                    f"original refinement level ({refinement_level})"
                 )
 
         # Get the HEALPix axis
@@ -5059,12 +5171,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         )
 
-        # Coarsen the field data using the 'reduction' function.
-        #
-        # Note: Using 'Data.coarsen' only works because a) we have
-        #       'nested' HEALPix ordering, and b) each coarser cell
-        #       contains the maximum possible number of original
-        #       cells.
+        # ------------------------------------------------------------
+        # Chenge the refinement level of the Field's data
+        # ------------------------------------------------------------
+
+        # Note: Using 'Data.coarsen' works because a) we have 'nested'
+        #       HEALPix ordering, and b) each coarser cell contains
+        #       the maximum possible number of original cells.
         f.data.coarsen(
             reduction, axes={iaxis: ncells}, trim_excess=False, inplace=True
         )
@@ -5073,6 +5186,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         domain_axis = f.domain_axis(axis)
         domain_axis.set_size(f.shape[iaxis])
 
+        # ------------------------------------------------------------
+        # Change the refinement level of the Field's metadata
+        # ------------------------------------------------------------
+
         # Coarsen the domain ancillary constructs that span the
         # HEALPix axis. We're assuming that domain ancillary data are
         # intensive (i.e. do not depend on the size of the cell), so
@@ -5080,9 +5197,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
-            i = f.get_data_axes(key).index(axis)
+            iaxis = f.get_data_axes(key).index(axis)
             domain_ancillary.data.coarsen(
-                np.mean, axes={i: ncells}, trim_excess=False, inplace=True
+                np.mean, axes={iaxis: ncells}, trim_excess=False, inplace=True
             )
 
         # Coarsen the cell measure constructs that span the HEALPix
@@ -5092,14 +5209,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
-            i = f.get_data_axes(key).index(axis)
+            iaxis = f.get_data_axes(key).index(axis)
             cell_measure.data.coarsen(
-                np.sum, axes={i: ncells}, trim_excess=False, inplace=True
+                np.sum, axes={iaxis: ncells}, trim_excess=False, inplace=True
             )
 
         # Remove all other metadata constructs that span the HEALPix
-        # axis, including the original healpix_index coordinate
-        # construct.
+        # axis, including the original healpix_index coordinates and
+        # any lat/lon coordinates.
         for key in (
             f.constructs.filter_by_axis(axis, axis_mode="and")
             .filter_by_type("cell_measure", "domain_ancillary")
@@ -5108,8 +5225,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ):
             f.del_construct(key)
 
-        # Create the healpix_index coordinates for the new refinement
-        # level
+        # ------------------------------------------------------------
+        # Change the refinement level of the healpix_index coordinates
+        # ------------------------------------------------------------
         if healpix_index.construct_type == "dimension_coordinate":
             # Ensure that healpix indices are auxiliary coordinates
             healpix_index = f._AuxiliaryCoordinate(
@@ -5119,13 +5237,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         healpix_index = healpix_index[::ncells] // ncells
         hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
 
+        # ------------------------------------------------------------
         # Update the healpix Coordinate Reference
+        # ------------------------------------------------------------
         cr = hp.get("grid_mapping_name:healpix")
         cr.coordinate_conversion.set_parameter("refinement_level", level)
         cr.set_coordinate(hp_key)
 
+        # ------------------------------------------------------------
+        # Update the cell methods
+        # ------------------------------------------------------------
+        f._update_cell_methods(
+            method=method,
+            input_axes=("area",),
+            domain_axes=f.domain_axes(axis, todict=True),
+        )
+
+        # ------------------------------------------------------------
+        # Create lat/lon coordinates for the new refinement level
+        # ------------------------------------------------------------
         if create_latlon:
-            # Create lat/lon coordinates for the new refinement level
             f.create_latlon_coordinates(two_d=False, inplace=True)
 
         return f
@@ -5140,11 +5271,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         For an extensive field quantity (i.e. one that depends on the
         size of the cells, such as "sea_ice_mass" with units of kg),
-        the broadcast values are reduced to be consistent with the new
-        smaller cell areas. For an intensive field quantity (i.e. one
-        that does not depend on the size of the cells, such as
-        "sea_ice_amount" with units of kg m-2), the broadcast values
-        are not changed.
+        the broadcast values are also reduced to be consistent with
+        the new smaller cell areas. For an intensive field quantity
+        (i.e. one that does not depend on the size of the cells, such
+        as "sea_ice_amount" with units of kg m-2), the broadcast
+        values are not changed.
 
         K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
         et al.. HEALPix: A Framework for High-Resolution
@@ -5166,7 +5297,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 or if `None` then the refinement level is not changed.
 
             quantity: `str`
-                Whether the data values represent intensive or
+                Whether the Field data represent intensive or
                 extensive quantities, specified with ``'intensive'``
                 and ``'extensive'`` respectively.
 
@@ -5207,12 +5338,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(g[0, :8] .array)
         [[291.5 291.5 291.5 291.5 293.5 293.5 293.5 293.5]]
 
-        For an extensive quantity (which ``f`` is not, but we can
-        assume that it is for demonstration purposes), every four
-        cells at the higher refinement level have the value of a
-        single cell at the original refinement level after dividing it
-        by the number of cells at the higher refinement level that lie
-        in one cell of the original refinement level (4 in this case):
+        For an extensive quantity (which ``f`` is not in this example,
+        but we can assume that it is for demonstration purposes), each
+        cell at the higher refinement level has the value of a cell at
+        the original refinement level after dividing it by the number
+        of cells at the higher refinement level that lie in one cell
+        of the original refinement level (4 in this case):
 
         >>> g = f.healpix_increase_refinement_level(2, 'extensive')
         >>> print(f[0, :2] .array)
@@ -5404,7 +5535,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f.del_construct(key)
 
         # Create the healpix_index coordinates for the new refinement
-        # level
+        # level, and put them into the Field.
         healpix_index = hp["healpix_index"]
         if healpix_index.construct_type == "dimension_coordinate":
             # Ensure that healpix indices are auxiliary coordinates
@@ -5412,7 +5543,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 source=healpix_index, copy=False
             )
 
-        dx = healpix_index.data.to_dask_array(
+        # Save any cached data elements
+        data = healpix_index.data
+        cached = data._get_cached_elements().copy()
+
+        dx = data.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         )
 
@@ -5434,6 +5569,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         healpix_index.set_data(dx, copy=False)
+
+        # Set new cached data elements
+        data = healpix_index.data
+        if 0 in cached:
+            x = np.array(cached[0], dtype=dtype) * ncells
+            data._set_cached_elements({0: x, 1: x + 1})
+
+        if -1 in cached:
+            x = np.array(cached[-1], dtype=dtype) * ncells + (ncells - 1)
+            data._set_cached_elements({-1: x})
+
         hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
 
         # Update the healpix Coordinate Reference
