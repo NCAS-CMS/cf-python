@@ -267,21 +267,15 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def create_healpix(
         cls, refinement_level, indexing_scheme="nested", radius=None
     ):
-        """Create a new global HEALPix domain.
+        r"""Create a new global HEALPix domain.
 
         The HEALPix axis of the new Domain is ordered so that the
         HEALPix indices are monotonically increasing.
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
-
-        M. Reinecke and E. Hivon: Efficient data structures for masks
-        on 2D grids. A&A, 580 (2015)
-        A132. https://doi.org/10.1051/0004-6361/201526549
-
+        **References**
+        
+        {{HEALPix references}}
+        
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.Domain.create_regular`,
@@ -293,8 +287,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 The refinement level of the grid within the HEALPix
                 hierarchy, starting at 0 for the base tessellation
                 with 12 cells. The number of cells in the global
-                HEALPix grid is :math:`(12 \times
-                4^refinement_level)`.
+                HEALPix grid for refinement level *n* is
+                :math:`12\times 4^n`.
 
             indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the
@@ -325,64 +319,78 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples**
 
-        >>> d = cf.Domain.create_healpix(4)
-        >>> d.dump()
-        --------
-        Domain:
-        --------
-        Domain Axis: healpix_index(3072)
+        .. code-block:: python
 
-        Auxiliary coordinate: healpix_index
-            standard_name = 'healpix_index'
-            units = '1'
-            Data(healpix_index(3072)) = [0, ..., 3071] 1
+           >>> d = cf.Domain.create_healpix(4)
+           >>> d.dump()
+           --------
+           Domain:
+           --------
+           Domain Axis: healpix_index(3072)
 
-        Coordinate reference: grid_mapping_name:healpix
-            Coordinate conversion:grid_mapping_name = healpix
-            Coordinate conversion:indexing_scheme = nested
-            Coordinate conversion:refinement_level = 4
-            Auxiliary Coordinate: healpix_index
+           Auxiliary coordinate: healpix_index
+               standard_name = 'healpix_index'
+               units = '1'
+               Data(healpix_index(3072)) = [0, ..., 3071] 1
 
-        >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
-        >>> d.dump()
-        --------
-        Domain:
-        --------
-        Domain Axis: healpix_index(3072)
+           Coordinate reference: grid_mapping_name:healpix
+               Coordinate conversion:grid_mapping_name = healpix
+               Coordinate conversion:indexing_scheme = nested
+               Coordinate conversion:refinement_level = 4
+               Auxiliary Coordinate: healpix_index
 
-        Auxiliary coordinate: healpix_index
-            standard_name = 'healpix_index'
-            units = '1'
-            Data(healpix_index(3072)) = [1024, ..., 4095] 1
+        .. code-block:: python
 
-        Coordinate reference: grid_mapping_name:healpix
-            Coordinate conversion:grid_mapping_name = healpix
-            Coordinate conversion:indexing_scheme = nested_unique
-            Datum:earth_radius = 6371000.0
-            Auxiliary Coordinate: healpix_index
+           >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
+           >>> d.dump()
+           --------
+           Domain:
+           --------
+           Domain Axis: healpix_index(3072)
 
-        >>> d.create_latlon_coordinates(inplace=True)
-        >>> print(d)
-        Auxiliary coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095] 1
-                        : latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
-                        : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
-        Coord references: grid_mapping_name:healpix
+           Auxiliary coordinate: healpix_index
+               standard_name = 'healpix_index'
+               units = '1'
+               Data(healpix_index(3072)) = [1024, ..., 4095] 1
+
+           Coordinate reference: grid_mapping_name:healpix
+               Coordinate conversion:grid_mapping_name = healpix
+               Coordinate conversion:indexing_scheme = nested_unique
+               Datum:earth_radius = 6371000.0
+               Auxiliary Coordinate: healpix_index
+
+        .. code-block:: python
+
+           >>> d.create_latlon_coordinates(inplace=True)
+           >>> print(d)
+           Auxiliary coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095] 1
+                           : latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
+                           : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
+           Coord references: grid_mapping_name:healpix
 
         """
         import dask.array as da
 
-        from .healpix import HEALPix_indexing_schemes
+        from .healpix import (
+            HEALPix_indexing_schemes,
+            healpix_max_refinement_level,
+        )
+
+        if (
+            not isinstance(refinement_level, Integral)
+            or refinement_level < 0
+            or refinement_level > healpix_max_refinement_level()
+        ):
+            raise ValueError(
+                "Can't create HEALPix Domain: 'refinement_level' must be a "
+                "non-negative integer less than or equal to "
+                f"{healpix_max_refinement_level()}. Got {refinement_level!r}"
+            )
 
         if indexing_scheme not in HEALPix_indexing_schemes:
             raise ValueError(
                 "Can't create HEALPix Domain: 'indexing_scheme' must be one "
                 f"of {HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
-            )
-
-        if not isinstance(refinement_level, Integral) or refinement_level < 0:
-            raise ValueError(
-                "Can't create HEALPix Domain: 'refinement_level' must be a "
-                f"non-negative integer. Got: {refinement_level!r}"
             )
 
         nested_unique = indexing_scheme == "nested_unique"

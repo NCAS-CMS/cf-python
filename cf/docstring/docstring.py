@@ -88,7 +88,17 @@ _docstring_substitution_definitions = {
         elements will be automatically reduced if including the full
         amount defined by the halo would extend the subspace beyond
         the axis limits.""",
-    # ----------------------------------------------------------------
+    # HEALPix references
+    "{{HEALPix references}}": """K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
+        et al.. HEALPix: A Framework for High-Resolution
+        Discretization and Fast Analysis of Data Distributed on the
+        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
+        https://dx.doi.org/10.1086/427976
+
+        M. Reinecke and E. Hivon: Efficient data structures for masks
+        on 2D grids. A&A, 580 (2015)
+        A132. https://doi.org/10.1051/0004-6361/201526549""",
+   # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
     # i: deprecated at version 3.0.0
@@ -586,7 +596,7 @@ _docstring_substitution_definitions = {
                 employed. In the "nested_unique" scheme, pixels at
                 different refinement levels inside a single coarser
                 refinement level cell can have widely different
-                indices. For each refinment level *n*, the
+                indices. For each refinement level *n*, the
                 "nested_unique" indices are in the range
                 :math:`4^{(n+1)}, ..., 4^{(n+2)}-1`.""",
     # ----------------------------------------------------------------

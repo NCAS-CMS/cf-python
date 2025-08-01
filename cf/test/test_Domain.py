@@ -533,6 +533,11 @@ class DomainTest(unittest.TestCase):
                 1000,
             )
 
+        # Bad 'refinement_level'
+        for level in (-1, 3.14, 30, "string"):
+            with self.assertRaises(ValueError):
+                cf.Domain.create_healpix(level)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

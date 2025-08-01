@@ -1968,18 +1968,12 @@ class FieldDomain:
         return set(axes)
 
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
-        """Change the indexing scheme of HEALPix indices.
+        r"""Change the indexing scheme of HEALPix indices.
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
-
-        M. Reinecke and E. Hivon: Efficient data structures for masks
-        on 2D grids. A&A, 580 (2015)
-        A132. https://doi.org/10.1051/0004-6361/201526549
-
+        **References**
+        
+        {{HEALPix references}}
+        
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_info`, `healpix_to_ugrid`
@@ -2145,11 +2139,9 @@ class FieldDomain:
     def healpix_info(self):
         """Get information about the HEALPix grid, if there is one.
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
+        **References**
+        
+        {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
 
@@ -2161,30 +2153,24 @@ class FieldDomain:
                 all of the following dictionary keys:
 
                 * ``'coordinate_reference_key'``: The construct key of
-                                                  the healpix
-                                                  coordinate reference
-                                                  construct.
+                  the healpix coordinate reference construct.
 
                 * ``'grid_mapping_name:healpix'``: The healpix
-                                                   coordinate
-                                                   reference
-                                                   construct.
+                  coordinate reference construct.
 
                 * ``'indexing_scheme'``: The HEALPix indexing scheme.
 
                 * ``'refinement_level'``: The refinement level of the
-                                          HEALPix grid.
+                  HEALPix grid.
 
                 * ``'domain_axis_key'``: The construct key of the
-                                         HEALPix domain axis
-                                         construct.
+                  HEALPix domain axis construct.
 
                 * ``'coordinate_key'``: The construct key of the
-                                        healpix_index coordinate
-                                        construct.
+                  healpix_index coordinate construct.
 
                 * ``'healpix_index'``: The healpix_index coordinate
-                                       construct.
+                  construct.
 
                 The dictionary will be empty if there is no HEALPix axis.
 
@@ -2213,11 +2199,9 @@ class FieldDomain:
     def healpix_to_ugrid(self, inplace=False):
         """Convert a HEALPix domain to a UGRID domain.
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
+        **References**
+        
+        {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
 

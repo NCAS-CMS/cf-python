@@ -4820,7 +4820,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
     def healpix_decrease_refinement_level(
         self,
-        level,
+        refinement_level,
         method,
         reduction=None,
         conform=True,
@@ -4850,15 +4850,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         covered by original cells. For instance, if the original
         refinement level is 10 and the new refinement level is 8, then
         each output cell will be the combination of :math:`16\equiv
-        4^(10-8)`) original cells, and if a larger cell contains at
+        4^{(10-8)}` original cells, and if a larger cell contains at
         least one but fewer than 16 original cells then an exception
         is raised (assuming that *check_healpix_index* is True).
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
+        **References**
+        
+        {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
 
@@ -4868,7 +4866,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            level: `int` or `None`
+            refinement_level: `int` or `None`
                 Specify the new lower refinement level as a
                 non-negative integer less than or equal to the current
                 refinement level, or if `None` then the refinement
@@ -4954,12 +4952,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. warning:: Only set to False, which will speed up
                              the operation, when it is known in
-                             advance that these conditions are already
-                             met. If set to False and any of the
+                             advance that these conditions are
+                             satisfied. If set to False and any of the
                              conditions are not met then either an
-                             exception will be raised or, much worse,
-                             the operation could complete and return
-                             incorrect data values.
+                             exception may be raised or, **much
+                             worse**, the operation could complete and
+                             return incorrect data values.
 
         :Returns:
 
@@ -5073,8 +5071,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "mapping coordinate reference"
             )
 
-        refinement_level = hp.get("refinement_level")
-        if refinement_level is None:
+        old_refinement_level = hp.get("refinement_level")
+        if old_refinement_level is None:
             raise ValueError(
                 f"Can't decrease HEALPix refinement level of {f!r}: "
                 "refinement_level has not been set in the healpix grid "
@@ -5102,30 +5100,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
         # Parse 'level'
-        if level is None:
+        if refinement_level is None:
             # No change in refinement level
             return f
 
         if (
-            not isinstance(level, Integral)
-            or level < 0
-            or level > refinement_level
+            not isinstance(refinement_level, Integral)
+            or refinement_level < 0
+            or refinement_level > old_refinement_level
         ):
             raise ValueError(
                 f"Can't decrease HEALPix refinement level of {f!r}: "
                 "'level' must be a non-negative integer less than "
                 "or equal to the current refinement level of "
-                f"{refinement_level}. Got {level!r}"
+                f"{old_refinement_level}. Got {refinement_level!r}"
             )
 
-        if level == refinement_level:
+        if refinement_level == old_refinement_level:
             # No change in refinement level
             return f
 
         # Get the number of cells at the original refinement level
         # which are contained in one cell at the lower refinement
         # level
-        ncells = 4 ** (refinement_level - level)
+        ncells = 4 ** (old_refinement_level - refinement_level)
 
         # Get the healpix_index coordinates
         healpix_index = hp.get("healpix_index")
@@ -5150,8 +5148,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 raise ValueError(
                     f"Can't decrease HEALPix refinement level of {f!r}: "
                     "At least one cell at the new lower refinement level "
-                    f"({level}) contains fewer than {ncells} cells at the "
-                    f"original refinement level ({refinement_level})"
+                    f"({refinement_level}) contains fewer than {ncells} "
+                    "cells at the original refinement level "
+                    f"({old_refinement_level})"
                 )
 
         # Get the HEALPix axis
@@ -5241,7 +5240,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Update the healpix Coordinate Reference
         # ------------------------------------------------------------
         cr = hp.get("grid_mapping_name:healpix")
-        cr.coordinate_conversion.set_parameter("refinement_level", level)
+        cr.coordinate_conversion.set_parameter(
+            "refinement_level", refinement_level
+        )
         cr.set_coordinate(hp_key)
 
         # ------------------------------------------------------------
@@ -5261,7 +5262,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def healpix_increase_refinement_level(self, level, quantity):
+    def healpix_increase_refinement_level(self, refinement_level, quantity):
         """Increase the refinement level of a HEALPix grid.
 
         Increasing the refinement level increases the resolution of
@@ -5277,11 +5278,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         as "sea_ice_amount" with units of kg m-2), the broadcast
         values are not changed.
 
-        K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann,
-        et al.. HEALPix: A Framework for High-Resolution
-        Discretization and Fast Analysis of Data Distributed on the
-        Sphere. The Astrophysical Journal, 2005, 622 (2), pp.759-771.
-        https://dx.doi.org/10.1086/427976
+        **References**
+        
+        {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
 
@@ -5291,7 +5290,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            level: `int` or `None`
+            refinement_level: `int` or `None`
                 Specify the new higher refinement level as an integer
                 greater than or equal to the current refinement level,
                 or if `None` then the refinement level is not changed.
@@ -5369,27 +5368,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the HEALPix info
         hp = f.healpix_info()
-        refinement_level = hp["refinement_level"]
+        old_refinement_level = hp["refinement_level"]
 
-        # Parse 'level'
-        if level is None:
+        # Parse 'refinement_level'
+        if refinement_level is None:
             # No change in refinement level
             return f
 
         if (
-            not isinstance(level, Integral)
-            or level < refinement_level
-            or level > healpix_max_refinement_level()
+            not isinstance(refinement_level, Integral)
+            or refinement_level < old_refinement_level
+            or refinement_level > healpix_max_refinement_level()
         ):
             raise ValueError(
                 f"Can't increase HEALPix refinement level of {f!r}: "
                 "'level' must be an integer greater than or equal to the "
-                f"current refinement level of {refinement_level}, and less "
-                f"than or equal to {healpix_max_refinement_level()}. "
-                f"Got {level!r}"
+                f"current refinement level of {old_refinement_level}, and "
+                f"less than or equal to {healpix_max_refinement_level()}. "
+                f"Got {refinement_level!r}"
             )
 
-        if level == refinement_level:
+        if refinement_level == old_refinement_level:
             # No change in refinement level
             return f
 
@@ -5404,7 +5403,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the number of cells at the higher refinement level which
         # are contained in one cell at the original refinement level
-        ncells = 4 ** (level - refinement_level)
+        ncells = 4 ** (refinement_level - old_refinement_level)
 
         # Get the HEALPix axis
         axis = hp["domain_axis_key"]
@@ -5553,7 +5552,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Set the data type to allow for the largest possible HEALPix
         # index at the new refinement level
-        dtype = cfdm.integer_dtype(12 * (4**level) - 1)
+        dtype = cfdm.integer_dtype(12 * (4**refinement_level) - 1)
         if dx.dtype != dtype:
             dx = dx.astype(dtype, copy=False)
 
@@ -5584,7 +5583,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Update the healpix Coordinate Reference
         cr = hp.get("grid_mapping_name:healpix")
-        cr.coordinate_conversion.set_parameter("refinement_level", level)
+        cr.coordinate_conversion.set_parameter(
+            "refinement_level", refinement_level
+        )
         cr.set_coordinate(hp_key)
 
         if create_latlon:
