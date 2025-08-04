@@ -2700,7 +2700,6 @@ def create_esmpy_weights(
                 r.destroy()
 
             if debug:
-                ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
                 logger.debug(
                     f"Partition {i}: Time taken by ESMF to create weights: "
                     f"{time() - start_time} s\n"
@@ -2708,7 +2707,7 @@ def create_esmpy_weights(
                     f"{(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} GiB"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
-                if  ru_maxrss1 is None:
+                if ru_maxrss1 is None:
                     ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
                     logger.debug(
                         f"Partition {i}: Memory used by ESMF to create "
