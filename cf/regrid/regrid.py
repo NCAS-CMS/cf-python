@@ -2634,6 +2634,7 @@ def create_esmpy_weights(
 
         if debug:
             start_time = time()  # pragma: no cover
+            ru_maxrss1  =None
 
         # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
@@ -2707,8 +2708,16 @@ def create_esmpy_weights(
                     f"{(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} GiB"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
+                if  ru_maxrss1 is None:
+                    ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
+                    logger.debug(
+                        f"Partition {i}: Memory used by ESMF to create "
+                        f"weights: {(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} "
+                        "GiB"
+                    )  # pragma: no cover
+                    
+                start_time = time()  # pragma: no cover
 
-                
             if quarter:
                 # The weights were created with a dummy size 2
                 # dimension such that the weights for each dummy axis
