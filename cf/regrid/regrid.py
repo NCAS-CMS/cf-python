@@ -3,7 +3,6 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from time import time
 from typing import Any
 
 import dask.array as da
@@ -2575,18 +2574,18 @@ def create_esmpy_weights(
         partitioned_dst_grid = dst_grid_partitions > 1
         if debug:
             from resource import RUSAGE_SELF, getrusage
+            from time import time
 
-            start_time0 = time()
-            maxrss = getrusage(RUSAGE_SELF).ru_maxrss
+            maxrss = getrusage(RUSAGE_SELF).ru_maxrss  # pragma: no cover
+            start_time0 = time()  # pragma: no cover
             logger.debug(
                 "Calculating weights ...\n\n"
                 "Number of destination grid partitions: "
                 f"{dst_grid_partitions}\n"
-                "Free memory before calculation of weights: "
+                "Free memory before weights creation: "
                 f"{free_memory() / 2**30} GiB\n"
                 "Maximum RSS before weights creation: "
                 f"{maxrss * 1000/ 2**30} GiB\n"
-              
             )  # pragma: no cover
 
         # Create the weights using ESMF
@@ -2618,9 +2617,7 @@ def create_esmpy_weights(
         # Create source esmpy field
         src_esmpy_grid = src_esmpy_grids[0]
         if debug:
-            logger.debug(
-                f"Source ESMF {src_esmpy_grid.__class__.__name__}\n"
-            )  # pragma: no cover
+            logger.debug(f"Source ESMF {src_esmpy_grid}\n")  # pragma: no cover
 
         src_esmpy_field = esmpy.Field(
             src_esmpy_grid, name="src", meshloc=src_meshloc
@@ -2649,7 +2646,7 @@ def create_esmpy_weights(
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
-                
+
             # Create destination esmpy field
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
@@ -2730,8 +2727,8 @@ def create_esmpy_weights(
                 weights = csr_array(
                     (weights, (row, col)), shape=[dst_size, src_size]
                 )
-                w.append(weights)
                 del row, col
+                w.append(weights)
 
                 if debug:
                     logger.debug(
