@@ -96,7 +96,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         meta=meta,
         indexing_scheme=indexing_scheme,
         refinement_level=refinement_level,
-        lat=True,
+        latitude=True,
     )
     lat = f._AuxiliaryCoordinate(
         data=f._Data(dy, "degrees_north", copy=False),
@@ -110,7 +110,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         meta=meta,
         indexing_scheme=indexing_scheme,
         refinement_level=refinement_level,
-        lon=True,
+        longitude=True,
     )
     lon = f._AuxiliaryCoordinate(
         data=f._Data(dy, "degrees_east", copy=False),
@@ -128,7 +128,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         meta=meta,
         indexing_scheme=indexing_scheme,
         refinement_level=refinement_level,
-        lat=True,
+        latitude=True,
     )
     bounds = f._Bounds(data=dy)
     lat.set_bounds(bounds)
@@ -143,7 +143,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         meta=meta,
         indexing_scheme=indexing_scheme,
         refinement_level=refinement_level,
-        lon=True,
+        longitude=True,
         pole_longitude=pole_longitude,
     )
     bounds = f._Bounds(data=dy)

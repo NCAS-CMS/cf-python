@@ -2970,8 +2970,8 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(g.auxiliary_to_dimension("Y", inplace=True))
 
         f = self.f12.copy()
-        g = f.auxiliary_to_dimension("healpix_index")
-        h = g.dimension_to_auxiliary("healpix_index")
+        g = f.dimension_to_auxiliary("healpix_index")
+        h = g.auxiliary_to_dimension("healpix_index")
         self.assertFalse(f.equals(g))
         self.assertTrue(f.equals(h))
 
@@ -3211,14 +3211,11 @@ class FieldTest(unittest.TestCase):
         # HEALPix field
         # ------------------------------------------------------------
         f = self.f12.copy()
-        self.assertEqual(len(f.auxiliary_coordinates()), 1)
-        self.assertEqual(len(f.auxiliary_coordinates("healpix_index")), 1)
+        self.assertEqual(len(f.auxiliary_coordinates()), 0)
+        self.assertEqual(len(f.dimension_coordinates("healpix_index")), 1)
 
         g = f.create_latlon_coordinates()
-        self.assertEqual(len(g.auxiliary_coordinates()), 3)
-        self.assertEqual(
-            len(g.auxiliary_coordinates("healpix_index", "X", "Y")), 3
-        )
+        self.assertEqual(len(g.auxiliary_coordinates("X", "Y")), 2)
         self.assertIsNone(f.create_latlon_coordinates(inplace=True))
         self.assertTrue(f.equals(g))
 

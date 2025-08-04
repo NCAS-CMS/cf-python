@@ -98,7 +98,7 @@ _docstring_substitution_definitions = {
         M. Reinecke and E. Hivon: Efficient data structures for masks
         on 2D grids. A&A, 580 (2015)
         A132. https://doi.org/10.1051/0004-6361/201526549""",
-   # ----------------------------------------------------------------
+    # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
     # i: deprecated at version 3.0.0

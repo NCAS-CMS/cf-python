@@ -273,9 +273,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         HEALPix indices are monotonically increasing.
 
         **References**
-        
+
         {{HEALPix references}}
-        
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.Domain.create_regular`,
@@ -404,20 +404,23 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         axis = domain.set_construct(d, copy=False)
 
         # auxiliary_coordinate: healpix_index
-        c = domain._AuxiliaryCoordinate()
+        c = domain._DimensionCoordinate()
         c.set_properties({"standard_name": "healpix_index"})
         c.nc_set_variable("healpix_index")
 
         # Create the healpix_index data
         if nested_unique:
-            index0 = 4 ** (refinement_level + 1)
+            start = 4 ** (refinement_level + 1)
         else:
-            index0 = 0
+            start = 0
 
-        c.set_data(
-            Data(da.arange(index0, index0 + ncells), units="1"), copy=False
-        )
+        stop = start + ncells
+        data = Data(da.arange(start, stop), units="1")
 
+        # Set cached data elements
+        data._set_cached_elements({0: start, -1: stop - 1})
+
+        c.set_data(data, copy=False)
         key = domain.set_construct(c, axes=axis, copy=False)
 
         # coordinate_reference: grid_mapping_name:healpix

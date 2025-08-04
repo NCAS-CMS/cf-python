@@ -180,8 +180,6 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 _collapse_ddof_methods = set(("sd", "var"))
 
-# _earth_radius = Data(6371229.0, "m")
-
 _relational_methods = (
     "__eq__",
     "__ne__",
@@ -4855,7 +4853,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         is raised (assuming that *check_healpix_index* is True).
 
         **References**
-        
+
         {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
@@ -5227,12 +5225,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Change the refinement level of the healpix_index coordinates
         # ------------------------------------------------------------
-        if healpix_index.construct_type == "dimension_coordinate":
-            # Ensure that healpix indices are auxiliary coordinates
-            healpix_index = f._AuxiliaryCoordinate(
-                source=healpix_index, copy=False
-            )
-
         healpix_index = healpix_index[::ncells] // ncells
         hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
 
@@ -5279,7 +5271,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         values are not changed.
 
         **References**
-        
+
         {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
@@ -5536,11 +5528,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Create the healpix_index coordinates for the new refinement
         # level, and put them into the Field.
         healpix_index = hp["healpix_index"]
-        if healpix_index.construct_type == "dimension_coordinate":
-            # Ensure that healpix indices are auxiliary coordinates
-            healpix_index = f._AuxiliaryCoordinate(
-                source=healpix_index, copy=False
-            )
 
         # Save any cached data elements
         data = healpix_index.data
@@ -5589,7 +5576,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         cr.set_coordinate(hp_key)
 
         if create_latlon:
-            # Create lat/lon coordinates for the new refinement level
+            # Create 1-d lat/lon coordinates for the new refinement
+            # level
             f.create_latlon_coordinates(two_d=False, inplace=True)
 
         return f
@@ -6025,7 +6013,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         .. versionadded:: 1.0
 
         .. seealso:: `bin`, `cell_area`, `convolution_filter`,
-                     `moving_window`, `radius`, `weights`
+                     `moving_window`,
+                     `healpix_decrease_refinement_level`, `radius`,
+                     `weights`
 
         :Parameters:
 
@@ -7621,7 +7611,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f.del_coordinate_reference(ref_key)
 
             # --------------------------------------------------------
-            # Remove a HEALPix coordinate reference
+            # Remove a HEALPix Coordinate Reference and Dimension
+            # Coordinate. (A HEALPix Auxiliary Coordinate gets removed
+            # later with the other 1-d Auxiliary Coordinates.)
             # --------------------------------------------------------
             healpix_axis = f.domain_axis(
                 "healpix_index", key=True, default=None
@@ -7631,6 +7623,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 from .healpix import del_healpix_coordinate_reference
 
                 del_healpix_coordinate_reference(f)
+
+                key = f.dimension_coordinate(
+                    "healpix_index", key=True, default=None
+                )
+                if key is not None:
+                    f.del_construct(key)
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,

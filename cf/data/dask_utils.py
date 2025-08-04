@@ -469,8 +469,8 @@ def cf_healpix_bounds(
     a,
     indexing_scheme,
     refinement_level=None,
-    lat=False,
-    lon=False,
+    latitude=False,
+    longitude=False,
     pole_longitude=None,
 ):
     """Calculate HEALPix cell bounds.
@@ -511,10 +511,10 @@ def cf_healpix_bounds(
             ``'nested_unique'`` (in which case *refinement_level* may
             be `None`).
 
-        lat: `bool`, optional
+        latitude: `bool`, optional
             If True then return latitude bounds.
 
-        lon: `bool`, optional
+        longitude: `bool`, optional
             If True then return longitude bounds.
 
         pole_longitude: `None` or number
@@ -532,21 +532,21 @@ def cf_healpix_bounds(
     **Examples**
 
     >>> cf.data.dask_utils.cf_healpix_bounds(
-    ...     np.array([0, 1, 2, 3]), 'nested', 1, lat=True
+    ...     np.array([0, 1, 2, 3]), 'nested', 1, latitude=True
     )
     array([[41.8103149 , 19.47122063,  0.        , 19.47122063],
            [66.44353569, 41.8103149 , 19.47122063, 41.8103149 ],
            [66.44353569, 41.8103149 , 19.47122063, 41.8103149 ],
            [90.        , 66.44353569, 41.8103149 , 66.44353569]])
     >>> cf.data.dask_utils.cf_healpix_bounds(
-    ...     np.array([0, 1, 2, 3]), 'nested', 1, lon=True
+    ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True
     )
     array([[45. , 22.5, 45. , 67.5],
            [90. , 45. , 67.5, 90. ],
            [ 0. ,  0. , 22.5, 45. ],
            [45. ,  0. , 45. , 90. ]])
     >>> cf.data.dask_utils.cf_healpix_bounds(
-    ...     np.array([0, 1, 2, 3]), 'nested', 1, lon=True,
+    ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True,
     ...     pole_longitude=3.14159
     )
     array([[45.     , 22.5    , 45.     , 67.5    ],
@@ -573,9 +573,9 @@ def cf_healpix_bounds(
             f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
-    if lat:
+    if latitude:
         pos = 1
-    elif lon:
+    elif longitude:
         pos = 0
 
     if indexing_scheme == "ring":
@@ -639,7 +639,7 @@ def cf_healpix_bounds(
 
 
 def cf_healpix_coordinates(
-    a, indexing_scheme, refinement_level=None, lat=False, lon=False
+    a, indexing_scheme, refinement_level=None, latitude=False, longitude=False
 ):
     """Calculate HEALPix cell centre coordinates.
 
@@ -674,10 +674,10 @@ def cf_healpix_coordinates(
             ``'nested_unique'`` (in which case *refinement_level* may
             be `None`).
 
-        lat: `bool`, optional
+        latitude: `bool`, optional
             If True then return latitude coordinates.
 
-        lon: `bool`, optional
+        longitude: `bool`, optional
             If True then return longitude coordinates.
 
     :Returns:
@@ -688,11 +688,11 @@ def cf_healpix_coordinates(
     **Examples**
 
     >>> cf.data.dask_utils.cf_healpix_coordinates(
-    ...     np.array([0, 1, 2, 3]), 'nested', 1, lat=True
+    ...     np.array([0, 1, 2, 3]), 'nested', 1, latitude=True
     )
     array([19.47122063, 41.8103149 , 41.8103149 , 66.44353569])
     >>> cf.data.dask_utils.cf_healpix_coordinates(
-    ...     np.array([0, 1, 2, 3]), 'nested', 1, lon=True
+    ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True
     )
     array([45. , 67.5, 22.5, 45. ])
 
@@ -714,9 +714,9 @@ def cf_healpix_coordinates(
             f"healpix_index array has one dimension. Got shape {a.shape}"
         )
 
-    if lat:
+    if latitude:
         pos = 1
-    elif lon:
+    elif longitude:
         pos = 0
 
     match indexing_scheme:

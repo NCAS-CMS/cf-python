@@ -1,7 +1,6 @@
 import logging
 from numbers import Integral
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
 from dask.array.slicing import normalize_index
@@ -1971,9 +1970,9 @@ class FieldDomain:
         r"""Change the indexing scheme of HEALPix indices.
 
         **References**
-        
+
         {{HEALPix references}}
-        
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_info`, `healpix_to_ugrid`
@@ -2116,23 +2115,32 @@ class FieldDomain:
 
             _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme)
 
-        # Ensure that healpix indices are auxiliary coordinates
-        if healpix_index.construct_type == "dimension_coordinate":
-            f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
+        #        # Ensure that healpix indices are auxiliary coordinates
+        #        if healpix_index.construct_type == "dimension_coordinate":
+        #            f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
-            # monotonically increasing. Test for the common case of
-            # already-ordered global nested or ring indices (which is
-            # a relatively fast compared to do doing any actual
-            # sorting and subspacing).
-            h = healpix_index
-            if not (
-                indexing_scheme in ("nested", "ring")
-                and (h == da.arange(h.size, chunks=h.data.chunks)).all()
-            ):
-                index = h.data.compute()
+            # monotonically increasing.
+
+            #            # Test for the common case of
+            #            # already-ordered global nested or ring indices (which is
+            #            # a relatively fast compared to do doing any actual
+            #            # sorting and subspacing).
+            #            h = healpix_index
+            #            if not (
+            #                indexing_scheme in ("nested", "ring")
+            #                and (h == da.arange(h.size, chunks=h.data.chunks)).all()
+            #           ):
+            d = healpix_index.data
+            if (d.diff() < 0).any():
+                index = d.compute()
                 f = f.subspace(**{hp["domain_axis_key"]: np.argsort(index)})
+
+            # Now that the HEALPix indices are ordered, make sure that
+            # they're stored in a Dimension Coordinate.
+            if healpix_index.construct_type == "auxiliary_coordinate":
+                f.auxiliary_to_dimension(hp["coordinate_key"], inplace=True)
 
         return f
 
@@ -2140,7 +2148,7 @@ class FieldDomain:
         """Get information about the HEALPix grid, if there is one.
 
         **References**
-        
+
         {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
@@ -2200,7 +2208,7 @@ class FieldDomain:
         """Convert a HEALPix domain to a UGRID domain.
 
         **References**
-        
+
         {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
@@ -2502,9 +2510,9 @@ class FieldDomain:
 
         # Initialize the flag that tells us if any new coordinates
         # have been created
-        new_coords = False
+        coords_created = False
 
-        if one_d:
+        if one_d and not coords_created:
             # --------------------------------------------------------
             # 1-d lat/lon coordinates
             # --------------------------------------------------------
@@ -2517,15 +2525,15 @@ class FieldDomain:
                 lat_key, lon_key = _healpix_create_latlon_coordinates(
                     f, pole_longitude
                 )
-                new_coords = lat_key is not None
+                coords_created = lat_key is not None
 
-        elif two_d:
+        if two_d and not coords_created:
             # --------------------------------------------------------
             # 2-d lat/lon coordinates
             # --------------------------------------------------------
             pass  # Add some code here!
 
-        if new_coords:
+        if coords_created:
             # --------------------------------------------------------
             # Update the approrpriate coordinate reference with the
             # new coordinate keys

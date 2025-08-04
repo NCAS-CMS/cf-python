@@ -499,12 +499,13 @@ class DomainTest(unittest.TestCase):
         d = cf.Domain.create_healpix(0)
         self.assertEqual(len(d.constructs), 3)
         self.assertEqual(len(d.domain_axes()), 1)
-        self.assertEqual(len(d.auxiliary_coordinates()), 1)
+        self.assertEqual(len(d.dimension_coordinates()), 1)
+        self.assertEqual(len(d.auxiliary_coordinates()), 0)
         self.assertEqual(len(d.coordinate_references()), 1)
 
-        self.assertTrue(
-            (d.auxiliary_coordinate().array == np.arange(12)).all()
-        )
+        hp = d.dimension_coordinate()
+        self.assertEqual(hp.data._get_cached_elements(), {0: 0, -1: 11})
+        self.assertTrue(np.array_equal(hp, np.arange(12)))
 
         self.assertEqual(
             d.coordinate_reference().coordinate_conversion.get_parameter(
@@ -515,7 +516,7 @@ class DomainTest(unittest.TestCase):
 
         d = cf.Domain.create_healpix(0, "nested_unique")
         self.assertTrue(
-            (d.auxiliary_coordinate().array == np.arange(4, 16)).all()
+            np.array_equal(d.dimension_coordinate(), np.arange(4, 16))
         )
         self.assertIsNone(
             d.coordinate_reference().datum.get_parameter("earth_radius", None)
@@ -533,7 +534,7 @@ class DomainTest(unittest.TestCase):
                 1000,
             )
 
-        # Bad 'refinement_level'
+        # Bad refinement_level
         for level in (-1, 3.14, 30, "string"):
             with self.assertRaises(ValueError):
                 cf.Domain.create_healpix(level)
