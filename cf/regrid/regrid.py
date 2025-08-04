@@ -2580,7 +2580,7 @@ def create_esmpy_weights(
             logger.debug(
                 "Calculating weights ...\n\n"
                 "Free memory before calculation of weights: "
-                f"{free_memory() / (2**30)} GiB\n\n"
+                f"{free_memory() / 2**30} GiB\n\n"
                 "Number of destination grid partitions: "
                 f"{dst_grid_partitions}\n"
             )  # pragma: no cover
@@ -2634,7 +2634,7 @@ def create_esmpy_weights(
 
         if debug:
             start_time = time()  # pragma: no cover
-            ru_maxrss1  =None
+            maxrss1  =None
 
         # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
@@ -2659,7 +2659,7 @@ def create_esmpy_weights(
 
             # Create the esmpy.Regrid operator
             if debug:
-                ru_maxrss0 = getrusage(RUSAGE_SELF).ru_maxrss
+                maxrss0 = getrusage(RUSAGE_SELF).ru_maxrss
                 
             r = esmpy.Regrid(
                 src_esmpy_field,
@@ -2678,16 +2678,6 @@ def create_esmpy_weights(
             col = weights["col_src"]
             weights = weights["weights"]
 
-#            if debug:
-#                ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
-#                logger.debug(
-#                    f"Partition {i}: Time taken by ESMF to create weights: "
-#                    f"{time() - start_time} s\n"
-#                    f"Partition {i}: Memory used by ESMF to create weights: "
-#                    f"{(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} GiB"
-#                )  # pragma: no cover
-#                start_time = time()  # pragma: no cover
-
             ESMF_unmapped_action = r.unmapped_action
             ESMF_ignore_degenerate = int(r.ignore_degenerate)
 
@@ -2702,15 +2692,14 @@ def create_esmpy_weights(
             if debug:
                 logger.debug(
                     f"Partition {i}: Time taken by ESMF to create weights: "
-                    f"{time() - start_time} s\n"
+                    f"{time() - start_time} s"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
-                if ru_maxrss1 is None:
-                    ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
+                if maxrss1 is None:
+                    maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
                     logger.debug(
                         f"Partition {i}: Memory used by ESMF to create "
-                        f"weights: {(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} "
-                        "GiB"
+                        f"weights: {(maxrss1 - maxrss0) * 1000/2**30} GiB"
                     )  # pragma: no cover
                     
                 start_time = time()  # pragma: no cover
@@ -2760,7 +2749,7 @@ def create_esmpy_weights(
             if debug:
                 logger.debug(
                     f"Partition {i}: Free memory after weights calculation: "
-                    f"{free_memory() / (2**30)} GiB\n"
+                    f"{free_memory() / 2**30} GiB\n"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
 
@@ -2785,7 +2774,7 @@ def create_esmpy_weights(
                     f"Time taken to concatenate sparse weights arrays: "
                     f"{time() - start_time} s\n"
                     f"Free memory after concatenation of sparse weights "
-                    f"arrays: {free_memory() / (2**30)} GiB\n"
+                    f"arrays: {free_memory() / 2**30} GiB\n"
                     f"Sparse weights array for all partitions: {weights!r}\n"
                 )  # pragma: no
                 start_time = time()  # pragma: no cover
@@ -2795,7 +2784,7 @@ def create_esmpy_weights(
                 "Total time taken to calculate all weights: "
                 f"{time() - start_time0} s\n"
                 "Free memory after calculation of all weights: "
-                f"{free_memory() / (2**30)} GiB\n"
+                f"{free_memory() / 2**30} GiB\n"
             )  # pragma: no cover
 
         if weights_file is not None:
@@ -2901,7 +2890,7 @@ def create_esmpy_weights(
                         f"Time taken to create weights file {weights_file}: "
                         f"{time() - start_time} s\n"
                         f"Free memory after creation of weights file: "
-                        f"{free_memory() / (2**30)} GiB\n"
+                        f"{free_memory() / 2**30} GiB\n"
                     )  # pragma: no cover
                     start_time = time()  # pragma: no cover
 
