@@ -2574,8 +2574,8 @@ def create_esmpy_weights(
     if compute_weights:  # or esmpy_regrid_operator is not None:
         partitioned_dst_grid = dst_grid_partitions > 1
         if debug:
-            from resource import getrusage, RUSAGE_SELF
-    
+            from resource import RUSAGE_SELF, getrusage
+
             start_time0 = time()
             logger.debug(
                 "Calculating weights ...\n\n"
@@ -2634,7 +2634,7 @@ def create_esmpy_weights(
 
         if debug:
             start_time = time()  # pragma: no cover
-            maxrss1  =None
+            maxrss1 = None
 
         # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
@@ -2660,7 +2660,7 @@ def create_esmpy_weights(
             # Create the esmpy.Regrid operator
             if debug:
                 maxrss0 = getrusage(RUSAGE_SELF).ru_maxrss
-                
+
             r = esmpy.Regrid(
                 src_esmpy_field,
                 dst_esmpy_field,
@@ -2696,12 +2696,12 @@ def create_esmpy_weights(
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
                 if maxrss1 is None:
-                    maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
+                    maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss
                     logger.debug(
                         f"Partition {i}: Memory used by ESMF to create "
-                        f"weights: {(maxrss1 - maxrss0) * 1000/2**30} GiB"
+                        f"weights: {(maxrss1 - maxrss0) * 1000 / 2**30} GiB"
                     )  # pragma: no cover
-                    
+
                 start_time = time()  # pragma: no cover
 
             if quarter:
