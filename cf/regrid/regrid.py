@@ -2577,12 +2577,16 @@ def create_esmpy_weights(
             from resource import RUSAGE_SELF, getrusage
 
             start_time0 = time()
+            maxrss = getrusage(RUSAGE_SELF).ru_maxrss
             logger.debug(
                 "Calculating weights ...\n\n"
-                "Free memory before calculation of weights: "
-                f"{free_memory() / 2**30} GiB\n\n"
                 "Number of destination grid partitions: "
                 f"{dst_grid_partitions}\n"
+                "Free memory before calculation of weights: "
+                f"{free_memory() / 2**30} GiB\n"
+                "Maximum RSS before weights creation: "
+                f"{maxrss * 1000/ 2**30} GiB\n"
+              
             )  # pragma: no cover
 
         # Create the weights using ESMF
@@ -2633,8 +2637,7 @@ def create_esmpy_weights(
             w = []
 
         if debug:
-            start_time = time()  # pragma: no cover
-            maxrss1 = None
+            start_time = time()
 
         # Loop round destination grid partitions
         for i, dst_esmpy_grid in enumerate(dst_esmpy_grids):
@@ -2646,7 +2649,7 @@ def create_esmpy_weights(
                     f"Partition {i}: Destination ESMF {dst_esmpy_grid}"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
-
+                
             # Create destination esmpy field
             dst_esmpy_field = esmpy.Field(
                 dst_esmpy_grid, name="dst", meshloc=dst_meshloc
@@ -2658,9 +2661,6 @@ def create_esmpy_weights(
             mask_values = np.array([0], dtype="int32")
 
             # Create the esmpy.Regrid operator
-            if debug:
-                maxrss0 = getrusage(RUSAGE_SELF).ru_maxrss
-
             r = esmpy.Regrid(
                 src_esmpy_field,
                 dst_esmpy_field,
@@ -2690,18 +2690,13 @@ def create_esmpy_weights(
                 r.destroy()
 
             if debug:
+                maxrss = getrusage(RUSAGE_SELF).ru_maxrss
                 logger.debug(
                     f"Partition {i}: Time taken by ESMF to create weights: "
-                    f"{time() - start_time} s"
+                    f"{time() - start_time} s\n"
+                    f"Partition {i}: Maximum RSS after ESMF weights creation: "
+                    f"creation: {maxrss * 1000/ 2**30} GiB"
                 )  # pragma: no cover
-                start_time = time()  # pragma: no cover
-                if maxrss1 is None:
-                    maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss
-                    logger.debug(
-                        f"Partition {i}: Memory used by ESMF to create "
-                        f"weights: {(maxrss1 - maxrss0) * 1000 / 2**30} GiB"
-                    )  # pragma: no cover
-
                 start_time = time()  # pragma: no cover
 
             if quarter:
