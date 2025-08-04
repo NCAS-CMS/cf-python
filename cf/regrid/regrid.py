@@ -638,7 +638,7 @@ def regrid(
 
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
-        # Convert dst_grid_partitions to a number
+        # Find the actual number of partitions
         dst_grid_partitions = partitions(
             dst_grid, dst_grid_partitions, return_n=True
         )
@@ -2574,6 +2574,8 @@ def create_esmpy_weights(
     if compute_weights:  # or esmpy_regrid_operator is not None:
         partitioned_dst_grid = dst_grid_partitions > 1
         if debug:
+            from resource import getrusage, RUSAGE_SELF
+    
             start_time0 = time()
             logger.debug(
                 "Calculating weights ...\n\n"
@@ -2655,6 +2657,9 @@ def create_esmpy_weights(
             mask_values = np.array([0], dtype="int32")
 
             # Create the esmpy.Regrid operator
+            if debug:
+                ru_maxrss0 = getrusage(RUSAGE_SELF).ru_maxrss
+                
             r = esmpy.Regrid(
                 src_esmpy_field,
                 dst_esmpy_field,
@@ -2672,12 +2677,15 @@ def create_esmpy_weights(
             col = weights["col_src"]
             weights = weights["weights"]
 
-            if debug:
-                logger.debug(
-                    f"Partition {i}: Time taken by ESMF to create weights: "
-                    f"{time() - start_time} s\n"
-                )  # pragma: no cover
-                start_time = time()  # pragma: no cover
+#            if debug:
+#                ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
+#                logger.debug(
+#                    f"Partition {i}: Time taken by ESMF to create weights: "
+#                    f"{time() - start_time} s\n"
+#                    f"Partition {i}: Memory used by ESMF to create weights: "
+#                    f"{(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} GiB"
+#                )  # pragma: no cover
+#                start_time = time()  # pragma: no cover
 
             ESMF_unmapped_action = r.unmapped_action
             ESMF_ignore_degenerate = int(r.ignore_degenerate)
@@ -2690,6 +2698,17 @@ def create_esmpy_weights(
                 r.dstfield.destroy()
                 r.destroy()
 
+            if debug:
+                ru_maxrss1 = getrusage(RUSAGE_SELF).ru_maxrss   
+                logger.debug(
+                    f"Partition {i}: Time taken by ESMF to create weights: "
+                    f"{time() - start_time} s\n"
+                    f"Partition {i}: Memory used by ESMF to create weights: "
+                    f"{(ru_maxrss1 - ru_maxrss0) * 1000/(2**30)} GiB"
+                )  # pragma: no cover
+                start_time = time()  # pragma: no cover
+
+                
             if quarter:
                 # The weights were created with a dummy size 2
                 # dimension such that the weights for each dummy axis

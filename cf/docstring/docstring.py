@@ -596,9 +596,10 @@ _docstring_substitution_definitions = {
             balance between memory usage and calculation time to be
             adjusted.
 
-            The actual number of destination grid partitions, and
-            their sizes and shapes, is displayed when ``'DEBUG'``
-            logging is activated. See *verbose* for details.
+            The actual number of destination grid partitions, their
+            sizes and shapes, and the each partition's time and memory
+            requirement are displayed when ``'DEBUG'`` logging is
+            activated. See *verbose* for details.
 
             .. note:: If setting *dst_grid_partitions* is required for
                       the regridding to work, then it is worth
