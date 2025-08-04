@@ -1491,7 +1491,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.shape, (1, 10, 3))
         self.assertTrue((x == [120, 200, 280]).all())
 
-        cf.log_level(1)
         # 2-d
         lon = f.construct("longitude").array
         lon = np.transpose(lon)

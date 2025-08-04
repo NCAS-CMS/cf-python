@@ -1640,66 +1640,66 @@ class FieldDomain:
         """Remove a coordinate reference construct and all of its domain
         ancillary constructs.
 
-                .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-                .. seealso:: `del_construct`
+        .. seealso:: `del_construct`
 
-                :Parameters:
+        :Parameters:
 
-                    identity: optional
-                        Select the coordinate reference construct by one of:
+            identity: optional
+                Select the coordinate reference construct by one of:
 
-                        * The identity of a coordinate reference construct.
+                * The identity of a coordinate reference construct.
 
-                          {{construct selection identity}}
+                  {{construct selection identity}}
 
-                        * The key of a coordinate reference construct
+                * The key of a coordinate reference construct
 
-                        * `None`. This is the default, which selects the
-                          coordinate reference construct when there is only
-                          one of them.
+                * `None`. This is the default, which selects the
+                  coordinate reference construct when there is only
+                  one of them.
 
-                        *Parameter example:*
-                          ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                *Parameter example:*
+                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-                        *Parameter example:*
-                          ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                *Parameter example:*
+                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-                        *Parameter example:*
-                          ``identity='transverse_mercator'``
+                *Parameter example:*
+                  ``identity='transverse_mercator'``
 
-                        *Parameter example:*
-                          ``identity='coordinatereference1'``
+                *Parameter example:*
+                  ``identity='coordinatereference1'``
 
-                        *Parameter example:*
-                          ``identity='key%coordinatereference1'``
+                *Parameter example:*
+                  ``identity='key%coordinatereference1'``
 
-                        *Parameter example:*
-                          ``identity='ncvar%lat_lon'``
+                *Parameter example:*
+                  ``identity='ncvar%lat_lon'``
 
-                        *Parameter example:*
-                          ``identity=cf.eq('rotated_pole')'``
+                *Parameter example:*
+                  ``identity=cf.eq('rotated_pole')'``
 
-                        *Parameter example:*
-                          ``identity=re.compile('^rotated')``
+                *Parameter example:*
+                  ``identity=re.compile('^rotated')``
 
-                    construct: optional
-                        TODO
+            construct: optional
+                TODO
 
-                    default: optional
-                        Return the value of the *default* parameter if the
-                        construct can not be removed, or does not exist.
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
 
-                        {{default Exception}}
+                {{default Exception}}
 
-                :Returns:
+        :Returns:
 
-                        The removed coordinate reference construct.
+                The removed coordinate reference construct.
 
-                **Examples**
+        **Examples**
 
-                >>> f.del_coordinate_reference('rotated_latitude_longitude')
-                <CF CoordinateReference: rotated_latitude_longitude>
+        >>> f.del_coordinate_reference('rotated_latitude_longitude')
+        <CF CoordinateReference: rotated_latitude_longitude>
 
         """
         if construct is None:
@@ -2115,23 +2115,9 @@ class FieldDomain:
 
             _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme)
 
-        #        # Ensure that healpix indices are auxiliary coordinates
-        #        if healpix_index.construct_type == "dimension_coordinate":
-        #            f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
-
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
             # monotonically increasing.
-
-            #            # Test for the common case of
-            #            # already-ordered global nested or ring indices (which is
-            #            # a relatively fast compared to do doing any actual
-            #            # sorting and subspacing).
-            #            h = healpix_index
-            #            if not (
-            #                indexing_scheme in ("nested", "ring")
-            #                and (h == da.arange(h.size, chunks=h.data.chunks)).all()
-            #           ):
             d = healpix_index.data
             if (d.diff() < 0).any():
                 index = d.compute()
