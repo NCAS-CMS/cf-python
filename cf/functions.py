@@ -3171,6 +3171,7 @@ def environment(display=True, paths=True):
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
     scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    distributed: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/distributed/__init__.py
     cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
     cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
     cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/__init__.py
@@ -3196,6 +3197,7 @@ def environment(display=True, paths=True):
     s3fs: 2024.12.0
     scipy: 1.15.1
     dask: 2025.5.1
+    distributed: 2025.5.1
     cftime: 1.6.4.post1
     cfunits: 3.3.7
     cfdm: 1.12.2.0

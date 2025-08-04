@@ -572,7 +572,7 @@ _docstring_substitution_definitions = {
     # dst_grid_partitions
     "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional
             Calculating the weights matrix for grids with a very large
-            number of source and or destination grid points can
+            number of source and/or destination grid points can
             potentially require more memory than is
             available. However, the memory requirement can be greatly
             reduced by calculating weights separately for
