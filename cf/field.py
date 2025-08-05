@@ -4826,10 +4826,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         r"""Decrease the refinement level of a HEALPix grid.
 
-        Decreasing the refinement level reduces the resolution of the
-        HEALPix grid by combining, using the given *method*, the Field
-        data from the original cells that lie inside each larger cell
-        at the new lower refinement level.
+        Decreasing the HEALPix refinement level reduces the resolution
+        of the HEALPix grid by combining, using the given *method*,
+        the Field data from the original cells that lie inside each
+        larger cell at the new lower refinement level.
 
         A new cell method is added, when appropriate, to describe the
         reduction.
@@ -4860,7 +4860,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `healpix_increase_refinement_level`,
                      `healpix_info`, `healpix_indexing_scheme`,
-                     `healpix_to_ugrid`
+                     `healpix_to_ugrid`, `collapse`
 
         :Parameters:
 
@@ -4992,6 +4992,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(g[0, 0].array)
         [[293.5]]
 
+        Set the refinement level to 0 using the ``'`range'`` *method*,
+        which requires a new *reduction* function to be defined:
+        
         >>> import numpy as np
         >>> def range_func(a, axis=None):
         ...     return np.max(a, axis=axis) - np.min(a, axis=axis)
@@ -5012,7 +5015,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         from .constants import cell_methods
 
-        # "point" is not a valid cell method after a reduction
+        # "point" is not a reduction method
         cell_methods = cell_methods.copy()
         cell_methods.remove("point")
 
@@ -5028,7 +5031,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Parse 'reduction'
         if reduction is None:
-            # Infer 'reduction' function from 'method'
+            # Use a default reduction function for selected methods
             match method:
                 case "maximum":
                     reduction = np.max
@@ -5054,8 +5057,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         elif not callable(reduction):
             raise ValueError(
                 f"Can't decrease HEALPix refinement level of {f!r}: "
-                f"'reduction' must be callable. Got: {reduction!r} of type "
-                f"{type(reduction)}"
+                f"'reduction' must be a callable. Got: {reduction!r} of "
+                f"type {type(reduction)}"
             )
 
         # Get the HEALPix info
