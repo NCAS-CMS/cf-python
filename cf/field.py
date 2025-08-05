@@ -4919,6 +4919,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         scale=None,
         radius="earth",
         great_circle=False,
+        cell_measures=True,
         verbose=None,
         remove_vertical_crs=True,
         _create_zero_size_cell_bounds=False,
@@ -5472,52 +5473,61 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             weights: optional
                 Specify the weights for the collapse axes. The weights
-                are, in general, those that would be returned by this
-                call of the field construct's `weights` method:
-                ``f.weights(weights, axes=axes, measure=measure,
-                scale=scale, radius=radius, great_circle=great_circle,
-                components=True)``. See the *axes*, *measure*,
-                *scale*, *radius* and *great_circle* parameters and
-                `cf.Field.weights` for details, and note that the
+                are created internaly as the output of this call of
+                the field construct's `weights` method:
+                ``f.weights(weights, components=True, axes=axes,
+                measure=measure, scale=scale, radius=radius,
+                great_circle=great_circle,
+                cell_measures=cell_measures)``.
+
+                See the *axes*, *measure*, *scale*, *radius*,
+                *great_circle*, and *cell_measures* parameters, and
+                `cf.Field.weights` for details; and note that the
                 value of *scale* may be modified depending on the
                 value of *measure*.
 
-                .. note:: By default *weights* is `None`, resulting in
-                          **unweighted calculations**.
+                .. warning:: By default *weights* is `None`, resulting
+                             in **unweighted calculations**.
+
+                .. note:: Setting *weights* to `True` is generally a
+                          good way to ensure that all collapses are
+                          appropriately weighted according to the
+                          field construct's metadata. In this case, if
+                          it is not possible to create weights for any
+                          axis then an exception will be raised.
 
                 .. note:: Unless the *method* is ``'integral'``, the
                           units of the weights are not combined with
                           the field's units in the collapsed field.
 
-                If the alternative form of providing the collapse method
-                and axes combined as a CF cell methods-like string via the
-                *method* parameter has been used, then the *axes*
-                parameter is ignored and the axes are derived from the
-                *method* parameter. For example, if *method* is ``'T:
-                area: minimum'`` then this defines axes of ``['T',
+                .. note:: A pre-calculated weights array may also be
+                          provided as the *weights* parameter. See
+                          `cf.Field.weights` for details
+
+                If the collapse method and axes have been provided as
+                a CF cell methods-like string via the *method*
+                parameter, then the *axes* parameter is ignored and
+                the axes for weights instead inferred from that
+                string. For instance, if *method* is ``'T: xarea:
+                minimum'`` then this defines axes of ``['T',
                 'area']``. If *method* specifies multiple collapses,
-                e.g. ``'T: minimum area: mean'`` then this implies axes of
-                ``'T'`` for the first collapse, and axes of ``'area'`` for
-                the second collapse.
+                e.g. ``'T: minimum area: mean'`` then this implies
+                axes of ``'T'`` for the first collapse, and axes of
+                ``'area'`` for the second collapse.
 
-                .. note:: Setting *weights* to `True` is generally a good
-                          way to ensure that all collapses are
-                          appropriately weighted according to the field
-                          construct's metadata. In this case, if it is not
-                          possible to create weights for any axis then an
-                          exception will be raised.
-
-                          However, care needs to be taken if *weights* is
-                          `True` when cell volume weights are desired. The
-                          volume weights will be taken from a "volume"
-                          cell measure construct if one exists, otherwise
-                          the cell volumes will be calculated as being
-                          proportional to the sizes of one-dimensional
-                          vertical coordinate cells. In the latter case
-                          **if the vertical dimension coordinates do not
-                          define the actual height or depth thickness of
-                          every cell in the domain then the weights will
-                          be incorrect**.
+                .. warning:: Care needs to be taken if *weights* is
+                             set to `True` when cell volume weights
+                             are desired. The volume weights will be
+                             taken from a "volume" cell measure
+                             construct if one exists, otherwise the
+                             cell volumes will be calculated as being
+                             proportional to the sizes of
+                             one-dimensional vertical coordinate
+                             cells. In the latter case **if the
+                             vertical dimension coordinates do not
+                             define the actual height or depth
+                             thickness of every cell in the domain
+                             then the weights will be incorrect**.
 
                 *Parameter example:*
                   To specify weights based on the field construct's
@@ -5608,6 +5618,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 line part is composed of great circle segments.
 
                 .. versionadded:: 3.2.0
+
+            cell_measures: `bool`, optional
+                If True, the default, then area and volume cell
+                measure constructs are considered for weights creation
+                when *weights* is `True`, ``'area'``, or
+                ``'volume'``. If False then cell measure constructs
+                are ignored for these *weights*.
+
+                .. versionadded:: NEXTVERSION
 
             squeeze: `bool`, optional
                 If True then size 1 collapsed axes are removed from the
@@ -6714,6 +6733,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         measure=measure,
                         radius=radius,
                         great_circle=great_circle,
+                        cell_measures=cell_measures,
                     )
                     if g_weights:
                         # For grouped collapses, bring the weights
@@ -6748,6 +6768,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     group_by=group_by,
                     axis_in=axes_in[0],
                     verbose=verbose,
+                    cell_measures=cell_measures,
                 )
 
                 if regroup:
@@ -6818,6 +6839,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     measure=measure,
                     radius=radius,
                     great_circle=great_circle,
+                    cell_measures=cell_measures,
                 )
                 if d_weights:
                     d_kwargs["weights"] = d_weights
@@ -7091,6 +7113,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         coordinate=None,
         measure=False,
         weights=None,
+        cell_measures=True,
         squeeze=None,
         group_by=None,
         axis_in=None,
