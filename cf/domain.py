@@ -415,10 +415,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             start = 0
 
         stop = start + ncells
-        data = Data(da.arange(start, stop), units="1")
+        dtype = cfdm.integer_dtype(stop - 1)
+        data = Data(da.arange(start, stop, dtype=dtype), units="1")
 
         # Set cached data elements
-        data._set_cached_elements({0: start, -1: stop - 1})
+        data._set_cached_elements({0: start, 1: start + 1, -1: stop - 1})
 
         c.set_data(data, copy=False)
         key = domain.set_construct(c, axes=axis, copy=False)

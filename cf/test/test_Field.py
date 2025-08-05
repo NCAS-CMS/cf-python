@@ -3301,6 +3301,16 @@ class FieldTest(unittest.TestCase):
         """Test Field.healpix_decrease_refinement_level."""
         f = self.f12
 
+        # No change
+        for level in (None, 1):
+            g = f.healpix_decrease_refinement_level(level, "mean")
+            self.assertTrue(g.equals(f))
+
+        # Can't change refinement level when a larger cell is only
+        # partially covered by original cells
+        with self.assertRaises(ValueError):
+            f[:, 1:].healpix_decrease_refinement_level(0, "mean")
+
         g = f.healpix_decrease_refinement_level(0, "mean")
         self.assertTrue(
             np.array_equal(g.coord("healpix_index"), np.arange(12))
@@ -3319,7 +3329,7 @@ class FieldTest(unittest.TestCase):
             (293.5, 289.15, 285.3, 3.44201976, 11.8475, 1156.6, 288.9),
         ):
             g = f.healpix_decrease_refinement_level(0, method)
-            self.assertTrue(np.allclose(g[0, 0], first_value))
+            self.assertTrue(np.isclose(g[0, 0], first_value))
 
         # Bad methods
         for method in ("point", "range", "bad method", 3.14):
@@ -3330,13 +3340,13 @@ class FieldTest(unittest.TestCase):
             return np.max(a, axis=axis) - np.min(a, axis=axis)
 
         g = f.healpix_decrease_refinement_level(0, "range", range_func)
-        self.assertTrue(np.allclose(g[0, 0], 8.2))
+        self.assertTrue(np.isclose(g[0, 0], 8.2))
 
         def my_mean(a, axis=None):
             return np.mean(a, axis=axis)
 
         g = f.healpix_decrease_refinement_level(0, "mean", my_mean)
-        self.assertTrue(np.allclose(g[0, 0], 289.15))
+        self.assertTrue(np.isclose(g[0, 0], 289.15))
 
         f = f.healpix_indexing_scheme("ring")
         g = f.healpix_decrease_refinement_level(0, "maximum")
@@ -3361,8 +3371,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.auxiliary_coordinate("latitude"), (12,))
         self.assertEqual(g.auxiliary_coordinate("longitude"), (12,))
 
+        # Can't change refinement level when the HEALPix indices are
+        # not strictly monotonically increasing
         with self.assertRaises(ValueError):
-            f.healpix_decrease_refinement_level(0, np.mean, conform=False)
+            f.healpix_decrease_refinement_level(0, "mean", conform=False)
 
         # Bad results when check_healpix_index=False
         h = f.healpix_decrease_refinement_level(
@@ -3375,20 +3387,21 @@ class FieldTest(unittest.TestCase):
         # Bad 'level' parameter
         for level in (-1, 0.785, np.array(1), 2, "string"):
             with self.assertRaises(ValueError):
-                f.healpix_decrease_refinement_level(level, np.mean)
+                f.healpix_decrease_refinement_level(level, "mean")
 
         # Can't change refinement level for a 'nested_unique' field
+        # TODOHEALPIX
         with self.assertRaises(ValueError):
-            self.f13.healpix_decrease_refinement_level(0, np.mean)
+            self.f13.healpix_decrease_refinement_level(0, "mean")
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):
-            self.f0.healpix_decrease_refinement_level(0, np.mean)
+            self.f0.healpix_decrease_refinement_level(0, "mean")
 
     def test_Field_healpix_increase_refinement_level(self):
         """Test Field.healpix_increase_refinement_level."""
-        f = self.f12.copy()
-        f.rechunk((-1, 17), inplace=True)
+        f = self.f12
+        f = f.rechunk((None, 17))
         f.coordinate("healpix_index").rechunk(13, inplace=True)
 
         g = f.healpix_increase_refinement_level(2, "intensive")

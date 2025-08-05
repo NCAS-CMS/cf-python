@@ -157,8 +157,78 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
     return lat_key, lon_key
 
 
+def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
+    """Increase the HEALPix refinement level in-place.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_increase_refinement_level`
+
+    :Parameters:
+
+        x: construct
+            The construct containing data that is to be changed.
+
+        ncells: `int`
+            The number of cells at the new refinement level which are
+            contained in one cell at the original refinement level.
+
+        iaxis: `int`
+            The position of the HEALPix axis in the construct's data
+            dimensions.
+
+        quantity: `str`
+            Whether the data represent intensive or extensive
+            quantities, specified with ``'intensive'`` and
+            ``'extensive'`` respectively.
+
+    :Returns:
+
+        `None`
+
+    """
+    from .data.dask_utils import cf_healpix_increase_refinement
+
+    # Get the Dask array.
+    #
+    # `cf_healpix_increase_refinement` has its own call to
+    # `cfdm_to_memory`, so we can set _force_to_memory=False.
+    dx = x.data.to_dask_array(
+        _force_mask_hardness=False, _force_to_memory=False
+    )
+
+    if quantity == "extensive":
+        # Extensive data get divided by 'ncells' in
+        # `cf_healpix_increase_refinement`, so they end up with a
+        # data type of float64.
+        dtype = np.dtype("float64")
+    else:
+        dtype = dx.dtype
+
+    # Each chunk is going to get larger by a factor of 'ncells'
+    chunks = list(dx.chunks)
+    chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
+
+    dx = dx.map_blocks(
+        cf_healpix_increase_refinement,
+        chunks=tuple(chunks),
+        dtype=dtype,
+        meta=np.array((), dtype=dtype),
+        ncells=ncells,
+        iaxis=iaxis,
+        quantity=quantity,
+    )
+    x.set_data(dx, copy=False)
+
+
 def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
-    """Change the indexing scheme of HEALPix indices.
+    """Change the indexing scheme of HEALPix indices in-place.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and

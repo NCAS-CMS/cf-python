@@ -754,15 +754,18 @@ def cf_healpix_coordinates(
 
 
 def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
-    """Increase the refinement level of a HEALPix array.
+    """Increase the refinement level of a HEALPix data.
 
     Data are broadcast to cells of at the higher refinement level. For
-    an extensive field quantity (that depends on the size of the
-    cells, such as "sea_ice_mass" with units of kg), the new values
-    are reduced so that they are consistent with the new smaller cell
-    areas. For an intensive field quantity (that does not depend on
-    the size of the cells, such as "sea_ice_amount" with units of kg
-    m-2), the broadcast values are not changed.
+    an "extensive" quantity only, the broadcast values are reduced to
+    be consistent with the new smaller cell areas.
+
+    .. warning:: The returned `numpy` array will take up at least
+                 *ncells* times more memory than the input array
+                 *a*. For instance, if *a* has shape ``(3600, 48)``
+                 (1.3 MiB), the HEALPix axis is ``1``, and *ncells* is
+                 ``4096``, then the returned array will have shape
+                 ``(3600, 196608)`` (5.3 GiB), where 196608=48*4096.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -781,7 +784,7 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
 
         ncells: `int`
             The number of cells at the new refinement level which are
-            contained in one cell at the original refinement level
+            contained in one cell at the original refinement level.
 
         iaxis: `int`
             The position of the HEALPix axis in the array dimensions.
@@ -819,7 +822,7 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
 
 
 def cf_healpix_increase_refinement_indices(a, ncells):
-    """Increase the refinement level of HEALPix indices
+    """Increase the refinement level of HEALPix indices.
 
     For instance, when going from refinement level 1 to refinement
     level 2, if *a* is ``(2, 23, 17)`` then it will be transformed to
@@ -827,6 +830,13 @@ def cf_healpix_increase_refinement_indices(a, ncells):
     ``8=2*ncells, 9=2*ncells+1, ..., 71=17*ncells+3``, and where
     ``ncells`` is the number of cells at refinement level 2 that lie
     inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
+
+    .. warning:: The returned `numpy` array will take up at least
+                 *ncells* times more memory than the input array
+                 *a*. For instance, if *a* has shape ``(48,)`` (384
+                 B), and *ncells* is ``262144``, then the returned
+                 array will have shape ``(12582912,)`` (96 MiB), where
+                 12582912=48*262144.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -853,9 +863,6 @@ def cf_healpix_increase_refinement_indices(a, ncells):
             The array at the new refinement level.
 
     """
-    # PERFORMANCE: This function can use a lot of memory when 'a'
-    #              and/or 'ncells' are large.
-
     a = cfdm_to_memory(a)
 
     a = a * ncells

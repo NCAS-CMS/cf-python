@@ -4994,7 +4994,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Set the refinement level to 0 using the ``'`range'`` *method*,
         which requires a new *reduction* function to be defined:
-        
+
         >>> import numpy as np
         >>> def range_func(a, axis=None):
         ...     return np.max(a, axis=axis) - np.min(a, axis=axis)
@@ -5114,16 +5114,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"Can't decrease HEALPix refinement level of {f!r}: "
                 "'level' must be a non-negative integer less than "
                 "or equal to the current refinement level of "
-                f"{old_refinement_level}. Got {refinement_level!r}"
+                f"{old_refinement_level}. Got: {refinement_level!r}"
             )
 
+        # Parse 'level'
         if refinement_level == old_refinement_level:
             # No change in refinement level
             return f
 
         # Get the number of cells at the original refinement level
-        # which are contained in one cell at the lower refinement
-        # level
+        # which are contained in one larger cell at the new lower
+        # refinement level
         ncells = 4 ** (old_refinement_level - refinement_level)
 
         # Get the healpix_index coordinates
@@ -5260,18 +5261,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def healpix_increase_refinement_level(self, refinement_level, quantity):
         """Increase the refinement level of a HEALPix grid.
 
-        Increasing the refinement level increases the resolution of
-        the HEALPix grid by broadcasting the Field data from each
-        original cell to all of the new smaller cells at the new
-        higher refinement level that lie inside it.
+        Increasing the HEALPix refinement level increases the
+        resolution of the HEALPix grid by broadcasting the Field data
+        from each original cell to all of the new smaller cells at the
+        new higher refinement level that lie inside it.
 
-        For an extensive field quantity (i.e. one that depends on the
-        size of the cells, such as "sea_ice_mass" with units of kg),
-        the broadcast values are also reduced to be consistent with
-        the new smaller cell areas. For an intensive field quantity
-        (i.e. one that does not depend on the size of the cells, such
-        as "sea_ice_amount" with units of kg m-2), the broadcast
-        values are not changed.
+        It must be specified whether the field data contains an
+        extensive or intensive quantity. An extensive quantity depends
+        on the size of the cells (such as "sea_ice_mass" with units of
+        kg, or "cell_area" with units of m2), and an intensive
+        quantity does not depend on the size of the cells (such as
+        "sea_ice_amount" with units of kg m-2, or "air_temperature"
+        with units of K). For an extensive quantity only, the
+        broadcast values are reduced to be consistent with the new
+        smaller cell areas.
 
         **References**
 
@@ -5332,12 +5335,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(g[0, :8] .array)
         [[291.5 291.5 291.5 291.5 293.5 293.5 293.5 293.5]]
 
-        For an extensive quantity (which ``f`` is not in this example,
-        but we can assume that it is for demonstration purposes), each
-        cell at the higher refinement level has the value of a cell at
-        the original refinement level after dividing it by the number
-        of cells at the higher refinement level that lie in one cell
-        of the original refinement level (4 in this case):
+        For an extensive quantity (which the ``f`` is this example is
+        not, but we can assume that it is for demonstration purposes),
+        each cell at the higher refinement level has the value of a
+        cell at the original refinement level after dividing it by the
+        number of cells at the higher refinement level that lie in one
+        cell of the original refinement level (4 in this case):
 
         >>> g = f.healpix_increase_refinement_level(2, 'extensive')
         >>> print(f[0, :2] .array)
@@ -5346,11 +5349,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         [[72.875 72.875 72.875 72.875 73.375 73.375 73.375 73.375]]
 
         """
-        from .data.dask_utils import (
-            cf_healpix_increase_refinement,
-            cf_healpix_increase_refinement_indices,
+        from .data.dask_utils import cf_healpix_increase_refinement_indices
+        from .healpix import (
+            _healpix_increase_refinement_level,
+            healpix_max_refinement_level,
         )
-        from .healpix import healpix_max_refinement_level
 
         # Increasing the refinement level requires the nested indexing
         # scheme
@@ -5380,7 +5383,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "'level' must be an integer greater than or equal to the "
                 f"current refinement level of {old_refinement_level}, and "
                 f"less than or equal to {healpix_max_refinement_level()}. "
-                f"Got {refinement_level!r}"
+                f"Got: {refinement_level!r}"
             )
 
         if refinement_level == old_refinement_level:
@@ -5393,7 +5396,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             raise ValueError(
                 f"Can't increase HEALPix refinement level of {f!r}: "
                 f"'quantity' keyword must be one of {valid_quantities}. "
-                f"Got {quantity!r}"
+                f"Got: {quantity!r}"
             )
 
         # Get the number of cells at the higher refinement level which
@@ -5424,97 +5427,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         )
 
-        # Increase the refinement of the Field data
-        dx = f.data.to_dask_array(
-            _force_mask_hardness=False, _force_to_memory=False
-        )
-
-        if quantity == "extensive":
-            # Extensive data get divided by 'ncells' in
-            # `cf_healpix_increase_refinement`, so they end up with a
-            # data type of float64.
-            dtype = np.dtype("float64")
-        else:
-            dtype = dx.dtype
-
-        # Each chunk is going to get larger by a factor of 'ncells'
-        chunks = list(dx.chunks)
-        chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
-
-        dx = dx.map_blocks(
-            cf_healpix_increase_refinement,
-            chunks=tuple(chunks),
-            dtype=dtype,
-            meta=np.array((), dtype=dtype),
-            ncells=ncells,
-            iaxis=iaxis,
-            quantity=quantity,
-        )
-
         # Re-size the HEALPix axis
         domain_axis = f.domain_axis(axis)
-        domain_axis.set_size(dx.shape[iaxis])
+        domain_axis.set_size(f.shape[iaxis] * ncells)
 
-        f.set_data(dx, copy=False)
+        # Increase the refinement of the Field data
+        _healpix_increase_refinement_level(f, ncells, iaxis, quantity)
 
         # Increase the refinement level of domain ancillary constructs
         # that span the HEALPix axis. We're assuming that domain
         # ancillary data are intensive (i.e. do not depend on the size
         # of the cell).
-        meta = np.array((), dtype=dtype)
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
             iaxis = f.get_data_axes(key).index(axis)
-            dx = domain_ancillary.data.to_dask_array(
-                _force_mask_hardness=False, _force_to_memory=False
+            _healpix_increase_refinement_level(
+                domain_ancillary, ncells, iaxis, "intensive"
             )
-            dtype = dx.dtype
-
-            # Each chunk is going to get larger by a factor of
-            # 'ncells'
-            chunks = list(dx.chunks)
-            chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
-
-            dx = dx.map_blocks(
-                cf_healpix_increase_refinement,
-                chunks=tuple(chunks),
-                dtype=dtype,
-                meta=meta,
-                ncells=ncells,
-                iaxis=iaxis,
-                quantity="intensive",
-            )
-            domain_ancillary.set_data(dx, copy=False)
 
         # Increase the refinement level of cell measure constructs
         # that span the HEALPix axis. Cell measure data are extensive
         # (i.e. depend on the size of the cell).
-        dtype = np.dtype("float64")
-        meta = np.array((), dtype=dtype)
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
             iaxis = f.get_data_axes(key).index(axis)
-            dx = cell_measure.data.to_dask_array(
-                _force_mask_hardness=False, _force_to_memory=False
+            _healpix_increase_refinement_level(
+                cell_measure, ncells, iaxis, "extensive"
             )
-
-            # Each chunk is going to get larger by a factor of
-            # 'ncells'
-            chunks = list(dx.chunks)
-            chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
-
-            dx = dx.map_blocks(
-                cf_healpix_increase_refinement,
-                chunks=tuple(chunks),
-                dtype=dtype,
-                meta=meta,
-                ncells=ncells,
-                iaxis=iaxis,
-                quantity="extensive",
-            )
-            cell_measure.set_data(dx, copy=False)
 
         # Remove all other metadata constructs that span the HEALPix
         # axis (including the original healpix_index coordinate
