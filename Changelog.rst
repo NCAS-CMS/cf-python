@@ -6,6 +6,9 @@ Version NEXTVERSION
 * New methods to allow changing units in a chain: `cf.Field.to_units`,
   `cf.Data.to_units`
   (https://github.com/NCAS-CMS/cf-python/issues/874)
+* Allow multiple conditions for the same axis in `cf.Field.subspace`
+  and `cf.Field.indices`
+  (https://github.com/NCAS-CMS/cf-python/issues/881)
 * Allow regridding for very large grids. New keyword parameter to
   `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
   (https://github.com/NCAS-CMS/cf-python/issues/878)

@@ -366,18 +366,13 @@ class FieldDomain:
                 zip(*axes_key_construct_value_id)
             )
 
-            n_items = len(constructs)
+            n_constructs = len(constructs)
             n_axes = len(canonical_axes)
 
-            if n_items > n_axes:
-                if n_axes == 1:
-                    a = "axis"
-                else:
-                    a = "axes"
-
+            if n_axes > 1 and n_constructs > n_axes:
                 raise ValueError(
-                    f"Error: Can't specify {n_items} conditions for "
-                    f"{n_axes} {a}: {points}. Consider applying the "
+                    f"Error: Can't specify {n_constructs} conditions for "
+                    f"{n_axes} axes: {points}. Consider applying the "
                     "conditions separately."
                 )
 
@@ -396,150 +391,229 @@ class FieldDomain:
                 # ----------------------------------------------------
                 # 1-d construct
                 # ----------------------------------------------------
-                ind = None
-
                 axis = item_axes[0]
-                item = constructs[0]
-                value = points[0]
-                identity = identities[0]
+                size = domain_axes[axis].get_size()
 
-                if debug:
-                    logger.debug(
-                        f"  {n_items} 1-d constructs: {constructs!r}\n"
-                        f"  item         = {item!r}\n"
-                        f"  axis         = {axis!r}\n"
-                        f"  value        = {value!r}\n"
-                        f"  identity     = {identity!r}"
-                    )  # pragma: no cover
+                ind0 = None
+                index0 = None
 
-                if isinstance(value, (list, slice, tuple, np.ndarray)):
-                    # 1-d CASE 1: Value is already an index, e.g. [0],
-                    #             [7,4,2], slice(0,4,2),
-                    #             numpy.array([2,4,7]),
-                    #             [True,False,True]
-                    if debug:
-                        logger.debug("  1-d CASE 1:")  # pragma: no cover
-
-                    index = value
-
-                    if envelope or full:
-                        # Set ind
-                        size = domain_axes[axis].get_size()
-                        ind = (np.arange(size)[value],)
-                        # Placeholder which will be overwritten later
-                        index = None
-
-                elif (
-                    item is not None
-                    and isinstance(value, Query)
-                    and value.operator in ("wi", "wo")
-                    and item.construct_type == "dimension_coordinate"
-                    and self.iscyclic(axis)
+                # Loop round the conditions for this axis.
+                #
+                # When there are multiple conditions, each iteration
+                # produces a 1-d Boolean array, and the axis selection
+                # is the logical AND of these arrays.
+                #
+                # When there is a single condition, the axis selection
+                # could be a slice or list of integers.
+                for item, value, identity in zip(
+                    constructs, points, identities
                 ):
-                    # 1-d CASE 2: Axis is cyclic and subspace
-                    #             criterion is a 'within' or 'without'
-                    #             Query instance
                     if debug:
-                        logger.debug("  1-d CASE 2:")  # pragma: no cover
+                        logger.debug(
+                            f"  axis         = {axis!r}\n"
+                            f"  item         = {item!r}\n"
+                            f"  value        = {value!r}\n"
+                            f"  identity     = {identity!r}"
+                        )  # pragma: no cover
 
-                    size = item.size
-                    if item.increasing:
-                        anchor = value.value[0]
-                    else:
-                        anchor = value.value[1]
+                    ind = None
 
-                    item = item.persist()
-                    parameters = {}
-                    item = item.anchor(anchor, parameters=parameters)
-                    n = np.roll(np.arange(size), parameters["shift"], 0)
-                    if value.operator == "wi":
-                        n = n[item == value]
-                        if not n.size:
-                            raise ValueError(
-                                f"No indices found from: {identity}={value!r}"
-                            )
+                    if isinstance(value, (list, slice, tuple, np.ndarray)):
+                        # 1-d CASE 1: Value is already an index,
+                        #             e.g. [0], [7,4,2], slice(0,4,2),
+                        #             numpy.array([2,4,7]),
+                        #             [True,False,True]
+                        if debug:
+                            logger.debug("  1-d CASE 1:")  # pragma: no cover
 
-                        start = n[0]
-                        stop = n[-1] + 1
-                    else:
-                        # "wo" operator
-                        n = n[item == wi(*value.value)]
-                        if n.size == size:
-                            raise ValueError(
-                                f"No indices found from: {identity}={value!r}"
-                            )
+                        index = value
 
-                        if n.size:
-                            start = n[-1] + 1
-                            stop = start - n.size
+                        if envelope or full:
+                            # Set ind
+                            ind = np.zeros((size,), bool)
+                            ind[index] = True
+                            # Placeholder to be overwritten later
+                            index = None
+
+                        if n_constructs > 1 and index is not None:
+                            # Multiple conditions: Convert 'index' to
+                            # a boolean array
+                            i = np.zeros((size,), bool)
+                            i[index] = True
+                            index = i
+
+                    elif (
+                        item is not None
+                        and isinstance(value, Query)
+                        and value.operator in ("wi", "wo")
+                        and item.construct_type == "dimension_coordinate"
+                        and self.iscyclic(axis)
+                    ):
+                        # 1-d CASE 2: Axis is cyclic and subspace
+                        #             criterion is a 'within' or
+                        #             'without' Query instance
+                        if debug:
+                            logger.debug("  1-d CASE 2:")  # pragma: no cover
+
+                        size = item.size
+                        if item.increasing:
+                            anchor = value.value[0]
                         else:
-                            start = size - parameters["shift"]
-                            stop = start + size
-                            if stop > size:
-                                stop -= size
+                            anchor = value.value[1]
 
-                    index = slice(start, stop, 1)
+                        item = item.persist()
+                        parameters = {}
+                        item = item.anchor(anchor, parameters=parameters)
+                        n = np.roll(np.arange(size), parameters["shift"], 0)
+                        if value.operator == "wi":
+                            n = n[item == value]
+                            if not n.size:
+                                raise ValueError(
+                                    "No indices found from: "
+                                    f"{identity}={value!r}"
+                                )
 
-                    if full:
-                        # Set ind
-                        try:
-                            index = normalize_slice(index, size, cyclic=True)
-                        except IndexError:
-                            # Index is not a cyclic slice
-                            ind = (np.arange(size)[index],)
+                            start = n[0]
+                            stop = n[-1] + 1
                         else:
-                            # Index is a cyclic slice
-                            ind = (
-                                np.arange(size)[
+                            # "wo" operator
+                            n = n[item == wi(*value.value)]
+                            if n.size == size:
+                                raise ValueError(
+                                    "No indices found from: "
+                                    f"{identity}={value!r}"
+                                )
+
+                            if n.size:
+                                start = n[-1] + 1
+                                stop = start - n.size
+                            else:
+                                start = size - parameters["shift"]
+                                stop = start + size
+                                if stop > size:
+                                    stop -= size
+
+                        index = slice(start, stop, 1)
+
+                        if envelope or full:
+                            # Set ind
+                            try:
+                                index = normalize_slice(
+                                    index, size, cyclic=True
+                                )
+                            except IndexError:
+                                # Index is not a cyclic slice
+                                ind = np.zeros((size,), bool)
+                                ind[index] = True
+                                # np.arange(size)[index]
+                            else:
+                                # Index is a cyclic slice
+                                if n_constructs > 1:
+                                    raise ValueError(
+                                        "Error: Can't specify multiple "
+                                        "conditions for a single axis when "
+                                        f"one of those condtions ({value!r}) "
+                                        "is effectively a cyclic slice: "
+                                        f"{index}. Consider applying the "
+                                        "conditions separately."
+                                    )
+
+                                ind = np.zeros((size,), bool)
+                                ind[
                                     np.arange(
                                         index.start, index.stop, index.step
                                     )
-                                ],
-                            )
+                                ] = True
 
-                        # Placeholder which will be overwritten later
-                        index = None
+                            # Placeholder to be overwritten later
+                            index = None
 
-                elif item is not None:
-                    # 1-d CASE 3: All other 1-d cases
-                    if debug:
-                        logger.debug("  1-d CASE 3:")  # pragma: no cover
+                        if n_constructs > 1 and index is not None:
+                            # Multiple conditions: Convert 'index' to
+                            # a boolean array
+                            i = np.zeros((size,), bool)
+                            i[index] = True
+                            index = i
 
-                    index = item == value
+                    elif item is not None:
+                        # 1-d CASE 3: All other 1-d cases
+                        if debug:
+                            logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    # Performance: Convert the 1-d 'index' to a numpy
-                    #              array of bool.
-                    #
-                    # This is because Dask can be *very* slow at
-                    # instantiation time when the 'index' is a Dask
-                    # array, in which case contents of 'index' are
-                    # unknown.
-                    index = np.asanyarray(index)
+                        index = item == value
 
-                    if envelope or full:
-                        # Set ind
+                        # Performance: Convert the 1-d 'index' to a
+                        #              numpy array of bool.
+                        #
+                        # This is because Dask can be *very* slow at
+                        # instantiation time when the 'index' is a
+                        # Dask array, in which case contents of
+                        # 'index' are unknown.
                         index = np.asanyarray(index)
-                        if np.ma.isMA(index):
-                            ind = np.ma.where(index)
-                        else:
-                            ind = np.where(index)
 
-                        # Placeholder which will be overwritten later
-                        index = None
+                        if envelope or full:
+                            # Set ind
+                            index = np.asanyarray(index)
+                            if np.ma.isMA(index):
+                                ind = np.ma.where(index)[0]
+                            else:
+                                ind = np.where(index)[0]
+
+                            # Placeholder to be overwritten later
+                            index = None
+
+                        if n_constructs > 1 and ind is not None:
+                            # Multiple conditions: Convert 'ind' to a
+                            # boolean array (note that 'index' is
+                            # already a boolean array)
+                            i = np.zeros((size,), bool)
+                            i[ind] = True
+                            ind = i
+
                     else:
-                        # Convert bool to int, to save memory.
-                        size = domain_axes[axis].get_size()
-                        index = normalize_index(index, (size,))[0]
-                else:
-                    raise ValueError(
-                        "Could not find a unique construct with identity "
-                        f"{identity!r} from which to infer the indices."
-                    )
+                        raise ValueError(
+                            "Could not find a unique construct with identity "
+                            f"{identity!r} from which to infer the indices."
+                        )
 
-                if debug:
-                    logger.debug(
-                        f"    index      = {index}\n    ind        = {ind}"
-                    )  # pragma: no cover
+                    if debug:
+                        logger.debug(
+                            f"    index      = {index}\n    ind        = {ind}"
+                        )  # pragma: no cover
+
+                    if n_constructs > 1:
+                        # Multiple conditions: Update the 'ind0' and
+                        # 'index0' boolean arrays with the latest
+                        # 'ind' and 'index'
+                        if ind is not None:
+                            # Note that 'index' must be None when
+                            # 'ind' is not None, so no need to update
+                            # 'index0' in this case.
+                            if ind0 is None:
+                                ind0 = ind
+                            else:
+                                ind0 &= ind
+                        else:
+                            if index0 is None:
+                                index0 = index
+                            else:
+                                index0 &= index
+
+                # Finalise 'ind' and 'index'
+                if n_constructs > 1:
+                    # Multiple conditions
+                    if ind0 is not None:
+                        ind = ind0
+
+                    if index0 is not None:
+                        index = index0
+
+                if ind is not None:
+                    ind = normalize_index(ind, (size,))[0]
+                    ind = (ind,)
+
+                if index is not None and getattr(index, "dtype", None) == bool:
+                    index = normalize_index(index, (size,))[0]
 
                 # Put the index into the correct place in the list of
                 # indices.
@@ -554,7 +628,7 @@ class FieldDomain:
                 # ----------------------------------------------------
                 if debug:
                     logger.debug(
-                        f"  {n_items} N-d constructs: {constructs!r}\n"
+                        f"  {n_constructs} N-d constructs: {constructs!r}\n"
                         f"  {len(points)} points        : {points!r}\n"
                     )  # pragma: no cover
 
@@ -626,7 +700,7 @@ class FieldDomain:
                 # outside of the cell. This could happen if the cells
                 # are not rectilinear (e.g. for curvilinear latitudes
                 # and longitudes arrays).
-                if n_items == constructs[0].ndim == len(bounds) == 2:
+                if n_constructs == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
                         if isinstance(v, Query) and v.iscontains():

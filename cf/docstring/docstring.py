@@ -596,8 +596,8 @@ _docstring_substitution_definitions = {
             balance between memory usage and calculation time to be
             adjusted.
 
-            The actual number of destination grid partitions, their
-            sizes and shapes, and the each partition's time and memory
+            The actual number of destination grid partitions; and each
+            partition's shape, and weights calculation time and memory
             requirement are displayed when ``'DEBUG'`` logging is
             activated. See *verbose* for details.
 
