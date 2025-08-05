@@ -117,6 +117,25 @@ Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
 
+.. _Jupyter Notebooks:
+
+Jupyter Notebooks
+^^^^^^^^^^^^^^^^^
+
+You may want to work with cf via a Jupyter Notebook within a ``conda`` environment.
+
+A `known issue <https://github.com/NCAS-CMS/cf-python/issues/883/>`_ exists where the stricter dependencies of the Jupyter library clash with those of cf and installation fails.
+
+A proven workaround is to install Jupyter *before* installing cf, like so:
+
+.. code-block:: console
+   :caption: *Install with conda alongside Jupyter.*
+
+   $ conda install jupyter
+   $ conda install -c conda-forge cf-python cf-plot udunits2
+   $ conda install -c conda-forge "esmpy>=8.7.0"
+
+
 ----
 
 .. _Source:
