@@ -227,6 +227,85 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
     x.set_data(dx, copy=False)
 
 
+def _healpix_increase_refinement_level_indices(
+    healpix_index, ncells, refinement_level
+):
+    """Increase the refinement level of HEALPix indices in-place.
+
+    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
+    al.. HEALPix: A Framework for High-Resolution Discretization and
+    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
+    Journal, 2005, 622 (2), pp.759-771.
+    https://dx.doi.org/10.1086/427976
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.Field.healpix_increase_refinement_level`
+
+    :Parameters:
+
+        healpix_index: `Coordinate`
+            The HEALPix indices to be changed. It is assumed they use
+            the "nested" indexing scheme.
+
+        ncells: `int`
+            The number of cells at the new higher refinement level
+            which are contained in one cell at the original refinement
+            level.
+
+        refinement_level: `int`
+            The new higher refinement level.
+
+    :Returns:
+
+        `None`
+
+    """
+    from cfdm import integer_dtype
+
+    from .data.dask_utils import cf_healpix_increase_refinement_indices
+
+    # Save any cached data elements
+    cached = healpix_index.data._get_cached_elements().copy()
+
+    # Get the Dask array.
+    #
+    # `cf_healpix_increase_refinement_indices` has its own call to
+    # `cfdm_to_memory`, so we can set _force_to_memory=False.
+    dx = healpix_index.data.to_dask_array(
+        _force_mask_hardness=False, _force_to_memory=False
+    )
+
+    # Set the data type to allow for the largest possible HEALPix
+    # index at the new refinement level
+    dtype = integer_dtype(12 * (4**refinement_level) - 1)
+    if dx.dtype != dtype:
+        dx = dx.astype(dtype, copy=False)
+
+    # Each chunk is going to get larger by a factor of 'ncells'
+    chunks = [(np.array(dx.chunks[0]) * ncells).tolist()]
+
+    dx = dx.map_blocks(
+        cf_healpix_increase_refinement_indices,
+        chunks=tuple(chunks),
+        dtype=dtype,
+        meta=np.array((), dtype=dtype),
+        ncells=ncells,
+    )
+
+    healpix_index.set_data(dx, copy=False)
+
+    # Set new cached data elements
+    data = healpix_index.data
+    if 0 in cached:
+        x = np.array(cached[0], dtype=dtype) * ncells
+        data._set_cached_elements({0: x, 1: x + 1})
+
+    if -1 in cached:
+        x = np.array(cached[-1], dtype=dtype) * ncells + (ncells - 1)
+        data._set_cached_elements({-1: x})
+
+
 def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
     """Change the indexing scheme of HEALPix indices in-place.
 

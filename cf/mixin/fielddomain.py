@@ -332,8 +332,17 @@ class FieldDomain:
                         f"defined by {identity!r}"
                     )
 
+            # If the condition is a callable function, then call it
+            # with 'self' as the only argument and replace the
+            # condition with the result.
             if callable(value):
-                value = value(self)
+                try:
+                    value = value(self)
+                except Exception as e:
+                    raise RuntimeError(
+                        f"Error encountered when calling condition "
+                        f"{identity}={value}: {e}"
+                    )
 
             if axes in parsed:
                 # The axes are the same as an existing key

@@ -5349,9 +5349,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         [[72.875 72.875 72.875 72.875 73.375 73.375 73.375 73.375]]
 
         """
-        from .data.dask_utils import cf_healpix_increase_refinement_indices
         from .healpix import (
             _healpix_increase_refinement_level,
+            _healpix_increase_refinement_level_indices,
             healpix_max_refinement_level,
         )
 
@@ -5470,46 +5470,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f.del_construct(key)
 
         # Create the healpix_index coordinates for the new refinement
-        # level, and put them into the Field.
+        # level
         healpix_index = hp["healpix_index"]
-
-        # Save any cached data elements
-        data = healpix_index.data
-        cached = data._get_cached_elements().copy()
-
-        dx = data.to_dask_array(
-            _force_mask_hardness=False, _force_to_memory=False
+        _healpix_increase_refinement_level_indices(
+            healpix_index, ncells, refinement_level
         )
-
-        # Set the data type to allow for the largest possible HEALPix
-        # index at the new refinement level
-        dtype = cfdm.integer_dtype(12 * (4**refinement_level) - 1)
-        if dx.dtype != dtype:
-            dx = dx.astype(dtype, copy=False)
-
-        # Each chunk is going to get larger by a factor of 'ncells'
-        chunks = [(np.array(dx.chunks[0]) * ncells).tolist()]
-
-        dx = dx.map_blocks(
-            cf_healpix_increase_refinement_indices,
-            chunks=tuple(chunks),
-            dtype=dtype,
-            meta=np.array((), dtype=dtype),
-            ncells=ncells,
-        )
-
-        healpix_index.set_data(dx, copy=False)
-
-        # Set new cached data elements
-        data = healpix_index.data
-        if 0 in cached:
-            x = np.array(cached[0], dtype=dtype) * ncells
-            data._set_cached_elements({0: x, 1: x + 1})
-
-        if -1 in cached:
-            x = np.array(cached[-1], dtype=dtype) * ncells + (ncells - 1)
-            data._set_cached_elements({-1: x})
-
         hp_key = f.set_construct(healpix_index, axes=axis, copy=False)
 
         # Update the healpix Coordinate Reference
@@ -9221,7 +9186,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Metadata constructs are selected by conditions specified on
         their data. Indices for subspacing are then automatically
-        inferred from where the conditions are met.
+        inferred from where the conditions are met. If a condition is
+        a callable function then if is automateically replaced with
+        the result of calling that function with the Field as its only
+        argument.
 
         The returned tuple of indices may be used to created a
         subspace by indexing the original field construct with them.
@@ -13406,10 +13374,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Subspacing by metadata**
 
-        Subspacing by metadata, signified by the use of round brackets,
-        selects metadata constructs and specifies conditions on their
-        data. Indices for subspacing are then automatically inferred from
-        where the conditions are met.
+        Subspacing by metadata, signified by the use of round
+        brackets, selects metadata constructs and specifies conditions
+        on their data. Indices for subspacing are then automatically
+        inferred from where the conditions are met. If a condition is
+        a callable function then if is automateically replaced with
+        the result of calling that function with the Field as its only
+        argument.
 
         Metadata constructs and the conditions on their data are defined
         by keyword parameters.

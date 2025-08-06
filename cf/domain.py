@@ -737,7 +737,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Metadata constructs are selected conditions are specified on
         their data. Indices for subspacing are then automatically
-        inferred from where the conditions are met.
+        inferred from where the conditions are met. If a condition is
+        a callable function then if is automateically replaced with
+        the result of calling that function with the Domain as its
+        only argument.
 
         Metadata constructs and the conditions on their data are
         defined by keyword parameters.
@@ -1092,7 +1095,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Subspacing by metadata selects metadata constructs and
         specifies conditions on their data. Indices for subspacing are
-        then automatically inferred from where the conditions are met.
+        then automatically inferred from where the conditions are
+        met. If a condition is a callable function then if is
+        automateically replaced with the result of calling that
+        function with the Domain as its only argument.
 
         Metadata constructs and the conditions on their data are defined
         by keyword parameters.

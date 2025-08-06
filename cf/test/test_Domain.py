@@ -504,7 +504,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(len(d.coordinate_references()), 1)
 
         hp = d.dimension_coordinate()
-        self.assertEqual(hp.data._get_cached_elements(), {0: 0, -1: 11})
+        self.assertEqual(hp.data._get_cached_elements(), {0: 0, 1: 1, -1: 11})
         self.assertTrue(np.array_equal(hp, np.arange(12)))
 
         self.assertEqual(
