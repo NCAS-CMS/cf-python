@@ -3708,7 +3708,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     weights_axes.discard(xaxis)
                     weights_axes.discard(yaxis)
                     if not Weights.cell_measure(
-                        self, "area", comp, weights_axes, methods=methods
+                        self,
+                        "area",
+                        comp,
+                        weights_axes,
+                        methods=methods,
+                        auto=True,
                     ):
                         Weights.area_XY(
                             self,
@@ -4919,7 +4924,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         scale=None,
         radius="earth",
         great_circle=False,
-        cell_measures=True,
         verbose=None,
         remove_vertical_crs=True,
         _create_zero_size_cell_bounds=False,
@@ -5477,14 +5481,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 the field construct's `weights` method:
                 ``f.weights(weights, components=True, axes=axes,
                 measure=measure, scale=scale, radius=radius,
-                great_circle=great_circle,
-                cell_measures=cell_measures)``.
+                great_circle=great_circle)``.
 
-                See the *axes*, *measure*, *scale*, *radius*,
-                *great_circle*, and *cell_measures* parameters, and
-                `cf.Field.weights` for details; and note that the
-                value of *scale* may be modified depending on the
-                value of *measure*.
+                See the cf.Field.weights` and the *axes*, *measure*,
+                *scale*, *radius*, and *great_circle* parameters for
+                details; and note that the value of *scale* may be
+                modified depending on the value of *measure*.
 
                 .. warning:: By default *weights* is `None`, resulting
                              in **unweighted calculations**.
@@ -5500,9 +5502,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                           units of the weights are not combined with
                           the field's units in the collapsed field.
 
-                .. note:: A pre-calculated weights array may also be
-                          provided as the *weights* parameter. See
-                          `cf.Field.weights` for details
+                .. note:: A pre-calculated weights array or dictionary
+                          may also be provided as the *weights*
+                          parameter. See `cf.Field.weights` for
+                          details
 
                 If the collapse method and axes have been provided as
                 a CF cell methods-like string via the *method*
@@ -5618,15 +5621,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 line part is composed of great circle segments.
 
                 .. versionadded:: 3.2.0
-
-            cell_measures: `bool`, optional
-                If True, the default, then area and volume cell
-                measure constructs are considered for weights creation
-                when *weights* is `True`, ``'area'``, or
-                ``'volume'``. If False then cell measure constructs
-                are ignored for these *weights*.
-
-                .. versionadded:: NEXTVERSION
 
             squeeze: `bool`, optional
                 If True then size 1 collapsed axes are removed from the
@@ -6733,7 +6727,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         measure=measure,
                         radius=radius,
                         great_circle=great_circle,
-                        cell_measures=cell_measures,
                     )
                     if g_weights:
                         # For grouped collapses, bring the weights
@@ -6768,7 +6761,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     group_by=group_by,
                     axis_in=axes_in[0],
                     verbose=verbose,
-                    cell_measures=cell_measures,
                 )
 
                 if regroup:
@@ -6839,7 +6831,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     measure=measure,
                     radius=radius,
                     great_circle=great_circle,
-                    cell_measures=cell_measures,
                 )
                 if d_weights:
                     d_kwargs["weights"] = d_weights
@@ -7113,7 +7104,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         coordinate=None,
         measure=False,
         weights=None,
-        cell_measures=True,
         squeeze=None,
         group_by=None,
         axis_in=None,
