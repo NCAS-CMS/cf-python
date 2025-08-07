@@ -5483,7 +5483,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 measure=measure, scale=scale, radius=radius,
                 great_circle=great_circle)``.
 
-                See the cf.Field.weights` and the *axes*, *measure*,
+                See the `cf.Field.weights` and the *axes*, *measure*,
                 *scale*, *radius*, and *great_circle* parameters for
                 details; and note that the value of *scale* may be
                 modified depending on the value of *measure*.
@@ -5511,7 +5511,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 a CF cell methods-like string via the *method*
                 parameter, then the *axes* parameter is ignored and
                 the axes for weights instead inferred from that
-                string. For instance, if *method* is ``'T: xarea:
+                string. For instance, if *method* is ``'T: area:
                 minimum'`` then this defines axes of ``['T',
                 'area']``. If *method* specifies multiple collapses,
                 e.g. ``'T: minimum area: mean'`` then this implies
