@@ -9,6 +9,9 @@ Version NEXTVERSION
 * Allow multiple conditions for the same axis in `cf.Field.subspace`
   and `cf.Field.indices`
   (https://github.com/NCAS-CMS/cf-python/issues/881)
+* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
+  for missing external cell measures data
+  (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New dependency: ``distributed>=2025.5.1``
 
 ----
