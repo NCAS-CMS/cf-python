@@ -5477,7 +5477,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             weights: optional
                 Specify the weights for the collapse axes. The weights
-                are created internaly as the output of this call of
+                are created internally as the output of this call of
                 the field construct's `weights` method:
                 ``f.weights(weights, components=True, axes=axes,
                 measure=measure, scale=scale, radius=radius,

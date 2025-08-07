@@ -10,7 +10,7 @@ Version NEXTVERSION
   and `cf.Field.indices`
   (https://github.com/NCAS-CMS/cf-python/issues/881)
 * Fix bug in `cf.Field.collapse` that causes an Exception to be raised
-  for external cell measures data
+  for missing external cell measures data
   (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New dependency: ``distributed>=2025.5.1``
 
