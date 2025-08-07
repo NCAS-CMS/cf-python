@@ -919,10 +919,7 @@ def cf_healpix_increase_refinement_indices(a, refinement_level, ncells):
 def cf_healpix_indexing_scheme(
     a, indexing_scheme, new_indexing_scheme, refinement_level=None
 ):
-    """Change the ordering of HEALPix indices.
-
-    Does not change the position of each cell in the array, but
-    redefines their indices according to the new ordering scheme.
+    """Change the indexing scheme of HEALPix indices.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -989,7 +986,7 @@ def cf_healpix_indexing_scheme(
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to allow the changing of the HEALPix index scheme"
+            "for changing the HEALPix indexing scheme"
         )
 
     a = cfdm_to_memory(a)
@@ -1094,18 +1091,18 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
            1.06263432e+13, 1.06263432e+13])
 
     """
+    if indexing_scheme != "nested_unique":
+        raise ValueError(
+            "cf_healpix_weights: Can only calulate weights for the "
+            "'nested_unique' indexing scheme"
+        )
+
     try:
         import healpix
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to allow the calculation of cell area weights for a HEALPix grid"
-        )
-
-    if indexing_scheme != "nested_unique":
-        raise ValueError(
-            "cf_healpix_weights: Can only calulate weights for the "
-            "'nested_unique' indexing scheme"
+            "for the calculation of cell area weights of a HEALPix grid"
         )
 
     a = cfdm_to_memory(a)
@@ -1113,15 +1110,17 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     if a.ndim != 1:
         raise ValueError(
             "Can only calculate HEALPix cell area weights when the "
-            f"healpix_index array has one dimension. Got shape {a.shape}"
+            f"healpix_index array has one dimension. Got shape: {a.shape}"
         )
 
+    # Each cell at refinement level N has weight x/(4**N), where ...
     if measure:
-        # Surface area of sphere is 4*pi*(r**2)
-        # Number of HEALPix cells at refinement level N is 12*(4**N)
-        # => Area of one cell is pi*(r**2)/(3* (4**N))
+        # Cell weights equal cell areas. Surface area of a sphere is
+        # 4*pi*(r**2), number of HEALPix cells at refinement level N
+        # is 12*(4**N) => Area of each cell is (pi*(r**2)/3.0)/(4**N)
         x = np.pi * (radius**2) / 3.0
     else:
+        # Normalised weights
         x = 1.0
 
     orders = healpix.uniq2pix(a, nest=True)[0]
@@ -1133,8 +1132,8 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     w = np.empty(a.shape, dtype="float64")
 
     # For each refinement level N, put the weights (= x/4**N) into 'w'
-    # at the correct locations
-    for order, i in zip(orders, index):
-        w = np.where(inverse == inverse[i], x / (4**order), w)
+    # at the correct locations.
+    for N, i in zip(orders, index):
+        w = np.where(inverse == inverse[i], x / (4**N), w)
 
     return w
