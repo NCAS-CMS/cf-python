@@ -8,6 +8,7 @@ instance, as would be passed to `dask.array.map_blocks`.
 from functools import partial
 
 import numpy as np
+from cfdm import integer_dtype
 from cfdm.data.dask_utils import cfdm_to_memory
 from scipy.ndimage import convolve1d
 
@@ -508,21 +509,21 @@ def cf_healpix_bounds(
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nested_unique'`` (in which case *refinement_level* may
-            be `None`).
+            ``'nested_unique'``, in which case *refinement_level* may
+            be `None`.
 
         latitude: `bool`, optional
-            If True then return latitude bounds.
+            If True then return the bounds' latitudes.
 
         longitude: `bool`, optional
-            If True then return longitude bounds.
+            If True then return the bounds' longitudes.
 
         pole_longitude: `None` or number
-            The longitude of coordinate bounds that lie exactly on the
-            north (south) pole. If `None` then the longitude of such a
-            vertex will be the same as the south (north) vertex of the
-            same cell. If set to a number, then the longitudes of such
-            vertices will all be given that value.
+            The longitude of bounds that lie exactly on the north
+            (south) pole. If `None` (the default) then the longitude
+            of such a vertex will be the same as the south (north)
+            vertex of the same cell. If set to a number, then the
+            longitudes of all such vertices will be given that value.
 
     :Returns:
 
@@ -560,8 +561,8 @@ def cf_healpix_bounds(
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to allow the calculation of latitude/longitude coordinate "
-            "bounds for a HEALPix grid"
+            "for the calculation of latitude/longitude coordinate bounds "
+            "of a HEALPix grid"
         )
 
     a = cfdm_to_memory(a)
@@ -570,7 +571,7 @@ def cf_healpix_bounds(
     if a.ndim != 1:
         raise ValueError(
             "Can only calculate HEALPix cell bounds when the "
-            f"healpix_index array has one dimension. Got shape {a.shape}"
+            f"healpix_index array has one dimension. Got shape: {a.shape}"
         )
 
     if latitude:
@@ -578,6 +579,8 @@ def cf_healpix_bounds(
     elif longitude:
         pos = 0
 
+    # Define the function that's going to calculate the bounds from
+    # the HEALPix indices
     if indexing_scheme == "ring":
         bounds_func = healpix._chp.ring2ang_uv
     else:
@@ -596,7 +599,7 @@ def cf_healpix_bounds(
     b = np.empty((a.size, 4), dtype="float64")
 
     if indexing_scheme == "nested_unique":
-        # Create bounds for 'nested_unique' cells
+        # Create bounds for 'nested_unique' indices
         orders, a = healpix.uniq2pix(a, nest=True)
         for order in np.unique(orders):
             nside = healpix.order2nside(order)
@@ -604,18 +607,23 @@ def cf_healpix_bounds(
             for j, (u, v) in enumerate(vertices):
                 thetaphi = bounds_func(nside, a[indices], u, v)
                 b[indices, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+
+        del orders, indices
     else:
-        # Create bounds for 'nested' or 'ring' cells
+        # Create bounds for 'nested' or 'ring' indices
         nside = healpix.order2nside(refinement_level)
         for j, (u, v) in enumerate(vertices):
             thetaphi = bounds_func(nside, a, u, v)
-            b[..., j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+            b[:, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+
+    del thetaphi, a
 
     if not pos:
         # Ensure that longitude bounds are less than 360
         where_ge_360 = np.where(b >= 360)
         if where_ge_360[0].size:
             b[where_ge_360] -= 360.0
+            del where_ge_360
 
         # Vertices on the north or south pole come out with a
         # longitude of NaN, so replace these with sensible values:
@@ -671,14 +679,14 @@ def cf_healpix_coordinates(
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nested_unique'`` (in which case *refinement_level* may
-            be `None`).
+            ``'nested_unique'``, in which case *refinement_level* may
+            be `None`.
 
         latitude: `bool`, optional
-            If True then return latitude coordinates.
+            If True then return the coordinate latitudes.
 
         longitude: `bool`, optional
-            If True then return longitude coordinates.
+            If True then return the coordinate longitudes.
 
     :Returns:
 
@@ -702,8 +710,8 @@ def cf_healpix_coordinates(
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to allow the calculation of latitude/longitude coordinates "
-            "for a HEALPix grid"
+            "for the calculation of latitude/longitude coordinates of a "
+            "HEALPix grid"
         )
 
     a = cfdm_to_memory(a)
@@ -711,7 +719,7 @@ def cf_healpix_coordinates(
     if a.ndim != 1:
         raise ValueError(
             "Can only calculate HEALPix cell coordinates when the "
-            f"healpix_index array has one dimension. Got shape {a.shape}"
+            f"healpix_index array has one dimension. Got shape: {a.shape}"
         )
 
     if latitude:
@@ -721,7 +729,7 @@ def cf_healpix_coordinates(
 
     match indexing_scheme:
         case "nested_unique":
-            # Create coordinates for 'nested_unique' cells
+            # Create coordinates for 'nested_unique' indices
             c = np.empty(a.shape, dtype="float64")
 
             nest = True
@@ -734,7 +742,7 @@ def cf_healpix_coordinates(
                 )[pos]
 
         case "nested" | "ring":
-            # Create coordinates for 'nested' or 'ring' cells
+            # Create coordinates for 'nested' or 'ring' indices
             nest = indexing_scheme == "nested"
             nside = healpix.order2nside(refinement_level)
             c = healpix.pix2ang(
@@ -760,12 +768,14 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
     an "extensive" quantity only, the broadcast values are reduced to
     be consistent with the new smaller cell areas.
 
-    .. warning:: The returned `numpy` array will take up at least
-                 *ncells* times more memory than the input array
-                 *a*. For instance, if *a* has shape ``(3600, 48)``
-                 (1.3 MiB), the HEALPix axis is ``1``, and *ncells* is
-                 ``4096``, then the returned array will have shape
-                 ``(3600, 196608)`` (5.3 GiB), where 196608=48*4096.
+    .. warning:: The returned `numpy` array will take up *ncells*
+                 times more memory than the input array *a* (or two
+                 times *ncells* more memory, if *a* contains 32-bit
+                 integers and *quantity* is ``'extensive'``). For
+                 instance, if 64-bit *a* has shape ``(3600, 48)``
+                 (1.318 MiB), the HEALPix axis is ``1``, and *ncells*
+                 is ``4096``, then the returned array will have shape
+                 ``(3600, 196608)`` (5.4 GiB), where 196608=48*4096.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -805,13 +815,19 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
     if quantity == "extensive":
         a = a / ncells
 
+    # Create a new dimension over which the original HEALPix axis will
+    # be broadcast
     iaxis = iaxis + 1
     a = np.expand_dims(a, iaxis)
 
+    # Define the shape of the new array, and broadcast 'a' to it.
+    # shape
     shape = list(a.shape)
     shape[iaxis] = ncells
-
     a = np.broadcast_to(a, shape, subok=True)
+
+    # Reshape the new array to combine the original HEALPix and
+    # broadcast dimensions into a single new HEALPix dimension
     a = a.reshape(
         shape[: iaxis - 1]
         + [shape[iaxis - 1] * shape[iaxis]]
@@ -821,7 +837,7 @@ def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
     return a
 
 
-def cf_healpix_increase_refinement_indices(a, ncells):
+def cf_healpix_increase_refinement_indices(a, refinement_level, ncells):
     """Increase the refinement level of HEALPix indices.
 
     For instance, when going from refinement level 1 to refinement
@@ -831,12 +847,14 @@ def cf_healpix_increase_refinement_indices(a, ncells):
     ``ncells`` is the number of cells at refinement level 2 that lie
     inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
 
-    .. warning:: The returned `numpy` array will take up at least
-                 *ncells* times more memory than the input array
-                 *a*. For instance, if *a* has shape ``(48,)`` (384
-                 B), and *ncells* is ``262144``, then the returned
-                 array will have shape ``(12582912,)`` (96 MiB), where
-                 12582912=48*262144.
+    .. warning:: The returned `numpy` array will take up *ncells*
+                 times more memory than the input array *a* (or two
+                 times *ncells* more memory, if *a* is 32-bit and the
+                 output requires 64-bit integers). For instance, if
+                 32-bit *a* has shape ``(48,)`` (192 B), and *ncells*
+                 is ``67108864``, then the returned 64-bit array will
+                 have shape ``(3221225472,)`` (24 GiB), where
+                 3221225472=48*67108864.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -853,6 +871,9 @@ def cf_healpix_increase_refinement_indices(a, ncells):
         a: `numpy.ndarray`
             The array of HEALPix nested indices.
 
+        refinement_level: `int`
+            The new higher HEALPix refinement level.
+
         ncells: `int`
             The number of cells at the new refinement level which are
             contained in one cell at the original refinement level
@@ -865,10 +886,31 @@ def cf_healpix_increase_refinement_indices(a, ncells):
     """
     a = cfdm_to_memory(a)
 
-    a = a * ncells
+    # Set the data type to allow for the largest possible HEALPix
+    # index at the new refinement level
+    dtype = integer_dtype(12 * (4**refinement_level) - 1)
+    if a.dtype != dtype:
+        a = a.astype(dtype, copy=True)
+        a *= ncells
+    else:
+        a = a * ncells
+
+    # Create a new dimension over which the original HEALPix axis will
+    # be broadcast
     a = np.expand_dims(a, -1)
-    a = np.broadcast_to(a, (a.size, ncells), subok=True).copy()
+
+    # Define the shape of the new array, and broadcast 'a' to it.
+    shape = (a.size, ncells)
+    a = np.broadcast_to(a, shape, subok=True).copy()
+
+    # Increment the broadcast values along the new dimension, so that
+    # a[i, :] contains all of the nested indices at the higher
+    # refinement level that correspond to index i at the original
+    # refinement level.
     a += np.arange(ncells)
+
+    # Reshape the new array to combine the original HEALPix and
+    # broadcast dimensions into a single new HEALPix dimension
     a = a.flatten()
 
     return a

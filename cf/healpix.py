@@ -279,8 +279,6 @@ def _healpix_increase_refinement_level_indices(
     # Set the data type to allow for the largest possible HEALPix
     # index at the new refinement level
     dtype = integer_dtype(12 * (4**refinement_level) - 1)
-    if dx.dtype != dtype:
-        dx = dx.astype(dtype, copy=False)
 
     # Each chunk is going to get larger by a factor of 'ncells'
     chunks = [(np.array(dx.chunks[0]) * ncells).tolist()]
@@ -290,6 +288,7 @@ def _healpix_increase_refinement_level_indices(
         chunks=tuple(chunks),
         dtype=dtype,
         meta=np.array((), dtype=dtype),
+        refinement_level=refinement_level,
         ncells=ncells,
     )
 
