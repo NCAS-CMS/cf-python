@@ -124,6 +124,7 @@ ideas, code, and documentation to the cf library:
 * Mark Rhodes-Smith
 * Matt Brown
 * Michael Decker
+* Oliver Kotla
 * Sadie Bartholomew
 * Thibault Hallouin
 * Tim Bradshaw
