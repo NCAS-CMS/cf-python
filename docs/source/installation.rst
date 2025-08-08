@@ -124,7 +124,7 @@ Jupyter Notebooks
 
 You may want to work with cf via a Jupyter Notebook within a ``conda`` environment.
 
-A `known issue <https://github.com/NCAS-CMS/cf-python/issues/883/>`_ exists where the stricter dependencies of the Jupyter library clash with those of cf and installation fails.
+A `known issue <https://github.com/NCAS-CMS/cf-python/issues/883/>`_ exists for Python 3.12 only when one wants to install the optional dependency ESMPy. Namely, the stricter dependencies of the Jupyter library clash with those of cf (namely ``zlib`` required by ESMPy) and installation fails.
 
 A proven workaround is to install Jupyter *before* installing cf, like so:
 
