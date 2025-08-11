@@ -84,7 +84,10 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
 
         return (None, None)
 
-    # Get the Dask array of HEALPix indices
+    # Get the Dask array of HEALPix indices.
+    #
+    # `cf_healpix_coordinates` anad `cf_healpix_bounds` have their own
+    # calls to `cfdm_to_memory`, so we can set _force_to_memory=False.
     dx = healpix_index.data.to_dask_array(
         _force_mask_hardness=False, _force_to_memory=False
     )
@@ -131,7 +134,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         latitude=True,
     )
     bounds = f._Bounds(data=dy)
-    lat.set_bounds(bounds)
+    lat.set_bounds(bounds, copy=False)
 
     # Create longitude bounds
     dy = da.blockwise(
@@ -147,7 +150,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         pole_longitude=pole_longitude,
     )
     bounds = f._Bounds(data=dy)
-    lon.set_bounds(bounds)
+    lon.set_bounds(bounds, copy=False)
 
     # Set the new latitude and longitude coordinates
     axis = hp["domain_axis_key"]
@@ -173,7 +176,8 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
     :Parameters:
 
         x: construct
-            The construct containing data that is to be changed.
+            The construct containing data that is to be changed
+            in-place.
 
         ncells: `int`
             The number of cells at the new refinement level which are
@@ -193,37 +197,38 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
         `None`
 
     """
-    from .data.dask_utils import cf_healpix_increase_refinement
+    from dask.array.core import normalize_chunks
 
     # Get the Dask array.
-    #
-    # `cf_healpix_increase_refinement` has its own call to
-    # `cfdm_to_memory`, so we can set _force_to_memory=False.
-    dx = x.data.to_dask_array(
-        _force_mask_hardness=False, _force_to_memory=False
-    )
+    dx = x.data.to_dask_array(_force_mask_hardness=False)
 
+    # Divide extensive data by the number of new cells
     if quantity == "extensive":
-        # Extensive data get divided by 'ncells' in
-        # `cf_healpix_increase_refinement`, so they end up with a
-        # data type of float64.
-        dtype = np.dtype("float64")
-    else:
-        dtype = dx.dtype
+        dx = dx / ncells
 
-    # Each chunk is going to get larger by a factor of 'ncells'
+    # Add a new size dimension just after the HEALPix dimension
+    new_axis = iaxis + 1
+    dx = da.expand_dims(dx, new_axis)
+
+    # Work out what the chunks should be for the new dimension
+    shape = list(dx.shape)
+    shape[new_axis] = ncells
+
     chunks = list(dx.chunks)
-    chunks[iaxis] = (np.array(chunks[iaxis]) * ncells).tolist()
+    chunks[new_axis] = "auto"
+    chunks = normalize_chunks(chunks, shape, dtype=dx.dtype)
 
-    dx = dx.map_blocks(
-        cf_healpix_increase_refinement,
-        chunks=tuple(chunks),
-        dtype=dtype,
-        meta=np.array((), dtype=dtype),
-        ncells=ncells,
-        iaxis=iaxis,
-        quantity=quantity,
+    # Broadcast the data along the new dimension
+    dx = da.broadcast_to(dx, shape, chunks=chunks)
+
+    # Reshape the array so that it has a single, larger HEALPix
+    # dimension
+    dx = dx.reshape(
+        shape[:iaxis]
+        + [shape[iaxis] * shape[new_axis]]
+        + shape[new_axis + 1 :]
     )
+
     x.set_data(dx, copy=False)
 
 
@@ -262,35 +267,50 @@ def _healpix_increase_refinement_level_indices(
 
     """
     from cfdm import integer_dtype
+    from dask.array.core import normalize_chunks
 
-    from .data.dask_utils import cf_healpix_increase_refinement_indices
-
-    # Save any cached data elements
+    # Get any cached data values
     cached = healpix_index.data._get_cached_elements().copy()
 
-    # Get the Dask array.
-    #
-    # `cf_healpix_increase_refinement_indices` has its own call to
-    # `cfdm_to_memory`, so we can set _force_to_memory=False.
-    dx = healpix_index.data.to_dask_array(
-        _force_mask_hardness=False, _force_to_memory=False
-    )
+    # Get the Dask array
+    dx = healpix_index.data.to_dask_array(_force_mask_hardness=False)
 
     # Set the data type to allow for the largest possible HEALPix
     # index at the new refinement level
     dtype = integer_dtype(12 * (4**refinement_level) - 1)
+    if dx.dtype != dtype:
+        dx = dx.astype(dtype)
 
-    # Each chunk is going to get larger by a factor of 'ncells'
-    chunks = [(np.array(dx.chunks[0]) * ncells).tolist()]
+    # Change each original HEALpix index to the smallest new HEALPix
+    # index that the larger cell contains
+    dx = dx * ncells
 
-    dx = dx.map_blocks(
-        cf_healpix_increase_refinement_indices,
-        chunks=tuple(chunks),
-        dtype=dtype,
-        meta=np.array((), dtype=dtype),
-        refinement_level=refinement_level,
-        ncells=ncells,
-    )
+    # Add a new size dimension just after the HEALPix dimension
+    new_axis = 1
+    dx = da.expand_dims(dx, new_axis)
+
+    # Work out what the chunks should be for the new dimension
+    shape = list(dx.shape)
+    shape[new_axis] = ncells
+
+    chunks = list(dx.chunks)
+    chunks[new_axis] = "auto"
+    chunks = normalize_chunks(chunks, shape, dtype=dx.dtype)
+
+    # Broadcast the data along the new dimension
+    dx = da.broadcast_to(dx, shape, chunks=chunks)
+
+    # Increment the broadcast values along the new dimension, so that
+    # dx[i, :] contains all of the nested indices at the higher
+    # refinement level that correspond to HEALPix index value i at the
+    # original refinement level.
+    new_shape = [1] * dx.ndim
+    new_shape[new_axis] = shape[new_axis]
+    dx += da.arange(ncells, chunks=chunks[new_axis]).reshape(new_shape)
+
+    # Reshape the new array to combine the original HEALPix and
+    # broadcast dimensions into a single new HEALPix dimension
+    dx = dx.reshape(shape[0] * shape[new_axis])
 
     healpix_index.set_data(dx, copy=False)
 
@@ -303,6 +323,8 @@ def _healpix_increase_refinement_level_indices(
     if -1 in cached:
         x = np.array(cached[-1], dtype=dtype) * ncells + (ncells - 1)
         data._set_cached_elements({-1: x})
+
+    return
 
 
 def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
@@ -345,6 +367,9 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
     refinement_level = hp.get("refinement_level")
 
     # Change the HEALPix indices
+    #
+    # `cf_healpix_indexing_scheme` has its own call to
+    # `cfdm_to_memory`, so we can set _force_to_memory=False.
     dx = healpix_index.data.to_dask_array(
         _force_mask_hardness=False, _force_to_memory=False
     )

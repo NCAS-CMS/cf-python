@@ -2354,8 +2354,8 @@ class FieldDomain:
 
         When it is not possible to create latitude and longitude
         coordinates, the reason why will be reported if the log level
-        at ``2``/``'INFO'`` or higher (as set by `cf.log_level` or the
-        *verbose* parameter).
+        is at ``2``/``'INFO'`` or higher (as set by `cf.log_level` or
+        the *verbose* parameter).
 
         .. versionadded:: NEXTVERSION
 
@@ -2365,13 +2365,13 @@ class FieldDomain:
 
             one_d: `bool`, optional`
                 If True (the default) then attempt to create 1-d
-                latitude and longitude coordinates, if
-                possible. Otherwise do not attempt this.
+                latitude and longitude coordinates. Otherwise do not
+                attempt this.
 
             two_d: `bool`, optional`
                 If True (the default) then attempt to create 2-d
-                latitude and longitude coordinates, if
-                possible. Otherwise do not attempt this.
+                latitude and longitude coordinates. Otherwise do not
+                attempt this.
 
             pole_longitude: `None` or number
                 The longitude of coordinates, or coordinate bounds,
@@ -2396,9 +2396,8 @@ class FieldDomain:
 
             `{{class}}` or `None`
                 The {{class}} with new latitude and longitude
-                constructs, if any could be created. If none could be
-                created then a new, identical field is returned. If
-                the operation was in-place then `None` is returned.
+                constructs, if any could be created. If the operation
+                was in-place then `None` is returned.
 
         **Examples**
 
@@ -2453,11 +2452,12 @@ class FieldDomain:
 
         # Store all of the grid mapping Coordinate References in a
         # dictionary
-        identities = {
-            cr.identity(""): cr
+        coordinate_references = {
+            cr.identity(None): cr
             for cr in f.coordinate_references(todict=True).values()
         }
-        if not identities:
+        coordinate_references.pop(None, None)
+        if not coordinate_references:
             if is_log_level_info(logger):
                 logger.info(
                     "Can't create latitude and longitude coordinates: "
@@ -2466,18 +2466,18 @@ class FieldDomain:
 
             return f
 
-        identities = {
+        coordinate_references = {
             identity: cr
-            for identity, cr in identities.items()
+            for identity, cr in coordinate_references.items()
             if identity.startswith("grid_mapping_name:")
         }
 
         # Remove a 'latitude_longitude' grid mapping (if there is one)
         # from the dictionary, saving it for later.
-        latlon_cr = identities.pop(
+        latlon_cr = coordinate_references.pop(
             "grid_mapping_name:latitude_longitude", None
         )
-        if not identities:
+        if not coordinate_references:
             if is_log_level_info(logger):
                 logger.info(
                     "Can't create latitude and longitude coordinates: There "
@@ -2487,12 +2487,13 @@ class FieldDomain:
 
             return f
 
-        if len(identities) > 1:
+        if len(coordinate_references) > 1:
             if is_log_level_info(logger):
                 logger.info(
                     "Can't create latitude and longitude coordinates: There "
                     "is more than one non-latitude_longitude grid mapping "
-                    "coordinate reference"
+                    "coordinate reference: "
+                    f"{', '.join(map(repr, coordinate_references.values()))}"
                 )  # pragma: no cover
 
             return f
@@ -2501,7 +2502,7 @@ class FieldDomain:
         # Still here? Then get the unique non-latitude_longitude grid
         # mapping, and use it to calculate the lat/lon coordinates.
         # ------------------------------------------------------------
-        identity, cr = identities.popitem()
+        identity, cr = coordinate_references.popitem()
 
         # Initialize the flag that tells us if any new coordinates
         # have been created

@@ -3428,16 +3428,20 @@ class FieldTest(unittest.TestCase):
 
         # Cached values
         f.coordinate("healpix_index").data._del_cached_elements()
-        g = f.healpix_increase_refinement_level(29, "intensive")
-        self.assertEqual(
-            g.coordinate("healpix_index").data._get_cached_elements(), {}
-        )
-        _ = str(f.coordinate("healpix_index").data)  # Create cached elements
-        g = f.healpix_increase_refinement_level(29, "intensive")
-        self.assertEqual(
-            g.coordinate("healpix_index").data._get_cached_elements(),
-            {0: 0, 1: 1, -1: 3458764513820540927},
-        )
+        with cf.chunksize(256 * (2**30)):
+            g = f.healpix_increase_refinement_level(16, "intensive")
+            self.assertEqual(g.data.npartitions, 6)
+            self.assertEqual(
+                g.coordinate("healpix_index").data._get_cached_elements(), {}
+            )
+            _ = str(
+                f.coordinate("healpix_index").data
+            )  # Create cached elements
+            g = f.healpix_increase_refinement_level(16, "intensive")
+            self.assertEqual(
+                g.coordinate("healpix_index").data._get_cached_elements(),
+                {0: 0, 1: 1, -1: 51539607551},
+            )
 
         # Bad 'quantity' parameter
         with self.assertRaises(ValueError):

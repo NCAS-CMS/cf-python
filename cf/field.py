@@ -5279,7 +5279,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         "sea_ice_amount" with units of kg m-2, or "air_temperature"
         with units of K). For an extensive quantity only, the
         broadcast values are reduced to be consistent with the new
-        smaller cell areas.
+        smaller cell areas x(by dividing them by the number of new
+        cells per original cell).
 
         **References**
 
@@ -5410,14 +5411,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the HEALPix axis
         axis = hp["domain_axis_key"]
-        try:
-            iaxis = f.get_data_axes().index(axis)
-        except ValueError:
-            # Field data doesn't span the HEALPix axis, so insert it
-            # (note that it must be size 1, given that the Field data
-            # doen't span it).
-            f.insert_dimension(axis, -1, inplace=True)
-            iaxis = f.get_data_axes().index(axis)
 
         # Whether or not to create lat/lon coordinates for the new
         # refinement level. Only do so if the original grid has
@@ -5432,17 +5425,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
         )
 
+        # Find the position of the HEALPix axis in the Field data
+        try:
+            iaxis = f.get_data_axes().index(axis)
+        except ValueError:
+            # The Field data doesn't span the HEALPix axis, so insert
+            # it.
+            f.insert_dimension(axis, -1, inplace=True)
+            iaxis = f.get_data_axes().index(axis)
+
         # Re-size the HEALPix axis
         domain_axis = f.domain_axis(axis)
         domain_axis.set_size(f.shape[iaxis] * ncells)
 
-        # Increase the refinement of the Field data
+        # Increase the refinement level of the Field data
         _healpix_increase_refinement_level(f, ncells, iaxis, quantity)
 
         # Increase the refinement level of domain ancillary constructs
         # that span the HEALPix axis. We're assuming that domain
-        # ancillary data are intensive (i.e. do not depend on the size
-        # of the cell).
+        # ancillary data are intensive (i.e. they do not depend on the
+        # size of the cell).
         for key, domain_ancillary in f.domain_ancillaries(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5453,7 +5455,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Increase the refinement level of cell measure constructs
         # that span the HEALPix axis. Cell measure data are extensive
-        # (i.e. depend on the size of the cell).
+        # (i.e. they depend on the size of the cell).
         for key, cell_measure in f.cell_measures(
             filter_by_axis=(axis,), axis_mode="and", todict=True
         ).items():
@@ -5465,12 +5467,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Remove all other metadata constructs that span the HEALPix
         # axis (including the original healpix_index coordinate
         # construct, and any lat/lon coordinate constructs that span
-        # the HEALPix axis)
+        # the HEALPix axis).
         for key in (
             f.constructs.filter_by_axis(axis, axis_mode="and")
             .filter_by_type("cell_measure", "domain_ancillary")
             .inverse_filter(1)
-            .todict()
         ):
             f.del_construct(key)
 

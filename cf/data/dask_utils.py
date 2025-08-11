@@ -8,7 +8,6 @@ instance, as would be passed to `dask.array.map_blocks`.
 from functools import partial
 
 import numpy as np
-from cfdm import integer_dtype
 from cfdm.data.dask_utils import cfdm_to_memory
 from scipy.ndimage import convolve1d
 
@@ -761,161 +760,6 @@ def cf_healpix_coordinates(
     return c
 
 
-def cf_healpix_increase_refinement(a, ncells, iaxis, quantity):
-    """Increase the refinement level of a HEALPix data.
-
-    Data are broadcast to cells of at the higher refinement level. For
-    an "extensive" quantity only, the broadcast values are reduced to
-    be consistent with the new smaller cell areas.
-
-    .. warning:: The returned `numpy` array will take up *ncells*
-                 times more memory than the input array *a* (or two
-                 times *ncells* more memory, if *a* contains 32-bit
-                 integers and *quantity* is ``'extensive'``). For
-                 instance, if 64-bit *a* has shape ``(3600, 48)``
-                 (1.318 MiB), the HEALPix axis is ``1``, and *ncells*
-                 is ``4096``, then the returned array will have shape
-                 ``(3600, 196608)`` (5.4 GiB), where 196608=48*4096.
-
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.healpix_increase_refinement_level`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array.
-
-        ncells: `int`
-            The number of cells at the new refinement level which are
-            contained in one cell at the original refinement level.
-
-        iaxis: `int`
-            The position of the HEALPix axis in the array dimensions.
-
-        quantity: `str`
-            Whether the array values represent intensive or extensive
-            quantities, specified with ``'intensive'`` and
-            ``'extensive'`` respectively.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array at the new refinement level.
-
-    """
-    a = cfdm_to_memory(a)
-
-    if quantity == "extensive":
-        a = a / ncells
-
-    # Create a new dimension over which the original HEALPix axis will
-    # be broadcast
-    iaxis = iaxis + 1
-    a = np.expand_dims(a, iaxis)
-
-    # Define the shape of the new array, and broadcast 'a' to it.
-    # shape
-    shape = list(a.shape)
-    shape[iaxis] = ncells
-    a = np.broadcast_to(a, shape, subok=True)
-
-    # Reshape the new array to combine the original HEALPix and
-    # broadcast dimensions into a single new HEALPix dimension
-    a = a.reshape(
-        shape[: iaxis - 1]
-        + [shape[iaxis - 1] * shape[iaxis]]
-        + shape[iaxis + 1 :]
-    )
-
-    return a
-
-
-def cf_healpix_increase_refinement_indices(a, refinement_level, ncells):
-    """Increase the refinement level of HEALPix indices.
-
-    For instance, when going from refinement level 1 to refinement
-    level 2, if *a* is ``(2, 23, 17)`` then it will be transformed to
-    ``(8, 9, 10, 11, 92, 93, 94, 95, 68, 69, 70, 71)`` where
-    ``8=2*ncells, 9=2*ncells+1, ..., 71=17*ncells+3``, and where
-    ``ncells`` is the number of cells at refinement level 2 that lie
-    inside one cell at refinement level 1, i.e. ``ncells=4**(2-1)=4``.
-
-    .. warning:: The returned `numpy` array will take up *ncells*
-                 times more memory than the input array *a* (or two
-                 times *ncells* more memory, if *a* is 32-bit and the
-                 output requires 64-bit integers). For instance, if
-                 32-bit *a* has shape ``(48,)`` (192 B), and *ncells*
-                 is ``67108864``, then the returned 64-bit array will
-                 have shape ``(3221225472,)`` (24 GiB), where
-                 3221225472=48*67108864.
-
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.healpix_increase_refinement_level`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array of HEALPix nested indices.
-
-        refinement_level: `int`
-            The new higher HEALPix refinement level.
-
-        ncells: `int`
-            The number of cells at the new refinement level which are
-            contained in one cell at the original refinement level
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array at the new refinement level.
-
-    """
-    a = cfdm_to_memory(a)
-
-    # Set the data type to allow for the largest possible HEALPix
-    # index at the new refinement level
-    dtype = integer_dtype(12 * (4**refinement_level) - 1)
-    if a.dtype != dtype:
-        a = a.astype(dtype, copy=True)
-        a *= ncells
-    else:
-        a = a * ncells
-
-    # Create a new dimension over which the original HEALPix axis will
-    # be broadcast
-    a = np.expand_dims(a, -1)
-
-    # Define the shape of the new array, and broadcast 'a' to it.
-    shape = (a.size, ncells)
-    a = np.broadcast_to(a, shape, subok=True).copy()
-
-    # Increment the broadcast values along the new dimension, so that
-    # a[i, :] contains all of the nested indices at the higher
-    # refinement level that correspond to index i at the original
-    # refinement level.
-    a += np.arange(ncells)
-
-    # Reshape the new array to combine the original HEALPix and
-    # broadcast dimensions into a single new HEALPix dimension
-    a = a.flatten()
-
-    return a
-
-
 def cf_healpix_indexing_scheme(
     a, indexing_scheme, new_indexing_scheme, refinement_level=None
 ):
@@ -972,7 +816,7 @@ def cf_healpix_indexing_scheme(
     )
     array([16, 17, 18, 19])
     >>> cf.data.dask_utils.cf_healpix_indexing_scheme(
-    ...     [16, 17, 18, 19], 'nested_unique', 'nest', None
+    ...     [16, 17, 18, 19], 'nested_unique', 'nested', None
     )
     array([0, 1, 2, 3])
 
@@ -1030,12 +874,15 @@ def cf_healpix_indexing_scheme(
 
         case _:
             raise ValueError(
-                "Can't calculate HEALPix cell coordinates: Unknown "
-                f"'indexing_scheme': {indexing_scheme!r}"
+                "Can't change HEALPix indexing scheme: Unknown "
+                f"'indexing_scheme' in cf_healpix_indexing_scheme: "
+                f"{indexing_scheme!r}"
             )
 
-    raise RuntimeError(
-        "cf_healpix_indexing_scheme: Failed during Dask computation"
+    raise ValueError(
+        "Can't change HEALPix indexing scheme: Unknown "
+        f"'new_indexing_scheme in cf_healpix_indexing_scheme: "
+        f"{new_indexing_scheme!r}"
     )
 
 
@@ -1117,7 +964,7 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     if measure:
         # Cell weights equal cell areas. Surface area of a sphere is
         # 4*pi*(r**2), number of HEALPix cells at refinement level N
-        # is 12*(4**N) => Area of each cell is (pi*(r**2)/3.0)/(4**N)
+        # is 12*(4**N) => Area of each cell is (pi*(r**2)/3)/(4**N)
         x = np.pi * (radius**2) / 3.0
     else:
         # Normalised weights
