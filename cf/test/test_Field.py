@@ -3173,7 +3173,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(u.domain_topologies()), 1)
         self.assertEqual(len(u.auxiliary_coordinates()), 2)
 
-        topology = u.domain_topology().normalise().array
+        topology = u.domain_topology().normalise()
         self.assertEqual(np.unique(topology).size, 53)
         self.assertTrue(
             np.array_equal(
@@ -3434,9 +3434,8 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(
                 g.coordinate("healpix_index").data._get_cached_elements(), {}
             )
-            _ = str(
-                f.coordinate("healpix_index").data
-            )  # Create cached elements
+            # Create cached elements
+            _ = str(f.coordinate("healpix_index").data)
             g = f.healpix_increase_refinement_level(16, "intensive")
             self.assertEqual(
                 g.coordinate("healpix_index").data._get_cached_elements(),

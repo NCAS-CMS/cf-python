@@ -199,7 +199,7 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
     """
     from dask.array.core import normalize_chunks
 
-    # Get the Dask array.
+    # Get the Dask array (e.g. dx.shape is (12, 19, 48))
     dx = x.data.to_dask_array(_force_mask_hardness=False)
 
     # Divide extensive data by the number of new cells
@@ -207,22 +207,27 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
         dx = dx / ncells
 
     # Add a new size dimension just after the HEALPix dimension
+    # (e.g. .shape becomes (12, 19, 48, 1))
     new_axis = iaxis + 1
     dx = da.expand_dims(dx, new_axis)
 
-    # Work out what the chunks should be for the new dimension
+    # Modify the size of the new dimension to be the number of cells
+    # at the new refinement level which are contained in one cell at
+    # the original refinement level (e.g. size becomes 16)
     shape = list(dx.shape)
     shape[new_axis] = ncells
 
+    # Work out what the chunks should be for the new dimension
     chunks = list(dx.chunks)
     chunks[new_axis] = "auto"
     chunks = normalize_chunks(chunks, shape, dtype=dx.dtype)
 
-    # Broadcast the data along the new dimension
+    # Broadcast the data along the new dimension (e.g. dx.shape
+    # becomes (12, 19, 48, 16))
     dx = da.broadcast_to(dx, shape, chunks=chunks)
 
     # Reshape the array so that it has a single, larger HEALPix
-    # dimension
+    # dimension (e.g. dx.shape becomes (12, 19, 768))
     dx = dx.reshape(
         shape[:iaxis]
         + [shape[iaxis] * shape[new_axis]]
@@ -272,7 +277,7 @@ def _healpix_increase_refinement_level_indices(
     # Get any cached data values
     cached = healpix_index.data._get_cached_elements().copy()
 
-    # Get the Dask array
+    # Get the Dask array (e.g. dx.shape is (48,))
     dx = healpix_index.data.to_dask_array(_force_mask_hardness=False)
 
     # Set the data type to allow for the largest possible HEALPix
@@ -286,18 +291,23 @@ def _healpix_increase_refinement_level_indices(
     dx = dx * ncells
 
     # Add a new size dimension just after the HEALPix dimension
+    # (e.g. .shape becomes (48, 1))
     new_axis = 1
     dx = da.expand_dims(dx, new_axis)
 
-    # Work out what the chunks should be for the new dimension
+    # Modify the size of the new dimension to be the number of cells
+    # at the new refinement level which are contained in one cell at
+    # the original refinement level (e.g. size becomes 16)
     shape = list(dx.shape)
     shape[new_axis] = ncells
 
+    # Work out what the chunks should be for the new dimension
     chunks = list(dx.chunks)
     chunks[new_axis] = "auto"
     chunks = normalize_chunks(chunks, shape, dtype=dx.dtype)
 
-    # Broadcast the data along the new dimension
+    # Broadcast the data along the new dimension (e.g. dx.shape
+    # becomes (48, 16))
     dx = da.broadcast_to(dx, shape, chunks=chunks)
 
     # Increment the broadcast values along the new dimension, so that
@@ -306,10 +316,12 @@ def _healpix_increase_refinement_level_indices(
     # original refinement level.
     new_shape = [1] * dx.ndim
     new_shape[new_axis] = shape[new_axis]
+
     dx += da.arange(ncells, chunks=chunks[new_axis]).reshape(new_shape)
 
     # Reshape the new array to combine the original HEALPix and
     # broadcast dimensions into a single new HEALPix dimension
+    # (e.g. dx.shape becomes (768,))
     dx = dx.reshape(shape[0] * shape[new_axis])
 
     healpix_index.set_data(dx, copy=False)
@@ -323,8 +335,6 @@ def _healpix_increase_refinement_level_indices(
     if -1 in cached:
         x = np.array(cached[-1], dtype=dtype) * ncells + (ncells - 1)
         data._set_cached_elements({-1: x})
-
-    return
 
 
 def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):

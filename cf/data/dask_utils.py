@@ -518,11 +518,13 @@ def cf_healpix_bounds(
             If True then return the bounds' longitudes.
 
         pole_longitude: `None` or number
-            The longitude of bounds that lie exactly on the north
-            (south) pole. If `None` (the default) then the longitude
-            of such a vertex will be the same as the south (north)
-            vertex of the same cell. If set to a number, then the
-            longitudes of all such vertices will be given that value.
+            Define the longitudes of vertices that lie exactly on the
+            north or south pole. If `None` (the default) then the
+            longitude of such a vertex on the north (south) pole will
+            be the same as the longitude of the south (north) vertex
+            of the same cell. If set to a number, then the longitudes
+            of all vertices on the north or south pole will be given
+            the value *pole_longitude*.
 
     :Returns:
 

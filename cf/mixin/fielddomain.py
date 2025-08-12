@@ -2268,6 +2268,7 @@ class FieldDomain:
             two_d=False, pole_longitude=0, inplace=True
         )
 
+        # Get the lat/lon coordinates
         x_key, x = f.auxiliary_coordinate(
             "Y",
             filter_by_axis=(axis,),
@@ -2308,8 +2309,9 @@ class FieldDomain:
                 "coordinate bounds"
             )
 
-        # Create the Domain Topology construct, by creating a unique
-        # integer identifer for each node location.
+        # Create the UGRID Domain Topology construct, by creating an
+        # arbitrary unique integer identifer for each unique node
+        # location.
         bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
         bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
 
@@ -2374,12 +2376,15 @@ class FieldDomain:
                 attempt this.
 
             pole_longitude: `None` or number
-                The longitude of coordinates, or coordinate bounds,
-                that lie exactly on the north or south pole. If `None`
-                (the default) then the longitudes of such points will
-                vary according to the algorithm being used to create
-                them. If set to a number, then the longitudes of such
-                points will all be given that value.
+                Define the longitudes of coordinates or coordinate
+                bounds that lie exactly on the north or south pole. If
+                `None` (the default) then the longitudes of such
+                points are determined by whatever algorithm was used
+                to create the coordinates, which will likely result in
+                different points on a pole having different
+                longitudes. If set to a number, then the longitudes of
+                all points on the north or south pole will be given
+                the value *pole_longitude*.
 
             overwrite: `bool`, optional
                 If True then remove any existing latitude and
