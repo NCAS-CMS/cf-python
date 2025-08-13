@@ -1978,6 +1978,11 @@ class FieldDomain:
     def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
         r"""Change the indexing scheme of HEALPix indices.
 
+        Note that the Field data values are not changed, nor is the
+        Field Data array reordered. Only the "healpix_index"
+        coordinate values are changed, along with the corresponding
+        "healpix" grid mapping Coordinate Reference.
+        
         **References**
 
         {{HEALPix references}}
