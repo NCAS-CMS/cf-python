@@ -122,7 +122,7 @@ except ImportError as error1:
 else:
     # Check the version of cfdm
     _minimum_vn = "1.12.2.0"
-    _maximum_vn = "1.12.3.0"
+    _maximum_vn = "1.12.10.0"
     _cfdm_version = Version(cfdm.__version__)
     if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
         _maximum_vn

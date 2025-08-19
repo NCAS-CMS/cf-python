@@ -10,11 +10,9 @@ fi
 
 version=`python -c "import cf; print(cf.__version__)"`
 
+
 sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
-if [[ $sphinx_version != "2.4.5"  ]] ; then
-  echo "ERROR: Must (sadly) use sphinx version 2.4.5. Got $sphinx_version"
-  exit 3
-fi
+echo "NOTE: Using sphinx version: $sphinx_version"
 
 if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
