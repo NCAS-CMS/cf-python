@@ -1,30 +1,27 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="../">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.CellConnectivity &#8212; Documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
+    <script src="../_static/documentation_options.js?v=64e044ff"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.CellConnectivity.dump" href="../method/cf.CellConnectivity.dump.html" />
@@ -32,21 +29,22 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+              <img class="logo" src="../_static/logo.svg" alt="Logo of Python cf package"/>
             </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.1</a></h1>
 
 
 
@@ -65,16 +63,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -130,13 +128,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
           <div class="body" role="main">
             
   <section id="cf-cellconnectivity">
-<span id="id1"></span><h1>cf.CellConnectivity<a class="headerlink" href="#cf-cellconnectivity" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>cf.CellConnectivity<a class="headerlink" href="#cf-cellconnectivity" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<dl class="class">
-<dt id="cf.CellConnectivity">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellConnectivity</code><span class="sig-paren">(</span><em class="sig-param">connectivity=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/cellconnectivity.py#L6-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellConnectivity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellconnectivity.CellConnectivity</span></code></p>
-<p>A cell connectivity construct of the CF data model.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cf.CellConnectivity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">CellConnectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.1/cf/cellconnectivity.py#L6-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity" title="Link to this definition">¶</a></dt>
+<dd><p>A cell connectivity construct of the CF data model.</p>
 <p>A cell connectivity construct defines explicitly how cells
 arranged in two or three dimensions in real space but indexed by a
 single domain (discrete) axis are connected. Connectivity can only
@@ -185,11 +182,11 @@ within CF-netCDF.</p>
 <a class="reference internal" href="../method/cf.CellConnectivity.nc_clear_variable_groups.html#cf.CellConnectivity.nc_clear_variable_groups" title="cf.CellConnectivity.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cf.CellConnectivity.nc_set_variable_groups.html#cf.CellConnectivity.nc_set_variable_groups" title="cf.CellConnectivity.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
 methods.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.16.0.</span></p>
+<p><span class="versionmodified added">Added in version 3.16.0.</span></p>
 </div>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
 <dt>connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The connectivity type describes a characteristic of
 inter-cell connectivity defined by the domain topology
@@ -209,7 +206,7 @@ the <a class="reference internal" href="../method/cf.CellConnectivity.set_proper
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
 <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -236,13 +233,9 @@ parameters are not deep copied.</p>
 </dd></dl>
 
 <section id="inspection">
-<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<h2>Inspection<a class="headerlink" href="#inspection" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.dump.html#cf.CellConnectivity.dump" title="cf.CellConnectivity.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
 <td><p>A full description of the cell connectivity construct.</p></td>
@@ -259,11 +252,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.construct_type.html#cf.CellConnectivity.construct_type" title="cf.CellConnectivity.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
 <td><p>Return a description of the construct type.</p></td>
@@ -272,13 +261,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="topology">
-<h2>Topology<a class="headerlink" href="#topology" title="Permalink to this headline">¶</a></h2>
+<h2>Topology<a class="headerlink" href="#topology" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.del_connectivity.html#cf.CellConnectivity.del_connectivity" title="cf.CellConnectivity.del_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_connectivity</span></code></a></p></td>
 <td><p>Remove the connectivity.</p></td>
@@ -298,11 +283,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.connectivity.html#cf.CellConnectivity.connectivity" title="cf.CellConnectivity.connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connectivity</span></code></a></p></td>
 <td><p>The connectivity type.</p></td>
@@ -311,13 +292,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="selection">
-<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<h2>Selection<a class="headerlink" href="#selection" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.match_by_identity.html#cf.CellConnectivity.match_by_identity" title="cf.CellConnectivity.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
 <td><p>Whether or not the construct identity satisfies conditions.</p></td>
@@ -338,13 +315,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="properties">
-<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.del_property.html#cf.CellConnectivity.del_property" title="cf.CellConnectivity.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
 <td><p>Remove a property.</p></td>
@@ -373,11 +346,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.add_offset.html#cf.CellConnectivity.add_offset" title="cf.CellConnectivity.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></p></td>
 <td><p>The add_offset CF property.</p></td>
@@ -431,28 +400,23 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="units">
-<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<h2>Units<a class="headerlink" href="#units" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.override_units.html#cf.CellConnectivity.override_units" title="cf.CellConnectivity.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_units</span></code></p></td>
+<td><p>Change the data array units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.override_units.html#cf.CellConnectivity.override_units" title="cf.CellConnectivity.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
 <td><p>Override the units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.override_calendar.html#cf.CellConnectivity.override_calendar" title="cf.CellConnectivity.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.override_calendar.html#cf.CellConnectivity.override_calendar" title="cf.CellConnectivity.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
 <td><p>Override the calendar of date-time units.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.Units.html#cf.CellConnectivity.Units" title="cf.CellConnectivity.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
 <td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</p></td>
@@ -461,13 +425,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="data">
-<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading">¶</a></h2>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.array.html#cf.CellConnectivity.array" title="cf.CellConnectivity.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
 <td><p>A numpy array deep copy of the data.</p></td>
@@ -485,7 +445,7 @@ parameters are not deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.dtype.html#cf.CellConnectivity.dtype" title="cf.CellConnectivity.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.isscalar.html#cf.CellConnectivity.isscalar" title="cf.CellConnectivity.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
 <td><p>True if the data array is scalar.</p></td>
@@ -494,7 +454,7 @@ parameters are not deep copied.</p>
 <td><p>The number of data dimensions.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.shape.html#cf.CellConnectivity.shape" title="cf.CellConnectivity.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
-<td><p>A tuple of the data array’s dimension sizes.</p></td>
+<td><p>A tuple of the data array's dimension sizes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.size.html#cf.CellConnectivity.size" title="cf.CellConnectivity.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>The number elements in the data.</p></td>
@@ -505,11 +465,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.to_dask_array.html#cf.CellConnectivity.to_dask_array" title="cf.CellConnectivity.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
 <td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
@@ -532,11 +488,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Rearranging elements</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.flatten.html#cf.CellConnectivity.flatten" title="cf.CellConnectivity.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
 <td><p>Flatten axes of the data.</p></td>
@@ -562,11 +514,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Expanding the data</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.halo.html#cf.CellConnectivity.halo" title="cf.CellConnectivity.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
 <td><p>Expand the data by adding a halo.</p></td>
@@ -577,11 +525,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Data array mask</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.apply_masking.html#cf.CellConnectivity.apply_masking" title="cf.CellConnectivity.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
 <td><p>Apply masking as defined by the CF conventions.</p></td>
@@ -603,11 +547,7 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.binary_mask.html#cf.CellConnectivity.binary_mask" title="cf.CellConnectivity.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
 <td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
@@ -620,20 +560,12 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 </tbody>
 </table>
 <p class="rubric"><em>Changing data values</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.__setitem__.html#cf.CellConnectivity.__setitem__" title="cf.CellConnectivity.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Called to implement assignment to x[indices]</p></td>
@@ -650,11 +582,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Miscellaneous</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.rechunk.html#cf.CellConnectivity.rechunk" title="cf.CellConnectivity.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
 <td><p>Change the chunk structure of the data.</p></td>
@@ -689,13 +617,9 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <section id="quantization">
-<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<h3>Quantization<a class="headerlink" href="#quantization" title="Link to this heading">¶</a></h3>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.get_quantization.html#cf.CellConnectivity.get_quantization" title="cf.CellConnectivity.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
 <td><p>Get quantization metadata.</p></td>
@@ -708,13 +632,9 @@ parameters are not deep copied.</p>
 </section>
 </section>
 <section id="miscellaneous">
-<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.concatenate.html#cf.CellConnectivity.concatenate" title="cf.CellConnectivity.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
 <td><p>Join a together sequence of <a class="reference internal" href="#cf.CellConnectivity" title="cf.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a>.</p></td>
@@ -737,14 +657,10 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.T.html#cf.CellConnectivity.T" title="cf.CellConnectivity.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF 'T' axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.X.html#cf.CellConnectivity.X" title="cf.CellConnectivity.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
 <td><p>Always False.</p></td>
@@ -762,14 +678,10 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="mathematical-operations">
-<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
 <p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.arccos.html#cf.CellConnectivity.arccos" title="cf.CellConnectivity.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
 <td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
@@ -810,11 +722,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Rounding and truncation</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.ceil.html#cf.CellConnectivity.ceil" title="cf.CellConnectivity.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></p></td>
 <td><p>The ceiling of the data, element-wise.</p></td>
@@ -837,11 +745,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Statistical collapses</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.max.html#cf.CellConnectivity.max" title="cf.CellConnectivity.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
@@ -885,11 +789,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric"><em>Exponential and logarithmic functions</em></p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.exp.html#cf.CellConnectivity.exp" title="cf.CellConnectivity.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
 <td><p>The exponential of the data, element-wise.</p></td>
@@ -901,13 +801,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="date-time-operations">
-<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Link to this heading">¶</a></h2>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.day.html#cf.CellConnectivity.day" title="cf.CellConnectivity.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
 <td><p>The day of each date-time data array element.</p></td>
@@ -937,13 +833,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="logic-functions">
-<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Link to this heading">¶</a></h2>
 <p class="rubric">Truth value testing</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.all.html#cf.CellConnectivity.all" title="cf.CellConnectivity.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
 <td><p>Test whether all data elements evaluate to True.</p></td>
@@ -954,11 +846,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Comparison</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.allclose.html#cf.CellConnectivity.allclose" title="cf.CellConnectivity.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
 <td><p>Test whether all data are element-wise equal to other, broadcastable data.</p></td>
@@ -972,11 +860,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Set operations</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.unique.html#cf.CellConnectivity.unique" title="cf.CellConnectivity.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
 <td><p>The unique elements of the data.</p></td>
@@ -985,13 +869,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="netcdf">
-<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_del_variable.html#cf.CellConnectivity.nc_del_variable" title="cf.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
 <td><p>Remove the netCDF variable name.</p></td>
@@ -1018,13 +898,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="aggregation">
-<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.file_directories.html#cf.CellConnectivity.file_directories" title="cf.CellConnectivity.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
 <td><p>The directories of files containing parts of the data.</p></td>
@@ -1036,13 +912,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="id2">
-<h2>NetCDF<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2>NetCDF<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_del_variable.html#cf.CellConnectivity.nc_del_variable" title="cf.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
 <td><p>Remove the netCDF variable name.</p></td>
@@ -1059,13 +931,9 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <section id="groups">
-<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<h3>Groups<a class="headerlink" href="#groups" title="Link to this heading">¶</a></h3>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_variable_groups.html#cf.CellConnectivity.nc_variable_groups" title="cf.CellConnectivity.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
 <td><p>Return the netCDF variable group hierarchy.</p></td>
@@ -1080,13 +948,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="dataset-chunks">
-<h3>Dataset chunks<a class="headerlink" href="#dataset-chunks" title="Permalink to this headline">¶</a></h3>
+<h3>Dataset chunks<a class="headerlink" href="#dataset-chunks" title="Link to this heading">¶</a></h3>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_dataset_chunksizes.html#cf.CellConnectivity.nc_dataset_chunksizes" title="cf.CellConnectivity.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
 <td><p>Get the dataset chunking strategy for the data.</p></td>
@@ -1102,13 +966,9 @@ parameters are not deep copied.</p>
 </section>
 </section>
 <section id="aliases">
-<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<h2>Aliases<a class="headerlink" href="#aliases" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.match.html#cf.CellConnectivity.match" title="cf.CellConnectivity.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
@@ -1116,11 +976,7 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.CellConnectivity.dtarray.html#cf.CellConnectivity.dtarray" title="cf.CellConnectivity.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</p></td>
@@ -1129,13 +985,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="special">
-<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<h2>Special<a class="headerlink" href="#special" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.__deepcopy__.html#cf.CellConnectivity.__deepcopy__" title="cf.CellConnectivity.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
@@ -1153,13 +1005,9 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="docstring-substitutions">
-<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity._docstring_special_substitutions.html#cf.CellConnectivity._docstring_special_substitutions" title="cf.CellConnectivity._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
@@ -1177,43 +1025,21 @@ parameters are not deep copied.</p>
 </table>
 </section>
 <section id="deprecated">
-<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.add_file_location</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.asdatetime.html#cf.CellConnectivity.asdatetime" title="cf.CellConnectivity.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.asdatetime.html#cf.CellConnectivity.asdatetime" title="cf.CellConnectivity.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.asreftime.html#cf.CellConnectivity.asreftime" title="cf.CellConnectivity.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.asreftime.html#cf.CellConnectivity.asreftime" title="cf.CellConnectivity.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.attributes.html#cf.CellConnectivity.attributes" title="cf.CellConnectivity.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.attributes.html#cf.CellConnectivity.attributes" title="cf.CellConnectivity.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.cfa_clear_file_substitutions</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.cfa_del_file_substitution</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.cfa_file_substitutions</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.cfa_update_file_substitutions</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.chunk.html#cf.CellConnectivity.chunk" title="cf.CellConnectivity.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.chunk.html#cf.CellConnectivity.chunk" title="cf.CellConnectivity.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
 <td><p>Partition the data array.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.del_file_location</span></code></p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.delprop.html#cf.CellConnectivity.delprop" title="cf.CellConnectivity.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
@@ -1227,64 +1053,61 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.get_filenames.html#cf.CellConnectivity.get_filenames" title="cf.CellConnectivity.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellConnectivity.file_locations</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.getprop.html#cf.CellConnectivity.getprop" title="cf.CellConnectivity.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.getprop.html#cf.CellConnectivity.getprop" title="cf.CellConnectivity.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasbounds.html#cf.CellConnectivity.hasbounds" title="cf.CellConnectivity.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasbounds.html#cf.CellConnectivity.hasbounds" title="cf.CellConnectivity.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasdata.html#cf.CellConnectivity.hasdata" title="cf.CellConnectivity.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasdata.html#cf.CellConnectivity.hasdata" title="cf.CellConnectivity.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasprop.html#cf.CellConnectivity.hasprop" title="cf.CellConnectivity.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.hasprop.html#cf.CellConnectivity.hasprop" title="cf.CellConnectivity.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.insert_data.html#cf.CellConnectivity.insert_data" title="cf.CellConnectivity.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.insert_data.html#cf.CellConnectivity.insert_data" title="cf.CellConnectivity.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isauxiliary.html#cf.CellConnectivity.isauxiliary" title="cf.CellConnectivity.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isauxiliary.html#cf.CellConnectivity.isauxiliary" title="cf.CellConnectivity.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isdimension.html#cf.CellConnectivity.isdimension" title="cf.CellConnectivity.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isdimension.html#cf.CellConnectivity.isdimension" title="cf.CellConnectivity.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isdomainancillary.html#cf.CellConnectivity.isdomainancillary" title="cf.CellConnectivity.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isdomainancillary.html#cf.CellConnectivity.isdomainancillary" title="cf.CellConnectivity.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isfieldancillary.html#cf.CellConnectivity.isfieldancillary" title="cf.CellConnectivity.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.isfieldancillary.html#cf.CellConnectivity.isfieldancillary" title="cf.CellConnectivity.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.ismeasure.html#cf.CellConnectivity.ismeasure" title="cf.CellConnectivity.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.ismeasure.html#cf.CellConnectivity.ismeasure" title="cf.CellConnectivity.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
 <td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.mask_invalid.html#cf.CellConnectivity.mask_invalid" title="cf.CellConnectivity.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.mask_invalid.html#cf.CellConnectivity.mask_invalid" title="cf.CellConnectivity.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.name.html#cf.CellConnectivity.name" title="cf.CellConnectivity.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.name.html#cf.CellConnectivity.name" title="cf.CellConnectivity.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method 'identity' instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.remove_data.html#cf.CellConnectivity.remove_data" title="cf.CellConnectivity.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.remove_data.html#cf.CellConnectivity.remove_data" title="cf.CellConnectivity.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.select.html#cf.CellConnectivity.select" title="cf.CellConnectivity.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.select.html#cf.CellConnectivity.select" title="cf.CellConnectivity.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.setprop.html#cf.CellConnectivity.setprop" title="cf.CellConnectivity.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.setprop.html#cf.CellConnectivity.setprop" title="cf.CellConnectivity.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.unsafe_array.html#cf.CellConnectivity.unsafe_array" title="cf.CellConnectivity.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.unsafe_array.html#cf.CellConnectivity.unsafe_array" title="cf.CellConnectivity.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_clear_hdf5_chunksizes.html#cf.CellConnectivity.nc_clear_hdf5_chunksizes" title="cf.CellConnectivity.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_clear_hdf5_chunksizes.html#cf.CellConnectivity.nc_clear_hdf5_chunksizes" title="cf.CellConnectivity.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
 <td><p>Clear the HDF5 chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_hdf5_chunksizes.html#cf.CellConnectivity.nc_hdf5_chunksizes" title="cf.CellConnectivity.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_hdf5_chunksizes.html#cf.CellConnectivity.nc_hdf5_chunksizes" title="cf.CellConnectivity.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
 <td><p>Get the HDF5 chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_set_hdf5_chunksizes.html#cf.CellConnectivity.nc_set_hdf5_chunksizes" title="cf.CellConnectivity.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_set_hdf5_chunksizes.html#cf.CellConnectivity.nc_set_hdf5_chunksizes" title="cf.CellConnectivity.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
 <td><p>Set the HDF5 chunking strategy.</p></td>
 </tr>
 </tbody>
@@ -1300,11 +1123,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &#169;2025, NCAS | Page built on 2025-08-20.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

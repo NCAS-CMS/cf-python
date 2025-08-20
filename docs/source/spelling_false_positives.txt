@@ -214,6 +214,7 @@ getitem
 getprop
 getslice
 ggroup
+GiB
 gopen
 gpos
 gregorian
@@ -283,9 +284,11 @@ Januarys
 Javier
 ji
 jja
+Jupyter
 kB
 keepdims
 Kinoshita
+Kotla
 Kristian
 kwargs
 laplacian
@@ -307,6 +310,7 @@ lt
 Makefile
 mam
 matplotlib
+Mem
 mercator
 metacharacters
 MiB
@@ -350,6 +354,8 @@ nonzero
 normalized
 notPP
 npartitions
+nsb
+nsd
 numblocks
 numpy
 onwards
@@ -383,6 +389,8 @@ py
 pyplot
 Quantization
 quantization
+quantize
+quantized
 radd
 RaggedContiguousArray
 RaggedIndexedArray

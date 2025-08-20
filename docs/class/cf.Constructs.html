@@ -1,30 +1,27 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="../">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.Constructs &#8212; Documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
+    <script src="../_static/documentation_options.js?v=64e044ff"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Constructs.filter_by_identity" href="../method/cf.Constructs.filter_by_identity.html" />
@@ -32,21 +29,22 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+              <img class="logo" src="../_static/logo.svg" alt="Logo of Python cf package"/>
             </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.1</a></h1>
 
 
 
@@ -65,16 +63,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -130,13 +128,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
           <div class="body" role="main">
             
   <section id="cf-constructs">
-<h1>cf.Constructs<a class="headerlink" href="#cf-constructs" title="Permalink to this headline">¶</a></h1>
+<h1>cf.Constructs<a class="headerlink" href="#cf-constructs" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<dl class="class">
-<dt id="cf.Constructs">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">domain_topology=None</em>, <em class="sig-param">cell_connectivity=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.0/cf/constructs.py#L11-L205"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.constructs.Constructs</span></code></p>
-<p>A container for metadata constructs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cf.Constructs">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">Constructs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auxiliary_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_use_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.1/cf/constructs.py#L11-L205"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Constructs" title="Link to this definition">¶</a></dt>
+<dd><p>A container for metadata constructs.</p>
 <p>The container has similarities to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> in that it presents the
 metadata constructs as key/value pairs, where the key is the
 unique identifier that corresponds to a metadata construct value;
@@ -173,11 +170,11 @@ either <code class="docutils literal notranslate"><span class="pre">x</span> <sp
 <li><p>field ancillary constructs</p></li>
 </ul>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+<p><span class="versionmodified added">Added in version 3.0.0.</span></p>
 </div>
 <p><strong>Initialisation</strong></p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
 <dt>auxiliary_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of auxiliary coordinate
 constructs.</p>
@@ -230,7 +227,7 @@ constructs.</p>
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
 </div>
 </dd>
 <dt>cell_connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell connectivity
@@ -240,7 +237,7 @@ constructs.</p>
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
 </div>
 </dd>
 <dt>cell_method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell method constructs.</p>
@@ -276,13 +273,9 @@ are not deep copied.</p>
 </dd></dl>
 
 <section id="filtering">
-<h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<h2>Filtering<a class="headerlink" href="#filtering" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></p></td>
 <td><p>Select metadata constructs by identity.</p></td>
@@ -342,13 +335,9 @@ are not deep copied.</p>
 </table>
 </section>
 <section id="constructs-and-keys">
-<h2>Constructs and keys<a class="headerlink" href="#constructs-and-keys" title="Permalink to this headline">¶</a></h2>
+<h2>Constructs and keys<a class="headerlink" href="#constructs-and-keys" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axes.html#cf.Constructs.domain_axes" title="cf.Constructs.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></p></td>
 <td><p>Return domain axis constructs.</p></td>
@@ -363,31 +352,23 @@ are not deep copied.</p>
 </table>
 </section>
 <section id="data-axes">
-<h2>Data axes<a class="headerlink" href="#data-axes" title="Permalink to this headline">¶</a></h2>
+<h2>Data axes<a class="headerlink" href="#data-axes" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a></p></td>
 <td><p>Returns the axes spanned by the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.get_data_axes.html#cf.Constructs.get_data_axes" title="cf.Constructs.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
-<td><p>Return the keys of the axes spanned by a construct’s data.</p></td>
+<td><p>Return the keys of the axes spanned by a construct's data.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="miscellaneous">
-<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.copy.html#cf.Constructs.copy" title="cf.Constructs.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
@@ -401,38 +382,31 @@ are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.equals.html#cf.Constructs.equals" title="cf.Constructs.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two <a class="reference internal" href="#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs.ordered</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_type.html#cf.Constructs.construct_type" title="cf.Constructs.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_type.html#cf.Constructs.construct_type" title="cf.Constructs.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
 <td><p>Return the type of a construct for a given key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_types.html#cf.Constructs.construct_types" title="cf.Constructs.construct_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_types</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.construct_types.html#cf.Constructs.construct_types" title="cf.Constructs.construct_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_types</span></code></a></p></td>
 <td><p>Return all of the construct types for all keys.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axis_identity.html#cf.Constructs.domain_axis_identity" title="cf.Constructs.domain_axis_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_identity</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.domain_axis_identity.html#cf.Constructs.domain_axis_identity" title="cf.Constructs.domain_axis_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_identity</span></code></a></p></td>
 <td><p>Return the canonical identity for a domain axis construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.new_identifier.html#cf.Constructs.new_identifier" title="cf.Constructs.new_identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_identifier</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.new_identifier.html#cf.Constructs.new_identifier" title="cf.Constructs.new_identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_identifier</span></code></a></p></td>
 <td><p>Return a new, unused construct key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.replace.html#cf.Constructs.replace" title="cf.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.replace.html#cf.Constructs.replace" title="cf.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
 <td><p>Replace one metadata construct with another.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.close.html#cf.Constructs.close" title="cf.Constructs.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.close.html#cf.Constructs.close" title="cf.Constructs.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
 <td><p>Close all files referenced by the metadata constructs.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="dictionary-access-methods">
-<h2>Dictionary-access methods<a class="headerlink" href="#dictionary-access-methods" title="Permalink to this headline">¶</a></h2>
+<h2>Dictionary-access methods<a class="headerlink" href="#dictionary-access-methods" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
 <td><p>Returns the construct for the key, else default.</p></td>
@@ -453,13 +427,9 @@ are not deep copied.</p>
 </table>
 </section>
 <section id="special">
-<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<h2>Special<a class="headerlink" href="#special" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.__call__.html#cf.Constructs.__call__" title="cf.Constructs.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a></p></td>
 <td><p>Select metadata constructs by identity.</p></td>
@@ -501,11 +471,11 @@ are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &#169;2025, NCAS | Page built on 2025-08-20.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 
