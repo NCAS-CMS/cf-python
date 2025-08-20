@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 3.18.1
 --------------
 
-**2025-??-??**
+**2025-08-20**
 
 * New methods to allow changing units in a chain: `cf.Field.to_units`,
   `cf.Data.to_units`
@@ -13,6 +13,7 @@ Version NEXTVERSION
   for missing external cell measures data
   (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New dependency: ``distributed>=2025.5.1``
+* Changed dependency: ``cfdm>=1.12.3.0, <1.12.4.0``
 
 ----
 

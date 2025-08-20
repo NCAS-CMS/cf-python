@@ -80,8 +80,8 @@ installation and source code.
 
 """
 
-__date__ = "2025-06-05"
-__version__ = "3.18.0"
+__date__ = "2025-08-20"
+__version__ = "3.18.1"
 
 _requires = (
     "numpy",
@@ -93,6 +93,7 @@ _requires = (
     "dask",
     "packaging",
     "scipy",
+    "distributed",
 )
 x = ", ".join(_requires)
 _error0 = f"cf v{__version__} requires the modules {x}. "
@@ -121,8 +122,8 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     # Check the version of cfdm
-    _minimum_vn = "1.12.2.0"
-    _maximum_vn = "1.12.10.0"
+    _minimum_vn = "1.12.3.0"
+    _maximum_vn = "1.12.4.0"
     _cfdm_version = Version(cfdm.__version__)
     if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
         _maximum_vn
