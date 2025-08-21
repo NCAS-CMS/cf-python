@@ -267,10 +267,30 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def create_healpix(
         cls, refinement_level, indexing_scheme="nested", radius=None
     ):
-        r"""Create a new global HEALPix domain.
+        r"""Create a new global HEALPix grid.
 
         The HEALPix axis of the new Domain is ordered so that the
         HEALPix indices are monotonically increasing.
+
+        **Performance**
+        
+        Very high refinement levels may require the setting of a very
+        large Dask chunksize, to prevent a possible run-time failure
+        resulting from an attempt to create an excessive amount of
+        chunks for the healpix_index coordinates. For instance,
+        healpix_index coordinates at refinement level 29 would need
+        ~206e9 chunks with the default Dask chunksize of 128 MiB, but
+        with a chunksize of 1 PiB, only 24576 chunks are required::
+
+           >>> cf.chunksize()
+           >>> 134217728
+           >>> d = cf.Domain.create_healpix(10)
+           >>> assert d.coord('healpix_index').data.npartitions == 1
+           >>> d = cf.Domain.create_healpix(15)
+           >>> assert d.coord('healpix_index').data.npartitions == 768
+           >>> with cf.chunksize('1 PiB'):
+           ...     d = cf.Domain.create_healpix(29)
+           ...     assert d.coord('healpix_index').data.npartitions == 24576
 
         **References**
 
@@ -324,34 +344,33 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            >>> d = cf.Domain.create_healpix(4)
            >>> d.dump()
            --------
-           Domain:
+           Domain: 
            --------
            Domain Axis: healpix_index(3072)
-
+           
            Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
-               units = '1'
                Data(healpix_index(3072)) = [0, ..., 3071]
-
+           
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested
                Coordinate conversion:refinement_level = 4
-               Dimension Coordinate: healpix_index
+               Dimension Coordinate: healpix_index           
 
         .. code-block:: python
 
            >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
            >>> d.dump()
            --------
-           Domain:
+           Domain: 
            --------
            Domain Axis: healpix_index(3072)
-
+           
            Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
                Data(healpix_index(3072)) = [1024, ..., 4095]
-
+           
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested_unique
@@ -362,9 +381,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
            >>> d.create_latlon_coordinates(inplace=True)
            >>> print(d)
-           Dimension coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095]
-           Auxiliary coords: latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
-                           : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
+           Dimension coords: healpix_index(3072) = [1024, ..., 4095]
+           Auxiliary coords: latitude(healpix_index(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
+                           : longitude(healpix_index(3072)) = [45.0, ..., 315.0] degrees_east
            Coord references: grid_mapping_name:healpix
 
         """
@@ -413,7 +432,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         stop = start + ncells
         dtype = cfdm.integer_dtype(stop - 1)
-        data = Data(da.arange(start, stop, dtype=dtype), units="1")
+        data = Data(da.arange(start, stop, dtype=dtype))
 
         # Set cached data elements
         data._set_cached_elements({0: start, 1: start + 1, -1: stop - 1})

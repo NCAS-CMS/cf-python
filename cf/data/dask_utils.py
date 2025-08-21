@@ -723,6 +723,12 @@ def cf_healpix_coordinates(
             f"healpix_index array has one dimension. Got shape: {a.shape}"
         )
 
+    if latitude == longitude:
+        raise ValueError(
+            "Can't calculate HEALPix cell coordinates: "
+            f"latitude={latitude!r} and longitude={longitude!r}"
+        )
+
     if latitude:
         pos = 1
     elif longitude:

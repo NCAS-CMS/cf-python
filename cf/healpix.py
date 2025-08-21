@@ -12,6 +12,10 @@ logger = logging.getLogger(__name__)
 def _healpix_create_latlon_coordinates(f, pole_longitude):
     """Create latitude and longitude coordinates for a HEALPix grid.
 
+    When it is not possible to create latitude and longitude
+    coordinates, the reason why will be reported if the log level is
+    at ``2``/``'INFO'`` or higher.
+
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
     Fast Analysis of Data Distributed on the Sphere. The Astrophysical
@@ -41,8 +45,8 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
 
         (`str`, `str`) or (`None`, `None`)
             The keys of the new latitude and longitude coordinate
-            constructs, or `None` if the coordinates could not be
-            created.
+            constructs, in that order, or two `None`s if the
+            coordinates could not be created.
 
     """
     from .constants import healpix_indexing_schemes

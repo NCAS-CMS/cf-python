@@ -4853,9 +4853,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         covered by original cells. For instance, if the original
         refinement level is 10 and the new refinement level is 8, then
         each output cell will be the combination of :math:`16\equiv
-        4^{(10-8)}` original cells, and if a larger cell contains at
-        least one but fewer than 16 original cells then an exception
-        is raised (assuming that *check_healpix_index* is True).
+        4^2\equiv 4^{(10-8)}` original cells, and if a larger cell
+        contains at least one but fewer than 16 original cells then an
+        exception is raised (assuming that *check_healpix_index* is
+        True).
 
         **References**
 
@@ -4878,7 +4879,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             method: `str`
                 The method used to calculate the values in the new
                 larger cells, from the data on the original
-                cells. Must be one of the CF standardised cell
+                cells. Must be one of these CF standardised cell
                 methods: ``'maximum'``, ``'maximum_absolute_value'``,
                 ``'mean'``, ``'mean_absolute_value'``,
                 ``'mean_of_upper_decile'``, ``'median'``,
@@ -4887,17 +4888,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``'root_mean_square'``, ``'standard_deviation'``,
                 ``'sum'``, ``'sum_of_squares'``, ``'variance'``.
 
-                *Example:*
-                  For an intensive field quantity (i.e. one that does
-                  not depend on the size of the cells, such as
-                  "sea_ice_amount" with units of kg m-2), a method of
-                  ``'mean'`` might be appropriate.
-
-                *Example:*
-                  For an extensive field quantity (i.e. one that
-                  depends on the size of the cells, such as
-                  "sea_ice_mass" with units of kg), a method of
-                  ``'sum'`` might be appropriate.
+                The method should be appropriate to nature of the
+                Field quantity, which is either intensive (i.e. that
+                does not depend on the size of the cells, such as
+                "sea_ice_amount" with units of kg m-2), or extensive
+                (i.e. that depends on the size of the cells, such as
+                "sea_ice_mass" with units of kg).
 
             reduction: function or `None`, optional
                 The function used to calculate the values in the new
@@ -4905,11 +4901,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 function must calculate the quantity defined by the
                 *method* parameter, take an array of values as its
                 first argument, and have an *axis* keyword that
-                specifies which axis of the array is the HEALPix axis.
+                specifies which of the array axes is the HEALPix axis.
 
                 For some methods there are default *reduction*
-                functions, which are used when *reduction* is `None`
-                (the default):
+                functions, which are only used when *reduction* is
+                `None` (the default):
 
                 ========================  ===================
                 *method*                  Default *reduction*
@@ -4924,7 +4920,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ========================  ===================
 
                 Note that these methods may be also calculated by any
-                function provided by the *reduction* parameter.
+                other function provided by the *reduction* parameter.
 
             conform: `bool`, optional
                 If True (the default) then the HEALPix grid is
@@ -4997,8 +4993,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Data            : air_temperature(time(2), healpix_index(12)) K
         Cell methods    : time(2): mean area: mean area: maximum
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(12) = [0, ..., 11]
                         : height(1) = [1.5] m
-                        : healpix_index(healpix_index(12)) = [0, ..., 11]
         Coord references: grid_mapping_name:healpix
         >>> g.healpix_info()['refinement_level']
         0
@@ -5007,7 +5003,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(g[0, 0].array)
         [[293.5]]
 
-        Set the refinement level to 0 using the ``'`range'`` *method*,
+        Set the refinement level to 0 using the ``'range'`` *method*,
         which requires a new *reduction* function to be defined:
 
         >>> import numpy as np
@@ -5021,8 +5017,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Data            : air_temperature(time(2), healpix_index(12)) K
         Cell methods    : time(2): mean area: mean area: range
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(12) = [0, ..., 11]
                         : height(1) = [1.5] m
-                        : healpix_index(healpix_index(12)) = [0, ..., 11]
         Coord references: grid_mapping_name:healpix
         >>> print(g[0, 0].array)
         [[8.2]]
@@ -5191,7 +5187,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Chenge the refinement level of the Field's data
         # ------------------------------------------------------------
 
-        # Note: Using 'Data.coarsen' only works because a) the HEALPix
+        # Note: Using 'Data.coarsen' works because a) the HEALPix
         #       indexing scheme is "nested", and b) each new coarser
         #       cell contains the maximum possible number
         #       (i.e. 'ncells') of original cells.
@@ -5283,15 +5279,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new higher refinement level that lie inside it.
 
         It must be specified whether the field data contains an
-        extensive or intensive quantity. An extensive quantity depends
-        on the size of the cells (such as "sea_ice_mass" with units of
-        kg, or "cell_area" with units of m2), and an intensive
-        quantity does not depend on the size of the cells (such as
-        "sea_ice_amount" with units of kg m-2, or "air_temperature"
-        with units of K). For an extensive quantity only, the
-        broadcast values are reduced to be consistent with the new
-        smaller cell areas x(by dividing them by the number of new
-        cells per original cell).
+        extensive or intensive quantity. An intensive quantity does
+        not depend on the size of the cells (such as "sea_ice_amount"
+        with units of kg m-2, or "air_temperature" with units of K),
+        and an extensive quantity depends on the size of the cells
+        (such as "sea_ice_mass" with units of kg, or "cell_area" with
+        units of m2). For an extensive quantity only, the broadcast
+        values are reduced to be consistent with the new smaller cell
+        areas (by dividing them by the number of new cells per
+        original cell).
 
         **References**
 
@@ -5361,10 +5357,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         For an extensive quantity (which the ``f`` is this example is
         not, but we can assume that it is for demonstration purposes),
-        each cell at the higher refinement level has the value of a
-        cell at the original refinement level after dividing it by the
-        number of cells at the higher refinement level that lie in one
-        cell of the original refinement level (4 in this case):
+        each output cell has the value of the original cell in which
+        it lies, divided by the ratio of the cells' areas (4 in this
+        case):
 
         >>> g = f.healpix_increase_refinement_level(2, 'extensive')
         >>> print(f[0, :2] .array)

@@ -2021,8 +2021,8 @@ class FieldDomain:
         Data            : air_temperature(time(2), healpix_index(48)) K
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
                         : height(1) = [1.5] m
-        Dimension coords: healpix_index(healpix_index(48)) = [0, ..., 47]
         Coord references: grid_mapping_name:healpix
         >>> f.healpix_info()['indexing_scheme']
         'nested'
@@ -2234,8 +2234,8 @@ class FieldDomain:
         Data            : air_temperature(time(2), healpix_index(48)) K
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
                         : height(1) = [1.5] m
-        Dimension coords: healpix_index(healpix_index(48)) = [0, ..., 47]
         Coord references: grid_mapping_name:healpix
         >>> print(f.healpix_to_ugrid())
         Field: air_temperature (ncvar%tas)
@@ -2248,7 +2248,6 @@ class FieldDomain:
                         : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
         Coord references: grid_mapping_name:latitude_longitude
         Topologies      : cell:face(ncdim%cell(48), 4) = [[774, ..., 3267]]
-
 
         """
         from ..healpix import del_healpix_coordinate_reference
@@ -2356,8 +2355,8 @@ class FieldDomain:
         Creates 1-d or 2-d latitude and longitude coordinate
         constructs that are implied by the {{class}} coordinate
         reference constructs. By default (or if *overwrite* is False),
-        new coordinates are only created if the {{class}} metadata
-        doesn't already include any latitude or longitude coordinates.
+        new coordinates are only created if the {{class}} doesn't
+        already include any latitude or longitude coordinates.
 
         When it is not possible to create latitude and longitude
         coordinates, the reason why will be reported if the log level
@@ -2371,20 +2370,21 @@ class FieldDomain:
         :Parameters:
 
             one_d: `bool`, optional`
-                If True (the default) then attempt to create 1-d
-                latitude and longitude coordinates. Otherwise do not
-                attempt this.
+
+                If True (the default) then consider creating 1-d
+                latitude and longitude coordinates. If False then 1-d
+                coordinates will not be created.
 
             two_d: `bool`, optional`
-                If True (the default) then attempt to create 2-d
-                latitude and longitude coordinates. Otherwise do not
-                attempt this.
+                If True (the default) then consider creating 2-d
+                latitude and longitude coordinates. If False then 2-d
+                coordinates will not be created.
 
             pole_longitude: `None` or number
                 Define the longitudes of coordinates or coordinate
                 bounds that lie exactly on the north or south pole. If
                 `None` (the default) then the longitudes of such
-                points are determined by whatever algorithm was used
+                points are determined by whichever algorithm was used
                 to create the coordinates, which will likely result in
                 different points on a pole having different
                 longitudes. If set to a number, then the longitudes of
@@ -2395,7 +2395,7 @@ class FieldDomain:
                 If True then remove any existing latitude and
                 longitude coordinates, prior to attempting to create
                 new ones. If False (the default) then if any latitude
-                and longitude coordinates already exist, new ones will
+                or longitude coordinates already exist, new ones will
                 not be created.
 
             {{inplace: `bool`, optional}}
@@ -2405,8 +2405,8 @@ class FieldDomain:
         :Returns:
 
             `{{class}}` or `None`
-                The {{class}} with new latitude and longitude
-                constructs, if any could be created. If the operation
+                A new {{class}}, with new latitude and longitude
+                constructs if any could be created. If the operation
                 was in-place then `None` is returned.
 
         **Examples**
@@ -2418,25 +2418,29 @@ class FieldDomain:
         Data            : air_temperature(time(2), healpix_index(48)) K
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(healpix_index(48)) = [0, ..., 47]
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
         Coord references: grid_mapping_name:healpix
         >>> g = f.create_latlon_coordinates()
         >>> print(g)
         Field: air_temperature (ncvar%tas)
         ----------------------------------
-        Data            : air_temperature(time(2), ncdim%cell(48)) K
+        Data            : air_temperature(time(2), healpix_index(48)) K
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(ncdim%cell(48)) = [0, ..., 47] 1
-                        : latitude(ncdim%cell(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
-                        : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
+        Auxiliary coords: latitude(healpix_index(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
+                        : longitude(healpix_index(48)) = [45.0, ..., 315.0] degrees_east
         Coord references: grid_mapping_name:healpix
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
+        # ------------------------------------------------------------
+        # See if any lat/lon coordinates should be created
+        # ------------------------------------------------------------
+        
         # See if there are any existing latitude/longutude coordinates
         latlon_coordinates = {
             key: c
@@ -2509,14 +2513,15 @@ class FieldDomain:
             return f
 
         # ------------------------------------------------------------
-        # Still here? Then get the unique non-latitude_longitude grid
-        # mapping, and use it to calculate the lat/lon coordinates.
+        # Still here? Then try to calculate some lat/lon coordinates.
         # ------------------------------------------------------------
-        identity, cr = coordinate_references.popitem()
 
         # Initialize the flag that tells us if any new coordinates
         # have been created
         coords_created = False
+
+        # Get the unique non-latitude_longitude grid mapping
+        identity, cr = coordinate_references.popitem()
 
         if one_d and not coords_created:
             # --------------------------------------------------------
@@ -2537,13 +2542,13 @@ class FieldDomain:
             # --------------------------------------------------------
             # 2-d lat/lon coordinates
             # --------------------------------------------------------
-            pass  # Add some code here!
+            pass  # For now ...
 
+        # ------------------------------------------------------------
+        # Update the appropriate coordinate reference with any new
+        # coordinate keys
+        # ------------------------------------------------------------
         if coords_created:
-            # --------------------------------------------------------
-            # Update the approrpriate coordinate reference with the
-            # new coordinate keys
-            # --------------------------------------------------------
             if latlon_cr is not None:
                 latlon_cr.set_coordinates((lat_key, lon_key))
             else:
