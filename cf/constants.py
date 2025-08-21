@@ -584,6 +584,12 @@ cell_methods = set(
 
 
 # --------------------------------------------------------------------
+# CF HEALPix indexing schemes
+# --------------------------------------------------------------------
+healpix_indexing_schemes = ("nested", "ring", "nested_unique")
+
+
+# --------------------------------------------------------------------
 # Logging level setup
 # --------------------------------------------------------------------
 # For explicitness, define here rather than importing identical Enum
@@ -604,3 +610,4 @@ class OperandBoundsCombination(Enum):
     OR = auto()
     XOR = auto()
     NONE = auto()
+

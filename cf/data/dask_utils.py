@@ -763,7 +763,11 @@ def cf_healpix_coordinates(
 
 
 def cf_healpix_indexing_scheme(
-    a, indexing_scheme, new_indexing_scheme, refinement_level=None
+    a,
+    indexing_scheme,
+    new_indexing_scheme,
+    healpix_index_dtype,
+    refinement_level=None,
 ):
     """Change the indexing scheme of HEALPix indices.
 
@@ -793,6 +797,12 @@ def cf_healpix_indexing_scheme(
         new_indexing_scheme: `str`
             The new HEALPix indexing scheme to change to. One of
             ``'nested'``, ``'ring'``, or ``'nested_unique'``.
+
+        healpix_index_dtype: `str` or `numpy.dtype`
+            Typecode or data-type to which the new indices will be
+            cast. This should be the smallest data type needed for
+            storing the largest possible index value at the refinement
+            level.
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
@@ -827,6 +837,15 @@ def cf_healpix_indexing_scheme(
         # Null operation
         return a
 
+    from ..constants import healpix_indexing_schemes
+
+    if new_indexing_scheme not in healpix_indexing_schemes:
+        raise ValueError(
+            "Can't change HEALPix indexing scheme: Unknown "
+            f"'new_indexing_scheme' in cf_healpix_indexing_scheme: "
+            f"{new_indexing_scheme!r}"
+        )
+
     try:
         import healpix
     except ImportError as e:
@@ -842,19 +861,19 @@ def cf_healpix_indexing_scheme(
             match new_indexing_scheme:
                 case "ring":
                     nside = healpix.order2nside(refinement_level)
-                    return healpix.nest2ring(nside, a)
+                    a = healpix.nest2ring(nside, a)
 
                 case "nested_unique":
-                    return healpix.pix2uniq(refinement_level, a, nest=True)
+                    a = healpix.pix2uniq(refinement_level, a, nest=True)
 
         case "ring":
             match new_indexing_scheme:
                 case "nested":
                     nside = healpix.order2nside(refinement_level)
-                    return healpix.ring2nest(nside, a)
+                    a = healpix.ring2nest(nside, a)
 
                 case "nested_unique":
-                    return healpix.pix2uniq(refinement_level, a, nest=False)
+                    a = healpix.pix2uniq(refinement_level, a, nest=False)
 
         case "nested_unique":
             match new_indexing_scheme:
@@ -872,8 +891,6 @@ def cf_healpix_indexing_scheme(
                             f"{refinement_levels.tolist()})"
                         )
 
-                    return a
-
         case _:
             raise ValueError(
                 "Can't change HEALPix indexing scheme: Unknown "
@@ -881,11 +898,9 @@ def cf_healpix_indexing_scheme(
                 f"{indexing_scheme!r}"
             )
 
-    raise ValueError(
-        "Can't change HEALPix indexing scheme: Unknown "
-        f"'new_indexing_scheme in cf_healpix_indexing_scheme: "
-        f"{new_indexing_scheme!r}"
-    )
+    # Cast the new indices to the given data type
+    a = a.astype(healpix_index_dtype, copy=False)
+    return a
 
 
 def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):

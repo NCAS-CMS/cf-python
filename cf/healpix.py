@@ -8,8 +8,6 @@ from cfdm import is_log_level_info
 
 logger = logging.getLogger(__name__)
 
-HEALPix_indexing_schemes = ("nested", "ring", "nested_unique")
-
 
 def _healpix_create_latlon_coordinates(f, pole_longitude):
     """Create latitude and longitude coordinates for a HEALPix grid.
@@ -47,18 +45,19 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
             created.
 
     """
+    from .constants import healpix_indexing_schemes
     from .data.dask_utils import cf_healpix_bounds, cf_healpix_coordinates
 
     hp = f.healpix_info()
 
     indexing_scheme = hp.get("indexing_scheme")
-    if indexing_scheme not in HEALPix_indexing_schemes:
+    if indexing_scheme not in healpix_indexing_schemes:
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
                 f"{f!r}: indexing_scheme in the healpix grid mapping "
                 "coordinate reference must be one of "
-                f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"{healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )  # pragma: no cover
 
         return (None, None)
@@ -356,12 +355,13 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
 
     :Parameters:
 
-        healpix_index: `Coordinate` TODOHEALPIX
-            The healpix_index coordinates, which will be updated TODOHEALPIX
-            in-place.
+        f: `Field` or `Domain`
+            The Field or Domain that contains the healpix_index
+            coordinates. *f* will be updated with the new HEALPix
+            indices in-place.
 
         hp: `dict`
-            The HEALPix info dictionary.
+            The HEALPix info dictionary for *f*.
 
         new_indexing_scheme: `str`
             The new indexing scheme.
@@ -390,10 +390,12 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     # Find the datatype for the largest possible index at this
     # refinement level
     if new_indexing_scheme == "nested_unique":
-        # 16*(4**n) - 1 = 4*(4**n) + 12*(4**n) - 1
+        # The largest possible "nested_unique" index at refinement
+        # level N is 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
         dtype = integer_dtype(16 * (4**refinement_level) - 1)
     else:
-        # nested or ring
+        # The largest possible "nested" or "ring" index at refinement
+        # level N is 12*(4**N) - 1
         dtype = integer_dtype(12 * (4**refinement_level) - 1)
 
     dx = dx.map_blocks(
@@ -402,6 +404,7 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
         meta=np.array((), dtype=dtype),
         indexing_scheme=indexing_scheme,
         new_indexing_scheme=new_indexing_scheme,
+        healpix_index_dtype=dtype,
         refinement_level=refinement_level,
     )
     healpix_index.set_data(dx, copy=False)
@@ -534,7 +537,7 @@ def _healpix_locate(lat, lon, f):
             raise ValueError(
                 f"Can't locate HEALPix cells for {f!r}: indexing_scheme in "
                 "the healpix grid mapping coordinate reference must be one "
-                f"of {HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
     # Return the cell locations as a numpy array of element indices

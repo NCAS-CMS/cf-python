@@ -370,10 +370,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         import dask.array as da
 
-        from .healpix import (
-            HEALPix_indexing_schemes,
-            healpix_max_refinement_level,
-        )
+        from .constants import healpix_indexing_schemes
+        from .healpix import             healpix_max_refinement_level
 
         if (
             not isinstance(refinement_level, Integral)
@@ -386,10 +384,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 f"{healpix_max_refinement_level()}. Got {refinement_level!r}"
             )
 
-        if indexing_scheme not in HEALPix_indexing_schemes:
+        if indexing_scheme not in healpix_indexing_schemes:
             raise ValueError(
                 "Can't create HEALPix Domain: 'indexing_scheme' must be one "
-                f"of {HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
         nested_unique = indexing_scheme == "nested_unique"

@@ -4923,6 +4923,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``'variance'``            `np.var`
                 ========================  ===================
 
+                Note that these methods may be also calculated by any
+                function provided by the *reduction* parameter.
+
             conform: `bool`, optional
                 If True (the default) then the HEALPix grid is
                 automatically converted to a form suitable for having
@@ -4970,8 +4973,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Examples**
 
         >>> f = cf.example_field(12)
-        >>> f
-        <CF Field: air_temperature(time(2), healpix_index(48)) K>
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Coord references: grid_mapping_name:healpix
         >>> f.healpix_info()['refinement_level']
         1
 
@@ -4988,7 +4998,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Cell methods    : time(2): mean area: mean area: maximum
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(12)) = [0, ..., 11] 1
+                        : healpix_index(healpix_index(12)) = [0, ..., 11]
         Coord references: grid_mapping_name:healpix
         >>> g.healpix_info()['refinement_level']
         0
@@ -5012,7 +5022,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Cell methods    : time(2): mean area: mean area: range
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(12)) = [0, ..., 11] 1
+                        : healpix_index(healpix_index(12)) = [0, ..., 11]
         Coord references: grid_mapping_name:healpix
         >>> print(g[0, 0].array)
         [[8.2]]
@@ -5181,9 +5191,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Chenge the refinement level of the Field's data
         # ------------------------------------------------------------
 
-        # Note: Using 'Data.coarsen' works because a) we have 'nested'
-        #       HEALPix ordering, and b) each coarser cell contains
-        #       the maximum possible number of original cells.
+        # Note: Using 'Data.coarsen' only works because a) the HEALPix
+        #       indexing scheme is "nested", and b) each new coarser
+        #       cell contains the maximum possible number
+        #       (i.e. 'ncells') of original cells.
         f.data.coarsen(
             reduction, axes={iaxis: ncells}, trim_excess=False, inplace=True
         )
@@ -5312,8 +5323,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Examples**
 
         >>> f = cf.example_field(12)
-        >>> f
-        <CF Field: air_temperature(time(2), healpix_index(48)) K>
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Coord references: grid_mapping_name:healpix
         >>> f.healpix_info()['refinement_level']
         1
         >>> g = f.healpix_increase_refinement_level(3, 'intensive')

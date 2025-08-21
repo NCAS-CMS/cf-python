@@ -2058,17 +2058,17 @@ class FieldDomain:
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
-        from ..healpix import HEALPix_indexing_schemes
+        from ..constants import healpix_indexing_schemes
 
         f = self.copy()
 
         hp = f.healpix_info()
 
-        if new_indexing_scheme not in HEALPix_indexing_schemes + (None,):
+        if new_indexing_scheme not in healpix_indexing_schemes + (None,):
             raise ValueError(
                 f"Can't change HEALPix index scheme of {f!r}: "
                 "new_indexing_scheme keyword must be None or one of "
-                f"{HEALPix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
             )
 
         # Get the healpix_index coordinates
@@ -2087,12 +2087,12 @@ class FieldDomain:
                 "mapping coordinate reference"
             )
 
-        if indexing_scheme not in HEALPix_indexing_schemes:
+        if indexing_scheme not in healpix_indexing_schemes:
             raise ValueError(
                 f"Can't change HEALPix indexing scheme of {f!r}: "
                 "indexing_scheme in the healpix grid mapping coordinate "
                 "reference must be one of "
-                f"{HEALPix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
             )
 
         if (
