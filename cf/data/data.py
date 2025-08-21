@@ -7480,7 +7480,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Not to be confused with overriding the units with
         `override_units`
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.1
 
         .. seealso:: `override_units`, `override_calendar`, `Units`,
                      `units`, `calendar`

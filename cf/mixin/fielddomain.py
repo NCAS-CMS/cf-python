@@ -1982,7 +1982,7 @@ class FieldDomain:
         Field Data array reordered. Only the "healpix_index"
         coordinate values are changed, along with the corresponding
         "healpix" grid mapping Coordinate Reference.
-        
+
         **References**
 
         {{HEALPix references}}
@@ -2022,7 +2022,7 @@ class FieldDomain:
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Dimension coords: healpix_index(healpix_index(48)) = [0, ..., 47]
         Coord references: grid_mapping_name:healpix
         >>> f.healpix_info()['indexing_scheme']
         'nested'
@@ -2127,7 +2127,7 @@ class FieldDomain:
             # Change the HEALPix indices
             from ..healpix import _healpix_indexing_scheme
 
-            _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme)
+            _healpix_indexing_scheme(f, hp, new_indexing_scheme)
 
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
@@ -2192,7 +2192,7 @@ class FieldDomain:
          'refinement_level': 1,
          'domain_axis_key': 'domainaxis1',
          'coordinate_key': 'auxiliarycoordinate0',
-         'healpix_index': <CF AuxiliaryCoordinate: healpix_index(48) 1>}
+         'healpix_index': <CF DimensionCoordinate: healpix_index(48)>}
 
         >>> f = cf.example_field(0)
         >>> healpix_info(f)
@@ -2235,7 +2235,7 @@ class FieldDomain:
         Cell methods    : time(2): mean area: mean
         Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                         : height(1) = [1.5] m
-        Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+        Dimension coords: healpix_index(healpix_index(48)) = [0, ..., 47]
         Coord references: grid_mapping_name:healpix
         >>> print(f.healpix_to_ugrid())
         Field: air_temperature (ncvar%tas)

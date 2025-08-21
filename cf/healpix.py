@@ -337,7 +337,7 @@ def _healpix_increase_refinement_level_indices(
         data._set_cached_elements({-1: x})
 
 
-def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
+def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     """Change the indexing scheme of HEALPix indices in-place.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
@@ -356,8 +356,8 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
 
     :Parameters:
 
-        healpix_index: `Coordinate`
-            The healpix_index coordinates, which will be updated
+        healpix_index: `Coordinate` TODOHEALPIX
+            The healpix_index coordinates, which will be updated TODOHEALPIX
             in-place.
 
         hp: `dict`
@@ -371,8 +371,11 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
         `None`
 
     """
+    from cfdm import integer_dtype
+
     from .data.dask_utils import cf_healpix_indexing_scheme
 
+    healpix_index = hp["healpix_index"]
     indexing_scheme = hp["indexing_scheme"]
     refinement_level = hp.get("refinement_level")
 
@@ -383,14 +386,32 @@ def _healpix_indexing_scheme(healpix_index, hp, new_indexing_scheme):
     dx = healpix_index.data.to_dask_array(
         _force_mask_hardness=False, _force_to_memory=False
     )
+
+    # Find the datatype for the largest possible index at this
+    # refinement level
+    if new_indexing_scheme == "nested_unique":
+        # 16*(4**n) - 1 = 4*(4**n) + 12*(4**n) - 1
+        dtype = integer_dtype(16 * (4**refinement_level) - 1)
+    else:
+        # nested or ring
+        dtype = integer_dtype(12 * (4**refinement_level) - 1)
+
     dx = dx.map_blocks(
         cf_healpix_indexing_scheme,
-        meta=np.array((), dtype="int64"),
+        dtype=dtype,
+        meta=np.array((), dtype=dtype),
         indexing_scheme=indexing_scheme,
         new_indexing_scheme=new_indexing_scheme,
         refinement_level=refinement_level,
     )
     healpix_index.set_data(dx, copy=False)
+
+    # If a Dimension Coordinate is now not monotonically ordered,
+    # convert it to an Auxiliary Coordinate
+    if healpix_index.construct_type == "dimension_coordinate" and set(
+        (indexing_scheme, new_indexing_scheme)
+    ) != set(("nested", "nested_unique")):
+        f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
 
 def _healpix_locate(lat, lon, f):
@@ -627,7 +648,7 @@ def healpix_info(f):
      'refinement_level': 1,
      'domain_axis_key': 'domainaxis1',
      'coordinate_key': 'auxiliarycoordinate0',
-     'healpix_index': <CF AuxiliaryCoordinate: healpix_index(48) 1>}
+     'healpix_index': <CF DimensionCoordinate: healpix_index(48)>}
 
     >>> f = cf.example_field(0)
     >>> healpix_info(f)

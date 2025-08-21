@@ -328,16 +328,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            --------
            Domain Axis: healpix_index(3072)
 
-           Auxiliary coordinate: healpix_index
+           Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
                units = '1'
-               Data(healpix_index(3072)) = [0, ..., 3071] 1
+               Data(healpix_index(3072)) = [0, ..., 3071]
 
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested
                Coordinate conversion:refinement_level = 4
-               Auxiliary Coordinate: healpix_index
+               Dimension Coordinate: healpix_index
 
         .. code-block:: python
 
@@ -348,23 +348,22 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            --------
            Domain Axis: healpix_index(3072)
 
-           Auxiliary coordinate: healpix_index
+           Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
-               units = '1'
-               Data(healpix_index(3072)) = [1024, ..., 4095] 1
+               Data(healpix_index(3072)) = [1024, ..., 4095]
 
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested_unique
                Datum:earth_radius = 6371000.0
-               Auxiliary Coordinate: healpix_index
+               Dimension Coordinate: healpix_index
 
         .. code-block:: python
 
            >>> d.create_latlon_coordinates(inplace=True)
            >>> print(d)
-           Auxiliary coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095] 1
-                           : latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
+           Dimension coords: healpix_index(ncdim%cell(3072)) = [1024, ..., 4095]
+           Auxiliary coords: latitude(ncdim%cell(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
                            : longitude(ncdim%cell(3072)) = [45.0, ..., 315.0] degrees_east
            Coord references: grid_mapping_name:healpix
 
@@ -403,7 +402,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         d.nc_set_dimension("cell")
         axis = domain.set_construct(d, copy=False)
 
-        # auxiliary_coordinate: healpix_index
+        # dimension_coordinate: healpix_index
         c = domain._DimensionCoordinate()
         c.set_properties({"standard_name": "healpix_index"})
         c.nc_set_variable("healpix_index")

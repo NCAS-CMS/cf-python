@@ -3,15 +3,6 @@ Version NEXTVERSION
 
 **2025-??-??**
 
-* New methods to allow changing units in a chain: `cf.Field.to_units`,
-  `cf.Data.to_units`
-  (https://github.com/NCAS-CMS/cf-python/issues/874)
-* Allow multiple conditions for the same axis in `cf.Field.subspace`
-  and `cf.Field.indices`
-  (https://github.com/NCAS-CMS/cf-python/issues/881)
-* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
-  for missing external cell measures data
-  (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New method: `cf.Field.create_latlon_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New HEALPix methods: `cf.Field.healpix_info`,
@@ -24,9 +15,27 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
-* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
-* New dependency: ``distributed>=2025.5.1``
 * New optional dependency: ``healpix>=2025.1``
+* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
+
+----
+
+Version 3.18.1
+--------------
+
+**2025-08-20**
+
+* New methods to allow changing units in a chain: `cf.Field.to_units`,
+  `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/874)
+* Allow multiple conditions for the same axis in `cf.Field.subspace`
+  and `cf.Field.indices`
+  (https://github.com/NCAS-CMS/cf-python/issues/881)
+* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be
+  raised for missing external cell measures data
+  (https://github.com/NCAS-CMS/cf-python/issues/885)
+* New dependency: ``distributed>=2025.5.1``
+* Changed dependency: ``cfdm>=1.12.3.0, <1.12.4.0``
 
 ----
 
