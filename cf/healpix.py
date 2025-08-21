@@ -534,6 +534,8 @@ def _healpix_locate(lat, lon, f):
             )
 
         case _:
+            from .constants import healpix_indexing_schemes
+
             raise ValueError(
                 f"Can't locate HEALPix cells for {f!r}: indexing_scheme in "
                 "the healpix grid mapping coordinate reference must be one "

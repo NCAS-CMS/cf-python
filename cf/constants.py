@@ -610,4 +610,3 @@ class OperandBoundsCombination(Enum):
     OR = auto()
     XOR = auto()
     NONE = auto()
-
