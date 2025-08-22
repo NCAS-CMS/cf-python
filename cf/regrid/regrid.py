@@ -1139,7 +1139,7 @@ def spherical_grid(
         # create 1-d lat/lon coordinates)
         f.healpix_to_ugrid(inplace=True)
     except ValueError:
-        f.create_latlon_coordinates(inplace=True)
+        f.create_latlon_coordinates(cache=False, inplace=True)
 
     data_axes = f.constructs.data_axes()
 

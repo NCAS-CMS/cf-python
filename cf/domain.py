@@ -273,7 +273,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         HEALPix indices are monotonically increasing.
 
         **Performance**
-        
+
         Very high refinement levels may require the setting of a very
         large Dask chunksize, to prevent a possible run-time failure
         resulting from an attempt to create an excessive amount of
@@ -344,33 +344,33 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            >>> d = cf.Domain.create_healpix(4)
            >>> d.dump()
            --------
-           Domain: 
+           Domain:
            --------
            Domain Axis: healpix_index(3072)
-           
+
            Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
                Data(healpix_index(3072)) = [0, ..., 3071]
-           
+
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested
                Coordinate conversion:refinement_level = 4
-               Dimension Coordinate: healpix_index           
+               Dimension Coordinate: healpix_index
 
         .. code-block:: python
 
            >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
            >>> d.dump()
            --------
-           Domain: 
+           Domain:
            --------
            Domain Axis: healpix_index(3072)
-           
+
            Dimension coordinate: healpix_index
                standard_name = 'healpix_index'
                Data(healpix_index(3072)) = [1024, ..., 4095]
-           
+
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
                Coordinate conversion:indexing_scheme = nested_unique

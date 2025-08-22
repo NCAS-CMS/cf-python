@@ -517,14 +517,15 @@ def cf_healpix_bounds(
         longitude: `bool`, optional
             If True then return the bounds' longitudes.
 
-        pole_longitude: `None` or number
+        pole_longitude: `None` or number, optional
             Define the longitudes of vertices that lie exactly on the
             north or south pole. If `None` (the default) then the
             longitude of such a vertex on the north (south) pole will
             be the same as the longitude of the south (north) vertex
             of the same cell. If set to a number, then the longitudes
             of all vertices on the north or south pole will be given
-            the value *pole_longitude*.
+            the value *pole_longitude*. Ignored if *longitude* is
+            False.
 
     :Returns:
 
@@ -569,7 +570,7 @@ def cf_healpix_bounds(
     a = cfdm_to_memory(a)
 
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
-    if a.ndim != 1:
+    if a.ndim > 1:
         raise ValueError(
             "Can only calculate HEALPix cell bounds when the "
             f"healpix_index array has one dimension. Got shape: {a.shape}"
@@ -619,7 +620,7 @@ def cf_healpix_bounds(
 
     del thetaphi, a
 
-    if not pos:
+    if longitude:
         # Ensure that longitude bounds are less than 360
         where_ge_360 = np.where(b >= 360)
         if where_ge_360[0].size:
@@ -717,7 +718,7 @@ def cf_healpix_coordinates(
 
     a = cfdm_to_memory(a)
 
-    if a.ndim != 1:
+    if a.ndim > 1:
         raise ValueError(
             "Can only calculate HEALPix cell coordinates when the "
             f"healpix_index array has one dimension. Got shape: {a.shape}"
@@ -887,14 +888,13 @@ def cf_healpix_indexing_scheme(
                     nest = new_indexing_scheme == "nested"
                     order, a = healpix.uniq2pix(a, nest=nest)
 
-                    refinement_levels = np.unique(order)
-                    if refinement_levels.size > 1:
+                    order = np.unique(order)
+                    if order.size > 1:
                         raise ValueError(
                             "Can't change HEALPix indexing scheme from "
-                            f"'nested_unique' to {new_indexing_scheme!r} "
-                            "when the HEALPix indices span multiple "
-                            "refinement levels (at least levels "
-                            f"{refinement_levels.tolist()})"
+                            f"'nested_unique' to {new_indexing_scheme!r}: "
+                            "HEALPix indices span multiple refinement levels "
+                            f"(at least levels {order.tolist()})"
                         )
 
         case _:

@@ -303,7 +303,7 @@ class FieldDomain:
         # metadata.
         #
         # Do not do this in-place.
-        self = self.create_latlon_coordinates()
+        self = self.create_latlon_coordinates(cache=False)
 
         domain_axes = self.domain_axes(todict=True)
 
@@ -2204,7 +2204,7 @@ class FieldDomain:
         return healpix_info(self)
 
     @_inplace_enabled(default=False)
-    def healpix_to_ugrid(self, inplace=False):
+    def healpix_to_ugrid(self, cache=True, inplace=False):
         """Convert a HEALPix domain to a UGRID domain.
 
         **References**
@@ -2216,6 +2216,17 @@ class FieldDomain:
         .. seealso:: `healpix_info`, `create_latlon_coordinates`
 
         :Parameters:
+
+            cache: `bool`, optional
+                If True (the default) then cache in memory the first
+                and last of any newly-created coordinates and
+                bounds. This will slightly slow down the coordinate
+                creation process, but will greatly speed up, and
+                reduce the memory requirement of, a future inspection
+                of the coordinates and bounds. Even when *cache* is
+                True, new cached values can only be created if the
+                existing source coordinates themselves have cached
+                first and last values.
 
             {{inplace: `bool`, optional}}
 
@@ -2269,7 +2280,7 @@ class FieldDomain:
         # that the north (south) polar vertex comes out as a single
         # node in the domain topology.
         f.create_latlon_coordinates(
-            two_d=False, pole_longitude=0, inplace=True
+            two_d=False, pole_longitude=0, cache=cache, inplace=True
         )
 
         # Get the lat/lon coordinates
@@ -2347,6 +2358,7 @@ class FieldDomain:
         two_d=True,
         pole_longitude=None,
         overwrite=False,
+        cache=True,
         inplace=False,
         verbose=None,
     ):
@@ -2370,7 +2382,6 @@ class FieldDomain:
         :Parameters:
 
             one_d: `bool`, optional`
-
                 If True (the default) then consider creating 1-d
                 latitude and longitude coordinates. If False then 1-d
                 coordinates will not be created.
@@ -2397,6 +2408,17 @@ class FieldDomain:
                 new ones. If False (the default) then if any latitude
                 or longitude coordinates already exist, new ones will
                 not be created.
+
+            cache: `bool`, optional
+                If True (the default) then cache in memory the first
+                and last of any newly-created coordinates and
+                bounds. This will slightly slow down the coordinate
+                creation process, but will greatly speed up, and
+                reduce the memory requirement of, a future inspection
+                of the coordinates and bounds. Even when *cache* is
+                True, new cached values can only be created if the
+                existing source coordinates themselves have cached
+                first and last values.
 
             {{inplace: `bool`, optional}}
 
@@ -2440,7 +2462,7 @@ class FieldDomain:
         # ------------------------------------------------------------
         # See if any lat/lon coordinates should be created
         # ------------------------------------------------------------
-        
+
         # See if there are any existing latitude/longutude coordinates
         latlon_coordinates = {
             key: c
@@ -2534,7 +2556,7 @@ class FieldDomain:
                 from ..healpix import _healpix_create_latlon_coordinates
 
                 lat_key, lon_key = _healpix_create_latlon_coordinates(
-                    f, pole_longitude
+                    f, pole_longitude, cache
                 )
                 coords_created = lat_key is not None
 

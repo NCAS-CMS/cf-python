@@ -7168,7 +7168,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if f_latlon is None:
                 # Temporarily create any implied lat/lon coordinates
-                f_latlon = f.create_latlon_coordinates()
+                f_latlon = f.create_latlon_coordinates(cache=False)
 
             axes2 = []
             for axis in axes:

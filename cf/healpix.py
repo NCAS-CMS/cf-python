@@ -9,8 +9,8 @@ from cfdm import is_log_level_info
 logger = logging.getLogger(__name__)
 
 
-def _healpix_create_latlon_coordinates(f, pole_longitude):
-    """Create latitude and longitude coordinates for a HEALPix grid.
+def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
+    """Create HEALPIx latitude and longitude coordinates and bounds.
 
     When it is not possible to create latitude and longitude
     coordinates, the reason why will be reported if the log level is
@@ -40,6 +40,16 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
             (north) vertex of the same cell. If set to a number, then
             the longitudes of such vertices will all be given that
             value.
+
+        cache: `bool`, optional
+            If True (the default) then cache in memory the first and
+            last of any newly-created coordinates and bounds. This
+            will slightly slow down the coordinate creation process,
+            but will greatly speed up, and reduce the memory
+            requirement of, a future inspection of the coordinates and
+            bounds. Even when *cache* is True, new cached values can
+            only be created if the existing source coordinates
+            themselves have cached first and last values.
 
     :Returns:
 
@@ -87,6 +97,34 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
 
         return (None, None)
 
+    # Create latitude and longitude cached elements
+    if cache:
+        cache = healpix_index.data._get_cached_elements()
+        cached_lon_coords = {}
+        cached_lat_coords = {}
+        cached_lon_bounds = {}
+        cached_lat_bounds = {}
+        for i, value in cache.items():
+            if i not in (0, -1):
+                continue
+            
+            cached_lon_coords[i] = cf_healpix_coordinates(
+                value, indexing_scheme, refinement_level, longitude=True
+            )
+            cached_lat_coords[i] = cf_healpix_coordinates(
+                value, indexing_scheme, refinement_level, latitude=True
+            )
+            cached_lon_bounds[i] = cf_healpix_bounds(
+                value,
+                indexing_scheme,
+                refinement_level,
+                longitude=True,
+                pole_longitude=pole_longitude,
+            )[0, i]
+            cached_lat_bounds[i] = cf_healpix_bounds(
+                value, indexing_scheme, refinement_level, latitude=True
+            )[0, i]
+
     # Get the Dask array of HEALPix indices.
     #
     # `cf_healpix_coordinates` anad `cf_healpix_bounds` have their own
@@ -104,8 +142,12 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         refinement_level=refinement_level,
         latitude=True,
     )
+    data = f._Data(dy, "degrees_north")
+    if cache:
+        data._set_cached_elements(cached_lat_coords)
+
     lat = f._AuxiliaryCoordinate(
-        data=f._Data(dy, "degrees_north", copy=False),
+        data=data,
         properties={"standard_name": "latitude"},
         copy=False,
     )
@@ -118,8 +160,12 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         refinement_level=refinement_level,
         longitude=True,
     )
+    data = f._Data(dy, "degrees_east")
+    if cache:
+        data._set_cached_elements(cached_lon_coords)
+
     lon = f._AuxiliaryCoordinate(
-        data=f._Data(dy, "degrees_east", copy=False),
+        data=data,
         properties={"standard_name": "longitude"},
         copy=False,
     )
@@ -136,7 +182,11 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         refinement_level=refinement_level,
         latitude=True,
     )
-    bounds = f._Bounds(data=dy)
+    data = f._Data(dy, "degrees_north")
+    if cache:
+        data._set_cached_elements(cached_lat_bounds)
+
+    bounds = f._Bounds(data=data)
     lat.set_bounds(bounds, copy=False)
 
     # Create longitude bounds
@@ -152,7 +202,11 @@ def _healpix_create_latlon_coordinates(f, pole_longitude):
         longitude=True,
         pole_longitude=pole_longitude,
     )
-    bounds = f._Bounds(data=dy)
+    data = f._Data(dy, "degrees_east")
+    if cache:
+        data._set_cached_elements(cached_lon_bounds)
+
+    bounds = f._Bounds(data=data)
     lon.set_bounds(bounds, copy=False)
 
     # Set the new latitude and longitude coordinates
