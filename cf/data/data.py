@@ -4437,8 +4437,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
 
-        if isinstance(getattr(x2, "Units", None), Units):
-            x1 = conform_units(x1, x2.Units)
+        x1 = conform_units(x1, x2.Units)
 
         try:
             y = x1.to_dask_array()
