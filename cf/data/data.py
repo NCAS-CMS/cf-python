@@ -4408,8 +4408,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 X coordinates. *x1* and *x2* must be broadcastable to
                 a common shape (which becomes the shape of the
                 output). If both *x1* and *x2* have units, they must
-                be in the same dimension (can be conformed), else
-                they will be treated as unitless.
+                be equal or equivalent, in which case they
+                will be conformed.
 
         :Returns:
 
