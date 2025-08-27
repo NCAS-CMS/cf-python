@@ -1181,7 +1181,7 @@ def spherical_grid(
                         f"The {name} latitude and longitude coordinates "
                         "are 2-d but the X and Y axes could not be identified "
                         "from dimension coordinates nor from the "
-                        f"{'src_axes' if name == 'source' else 'dst_axes'!r}"
+                        f"{'src_axes' if name == 'source' else 'dst_axes'!r} "
                         "parameter"
                     )
 
