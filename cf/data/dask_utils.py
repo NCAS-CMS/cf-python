@@ -583,10 +583,17 @@ def cf_healpix_bounds(
 
     # Define the function that's going to calculate the bounds from
     # the HEALPix indices
-    if indexing_scheme == "ring":
-        bounds_func = healpix._chp.ring2ang_uv
-    else:
-        bounds_func = healpix._chp.nest2ang_uv
+    match indexing_scheme:
+        case "ring":
+            bounds_func = healpix._chp.ring2ang_uv
+        case "nested" | "nested_unique":
+            bounds_func = healpix._chp.nest2ang_uv
+        case _:
+            raise ValueError(
+                "Can't calculate HEALPix cell bounds: Unknown "
+                f"'indexing_scheme' in  cf_healpix_bounds: "
+                f"{indexing_scheme!r}"
+            )
 
     # Define the cell vertices in an anticlockwise direction, as seen
     # from above, starting with the northern-most vertex. Each vertex
@@ -600,23 +607,27 @@ def cf_healpix_bounds(
     # Initialise the output bounds array
     b = np.empty((a.size, 4), dtype="float64")
 
-    if indexing_scheme == "nested_unique":
-        # Create bounds for 'nested_unique' indices
-        orders, a = healpix.uniq2pix(a, nest=True)
-        for order in np.unique(orders):
-            nside = healpix.order2nside(order)
-            indices = np.where(orders == order)[0]
-            for j, (u, v) in enumerate(vertices):
-                thetaphi = bounds_func(nside, a[indices], u, v)
-                b[indices, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+    match indexing_scheme:
+        case "nested_unique":
+            # Create bounds for 'nested_unique' indices
+            orders, a = healpix.uniq2pix(a, nest=True)
+            for order in np.unique(orders):
+                nside = healpix.order2nside(order)
+                indices = np.where(orders == order)[0]
+                for j, (u, v) in enumerate(vertices):
+                    thetaphi = bounds_func(nside, a[indices], u, v)
+                    b[indices, j] = healpix.lonlat_from_thetaphi(*thetaphi)[
+                        pos
+                    ]
 
-        del orders, indices
-    else:
-        # Create bounds for 'nested' or 'ring' indices
-        nside = healpix.order2nside(refinement_level)
-        for j, (u, v) in enumerate(vertices):
-            thetaphi = bounds_func(nside, a, u, v)
-            b[:, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
+            del orders, indices
+
+        case "nested" | "ring":
+            # Create bounds for 'nested' or 'ring' indices
+            nside = healpix.order2nside(refinement_level)
+            for j, (u, v) in enumerate(vertices):
+                thetaphi = bounds_func(nside, a, u, v)
+                b[:, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
 
     del thetaphi, a
 

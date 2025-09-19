@@ -3,13 +3,13 @@ Version NEXTVERSION
 
 **2025-??-??**
 
-* New method: `cf.Field.create_latlon_coordinates`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New HEALPix methods: `cf.Field.healpix_info`,
   `cf.Field.healpix_decrease_refinement_level`,
   `cf.Field.healpix_increase_refinement_level`,
   `cf.Field.healpix_indexing_scheme`, `cf.Field.healpix_to_ugrid`,
   `cf.Domain.create_healpix`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+* New method: `cf.Field.create_latlon_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New method: `cf.Data.coarsen`
   (https://github.com/NCAS-CMS/cf-python/issues/???)

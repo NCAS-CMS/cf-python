@@ -107,7 +107,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
         for i, value in cache.items():
             if i not in (0, -1):
                 continue
-            
+
             cached_lon_coords[i] = cf_healpix_coordinates(
                 value, indexing_scheme, refinement_level, longitude=True
             )

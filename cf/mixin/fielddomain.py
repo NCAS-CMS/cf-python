@@ -2137,8 +2137,8 @@ class FieldDomain:
                 index = d.compute()
                 f = f.subspace(**{hp["domain_axis_key"]: np.argsort(index)})
 
-            # Now that the HEALPix indices are ordered, make sure that
-            # they're stored in a Dimension Coordinate.
+            # Now that the HEALPix indices are ordered, store them in
+            # a Dimension Coordinate.
             if healpix_index.construct_type == "auxiliary_coordinate":
                 f.auxiliary_to_dimension(hp["coordinate_key"], inplace=True)
 
