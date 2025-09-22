@@ -3,6 +3,17 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Allow regridding for very large grids. New keyword parameter to
+  `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
+  (https://github.com/NCAS-CMS/cf-python/issues/878)
+
+----
+
+Version 3.18.1
+--------------
+
+**2025-08-20**
+
 * New methods to allow changing units in a chain: `cf.Field.to_units`,
   `cf.Data.to_units`
   (https://github.com/NCAS-CMS/cf-python/issues/874)
@@ -12,7 +23,11 @@ Version NEXTVERSION
 * Allow regridding for very large grids. New keyword parameter to
   `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
   (https://github.com/NCAS-CMS/cf-python/issues/878)
+* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
+  for missing external cell measures data
+  (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New dependency: ``distributed>=2025.5.1``
+* Changed dependency: ``cfdm>=1.12.3.0, <1.12.4.0``
 
 ----
 

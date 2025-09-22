@@ -16,6 +16,7 @@ Documentation for all versions of cf.
 **CF-1.12**
 -----------
 
+* `Version 3.18.1 <https://ncas-cms.github.io/cf-python-docs/3.18.1>`_ (2025-08-20)
 * `Version 3.18.0 <https://ncas-cms.github.io/cf-python-docs/3.18.0>`_ (2025-06-05)
 * `Version 3.17.0 <https://ncas-cms.github.io/cf-python-docs/3.17.0>`_ (2025-04-02)
 
@@ -158,7 +159,7 @@ version , and is found in the usual manner:
    :caption: *Retrieve the version of the cf package.*
 	     	     
    >>> cf.__version__
-   '3.18.0'
+   '3.18.1'
 
 The next section outlines the scheme used to set version identifiers.
 

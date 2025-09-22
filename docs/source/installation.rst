@@ -117,6 +117,25 @@ Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
 
+.. _Jupyter Notebooks:
+
+Jupyter Notebooks
+^^^^^^^^^^^^^^^^^
+
+You may want to work with cf via a Jupyter Notebook within a ``conda`` environment.
+
+A `known issue <https://github.com/NCAS-CMS/cf-python/issues/883/>`_ exists for Python 3.12 only when one wants to install the optional dependency ESMPy. Namely, the stricter dependencies of the Jupyter library clash with those of cf (namely ``zlib`` required by ESMPy) and installation fails.
+
+A proven workaround is to install Jupyter *before* installing cf, like so:
+
+.. code-block:: console
+   :caption: *Install with conda alongside Jupyter.*
+
+   $ conda install jupyter
+   $ conda install -c conda-forge cf-python cf-plot udunits2
+   $ conda install -c conda-forge "esmpy>=8.7.0"
+
+
 ----
 
 .. _Source:
@@ -206,8 +225,8 @@ Required
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.2.0 or up to,
-  but not including, 1.12.3.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.3.0 or up to,
+  but not including, 1.12.4.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 

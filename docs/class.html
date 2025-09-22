@@ -1,30 +1,27 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="./">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf classes &#8212; Documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
+    <script src="_static/documentation_options.js?v=64e044ff"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=b578dfe4"></script>
+    <script src="_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cf.Field" href="class/cf.Field.html" />
@@ -32,21 +29,22 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+              <img class="logo" src="_static/logo.svg" alt="Logo of Python cf package"/>
             </a></p>
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.18.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.18.1</a></h1>
 
 
 
@@ -65,16 +63,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
@@ -128,14 +126,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
           <div class="body" role="main">
             
   <section id="cf-classes">
-<span id="class"></span><h1><strong>cf classes</strong><a class="headerlink" href="#cf-classes" title="Permalink to this headline">¶</a></h1>
+<span id="class"></span><h1><strong>cf classes</strong><a class="headerlink" href="#cf-classes" title="Link to this heading">¶</a></h1>
 <section id="field-construct-class">
-<h2>Field construct class<a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Field construct class<a class="headerlink" href="#field-construct-class" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a></p></td>
 <td><p>A field construct of the CF data model.</p></td>
@@ -144,12 +138,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="field-list-class">
-<h2>Field list class<a class="headerlink" href="#field-list-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Field list class<a class="headerlink" href="#field-list-class" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a></p></td>
 <td><p>An ordered sequence of field constructs.</p></td>
@@ -158,12 +148,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="domain-class">
-<h2>Domain class<a class="headerlink" href="#domain-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Domain class<a class="headerlink" href="#domain-class" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></p></td>
 <td><p>A domain construct of the CF data model.</p></td>
@@ -172,12 +158,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="metadata-component-classes">
-<h2>Metadata component classes<a class="headerlink" href="#metadata-component-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Metadata component classes<a class="headerlink" href="#metadata-component-classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a></p></td>
 <td><p>An auxiliary coordinate construct of the CF data model.</p></td>
@@ -213,12 +195,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="constructs-class">
-<h2>Constructs class<a class="headerlink" href="#constructs-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Constructs class<a class="headerlink" href="#constructs-class" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a></p></td>
 <td><p>A container for metadata constructs.</p></td>
@@ -227,12 +205,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="coordinate-component-classes">
-<h2>Coordinate component classes<a class="headerlink" href="#coordinate-component-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Coordinate component classes<a class="headerlink" href="#coordinate-component-classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a></p></td>
 <td><p>A cell bounds component of a coordinate or domain ancillary construct of the CF data model.</p></td>
@@ -247,12 +221,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="data-classes">
-<h2>Data classes<a class="headerlink" href="#data-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Data classes<a class="headerlink" href="#data-classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a></p></td>
 <td><p>An N-dimensional data array with units and masked values.</p></td>
@@ -270,19 +240,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <td><p>A sub-array stored in a PP or UM fields file.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="class/cf.ZarrArray.html#cf.ZarrArray" title="cf.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ZarrArray</span></code></a></p></td>
-<td><p>A Zarr array accessed with <code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code>.</p></td>
+<td><p>A Zarr array accessed with <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/index.html#module-zarr" title="(in zarr v0.1.dev50+gb792530)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="data-compression-classes">
-<h2>Data compression classes<a class="headerlink" href="#data-compression-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Data compression classes<a class="headerlink" href="#data-compression-classes" title="Link to this heading">¶</a></h2>
 <p>Classes that support the creation and storage of compressed arrays.</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a></p></td>
 <td><p>A count variable required to uncompress a ragged array.</p></td>
@@ -315,13 +281,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="data-ugrid-classes">
-<h2>Data UGRID classes<a class="headerlink" href="#data-ugrid-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Data UGRID classes<a class="headerlink" href="#data-ugrid-classes" title="Link to this heading">¶</a></h2>
 <p>Classes that support the creation and storage of UGRID-related arrays.</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.BoundsFromNodesArray.html#cf.BoundsFromNodesArray" title="cf.BoundsFromNodesArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.BoundsFromNodesArray</span></code></a></p></td>
 <td><p><strong>Initialisation</strong></p></td>
@@ -336,12 +298,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 </section>
 <section id="miscellaneous-classes">
-<h2>Miscellaneous classes<a class="headerlink" href="#miscellaneous-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<h2>Miscellaneous classes<a class="headerlink" href="#miscellaneous-classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Flags</span></code></a></p></td>
 <td><p>Self-describing CF flag values.</p></td>
@@ -377,11 +335,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &#169;2025, NCAS | Page built on 2025-08-20.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

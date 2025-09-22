@@ -247,7 +247,7 @@ extras_require = {
     "convolution filters, derivatives, relative vorticity": ["scipy>=1.1.0"],
     "subspacing with multi-dimensional construct cells": ["matplotlib>=3.0.0"],
     "documentation": [
-        "sphinx==2.4.5",
+        "sphinx>=7.0.0",
         "sphinx-copybutton",
         "sphinx-toggleprompt",
         "sphinxcontrib-spelling",

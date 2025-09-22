@@ -4407,7 +4407,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             x2: array_like
                 X coordinates. *x1* and *x2* must be broadcastable to
                 a common shape (which becomes the shape of the
-                output).
+                output). If both *x1* and *x2* have units, they must
+                be equal or equivalent, in which case they
+                will be conformed.
 
         :Returns:
 
@@ -4434,6 +4436,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [90.0 -90.0]
 
         """
+
+        x1 = conform_units(x1, x2.Units)
+
         try:
             y = x1.to_dask_array()
         except AttributeError:
@@ -7391,7 +7396,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Not to be confused with overriding the units with
         `override_units`
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.1
 
         .. seealso:: `override_units`, `override_calendar`, `Units`,
                      `units`, `calendar`

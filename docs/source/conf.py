@@ -22,6 +22,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
 
+
 print("\ncf environment:")
 print("-----------------")
 cf.environment()
@@ -78,7 +79,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "2.3.1"
+needs_sphinx = "7.0.0"
 
 # rst_prolog = """
 # .. |CF| replace:: """+_get_cf_version()+"""
@@ -113,10 +114,11 @@ spelling_lang = "en_GB"
 tokenizer_lang = "en_GB"
 spelling_word_list_filename = "spelling_false_positives.txt"
 
-# Boolean indicating whether to scan all found documents for
-# autosummary directives, and to generate stub pages for each
-# (http://sphinx-doc.org/latest/ext/autosummary.html)
-autosummary_generate = True
+# SLB, DH NOTE: we don't want to generate these stubs as they use templates
+# from _templates/autosummary which override our custom sub-section lists
+# in our class/*.rst reference files, which we want to use directly! So this
+# flag setting is crucial.
+autosummary_generate = False
 
 # Both the class’ and the __init__ method’s docstring are concatenated
 # and inserted.
@@ -157,7 +159,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
     # REVIEW: h5: new intersphinx mapping
     "h5netcdf": ("https://h5netcdf.org", None),
-    "zarr": ("https://zarr.readthedocs.io", None),
+    "zarr": ("https://zarr.readthedocs.io/en/stable/", None),
 }
 
 # This extension is meant to help with the common pattern of having
