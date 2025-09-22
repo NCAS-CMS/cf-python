@@ -20,9 +20,6 @@ Version 3.18.1
 * Allow multiple conditions for the same axis in `cf.Field.subspace`
   and `cf.Field.indices`
   (https://github.com/NCAS-CMS/cf-python/issues/881)
-* Allow regridding for very large grids. New keyword parameter to
-  `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
-  (https://github.com/NCAS-CMS/cf-python/issues/878)
 * Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
   for missing external cell measures data
   (https://github.com/NCAS-CMS/cf-python/issues/885)
