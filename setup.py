@@ -177,13 +177,13 @@ are partially conformant may nonetheless be modified in memory.
 
 The ``cf`` package can:
 
-* read field constructs from netCDF, CDL, Zarr, PP and UM datasets,
+* read field and domain constructs from netCDF, CDL, Zarr, PP and UM datasets,
 
 * be fully flexible with respect to dataset storage chunking,
 
 * create new field constructs in memory,
 
-* write and append field constructs to netCDF datasets on disk,
+* write and append field constructs and domain to netCDF and Zarr v3 datasets on disk,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -261,6 +261,9 @@ extras_require = {
         "black",
         "docformatter",
         "flake8",
+    ],
+    "zarr": [
+        "zarr>=3.1.2",
     ],
 }
 
