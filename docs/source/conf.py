@@ -22,7 +22,6 @@ from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
 
-
 print("\ncf environment:")
 print("-----------------")
 cf.environment()

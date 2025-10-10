@@ -1,3 +1,12 @@
+Version NEXTVERSION
+--------------
+
+**2025-10-??**
+
+* Python 3.9 support removed
+  (https://github.com/NCAS-CMS/cf-python/issues/896)
+* Changed dependency: ``Python>=3.10.0``
+
 Version 3.18.1
 --------------
 
