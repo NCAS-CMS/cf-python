@@ -1,6 +1,7 @@
 import datetime
 import faulthandler
 import os
+import shutil
 import unittest
 
 import pycodestyle
@@ -31,6 +32,8 @@ class styleTest(unittest.TestCase):
             for path in non_cf_python_files
         ]
 
+    @unittest.skipUnless(
+        shutil.which("pycodestyle"), "pycodestyle not available - install it")
     def test_pep8_compliance(self):
         pep8_check = pycodestyle.StyleGuide()
 

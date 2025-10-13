@@ -5,6 +5,7 @@ import faulthandler
 import io
 import itertools
 import os
+import shutil
 import tempfile
 import unittest
 import warnings
@@ -618,6 +619,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
+    @unittest.skipUnless(
+        shutil.which("scipy"), "scipy not available - install it")
     def test_Data_convolution_filter(self):
         """Test the `convolution_filter` Data method."""
         #        raise unittest.SkipTest("GSASL has no PLAIN support")

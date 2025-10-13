@@ -4,6 +4,7 @@ import faulthandler
 import itertools
 import os
 import re
+import shutil
 import tempfile
 import unittest
 
@@ -1961,6 +1962,8 @@ class FieldTest(unittest.TestCase):
     def test_Field_construct_key(self):
         self.f.construct_key("grid_longitude")
 
+    @unittest.skipUnless(
+        shutil.which("scipy"), "scipy not available - install it")
     def test_Field_convolution_filter(self):
         f = cf.read(self.filename1)[0]
 
