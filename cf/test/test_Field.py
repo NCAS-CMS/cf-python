@@ -1153,6 +1153,8 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
+    @unittest.skipUnless(
+        importlib.util.find_spec("matplotlib"), "matplotlib needs installing")
     def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 
