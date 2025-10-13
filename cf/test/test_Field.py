@@ -1,16 +1,15 @@
 import atexit
 import datetime
 import faulthandler
+from importlib.util import find_spec
 import itertools
 import os
 import re
-import shutil
 import tempfile
 import unittest
 
 import numpy
 import numpy as np
-from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -1154,7 +1153,7 @@ class FieldTest(unittest.TestCase):
             f.insert_dimension(1, "qwerty")
 
     @unittest.skipUnless(
-        importlib.util.find_spec("matplotlib"), "matplotlib needs installing")
+        find_spec("matplotlib"), "matplotlib required but not installed")
     def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 
@@ -1965,8 +1964,9 @@ class FieldTest(unittest.TestCase):
         self.f.construct_key("grid_longitude")
 
     @unittest.skipUnless(
-        shutil.which("scipy"), "scipy not available - install it")
+        find_spec("scipy"), "scipy required but not installed")
     def test_Field_convolution_filter(self):
+        from scipy.ndimage import convolve1d
         f = cf.read(self.filename1)[0]
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]

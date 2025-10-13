@@ -1,10 +1,9 @@
 import datetime
 import faulthandler
+from importlib.util import find_spec
 import os
 import shutil
 import unittest
-
-import pycodestyle
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -33,8 +32,10 @@ class styleTest(unittest.TestCase):
         ]
 
     @unittest.skipUnless(
-        shutil.which("pycodestyle"), "pycodestyle not available - install it")
+        find_spec("pycodestyle"), "pycodestyle required but not installed")
     def test_pep8_compliance(self):
+        import pycodestyle
+
         pep8_check = pycodestyle.StyleGuide()
 
         # Directories to skip in the recursive walk of the directory:

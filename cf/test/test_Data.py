@@ -2,6 +2,7 @@ import atexit
 import contextlib
 import datetime
 import faulthandler
+from importlib.util import find_spec
 import io
 import itertools
 import os
@@ -14,7 +15,6 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
-from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -620,9 +620,11 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b.mask == e.mask.array).all())
 
     @unittest.skipUnless(
-        shutil.which("scipy"), "scipy not available - install it")
+        find_spec("scipy"), "scipy required but not installed")
     def test_Data_convolution_filter(self):
         """Test the `convolution_filter` Data method."""
+        from scipy.ndimage import convolve1d
+
         #        raise unittest.SkipTest("GSASL has no PLAIN support")
         d = cf.Data(self.ma, units="m", chunks=(2, 4, 5, 3))
 
