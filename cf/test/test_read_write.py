@@ -642,6 +642,8 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
+    @unittest.skipUnless(
+        shutil.which("ncdump"), "ncdump not available - install nco")
     def test_read_CDL(self):
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
@@ -703,6 +705,8 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.read("test_read_write.py")
 
+    @unittest.skipUnless(
+        shutil.which("ncdump"), "ncdump not available - install nco")
     def test_read_cdl_string(self):
         """Test the cf.read 'cdl_string' keyword."""
         f = cf.read("example_field_0.nc")[0]
@@ -876,6 +880,8 @@ class read_writeTest(unittest.TestCase):
             f = cf.read(remote)
             self.assertEqual(len(f), 1)
 
+    @unittest.skipUnless(
+        shutil.which("ncdump"), "ncdump not available - install nco")
     def test_read_dataset_type(self):
         """Test the cf.read 'dataset_type' keyword."""
         # netCDF dataset
