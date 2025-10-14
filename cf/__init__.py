@@ -235,7 +235,7 @@ else:
             f"Got {scipy.__version__} at {scipy.__file__}"
         )
 
-_minimum_vn = "3.9.0"
+_minimum_vn = "3.10.0"
 if Version(python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python>={_minimum_vn}. "
