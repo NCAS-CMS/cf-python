@@ -2,11 +2,9 @@ import atexit
 import contextlib
 import datetime
 import faulthandler
-from importlib.util import find_spec
 import io
 import itertools
 import os
-import shutil
 import tempfile
 import unittest
 import warnings
