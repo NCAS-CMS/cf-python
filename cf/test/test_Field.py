@@ -10,6 +10,7 @@ import unittest
 
 import numpy
 import numpy as np
+from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -1963,10 +1964,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_construct_key(self):
         self.f.construct_key("grid_longitude")
 
-    @unittest.skipUnless(
-        find_spec("scipy"), "scipy required but not installed")
     def test_Field_convolution_filter(self):
-        from scipy.ndimage import convolve1d
         f = cf.read(self.filename1)[0]
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
