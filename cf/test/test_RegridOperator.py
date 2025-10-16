@@ -1,5 +1,6 @@
 import datetime
 import faulthandler
+from importlib.util import find_spec
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -7,11 +8,23 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cf
 
 
-class RegridOperatorTest(unittest.TestCase):
-    src = cf.example_field(0)
-    dst = cf.example_field(1)
-    r = src.regrids(dst, "linear", return_operator=True)
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
+esmpy_imported = False
+# Note: here only need esmpy for cf under-the-hood code, not in test
+# directly, so no need to actually import esmpy, just test it is there.
+if find_spec("esmpy") or find_spec("ESMF"):
+    esmpy_imported = True
 
+
+class RegridOperatorTest(unittest.TestCase):
+
+    def setUp(self):
+        src = cf.example_field(0)
+        dst = cf.example_field(1)
+        self.r = src.regrids(dst, "linear", return_operator=True)
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_RegridOperator_attributes(self):
         self.assertEqual(self.r.coord_sys, "spherical")
         self.assertEqual(self.r.method, "linear")
@@ -39,6 +52,7 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertIsNone(self.r.dst_z)
         self.assertFalse(self.r.ln_z)
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
 

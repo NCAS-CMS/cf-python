@@ -14,6 +14,11 @@
   $ find cf/ -type f | xargs sed -i 's/NEXTVERSION/X.Y.Z/g'
   ```
 
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
+      upcoming version `<VN>` (replacing `<VN>` appropriately,
+      e.g. `3.18.0`). Then close the new `<VN>` milestone, and create a
+      new `NEXTVERSION` milestone.
+
 - [ ] Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 

@@ -30,11 +30,6 @@ all_methods = (
 atol = 2e-12
 rtol = 0
 
-meshloc = {
-    "face": esmpy.MeshLoc.ELEMENT,
-    "node": esmpy.MeshLoc.NODE,
-}
-
 
 def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
     """Helper function that regrids one dimension of Field data using
@@ -47,6 +42,11 @@ def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
         Regridded numpy masked array.
 
     """
+    meshloc = {
+        "face": esmpy.MeshLoc.ELEMENT,
+        "node": esmpy.MeshLoc.NODE,
+    }
+
     esmpy_regrid = cf.regrid.regrid(
         coord_sys,
         src,
