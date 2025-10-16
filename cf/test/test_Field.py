@@ -1,12 +1,12 @@
 import atexit
 import datetime
 import faulthandler
-from importlib.util import find_spec
 import itertools
 import os
 import re
 import tempfile
 import unittest
+from importlib.util import find_spec
 
 import numpy
 import numpy as np
@@ -1154,7 +1154,8 @@ class FieldTest(unittest.TestCase):
             f.insert_dimension(1, "qwerty")
 
     @unittest.skipUnless(
-        find_spec("matplotlib"), "matplotlib required but not installed")
+        find_spec("matplotlib"), "matplotlib required but not installed"
+    )
     def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 

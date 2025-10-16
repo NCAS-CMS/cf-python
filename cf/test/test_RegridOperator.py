@@ -1,12 +1,11 @@
 import datetime
 import faulthandler
-from importlib.util import find_spec
 import unittest
+from importlib.util import find_spec
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
-
 
 # ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
 # either for now for backwards compatibility.

@@ -1,8 +1,8 @@
 import datetime
 import faulthandler
-from importlib.util import find_spec
 import os
 import unittest
+from importlib.util import find_spec
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -31,7 +31,8 @@ class styleTest(unittest.TestCase):
         ]
 
     @unittest.skipUnless(
-        find_spec("pycodestyle"), "pycodestyle required but not installed")
+        find_spec("pycodestyle"), "pycodestyle required but not installed"
+    )
     def test_pep8_compliance(self):
         import pycodestyle
 
