@@ -157,7 +157,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2.0.0"
     if Version(np.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             f"Bad numpy version: cf requires numpy>={_minimum_vn} "
             f"Got {np.__version__} at {np.__file__}"
         )
@@ -206,7 +206,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2025.5.1"
     if Version(dask.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             f"Bad dask version: cf requires dask>={_minimum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"
         )
@@ -218,7 +218,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2025.5.1"
     if Version(distributed.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             "Bad distributed version: cf requires "
             f"distributed>={_minimum_vn}. "
             f"Got {distributed.__version__} at {distributed.__file__}"
@@ -238,7 +238,7 @@ else:
 
 _minimum_vn = "3.10.0"
 if Version(python_version()) < Version(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         f"Bad python version: cf requires python>={_minimum_vn}. "
         f"Got {python_version()}"
     )
