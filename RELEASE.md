@@ -14,8 +14,9 @@
   $ find cf/ -type f | xargs sed -i 's/NEXTVERSION/X.Y.Z/g'
   ```
 
-- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
-      upcoming version `<VN>` (replacing `<VN>` appropriately,
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub
+      (see https://github.com/NCAS-CMS/cf-python/milestones)
+      to be the upcoming version `<VN>` (replacing `<VN>` appropriately,
       e.g. `3.18.0`). Then close the new `<VN>` milestone, and create a
       new `NEXTVERSION` milestone.
 
