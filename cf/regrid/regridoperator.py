@@ -649,8 +649,8 @@ class RegridOperator(mixin_Container, Container):
         :Returns:
 
            `bool`
-               True if the regrid operators have destination masks,
-               otherwise False.
+               True if the regrid operators have identical destination
+               masks, otherwise False.
 
         """
         self.tosparse()

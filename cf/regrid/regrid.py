@@ -2000,7 +2000,7 @@ def create_esmpy_grid(grid, mask=None, grid_partitions=1):
                 if bounds:
                     bounds[-1] = bounds[-1][partition]
             else:
-                # All coordinates spans the same axes
+                # All coordinates span the same axes
                 coords = [c[partition] for c in coords]
                 if bounds:
                     bounds = [b[partition] for b in bounds]
@@ -3471,7 +3471,7 @@ def partitions(grid, grid_partitions, return_n=False):
 
     Each partition is defined as an index to cell coordinates. Only
     the last (left-most) dimension in esmpy order is partitioned. Note
-    that the coordinates storded in `grid.coords` are in esmpy order.
+    that the coordinates stored in `grid.coords` are in esmpy order.
 
     Only a destinaton grid without a dummy size 2 dimension can be
     partitioned.
