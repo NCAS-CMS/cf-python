@@ -85,9 +85,13 @@ class Grid:
     cyclic: Any = None
     # The regridding method.
     method: str = ""
-    # If True then, for 1-d regridding, the esmpy weights are generated
-    # for a 2-d grid for which one of the dimensions is a size 2 dummy
-    # dimension.
+    # If True then, for Cartesian 1-d conservative regridding, the
+    # esmpy weights are generated for a 2-d grid for which one of the
+    # dimensions is a size 1 dummy dimension.
+    dummy_size_1_dimension: bool = False
+    # If True then, for Cartesian 1-d non-conservative regridding, the
+    # esmpy weights are generated for a 2-d grid for which one of the
+    # dimensions is a size 2 dummy dimension.
     dummy_size_2_dimension: bool = False
     # Whether or not the grid is a structured grid.
     is_grid: bool = False
@@ -1668,6 +1672,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
 
     bounds = get_bounds(method, coords, mesh_location)
 
+    dummy_size_1_dimension = False
     dummy_size_2_dimension = False
     if not (mesh_location or featureType) and len(coords) == 1:
         # Create a dummy axis because esmpy doesn't like creating
@@ -1678,6 +1683,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             # size 1
             coords.append(np.array([0.0]))
             bounds.append(np.array([data]))
+            dummy_size_1_dimension = True
         else:
             # For linear regridding the extra dimension must be size 2
             coords.append(data)
@@ -1708,6 +1714,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         coords=coords,
         bounds=bounds,
         cyclic=cyclic,
+        dummy_size_1_dimension=dummy_size_1_dimension,
         dummy_size_2_dimension=dummy_size_2_dimension,
         is_mesh=is_mesh,
         is_locstream=is_locstream,
@@ -3526,6 +3533,7 @@ def partitions(grid, grid_partitions, return_n=False):
     if (
         grid_partitions == 1
         or grid.name == "source"
+        or grid.dummy_size_1_dimension
         or grid.dummy_size_2_dimension
     ):
         # One partition
