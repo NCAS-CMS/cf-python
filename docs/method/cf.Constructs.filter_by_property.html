@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.Constructs.filter_by_property &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=64e044ff"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=5318ce95"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=b578dfe4"></script>
@@ -29,9 +29,8 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
-
   
-  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
   <div class="document">
@@ -44,7 +43,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.2</a></h1>
 
 
 
@@ -133,18 +132,18 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Constructs.filter_by_property<a class="headerlink" href="#cf-constructs-filter-by-property" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Constructs.filter_by_property">
-<span class="sig-prename descclassname"><span class="pre">Constructs.</span></span><span class="sig-name descname"><span class="pre">filter_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">property_mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2990-L3075"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Constructs.filter_by_property" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Constructs.</span></span><span class="sig-name descname"><span class="pre">filter_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">property_mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/constructs.py#L2990-L3075"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Constructs.filter_by_property" title="Link to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by property.</p>
 <p>Unlike the other “<a href="#id1"><span class="problematic" id="id2">filter_by_</span></a>” methods, this method has no
 <em>todict</em> or <em>cached</em> parameters. To get the results as a
 dictionary, use the <a class="reference internal" href="cf.Constructs.todict.html#cf.Constructs.todict" title="cf.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a> method on the result, or for
-faster performance use the <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> method. For instance, to
+faster performance use the <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> method. For instance, to
 get a dictionary of all constructs with a long_name of
 <code class="docutils literal notranslate"><span class="pre">'time'</span></code> you could do
 <code class="docutils literal notranslate"><span class="pre">c.filter_by_property(long_name=&quot;time&quot;).todict()</span></code>, or the
 faster <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">c.filter(filter_by_property={&quot;long_name&quot;:</span>
 <span class="pre">&quot;time&quot;},</span> <span class="pre">todict=True)</span></code>. To return a cached result, you have
-to use the <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> method:
+to use the <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> method:
 <code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_property={&quot;long_name&quot;:</span> <span class="pre">&quot;time&quot;},</span>
 <span class="pre">cached=x)</span></code>.</p>
 <div class="versionadded">
@@ -152,7 +151,7 @@ to use the <a class="reference external" href="https://docs.python.org/3/library
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>,
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>,
 <a class="reference internal" href="cf.Constructs.clear_filters_applied.html#cf.Constructs.clear_filters_applied" title="cf.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.unfilter.html#cf.Constructs.unfilter" title="cf.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></p>
 </div>
 <dl class="field-list">
@@ -185,9 +184,9 @@ given values.</p>
 <p>A property names and their given values are specified
 by keyword argument names and values.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>The special value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> selects any construct that
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>The special value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> selects any construct that
 has that property, regardless of the construct’s
 property value.</p>
 <p>If no properties are provided then all constructs that
@@ -220,7 +219,7 @@ selected.</p>
 </div>
 <p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> which contains
 start with the string ‘air’:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^air&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -236,11 +235,11 @@ start with the string ‘air’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-08-20.
+      &copy;2025, NCAS | Page built on 2025-10-16.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
       
     </div>
 
