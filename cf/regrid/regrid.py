@@ -638,8 +638,9 @@ def regrid(
         esmpy_regrid_operator = [] if return_esmpy_regrid_operator else None
 
         # Find the actual number of partitions
+        requested_dst_grid_partitions = dst_grid_partitions
         dst_grid_partitions = partitions(
-            dst_grid, dst_grid_partitions, return_n=True
+            dst_grid, requested_dst_grid_partitions, return_n=True
         )
 
         # Create regrid weights
@@ -654,6 +655,7 @@ def regrid(
             esmpy_regrid_operator=esmpy_regrid_operator,
             weights_file=weights_file,
             dst_grid_partitions=dst_grid_partitions,
+            requested_dst_grid_partitions=requested_dst_grid_partitions,
         )
 
         if return_esmpy_regrid_operator:
@@ -2455,6 +2457,7 @@ def create_esmpy_weights(
     esmpy_regrid_operator=None,
     weights_file=None,
     dst_grid_partitions=1,
+    requested_dst_grid_partitions=1,
 ):
     """Create the `esmpy` regridding weights.
 
@@ -2510,7 +2513,14 @@ def create_esmpy_weights(
             .. versionadded:: 3.15.2
 
         dst_grid_partitions: `int`, optional
-            The number of destination grid partitions.
+            The actual number of destination grid partitions to be
+            used.
+
+            .. versionadded:: NEXTVERSION
+
+        requested_dst_grid_partitions: `int` or `str`, optional
+            The requested number of destination grid
+            partitions. Either an integer, or ``'maximum'``.
 
             .. versionadded:: NEXTVERSION
 
@@ -2581,11 +2591,12 @@ def create_esmpy_weights(
             logger.debug(
                 "Calculating weights ...\n\n"
                 "Number of destination grid partitions: "
-                f"{dst_grid_partitions}\n"
+                f"{dst_grid_partitions} "
+                f"({requested_dst_grid_partitions!r} requested)\n"
                 "Free memory before weights creation: "
                 f"{free_memory() / 2**30} GiB\n"
                 "Maximum RSS before weights creation: "
-                f"{maxrss * 1000/ 2**30} GiB\n"
+                f"{maxrss * 1000 / 2**30} GiB\n"
             )  # pragma: no cover
 
         # Create the weights using ESMF
@@ -2692,7 +2703,7 @@ def create_esmpy_weights(
                     f"Partition {i}: Time taken by ESMF to create weights: "
                     f"{time() - start_time} s\n"
                     f"Partition {i}: Maximum RSS after ESMF weights creation: "
-                    f"creation: {maxrss * 1000/ 2**30} GiB"
+                    f"creation: {maxrss * 1000 / 2**30} GiB"
                 )  # pragma: no cover
                 start_time = time()  # pragma: no cover
 
