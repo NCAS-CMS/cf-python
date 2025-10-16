@@ -114,7 +114,7 @@ The `cf` package can:
 * regrid structured grid, mesh and DSG field constructs with
   (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including
-  3-d regridding,
+  3-d regridding, and large-grid support,
 
 * apply convolution filters to field constructs,
 
