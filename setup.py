@@ -225,7 +225,7 @@ The ``cf`` package can:
 
 * create derived quantities (such as relative vorticity),
 
-* read and write that data that are quantized to eliminate false
+* read and write data that are quantized to eliminate false
   precision.
 
 """
