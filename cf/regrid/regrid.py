@@ -332,7 +332,7 @@ def regrid(
             See `cf.Field.regrids` (for spherical regridding) or
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.18.2
 
     :Returns:
 
@@ -2523,13 +2523,13 @@ def create_esmpy_weights(
             The actual number of destination grid partitions to be
             used.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.18.2
 
         requested_dst_grid_partitions: `int` or `str`, optional
             The requested number of destination grid
             partitions. Either an integer, or ``'maximum'``.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.18.2
 
     :Returns:
 
@@ -3494,7 +3494,7 @@ def partitions(grid, grid_partitions, return_n=False):
     Only a destinaton grid without a dummy size 2 dimension can be
     partitioned.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.18.2
 
     .. seealso:: `create_esmpy_grid`, `create_esmpy_mesh`,
                  `create_esmpy_locstream`, `create_esmpy_weights`

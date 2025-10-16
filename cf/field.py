@@ -13220,7 +13220,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 UGRID, HEALPix, or DSG grid, Nmax = the size of the
                 horizontal discrete axis.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.18.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
@@ -13529,11 +13529,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 size of the first of the destination grid axes
                 specified by the *axes* parameter.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.18.2
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.18.2
 
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.

@@ -252,7 +252,7 @@ class RegridOperator(mixin_Container, Container):
 
         See `tosparse` for details.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.18.2
 
         """
         return self._get_component("_dst_mask_adjusted")

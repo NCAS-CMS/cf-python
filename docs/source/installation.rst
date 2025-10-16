@@ -218,14 +218,14 @@ Required
 * `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1 or
   newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.7.2 only.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.3.0 or up to,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.3.1 or up to,
   but not including, 1.12.4.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
