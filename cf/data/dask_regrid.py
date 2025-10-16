@@ -507,10 +507,10 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
             data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
@@ -528,8 +528,6 @@ def _regrid(
                 w = w / D_j
                 w[mask] = 0
                 data[i0:i1] = w
-
-            del indptr
 
         elif method in ("linear", "bilinear"):
             # 2) Linear methods:
@@ -549,22 +547,20 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
             where = np.where
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
-            pos_data = weights.data >= min_weight
+            data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
                 if not count_nonzero(mask):
                     continue
 
-                if where((mask) & (pos_data[i0:i1]))[0].size:
+                if where(data[i0:i1][mask] >= min_weight)[0].size:
                     dst_mask[j] = True
-
-            del indptr, pos_data
 
         elif method == "nearest_dtos":
             # 3) Nearest neighbour dtos method:
@@ -584,10 +580,10 @@ def _regrid(
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
             #       over rows of 'weights' and using
-            #       'weights.getrow'. Also, 'np.count_nonzero' is much
-            #       faster than 'np.any' and 'np.all'.
+            #       'weights.getrow'. Also, `np.count_nonzero` is much
+            #       faster than `np.any` and `np.all`.
             count_nonzero = np.count_nonzero
-            indptr = weights.indptr.tolist()
+            indptr = weights.indptr
             indices = weights.indices
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
@@ -596,8 +592,6 @@ def _regrid(
                     dst_mask[j] = True
                 elif n_masked:
                     weights.data[np.arange(i0, i1)[mask]] = 0
-
-            del indptr
 
         elif method in (
             "patch",

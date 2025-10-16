@@ -156,13 +156,9 @@ Visualization
 =============
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the
-`cf-plot <https://ncas-cms.github.io/cf-plot/build/>`_ package, that
-needs to be installed seprately to the ``cf`` package.
-
-See the `cfplot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the full range
-of plotting possibilities with example code.
+constructs are available with the `cf-plot
+<https://ncas-cms.github.io/cf-plot>`_ package, that needs to be
+installed separately to the ``cf`` package.
 
 Functionality
 =============
@@ -219,7 +215,7 @@ The ``cf`` package can:
 * regrid structured grid, mesh and DSG field constructs with
   (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including 3-d
-  regridding,
+  regridding, and large-grid support,
 
 * apply convolution filters to field constructs,
 

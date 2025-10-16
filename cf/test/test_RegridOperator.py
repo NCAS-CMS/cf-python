@@ -1,12 +1,11 @@
 import datetime
 import faulthandler
-from importlib.util import find_spec
 import unittest
+from importlib.util import find_spec
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
-
 
 # ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
 # either for now for backwards compatibility.
@@ -55,6 +54,25 @@ class RegridOperatorTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
+
+    def test_RegridOperator_equal_weights(self):
+        r0 = self.r
+        r1 = r0.copy()
+        self.assertTrue(r0.equal_weights(r1))
+        r1.weights.data += 0.1
+        self.assertFalse(r0.equal_weights(r1))
+
+    def test_RegridOperator_equal_dst_mask(self):
+        r0 = self.r.copy()
+        r1 = r0.copy()
+        self.assertTrue(r0.equal_dst_mask(r1))
+        mask = [True, False]
+        r0._set_component("dst_mask", mask)
+        self.assertFalse(r0.equal_dst_mask(r1))
+        r1._set_component("dst_mask", mask)
+        self.assertTrue(r0.equal_dst_mask(r1))
+        r1._set_component("dst_mask", mask[::-1])
+        self.assertFalse(r0.equal_dst_mask(r1))
 
 
 if __name__ == "__main__":

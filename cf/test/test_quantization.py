@@ -63,7 +63,6 @@ class quantizationTest(unittest.TestCase):
         f.set_quantize_on_write(q0)
 
         # Write the field and read it back in
-        tmpfile1 = "delme1.nc"
         cf.write(f, tmpfile1)
         g = cf.read(tmpfile1)[0]
 

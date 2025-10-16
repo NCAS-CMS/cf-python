@@ -5,7 +5,12 @@ Version NEXTVERSION
 
 * Python 3.9 support removed
   (https://github.com/NCAS-CMS/cf-python/issues/896)
+* Allow regridding for very large grids. New keyword parameter to
+  `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
+  (https://github.com/NCAS-CMS/cf-python/issues/878)
 * Changed dependency: ``Python>=3.10.0``
+
+----
 
 Version 3.18.1
 --------------

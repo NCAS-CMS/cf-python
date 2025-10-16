@@ -9,21 +9,12 @@ import numpy as np
 
 import cf
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
-    import esmpy
-
-    esmpy_imported = True
+    import esmpy  # noqa: F401
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 methods = (
     "linear",
@@ -168,7 +159,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
         self.assertFalse(cf.regrid_logging())
 
         # Create some nice data
-        src = self.dst_featureType
+        src = self.dst_featureType.copy()
         src.del_construct("cellmethod0")
         src = src[:12]
         src[...] = 273 + np.arange(12)
