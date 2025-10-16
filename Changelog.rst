@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 3.18.2
 --------------
 
-**2025-10-??**
+**2025-10-16**
 
 * Python 3.9 support removed
   (https://github.com/NCAS-CMS/cf-python/issues/896)
