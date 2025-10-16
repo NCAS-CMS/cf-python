@@ -2570,7 +2570,7 @@ def create_esmpy_weights(
         compute_weights = True
 
     from_file = True
-    if compute_weights:  # or esmpy_regrid_operator is not None:
+    if compute_weights:
         partitioned_dst_grid = dst_grid_partitions > 1
         if debug:
             from resource import RUSAGE_SELF, getrusage
