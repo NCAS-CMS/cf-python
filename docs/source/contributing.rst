@@ -116,13 +116,15 @@ ideas, code, and documentation to the cf library:
 * Bryan Lawrence
 * Charles Roberts
 * David Hassell
-* Evert Rol  
+* Evert Rol
+* George Pulickan
 * Javier Dehesa
 * Jonathan Gregory
 * Klaus Zimmermann
 * Kristian Sebastián
 * Mark Rhodes-Smith
 * Matt Brown
+* Natalia Hunt
 * Michael Decker
 * Oliver Kotla
 * Sadie Bartholomew
