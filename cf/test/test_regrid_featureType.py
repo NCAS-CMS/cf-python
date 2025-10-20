@@ -9,21 +9,12 @@ import numpy as np
 
 import cf
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
-    import esmpy
-
-    esmpy_imported = True
+    import esmpy  # noqa: F401
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 methods = (
     "linear",
@@ -35,11 +26,6 @@ methods = (
 # Set numerical comparison tolerances
 atol = 2e-12
 rtol = 0
-
-meshloc = {
-    "face": esmpy.MeshLoc.ELEMENT,
-    "node": esmpy.MeshLoc.NODE,
-}
 
 
 def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
@@ -53,6 +39,11 @@ def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
         Regridded numpy masked array.
 
     """
+    meshloc = {
+        "face": esmpy.MeshLoc.ELEMENT,
+        "node": esmpy.MeshLoc.NODE,
+    }
+
     esmpy_regrid = cf.regrid.regrid(
         coord_sys,
         src,
@@ -168,7 +159,7 @@ class RegridFeatureTypeTest(unittest.TestCase):
         self.assertFalse(cf.regrid_logging())
 
         # Create some nice data
-        src = self.dst_featureType
+        src = self.dst_featureType.copy()
         src.del_construct("cellmethod0")
         src = src[:12]
         src[...] = 273 + np.arange(12)

@@ -9,21 +9,12 @@ import numpy as np
 
 import cf
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
-    import esmpy
-
-    esmpy_imported = True
+    import esmpy  # noqa: F401
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 all_methods = (
     "linear",
@@ -39,11 +30,6 @@ all_methods = (
 atol = 2e-12
 rtol = 0
 
-meshloc = {
-    "face": esmpy.MeshLoc.ELEMENT,
-    "node": esmpy.MeshLoc.NODE,
-}
-
 
 def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
     """Helper function that regrids one dimension of Field data using
@@ -56,6 +42,11 @@ def esmpy_regrid(coord_sys, method, src, dst, **kwargs):
         Regridded numpy masked array.
 
     """
+    meshloc = {
+        "face": esmpy.MeshLoc.ELEMENT,
+        "node": esmpy.MeshLoc.NODE,
+    }
+
     esmpy_regrid = cf.regrid.regrid(
         coord_sys,
         src,

@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.Field.del_domain_axis &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=64e044ff"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=5318ce95"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=b578dfe4"></script>
@@ -29,9 +29,8 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
-
   
-  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
   <div class="document">
@@ -44,7 +43,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.2</a></h1>
 
 
 
@@ -133,12 +132,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.del_domain_axis<a class="headerlink" href="#cf-field-del-domain-axis" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Field.del_domain_axis">
-<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">del_domain_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.1/cf/mixin/fielddomain.py#L1746-L1873"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.del_domain_axis" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">del_domain_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.2/cf/mixin/fielddomain.py#L1746-L1873"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.del_domain_axis" title="Link to this definition">¶</a></dt>
 <dd><p>Remove a domain axis construct.</p>
 <p>In general, a domain axis construct can only be removed if it
 is not spanned by any construct’s data. However, a size 1
 domain axis construct can be removed in any case if the
-<em>squeeze</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. In this case, a metadata
+<em>squeeze</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. In this case, a metadata
 construct whose data spans only the removed domain axis
 construct will also be removed.</p>
 <div class="versionadded">
@@ -162,10 +161,10 @@ domain axis construct.</p>
 <p>defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, and is selected
 if any of them match the <em>identity</em>
 parameter. <em>identity</em> may be a string that equals one
-of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
+of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
 that matches one of a construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a metadata construct is always described by one
 of its identities, and so this description may always
 be used as an <em>identity</em> value.</p>
@@ -177,12 +176,12 @@ be used as an <em>identity</em> value.</p>
 <p>identities (defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method) and
 is selected if any of them match the <em>identity</em>
 parameter.  <em>identity</em> may be a string that equals one
-of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
+of a construct’s identities; or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object
 that matches one of a construct’s identities via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
 <ul class="simple">
 <li><p>The key of a domain axis construct.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the
 domain axis construct when there is only one of
 them.  <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code> are both
 acceptable keys.</p></li>
@@ -200,13 +199,13 @@ acceptable keys.</p></li>
 </dd>
 </dl>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the removal of a size 1 domain axis
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the removal of a size 1 domain axis
 construct that is spanned by any data array and
 squeeze the corresponding dimension from those arrays.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 construct can not be removed, or does not exist.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 </dl>
@@ -259,11 +258,11 @@ raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-08-20.
+      &copy;2025, NCAS | Page built on 2025-10-16.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
       
     </div>
 

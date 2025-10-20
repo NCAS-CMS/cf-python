@@ -349,6 +349,7 @@ netcdftime
 Niña
 Niño
 Nino
+Nmax
 nondimensional
 nonzero
 normalized

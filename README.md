@@ -112,12 +112,12 @@ of its array manipulation and can:
 * regrid structured grid, mesh and DSG field constructs with
   (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including 3-d
-  regridding,
+  regridding, and large-grid support,
 * apply convolution filters to field constructs,
 * create running means from field constructs,
 * apply differential operators to field constructs,
 * create derived quantities (such as relative vorticity).
-* read and write that data that are quantized to eliminate false
+* read and write data that are quantized to eliminate false
   precision.
 
 Visualization
@@ -126,12 +126,8 @@ Visualization
 Powerful and flexible visualizations of `cf` field constructs,
 designed to be produced and configured in as few lines of code as
 possible, are available with the [cf-plot
-package](https://ncas-cms.github.io/cf-plot/build/index.html), which
-needs to be installed separately to the `cf` package.
-
-See the [cf-plot
-gallery](https://ncas-cms.github.io/cf-plot/build/gallery.html) for a
-range of plotting possibilities with example code.
+package](https://ncas-cms.github.io/cf-plot), which needs to be
+installed separately to the `cf` package.
 
 ![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](https://raw.githubusercontent.com/NCAS-CMS/cf-plot/master/docs/source/images/cf_gallery_image.png)
 
