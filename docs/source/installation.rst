@@ -270,7 +270,7 @@ environments for which these features are not required.
 * `zarr <https://pypi.org/project/zarr>`_, version 3.1.2 or newer.
 
   For reading and writing Zarr datasets.
-    
+
 .. rubric:: Regridding
 
 * `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
