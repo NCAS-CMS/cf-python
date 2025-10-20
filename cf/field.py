@@ -383,14 +383,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
-        debug = is_log_level_debug(logger)
-
-        if debug:
-            logger.debug(
-                self.__class__.__name__ + ".__getitem__"
-            )  # pragma: no cover
-            logger.debug(f"    input indices = {indices}")  # pragma: no cover
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -437,12 +429,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             findices = ancillary_mask + indices
         else:
             findices = indices
-
-        if debug:
-            logger.debug(f"    shape    = {shape}")  # pragma: no cover
-            logger.debug(f"    indices  = {indices}")  # pragma: no cover
-            logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
-            logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = data[tuple(findices)]
 
@@ -496,11 +482,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-
-                if debug:
-                    logger.debug(
-                        f"    dice = {tuple(dice)}"
-                    )  # pragma: no cover
 
                 # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.
@@ -13640,6 +13621,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ln_z=None,
         verbose=None,
         return_esmpy_regrid_operator=False,
+        dst_grid_partitions=1,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13899,6 +13881,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.16.2
 
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                The maximum number of partitions, Nmax, depends on the
+                nature of the destination grid: If the Z axis is being
+                regridded, Nmax = the size of the Z axis. For a 2-d
+                structured grid, Nmax = the size of the Y axis. For a
+                UGRID, HEALPix, or DSG grid, Nmax = the size of the
+                horizontal discrete axis.
+
+                .. versionadded:: 3.18.2
+
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
 
@@ -13992,11 +13985,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
     def regridc(
         self,
         dst,
@@ -14016,6 +14011,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         return_esmpy_regrid_operator=False,
+        dst_grid_partitions=1,
+        verbose=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -14195,6 +14192,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.16.2
 
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                Partitioning is only available for 2-d or 3-d
+                regridding. The maximum number of partitions is the
+                size of the first of the destination grid axes
+                specified by the *axes* parameter.
+
+                .. versionadded:: 3.18.2
+
+            {{verbose: `int` or `str` or `None`, optional}}
+
+                .. versionadded:: 3.18.2
+
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
 
@@ -14287,6 +14297,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 

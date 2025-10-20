@@ -2218,15 +2218,16 @@ class FieldDomain:
         :Parameters:
 
             cache: `bool`, optional
+        
                 If True (the default) then cache in memory the first
-                and last of any newly-created coordinates and
-                bounds. This will slightly slow down the coordinate
-                creation process, but will greatly speed up, and
-                reduce the memory requirement of, a future inspection
-                of the coordinates and bounds. Even when *cache* is
-                True, new cached values can only be created if the
-                existing source coordinates themselves have cached
-                first and last values.
+                and last of any newly-created UGRID coordinates and
+                bounds. This may slightly slow down the coordinate
+                creation process, but may greatly speed up, and reduce
+                the memory requirement of, a future inspection of the
+                coordinates and bounds. Even when *cache* is True, new
+                cached coordinate values can only be created if the
+                existing healpix_index coordinates themselves have
+                cached first and last values.
 
             {{inplace: `bool`, optional}}
 
@@ -2324,9 +2325,8 @@ class FieldDomain:
                 "coordinate bounds"
             )
 
-        # Create the UGRID Domain Topology construct, by creating an
-        # arbitrary unique integer identifer for each unique node
-        # location.
+        # Create the UGRID Domain Topology construct, by creating a
+        # unique integer identifer for each unique node location.
         bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
         bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
 
@@ -2412,12 +2412,13 @@ class FieldDomain:
             cache: `bool`, optional
                 If True (the default) then cache in memory the first
                 and last of any newly-created coordinates and
-                bounds. This will slightly slow down the coordinate
-                creation process, but will greatly speed up, and
-                reduce the memory requirement of, a future inspection
-                of the coordinates and bounds. Even when *cache* is
-                True, new cached values can only be created if the
-                existing source coordinates themselves have cached
+                bounds. This may slightly slow down the coordinate
+                creation process, but may greatly speed up, and reduce
+                the memory requirement of, a future inspection of the
+                coordinates and bounds. Even when *cache* is True, new
+                cached values can only be created if the existing
+                source coordinates (from which the newly-created
+                coordinates are calculated) themselves have cached
                 first and last values.
 
             {{inplace: `bool`, optional}}
@@ -2460,7 +2461,7 @@ class FieldDomain:
         f = _inplace_enabled_define_and_cleanup(self)
 
         # ------------------------------------------------------------
-        # See if any lat/lon coordinates should be created
+        # See if any lat/lon coordinates could be created
         # ------------------------------------------------------------
 
         # See if there are any existing latitude/longutude coordinates
@@ -2535,7 +2536,8 @@ class FieldDomain:
             return f
 
         # ------------------------------------------------------------
-        # Still here? Then try to calculate some lat/lon coordinates.
+        # Still here? Then we might be able to create some lat/lon
+        # coordinates.
         # ------------------------------------------------------------
 
         # Initialize the flag that tells us if any new coordinates

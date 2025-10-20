@@ -80,8 +80,8 @@ installation and source code.
 
 """
 
-__date__ = "2025-08-20"
-__version__ = "3.18.1"
+__date__ = "2025-10-16"
+__version__ = "3.18.2"
 
 _requires = (
     "numpy",
@@ -122,7 +122,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     # Check the version of cfdm
-    _minimum_vn = "1.12.3.0"
+    _minimum_vn = "1.12.3.1"
     _maximum_vn = "1.12.4.0"
     _cfdm_version = Version(cfdm.__version__)
     if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
@@ -142,10 +142,11 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "1.7.2"
-    if Version(netCDF4.__version__) < Version(_minimum_vn):
+    _set_vn = "1.7.2"
+    if Version(netCDF4.__version__) != Version(_set_vn):
         raise RuntimeError(
-            f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
+            "Bad netCDF4 version: cf requires "
+            f"netCDF4=={_set_vn}. "
             f"Got {netCDF4.__version__} at {netCDF4.__file__}"
         )
 
@@ -156,7 +157,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2.0.0"
     if Version(np.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             f"Bad numpy version: cf requires numpy>={_minimum_vn} "
             f"Got {np.__version__} at {np.__file__}"
         )
@@ -205,7 +206,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2025.5.1"
     if Version(dask.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             f"Bad dask version: cf requires dask>={_minimum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"
         )
@@ -217,7 +218,7 @@ except ImportError as error1:
 else:
     _minimum_vn = "2025.5.1"
     if Version(distributed.__version__) < Version(_minimum_vn):
-        raise ValueError(
+        raise RuntimeError(
             "Bad distributed version: cf requires "
             f"distributed>={_minimum_vn}. "
             f"Got {distributed.__version__} at {distributed.__file__}"
@@ -235,9 +236,9 @@ else:
             f"Got {scipy.__version__} at {scipy.__file__}"
         )
 
-_minimum_vn = "3.9.0"
+_minimum_vn = "3.10.0"
 if Version(python_version()) < Version(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         f"Bad python version: cf requires python>={_minimum_vn}. "
         f"Got {python_version()}"
     )

@@ -44,12 +44,12 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
         cache: `bool`, optional
             If True (the default) then cache in memory the first and
             last of any newly-created coordinates and bounds. This
-            will slightly slow down the coordinate creation process,
-            but will greatly speed up, and reduce the memory
+            may slightly slow down the coordinate creation process,
+            but may greatly speed up, and reduce the memory
             requirement of, a future inspection of the coordinates and
-            bounds. Even when *cache* is True, new cached values can
-            only be created if the existing source coordinates
-            themselves have cached first and last values.
+            bounds. Even when *cache* is True, new cached coordinate
+            values can only be created if the existing healpix_index
+            coordinates themselves have cached first and last values.
 
     :Returns:
 

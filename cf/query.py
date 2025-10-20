@@ -959,122 +959,119 @@ class Query:
         operator = self._operator
         value = self._value
 
-        # TODO: Once Python 3.9 is no longer supported, this is a good
-        #       candidate for PEP 622 – Structural Pattern Matching
-        #       (https://peps.python.org/pep-0622)
+        match operator:
+            case "gt":
+                _gt = getattr(x, "__query_gt__", None)
+                if _gt is not None:
+                    return _gt(value)
 
-        if operator == "gt":
-            _gt = getattr(x, "__query_gt__", None)
-            if _gt is not None:
-                return _gt(value)
+                return x > value
 
-            return x > value
+            case "wi":
+                _wi = getattr(x, "__query_wi__", None)
+                if _wi is not None:
+                    return _wi(value, self.open_lower, self.open_upper)
 
-        if operator == "wi":
-            _wi = getattr(x, "__query_wi__", None)
-            if _wi is not None:
-                return _wi(value, self.open_lower, self.open_upper)
+                if self.open_lower:
+                    lower_bound = x > value[0]
+                else:
+                    lower_bound = x >= value[0]
 
-            if self.open_lower:
-                lower_bound = x > value[0]
-            else:
-                lower_bound = x >= value[0]
+                if self.open_upper:
+                    upper_bound = x < value[1]
+                else:
+                    upper_bound = x <= value[1]
 
-            if self.open_upper:
-                upper_bound = x < value[1]
-            else:
-                upper_bound = x <= value[1]
+                return lower_bound & upper_bound
 
-            return lower_bound & upper_bound
+            case "eq":
+                try:
+                    return bool(value.search(x))
+                except AttributeError:
+                    return x == value
+                except TypeError:
+                    raise ValueError(
+                        "Can't perform regular expression search on a "
+                        f"non-string: {x!r}"
+                    )
 
-        if operator == "eq":
-            try:
-                return bool(value.search(x))
-            except AttributeError:
-                return x == value
-            except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    f"non-string: {x!r}"
-                )
+            case "isclose":
+                rtol = self.rtol
+                atol = self.atol
+                if atol is None:
+                    atol = cf_atol().value
 
-        if operator == "isclose":
-            rtol = self.rtol
-            atol = self.atol
-            if atol is None:
-                atol = cf_atol().value
+                if rtol is None:
+                    rtol = cf_rtol().value
 
-            if rtol is None:
-                rtol = cf_rtol().value
+                _isclose = getattr(x, "__query_isclose__", None)
+                if _isclose is not None:
+                    return _isclose(value, rtol, atol)
 
-            _isclose = getattr(x, "__query_isclose__", None)
-            if _isclose is not None:
-                return _isclose(value, rtol, atol)
+                return np.isclose(x, value, rtol=rtol, atol=atol)
 
-            return np.isclose(x, value, rtol=rtol, atol=atol)
+            case "ne":
+                try:
+                    return not bool(value.search(x))
+                except AttributeError:
+                    return x != value
+                except TypeError:
+                    raise ValueError(
+                        "Can't perform regular expression search on a "
+                        f"non-string: {x!r}"
+                    )
 
-        if operator == "ne":
-            try:
-                return not bool(value.search(x))
-            except AttributeError:
-                return x != value
-            except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    f"non-string: {x!r}"
-                )
+            case "lt":
+                _lt = getattr(x, "__query_lt__", None)
+                if _lt is not None:
+                    return _lt(value)
 
-        if operator == "lt":
-            _lt = getattr(x, "__query_lt__", None)
-            if _lt is not None:
-                return _lt(value)
+                return x < value
 
-            return x < value
+            case "le":
+                _le = getattr(x, "__query_le__", None)
+                if _le is not None:
+                    return _le(value)
 
-        if operator == "le":
-            _le = getattr(x, "__query_le__", None)
-            if _le is not None:
-                return _le(value)
+                return x <= value
 
-            return x <= value
+            case "ge":
+                _ge = getattr(x, "__query_ge_", None)
+                if _ge is not None:
+                    return _ge(value)
 
-        if operator == "ge":
-            _ge = getattr(x, "__query_ge_", None)
-            if _ge is not None:
-                return _ge(value)
+                return x >= value
 
-            return x >= value
+            case "wo":
+                _wo = getattr(x, "__query_wo__", None)
+                if _wo is not None:
+                    return _wo(value)
 
-        if operator == "wo":
-            _wo = getattr(x, "__query_wo__", None)
-            if _wo is not None:
-                return _wo(value)
+                return (x < value[0]) | (x > value[1])
 
-            return (x < value[0]) | (x > value[1])
+            case "set":
+                if isinstance(x, str):
+                    for v in value:
+                        try:
+                            if v.search(x):
+                                return True
+                        except AttributeError:
+                            if x == v:
+                                return True
 
-        if operator == "set":
-            if isinstance(x, str):
-                for v in value:
-                    try:
-                        if v.search(x):
-                            return True
-                    except AttributeError:
-                        if x == v:
-                            return True
+                    return False
+                else:
+                    _set = getattr(x, "__query_set__", None)
+                    if _set is not None:
+                        return _set(value)
 
-                return False
-            else:
-                _set = getattr(x, "__query_set__", None)
-                if _set is not None:
-                    return _set(value)
+                    i = iter(value)
+                    v = next(i)
+                    out = x == v
+                    for v in i:
+                        out |= x == v
 
-                i = iter(value)
-                v = next(i)
-                out = x == v
-                for v in i:
-                    out |= x == v
-
-                return out
+                    return out
 
     def inspect(self):
         """Inspect the object for debugging.

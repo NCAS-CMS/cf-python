@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.Constructs &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=64e044ff"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=5318ce95"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=b578dfe4"></script>
@@ -29,9 +29,8 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
-
   
-  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
   <div class="document">
@@ -44,7 +43,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.18.2</a></h1>
 
 
 
@@ -132,20 +131,20 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cf.Constructs">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">Constructs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auxiliary_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_use_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.1/cf/constructs.py#L11-L205"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Constructs" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">Constructs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auxiliary_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_use_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.2/cf/constructs.py#L11-L205"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Constructs" title="Link to this definition">¶</a></dt>
 <dd><p>A container for metadata constructs.</p>
-<p>The container has similarities to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> in that it presents the
+<p>The container has similarities to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> in that it presents the
 metadata constructs as key/value pairs, where the key is the
 unique identifier that corresponds to a metadata construct value;
 is indexable by metadata construct identifier; and provides a
 subset of the usual dictionary methods: <a class="reference internal" href="../method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>, <a class="reference internal" href="../method/cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>, <a class="reference internal" href="../method/cf.Constructs.keys.html#cf.Constructs.keys" title="cf.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>,
 and <a class="reference internal" href="../method/cf.Constructs.values.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>. The number of constructs (which may be zero) can be
-found via the Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a> function. The container can be
-converted to an actual <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with the <a class="reference internal" href="../method/cf.Constructs.todict.html#cf.Constructs.todict" title="cf.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a> method.</p>
+found via the Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a> function. The container can be
+converted to an actual <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with the <a class="reference internal" href="../method/cf.Constructs.todict.html#cf.Constructs.todict" title="cf.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a> method.</p>
 <p><strong>Filtering</strong></p>
 <p>A subset of the metadata constructs can be defined and returned in
 a new <a class="reference internal" href="#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance by using the various filter
-methods. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for more details.</p>
+methods. See <a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for more details.</p>
 <p><strong>Calling</strong></p>
 <p>Calling a <a class="reference internal" href="#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance also creates a new <a class="reference internal" href="#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a>
 instance that contains a subset of the metadata constructs,
@@ -176,52 +175,52 @@ either <code class="docutils literal notranslate"><span class="pre">x</span> <sp
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>auxiliary_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of auxiliary coordinate
+<dt>auxiliary_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of auxiliary coordinate
 constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">auxiliary_coordinate='auxiliarycoordinate'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>dimension_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of dimension coordinate
+<dt>dimension_coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of dimension coordinate
 constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dimension_coordinate='dimensioncoordinate'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>domain_ancillary: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain ancillary constructs.</p>
+<dt>domain_ancillary: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain ancillary constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_ancillary='domainancillary'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>field_ancillary: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of field ancillary constructs.</p>
+<dt>field_ancillary: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of field ancillary constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">field_ancillary='fieldancillary'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>cell_measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell measure constructs.</p>
+<dt>cell_measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell measure constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cell_measure='cellmeasure'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>coordinate_reference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of coordinate reference
+<dt>coordinate_reference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of coordinate reference
 constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">coordinate_reference='coordinatereference'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>domain_axis: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain axis constructs.</p>
+<dt>domain_axis: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain axis constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_axis='domainaxis'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>domain_topology: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain topology constructs.</p>
+<dt>domain_topology: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of domain topology constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'domaintopology'</span></code></p>
 </dd>
@@ -230,7 +229,7 @@ constructs.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
 </div>
 </dd>
-<dt>cell_connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell connectivity
+<dt>cell_connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell connectivity
 constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'cellconnectivity'</span></code></p>
@@ -240,7 +239,7 @@ constructs.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
 </div>
 </dd>
-<dt>cell_method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell method constructs.</p>
+<dt>cell_method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The base name for keys of cell method constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cell_method='cellmethod'</span></code></p>
 </dd>
@@ -257,11 +256,11 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cf.Constructs(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy metadata constructs
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy metadata constructs
 from those of <em>source</em> prior to initialisation, else they
 are not deep copied.</p>
 </dd>
-<dt>_ignore: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Ignores the given construct types.</p>
+<dt>_ignore: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Ignores the given construct types.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">_ignore=('cell_method',</span> <span class="pre">'field_ancillary')</span></code></p>
 </dd>
@@ -438,10 +437,10 @@ are not deep copied.</p>
 <td><p>Implements membership test operators for construct keys.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.__copy__.html#cf.Constructs.__copy__" title="cf.Constructs.__copy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__copy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.copy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.copy</span></code></a> standard library function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.copy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.copy</span></code></a> standard library function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.__deepcopy__.html#cf.Constructs.__deepcopy__" title="cf.Constructs.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> standard library function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> standard library function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.__getitem__.html#cf.Constructs.__getitem__" title="cf.Constructs.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a construct with the given key.</p></td>
@@ -453,10 +452,10 @@ are not deep copied.</p>
 <td><p>Return the number of constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Constructs.__repr__.html#cf.Constructs.__repr__" title="cf.Constructs.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Constructs.__str__.html#cf.Constructs.__str__" title="cf.Constructs.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -471,11 +470,11 @@ are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-08-20.
+      &copy;2025, NCAS | Page built on 2025-10-16.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
       
     </div>
 
