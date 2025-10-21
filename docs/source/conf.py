@@ -145,7 +145,7 @@ autodoc_default_flags = [
 
 intersphinx_cache_limit = 5  # days to keep the cached inventories
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master", None),
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
@@ -153,12 +153,12 @@ intersphinx_mapping = {
     "cftime": ("https://unidata.github.io/cftime", None),
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
-    "cfplot": ("https://ncas-cms.github.io/cf-plot/build/", None),
+    "cfplot": ("https://ncas-cms.github.io/cf-plot", None),
     "dask": ("https://docs.dask.org/en/latest", None),
-    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
     # REVIEW: h5: new intersphinx mapping
     "h5netcdf": ("https://h5netcdf.org", None),
-    "zarr": ("https://zarr.readthedocs.io/en/stable/", None),
+    "zarr": ("https://zarr.readthedocs.io/en/stable", None),
 }
 
 # This extension is meant to help with the common pattern of having
@@ -387,16 +387,18 @@ sphinx_gallery_conf = {
     "examples_dirs": "recipes",  # path to recipe files
     "gallery_dirs": "recipes",  # path to save gallery generated output
     "run_stale_examples": False,
-    "reference_url": {"cf": None},
+    # Below setting can be buggy: see:
+    # https://github.com/sphinx-gallery/sphinx-gallery/issues/967
+    #"reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf",),
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
-    "default_thumb_file": "_static/logo.svg",
+    "default_thumb_file": "_static/cf-recipe-placeholder-squarecrop.png",
     "image_scrapers": (
         "matplotlib",
     ),  # Ensures Matplotlib images are captured
-    "plot_gallery": "True",  # Enables plot rendering
+    "plot_gallery": True,  # Enables plot rendering
     "reset_modules": ("matplotlib",),  # Helps with memory management
     "capture_repr": (),
 }
