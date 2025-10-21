@@ -148,7 +148,7 @@ intersphinx_mapping = {
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
     #   'netCDF4': ("https://unidata.github.io/netcdf4-python", None),
     "cftime": ("https://unidata.github.io/cftime", None),
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
