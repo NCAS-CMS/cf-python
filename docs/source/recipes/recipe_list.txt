@@ -38,3 +38,9 @@ plot_19_recipe.html#sphx-glr-recipes-plot-19-recipe-py
 <div class="sphx-glr-thumbcontainer collapse subspace subplot lineplot" tooltip="Collapse, Subspace, Subplot, Lineplot">
 plot_20_recipe.html#sphx-glr-recipes-plot-20-recipe-py
 <div class="sphx-glr-thumbcontainer subspace contourmap vectorplot maths masking" tooltip="Subspace, Contourmap, Vectorplot, Mathematical Operations, Mask">
+plot_21_recipe.html#sphx-glr-recipes-plot-21-recipe-py
+<div class="sphx-glr-thumbcontainer maths stats" tooltip="Mathematical Operations, Statistical Operations">
+plot_22_recipe.html#sphx-glr-recipes-plot-22-recipe-py
+<div class="sphx-glr-thumbcontainer subspace maths" tooltip="Subspace, Mathematical Operations">
+plot_23_recipe.html#sphx-glr-recipes-plot-23-recipe-py
+<div class="sphx-glr-thumbcontainer subspace subplot vectorplot" tooltip="Subspace, Subplot, Vectorplot">
