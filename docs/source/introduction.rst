@@ -142,7 +142,7 @@ See the `cf-plot gallery
 <https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide range
 of plotting possibilities with example code.
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
    *Example output of cf-plot displaying a cf field construct.*
 

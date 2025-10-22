@@ -547,7 +547,7 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
    *Example output of cf-plot displaying a cf field construct.*
 
