@@ -7,7 +7,7 @@ In this recipe we will explore various methods to apply a mathematical operation
 There are various options to do this, the recommended option is to use `cf native functions <https://ncas-cms.github.io/cf-python/class/cf.Field.html#mathematical-operations>`_, as they preserve units and metadata associated with fields. Sometimes, however, the function you need is not implemented in cf, so there are alternative methods.
 """
 
-#%% [markdown]
+# %% [markdown]
 #
 # .. figure:: ../images/data-operations-flowchart.png
 #    :scale: 50 %
@@ -16,18 +16,18 @@ There are various options to do this, the recommended option is to use `cf nativ
 #    It is recommended to use the highest possible implementation of a given function as shown by the chart.
 #
 
-#%%
+# %%
 # 1. Import cf-python:
 
 import cf
 
-#%%
+# %%
 # 2. Read the template field constructs from the example:
 
 f = cf.example_field(1)
 print(f)
 
-#%% [markdown]
+# %% [markdown]
 #
 # 1: Native cf
 # ------------
@@ -37,19 +37,19 @@ print(f)
 # Additionally, where a function or operation has a specific domain, cf will mask any erroneous elements that were not processed properly.
 #
 
-#%%
+# %%
 # 1. Create an instance of the template field to work with:
 
 field1 = f.copy()
 
-#%%
+# %%
 # 2. Calculate the sine of the elements in the data array:
 
 new_field = field1.sin()
 
 print(new_field.data)
 
-#%%
+# %%
 # Alternatively, we can update the original field in place using the ``inplace`` parameter:
 
 field1.sin(inplace=True)
@@ -59,10 +59,10 @@ print(field1.data)
 # cf will automatically update the units of our field depending on the operation.
 # Here, since the sine is a dimensionless value, we get the units "1".
 
-print(f.units) # Original
-print(field1.units) # After operation
+print(f.units)  # Original
+print(field1.units)  # After operation
 
-#%% [markdown]
+# %% [markdown]
 #
 # 2: Dask
 # -------
@@ -83,24 +83,24 @@ print(field1.units) # After operation
 # from outside of cf.
 #
 
-#%%
+# %%
 # 1. Import the necessary Dask module:
 
 import dask as da
 
-#%%
+# %%
 # 2. Create an instance of the template field to work with:
 
 field2 = f.copy()
 
-#%%
+# %%
 # 3. Load the data from the field as a Dask array:
 
 data = field2.data
 
 dask_array = data.to_dask_array()
 
-#%%
+# %%
 # 4. Create a new field, calculate the sine of the elements,
 # and write the array to the new field:
 
@@ -112,26 +112,26 @@ new_field.set_data(calculated_array)
 
 print(new_field.data)
 
-#%%
+# %%
 # 5. Manually update the units:
 
-new_field.override_units('1', inplace=True)
+new_field.override_units("1", inplace=True)
 
 print(new_field.units)
 
-#%%
+# %%
 # To instead update the original field in place, as before:
 
 calculated_array = da.array.sin(dask_array)
 
 field2.set_data(calculated_array)
 
-field2.override_units('1', inplace=True)
+field2.override_units("1", inplace=True)
 
 print(field2.data)
 print(field2.units)
 
-#%% [markdown]
+# %% [markdown]
 #
 # 3: NumPy Universal Functions
 # ----------------------------
@@ -145,17 +145,17 @@ print(field2.units)
 # As above, take care to manually update any metadata for the new field.
 #
 
-#%%
+# %%
 # 1. Import NumPy:
 
 import numpy as np
 
-#%%
+# %%
 # 2. Create an instance of the template field to work with:
 
 field3 = f.copy()
 
-#%%
+# %%
 # 3. Create a new field, compute the sine of the elements,
 # and write the array to the new field:
 
@@ -167,14 +167,14 @@ new_field.set_data(calculated_array)
 
 print(new_field.data)
 
-#%%
+# %%
 # 4. Manually update the units:
 
-new_field.override_units('1', inplace=True)
+new_field.override_units("1", inplace=True)
 
 print(new_field.units)
 
-#%% [markdown]
+# %% [markdown]
 #
 # 4: NumPy Vectorization
 # ----------------------
@@ -187,22 +187,22 @@ print(new_field.units)
 # array and applying the function.
 #
 
-#%%
+# %%
 # 1. Import our third-party function; here, from the ``math`` module:
 
 import math
 
-#%%
+# %%
 # 2. Create an instance of the template field to work with:
 
 field4 = f.copy()
 
-#%%
+# %%
 # 3. Vectorize the function with NumPy:
 
 vectorized_function = np.vectorize(math.sin)
 
-#%%
+# %%
 # 4. Create a new field, calculate the sine of the elements,
 # and write the array to the new field:
 
@@ -214,14 +214,14 @@ new_field.set_data(calculated_array)
 
 print(new_field.data)
 
-#%%
+# %%
 # 5. Manually update the units:
 
-new_field.override_units('1', inplace=True)
+new_field.override_units("1", inplace=True)
 
 print(new_field.units)
 
-#%% [markdown]
+# %% [markdown]
 #
 # Performance
 # -----------
