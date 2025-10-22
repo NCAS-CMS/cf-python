@@ -475,7 +475,6 @@ from os.path import dirname, relpath
 
 import cf
 
-link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
@@ -485,7 +484,6 @@ def linkcode_resolve(domain, info):
     #
     # >> rm -fr build/.doctrees build/*/.doctrees build/*/*/.doctrees
     # =================================================================
-
     online_source_code = True
 
     if domain != "py":
@@ -549,6 +547,8 @@ def linkcode_resolve(domain, info):
                 cfdm_version, fn, linespec
             )
         else:
+            link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
+
             # Point to on-line cf
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
             url = "https://github.com/NCAS-CMS/cf-python/blob/v{0}/cf/{1}{2}".format(
