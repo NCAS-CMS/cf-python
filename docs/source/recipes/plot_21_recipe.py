@@ -9,7 +9,7 @@ There are various options to do this, the recommended option is to use `cf nativ
 
 #%% [markdown]
 #
-# .. figure:: ../../sample-gallery-1/cf-flowchart.png
+# .. figure:: ../images/data-operations-flowchart.png
 #    :scale: 50 %
 #    :alt: flowchart showing process of location a function in cf, then in Dask, then in NumPy, and finally vectorising it with NumPy.
 #
