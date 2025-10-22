@@ -28,7 +28,7 @@ import dask.array as da
 #%%
 # 2. Read example data field constructs, and set region for our plots:
 
-f = cf.read(f"data1.nc")
+f = cf.read(f"~/recipes/data1.nc")
 
 u = f.select_by_identity("eastward_wind")[0]
 v = f.select_by_identity("northward_wind")[0]

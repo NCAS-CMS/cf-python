@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 # %%
 # 2. Read the field constructs and load the wind speed component fields:
 
-f = cf.read('data1.nc')
+f = cf.read('~/recipes/data1.nc')
 print(f)
 
 U = f[2].squeeze() # Easterly wind speed component
