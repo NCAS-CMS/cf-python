@@ -6,28 +6,28 @@ from uuid import uuid4
 
 import cfdm
 import cftime
-import dask.array as da
+#import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
 from cfdm.read_write.exceptions import DatasetTypeError
-from dask.array.core import getter, normalize_chunks
-from dask.base import tokenize
+#from dask.array.core import getter, normalize_chunks
+#from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
 
-from ... import __Conventions__, __version__
-from ...constants import _stash2standard_name
-from ...data import Data
-from ...data.array import UMArray
-from ...decorators import (
+from cf import __Conventions__, __version__
+from cf.constants import _stash2standard_name
+from cf.data import Data
+from cf.data.array import UMArray
+from cf.decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
 )
-from ...functions import abspath
-from ...functions import atol as cf_atol
-from ...functions import load_stash2standard_name
-from ...functions import rtol as cf_rtol
-from ...umread_lib.umfile import File
-from ...units import Units
+from cf.functions import abspath
+from cf.functions import atol as cf_atol
+from cf.functions import load_stash2standard_name
+from cf.functions import rtol as cf_rtol
+from cf.umread_lib.umfile import File
+from cf.units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -2005,6 +2005,10 @@ class UMField:
             `Data`
 
         """
+        import dask.array as da
+        from dask.base import tokenize
+        from dask.array.core import getter, normalize_chunks
+
         if self.info:
             logger.info("Creating data:")  # pragma: no cover
 
@@ -3243,6 +3247,8 @@ class UMField:
                 An independent copy of the new data.
 
         """
+        from dask.base import tokenize
+
         token = tokenize(array, units)
         data = _cached_data.get(token)
         if data is None:

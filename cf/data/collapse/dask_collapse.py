@@ -11,11 +11,11 @@ from operator import mul
 
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
-from dask.array import chunk
-from dask.array.core import _concatenate2
-from dask.array.reductions import divide, numel
-from dask.core import flatten
-from dask.utils import deepmap
+#from dask.array import chunk
+#from dask.array.core import _concatenate2
+#from dask.array.reductions import divide #, numel
+#from dask.core import flatten
+#from dask.utils import deepmap
 
 from .collapse_active import actify
 from .collapse_utils import double_precision_dtype
@@ -145,6 +145,8 @@ def sum_weights_chunk(
     if np.ma.is_masked(x):
         weights = np.ma.masked_where(x.mask, weights)
 
+    from dask.array import chunk
+
     return chunk.sum(weights, dtype=dtype, **kwargs)
 
 
@@ -167,6 +169,9 @@ def combine_arrays(
         `numpy.ndarray`
 
     """
+    from dask.utils import deepmap
+    from dask.array.core import _concatenate2
+
     x = deepmap(lambda pair: pair[key], pairs) if not computing_meta else pairs
 
     if dtype:
@@ -182,6 +187,8 @@ def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     .. versionadded:: 3.14.0
 
     """
+    from dask.array import chunk
+
     return combine_arrays(
         pairs, key, chunk.sum, axis, dtype, computing_meta, **kwargs
     )
@@ -193,6 +200,8 @@ def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     .. versionadded:: 3.14.0
 
     """
+    from dask.array import chunk
+
     return combine_arrays(
         pairs, key, chunk.max, axis, dtype, computing_meta, **kwargs
     )
@@ -204,6 +213,8 @@ def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     .. versionadded:: 3.14.0
 
     """
+    from dask.array import chunk
+
     return combine_arrays(
         pairs, key, chunk.min, axis, dtype, computing_meta, **kwargs
     )
@@ -216,6 +227,8 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
     .. versionadded:: 3.14.0
 
     """
+    from dask.array import chunk
+
     return combine_arrays(
         pairs,
         "N",
@@ -310,6 +323,8 @@ def cf_mean_combine(
         As for `cf_mean_chunk`.
 
     """
+    from dask.core import flatten
+
     if not isinstance(pairs, list):
         pairs = [pairs]
 
@@ -368,6 +383,8 @@ def cf_mean_agg(
     if computing_meta:
         return d
 
+    from dask.array.reductions import divide
+
     x = divide(d["sum"], d["V1"], dtype=dtype)
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
@@ -402,6 +419,8 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
         return x
 
     x = cfdm_to_memory(x)
+
+    from dask.array import chunk
 
     return {
         "max": chunk.max(x, **kwargs),
@@ -522,6 +541,8 @@ def cf_mid_range_agg(
         return d
 
     # Calculate the mid-range
+    from dask.array.reductions import divide
+        
     x = divide(d["max"] + d["min"], 2.0, dtype=dtype)
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
@@ -556,6 +577,8 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
         return x
 
     x = cfdm_to_memory(x)
+
+    from dask.array import chunk
 
     return {
         "min": chunk.min(x, **kwargs),
@@ -666,6 +689,8 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
 
     # N, max
     d = cf_max_chunk(x, **kwargs)
+
+    from dask.array import chunk
 
     d["min"] = chunk.min(x, **kwargs)
     return d
@@ -867,9 +892,13 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
         #       dtype=ndtype)". See
         #       https://github.com/numpy/numpy/issues/28255 for more
         #       details.
+        from dask.array import chunk
+
         x = np.ma.array(np.ones((x.shape), dtype=x.dtype), mask=x.mask)
         N = chunk.sum(x, **kwargs)
     else:
+        from dask.array.reductions import numel
+        
         if dtype:
             kwargs["dtype"] = dtype
 
@@ -1009,6 +1038,9 @@ def cf_sum_chunk(
         x = np.multiply(x, weights, dtype=dtype)
 
     d = cf_sample_size_chunk(x, **kwargs)
+
+    from dask.array import chunk
+
     d["sum"] = chunk.sum(x, dtype=dtype, **kwargs)
     return d
 
@@ -1226,6 +1258,8 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
             The unique values.
 
     """
+    from dask.utils import deepmap
+    
     x = (
         deepmap(lambda pair: pair["unique"], pairs)
         if not computing_meta
@@ -1233,6 +1267,8 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
     )
     if computing_meta:
         return x
+
+    from dask.array.core import _concatenate2
 
     x = _concatenate2(x, axes=[0])
     return np.unique(x)
@@ -1306,6 +1342,9 @@ def cf_var_chunk(
     if computing_meta:
         return x
 
+    from dask.array.reductions import divide
+    from dask.array import chunk
+
     x = cfdm_to_memory(x)
 
     weighted = weights is not None
@@ -1361,6 +1400,8 @@ def cf_var_combine(
         As for `cf_var_chunk`.
 
     """
+    from dask.core import flatten
+    
     if not isinstance(pairs, list):
         pairs = [pairs]
 

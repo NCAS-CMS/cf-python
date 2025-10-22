@@ -6,14 +6,14 @@ from operator import mul
 
 import cfdm
 import cftime
-import dask.array as da
+#import dask.array as da
 import numpy as np
 from cfdm.data.dask_utils import cfdm_where
 from cfdm.data.utils import new_axis_identifier
-from dask import compute, delayed  # noqa: F401
-from dask.array.core import normalize_chunks
-from dask.base import is_dask_collection, tokenize
-from dask.highlevelgraph import HighLevelGraph
+#from dask import compute, delayed  # noqa: F401
+#from dask.array.core import normalize_chunks
+#from dask.base import is_dask_collection, tokenize
+#from dask.highlevelgraph import HighLevelGraph
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked
@@ -186,6 +186,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         False
 
         """
+        import dask.array as da
+        from dask.base import is_dask_collection
+
         # Check that value is scalar by seeing if its shape is ()
         shape = getattr(value, "shape", None)
         if shape is None:
@@ -549,6 +552,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.0 1.0 -- 0.0]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = self.to_dask_array()
@@ -726,6 +731,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [ 1  1  1 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         org_units = d.Units
@@ -1192,7 +1199,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        import dask.array as da
         from dask.core import flatten
+        from dask.base import is_dask_collection, tokenize        
+        from dask.array.core import normalize_chunks        
+        from dask.highlevelgraph import HighLevelGraph
 
         # TODODASKAPI: interpolation -> method
         if interpolation is not None:
@@ -1336,6 +1347,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.ceil(dx)
@@ -2283,6 +2296,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
+        from dask import delayed
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
@@ -2357,6 +2371,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         src_mask = operator.src_mask
         if src_mask is not None:
+            import dask.array as da
+
             src_mask = da.asanyarray(src_mask)
 
         weights_dst_mask = delayed(regrid_weights, pure=True)(
@@ -2781,6 +2797,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         True
 
         """
+        import dask.array as da
+
         # 'cf_is_masked' has its own call to 'cfdm_to_memory', so we
         # can set '_force_to_memory=False'.
         dx = self.to_dask_array(_force_to_memory=False)
@@ -2946,6 +2964,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          0.5404195002705842 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -3102,6 +3122,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -3350,6 +3372,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
+            import dask.array as da
+
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
@@ -3434,6 +3458,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
+            import dask.array as da
+
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
@@ -4349,6 +4375,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [8. 9. 9. 9.]]
 
         """
+        import dask.array as da
+
         if units is not None:
             # Convert the limits to the same units as the data array
             units = self._Units_class(units)
@@ -4436,6 +4464,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [90.0 -90.0]
 
         """
+        import dask.array as da
 
         x1 = conform_units(x1, x2.Units)
 
@@ -4502,6 +4531,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [9]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -4565,6 +4596,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -4629,6 +4662,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         8
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array()
         dx = da.ma.count(
@@ -5033,6 +5068,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         units = self.Units
@@ -5474,6 +5511,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.floor(dx))
@@ -5534,6 +5573,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
           [18 21 24 27]]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         shape = d.shape
@@ -5925,6 +5966,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         <CF Data(3): [--, 0.5, --]>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.ma.masked_invalid(dx)
@@ -6182,6 +6225,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ True  True  True]
 
         """
+        import dask.array as da
+
         a = np.empty((), dtype=self.dtype)
         b = np.empty((), dtype=da.asanyarray(y).dtype)
         try:
@@ -6313,6 +6358,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.rint(dx))
@@ -6436,6 +6483,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.round(dx, decimals=decimals))
@@ -6612,6 +6661,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
+        from dask import compute,delayed
+        
         no_weights = (
             "minimum",
             "median",
@@ -6698,6 +6749,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.swapaxes(dx, axis0, axis1)
@@ -7024,6 +7077,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         x, y = xy
 
         # Apply the where operation
+        import dask.array as da
+
         dx = da.core.elemwise(cfdm_where, dx, condition, x, y, d.hardmask)
         d._set_dask(dx)
 
@@ -7079,6 +7134,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7140,6 +7197,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7199,6 +7258,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7261,6 +7322,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7292,6 +7355,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `Data` or `None`
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
 
@@ -7361,6 +7426,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7468,6 +7535,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.trunc(dx)
@@ -7543,6 +7612,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     dtype=float64)
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -7722,6 +7793,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         #               "shift,axis=", and the default axis behaviour
         #               of a flattened roll followed by shape
         #               restore
+        import dask.array as da
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -8388,6 +8460,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.0 1.0 6.25 -- 16.0]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.square(dx, dtype=dtype)
@@ -8457,6 +8531,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-- 1.0 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.sqrt(dx, dtype=dtype)

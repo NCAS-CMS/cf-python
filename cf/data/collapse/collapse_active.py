@@ -4,10 +4,10 @@ import time
 from functools import wraps
 from numbers import Integral
 
-try:
-    from activestorage import Active
-except ModuleNotFoundError:
-    pass
+#try:
+#    from activestorage import Active
+#except ModuleNotFoundError:
+#    pass
 
 from ...functions import (
     active_storage,
@@ -184,6 +184,8 @@ def active_chunk_function(method, *args, **kwargs):
     # reason, then this will trigger (inside `actify`) a local
     # reduction being carried out instead.
     # ----------------------------------------------------------------
+    from activestorage import Active
+    
     filename = x.get_filename()
     address = x.get_address()
     max_requests = active_storage_max_requests()

@@ -9,7 +9,7 @@ from functools import partial
 
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
-from scipy.ndimage import convolve1d
+#from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..units import Units
@@ -73,6 +73,8 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
+    from scipy.ndimage import convolve1d
+
     a = cfdm_to_memory(a)
 
     # Cast to float to ensure that NaNs can be stored

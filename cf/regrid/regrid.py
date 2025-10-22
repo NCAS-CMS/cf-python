@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-import dask.array as da
+#import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug
 
@@ -13,26 +13,26 @@ from ..functions import DeprecationError, free_memory, regrid_logging
 from ..units import Units
 from .regridoperator import RegridOperator
 
-esmpy_imported = True
-try:
-    import esmpy
-except ImportError:
-    esmpy_imported = False
+#esmpy_imported = True
+#try:
+#    import esmpy
+#except ImportError:
+#    esmpy_imported = False
 
 logger = logging.getLogger(__name__)
 
 # Mapping of regrid method strings to esmpy method codes. The values
-# get replaced with `esmpy.RegridMethod` constants the first time
+# get created with `esmpy.RegridMethod` constants the first time
 # `esmpy_initialise` is run.
 esmpy_methods = {
-    "linear": None,
-    "bilinear": None,
-    "conservative": None,
-    "conservative_1st": None,
-    "conservative_2nd": None,
-    "nearest_dtos": None,
-    "nearest_stod": None,
-    "patch": None,
+#    "linear": None,
+#    "bilinear": None,
+#    "conservative": None,
+#    "conservative_1st": None,
+#    "conservative_2nd": None,
+#    "nearest_dtos": None,
+#    "nearest_stod": None,
+#    "patch": None,
 }
 
 
@@ -1909,7 +1909,9 @@ def esmpy_initialise():
             The `esmpy` manager.
 
     """
-    if not esmpy_imported:
+    try:
+        import esmpy
+    except ImportError:
         raise RuntimeError(
             "Regridding will not work unless the esmpy library is installed"
         )
@@ -1962,6 +1964,8 @@ def create_esmpy_grid(grid, mask=None, grid_partitions=1):
             grid partition.
 
     """
+    import esmpy
+        
     debug = is_log_level_debug(logger)
 
     if mask is not None:
@@ -2247,6 +2251,8 @@ def create_esmpy_mesh(grid, mask=None, grid_partitions=1):
             grid partition.
 
     """
+    import esmpy
+        
     debug = is_log_level_debug(logger)
 
     if grid.mesh_location != "face":
@@ -2385,6 +2391,8 @@ def create_esmpy_locstream(grid, mask=None, grid_partitions=1):
             each grid partition.
 
     """
+    import esmpy
+        
     debug = is_log_level_debug(logger)
 
     if mask is not None:
@@ -2563,6 +2571,7 @@ def create_esmpy_weights(
                    written to, a file. Otherwise `False`.
 
     """
+    import esmpy
     from cfdm import integer_dtype
 
     debug = is_log_level_debug(logger)
@@ -3073,6 +3082,8 @@ def get_mask(f, grid):
             The Boolean mask.
 
     """
+    import dask.array as da
+    
     regrid_axes = grid.axis_indices
 
     index = [slice(None) if i in regrid_axes else 0 for i in range(f.ndim)]
