@@ -662,7 +662,7 @@ def regrid_weights(operator, dst_dtype=None):
     dst_mask = operator.dst_mask
     if dst_mask is not None:
         from math import prod
-        
+
         # Convert dst_mask to a 1-d array
         dst_mask = dst_mask.reshape((prod(operator.dst_shape),))
 

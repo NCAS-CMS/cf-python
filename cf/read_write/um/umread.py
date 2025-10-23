@@ -6,12 +6,9 @@ from uuid import uuid4
 
 import cfdm
 import cftime
-#import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
 from cfdm.read_write.exceptions import DatasetTypeError
-#from dask.array.core import getter, normalize_chunks
-#from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
 
 from cf import __Conventions__, __version__
@@ -2006,8 +2003,8 @@ class UMField:
 
         """
         import dask.array as da
-        from dask.base import tokenize
         from dask.array.core import getter, normalize_chunks
+        from dask.base import tokenize
 
         if self.info:
             logger.info("Creating data:")  # pragma: no cover

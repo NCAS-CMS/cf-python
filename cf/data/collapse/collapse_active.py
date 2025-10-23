@@ -4,17 +4,18 @@ import time
 from functools import wraps
 from numbers import Integral
 
-#try:
-#    from activestorage import Active
-#except ModuleNotFoundError:
-#    pass
-
 from ...functions import (
     active_storage,
     active_storage_max_requests,
     active_storage_url,
     is_log_level_info,
 )
+
+# try:
+#    from activestorage import Active
+# except ModuleNotFoundError:
+#    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +186,7 @@ def active_chunk_function(method, *args, **kwargs):
     # reduction being carried out instead.
     # ----------------------------------------------------------------
     from activestorage import Active
-    
+
     filename = x.get_filename()
     address = x.get_address()
     max_requests = active_storage_max_requests()

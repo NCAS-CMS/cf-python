@@ -725,7 +725,7 @@ class read(cfdm.read):
         # ------------------------------------------------------------
         # Try to read as a GRIB dataset
         #
-        # Not yet availabl. When (if!) the time comes, the framework
+        # Not yet available. When (if!) the time comes, the framework
         # will be:
         # ------------------------------------------------------------
         #

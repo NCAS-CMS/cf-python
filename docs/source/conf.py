@@ -389,7 +389,7 @@ sphinx_gallery_conf = {
     "run_stale_examples": False,
     # Below setting can be buggy: see:
     # https://github.com/sphinx-gallery/sphinx-gallery/issues/967
-    #"reference_url": {"cf": None},
+    # "reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf",),
     "inspect_global_variables": True,
@@ -474,7 +474,6 @@ import inspect
 from os.path import dirname, relpath
 
 import cf
-
 
 
 def linkcode_resolve(domain, info):

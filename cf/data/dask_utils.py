@@ -9,10 +9,11 @@ from functools import partial
 
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
-#from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..units import Units
+
+# from scipy.ndimage import convolve1d
 
 
 def cf_contains(a, value):

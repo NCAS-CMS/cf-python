@@ -3,8 +3,6 @@ from numbers import Integral
 
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
-#from dask.array.slicing import normalize_index
-#from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -254,7 +252,7 @@ class FieldDomain:
         """
         from dask.array.slicing import normalize_index
         from dask.base import is_dask_collection
-                        
+
         debug = is_log_level_debug(logger)
 
         # Parse mode and halo
@@ -827,7 +825,7 @@ class FieldDomain:
                 # Note: We're about to make 'indices' inconsistent
                 #       with 'ind', but that's OK because we're not
                 #       going to use 'ind' again as 'create_mask' is
-                #       False.                
+                #       False.
                 reduced_halo = False
                 for axis in item_axes:
                     index = indices[axis]

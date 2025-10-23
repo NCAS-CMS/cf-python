@@ -21,15 +21,10 @@ from urllib.parse import urljoin, urlparse
 import cfdm
 import netCDF4
 import numpy as np
-#from dask.base import is_dask_collection
 from psutil import virtual_memory
 
 from . import __file__, __version__
-from .constants import (
-#    CONSTANTS,
-    OperandBoundsCombination,
-    _stash2standard_name,
-)
+from .constants import OperandBoundsCombination, _stash2standard_name
 from .docstring import _docstring_substitution_definitions
 
 
@@ -467,9 +462,9 @@ def _configuration(_Configuration, **kwargs):
 
     old = ConstantAccess.constants(copy=True)
 
-#    old = {name.lower(): val for name, val in CONSTANTS.items()}
-#
-#    old.pop("total_memory", None)
+    #    old = {name.lower(): val for name, val in CONSTANTS.items()}
+    #
+    #    old.pop("total_memory", None)
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -2082,7 +2077,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 
     """
     from dask.base import is_dask_collection
-    
+
     shape = []
     for index, full_size in zip(indices, full_shape):
         if isinstance(index, slice):
@@ -3222,6 +3217,8 @@ def environment(display=True, paths=True):
     cf: 3.18.0
 
     """
+    #    regridding =  _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
+
     # Get cfdm env
     out = cfdm.environment(display=False, paths=paths)
 
@@ -3232,6 +3229,7 @@ def environment(display=True, paths=True):
         ),
         "psutil": _get_module_info("psutil"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
+        "activestorage": _get_module_info("activestorage", try_except=True),
         "cfplot": _get_module_info("cfplot", try_except=True),
         "cf": (__version__, _os_path_abspath(__file__)),
     }

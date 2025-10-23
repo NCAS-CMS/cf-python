@@ -6,7 +6,6 @@ from operator import itemgetter
 
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-#from dask.base import tokenize
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .data import Data
@@ -1987,7 +1986,7 @@ class _Meta:
 
         """
         from dask.base import tokenize
-        
+
         out = []
         for x in cell_conditions:
             if x is None:
@@ -4059,7 +4058,7 @@ def _get_hfl(
     except ValueError:
         # Slow
         from dask.base import tokenize
-        
+
         hash_value = tokenize(d.compute())
 
     if hash_value in hash_map:

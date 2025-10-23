@@ -1,72 +1,8 @@
-import logging
-import sys
 from enum import Enum, auto
-#from tempfile import gettempdir
 
 import numpy as np
-#from dask import config
-#from dask.utils import parse_bytes
-#from psutil import virtual_memory
 
 from .units import Units
-
-# --------------------------------------------------------------------
-# Find the total amount of memory, in bytes
-# --------------------------------------------------------------------
-#_TOTAL_MEMORY = float(virtual_memory().total)
-#
-#_CHUNKSIZE = "128 MiB"
-#config.set({"array.chunk-size": _CHUNKSIZE})
-#
-#
-#"""A dictionary of useful constants.
-#
-#Whilst the dictionary may be modified directly, it is safer to
-#retrieve and set the values with a function where one is
-#provided. This is due to interdependencies between some values.
-#
-#Note ATOL and RTOL are constants that in essence belong in this dict,
-#but since they can be read and manipulated directly from cfdm, it is
-#safest to work with ``cfdm.constants.CONSTANTS['ATOL']`` (and 'RTOL'
-#equivalent) instead of storing separately and synchronising them here
-#in cf.
-#
-#:Keys:
-#
-#    TOTAL_MEMORY: `float`
-#      Find the total amount of physical memory (in bytes).
-#
-#    CHUNKSIZE: `int`
-#      The Dask chunk size (in bytes). See `cf.chunksize`.
-#
-#    TEMPDIR: `str`
-#      The location to store temporary files. By default it is the
-#      default directory used by the :mod:`tempfile` module.
-#
-#    REGRID_LOGGING: `bool`
-#      Whether or not to enable `esmpy` logging. If it is logging is
-#      performed after every call to `esmpy`. By default logging is
-#      disabled.
-#
-#    LOG_LEVEL: `str`
-#      The minimal level of seriousness for which log messages are
-#      shown. See `cf.log_level`.
-#
-#"""
-#CONSTANTS = {
-#    "ATOL": sys.float_info.epsilon,
-#    "RTOL": sys.float_info.epsilon,
-#    "TEMPDIR": gettempdir(),
-#    "TOTAL_MEMORY": _TOTAL_MEMORY,
-#    "REGRID_LOGGING": False,
-#    "RELAXED_IDENTITIES": False,
-#    "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
-#    "BOUNDS_COMBINATION_MODE": "AND",
-#    "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
-#    "active_storage": False,
-#    "active_storage_url": None,
-#    "active_storage_max_requests": 100,
-#}
 
 masked = np.ma.masked
 

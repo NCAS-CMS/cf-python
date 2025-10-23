@@ -6,14 +6,9 @@ from operator import mul
 
 import cfdm
 import cftime
-#import dask.array as da
 import numpy as np
 from cfdm.data.dask_utils import cfdm_where
 from cfdm.data.utils import new_axis_identifier
-#from dask import compute, delayed  # noqa: F401
-#from dask.array.core import normalize_chunks
-#from dask.base import is_dask_collection, tokenize
-#from dask.highlevelgraph import HighLevelGraph
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked
@@ -1200,9 +1195,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         import dask.array as da
+        from dask.array.core import normalize_chunks
+        from dask.base import is_dask_collection, tokenize
         from dask.core import flatten
-        from dask.base import is_dask_collection, tokenize        
-        from dask.array.core import normalize_chunks        
         from dask.highlevelgraph import HighLevelGraph
 
         # TODODASKAPI: interpolation -> method
@@ -2297,6 +2292,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         from dask import delayed
+
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
@@ -6661,8 +6657,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
-        from dask import compute,delayed
-        
+        from dask import compute, delayed
+
         no_weights = (
             "minimum",
             "median",

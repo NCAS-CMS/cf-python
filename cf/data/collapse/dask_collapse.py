@@ -11,11 +11,6 @@ from operator import mul
 
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
-#from dask.array import chunk
-#from dask.array.core import _concatenate2
-#from dask.array.reductions import divide #, numel
-#from dask.core import flatten
-#from dask.utils import deepmap
 
 from .collapse_active import actify
 from .collapse_utils import double_precision_dtype
@@ -169,8 +164,8 @@ def combine_arrays(
         `numpy.ndarray`
 
     """
-    from dask.utils import deepmap
     from dask.array.core import _concatenate2
+    from dask.utils import deepmap
 
     x = deepmap(lambda pair: pair[key], pairs) if not computing_meta else pairs
 
@@ -542,7 +537,7 @@ def cf_mid_range_agg(
 
     # Calculate the mid-range
     from dask.array.reductions import divide
-        
+
     x = divide(d["max"] + d["min"], 2.0, dtype=dtype)
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
@@ -898,7 +893,7 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
         N = chunk.sum(x, **kwargs)
     else:
         from dask.array.reductions import numel
-        
+
         if dtype:
             kwargs["dtype"] = dtype
 
@@ -1259,7 +1254,7 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 
     """
     from dask.utils import deepmap
-    
+
     x = (
         deepmap(lambda pair: pair["unique"], pairs)
         if not computing_meta
@@ -1342,8 +1337,8 @@ def cf_var_chunk(
     if computing_meta:
         return x
 
-    from dask.array.reductions import divide
     from dask.array import chunk
+    from dask.array.reductions import divide
 
     x = cfdm_to_memory(x)
 
@@ -1401,7 +1396,7 @@ def cf_var_combine(
 
     """
     from dask.core import flatten
-    
+
     if not isinstance(pairs, list):
         pairs = [pairs]
 

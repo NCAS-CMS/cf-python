@@ -80,170 +80,29 @@ installation and source code.
 
 """
 
+import cfdm
+
+from packaging.version import Version
+
+
 __date__ = "2025-10-16"
 __version__ = "3.18.2"
-
-#_requires = (
-#    "numpy",
-#    "netCDF4",
-#    "cftime",
-#    "cfunits",
-#    "cfdm",
-#    "psutil",
-#    "dask",
-#    "packaging",
-#    "scipy",
-#    "distributed",
-#)
-#x = ", ".join(_requires)
-#_error0 = f"cf v{__version__} requires the modules {x}. "
-#
-#import importlib.util
-#from platform import python_version
-#
-#_found_esmpy = bool(importlib.util.find_spec("esmpy"))
-#
-#try:
-#    import packaging
-#    from packaging.version import Version
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "20.0"
-#    if Version(packaging.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
-#            f"Got {packaging.__version__} at {packaging.__file__}"
-#        )
-#
-#try:
-import cfdm
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    # Check the version of cfdm
-#    _minimum_vn = "1.12.3.1"
-#    _maximum_vn = "1.12.4.0"
-#    _cfdm_version = Version(cfdm.__version__)
-#    if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
-#        _maximum_vn
-#    ):
-#        raise RuntimeError(
-#            "Bad cfdm version: cf requires "
-#            f"{_minimum_vn}<=cfdm<{_maximum_vn}. "
-#            f"Got {_cfdm_version} at {cfdm.__file__}"
-#        )
-#
 __cf_version__ = cfdm.__cf_version__
 __Conventions__ = f"CF-{__cf_version__}"
 
-#try:
-#    import netCDF4
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _set_vn = "1.7.2"
-#    if Version(netCDF4.__version__) != Version(_set_vn):
-#        raise RuntimeError(
-#            "Bad netCDF4 version: cf requires "
-#            f"netCDF4=={_set_vn}. "
-#            f"Got {netCDF4.__version__} at {netCDF4.__file__}"
-#        )
-#
-#try:
-#    import numpy as np
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "2.0.0"
-#    if Version(np.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad numpy version: cf requires numpy>={_minimum_vn} "
-#            f"Got {np.__version__} at {np.__file__}"
-#        )
-#
-#try:
-#    import cftime
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "1.6.4"
-#    if Version(cftime.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
-#            f"Got {cftime.__version__} at {cftime.__file__}"
-#        )
-#
-#try:
-#    import cfunits
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "3.3.7"
-#    if Version(cfunits.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
-#            f"Got {cfunits.__version__} at {cfunits.__file__}"
-#        )
-#
-#try:
-#    import psutil
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "0.6.0"
-#    if Version(psutil.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad psutil version: cf requires psutil>={_minimum_vn}. "
-#            f"Got {psutil.__version__} at {psutil.__file__}"
-#        )
-#
-## Check the version of dask
-#try:
-#    import dask
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "2025.5.1"
-#    if Version(dask.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad dask version: cf requires dask>={_minimum_vn}. "
-#            f"Got {dask.__version__} at {dask.__file__}"
-#        )
-#
-#try:
-#    import distributed
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "2025.5.1"
-#    if Version(distributed.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            "Bad distributed version: cf requires "
-#            f"distributed>={_minimum_vn}. "
-#            f"Got {distributed.__version__} at {distributed.__file__}"
-#        )
-#
-#try:
-#    import scipy
-#except ImportError as error1:
-#    raise ImportError(_error0 + str(error1))
-#else:
-#    _minimum_vn = "1.10.0"
-#    if Version(scipy.__version__) < Version(_minimum_vn):
-#        raise RuntimeError(
-#            f"Bad scipy version: cf requires scipy>={_minimum_vn}. "
-#            f"Got {scipy.__version__} at {scipy.__file__}"
-#        )
-#
-#_minimum_vn = "3.10.0"
-#if Version(python_version()) < Version(_minimum_vn):
-#    raise RuntimeError(
-#        f"Bad python version: cf requires python>={_minimum_vn}. "
-#        f"Got {python_version()}"
-#    )
-#
-#del _minimum_vn, _maximum_vn
+# Check the version of cfdm (this is worth doing because of the very
+# tight coupling between cf and cfdm, and the risk of bad things
+# happening at run time if the versions are mismatched).
+_minimum_vn = "1.12.3.1"
+_maximum_vn = "1.12.4.0"
+_cfdm_vn = Version(cfdm.__version__)
+if _cfdm_vn < Version(_minimum_vn) or _cfdm_vn >= Version(_maximum_vn):
+    raise RuntimeError(
+        f"cf v{__version__} requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
+        f"Got {_cfdm_vn} at {cfdm.__file__}"
+    )
+
+del _minimum_vn, _maximum_vn
 
 from .constructs import Constructs
 

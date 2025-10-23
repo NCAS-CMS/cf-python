@@ -8784,13 +8784,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Check that there are no invalid indices for size 1 axes not
         # spanned by the data
         if len(axis_indices) > len(data_axes):
+            import dask.array as da
+
             for axis, index in axis_indices.items():
                 if axis in data_axes or (
                     isinstance(index, slice) and index == slice(None)
                 ):
                     continue
-
-                import dask.array as da
 
                 shape = da.from_array([0])[index].compute_chunk_sizes().shape
                 if 0 in shape:
