@@ -5,11 +5,9 @@ from datetime import datetime
 from uuid import uuid4
 
 import cfdm
-import cftime
 import numpy as np
 from cfdm import Constructs, is_log_level_info
 from cfdm.read_write.exceptions import DatasetTypeError
-from netCDF4 import date2num as netCDF4_date2num
 
 from cf import __Conventions__, __version__
 from cf.constants import _stash2standard_name
@@ -1866,6 +1864,8 @@ class UMField:
     def ctime(self, rec):
         """Return elapsed time since the clock time of the given
         record."""
+        import cftime
+
         reftime = self.refUnits
         LBVTIME = tuple(self.header_vtime(rec))
         LBDTIME = tuple(self.header_dtime(rec))
@@ -2287,6 +2287,8 @@ class UMField:
         key = (LBDTIME, units, calendar)
         time = _cached_date2num.get(key, None)
         if time is None:
+            from netCDF4 import date2num as netCDF4_date2num
+
             # It is important to use the same time_units as vtime
             try:
                 if self.calendar == "gregorian":
@@ -2294,6 +2296,8 @@ class UMField:
                         datetime(*LBDTIME), units, calendar
                     )
                 else:
+                    import cftime
+
                     time = netCDF4_date2num(
                         cftime.datetime(*LBDTIME, calendar=self.calendar),
                         units,
@@ -2949,6 +2953,8 @@ class UMField:
 
         time = _cached_date2num.get(key, None)
         if time is None:
+            import cftime
+
             # It is important to use the same time_units as dtime
             try:
                 time = cftime.date2num(

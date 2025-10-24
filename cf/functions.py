@@ -7,6 +7,7 @@ import re
 import warnings
 from collections.abc import Iterable
 from functools import partial
+from importlib.util import find_spec
 from itertools import product
 from math import isnan
 from os import mkdir
@@ -19,9 +20,7 @@ from tempfile import gettempdir
 from urllib.parse import urljoin, urlparse
 
 import cfdm
-import netCDF4
 import numpy as np
-from psutil import virtual_memory
 
 from . import __file__, __version__
 from .constants import OperandBoundsCombination, _stash2standard_name
@@ -150,6 +149,8 @@ else:
         96496240.0
 
         """
+        from psutil import virtual_memory
+
         return float(virtual_memory().available)
 
 
@@ -1189,18 +1190,15 @@ class active_storage(ConstantAccess):
                 insertion into the `_constants` dictionary.
 
         """
-        try:
-            import activestorage  # noqa: F401
-        except ModuleNotFoundError as error:
-            if arg:
-                error.msg += (
-                    ". Install the 'activestorage' package "
-                    "(https://pypi.org/project/PyActiveStorage) to enable "
-                    "active storage reductions"
-                )
-                raise
+        arg = bool(arg)
+        if arg and not find_spec("activestorage"):
+            raise ModuleNotFoundError(
+                "Must install the 'activestorage' package "
+                "(https://pypi.org/project/PyActiveStorage) to enable "
+                "active storage reductions"
+            )
 
-        return bool(arg)
+        return arg
 
 
 class active_storage_url(ConstantAccess):
@@ -1488,6 +1486,8 @@ def min_total_memory():
 
 def total_memory():
     """The total amount of physical memory (in bytes)."""
+    from psutil import virtual_memory
+
     return float(virtual_memory().total)
 
 
@@ -3275,6 +3275,8 @@ def default_netCDF_fillvals():
      'f8': 9.969209968386869e+36}
 
     """
+    import netCDF4
+
     return netCDF4.default_fillvals
 
 

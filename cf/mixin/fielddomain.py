@@ -726,9 +726,9 @@ class FieldDomain:
                                     for i, p in zip(identities, points)
                                 ]
                             )
-                            raise ImportError(
-                                "Must install matplotlib to create indices "
-                                f"for {self!r} from: {x}"
+                            raise ModuleNotFoundError(
+                                "Must install the 'matplotlib' package to "
+                                f"create indices for {self!r} from: {x}"
                             )
 
                         def _point_not_in_cell(nodes_x, nodes_y, point):

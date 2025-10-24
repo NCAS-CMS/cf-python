@@ -5,7 +5,6 @@ from itertools import product
 from operator import mul
 
 import cfdm
-import cftime
 import numpy as np
 from cfdm.data.dask_utils import cfdm_where
 from cfdm.data.utils import new_axis_identifier
@@ -2198,6 +2197,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
         if not isinstance(other, cls):
+            import cftime
+
             if (
                 isinstance(other, cftime.datetime)
                 and other.calendar == ""

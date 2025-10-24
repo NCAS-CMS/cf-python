@@ -1904,9 +1904,9 @@ def esmpy_initialise():
     """
     try:
         import esmpy
-    except ImportError:
-        raise RuntimeError(
-            "Regridding will not work unless the esmpy library is installed"
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError(
+            "Must install the 'esmpy' package to enable regridding"
         )
 
     # Update the global 'esmpy_methods' dictionary

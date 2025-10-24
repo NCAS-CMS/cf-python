@@ -13,8 +13,6 @@ from cfdm.data.dask_utils import cfdm_to_memory
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..units import Units
 
-# from scipy.ndimage import convolve1d
-
 
 def cf_contains(a, value):
     """Whether or not an array contains a value.

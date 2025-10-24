@@ -9949,12 +9949,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   An unweighted 5-point moving average can be computed
                   with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
-                Note that the `scipy.signal.windows` package has suite
-                of window functions for creating window weights for
-                filtering (see the examples for details).
+                .. note:: The `scipy.signal.windows` package has a
+                          suite of window functions for creating
+                          window weights for filtering (see the
+                          examples for details).
 
-                .. versionadded:: 3.3.0 (replaces the old weights
-                                  parameter)
+                .. versionadded:: 3.3.0
 
             axis:
                 Select the domain axis over which the filter is to be

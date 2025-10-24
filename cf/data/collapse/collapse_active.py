@@ -1,21 +1,13 @@
-import datetime
 import logging
-import time
 from functools import wraps
 from numbers import Integral
 
-from ...functions import (
+from cf.functions import (
     active_storage,
     active_storage_max_requests,
     active_storage_url,
     is_log_level_info,
 )
-
-# try:
-#    from activestorage import Active
-# except ModuleNotFoundError:
-#    pass
-
 
 logger = logging.getLogger(__name__)
 
@@ -185,6 +177,12 @@ def active_chunk_function(method, *args, **kwargs):
     # reason, then this will trigger (inside `actify`) a local
     # reduction being carried out instead.
     # ----------------------------------------------------------------
+    import datetime
+    import time
+
+    # Note: We know that the optional `activestorage` pacakge exists
+    #       because this was checked when active storage was enabled
+    #       with `cf.active_storage(True)`
     from activestorage import Active
 
     filename = x.get_filename()
