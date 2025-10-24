@@ -128,7 +128,7 @@ possible, are available with the [cf-plot
 package](https://ncas-cms.github.io/cf-plot), which needs to be
 installed separately to the `cf` package.
 
-![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](https://raw.githubusercontent.com/NCAS-CMS/cf-plot/master/docs/source/images/cf_gallery_image.png)
+![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](docs/source/images/new_gallery_view.png)
 
 Command line utilities
 ======================
