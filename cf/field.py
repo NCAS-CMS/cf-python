@@ -178,7 +178,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 _collapse_ddof_methods = set(("sd", "var"))
 
-_earth_radius = Data(6371229.0, "m")
+_earth_radius = 6371229.0
 
 _relational_methods = (
     "__eq__",
@@ -2701,7 +2701,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "or None"
                     )
 
-                return _earth_radius.copy()
+                return Data(_earth_radius, "m")
 
             r = Data.asdata(default).squeeze()
         else:
