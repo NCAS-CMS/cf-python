@@ -1,3 +1,13 @@
+Version NEXTVERSION
+-------------------
+
+**2025-12-??**
+
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cfdm/issues/902)
+
+----
+
 Version 3.18.2
 --------------
 
