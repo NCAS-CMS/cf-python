@@ -547,12 +547,12 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Examples gallery of plots made with the cf-plot library.*
 
 See the `cf-plot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide
+<https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide
 range of plotting possibilities, with example code. These include, but are
 not limited to:
 

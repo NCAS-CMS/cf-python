@@ -33,8 +33,8 @@
 
 - [ ] Make sure that the `long_description` in `setup.py` is up to date.
 
-- [ ] Make sure that `Changelog.rst` is up to date (version, date and
-  changes).
+- [ ] Make sure that `Changelog.rst` is up to date (cf version,
+      cfdm dependency, date and changes).
 
 - [ ] Deprecated methods and keyword arguments: Check the code for
   deprecated methods and keyword arguments that can be completely
