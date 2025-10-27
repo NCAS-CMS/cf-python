@@ -2,11 +2,12 @@ import logging
 from functools import wraps
 from numbers import Integral
 
+from cfdm import is_log_level_info
+
 from cf.functions import (
     active_storage,
     active_storage_max_requests,
     active_storage_url,
-    is_log_level_info,
 )
 
 logger = logging.getLogger(__name__)

@@ -1,15 +1,11 @@
 import atexit
-import csv
-import logging
 import os
 import platform
-import re
 import warnings
 from collections.abc import Iterable
 from functools import partial
 from importlib.util import find_spec
 from itertools import product
-from math import isnan
 from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import expanduser as _os_path_expanduser
@@ -1494,6 +1490,9 @@ def total_memory():
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
 
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `cfdm.is_log_level_info` instead.
+
     .. versionadded:: 3.16.3
 
     .. seealso:: `log_level`
@@ -1509,7 +1508,12 @@ def is_log_level_info(logger):
             Whether or not the log level is at least INFO.
 
     """
-    return logger.parent.level <= logging.INFO
+    _DEPRECATION_ERROR_FUNCTION(
+        "is_log_level_info",
+        message="Use cfdm.is_log_level_info instead",
+        version="NEXTVERSION",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 # --------------------------------------------------------------------
@@ -2076,6 +2080,8 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from math import isnan
+
     from dask.base import is_dask_collection
 
     shape = []
@@ -2498,6 +2504,9 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     >>> cf.load_stash2standard_name('my_table4.txt', merge=False)
 
     """
+    import csv
+    import re
+
     # 0  Model
     # 1  STASH code
     # 2  STASH name
@@ -2507,7 +2516,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     # 6  standard_name
     # 7  CF extra info
     # 8  PP extra info
-
     # Number matching regular expression
     number_regex = r"([-+]?\d*\.?\d+(e[-+]?\d+)?)"
 

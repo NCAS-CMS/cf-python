@@ -1,5 +1,4 @@
 import logging
-import re
 from ast import literal_eval as ast_literal_eval
 
 import cfdm
@@ -89,6 +88,8 @@ class CellMethod(cfdm.CellMethod):
         >>> c = CellMethod.create('lat: mean (interval: 1 hour)')
 
         """
+        import re
+
         incorrect_interval = "Cell method interval is incorrectly formatted"
 
         out = []
