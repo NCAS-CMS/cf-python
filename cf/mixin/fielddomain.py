@@ -247,7 +247,7 @@ class FieldDomain:
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
                  ancillary mask to apply to those domain axes
-                 immediately after the the subspace has been created
+                 immediately after the subspace has been created
                  by the ``'indices'``. This dictionary will always be
                  empty if the *ancillary_mask* parameter is False.
 
