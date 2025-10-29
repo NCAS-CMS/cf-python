@@ -2545,7 +2545,7 @@ grid point location for each cell. The cell bounds are stored in a
 `~Coordinate.bounds` attribute, or `~Coordinate.get_bounds` method, of
 the coordinate construct.
 
-A `cf.Bounds` instance shares the :ref:`the same API as the field
+A `cf.Bounds` instance shares :ref:`the same API as the field
 construct <Data>` for accessing its data.
 
 .. code-block:: python
@@ -7064,7 +7064,7 @@ adding new ones, is straight forward with the
 Note that some STASH codes have multiple standard name mappings. This
 could be due to the standard name being a function of other parts of
 the header (as is the case for ``(1, 2)``) and ``(1, 152)``), or the
-the STASH code only being valid for particular UM versions (as is the
+STASH code only being valid for particular UM versions (as is the
 case for ``(1, 152)``).
      
 ----
