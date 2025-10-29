@@ -1153,7 +1153,7 @@ Manipulating dimensions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
+one dimensions removed and have new size one dimensions included
 by using the following field construct methods:
 
 =========================  ===========================================
@@ -1223,7 +1223,7 @@ Data mask
 	     
 There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
-data mask is `False` where the the data has values, and `True` where
+data mask is `False` where the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~Field.mask` attribute of the field construct, which returns the data
 mask in a field construct with the same metadata constructs as the
