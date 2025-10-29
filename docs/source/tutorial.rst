@@ -1594,7 +1594,7 @@ Masked values
 ^^^^^^^^^^^^^
  
 Data array elements may be set to masked values by assigning them to
-the `cf.masked` constant, thereby updating the the :ref:`data mask
+the `cf.masked` constant, thereby updating the :ref:`data mask
 <Data-mask>`.
 
 .. code-block:: python
@@ -2327,7 +2327,7 @@ date-time objects of the `cftime package
 attribute of the construct, or its `cf.Data` instance.
 
 .. code-block:: python
-   :caption: *Inspect the the values of a "time" construct as elapsed
+   :caption: *Inspect the values of a "time" construct as elapsed
              times and as date-times.*
 
    >>> time = q.construct('time')
@@ -6902,7 +6902,7 @@ their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
-keyword of `cf.read` allows the format to be specified. The the UM
+keyword of `cf.read` allows the format to be specified. The UM
 version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the *um* keyword.
