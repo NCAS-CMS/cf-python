@@ -52,6 +52,15 @@ def n_mesh_variables(filename):
     return n
 
 
+def combinations(face, edge, point):
+    """Return combinations for field/domain indexing."""
+    return [
+        i
+        for n in range(1, 4)
+        for i in itertools.permutations([face, edge, point], n)
+    ]
+
+
 class UGRIDTest(unittest.TestCase):
     """Test UGRID field constructs."""
 
@@ -61,6 +70,10 @@ class UGRIDTest(unittest.TestCase):
 
     filename2 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "ugrid_2.nc"
+    )
+
+    filename3 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "ugrid_3.nc"
     )
 
     def setUp(self):
@@ -189,7 +202,6 @@ class UGRIDTest(unittest.TestCase):
         # Face, edge, and point fields that are all part of the same
         # UGRID mesh
         ugrid = cf.example_fields(8, 9, 10)
-
         face, edge, point = (0, 1, 2)
 
         tmpfile = "tmpfileu.nc"
@@ -202,19 +214,8 @@ class UGRIDTest(unittest.TestCase):
             self.assertEqual(len(g), 1)
             self.assertTrue(g[0].equals(f))
 
-        # Test round-tripping fields with multiple fields
-        #
-        # Get the indices of 'ugrid' for all possible combinations of
-        # fields:
-        #
-        # combinations = [(0,), (1,), ..., (2, 0, 1), (2, 1, 0)]
-        combinations = [
-            i
-            for n in range(1, 4)
-            for i in itertools.permutations([face, edge, point], n)
-        ]
-
-        for cells in combinations:
+        # Test round-tripping of field combinations
+        for cells in combinations(face, edge, point):
             f = []
             for cell in cells:
                 f.append(ugrid[cell])
@@ -241,7 +242,6 @@ class UGRIDTest(unittest.TestCase):
         # Face, edge, and point fields/domains that are all part of
         # the same UGRID mesh
         ugrid = [f.domain for f in cf.example_fields(8, 9, 10)]
-
         face, edge, point = (0, 1, 2)
 
         # Test for equality with the fields defined in memory. Only
@@ -254,38 +254,46 @@ class UGRIDTest(unittest.TestCase):
             self.assertTrue(e[0].equals(d))
             self.assertEqual(e[1].domain_topology().get_cell(), "point")
 
-        # Test round-tripping fields with all three domains
-        #
-        # combinations = [(0, 1, 2), (0, 2, 1), ..., (2, 0, 1), (2, 1, 0)]
-        combinations = list(itertools.permutations([face, edge, point], 3))
-        for cells in combinations:
-            d = []
-            for cell in cells:
-                d.append(ugrid[cell])
+        # Test round-tripping of domain combinations for the
+        # example_field domains, and also the domain read from
+        # 'ugrid_3.nc'.
+        for iteration in ("memory", "file"):
+            for cells in combinations(face, edge, point):
+                d = []
+                for cell in cells:
+                    d.append(ugrid[cell])
 
-            cf.write(d, tmpfile)
+                if point not in cells:
+                    # When we write a non-point domains, we also get
+                    # the point locations.
+                    d.append(ugrid[point])
+                elif cells == (point,):
+                    # When we write a point domain on its own, we also
+                    # get the edge location.
+                    d.append(ugrid[edge])
 
-            # Check that there's only one mesh variable in the file
-            self.assertEqual(n_mesh_variables(tmpfile), 1)
+                cf.write(d, tmpfile)
 
-            e = cf.read(tmpfile, domain=True)
+                # Check that there's only one mesh variable in the file
+                self.assertEqual(n_mesh_variables(tmpfile), 1)
 
-            self.assertEqual(len(e), len(d))
+                e = cf.read(tmpfile, domain=True)
 
-            cf.write(e, tmpfile1)
+                self.assertEqual(len(e), len(d))
 
-            # Check that there's only one mesh variable in the file
-            self.assertEqual(n_mesh_variables(tmpfile1), 1)
+                cf.write(e, tmpfile1)
 
-            f = cf.read(tmpfile1, domain=True)
-            self.assertEqual(len(f), len(e))
-            for i, j in zip(f, e):
-                self.assertTrue(i.equals(j))
+                # Check that there's only one mesh variable in the file
+                self.assertEqual(n_mesh_variables(tmpfile1), 1)
 
-        # Note: Other combintations of domain read/write are tricky,
-        #       because the mesh variable *and* the domain variable in
-        #       the dataset *both* define domains. Let's not worry
-        #       about that now!
+                f = cf.read(tmpfile1, domain=True)
+                self.assertEqual(len(f), len(e))
+                for i, j in zip(f, e):
+                    self.assertTrue(i.equals(j))
+
+            # Set up for the 'file' iteration
+            ugrid = cf.read(self.filename3, domain=True)
+            face, edge, point = (2, 1, 0)
 
 
 if __name__ == "__main__":
