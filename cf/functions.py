@@ -3225,8 +3225,6 @@ def environment(display=True, paths=True):
     cf: 3.18.0
 
     """
-    #    regridding =  _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
-
     # Get cfdm env
     out = cfdm.environment(display=False, paths=paths)
 
