@@ -2,7 +2,6 @@ from functools import partial
 
 import numpy as np
 from cfdm.core import DocstringRewriteMeta
-from dask.array.reductions import reduction
 
 from ...docstring import _docstring_substitution_definitions
 from .collapse_utils import check_input_dtype, double_precision_dtype
@@ -129,6 +128,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_max_agg, cf_max_chunk, cf_max_combine
 
         if chunk_function is None:
@@ -244,6 +245,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
         if chunk_function is None:
@@ -361,6 +364,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import (
             cf_mid_range_agg,
             cf_range_chunk,
@@ -427,6 +432,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
 
         if chunk_function is None:
@@ -538,6 +545,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import (
             cf_range_agg,
             cf_range_chunk,
@@ -608,6 +617,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_mean_combine, cf_rms_agg, cf_rms_chunk
 
         if chunk_function is None:
@@ -671,6 +682,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import (
             cf_sample_size_agg,
             cf_sample_size_chunk,
@@ -740,6 +753,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_sum_agg, cf_sum_chunk, cf_sum_combine
 
         if chunk_function is None:
@@ -809,6 +824,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import (
             cf_sum_agg,
             cf_sum_combine,
@@ -879,6 +896,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import (
             cf_sum_agg,
             cf_sum_combine,
@@ -925,6 +944,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The unique values in a 1-d array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_unique_agg, cf_unique_chunk
 
         if chunk_function is None:
@@ -1005,6 +1026,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from dask.array.reductions import reduction
+
         from .dask_collapse import cf_var_agg, cf_var_chunk, cf_var_combine
 
         if chunk_function is None:

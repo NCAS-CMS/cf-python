@@ -1,5 +1,3 @@
-# from itertools import chain
-
 from ..data.data import Data
 from ..decorators import (
     _deprecated_kwarg_check,
