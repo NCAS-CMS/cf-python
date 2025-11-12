@@ -25,8 +25,8 @@ _hours = Units("hours")
 _minutes = Units("minutes")
 _seconds = Units("seconds")
 
-# Define some data values
-_data = {}
+# Define some duration data values
+_durations = {}
 
 # Default month lengths in days
 _default_month_lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -336,8 +336,8 @@ class TimeDuration:
                 f"Can't create {self.__class__.__name__} of {self.duration}"
             )
 
-        if not _data:
-            _data.update(
+        if not _durations:
+            _durations.update(
                 {
                     "one_year": Data(1, "calendar_year"),
                     "one_day": Data(1, "day"),
@@ -350,16 +350,16 @@ class TimeDuration:
 
         offset = [None, month, day, hour, minute, second, 0]
         if units.equivalent(_calendar_years):
-            if duration < _data["one_year"]:
+            if duration < _durations["one_year"]:
                 offset[1] = None
         else:
             offset[1] = None
             offset[2] = None
-            if duration < _data["one_day"]:
+            if duration < _durations["one_day"]:
                 offset[3] = None
-                if duration < _data["one_hour"]:
+                if duration < _durations["one_hour"]:
                     offset[4] = None
-                    if duration < _data["one_minute"]:
+                    if duration < _durations["one_minute"]:
                         offset[5] = None
 
         self.offset = Offset(*offset)
