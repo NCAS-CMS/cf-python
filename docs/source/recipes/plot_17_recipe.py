@@ -11,8 +11,8 @@ misrepresentation, or lack of accessibility, a careful choice must be made.
 # %%
 # 1. Import cf-python and cf-plot:
 
-import cfplot as cfp
 import matplotlib.pyplot as plt
+import cfplot as cfp
 
 import cf
 
