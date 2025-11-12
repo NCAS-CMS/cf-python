@@ -178,7 +178,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 _collapse_ddof_methods = set(("sd", "var"))
 
-_earth_radius = Data(6371229.0, "m")
+_earth_radius = 6371229.0
 
 _relational_methods = (
     "__eq__",
@@ -2701,7 +2701,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "or None"
                     )
 
-                return _earth_radius.copy()
+                return Data(_earth_radius, "m")
 
             r = Data.asdata(default).squeeze()
         else:
@@ -8784,13 +8784,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Check that there are no invalid indices for size 1 axes not
         # spanned by the data
         if len(axis_indices) > len(data_axes):
+            import dask.array as da
+
             for axis, index in axis_indices.items():
                 if axis in data_axes or (
                     isinstance(index, slice) and index == slice(None)
                 ):
                     continue
-
-                import dask.array as da
 
                 shape = da.from_array([0])[index].compute_chunk_sizes().shape
                 if 0 in shape:
@@ -9949,12 +9949,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   An unweighted 5-point moving average can be computed
                   with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
-                Note that the `scipy.signal.windows` package has suite
-                of window functions for creating window weights for
-                filtering (see the examples for details).
+                .. note:: The `scipy.signal.windows` package has a
+                          suite of window functions for creating
+                          window weights for filtering (see the
+                          examples for details).
 
-                .. versionadded:: 3.3.0 (replaces the old weights
-                                  parameter)
+                .. versionadded:: 3.3.0
 
             axis:
                 Select the domain axis over which the filter is to be

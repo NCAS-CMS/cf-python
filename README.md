@@ -149,3 +149,11 @@ Tests
 Tests are run from within the ``cf/test`` directory:
 
     python run_tests.py
+
+Training
+=======
+
+Training material on cf-python and cf-plot i.e. the CF Data Tools,
+ in the form of Jupyter Notebooks, is openly-accessible and available
+ (with instructions for set-up provided) at:
+ https://github.com/NCAS-CMS/cf-tools-training.

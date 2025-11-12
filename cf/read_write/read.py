@@ -88,7 +88,7 @@ class read(cfdm.read):
     the end of the Python session, at which time it is automatically
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
+    ``-c`` option to ``ncdump``), in which case the relevant
     constructs in memory will be created with data with all missing
     values.
 

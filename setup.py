@@ -160,6 +160,11 @@ constructs are available with the `cf-plot
 <https://ncas-cms.github.io/cf-plot>`_ package, that needs to be
 installed separately to the ``cf`` package.
 
+Training
+========
+
+https://github.com/NCAS-CMS/cf-tools-training
+
 Functionality
 =============
 
