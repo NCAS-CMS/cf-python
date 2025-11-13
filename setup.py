@@ -264,7 +264,7 @@ extras_require = {
         "flake8",
     ],
     "zarr": [
-        "zarr>=3.1.2",
+        "zarr>=3.1.3",
     ],
 }
 
