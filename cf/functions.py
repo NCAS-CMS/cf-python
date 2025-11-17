@@ -1,33 +1,25 @@
 import atexit
-import csv
-import logging
 import os
 import platform
-import re
 import warnings
 from collections.abc import Iterable
+from functools import partial
+from importlib.util import find_spec
 from itertools import product
-from math import isnan
 from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
+from tempfile import gettempdir
 from urllib.parse import urljoin, urlparse
 
 import cfdm
-import netCDF4
 import numpy as np
-from dask.base import is_dask_collection
-from psutil import virtual_memory
 
 from . import __file__, __version__
-from .constants import (
-    CONSTANTS,
-    OperandBoundsCombination,
-    _stash2standard_name,
-)
+from .constants import OperandBoundsCombination, _stash2standard_name
 from .docstring import _docstring_substitution_definitions
 
 
@@ -153,6 +145,8 @@ else:
         96496240.0
 
         """
+        from psutil import virtual_memory
+
         return float(virtual_memory().available)
 
 
@@ -444,15 +438,6 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    old = {name.lower(): val for name, val in CONSTANTS.items()}
-
-    old.pop("total_memory", None)
-
-    # Filter out 'None' kwargs from configuration() defaults. Note that this
-    # does not filter out '0' or 'True' values, which is important as the user
-    # might be trying to set those, as opposed to None emerging as default.
-    kwargs = {name: val for name, val in kwargs.items() if val is not None}
-
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
         "new_atol": atol,
@@ -467,6 +452,21 @@ def _configuration(_Configuration, **kwargs):
         "active_storage_url": active_storage_url,
         "active_storage_max_requests": active_storage_max_requests,
     }
+
+    # Make sure that the constants dictionary is fully populated
+    for func in reset_mapping.values():
+        func()
+
+    old = ConstantAccess.constants(copy=True)
+
+    #    old = {name.lower(): val for name, val in CONSTANTS.items()}
+    #
+    #    old.pop("total_memory", None)
+
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
 
     old_values = {}
 
@@ -540,7 +540,7 @@ def FREE_MEMORY():
 _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level()
 # function as contained in _log_level, but can't inherit the
-# user-facing log_level() from cfdm as it operates on cfdm's CONSTANTS
+# user-facing log_level() from cfdm as it operates on cfdm's constants
 # dict. Define cf-python's own. This also means the log_level
 # dostrings are independent which is important for providing
 # module-specific documentation links and directives, etc.
@@ -552,14 +552,11 @@ _is_valid_log_level_int = cfdm._is_valid_log_level_int
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
 class ConstantAccess(cfdm.ConstantAccess):
-    _CONSTANTS = CONSTANTS
+    _constants = {}
     _Constant = Constant
 
     def __docstring_substitutions__(self):
         return _docstring_substitution_definitions
-
-    def __docstring_package_depth__(self):
-        return 0
 
 
 class atol(ConstantAccess, cfdm.atol):
@@ -614,7 +611,8 @@ class regrid_logging(ConstantAccess):
 
     """
 
-    _name = "REGRID_LOGGING"
+    _name = "regrid_logging"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -631,8 +629,8 @@ class regrid_logging(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return bool(arg)
@@ -681,7 +679,7 @@ class collapse_parallel_mode(ConstantAccess):
 
     """
 
-    _name = "COLLAPSE_PARALLEL_MODE"
+    _name = "collapse_parallel_mode"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -700,8 +698,8 @@ class collapse_parallel_mode(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -751,7 +749,8 @@ class relaxed_identities(ConstantAccess):
 
     """
 
-    _name = "RELAXED_IDENTITIES"
+    _name = "relaxed_identities"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -768,8 +767,8 @@ class relaxed_identities(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return bool(arg)
@@ -817,7 +816,8 @@ class tempdir(ConstantAccess):
 
     """
 
-    _name = "TEMPDIR"
+    _name = "tempdir"
+    _default = gettempdir()
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -834,8 +834,8 @@ class tempdir(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         arg = _os_path_expanduser(_os_path_expandvars(arg))
@@ -898,7 +898,7 @@ class of_fraction(ConstantAccess):
 
     """
 
-    _name = "OF_FRACTION"
+    _name = "of_fraction"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -917,8 +917,8 @@ class of_fraction(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -951,7 +951,7 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    _name = "FREE_MEMORY_FACTOR"
+    _name = "free_memory_factor"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -970,8 +970,8 @@ class free_memory_factor(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -1089,7 +1089,8 @@ class bounds_combination_mode(ConstantAccess):
 
     """
 
-    _name = "BOUNDS_COMBINATION_MODE"
+    _name = "bounds_combination_mode"
+    _default = "AND"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1106,8 +1107,8 @@ class bounds_combination_mode(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         try:
@@ -1164,6 +1165,7 @@ class active_storage(ConstantAccess):
     """
 
     _name = "active_storage"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1181,18 +1183,18 @@ class active_storage(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
-        try:
-            from activestorage import Active  # noqa: F401
-        except ModuleNotFoundError as error:
-            if arg:
-                raise ModuleNotFoundError(
-                    f"Can't enable active storage operations: {error}"
-                )
+        arg = bool(arg)
+        if arg and not find_spec("activestorage"):
+            raise ModuleNotFoundError(
+                "Must install the 'activestorage' package "
+                "(https://pypi.org/project/PyActiveStorage) to enable "
+                "active storage reductions"
+            )
 
-        return bool(arg)
+        return arg
 
 
 class active_storage_url(ConstantAccess):
@@ -1250,7 +1252,7 @@ class active_storage_url(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         if arg is None:
@@ -1315,6 +1317,7 @@ class active_storage_max_requests(ConstantAccess):
     """
 
     _name = "active_storage_max_requests"
+    _default = 100
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1332,7 +1335,7 @@ class active_storage_max_requests(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return int(arg)
@@ -1479,11 +1482,16 @@ def min_total_memory():
 
 def total_memory():
     """The total amount of physical memory (in bytes)."""
-    return CONSTANTS["TOTAL_MEMORY"]
+    from psutil import virtual_memory
+
+    return float(virtual_memory().total)
 
 
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
+
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `cfdm.is_log_level_info` instead.
 
     .. versionadded:: 3.16.3
 
@@ -1500,7 +1508,12 @@ def is_log_level_info(logger):
             Whether or not the log level is at least INFO.
 
     """
-    return logger.parent.level <= logging.INFO
+    _DEPRECATION_ERROR_FUNCTION(
+        "is_log_level_info",
+        message="Use cfdm.is_log_level_info instead",
+        version="NEXTVERSION",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 # --------------------------------------------------------------------
@@ -2067,6 +2080,10 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from math import isnan
+
+    from dask.base import is_dask_collection
+
     shape = []
     for index, full_size in zip(indices, full_shape):
         if isinstance(index, slice):
@@ -2487,6 +2504,9 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     >>> cf.load_stash2standard_name('my_table4.txt', merge=False)
 
     """
+    import csv
+    import re
+
     # 0  Model
     # 1  STASH code
     # 2  STASH name
@@ -2496,7 +2516,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     # 6  standard_name
     # 7  CF extra info
     # 8  PP extra info
-
     # Number matching regular expression
     number_regex = r"([-+]?\d*\.?\d+(e[-+]?\d+)?)"
 
@@ -2750,8 +2769,6 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
 
 
 dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
-
-from functools import partial
 
 dirname2 = partial(cfdm.dirname)
 dirname2.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
@@ -3218,6 +3235,7 @@ def environment(display=True, paths=True):
         ),
         "psutil": _get_module_info("psutil"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
+        "activestorage": _get_module_info("activestorage", try_except=True),
         "cfplot": _get_module_info("cfplot", try_except=True),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
@@ -3263,6 +3281,8 @@ def default_netCDF_fillvals():
      'f8': 9.969209968386869e+36}
 
     """
+    import netCDF4
+
     return netCDF4.default_fillvals
 
 

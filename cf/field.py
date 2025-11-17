@@ -4861,10 +4861,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The method used to calculate the values in the new
                 larger cells, from the data on the original
                 cells. Must be one of these CF standardised cell
-                methods: ``'maximum'``, ``'maximum_absolute_value'``,
-                ``'mean'``, ``'mean_absolute_value'``,
-                ``'mean_of_upper_decile'``, ``'median'``,
-                ``'mid_range'``, ``'minimum'``,
+                method names: ``'maximum'``,
+                ``'maximum_absolute_value'``, ``'mean'``,
+                ``'mean_absolute_value'``, ``'mean_of_upper_decile'``,
+                ``'median'``, ``'mid_range'``, ``'minimum'``,
                 ``'minimum_absolute_value'``, ``'mode'``, ``'range'``,
                 ``'root_mean_square'``, ``'standard_deviation'``,
                 ``'sum'``, ``'sum_of_squares'``, ``'variance'``.
@@ -4879,9 +4879,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             reduction: function or `None`, optional
                 The function used to calculate the values in the new
                 larger cells, from the data on the original cells. The
-                function must calculate the quantity defined by the
-                *method* parameter, take an array of values as its
-                first argument, and have an *axis* keyword that
+                function must i) calculate the quantity defined by the
+                *method* parameter, ii) take an array of values as its
+                first argument, and iii) have an *axis* keyword that
                 specifies which of the array axes is the HEALPix axis.
 
                 For some methods there are default *reduction*
@@ -4900,8 +4900,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``'variance'``            `np.var`
                 ========================  ===================
 
-                Note that these methods may be also calculated by any
-                other function provided by the *reduction* parameter.
+                Note that these methods may be also calculated by
+                another function provided by the *reduction*
+                parameter.
 
             conform: `bool`, optional
                 If True (the default) then the HEALPix grid is
@@ -4985,7 +4986,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         [[293.5]]
 
         Set the refinement level to 0 using the ``'range'`` *method*,
-        which requires a new *reduction* function to be defined:
+        which requires a *reduction* function to be defined:
 
         >>> import numpy as np
         >>> def range_func(a, axis=None):
@@ -9430,13 +9431,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Check that there are no invalid indices for size 1 axes not
         # spanned by the data
         if len(axis_indices) > len(data_axes):
+            import dask.array as da
+
             for axis, index in axis_indices.items():
                 if axis in data_axes or (
                     isinstance(index, slice) and index == slice(None)
                 ):
                     continue
-
-                import dask.array as da
 
                 shape = da.from_array([0])[index].compute_chunk_sizes().shape
                 if 0 in shape:
@@ -10595,12 +10596,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   An unweighted 5-point moving average can be computed
                   with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
-                Note that the `scipy.signal.windows` package has suite
-                of window functions for creating window weights for
-                filtering (see the examples for details).
+                .. note:: The `scipy.signal.windows` package has a
+                          suite of window functions for creating
+                          window weights for filtering (see the
+                          examples for details).
 
-                .. versionadded:: 3.3.0 (replaces the old weights
-                                  parameter)
+                .. versionadded:: 3.3.0
 
             axis:
                 Select the domain axis over which the filter is to be

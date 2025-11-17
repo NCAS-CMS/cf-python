@@ -2,7 +2,6 @@
 
 import logging
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_info
 
@@ -10,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
-    """Create HEALPIx latitude and longitude coordinates and bounds.
+    """Create HEALPix latitude and longitude coordinates and bounds.
 
     When it is not possible to create latitude and longitude
     coordinates, the reason why will be reported if the log level is
@@ -59,6 +58,8 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
             coordinates could not be created.
 
     """
+    import dask.array as da
+
     from .constants import healpix_indexing_schemes
     from .data.dask_utils import cf_healpix_bounds, cf_healpix_coordinates
 
@@ -77,7 +78,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
         return (None, None)
 
     refinement_level = hp.get("refinement_level")
-    if refinement_level is None and indexing_scheme != "nested_unique":
+    if refinement_level is None and indexing_scheme != "nuniq":
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
@@ -127,7 +128,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
 
     # Get the Dask array of HEALPix indices.
     #
-    # `cf_healpix_coordinates` anad `cf_healpix_bounds` have their own
+    # `cf_healpix_coordinates` and `cf_healpix_bounds` have their own
     # calls to `cfdm_to_memory`, so we can set _force_to_memory=False.
     dx = healpix_index.data.to_dask_array(
         _force_mask_hardness=False, _force_to_memory=False
@@ -254,17 +255,23 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
         `None`
 
     """
+    import dask.array as da
     from dask.array.core import normalize_chunks
+
+    # Get any cached data values
+    cached = x.data._get_cached_elements().copy()
 
     # Get the Dask array (e.g. dx.shape is (12, 19, 48))
     dx = x.data.to_dask_array(_force_mask_hardness=False)
 
-    # Divide extensive data by the number of new cells
     if quantity == "extensive":
+        # Divide extensive data by the number of new cells
         dx = dx / ncells
+        if cached:
+            cached = {i: value / ncells for i, value in cached.items()}
 
     # Add a new size dimension just after the HEALPix dimension
-    # (e.g. .shape becomes (12, 19, 48, 1))
+    # (e.g. dx.shape becomes (12, 19, 48, 1))
     new_axis = iaxis + 1
     dx = da.expand_dims(dx, new_axis)
 
@@ -293,6 +300,10 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
 
     x.set_data(dx, copy=False)
 
+    # Set cached data elements
+    if cached:
+        x.data._set_cached_elements(cached)
+
 
 def _healpix_increase_refinement_level_indices(
     healpix_index, ncells, refinement_level
@@ -312,8 +323,8 @@ def _healpix_increase_refinement_level_indices(
     :Parameters:
 
         healpix_index: `Coordinate`
-            The HEALPix indices to be changed. It is assumed they use
-            the "nested" indexing scheme.
+            The HEALPix indices to be changed. They must use the
+            "nested" indexing scheme.
 
         ncells: `int`
             The number of cells at the new higher refinement level
@@ -328,6 +339,7 @@ def _healpix_increase_refinement_level_indices(
         `None`
 
     """
+    import dask.array as da
     from cfdm import integer_dtype
     from dask.array.core import normalize_chunks
 
@@ -343,12 +355,12 @@ def _healpix_increase_refinement_level_indices(
     if dx.dtype != dtype:
         dx = dx.astype(dtype)
 
-    # Change each original HEALpix index to the smallest new HEALPix
+    # Change each original HEALPix index to the smallest new HEALPix
     # index that the larger cell contains
     dx = dx * ncells
 
     # Add a new size dimension just after the HEALPix dimension
-    # (e.g. .shape becomes (48, 1))
+    # (e.g. dx.shape becomes (48, 1))
     new_axis = 1
     dx = da.expand_dims(dx, new_axis)
 
@@ -447,9 +459,9 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
 
     # Find the datatype for the largest possible index at this
     # refinement level
-    if new_indexing_scheme == "nested_unique":
-        # The largest possible "nested_unique" index at refinement
-        # level N is 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
+    if new_indexing_scheme == "nuniq":
+        # The largest possible "nuniq" index at refinement level N is
+        # 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
         dtype = integer_dtype(16 * (4**refinement_level) - 1)
     else:
         # The largest possible "nested" or "ring" index at refinement
@@ -471,7 +483,7 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     # convert it to an Auxiliary Coordinate
     if healpix_index.construct_type == "dimension_coordinate" and set(
         (indexing_scheme, new_indexing_scheme)
-    ) != set(("nested", "nested_unique")):
+    ) != set(("nested", "nuniq")):
         f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
 
@@ -522,6 +534,8 @@ def _healpix_locate(lat, lon, f):
             HEALPix indices defined by the indexing scheme.
 
     """
+    import dask.array as da
+
     try:
         import healpix
     except ImportError as e:
@@ -541,8 +555,8 @@ def _healpix_locate(lat, lon, f):
 
     indexing_scheme = hp.get("indexing_scheme")
     match indexing_scheme:
-        case "nested_unique":
-            # nested_unique indexing scheme
+        case "nuniq":
+            # nuniq indexing scheme
             index = []
             healpix_index = healpix_index.array
             orders = healpix.uniq2pix(healpix_index, nest=True)[0]
@@ -555,7 +569,7 @@ def _healpix_locate(lat, lon, f):
                 pix = healpix.ang2pix(nside, lon, lat, nest=True, lonlat=True)
                 # Remove duplicate indices
                 pix = np.unique(pix)
-                # Convert back to HEALPix nested_unique indices
+                # Convert back to HEALPix nuniq indices
                 pix = healpix._chp.nest2uniq(order, pix, pix)
                 # Find where these HEALPix indices are located in the
                 # healpix_index coordinates
@@ -747,11 +761,11 @@ def healpix_info(f):
 
 
 def healpix_max_refinement_level():
-    """Return the maxium permitted HEALPix refinement level.
+    """Return the maximum permitted HEALPix refinement level.
 
-    The maximum refinement level is the highest refiniment level for
-    which all of its HEALPix indices are representable as double
-    precision integers.
+    The maximum refinement level is the highest refinement level for
+    which all of HEALPix indices from any indexing scheme are
+    representable as double precision integers.
 
     K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
     al.. HEALPix: A Framework for High-Resolution Discretization and
@@ -764,7 +778,7 @@ def healpix_max_refinement_level():
     :Returns:
 
         `int`
-            The maxium permitted HEALPix refinement level.
+            The maximum permitted HEALPix refinement level.
 
     """
     try:

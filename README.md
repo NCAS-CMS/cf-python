@@ -130,7 +130,7 @@ possible, are available with the [cf-plot
 package](https://ncas-cms.github.io/cf-plot), which needs to be
 installed separately to the `cf` package.
 
-![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](https://raw.githubusercontent.com/NCAS-CMS/cf-plot/master/docs/source/images/cf_gallery_image.png)
+![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](docs/source/images/new_gallery_view.png)
 
 Command line utilities
 ======================
@@ -150,3 +150,11 @@ Tests
 Tests are run from within the ``cf/test`` directory:
 
     python run_tests.py
+
+Training
+=======
+
+Training material on cf-python and cf-plot i.e. the CF Data Tools,
+ in the form of Jupyter Notebooks, is openly-accessible and available
+ (with instructions for set-up provided) at:
+ https://github.com/NCAS-CMS/cf-tools-training.

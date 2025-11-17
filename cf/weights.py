@@ -2005,7 +2005,7 @@ class Weights(Container, cfdm.Container):
 
         parameters = cr.coordinate_conversion.parameters()
         indexing_scheme = parameters.get("indexing_scheme")
-        if indexing_scheme not in ("nested", "ring", "nested_unique"):
+        if indexing_scheme not in ("nested", "ring", "nuniq"):
             if auto:
                 return False
 
@@ -2016,7 +2016,7 @@ class Weights(Container, cfdm.Container):
             )
 
         refinement_level = parameters.get("refinement_level")
-        if refinement_level is None and indexing_scheme != "nested_unique":
+        if refinement_level is None and indexing_scheme != "nuniq":
             # No refinement_level
             if auto:
                 return False
@@ -2029,8 +2029,8 @@ class Weights(Container, cfdm.Container):
         if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
-        # Create weights for 'nested_unique' indexed cells
-        if indexing_scheme == "nested_unique":
+        # Create weights for 'nuniq' indexed cells
+        if indexing_scheme == "nuniq":
             if methods:
                 weights[(axis,)] = "HEALPix Multi-Order Coverage"
                 return True
@@ -2062,7 +2062,7 @@ class Weights(Container, cfdm.Container):
             dx = dx.map_blocks(
                 cf_healpix_weights,
                 meta=np.array((), dtype="float64"),
-                indexing_scheme="nested_unique",
+                indexing_scheme="nuniq",
                 measure=measure,
                 radius=r,
             )

@@ -3135,7 +3135,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
-        h = g.healpix_indexing_scheme("nested_unique")
+        h = g.healpix_indexing_scheme("nuniq")
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
@@ -3153,14 +3153,14 @@ class FieldTest(unittest.TestCase):
             np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
 
-        g = f.healpix_indexing_scheme("nested_unique")
+        g = f.healpix_indexing_scheme("nuniq")
         self.assertTrue(
             np.array_equal(g.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
-        h = g.healpix_indexing_scheme("nested_unique")
+        h = g.healpix_indexing_scheme("nuniq")
         self.assertTrue(h.equals(g))
 
-        # Can't change from 'nested_unique' to 'nested'
+        # Can't change from 'nuniq' to 'nested'
         with self.assertRaises(ValueError):
             self.f13.healpix_indexing_scheme("nested")
 
@@ -3222,7 +3222,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.create_latlon_coordinates(inplace=True))
         self.assertTrue(f.equals(g))
 
-        g = self.f12.healpix_indexing_scheme("nested_unique")
+        g = self.f12.healpix_indexing_scheme("nuniq")
         g.create_latlon_coordinates(inplace=True)
         for c in ("latitude", "longitude"):
             self.assertTrue(
@@ -3393,7 +3393,7 @@ class FieldTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 f.healpix_decrease_refinement_level(level, "mean")
 
-        # Can't change refinement level for a 'nested_unique' field
+        # Can't change refinement level for a 'nuniq' field
         # TODOHEALPIX
         with self.assertRaises(ValueError):
             self.f13.healpix_decrease_refinement_level(0, "mean")
@@ -3455,7 +3455,7 @@ class FieldTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 f.healpix_increase_refinement_level(level, "intensive")
 
-        # Can't change refinement level for a 'nested_unique' field
+        # Can't change refinement level for a 'nuniq' field
         with self.assertRaises(ValueError):
             self.f13.healpix_increase_refinement_level(2, "intensive")
 

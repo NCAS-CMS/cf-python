@@ -15,9 +15,13 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/???)
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
 * New optional dependency: ``healpix>=2025.1``
 * Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
-  
+
+----
+
 Version 3.18.2
 --------------
 
@@ -29,6 +33,7 @@ Version 3.18.2
   `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
   (https://github.com/NCAS-CMS/cf-python/issues/878)
 * Changed dependency: ``Python>=3.10.0``
+* Changed dependency: ``cfdm>=1.12.3.1, <1.12.4.0``
 
 ----
 

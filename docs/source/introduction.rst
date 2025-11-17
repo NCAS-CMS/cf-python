@@ -139,12 +139,22 @@ separately to `cf` (see the
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
 See the `cf-plot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide range
+<https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide range
 of plotting possibilities with example code.
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Examples gallery of plots made with the cf-plot library.*
+
+----
+
+**Training**
+------------
+
+Training material on cf-python and cf-plot i.e. the CF Data Tools,
+in the form of Jupyter Notebooks, is openly-accessible and available
+(with instructions for set-up provided) at:
+https://github.com/NCAS-CMS/cf-tools-training.
 
 ----
 
@@ -261,7 +271,7 @@ all of its metadata. It is defined in CF-|version| as follows:
 
 .. figure:: images/cfdm_field.svg
 
-   *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
+   *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when their type (dimension or auxiliary coordinate construct) is not an issue.*
 
 ----
 

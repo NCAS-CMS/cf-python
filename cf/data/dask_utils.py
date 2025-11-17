@@ -9,7 +9,6 @@ from functools import partial
 
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
-from scipy.ndimage import convolve1d
 
 from ..cfdatetime import dt, dt2rt, rt2dt
 from ..units import Units
@@ -73,6 +72,8 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
             Convolved float array with same shape as input.
 
     """
+    from scipy.ndimage import convolve1d
+
     a = cfdm_to_memory(a)
 
     # Cast to float to ensure that NaNs can be stored
@@ -501,15 +502,15 @@ def cf_healpix_bounds(
 
         indexing_scheme: `str`
             The HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nested_unique'``.
+            ``'ring'``, or ``'nuniq'``.
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nested_unique'``, in which case *refinement_level* may
-            be `None`.
+            ``'nuniq'``, in which case *refinement_level* may be
+            `None`.
 
         latitude: `bool`, optional
             If True then return the bounds' latitudes.
@@ -586,7 +587,7 @@ def cf_healpix_bounds(
     match indexing_scheme:
         case "ring":
             bounds_func = healpix._chp.ring2ang_uv
-        case "nested" | "nested_unique":
+        case "nested" | "nuniq":
             bounds_func = healpix._chp.nest2ang_uv
         case _:
             raise ValueError(
@@ -608,8 +609,8 @@ def cf_healpix_bounds(
     b = np.empty((a.size, 4), dtype="float64")
 
     match indexing_scheme:
-        case "nested_unique":
-            # Create bounds for 'nested_unique' indices
+        case "nuniq":
+            # Create bounds for 'nuniq' indices
             orders, a = healpix.uniq2pix(a, nest=True)
             for order in np.unique(orders):
                 nside = healpix.order2nside(order)
@@ -685,15 +686,15 @@ def cf_healpix_coordinates(
 
         indexing_scheme: `str`
             The HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nested_unique'``.
+            ``'ring'``, or ``'nuniq'``.
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nested_unique'``, in which case *refinement_level* may
-            be `None`.
+            ``'nuniq'``, in which case *refinement_level* may be
+            `None`.
 
         latitude: `bool`, optional
             If True then return the coordinate latitudes.
@@ -747,8 +748,8 @@ def cf_healpix_coordinates(
         pos = 0
 
     match indexing_scheme:
-        case "nested_unique":
-            # Create coordinates for 'nested_unique' indices
+        case "nuniq":
+            # Create coordinates for 'nuniq' indices
             c = np.empty(a.shape, dtype="float64")
 
             nest = True
@@ -810,11 +811,11 @@ def cf_healpix_indexing_scheme(
 
         indexing_scheme: `str`
             The original HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nested_unique'``.
+            ``'ring'``, or ``'nuniq'``.
 
         new_indexing_scheme: `str`
             The new HEALPix indexing scheme to change to. One of
-            ``'nested'``, ``'ring'``, or ``'nested_unique'``.
+            ``'nested'``, ``'ring'``, or ``'nuniq'``.
 
         healpix_index_dtype: `str` or `numpy.dtype`
             Typecode or data-type to which the new indices will be
@@ -827,8 +828,8 @@ def cf_healpix_indexing_scheme(
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nested_unique'`` (in which case *refinement_level* may
-            be `None`).
+            ``'nuniq'`` (in which case *refinement_level* may be
+            `None`).
 
     :Returns:
 
@@ -842,11 +843,11 @@ def cf_healpix_indexing_scheme(
     ... )
     array([13,  5,  4,  0])
     >>> cf.data.dask_utils.cf_healpix_indexing_scheme(
-    ...     [0, 1, 2, 3], 'nested', 'nested_unique', 1
+    ...     [0, 1, 2, 3], 'nested', 'nuniq', 1
     )
     array([16, 17, 18, 19])
     >>> cf.data.dask_utils.cf_healpix_indexing_scheme(
-    ...     [16, 17, 18, 19], 'nested_unique', 'nested', None
+    ...     [16, 17, 18, 19], 'nuniq', 'nested', None
     )
     array([0, 1, 2, 3])
 
@@ -881,7 +882,7 @@ def cf_healpix_indexing_scheme(
                     nside = healpix.order2nside(refinement_level)
                     a = healpix.nest2ring(nside, a)
 
-                case "nested_unique":
+                case "nuniq":
                     a = healpix.pix2uniq(refinement_level, a, nest=True)
 
         case "ring":
@@ -890,10 +891,10 @@ def cf_healpix_indexing_scheme(
                     nside = healpix.order2nside(refinement_level)
                     a = healpix.ring2nest(nside, a)
 
-                case "nested_unique":
+                case "nuniq":
                     a = healpix.pix2uniq(refinement_level, a, nest=False)
 
-        case "nested_unique":
+        case "nuniq":
             match new_indexing_scheme:
                 case "nested" | "ring":
                     nest = new_indexing_scheme == "nested"
@@ -903,7 +904,7 @@ def cf_healpix_indexing_scheme(
                     if order.size > 1:
                         raise ValueError(
                             "Can't change HEALPix indexing scheme from "
-                            f"'nested_unique' to {new_indexing_scheme!r}: "
+                            f"'nuniq' to {new_indexing_scheme!r}: "
                             "HEALPix indices span multiple refinement levels "
                             f"(at least levels {order.tolist()})"
                         )
@@ -940,10 +941,10 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     :Parameters:
 
         a: `numpy.ndarray`
-            The array of HEALPix 'nested_unique' indices.
+            The array of HEALPix 'nuniq' indices.
 
         indexing_scheme: `str`
-            The HEALPix indexing scheme. Must be ``'nested_unique'``.
+            The HEALPix indexing scheme. Must be ``'nuniq'``.
 
         measure: `bool`, optional
             If True then create weights that are actual cell areas, in
@@ -961,21 +962,21 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     **Examples**
 
     >>> cf.data.dask_utils.cf_healpix_weights(
-    ...     [76, 77, 78, 79, 20, 21], 'nested_unique'
+    ...     [76, 77, 78, 79, 20, 21], 'nuniq'
     )
     array([0.0625, 0.0625, 0.0625, 0.0625, 0.25  , 0.25  ])
     >>> cf.data.dask_utils.cf_healpix_weights(
-    ...     [76, 77, 78, 79, 20, 21], 'nested_unique',
+    ...     [76, 77, 78, 79, 20, 21], 'nuniq',
     ...     measure=True, radius=6371000
     )
     array([2.65658579e+12, 2.65658579e+12, 2.65658579e+12, 2.65658579e+12,
            1.06263432e+13, 1.06263432e+13])
 
     """
-    if indexing_scheme != "nested_unique":
+    if indexing_scheme != "nuniq":
         raise ValueError(
             "cf_healpix_weights: Can only calulate weights for the "
-            "'nested_unique' indexing scheme"
+            "'nuniq' indexing scheme"
         )
 
     try:

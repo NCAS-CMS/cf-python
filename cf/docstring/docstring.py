@@ -595,14 +595,13 @@ _docstring_substitution_definitions = {
 
                 A Multi-Order Coverage (MOC) has pixels with different
                 refinement levels stored in the same array. The
-                "nested_unique" scheme for an MOC has a unique index
-                for each cell at each refinement level, such that
-                within each refinement level a nested-type scheme is
-                employed. In the "nested_unique" scheme, pixels at
-                different refinement levels inside a single coarser
-                refinement level cell can have widely different
-                indices. For each refinement level *n*, the
-                "nested_unique" indices are in the range
+                "nuniq" scheme for an MOC has a unique index for each
+                cell at each refinement level, such that within each
+                refinement level a nested-type scheme is employed. In
+                the "nuniq" scheme, pixels at different refinement
+                levels inside a single coarser refinement level cell
+                can have widely different indices. For each refinement
+                level *n*, the "nuniq" indices are in the range
                 :math:`4^{(n+1)}, ..., 4^{(n+2)}-1`.""",
     # dst_grid_partitions
     "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional

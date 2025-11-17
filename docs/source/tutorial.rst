@@ -547,12 +547,12 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Examples gallery of plots made with the cf-plot library.*
 
 See the `cf-plot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide
+<https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide
 range of plotting possibilities, with example code. These include, but are
 not limited to:
 
@@ -1153,7 +1153,7 @@ Manipulating dimensions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
+one dimensions removed and have new size one dimensions included
 by using the following field construct methods:
 
 =========================  ===========================================
@@ -1223,7 +1223,7 @@ Data mask
 	     
 There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
-data mask is `False` where the the data has values, and `True` where
+data mask is `False` where the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~Field.mask` attribute of the field construct, which returns the data
 mask in a field construct with the same metadata constructs as the
@@ -1594,7 +1594,7 @@ Masked values
 ^^^^^^^^^^^^^
  
 Data array elements may be set to masked values by assigning them to
-the `cf.masked` constant, thereby updating the the :ref:`data mask
+the `cf.masked` constant, thereby updating the :ref:`data mask
 <Data-mask>`.
 
 .. code-block:: python
@@ -2327,7 +2327,7 @@ date-time objects of the `cftime package
 attribute of the construct, or its `cf.Data` instance.
 
 .. code-block:: python
-   :caption: *Inspect the the values of a "time" construct as elapsed
+   :caption: *Inspect the values of a "time" construct as elapsed
              times and as date-times.*
 
    >>> time = q.construct('time')
@@ -2545,7 +2545,7 @@ grid point location for each cell. The cell bounds are stored in a
 `~Coordinate.bounds` attribute, or `~Coordinate.get_bounds` method, of
 the coordinate construct.
 
-A `cf.Bounds` instance shares the :ref:`the same API as the field
+A `cf.Bounds` instance shares :ref:`the same API as the field
 construct <Data>` for accessing its data.
 
 .. code-block:: python
@@ -6902,7 +6902,7 @@ their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
-keyword of `cf.read` allows the format to be specified. The the UM
+keyword of `cf.read` allows the format to be specified. The UM
 version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the *um* keyword.
@@ -7064,7 +7064,7 @@ adding new ones, is straight forward with the
 Note that some STASH codes have multiple standard name mappings. This
 could be due to the standard name being a function of other parts of
 the header (as is the case for ``(1, 2)``) and ``(1, 152)``), or the
-the STASH code only being valid for particular UM versions (as is the
+STASH code only being valid for particular UM versions (as is the
 case for ``(1, 152)``).
      
 ----

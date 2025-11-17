@@ -514,7 +514,7 @@ class DomainTest(unittest.TestCase):
             0,
         )
 
-        d = cf.Domain.create_healpix(0, "nested_unique")
+        d = cf.Domain.create_healpix(0, "nuniq")
         self.assertTrue(
             np.array_equal(d.dimension_coordinate(), np.arange(4, 16))
         )
@@ -534,7 +534,7 @@ class DomainTest(unittest.TestCase):
                 1000,
             )
 
-        # Bad refinement_level
+        # Bad refinement_level specification
         for level in (-1, 3.14, 30, "string"):
             with self.assertRaises(ValueError):
                 cf.Domain.create_healpix(level)

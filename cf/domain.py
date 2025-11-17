@@ -279,8 +279,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         resulting from an attempt to create an excessive amount of
         chunks for the healpix_index coordinates. For instance,
         healpix_index coordinates at refinement level 29 would need
-        ~206e9 chunks with the default Dask chunksize of 128 MiB, but
-        with a chunksize of 1 PiB, only 24576 chunks are required::
+        ~206 billion chunks with the default chunksize of 128 MiB, but
+        with a chunksize of 1 pebibyte only 24576 chunks are
+        required::
 
            >>> cf.chunksize()
            >>> 134217728
@@ -312,7 +313,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the
-                default), ``'ring'``, or ``'nested_unique'``.
+                default), ``'ring'``, or ``'nuniq'``.
 
                 {{HEALPix indexing schemes}}
 
@@ -360,7 +361,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         .. code-block:: python
 
-           >>> d = cf.Domain.create_healpix(4, "nested_unique", radius=6371000)
+           >>> d = cf.Domain.create_healpix(4, "nuniq", radius=6371000)
            >>> d.dump()
            --------
            Domain:
@@ -373,7 +374,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
            Coordinate reference: grid_mapping_name:healpix
                Coordinate conversion:grid_mapping_name = healpix
-               Coordinate conversion:indexing_scheme = nested_unique
+               Coordinate conversion:indexing_scheme = nuniq
                Datum:earth_radius = 6371000.0
                Dimension Coordinate: healpix_index
 
@@ -409,7 +410,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
-        nested_unique = indexing_scheme == "nested_unique"
+        nuniq = indexing_scheme == "nuniq"
 
         domain = Domain()
         ncells = 12 * (4**refinement_level)
@@ -425,7 +426,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         c.nc_set_variable("healpix_index")
 
         # Create the healpix_index data
-        if nested_unique:
+        if nuniq:
             start = 4 ** (refinement_level + 1)
         else:
             start = 0
@@ -455,7 +456,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 "indexing_scheme": indexing_scheme,
             }
         )
-        if not nested_unique:
+        if not nuniq:
             cr.coordinate_conversion.set_parameter(
                 "refinement_level", refinement_level
             )

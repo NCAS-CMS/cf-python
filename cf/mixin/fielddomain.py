@@ -3,8 +3,6 @@ from numbers import Integral
 
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
-from dask.array.slicing import normalize_index
-from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -23,6 +21,7 @@ from ..units import Units
 
 logger = logging.getLogger(__name__)
 
+_earth_radius = 6371229.0
 
 _units_degrees = Units("degrees")
 
@@ -247,11 +246,14 @@ class FieldDomain:
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
                  ancillary mask to apply to those domain axes
-                 immediately after the the subspace has been created
+                 immediately after the subspace has been created
                  by the ``'indices'``. This dictionary will always be
                  empty if the *ancillary_mask* parameter is False.
 
         """
+        from dask.array.slicing import normalize_index
+        from dask.base import is_dask_collection
+
         debug = is_log_level_debug(logger)
 
         # Parse mode and halo
@@ -747,9 +749,9 @@ class FieldDomain:
                                     for i, p in zip(identities, points)
                                 ]
                             )
-                            raise ImportError(
-                                "Must install matplotlib to create indices "
-                                f"for {self!r} from: {x}"
+                            raise ModuleNotFoundError(
+                                "Must install the 'matplotlib' package to "
+                                f"create indices for {self!r} from: {x}"
                             )
 
                         def _point_not_in_cell(nodes_x, nodes_y, point):
@@ -1995,8 +1997,8 @@ class FieldDomain:
 
             new_indexing_scheme: `str` or `None`
                 The new HEALPix indexing scheme. One of ``'nested'``,
-                ``'ring'``, ``'nested_unique'``, or `None`. If `None`
-                then the indexing scheme is unchanged.
+                ``'ring'``, ``'nuniq'``, or `None`. If `None` then the
+                indexing scheme is unchanged.
 
                 {{HEALPix indexing schemes}}
 
@@ -2030,9 +2032,9 @@ class FieldDomain:
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
-        >>> g = f.healpix_indexing_scheme('nested_unique')
+        >>> g = f.healpix_indexing_scheme('nuniq')
         >>> g.healpix_info()['indexing_scheme']
-        'nested_unique'
+        'nuniq'
         >>> print(g.coordinate('healpix_index').array)
         [16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
          40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63]
@@ -2116,9 +2118,9 @@ class FieldDomain:
             cr.coordinate_conversion.set_parameter(
                 "indexing_scheme", new_indexing_scheme
             )
-            if new_indexing_scheme == "nested_unique":
+            if new_indexing_scheme == "nuniq":
                 cr.coordinate_conversion.del_parameter("refinement_level")
-            elif indexing_scheme == "nested_unique":
+            elif indexing_scheme == "nuniq":
                 raise ValueError(
                     f"Can't change HEALPix indexing scheme of {f!r} from "
                     f"{indexing_scheme!r} to {new_indexing_scheme!r}"
@@ -2218,7 +2220,7 @@ class FieldDomain:
         :Parameters:
 
             cache: `bool`, optional
-        
+
                 If True (the default) then cache in memory the first
                 and last of any newly-created UGRID coordinates and
                 bounds. This may slightly slow down the coordinate
@@ -3322,7 +3324,7 @@ class FieldDomain:
                         "or None"
                     )
 
-                return self._Data(6371229.0, "m")
+                return self._Data(_earth_radius, "m")
 
             r = self._Data.asdata(default).squeeze()
         else:

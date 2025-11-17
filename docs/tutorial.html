@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Tutorial &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a5d0ad34" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
     <script src="_static/documentation_options.js?v=5318ce95"></script>
@@ -30,16 +30,17 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/logo.svg" alt="Logo of Python cf package"/>
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
             </a></p>
 
 
@@ -128,8 +129,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <p>Version 3.18.2 for version 1.12 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in two executable
-scripts (<a class="reference download internal" download="" href="_downloads/bb5fb8d8c9c79615a69f3b221f87dfa4/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 28kB,
-<a class="reference download internal" download="" href="_downloads/f005a212533d023d9ca8ee5ecd9a9065/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
+scripts (<a class="reference download internal" download="" href="_downloads/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 28kB,
+<a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#sample-datasets" id="id387"><strong>Sample datasets</strong></a></p></li>
@@ -359,7 +360,7 @@ scripts (<a class="reference download internal" download="" href="_downloads/bb5
 <span id="id2"></span><h2><a class="toc-backref" href="#id387" role="doc-backlink"><strong>Sample datasets</strong></a><a class="headerlink" href="#sample-datasets" title="Link to this heading">¶</a></h2>
 <p>This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file <code class="docutils literal notranslate"><span class="pre">cf_tutorial_files.zip</span></code>
-(<a class="reference download internal" download="" href="_downloads/662a6146f847a4d1c19d523d3f30e1cc/cf_tutorial_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
+(<a class="reference download internal" download="" href="_downloads/cf_tutorial_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id120">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id120" title="Link to this code">¶</a></div>
@@ -853,12 +854,12 @@ files</span></a>.</p>
 constructs are available with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf-plot</span></code> package (that needs to be
 installed separately to cf, see <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/">cf-plot documentation</a> for details).</p>
 <figure class="align-default" id="id131">
-<img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
+<img alt="_images/new_gallery_view.png" src="_images/new_gallery_view.png" />
 <figcaption>
-<p><span class="caption-text"><em>Example output of cf-plot displaying a cf field construct.</em></span><a class="headerlink" href="#id131" title="Link to this image">¶</a></p>
+<p><span class="caption-text"><em>Examples gallery of plots made with the cf-plot library.</em></span><a class="headerlink" href="#id131" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
-<p>See the <a class="reference external" href="https://ncas-cms.github.io/cf-plot/build/gallery.html">cf-plot gallery</a> for the wide
+<p>See the <a class="reference external" href="https://ncas-cms.github.io/cf-plot/gallery_of_examples.html">cf-plot gallery</a> for the wide
 range of plotting possibilities, with example code. These include, but are
 not limited to:</p>
 <ul class="simple">
@@ -1126,7 +1127,7 @@ following attributes of the field construct:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.field_ancillaries.html#cf.Field.field_ancillaries" title="cf.Field.field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code></a></p></td>
 <td><p>Field ancillaries</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.cell_methods.html#cf.Field.cell_methods" title="cf.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.cell_methods.html#cf.Field.cell_methods" title="cf.Field.cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_methods</span></code></a></p></td>
 <td><p>Cell methods</p></td>
 </tr>
 </tbody>
@@ -1447,7 +1448,7 @@ required.</em></span><a class="headerlink" href="#id149" title="Link to this cod
 <section id="manipulating-dimensions">
 <span id="id20"></span><h3><a class="toc-backref" href="#id406" role="doc-backlink">Manipulating dimensions</a><a class="headerlink" href="#manipulating-dimensions" title="Link to this heading">¶</a></h3>
 <p>The dimensions of a field construct’s data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
+one dimensions removed and have new size one dimensions included
 by using the following field construct methods:</p>
 <table class="docutils align-default">
 <thead>
@@ -1529,7 +1530,7 @@ using the ‘constructs’ keyword.</em></span><a class="headerlink" href="#id15
 </div>
 <p>There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
-data mask is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> where the the data has values, and <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> where
+data mask is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> where the data has values, and <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> where
 the data is missing. The data mask may be inspected with the
 <a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a> attribute of the field construct, which returns the data
 mask in a field construct with the same metadata constructs as the
@@ -1887,7 +1888,7 @@ latitudes.</em></span><a class="headerlink" href="#id166" title="Link to this co
 <section id="masked-values">
 <span id="id26"></span><h3><a class="toc-backref" href="#id410" role="doc-backlink">Masked values</a><a class="headerlink" href="#masked-values" title="Link to this heading">¶</a></h3>
 <p>Data array elements may be set to masked values by assigning them to
-the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant, thereby updating the the <a class="reference internal" href="#data-mask"><span class="std std-ref">data mask</span></a>.</p>
+the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant, thereby updating the <a class="reference internal" href="#data-mask"><span class="std std-ref">data mask</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id167">
 <div class="code-block-caption"><span class="caption-text"><em>Set a column of elements to masked values.</em></span><a class="headerlink" href="#id167" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
@@ -2645,7 +2646,7 @@ reference date. These constructs are identified by the presence of
 date-time objects of the <a class="reference external" href="https://unidata.github.io/cftime/">cftime package</a> with the <a class="reference internal" href="attribute/cf.Field.datetime_array.html#cf.Field.datetime_array" title="cf.Field.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>
 attribute of the construct, or its <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p>
 <div class="literal-block-wrapper docutils container" id="id199">
-<div class="code-block-caption"><span class="caption-text"><em>Inspect the the values of a “time” construct as elapsed
+<div class="code-block-caption"><span class="caption-text"><em>Inspect the values of a “time” construct as elapsed
 times and as date-times.</em></span><a class="headerlink" href="#id199" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span>
@@ -2859,7 +2860,7 @@ grid point location for each cell. The cell bounds are stored in a
 <a class="reference internal" href="class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> class instance that is accessed with the
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code> attribute, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code> method, of
 the coordinate construct.</p>
-<p>A <a class="reference internal" href="class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> instance shares the <a class="reference internal" href="#data"><span class="std std-ref">the same API as the field
+<p>A <a class="reference internal" href="class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> instance shares <a class="reference internal" href="#data"><span class="std std-ref">the same API as the field
 construct</span></a> for accessing its data.</p>
 <div class="literal-block-wrapper docutils container" id="id208">
 <div class="code-block-caption"><span class="caption-text"><em>Get the Bounds instance of a coordinate construct and
@@ -7247,7 +7248,7 @@ their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible <a class="footnote-reference brackets" href="#um" id="id87" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, the <em>um</em>
-keyword of <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> allows the format to be specified. The the UM
+keyword of <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> allows the format to be specified. The UM
 version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the <em>um</em> keyword.</p>
@@ -7422,7 +7423,7 @@ it.</em></span><a class="headerlink" href="#id332" title="Link to this code">¶<
 <p>Note that some STASH codes have multiple standard name mappings. This
 could be due to the standard name being a function of other parts of
 the header (as is the case for <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">2)</span></code>) and <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">152)</span></code>), or the
-the STASH code only being valid for particular UM versions (as is the
+STASH code only being valid for particular UM versions (as is the
 case for <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">152)</span></code>).</p>
 <hr class="docutils" />
 </section>
@@ -9660,7 +9661,7 @@ round and truncate their data:</p>
 cell sizes (or custom weights) may applied to the calculation.</p>
 <div class="literal-block-wrapper docutils container" id="id383">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point weighted mean of the ‘X’ axis. Since
-the the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="headerlink" href="#id383" title="Link to this code">¶</a></div>
+the ‘X’ axis is cyclic, the mean wraps by default.</em></span><a class="headerlink" href="#id383" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
@@ -9733,7 +9734,7 @@ filter. Convolution filters are carried with the
 <a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id384">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 5-point mean of the ‘X’ axis with a
-non-uniform window function. Since the the ‘X’ axis is
+non-uniform window function. Since the ‘X’ axis is
 cyclic, the convolution wraps by default.</em></span><a class="headerlink" href="#id384" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
@@ -10107,11 +10108,11 @@ format can not reliably be detected automatically.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-10-16.
+      &#169;2025, NCAS | Page built on 2025-10-29.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 
