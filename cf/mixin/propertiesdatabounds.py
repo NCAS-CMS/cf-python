@@ -3009,7 +3009,7 @@ class PropertiesDataBounds(PropertiesData):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic tangent of 90
+        they were radians. For example, the hyperbolic tangent of 90
         degrees_east is 0.91715234, as is the hyperbolic tangent of
         1.57079632 radians.
 
@@ -3069,7 +3069,7 @@ class PropertiesDataBounds(PropertiesData):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic sine of 90
+        they were radians. For example, the hyperbolic sine of 90
         degrees_north is 2.30129890, as is the hyperbolic sine of
         1.57079632 radians.
 
@@ -3128,7 +3128,7 @@ class PropertiesDataBounds(PropertiesData):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic cosine of 0
+        they were radians. For example, the hyperbolic cosine of 0
         degrees_east is 1.0, as is the hyperbolic cosine of 1.57079632 radians.
 
         The output units are changed to '1' (nondimensional).

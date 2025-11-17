@@ -3,8 +3,6 @@ from numbers import Integral
 
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_info
-from dask.array.slicing import normalize_index
-from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -247,11 +245,14 @@ class FieldDomain:
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
                  ancillary mask to apply to those domain axes
-                 immediately after the the subspace has been created
+                 immediately after the subspace has been created
                  by the ``'indices'``. This dictionary will always be
                  empty if the *ancillary_mask* parameter is False.
 
         """
+        from dask.array.slicing import normalize_index
+        from dask.base import is_dask_collection
+
         debug = is_log_level_debug(logger)
 
         # Parse mode and halo
@@ -725,9 +726,9 @@ class FieldDomain:
                                     for i, p in zip(identities, points)
                                 ]
                             )
-                            raise ImportError(
-                                "Must install matplotlib to create indices "
-                                f"for {self!r} from: {x}"
+                            raise ModuleNotFoundError(
+                                "Must install the 'matplotlib' package to "
+                                f"create indices for {self!r} from: {x}"
                             )
 
                         def _point_not_in_cell(nodes_x, nodes_y, point):
