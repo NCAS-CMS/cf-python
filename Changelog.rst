@@ -3,18 +3,20 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New HEALPix methods: `cf.Field.healpix_info`,
   `cf.Field.healpix_decrease_refinement_level`,
   `cf.Field.healpix_increase_refinement_level`,
   `cf.Field.healpix_indexing_scheme`, `cf.Field.healpix_to_ugrid`,
   `cf.Domain.create_healpix`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New method: `cf.Field.create_latlon_coordinates`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New method: `cf.Data.coarsen`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New function: `cf.locate`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
 * New optional dependency: ``healpix>=2025.1``
