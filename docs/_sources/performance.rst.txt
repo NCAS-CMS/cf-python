@@ -83,7 +83,7 @@ Some notable cases where non-lazy computations occur are:
 
   The weights may also be stored on disk for re-use in future sessions
   by using the ``weights_file`` keyword parameter.
-  
+
 * **Aggregation**
 
   When two or more field or domain constructs are aggregated to form a
@@ -100,7 +100,8 @@ Some notable cases where non-lazy computations occur are:
   convention (such as compression by gathering, some discrete sampling
   geometries, etc.), the compression metadata, such as the "list"
   array for compression by gathering, are read from disk non-lazily
-  during the `cf.read` operation.
+  during the `cf.read` operation. The compressed data themselves are,
+  however, accessed lazily.
 
 ----
 
@@ -173,15 +174,15 @@ scheduler has been defined will use that scheduler.
 
    >>> import cf
    >>> import dask
+   >>> # To make cf computations use local processes:
    >>> dask.config.set(scheduler='processes')
-   >>> # cf computations will now use local processes
+   >>> # To make cf computations be single-threaded
    >>> dask.config.set(scheduler='synchronous')
-   >>> # cf computations will now be single-threaded
+   >>> # To make cf computations use local threads (the default)
    >>> dask.config.set(scheduler='threads')
-   >>> # cf computations will now use local threads (the default)
+   >>> # To make cf computations use a user-defined distributed cluster
    >>> from dask.distributed import Client
    >>> client = Client('127.0.0.1:8786')
-   >>> # cf computations will now use the defined distributed cluster
  
 Operations are stored by Dask in `task graphs
 <https://docs.dask.org/en/stable/graphs.html>`_ where each task
@@ -212,7 +213,7 @@ basic data computation over four chunks:
     [18 19 20 21 22 23]
     [24 25 26 27 28 29]]
    >>> e = d ** 2 + d
-   >>> e.to_dask_array().visualize('dask_task_graph.png')
+   >>> e.to_dask_array().visualize('dask_task_graph.svg')
    >>> print(e.array)
    [[  0   2   6  12  20  30]
     [ 42  56  72  90 110 132]
@@ -220,27 +221,25 @@ basic data computation over four chunks:
     [342 380 420 462 506 552]
     [600 650 702 756 812 870]]
 
-The image file ``dask_task_graph.png`` contains the visualisation of
-the dask task graph, showing the operations on each chunk. The
-operations were only executed when their result was requested with the
-final ``e.array`` command. The boxes represent the data chunks and the
-circles represent the operations to be performed on the chunks. The
-five boxes in the bottom row are the starting data (i.e. the four
-chunks of ``d`` and the scalar ``2``), and the four boxes in the top
-row are the result of the computations which combine to produce the
-values in ``e.array``.
+The image file ``dask_task_graph.svg`` contains the visualisation of
+the Dask task graph, showing the operations on each chunk:
 
 .. figure:: images/dask_task_graph.svg
    :scale: 8 %
 
-   *The dask task graph from dask_task_graph.png*
-
+The operations were only executed when their result was requested with
+the final ``e.array`` command. The boxes in ``dask_task_graph.svg``
+represent the data chunks and the circles represent the operations to
+be performed on the chunks. The five boxes in the bottom row are the
+starting data (i.e. the four chunks of ``d`` and the scalar ``2``),
+and the four boxes in the top row are the result of the computations
+which combine to produce the values in ``e.array``.
 
 NetCDF file access
 ^^^^^^^^^^^^^^^^^^
 
-Note that reading from and writing to netCDF files is currently a
-serial operation, i.e. only one Dask chunk can access any netCDF file
+Note that reading from and writing to netCDF files are currently only
+serial operations, i.e. only one Dask chunk can access any netCDF file
 at any given moment. This situation can result in slower-than-expected
 performance. When a thread-safe version of the netCDF-C library is
 available we hope to lift this restriction.

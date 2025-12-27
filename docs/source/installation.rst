@@ -32,7 +32,7 @@ Windows Subsystem for Linux (WSL)
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.9 or newer.
+The cf package is only for Python 3.10 or newer.
 
 ----
 
@@ -117,6 +117,25 @@ Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
 
+.. _Jupyter Notebooks:
+
+Jupyter Notebooks
+^^^^^^^^^^^^^^^^^
+
+You may want to work with cf via a Jupyter Notebook within a ``conda`` environment.
+
+A `known issue <https://github.com/NCAS-CMS/cf-python/issues/883/>`_ exists for Python 3.12 only when one wants to install the optional dependency ESMPy. Namely, the stricter dependencies of the Jupyter library clash with those of cf (namely ``zlib`` required by ESMPy) and installation fails.
+
+A proven workaround is to install Jupyter *before* installing cf, like so:
+
+.. code-block:: console
+   :caption: *Install with conda alongside Jupyter.*
+
+   $ conda install jupyter
+   $ conda install -c conda-forge cf-python cf-plot udunits2
+   $ conda install -c conda-forge "esmpy>=8.7.0"
+
+
 ----
 
 .. _Source:
@@ -190,22 +209,24 @@ installed, which:
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.9.0 or newer.
+* `Python <https://www.python.org/>`_, 3.10.0 or newer.
 
 * `numpy <http://www.numpy.org>`_, versions 2.0.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, version 2025.2.0 or newer up to
-  2025.3.0 inclusive.
+* `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.7.2 or newer.
+* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1 or
+  newer.
+
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.7.2 only.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.1.0 or up to,
-  but not including, 1.12.2.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.12.3.1 or up to,
+  but not including, 1.12.4.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 

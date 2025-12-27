@@ -20,12 +20,13 @@ cf.RaggedIndexedArray
    ~cf.RaggedIndexedArray.compressed_dimensions
    ~cf.RaggedIndexedArray.conformed_data
    ~cf.RaggedIndexedArray.copy
+   ~cf.RaggedIndexedArray.get_attributes
    ~cf.RaggedIndexedArray.get_calendar
    ~cf.RaggedIndexedArray.get_compressed_axes
    ~cf.RaggedIndexedArray.get_compressed_dimension
    ~cf.RaggedIndexedArray.get_compression_type
    ~cf.RaggedIndexedArray.get_count
-   ~cf.RaggedIndexedArray.get_filename'
+   ~cf.RaggedIndexedArray.get_filename
    ~cf.RaggedIndexedArray.get_filenames
    ~cf.RaggedIndexedArray.get_index
    ~cf.RaggedIndexedArray.get_Subarray
@@ -46,6 +47,7 @@ cf.RaggedIndexedArray
    :template: attribute.rst
    
    ~cf.RaggedIndexedArray.array
+   ~cf.RaggedIndexedArray.astype
    ~cf.RaggedIndexedArray.compressed_array
    ~cf.RaggedIndexedArray.dtype
    ~cf.RaggedIndexedArray.ndim

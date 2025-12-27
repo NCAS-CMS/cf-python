@@ -11,7 +11,7 @@ nonetheless be modified in memory.
 The `cf` package uses `dask` for all of its array manipulation and
 can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs from netCDF, CDL, Zarr, PP and UM datasets,
 
 * read field constructs and domain constructs from netCDF, CDL, PP and
   UM datasets with a choice of netCDF backends,
@@ -80,156 +80,26 @@ installation and source code.
 
 """
 
-__date__ = "2025-04-02"
-__version__ = "3.17.0"
+import cfdm
 
-_requires = (
-    "numpy",
-    "netCDF4",
-    "cftime",
-    "cfunits",
-    "cfdm",
-    "psutil",
-    "dask",
-    "packaging",
-    "scipy",
-)
-x = ", ".join(_requires)
-_error0 = f"cf v{__version__} requires the modules {x}. "
+from packaging.version import Version
 
-import importlib.util
-from platform import python_version
 
-_found_esmpy = bool(importlib.util.find_spec("esmpy"))
-
-try:
-    import packaging
-    from packaging.version import Version
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "20.0"
-    if Version(packaging.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
-            f"Got {packaging.__version__} at {packaging.__file__}"
-        )
-
-try:
-    import cfdm
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    # Check the version of cfdm
-    _minimum_vn = "1.12.1.0"
-    _maximum_vn = "1.12.2.0"
-    _cfdm_version = Version(cfdm.__version__)
-    if _cfdm_version < Version(_minimum_vn) or _cfdm_version >= Version(
-        _maximum_vn
-    ):
-        raise RuntimeError(
-            "Bad cfdm version: cf requires "
-            f"{_minimum_vn}<=cfdm<{_maximum_vn}. "
-            f"Got {_cfdm_version} at {cfdm.__file__}"
-        )
-
+__date__ = "2025-10-16"
+__version__ = "3.18.2"
 __cf_version__ = cfdm.__cf_version__
 __Conventions__ = f"CF-{__cf_version__}"
 
-try:
-    import netCDF4
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "1.7.2"
-    if Version(netCDF4.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
-            f"Got {netCDF4.__version__} at {netCDF4.__file__}"
-        )
-
-try:
-    import numpy as np
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "2.0.0"
-    if Version(np.__version__) < Version(_minimum_vn):
-        raise ValueError(
-            f"Bad numpy version: cf requires numpy>={_minimum_vn} "
-            f"Got {np.__version__} at {np.__file__}"
-        )
-
-try:
-    import cftime
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "1.6.4"
-    if Version(cftime.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
-            f"Got {cftime.__version__} at {cftime.__file__}"
-        )
-
-try:
-    import cfunits
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "3.3.7"
-    if Version(cfunits.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
-            f"Got {cfunits.__version__} at {cfunits.__file__}"
-        )
-
-try:
-    import psutil
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "0.6.0"
-    if Version(psutil.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad psutil version: cf requires psutil>={_minimum_vn}. "
-            f"Got {psutil.__version__} at {psutil.__file__}"
-        )
-
-try:
-    import dask
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "2025.2.0"
-    # Note in this case max is inclusive, change inequalities if this changes
-    _maximum_vn = "2025.3.0"
-    _dask_version = Version(dask.__version__)
-    if _dask_version < Version(_minimum_vn) or _dask_version > Version(
-        _maximum_vn
-    ):
-        raise RuntimeError(
-            "Bad dask version: cf requires "
-            f"{_minimum_vn}<=dask<={_maximum_vn}. Got {_dask_version}."
-        )
-
-try:
-    import scipy
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "1.10.0"
-    if Version(scipy.__version__) < Version(_minimum_vn):
-        raise RuntimeError(
-            f"Bad scipy version: cf requires scipy>={_minimum_vn}. "
-            f"Got {scipy.__version__} at {scipy.__file__}"
-        )
-
-_minimum_vn = "3.9.0"
-if Version(python_version()) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad python version: cf requires python>={_minimum_vn}. "
-        f"Got {python_version()}"
+# Check the version of cfdm (this is worth doing because of the very
+# tight coupling between cf and cfdm, and the risk of bad things
+# happening at run time if the versions are mismatched).
+_minimum_vn = "1.12.3.1"
+_maximum_vn = "1.12.4.0"
+_cfdm_vn = Version(cfdm.__version__)
+if _cfdm_vn < Version(_minimum_vn) or _cfdm_vn >= Version(_maximum_vn):
+    raise RuntimeError(
+        f"cf v{__version__} requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
+        f"Got {_cfdm_vn} at {cfdm.__file__}"
     )
 
 del _minimum_vn, _maximum_vn
@@ -245,6 +115,7 @@ from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
 from .interiorring import InteriorRing
+from .quantization import Quantization
 from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
@@ -282,7 +153,7 @@ from .data.array import (
     H5netcdfArray,
     NetCDFArray,
     NetCDF4Array,
-#TODO    Netcdf_fileArray,
+    Netcdf_fileArray,
     PyfiveArray,
     PointTopologyArray,
     RaggedContiguousArray,
@@ -290,6 +161,7 @@ from .data.array import (
     RaggedIndexedContiguousArray,
     SubsampledArray,
     UMArray,
+    ZarrArray,
 )
 
 from .aggregate import aggregate, climatology_cells

@@ -36,6 +36,9 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 **Functionality**
 -----------------
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.14274886.svg
+  :target: https://doi.org/10.5281/zenodo.14274886
+
 The `cf` package implements the :ref:`CF-data-model` for its internal
 data structures and so is able to process any CF-compliant dataset. It
 is not strict about CF-compliance, however, so that partially
@@ -61,14 +64,15 @@ may nonetheless be modified in memory.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The `cf` package uses :ref:`Dask <Performance>` for all of its array
-manipulation and can:
+The `cf` package can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, PP and UM datasets
   with a choice of netCDF backends,
 
 * read files from OPeNDAP servers and S3 object stores,
+
+* be fully flexible with respect to dataset chunking,
 
 * create new field constructs in memory,
 
@@ -110,7 +114,7 @@ manipulation and can:
 * regrid structured grid, mesh and DSG field constructs with
   (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including
-  3-d regridding,
+  3-d regridding, and large-grid support,
 
 * apply convolution filters to field constructs,
 
@@ -118,7 +122,10 @@ manipulation and can:
 
 * apply differential operators to field constructs,
 
-* create derived quantities (such as relative vorticity).
+* create derived quantities (such as relative vorticity),
+
+* read and write data that are quantized to eliminate false
+  precision.
 
 ----
 
@@ -132,21 +139,31 @@ separately to `cf` (see the
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
 See the `cf-plot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide range
+<https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide range
 of plotting possibilities with example code.
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Examples gallery of plots made with the cf-plot library.*
+
+----
+
+**Training**
+------------
+
+Training material on cf-python and cf-plot i.e. the CF Data Tools,
+in the form of Jupyter Notebooks, is openly-accessible and available
+(with instructions for set-up provided) at:
+https://github.com/NCAS-CMS/cf-tools-training.
 
 ----
 
 **Performance**
 ---------------
 
-As of version 3.14.0 (released 2023-01-31), cf uses :ref:`Dask
-<Performance>` for all of its data manipulations, which provides lazy,
-parallelised, and out-of-core computations of array operations.
+The `cf` package uses :ref:`Dask <Performance>` for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
 
 ----
 
@@ -254,7 +271,7 @@ all of its metadata. It is defined in CF-|version| as follows:
 
 .. figure:: images/cfdm_field.svg
 
-   *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
+   *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when their type (dimension or auxiliary coordinate construct) is not an issue.*
 
 ----
 

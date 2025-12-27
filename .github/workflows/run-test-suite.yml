@@ -25,7 +25,7 @@ jobs:
         # Skip older ubuntu-16.04 & macos-10.15 to save usage resource
         os: [ubuntu-latest, macos-latest]
         # Note: keep versions quoted as strings else 3.10 taken as 3.1, etc.
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
     runs-on: ${{ matrix.os }}
@@ -138,7 +138,7 @@ jobs:
 
     # For one job only, generate a coverage report:
     - name: Upload coverage report to Codecov
-      # Get coverage from only one job (choose with Ubuntu Python 3.8 as
+      # Get coverage from only one job (choose with Ubuntu Python 3.10 as
       # representative). Note that we could use a separate workflow
       # to setup Codecov reports, but given the amount of steps required to
       # install including dependencies via conda, that a separate workflow
@@ -147,7 +147,7 @@ jobs:
       # passing at least for that job, avoiding useless coverage reports.
       uses: codecov/codecov-action@v3
       if: |
-        matrix.os == "ubuntu-latest" && matrix.python-version == "3.9"
+        matrix.os == "ubuntu-latest" && matrix.python-version == "3.10"
       with:
         file: |
           ${{ github.workspace }}/main/cf/test/cf_coverage_reports/coverage.xml

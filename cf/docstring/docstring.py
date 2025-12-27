@@ -74,7 +74,11 @@ _docstring_substitution_definitions = {
         weights with the source data. (Note that whilst the `esmpy`
         package is also able to create the regridded data from its
         weights, this feature can't be integrated with the `dask`
-        framework that underpins the field's data.)""",
+        framework that underpins the field's data.)
+
+        The calculation of weights for large grids can have a very
+        high memory requirement, but this can be reduced by setting
+        the *dst_grid_partitions* parameter.""",
     # regrid Logging
     "{{regrid Logging}}": """**Logging**
 
@@ -436,9 +440,10 @@ _docstring_substitution_definitions = {
 
                 **Performance**
 
-                The computation of the weights can be much more costly
-                than the regridding itself, in which case reading
-                pre-calculated weights can improve performance.
+                The computation of the weights can take much longer,
+                and take much more memory, than the regridding itself,
+                in which case reading pre-calculated weights can
+                improve performance.
 
                 Ignored if *dst* is a `RegridOperator`.""",
     # aggregated_units
@@ -564,6 +569,43 @@ _docstring_substitution_definitions = {
                 If True then do not perform the regridding, rather
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
+    # dst_grid_partitions
+    "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional
+            Calculating the weights matrix for grids with a very large
+            number of source and/or destination grid points can
+            potentially require more memory than is
+            available. However, the memory requirement can be greatly
+            reduced by calculating weights separately for
+            non-overlapping partitions of the destination grid, and
+            then combining the weights from each partition to create
+            the final weights matrix. The more partitions there are,
+            the smaller the memory requirement for the weights
+            calculations, at the expense of the weights calculations
+            taking longer.
+
+            The *dst_grid_partitions* parameter sets the number of
+            destination grid partitions for the weights
+            calculations. The default value is ``1``, i.e. one
+            partition for the entire destination grid, maximising
+            memory usage and minimising the calculation time. If the
+            string ``'maximum'`` is given then the largest possible
+            number of partitions of the destination grid will be used,
+            minimising memory usage and maximising the calculation
+            time. A positive integer specifies the exact number of
+            partitions, capped by the maximum allowed, allowing the
+            balance between memory usage and calculation time to be
+            adjusted.
+
+            The actual number of destination grid partitions and each
+            partition's shape, and weights calculation time and memory
+            requirement are displayed when ``'DEBUG'`` logging is
+            activated. See *verbose* for details.
+
+            .. note:: If setting *dst_grid_partitions* is required for
+                      the regridding to work, then it is worth
+                      considering storing the weights in a file for
+                      fast future access, via the *weights_file*
+                      parameter.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

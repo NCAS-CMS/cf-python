@@ -10,6 +10,18 @@ cf.Datum
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Datum.dump
+
 Parameters
 ----------
 
@@ -57,6 +69,7 @@ Miscellaneous
    ~cf.Datum.copy
    ~cf.Datum.get_original_filenames
    ~cf.Datum.equals
+   ~cf.Datum.creation_commands
 
 Groups
 ^^^^^^

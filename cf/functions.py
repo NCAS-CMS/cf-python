@@ -1,40 +1,29 @@
 import atexit
-import csv
-import ctypes.util
-import importlib
-import logging
 import os
 import platform
-import re
-import sys
 import warnings
 from collections.abc import Iterable
+from functools import partial
+from importlib.util import find_spec
 from itertools import product
-from math import isnan
 from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
+from tempfile import gettempdir
 from urllib.parse import urljoin, urlparse
 
 import cfdm
-import netCDF4
 import numpy as np
-from dask.base import is_dask_collection
-from psutil import virtual_memory
 
 from . import __file__, __version__
-from .constants import (
-    CONSTANTS,
-    OperandBoundsCombination,
-    _stash2standard_name,
-)
+from .constants import OperandBoundsCombination, _stash2standard_name
 from .docstring import _docstring_substitution_definitions
 
 
-# Instruction to close /proc/mem at exit.
+# Instruction to close /proc/meminfo at exit.
 def _close_proc_meminfo():
     try:
         _meminfo_file.close()
@@ -156,6 +145,8 @@ else:
         96496240.0
 
         """
+        from psutil import virtual_memory
+
         return float(virtual_memory().available)
 
 
@@ -447,15 +438,6 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    old = {name.lower(): val for name, val in CONSTANTS.items()}
-
-    old.pop("total_memory", None)
-
-    # Filter out 'None' kwargs from configuration() defaults. Note that this
-    # does not filter out '0' or 'True' values, which is important as the user
-    # might be trying to set those, as opposed to None emerging as default.
-    kwargs = {name: val for name, val in kwargs.items() if val is not None}
-
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
         "new_atol": atol,
@@ -470,6 +452,21 @@ def _configuration(_Configuration, **kwargs):
         "active_storage_url": active_storage_url,
         "active_storage_max_requests": active_storage_max_requests,
     }
+
+    # Make sure that the constants dictionary is fully populated
+    for func in reset_mapping.values():
+        func()
+
+    old = ConstantAccess.constants(copy=True)
+
+    #    old = {name.lower(): val for name, val in CONSTANTS.items()}
+    #
+    #    old.pop("total_memory", None)
+
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
 
     old_values = {}
 
@@ -543,7 +540,7 @@ def FREE_MEMORY():
 _disable_logging = cfdm._disable_logging
 # We can inherit the generic logic for the cf-python log_level()
 # function as contained in _log_level, but can't inherit the
-# user-facing log_level() from cfdm as it operates on cfdm's CONSTANTS
+# user-facing log_level() from cfdm as it operates on cfdm's constants
 # dict. Define cf-python's own. This also means the log_level
 # dostrings are independent which is important for providing
 # module-specific documentation links and directives, etc.
@@ -555,14 +552,11 @@ _is_valid_log_level_int = cfdm._is_valid_log_level_int
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
 class ConstantAccess(cfdm.ConstantAccess):
-    _CONSTANTS = CONSTANTS
+    _constants = {}
     _Constant = Constant
 
     def __docstring_substitutions__(self):
         return _docstring_substitution_definitions
-
-    def __docstring_package_depth__(self):
-        return 0
 
 
 class atol(ConstantAccess, cfdm.atol):
@@ -617,7 +611,8 @@ class regrid_logging(ConstantAccess):
 
     """
 
-    _name = "REGRID_LOGGING"
+    _name = "regrid_logging"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -634,8 +629,8 @@ class regrid_logging(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return bool(arg)
@@ -684,7 +679,7 @@ class collapse_parallel_mode(ConstantAccess):
 
     """
 
-    _name = "COLLAPSE_PARALLEL_MODE"
+    _name = "collapse_parallel_mode"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -703,8 +698,8 @@ class collapse_parallel_mode(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -754,7 +749,8 @@ class relaxed_identities(ConstantAccess):
 
     """
 
-    _name = "RELAXED_IDENTITIES"
+    _name = "relaxed_identities"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -771,8 +767,8 @@ class relaxed_identities(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return bool(arg)
@@ -820,7 +816,8 @@ class tempdir(ConstantAccess):
 
     """
 
-    _name = "TEMPDIR"
+    _name = "tempdir"
+    _default = gettempdir()
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -837,8 +834,8 @@ class tempdir(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         arg = _os_path_expanduser(_os_path_expandvars(arg))
@@ -901,7 +898,7 @@ class of_fraction(ConstantAccess):
 
     """
 
-    _name = "OF_FRACTION"
+    _name = "of_fraction"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -920,8 +917,8 @@ class of_fraction(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -954,7 +951,7 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    _name = "FREE_MEMORY_FACTOR"
+    _name = "free_memory_factor"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -973,8 +970,8 @@ class free_memory_factor(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # TODODASKAPI
@@ -1092,7 +1089,8 @@ class bounds_combination_mode(ConstantAccess):
 
     """
 
-    _name = "BOUNDS_COMBINATION_MODE"
+    _name = "bounds_combination_mode"
+    _default = "AND"
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1109,8 +1107,8 @@ class bounds_combination_mode(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         try:
@@ -1167,6 +1165,7 @@ class active_storage(ConstantAccess):
     """
 
     _name = "active_storage"
+    _default = False
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1184,18 +1183,18 @@ class active_storage(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
-        try:
-            from activestorage import Active  # noqa: F401
-        except ModuleNotFoundError as error:
-            if arg:
-                raise ModuleNotFoundError(
-                    f"Can't enable active storage operations: {error}"
-                )
+        arg = bool(arg)
+        if arg and not find_spec("activestorage"):
+            raise ModuleNotFoundError(
+                "Must install the 'activestorage' package "
+                "(https://pypi.org/project/PyActiveStorage) to enable "
+                "active storage reductions"
+            )
 
-        return bool(arg)
+        return arg
 
 
 class active_storage_url(ConstantAccess):
@@ -1253,7 +1252,7 @@ class active_storage_url(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         if arg is None:
@@ -1318,6 +1317,7 @@ class active_storage_max_requests(ConstantAccess):
     """
 
     _name = "active_storage_max_requests"
+    _default = 100
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1335,7 +1335,7 @@ class active_storage_max_requests(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return int(arg)
@@ -1482,11 +1482,16 @@ def min_total_memory():
 
 def total_memory():
     """The total amount of physical memory (in bytes)."""
-    return CONSTANTS["TOTAL_MEMORY"]
+    from psutil import virtual_memory
+
+    return float(virtual_memory().total)
 
 
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
+
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `cfdm.is_log_level_info` instead.
 
     .. versionadded:: 3.16.3
 
@@ -1503,7 +1508,12 @@ def is_log_level_info(logger):
             Whether or not the log level is at least INFO.
 
     """
-    return logger.parent.level <= logging.INFO
+    _DEPRECATION_ERROR_FUNCTION(
+        "is_log_level_info",
+        message="Use cfdm.is_log_level_info instead",
+        version="NEXTVERSION",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 # --------------------------------------------------------------------
@@ -2070,6 +2080,10 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from math import isnan
+
+    from dask.base import is_dask_collection
+
     shape = []
     for index, full_size in zip(indices, full_shape):
         if isinstance(index, slice):
@@ -2490,6 +2504,9 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     >>> cf.load_stash2standard_name('my_table4.txt', merge=False)
 
     """
+    import csv
+    import re
+
     # 0  Model
     # 1  STASH code
     # 2  STASH name
@@ -2499,7 +2516,6 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
     # 6  standard_name
     # 7  CF extra info
     # 8  PP extra info
-
     # Number matching regular expression
     number_regex = r"([-+]?\d*\.?\d+(e[-+]?\d+)?)"
 
@@ -2753,8 +2769,6 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
 
 
 dirname.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
-
-from functools import partial
 
 dirname2 = partial(cfdm.dirname)
 dirname2.__doc__ = cfdm.dirname.__doc__.replace("cfdm.", "cf.")
@@ -3134,34 +3148,6 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     return out
 
 
-def _get_module_info(module, alternative_name=False, try_except=False):
-    """Helper function for processing modules for cf.environment."""
-    if try_except:
-        module_name = None
-        try:
-            importlib.import_module(module)
-            module_name = module
-        except ImportError:
-            if (
-                alternative_name
-            ):  # where a module has a different (e.g. old) name
-                try:
-                    importlib.import_module(alternative_name)
-                    module_name = alternative_name
-                except ImportError:
-                    pass
-
-        if not module_name:
-            return ("not available", "")
-    else:
-        module_name = module
-
-    return (
-        importlib.import_module(module_name).__version__,
-        importlib.util.find_spec(module_name).origin,
-    )
-
-
 def environment(display=True, paths=True):
     """Return the names and versions of the cf package and its
     dependencies.
@@ -3187,98 +3173,86 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
-    HDF5 library: 1.12.2
-    netcdf library: 4.9.3-development
-    udunits2 library: /home/user/lib/libudunits2.so.0
-    esmpy/ESMF: 8.6.1 /home/user/lib/python3.12/site-packages/esmpy/__init__.py
-    Python: 3.12.2 /home/user/bin/python
-    dask: 2025.2.0 /home/user/lib/python3.12/site-packages/dask/__init__.py
-    netCDF4: 1.6.5 /home/user/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/user/lib/python3.12/site-packages/h5netcdf/__init__.py
-    h5py: 3.11.0 /home/user/lib/python3.12/site-packages/h5py/__init__.py
-    s3fs: 2024.6.0 /home/user/lib/python3.12/site-packages/s3fs/__init__.py
-    psutil: 5.9.8 /home/user/lib/python3.12/site-packages/psutil/__init__.py
-    packaging: 23.2 /home/user/lib/python3.12/site-packages/packaging/__init__.py
-    numpy: 1.26.4 /home/user/lib/python3.12/site-packages/numpy/__init__.py
-    scipy: 1.13.0 /home/user/lib/python3.12/site-packages/scipy/__init__.py
-    matplotlib: 3.8.4 /home/user/lib/python3.12/site-packages/matplotlib/__init__.py
-    cftime: 1.6.3 /home/user/lib/python3.12/site-packages/cftime/__init__.py
-    cfunits: 3.3.7 /home/user/lib/python3.12/site-packages/cfunits/__init__.py
-    cfplot: 3.3.0 /home/user/lib/python3.12/site-packages/cfplot/__init__.py
-    cfdm: 1.12.0.0 /home/user/cfdm/cfdm/__init__.py
-    cf: 3.17.0 /home/user/cf-python/cf/__init__.py
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    udunits2 library: libudunits2.so.0
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
+    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    distributed: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/distributed/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
+    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/__init__.py
+    esmpy/ESMF: 8.7.0 /home/miniconda3/lib/python3.12/site-packages/esmpy/__init__.py
+    psutil: 6.1.1 /home/miniconda3/lib/python3.12/site-packages/psutil/__init__.py
+    matplotlib: 3.10.0 /home/miniconda3/lib/python3.12/site-packages/matplotlib/__init__.py
+    cfplot: 3.4.0 /home/miniconda3/lib/python3.12/site-packages/cfplot/__init__.py
+    cf: 3.18.0 /home/miniconda3/lib/python3.12/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
-    Platform: Linux-5.15.0-122-generic-x86_64-with-glibc2.35
-    HDF5 library: 1.12.2
-    netcdf library: 4.9.3-development
-    udunits2 library: /home/user/lib/libudunits2.so.0
-    esmpy/ESMF: 8.6.1
-    Python: 3.12.2
-    dask: 2025.2.0
-    netCDF4: 1.6.5
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: 1.12.2.0
+    udunits2 library: libudunits2.so.0
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2
     h5netcdf: 1.3.0
-    h5py: 3.11.0
-    s3fs: 2024.6.0
-    psutil: 5.9.8
-    packaging: 23.2
-    numpy: 1.26.4
-    scipy: 1.13.0
-    matplotlib: 3.8.4
-    cftime: 1.6.3
+    h5py: 3.12.1
+    zarr: 3.0.8
+    s3fs: 2024.12.0
+    scipy: 1.15.1
+    dask: 2025.5.1
+    distributed: 2025.5.1
+    cftime: 1.6.4.post1
     cfunits: 3.3.7
-    cfplot: 3.3.0
-    cfdm: 1.12.0.0
-    cf: 3.17.0
+    cfdm: 1.12.2.0
+    esmpy/ESMF: 8.7.0
+    psutil: 6.1.1
+    matplotlib: 3.10.0
+    cfplot: 3.4.0
+    cf: 3.18.0
 
     """
+    # Get cfdm env
+    out = cfdm.environment(display=False, paths=paths)
+
+    _get_module_info = cfdm.functions._get_module_info
     dependency_version_paths_mapping = {
-        # Platform first, then use an ordering to group libraries as follows...
-        "Platform": (platform.platform(), ""),
-        # Underlying C and Fortran based libraries first
-        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
-        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "esmpy/ESMF": (
             _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
         ),
-        # Now Python itself
-        "Python": (platform.python_version(), sys.executable),
-        # Then Dask (cover first from below as it's important under-the-hood)
-        "dask": _get_module_info("dask"),
-        # Then Python libraries not related to CF
-        "netCDF4": _get_module_info("netCDF4"),
-        "h5netcdf": _get_module_info("h5netcdf"),
-        "h5py": _get_module_info("h5py"),
-        "s3fs": _get_module_info("s3fs"),
         "psutil": _get_module_info("psutil"),
-        "packaging": _get_module_info("packaging"),
-        "numpy": _get_module_info("numpy"),
-        "scipy": _get_module_info("scipy"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
-        # Finally the CF related Python libraries, with the cf version last
-        # as it is the most relevant (cfdm penultimate for similar reason)
-        "cftime": _get_module_info("cftime"),
-        "cfunits": _get_module_info("cfunits"),
+        "activestorage": _get_module_info("activestorage", try_except=True),
         "cfplot": _get_module_info("cfplot", try_except=True),
-        "cfdm": _get_module_info("cfdm"),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
     if paths:
-        # Include path information, else exclude, when unpacking tuple
+        # Include path information, else exclude, when unpacking tuple.
         string += " {2!s}"
 
-    out = [
-        string.format(dep, *info)
-        for dep, info in dependency_version_paths_mapping.items()
-    ]
-
-    out = "\n".join(out)
+    out.extend(
+        [
+            string.format(dep, *info)
+            for dep, info in dependency_version_paths_mapping.items()
+        ]
+    )
 
     if display:
-        print(out)  # pragma: no cover
+        print("\n".join(out))  # pragma: no cover
     else:
         return out
 
@@ -3307,6 +3281,8 @@ def default_netCDF_fillvals():
      'f8': 9.969209968386869e+36}
 
     """
+    import netCDF4
+
     return netCDF4.default_fillvals
 
 

@@ -5,15 +5,9 @@ from itertools import product
 from operator import mul
 
 import cfdm
-import cftime
-import dask.array as da
 import numpy as np
 from cfdm.data.dask_utils import cfdm_where
 from cfdm.data.utils import new_axis_identifier
-from dask import compute, delayed  # noqa: F401
-from dask.array.core import normalize_chunks
-from dask.base import is_dask_collection, tokenize
-from dask.highlevelgraph import HighLevelGraph
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked
@@ -186,6 +180,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         False
 
         """
+        import dask.array as da
+        from dask.base import is_dask_collection
+
         # Check that value is scalar by seeing if its shape is ()
         shape = getattr(value, "shape", None)
         if shape is None:
@@ -549,6 +546,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.0 1.0 -- 0.0]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = self.to_dask_array()
@@ -726,6 +725,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [ 1  1  1 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         org_units = d.Units
@@ -1192,7 +1193,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        import dask.array as da
+        from dask.array.core import normalize_chunks
+        from dask.base import is_dask_collection, tokenize
         from dask.core import flatten
+        from dask.highlevelgraph import HighLevelGraph
 
         # TODODASKAPI: interpolation -> method
         if interpolation is not None:
@@ -1336,6 +1341,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.ceil(dx)
@@ -2190,6 +2197,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
         if not isinstance(other, cls):
+            import cftime
+
             if (
                 isinstance(other, cftime.datetime)
                 and other.calendar == ""
@@ -2283,6 +2292,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
+        from dask import delayed
+
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
@@ -2357,6 +2368,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         src_mask = operator.src_mask
         if src_mask is not None:
+            import dask.array as da
+
             src_mask = da.asanyarray(src_mask)
 
         weights_dst_mask = delayed(regrid_weights, pure=True)(
@@ -2781,6 +2794,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         True
 
         """
+        import dask.array as da
+
         # 'cf_is_masked' has its own call to 'cfdm_to_memory', so we
         # can set '_force_to_memory=False'.
         dx = self.to_dask_array(_force_to_memory=False)
@@ -2946,6 +2961,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          0.5404195002705842 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -3102,6 +3119,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -3350,6 +3369,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
+            import dask.array as da
+
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
@@ -3434,6 +3455,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         if unravel and (axis is None or self.ndim <= 1):
             # Return a multidimensional index tuple
+            import dask.array as da
+
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
@@ -4349,6 +4372,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [8. 9. 9. 9.]]
 
         """
+        import dask.array as da
+
         if units is not None:
             # Convert the limits to the same units as the data array
             units = self._Units_class(units)
@@ -4407,7 +4432,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             x2: array_like
                 X coordinates. *x1* and *x2* must be broadcastable to
                 a common shape (which becomes the shape of the
-                output).
+                output). If both *x1* and *x2* have units, they must
+                be equal or equivalent, in which case they
+                will be conformed.
 
         :Returns:
 
@@ -4434,6 +4461,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [90.0 -90.0]
 
         """
+        import dask.array as da
+
+        x1 = conform_units(x1, x2.Units)
+
         try:
             y = x1.to_dask_array()
         except AttributeError:
@@ -4497,6 +4528,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [9]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -4560,6 +4593,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -4624,6 +4659,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         8
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array()
         dx = da.ma.count(
@@ -5028,6 +5065,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         units = self.Units
@@ -5469,6 +5508,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.floor(dx))
@@ -5529,10 +5570,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
           [18 21 24 27]]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         shape = d.shape
-        chunksizes0 = d.nc_hdf5_chunksizes()
+        chunksizes0 = d.nc_dataset_chunksizes()
 
         # Cast 'a' as a Data object so that it definitely has sensible
         # Units. We don't mind if the units of 'a' are incompatible
@@ -5563,8 +5606,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
-        # Update the HDF5 chunking strategy
-        chunksizes1 = a.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes1 = a.nc_dataset_chunksizes()
         if chunksizes0 or chunksizes1:
             if isinstance(chunksizes0, tuple):
                 if isinstance(chunksizes1, tuple):
@@ -5572,10 +5615,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 else:
                     chunksizes = chunksizes0 + a.shape
 
-                d.nc_set_hdf5_chunksizes(chunksizes)
+                d.nc_set_dataset_chunksizes(chunksizes)
             elif isinstance(chunksizes1, tuple):
                 chunksizes = shape + chunksizes1
-                d.nc_set_hdf5_chunksizes(chunksizes)
+                d.nc_set_dataset_chunksizes(chunksizes)
 
         d._update_deterministic(a)
         return d
@@ -5651,13 +5694,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
-        """Override the data array units.
+        """Override the units.
 
-        Not to be confused with setting the `Units` attribute to units
-        which are equivalent to the original units. This is different
-        because in this case the new units need not be equivalent to the
-        original ones and the data array elements will not be changed to
-        reflect the new units.
+        The new units need not be equivalent to the original ones, and
+        the data array elements will not be changed to reflect the new
+        units. Therefore, this method should only be used when it is
+        known that the data array values are correct but the units
+        have incorrectly encoded.
+
+        Not to be confused with changing to equivalent units with the
+        `to_units` method or the `Units`, `units`, or `calendar`
+        attributes. These approaches also convert the data to have the
+        new units.
+
+        .. seealso:: `override_calendar`, `to_units`, `Units`,
+                     `units`, `calendar`
 
         :Parameters:
 
@@ -5695,13 +5746,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
-        """Override the calendar of the data array elements.
+        """Override the calendar of date-time units.
 
-        Not to be confused with using the `change_calendar` method or
-        setting the `d.Units.calendar`. `override_calendar` is different
-        because the new calendar need not be equivalent to the original
-        ones and the data array elements will not be changed to reflect
-        the new units.
+        The new calendar need not be equivalent to the original one,
+        and the data array elements will not be changed to reflect the
+        new calendar. Therefore, this method should only be used when
+        it is known that the data array values are correct but the
+        calendar has been incorrectly encoded.
+
+        Not to be confused with changing to an equivalent calendar
+        with the `to_units` method or the `Units` or `calendar`
+        attributes.
+
+        .. seealso:: `override_units`, `to_units`, `Units`, `units`,
+                     `calendar`
 
         :Parameters:
 
@@ -5905,6 +5963,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         <CF Data(3): [--, 0.5, --]>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.ma.masked_invalid(dx)
@@ -6162,6 +6222,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ True  True  True]
 
         """
+        import dask.array as da
+
         a = np.empty((), dtype=self.dtype)
         b = np.empty((), dtype=da.asanyarray(y).dtype)
         try:
@@ -6259,7 +6321,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Clear cyclic axes, as we can't help but lose them in this
         # operation
-        d._cyclic = _empty_set
+        del d._cyclic
 
         return d
 
@@ -6293,6 +6355,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.rint(dx))
@@ -6416,6 +6480,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         d._set_dask(da.round(dx, decimals=decimals))
@@ -6592,6 +6658,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
+        from dask import compute, delayed
+
         no_weights = (
             "minimum",
             "median",
@@ -6678,6 +6746,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.swapaxes(dx, axis0, axis1)
@@ -7004,6 +7074,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         x, y = xy
 
         # Apply the where operation
+        import dask.array as da
+
         dx = da.core.elemwise(cfdm_where, dx, condition, x, y, d.hardmask)
         d._set_dask(dx)
 
@@ -7059,6 +7131,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7079,7 +7153,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic sine of 90
+        they were radians. For example, the hyperbolic sine of 90
         degrees_north is 2.30129890, as is the hyperbolic sine of
         1.57079632 radians.
 
@@ -7120,6 +7194,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7139,7 +7215,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic cosine of 0
+        they were radians. For example, the hyperbolic cosine of 0
         degrees_east is 1.0, as is the hyperbolic cosine of 1.57079632 radians.
 
         The output units are changed to '1' (nondimensional).
@@ -7179,6 +7255,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7199,7 +7277,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         Units are accounted for in the calculation. If the units are not
         equivalent to radians (such as Kelvin) then they are treated as if
-        they were radians. For example, the the hyperbolic tangent of 90
+        they were radians. For example, the hyperbolic tangent of 90
         degrees_east is 0.91715234, as is the hyperbolic tangent of
         1.57079632 radians.
 
@@ -7241,6 +7319,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7272,6 +7352,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `Data` or `None`
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
 
@@ -7341,6 +7423,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):
@@ -7364,6 +7448,57 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
+
+    @_inplace_enabled(default=False)
+    def to_units(self, units, inplace=False):
+        """Change the data array units.
+
+        Changing the units causes the data values to be changed
+        to match the new units, therefore the new units must be
+        equivalent to the existing ones.
+
+        Not to be confused with overriding the units with
+        `override_units`
+
+        .. versionadded:: 3.18.1
+
+        .. seealso:: `override_units`, `override_calendar`, `Units`,
+                     `units`, `calendar`
+
+        :Parameters:
+
+            units: `str` or `Units`
+                The new units for the data array.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The new data, or `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2], 'km')
+        >>> e = d.to_units('metre')
+        >>> print(e.Units)
+        'metre'
+        >>> print(e.array)
+        [1000. 2000.]
+        >>> e.to_units('miles', inplace=True)
+        >>> print(e.Units)
+        'miles'
+        >>> print(e.array)
+        [0.62137119 1.24274238]
+        >>> e.to_units('degC')
+        Traceback (most recent call last)
+            ...
+        ValueError: Can't set Units to <Units: degC> that are not equivalent to the current units <Units: miles>. Consider using the override_units method instead.
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        d.Units = self._Units_class(units)
+        return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -7397,6 +7532,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.trunc(dx)
@@ -7472,6 +7609,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     dtype=float64)
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
@@ -7651,6 +7790,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         #               "shift,axis=", and the default axis behaviour
         #               of a flattened roll followed by shape
         #               restore
+        import dask.array as da
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -8317,6 +8457,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0.0 1.0 6.25 -- 16.0]]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.square(dx, dtype=dtype)
@@ -8386,6 +8528,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [-- 1.0 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.sqrt(dx, dtype=dtype)

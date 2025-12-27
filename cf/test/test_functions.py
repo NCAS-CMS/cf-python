@@ -38,7 +38,6 @@ class functionTest(unittest.TestCase):
 
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
-        self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
         self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
         self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
         self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
@@ -286,13 +285,14 @@ class functionTest(unittest.TestCase):
     def test_environment(self):
         e = cf.environment(display=False)
         ep = cf.environment(display=False, paths=False)
-        self.assertIsInstance(e, str)
-        self.assertIsInstance(ep, str)
 
-        components = ["Platform: ", "udunits2 library: ", "numpy: ", "cfdm: "]
+        self.assertIsInstance(e, list)
+        self.assertIsInstance(ep, list)
+
+        components = ["Platform: ", "netCDF4: ", "numpy: ", "cftime: "]
         for component in components:
-            self.assertIn(component, e)
-            self.assertIn(component, ep)
+            self.assertTrue(any(s.startswith(component) for s in e))
+            self.assertTrue(any(s.startswith(component) for s in ep))
         for component in [
             f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}",
             f"Python: {platform.python_version()} {sys.executable}",

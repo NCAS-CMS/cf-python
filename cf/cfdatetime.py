@@ -1,7 +1,6 @@
 import datetime
 from functools import partial
 
-import cftime
 import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
@@ -10,17 +9,10 @@ from .functions import size as cf_size
 default_calendar = "gregorian"
 
 # --------------------------------------------------------------------
-# Mapping of CF calendars to cftime date-time objects
+# Mapping of CF calendars to cftime date-time objects (that gets
+# populated in the `dt` function).
 # --------------------------------------------------------------------
-_datetime_object = {
-    ("",): partial(cftime.datetime, calendar=""),
-    (None, "gregorian", "standard", "none"): cftime.DatetimeGregorian,
-    ("proleptic_gregorian",): cftime.DatetimeProlepticGregorian,
-    ("360_day",): cftime.Datetime360Day,
-    ("noleap", "365_day"): cftime.DatetimeNoLeap,
-    ("all_leap", "366_day"): cftime.DatetimeAllLeap,
-    ("julian",): cftime.DatetimeJulian,
-}
+_datetime_object = {}
 
 canonical_calendar = {
     None: "standard",
@@ -40,7 +32,7 @@ canonical_calendar = {
 _calendar_map = {None: "gregorian"}
 
 
-class Datetime(cftime.datetime):
+class Datetime:
     """A date-time object which supports CF calendars.
 
     Deprecated at version 3.0.0. Use function 'cf.dt' to create date-
@@ -134,6 +126,26 @@ def dt(
     (2003, 4, 5, 12, 30, 15)
 
     """
+    import cftime
+
+    if not _datetime_object:
+        _datetime_object.update(
+            {
+                ("",): partial(cftime.datetime, calendar=""),
+                (
+                    None,
+                    "gregorian",
+                    "standard",
+                    "none",
+                ): cftime.DatetimeGregorian,
+                ("proleptic_gregorian",): cftime.DatetimeProlepticGregorian,
+                ("360_day",): cftime.Datetime360Day,
+                ("noleap", "365_day"): cftime.DatetimeNoLeap,
+                ("all_leap", "366_day"): cftime.DatetimeAllLeap,
+                ("julian",): cftime.DatetimeJulian,
+            }
+        )
+
     if isinstance(arg, str):
         (year, month, day, hour, minute, second, microsecond) = st2elements(
             arg
@@ -160,11 +172,6 @@ def dt(
 
     else:
         year = arg
-
-    #    calendar=_calendar_map.get(calendar, calendar)
-    #
-    #    return cftime.datetime(year, month, day, hour, minute, second,
-    #                           microsecond, calendar=calendar)
 
     for calendars, datetime_cls in _datetime_object.items():
         if calendar in calendars:
@@ -354,6 +361,8 @@ def st2datetime(date_string, calendar=None):
         `cftime.datetime`
 
     """
+    import cftime
+
     if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "
@@ -388,6 +397,8 @@ def st2elements(date_string):
         `tuple`
 
     """
+    import cftime
+
     if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "
@@ -450,6 +461,8 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         # mask
         return np.ma.masked_all((), dtype=object)
 
+    import cftime
+
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
@@ -510,6 +523,8 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     [-- 685.5]
 
     """
+    import cftime
+
     isscalar = not np.ndim(array)
 
     array = cftime.date2num(
@@ -545,8 +560,9 @@ def st2rt(array, units_in, units_out, dummy1=None):
             An array of floats with the same shape as *array*.
 
     """
+    import cftime
+
     array = st2dt(array, units_in)
-    #    array = units_out._utime.date2num(array)
     array = cftime.date2num(
         array, units=units_out.units, calendar=units_out._utime.calendar
     )

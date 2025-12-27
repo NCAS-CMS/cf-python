@@ -342,15 +342,14 @@ construct.
 Collapse weights
 ^^^^^^^^^^^^^^^^
 
-.. The calculations of means, standard deviations and variances are,
-   by default, not weighted. For weights to be incorporated in the
-   collapse, the axes to be weighted must be identified with the
-   *weights* keyword.
+.. warning:: By default, the collapse calculations are **not**
+             weighted.
 
-For weights to be incorporated in the collapse, the axes to be
-weighted must be identified with the *weights* keyword. A collapse by
-a particular method is either never weighted, or may be weighted, or
-is always weighted, as described in the following table:
+             For weights to be incorporated in the collapse, the
+             *weights* keyword must be set.
+
+A collapse by a particular method is either never weighted, or may be
+weighted, or is always weighted, as described in the following table:
 
 ============================  ============================  ========
 Method                        Description                   Weighted  
@@ -853,6 +852,51 @@ method constructs.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
+.. _Active-storage-collapses:
+
+Active storage collapses
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+When the data being collapsed are stored remotely, the collapse
+calculations may be carried out on a server that is close (in a
+network distance sense) to the data, thereby removing the time and
+power costs of transferring the entire un-collapsed data to the local
+client.
+
+Whether or not this will occur for an individual `dask` chunk is
+determined on a case-by-case basis, and will only be done if all of
+the following criteria are met:
+
+* ``cf.active_storage()`` is `True`;
+
+* ``cf.active_storage_url()`` returns the URL of a valid active
+  storage server;
+
+* the `dask` chunk's data are defined by a netCDF-4 file on disk
+  (rather than in any other file format, or in memory);
+
+* it is possible to import the `activestorage.Active` class;
+
+* the method is one of those specified by
+  `cf.data.collapse.active_reduction_methods`;
+
+* the collapse is over all axes;
+
+* the collapse is unweighted;
+
+* the data are not numerically packed.
+
+If any of these conditions are not met then the `dask` chunk will be
+collapsed "as usual", i.e. by retrieving the data to memory (if it is
+not already there) and using the local client to perform the collapse
+calculations.
+
+The performance improvements from using active storage operations will
+increase the closer, in a network sense, the active storage server is
+to the data storage. If the active storage server is sufficiently far
+away from the data then it could even be faster and require less
+energy to do non-active operation of the local client.
+
 ----
    
 .. _ Other-statistical-operations:
@@ -1342,43 +1386,16 @@ Spherical regridding
 ^^^^^^^^^^^^^^^^^^^^
 
 Regridding from and to spherical coordinate systems using the
-`~cf.Field.regrids` method is only available for the 'X' and 'Y' axes
-simultaneously. All other axes are unchanged. The calculation of the
-regridding weights is based on areas and distances on the surface of
-the sphere, rather in :ref:`Euclidean space <Cartesian-regridding>`.
+`~cf.Field.regrids` method is available for the 'X', 'Y' and (if
+requested) 'Z' axes simultaneously. All other axes are unchanged. The
+calculation of the regridding weights is based on areas and distances
+on the surface of the sphere, rather than in :ref:`Euclidean space
+<Cartesian-regridding>`.
 
-The following combinations of spherical source and destination domain
-coordinate systems are available to the `~Field.regrids` method:
-		   
-==============================  ==============================
-Spherical source domain         Spherical destination domain
-==============================  ==============================
-`Latitude-longitude`_           `Latitude-longitude`_
-`Latitude-longitude`_           `Rotated latitude-longitude`_
-`Latitude-longitude`_           `Plane projection`_
-`Latitude-longitude`_           `Tripolar`_
-`Latitude-longitude`_           `UGRID mesh`_
-`Rotated latitude-longitude`_   `Latitude-longitude`_
-`Rotated latitude-longitude`_   `Rotated latitude-longitude`_
-`Rotated latitude-longitude`_   `Plane projection`_
-`Rotated latitude-longitude`_   `Tripolar`_
-`Rotated latitude-longitude`_   `UGRID mesh`_
-`Plane projection`_             `Latitude-longitude`_
-`Plane projection`_             `Rotated latitude-longitude`_
-`Plane projection`_             `Plane projection`_
-`Plane projection`_             `Tripolar`_
-`Plane projection`_             `UGRID mesh`_
-`Tripolar`_                     `Latitude-longitude`_
-`Tripolar`_                     `Rotated latitude-longitude`_
-`Tripolar`_                     `Plane projection`_
-`Tripolar`_                     `Tripolar`_
-`Tripolar`_                     `UGRID mesh`_
-`UGRID mesh`_                   `Latitude-longitude`_
-`UGRID mesh`_                   `Rotated latitude-longitude`_
-`UGRID mesh`_                   `Plane projection`_
-`UGRID mesh`_                   `Tripolar`_
-`UGRID mesh`_                   `UGRID mesh`_
-==============================  ==============================
+Spherical regridding can occur between source and destination grids
+that comprise any pairing of `Latitude-longitude`_, `Rotated
+latitude-longitude`_, `Plane projection`_, `Tripolar`_, `UGRID mesh`_,
+and `DSG feature type`_ coordinate systems.
 
 The most convenient usage is when the destination domain exists
 in another field construct. In this case, all you need to specify is the
@@ -1541,13 +1558,11 @@ point will not participate in the regridding.
 Vertical regridding
 ^^^^^^^^^^^^^^^^^^^
 
-The only option for regridding along a vertical axis is to use
-Cartesian regridding. However, care must be taken to ensure that the
-vertical axis is transformed so that it's coordinate values vary
-linearly. For example, to regrid data on one set of vertical pressure
-coordinates to another set, the pressure coordinates may first be
-transformed into the logarithm of pressure, and then changed back to
-pressure coordinates after the regridding operation.
+Vertical regridding may be incorporated into either spherical or
+Cartesian regridding, but in both cases the vertical coordinates need
+to be explicitly identified, and whether or not to calculate the
+regridding weights according to the natural logarithm of the vertical
+coordinate values stated.
 
 .. code-block:: python
    :caption: *Regrid a field construct from one set of pressure levels
@@ -1566,19 +1581,8 @@ pressure coordinates after the regridding operation.
    Auxiliary coords: latitude(grid_latitude(11), grid_longitude(10)) = [[67.12, ..., 66.07]] degrees_north
                    : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east
    Coord references: grid_mapping_name:rotated_latitude_longitude
-   >>> z_p = v.construct('Z')
-   >>> print(z_p.array)
-   [850. 700. 500. 250.  50.]
-   >>> z_ln_p = z_p.log()
-   >>> z_ln_p.axis = 'Z'
-   >>> print(z_ln_p.array)
-   [6.74523635 6.55108034 6.2146081  5.52146092 3.91202301]
-   >>> _ = v.replace_construct('Z', new=z_ln_p)
-   >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
-   >>> new_z_ln_p = new_z_p.log()
-   >>> new_z_ln_p.axis = 'Z'
-   >>> new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
-   >>> new_v.replace_construct('Z', new=new_z_p)
+   >>> new_z = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
+   >>> new_v = v.regridc([new_z], axes='Z', method='linear', z='Z', ln_z=True)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
    -------------------------------
@@ -1591,11 +1595,6 @@ pressure coordinates after the regridding operation.
    Auxiliary coords: latitude(grid_latitude(11), grid_longitude(10)) = [[67.12, ..., 66.07]] degrees_north
                    : longitude(grid_latitude(11), grid_longitude(10)) = [[-45.98, ..., -31.73]] degrees_east
    Coord references: grid_mapping_name:rotated_latitude_longitude
-
-Note that the `~Field.replace_construct` method of the field construct
-is used to directly replace the vertical dimension coordinate construct,
-without having to manually match up the corresponding domain axis
-construct and construct key.
 
 ----
    
@@ -2549,3 +2548,5 @@ See `cf.curl_xy` for details and examples.
 .. _Latitude-longitude:         http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude
 .. _Rotated latitude-longitude: http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole
 .. _Plane projection:           http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
+.. _UGRID mesh:                 https://cfconventions.org/cf-conventions/cf-conventions.html#mesh-topology-variables
+.. _DSG feature type:           https://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries

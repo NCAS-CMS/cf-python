@@ -102,6 +102,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.to_units
    ~cf.Index.override_units
    ~cf.Index.override_calendar
 
@@ -233,6 +234,19 @@ Data
    ~cf.Index.get_original_filenames
    ~cf.Index.has_bounds
    ~cf.Index.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Index.get_quantization
+   ~cf.Index.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -412,9 +426,9 @@ NetCDF
    ~cf.Index.nc_get_sample_dimension
    ~cf.Index.nc_has_sample_dimension
    ~cf.Index.nc_set_sample_dimension
-   ~cf.Index.nc_clear_hdf5_chunksizes
-   ~cf.Index.nc_hdf5_chunksizes
-   ~cf.Index.nc_set_hdf5_chunksizes
+   ~cf.Index.nc_clear_dataset_chunksizes
+   ~cf.Index.nc_dataset_chunksizes
+   ~cf.Index.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -661,3 +675,6 @@ Deprecated
    ~cf.Index.select
    ~cf.Index.setprop
    ~cf.Index.unsafe_array
+   ~cf.Index.nc_clear_hdf5_chunksizes
+   ~cf.Index.nc_hdf5_chunksizes
+   ~cf.Index.nc_set_hdf5_chunksizes

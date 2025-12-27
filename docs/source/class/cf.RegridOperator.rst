@@ -19,6 +19,8 @@ cf.RegridOperator
 
    ~cf.RegridOperator.copy
    ~cf.RegridOperator.dump
+   ~cf.RegridOperator.equal_dst_mask
+   ~cf.RegridOperator.equal_weights
    ~cf.RegridOperator.tosparse
 
 .. rubric:: Attributes

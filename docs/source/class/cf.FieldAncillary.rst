@@ -105,6 +105,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.to_units
    ~cf.FieldAncillary.override_units
    ~cf.FieldAncillary.override_calendar
 
@@ -236,6 +237,23 @@ Data
    ~cf.FieldAncillary.get_original_filenames
    ~cf.FieldAncillary.has_bounds
    ~cf.FieldAncillary.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.get_quantization
+   ~cf.FieldAncillary._set_quantization
+   ~cf.FieldAncillary._del_quantization
+   ~cf.FieldAncillary.get_quantize_on_write
+   ~cf.FieldAncillary.set_quantize_on_write
+   ~cf.FieldAncillary.del_quantize_on_write
 
 Miscellaneous
 -------------
@@ -407,9 +425,9 @@ NetCDF
    ~cf.FieldAncillary.nc_get_variable
    ~cf.FieldAncillary.nc_has_variable
    ~cf.FieldAncillary.nc_set_variable 
-   ~cf.FieldAncillary.nc_clear_hdf5_chunksizes
-   ~cf.FieldAncillary.nc_hdf5_chunksizes
-   ~cf.FieldAncillary.nc_set_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_clear_dataset_chunksizes
+   ~cf.FieldAncillary.nc_dataset_chunksizes
+   ~cf.FieldAncillary.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -648,3 +666,6 @@ Deprecated
    ~cf.FieldAncillary.select
    ~cf.FieldAncillary.setprop
    ~cf.FieldAncillary.unsafe_array
+   ~cf.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_hdf5_chunksizes
+   ~cf.FieldAncillary.nc_set_hdf5_chunksizes

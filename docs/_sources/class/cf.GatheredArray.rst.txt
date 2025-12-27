@@ -20,11 +20,12 @@ cf.GatheredArray
    ~cf.GatheredArray.compressed_dimensions
    ~cf.GatheredArray.conformed_data
    ~cf.GatheredArray.copy
+   ~cf.GatheredArray.get_attributes
    ~cf.GatheredArray.get_calendar
    ~cf.GatheredArray.get_compressed_axes
    ~cf.GatheredArray.get_compressed_dimension
    ~cf.GatheredArray.get_compression_type
-   ~cf.GatheredArray.get_filename'
+   ~cf.GatheredArray.get_filename
    ~cf.GatheredArray.get_filenames
    ~cf.GatheredArray.get_list
    ~cf.GatheredArray.get_Subarray
@@ -45,6 +46,7 @@ cf.GatheredArray
    :template: attribute.rst
    
    ~cf.GatheredArray.array
+   ~cf.GatheredArray.astype
    ~cf.GatheredArray.compressed_array
    ~cf.GatheredArray.dtype
    ~cf.GatheredArray.ndim

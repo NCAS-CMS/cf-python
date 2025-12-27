@@ -1,3 +1,75 @@
+Version NEXTVERSION
+-------------------
+
+**2025-12-??**
+
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
+
+----
+
+Version 3.18.2
+--------------
+
+**2025-10-16**
+
+* Python 3.9 support removed
+  (https://github.com/NCAS-CMS/cf-python/issues/896)
+* Allow regridding for very large grids. New keyword parameter to
+  `cf.Field.regrids` and `cf.Field.regridc`: ``dst_grid_partitions``
+  (https://github.com/NCAS-CMS/cf-python/issues/878)
+* Changed dependency: ``Python>=3.10.0``
+* Changed dependency: ``cfdm>=1.12.3.1, <1.12.4.0``
+
+----
+
+Version 3.18.1
+--------------
+
+**2025-08-20**
+
+* New methods to allow changing units in a chain: `cf.Field.to_units`,
+  `cf.Data.to_units`
+  (https://github.com/NCAS-CMS/cf-python/issues/874)
+* Allow multiple conditions for the same axis in `cf.Field.subspace`
+  and `cf.Field.indices`
+  (https://github.com/NCAS-CMS/cf-python/issues/881)
+* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
+  for missing external cell measures data
+  (https://github.com/NCAS-CMS/cf-python/issues/885)
+* New dependency: ``distributed>=2025.5.1``
+* Changed dependency: ``cfdm>=1.12.3.0, <1.12.4.0``
+
+----
+
+Version 3.18.0
+--------------
+
+**2025-06-05**
+
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
+* New quantization class: `cf.Quantization`
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
+* New quantization methods: `cf.Field.get_quantization`,
+  `cf.Field.get_quantize_on_write`, `cf.Field.set_quantize_on_write`,
+  `cf.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cf-python/issues/870)
+* New keyword parameter to `cf.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cf-python/issues/871)
+* Read Zarr datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/863)
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cf-python/issues/868)
+* New keyword parameter to `cf.DimensionCoordinate.create_bounds`:
+  ``inplace`` (https://github.com/NCAS-CMS/cf-python/issues/855)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cf-python/issues/866)
+* Changed dependency: ``cfdm>=1.12.2.0, <1.12.3.0``
+* Changed dependency: ``dask>=2025.5.1``
+
+----
+
 version 3.17.0
 --------------
 

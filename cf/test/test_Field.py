@@ -6,6 +6,7 @@ import os
 import re
 import tempfile
 import unittest
+from importlib.util import find_spec
 
 import numpy
 import numpy as np
@@ -821,8 +822,8 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(cf.functions._numpy_allclose(g.array, b))
 
     def test_Field_flip(self):
-        f = cf.read(self.filename, netcdf_backend='netCDF4')[0]
-    
+        f = cf.read(self.filename, netcdf_backend="netCDF4")[0]
+
         kwargs = {
             axis: slice(None, None, -1) for axis in f.domain_axes(todict=True)
         }
@@ -1152,6 +1153,9 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.insert_dimension(1, "qwerty")
 
+    @unittest.skipUnless(
+        find_spec("matplotlib"), "matplotlib required but not installed"
+    )
     def test_Field_indices(self):
         f = cf.read(self.filename)[0]
 
@@ -1159,6 +1163,7 @@ class FieldTest(unittest.TestCase):
 
         x = f.dimension_coordinate("X")
         x[...] = np.arange(0, 360, 40)
+        x.set_property("long_name", "grid_longitude")
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
@@ -1439,6 +1444,53 @@ class FieldTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             f.indices(grid_longitude=cf.wo(-180, 180))
+
+        # Multiple conditions for one axis
+        axis = f.get_data_axes("grid_longitude")[0]
+
+        indices = f.indices(
+            **{"grid_longitude": cf.wi(0, 360), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 4))
+        self.assertTrue((x == [40, 120, 200, 240]).all())
+
+        indices = f.indices(
+            **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 2))
+        self.assertTrue((x == [40, 120]).all())
+
+        indices = f.indices(
+            "envelope", **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5, 6]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 3))
+        self.assertTrue((x == [40, 80, 120]).all())
+
+        indices = f.indices(
+            "full", **{"grid_longitude": cf.wi(0, 180), axis: [1, 3, 5]}
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 9))
+        self.assertTrue((x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all())
+
+        indices = f.indices(
+            **{
+                "grid_longitude": cf.wi(50, 350),
+                axis: [1, 2, 3, 4, 5, 6, 7],
+                "long_name=grid_longitude": slice(1, None, 2),
+            }
+        )
+        g = f[indices]
+        x = g.dimension_coordinate("X").array
+        self.assertEqual(g.shape, (1, 10, 3))
+        self.assertTrue((x == [120, 200, 280]).all())
 
         # 2-d
         lon = f.construct("longitude").array
@@ -2925,12 +2977,12 @@ class FieldTest(unittest.TestCase):
     def test_Field_subspace_ugrid(self):
         f = cf.read(self.ugrid_global)[0]
 
-        with self.assertRaises(ValueError):
-            # Can't specify 2 conditions for 1 axis
-            g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
-
         g = f.subspace(X=cf.wi(40, 70))
         g = g.subspace(Y=cf.wi(-20, 30))
+        self.assertTrue(g.aux("X").data.range() < 30)
+        self.assertTrue(g.aux("Y").data.range() < 50)
+
+        g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
         self.assertTrue(g.aux("X").data.range() < 30)
         self.assertTrue(g.aux("Y").data.range() < 50)
 
@@ -3034,6 +3086,24 @@ class FieldTest(unittest.TestCase):
         values, counts = np.unique(f, return_counts=True)
         self.assertEqual(values[0], -999)
         self.assertEqual(counts[0], 5)
+
+    def test_Field_to_units(self):
+        """Test Field.to_units."""
+        f = cf.example_field(0)
+        f = f[0, :2]
+
+        g = f.to_units("g/kg")
+        self.assertIsInstance(f, g.__class__)
+        self.assertEqual(g.Units, cf.Units("g/kg"))
+        self.assertTrue(np.allclose(g.array, [7.0, 34.0]))
+
+        self.assertIsNone(g.to_units("1", inplace=True))
+        self.assertEqual(g.Units, cf.Units("1"))
+        self.assertTrue(np.allclose(g.array, [0.007, 0.034]))
+
+        # Non-equivalent units
+        with self.assertRaises(ValueError):
+            g.to_units("degC")
 
 
 if __name__ == "__main__":

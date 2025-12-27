@@ -14,20 +14,27 @@
   $ find cf/ -type f | xargs sed -i 's/NEXTVERSION/X.Y.Z/g'
   ```
 
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub
+      (see https://github.com/NCAS-CMS/cf-python/milestones)
+      to be the upcoming version `<VN>` (replacing `<VN>` appropriately,
+      e.g. `3.18.0`). Then close the new `<VN>` milestone, and create a
+      new `NEXTVERSION` milestone.
+
 - [ ] Change the version and date in `cf/__init__.py` (`__version__` and
   `__date__` variables)
 
-- [ ] Ensure that the requirements on dependencies & their versions are
-  up-to-date and consistent in both the `requirements.txt` and in
-  `docs/source/installation.rst`; and in the `_requires` list and
-  `Version` checks in `cf/__init__.py`.
+- [ ] Ensure that the requirements on dependencies & their versions
+  are up-to-date and consistent in both the `requirements.txt` and in
+  `docs/source/installation.rst` (paying particular attention to
+  `cfdm`); and in the `_requires` list and `Version` checks in
+  `cf/__init__.py`.
 
 - [ ] Make sure that `README.md` is up to date.
 
 - [ ] Make sure that the `long_description` in `setup.py` is up to date.
 
-- [ ] Make sure that `Changelog.rst` is up to date (version, date and
-  changes).
+- [ ] Make sure that `Changelog.rst` is up to date (cf version,
+      cfdm dependency, date and changes).
 
 - [ ] Deprecated methods and keyword arguments: Check the code for
   deprecated methods and keyword arguments that can be completely

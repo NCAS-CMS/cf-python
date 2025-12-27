@@ -1,0 +1,171 @@
+{
+    "metadata": {
+        ".zattrs": {
+            "Conventions": "CF-1.12"
+        },
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "lat/.zarray": {
+            "chunks": [
+                5
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                5
+            ],
+            "zarr_format": 2
+        },
+        "lat/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "lat"
+            ],
+            "bounds": "lat_bnds",
+            "standard_name": "latitude",
+            "units": "degrees_north"
+        },
+        "lat_bnds/.zarray": {
+            "chunks": [
+                3,
+                2
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                5,
+                2
+            ],
+            "zarr_format": 2
+        },
+        "lat_bnds/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "lat",
+                "bounds2"
+            ]
+        },
+        "lon/.zarray": {
+            "chunks": [
+                8
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                8
+            ],
+            "zarr_format": 2
+        },
+        "lon/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "lon"
+            ],
+            "bounds": "lon_bnds",
+            "standard_name": "longitude",
+            "units": "degrees_east"
+        },
+        "lon_bnds/.zarray": {
+            "chunks": [
+                4,
+                2
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                8,
+                2
+            ],
+            "zarr_format": 2
+        },
+        "lon_bnds/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "lon",
+                "bounds2"
+            ]
+        },
+        "q/.zarray": {
+            "chunks": [
+                3,
+                4
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                5,
+                8
+            ],
+            "zarr_format": 2
+        },
+        "q/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "lat",
+                "lon"
+            ],
+            "cell_methods": "area: mean",
+            "coordinates": "time",
+            "project": "research",
+            "standard_name": "specific_humidity",
+            "units": "1"
+        },
+        "time/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "standard_name": "time",
+            "units": "days since 2018-12-01"
+        }
+    },
+    "zarr_consolidated_format": 1
+}

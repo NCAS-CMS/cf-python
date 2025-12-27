@@ -428,7 +428,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(m1.equals(m2, ignore_fill_value=True))
 
         self.assertFalse(d2.equals(d))
-            
+
         # Test ignore_data_type parameter
         self.assertTrue(d2.equals(d, ignore_data_type=True))
 
@@ -4559,7 +4559,9 @@ class DataTest(unittest.TestCase):
         d = cf.Data(array)
         e = d.masked_values(1.1)
         ea = e.array
-        a = np.ma.masked_values(array, 1.1, rtol=cf.rtol(), atol=cf.atol())
+        a = np.ma.masked_values(
+            array, 1.1, rtol=float(cf.rtol()), atol=float(cf.atol())
+        )
         self.assertTrue(np.isclose(ea, a).all())
         self.assertTrue((ea.mask == a.mask).all())
         self.assertIsNone(d.masked_values(1.1, inplace=True))
@@ -4628,28 +4630,45 @@ class DataTest(unittest.TestCase):
         """Test that _axes and hdf_chunks are updated after a collapse."""
         d = cf.Data([[1, 2, 3, 4]])
         chunks = d.shape
-        d.nc_set_hdf5_chunksizes(chunks)
+        d.nc_set_dataset_chunksizes(chunks)
         e = d.mean(axes=1)
         self.assertEqual(d._axes, ("dim0", "dim1"))
-        self.assertEqual(d.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(d.nc_dataset_chunksizes(), chunks)
 
         e = d.mean(axes=1)
         self.assertNotEqual(e.size, d.size)
         self.assertEqual(e._axes, d._axes)
-        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+        self.assertEqual(e.nc_dataset_chunksizes(), None)
 
         e = d.mean(axes=1, squeeze=True)
         self.assertEqual(e._axes, d._axes[:1])
-        self.assertEqual(e.nc_hdf5_chunksizes(), None)
+        self.assertEqual(e.nc_dataset_chunksizes(), None)
 
         e = d.mean(axes=0)
         self.assertEqual(e.size, d.size)
         self.assertEqual(e._axes, d._axes)
-        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(e.nc_dataset_chunksizes(), chunks)
 
         e = d.mean(axes=0, squeeze=True)
         self.assertEqual(e._axes, d._axes[1:])
-        self.assertEqual(e.nc_hdf5_chunksizes(), chunks)
+        self.assertEqual(e.nc_dataset_chunksizes(), chunks)
+
+    def test_Data_to_units(self):
+        """Test cf.Data.to_units."""
+        d = cf.Data([1, 2], "km")
+        e = d.to_units("m")
+
+        self.assertIsInstance(e, d.__class__)
+        self.assertEqual(e.Units, cf.Units("m"))
+        self.assertTrue(np.allclose(e.array, [1000.0, 2000.0]))
+
+        self.assertIsNone(e.to_units("miles", inplace=True))
+        self.assertEqual(e.Units, cf.Units("miles"))
+        self.assertTrue(np.allclose(e.array, [0.62137119, 1.24274238]))
+
+        # Non-equivalent units
+        with self.assertRaises(ValueError):
+            e.to_units("degC")
 
 
 if __name__ == "__main__":

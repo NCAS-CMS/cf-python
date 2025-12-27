@@ -544,6 +544,15 @@ class DimensionCoordinateTest(unittest.TestCase):
             ).all()
         )
 
+        # In-place
+        self.assertFalse(d.has_bounds())
+        self.assertIsNone(d.create_bounds(inplace=True))
+        self.assertTrue(d.has_bounds())
+
+        # Fail when inplace=True and bounds already exist
+        with self.assertRaises(ValueError):
+            d.create_bounds(inplace=True)
+
         # Cellsize units must be equivalent to the coordinate units,
         # or if the cell has no units then they are assumed to be
         # the same as the coordinates:
@@ -830,6 +839,28 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(d.direction())
         d._custom["direction"] = None
         self.assertTrue(d[0].direction())
+
+    def test_DimensionCoordinate_to_units(self):
+        """Test DimensionCoordinate.to_units."""
+        f = cf.example_field(0)
+        d = f.dimension_coordinate("X")
+        d = d[:2]
+        self.assertEqual(d.period().Units, cf.Units("degrees_east"))
+
+        e = d.to_units("rad")
+        self.assertIsInstance(e, d.__class__)
+        self.assertEqual(e.Units, cf.Units("rad"))
+        self.assertTrue(np.allclose(e.array, [0.39269908, 1.17809725]))
+        self.assertEqual(e.period().Units, cf.Units("rad"))
+
+        self.assertIsNone(e.to_units("degrees_east", inplace=True))
+        self.assertEqual(e.Units, cf.Units("degrees_east"))
+        self.assertTrue(np.allclose(e.array, [22.5, 67.5]))
+        self.assertTrue(np.allclose(e.period().array, d.period().array))
+
+        # Non-equivalent units
+        with self.assertRaises(ValueError):
+            e.to_units("degC")
 
 
 if __name__ == "__main__":

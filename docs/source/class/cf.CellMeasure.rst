@@ -129,6 +129,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.to_units
    ~cf.CellMeasure.override_units
    ~cf.CellMeasure.override_calendar
 
@@ -261,6 +262,19 @@ Data
    ~cf.CellMeasure.get_original_filenames
    ~cf.CellMeasure.has_bounds
    ~cf.CellMeasure.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.get_quantization
+   ~cf.CellMeasure.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -434,9 +448,9 @@ NetCDF
    ~cf.CellMeasure.nc_set_variable 
    ~cf.CellMeasure.nc_get_external
    ~cf.CellMeasure.nc_set_external 
-   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
-   ~cf.CellMeasure.nc_hdf5_chunksizes
-   ~cf.CellMeasure.nc_set_hdf5_chunksizes
+   ~cf.CellMeasure.nc_clear_dataset_chunksizes
+   ~cf.CellMeasure.nc_dataset_chunksizes
+   ~cf.CellMeasure.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -676,3 +690,6 @@ Deprecated
    ~cf.CellMeasure.select
    ~cf.CellMeasure.setprop
    ~cf.CellMeasure.unsafe_array
+   ~cf.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cf.CellMeasure.nc_hdf5_chunksizes
+   ~cf.CellMeasure.nc_set_hdf5_chunksizes

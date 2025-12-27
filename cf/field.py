@@ -22,6 +22,7 @@ from . import (
     Flags,
     Index,
     List,
+    Quantization,
     mixin,
 )
 from .constants import masked as cf_masked
@@ -177,7 +178,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 _collapse_ddof_methods = set(("sd", "var"))
 
-_earth_radius = Data(6371229.0, "m")
+_earth_radius = 6371229.0
 
 _relational_methods = (
     "__eq__",
@@ -280,7 +281,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         instance._Domain = Domain
         instance._DomainAncillary = DomainAncillary
         instance._DomainAxis = DomainAxis
-        #        instance._Data = Data
+        instance._Quantization = Quantization
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -381,14 +382,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (6, 4, 3)
 
         """
-        debug = is_log_level_debug(logger)
-
-        if debug:
-            logger.debug(
-                self.__class__.__name__ + ".__getitem__"
-            )  # pragma: no cover
-            logger.debug(f"    input indices = {indices}")  # pragma: no cover
-
         if indices is Ellipsis:
             return self.copy()
 
@@ -435,12 +428,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             findices = ancillary_mask + indices
         else:
             findices = indices
-
-        if debug:
-            logger.debug(f"    shape    = {shape}")  # pragma: no cover
-            logger.debug(f"    indices  = {indices}")  # pragma: no cover
-            logger.debug(f"    indices2 = {indices2}")  # pragma: no cover
-            logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = data[tuple(findices)]
 
@@ -494,11 +481,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-
-                if debug:
-                    logger.debug(
-                        f"    dice = {tuple(dice)}"
-                    )  # pragma: no cover
 
                 # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.
@@ -2719,7 +2701,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "or None"
                     )
 
-                return _earth_radius.copy()
+                return Data(_earth_radius, "m")
 
             r = Data.asdata(default).squeeze()
         else:
@@ -3707,7 +3689,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     weights_axes.discard(xaxis)
                     weights_axes.discard(yaxis)
                     if not Weights.cell_measure(
-                        self, "area", comp, weights_axes, methods=methods
+                        self,
+                        "area",
+                        comp,
+                        weights_axes,
+                        methods=methods,
+                        auto=True,
                     ):
                         Weights.area_XY(
                             self,
@@ -5471,52 +5458,60 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             weights: optional
                 Specify the weights for the collapse axes. The weights
-                are, in general, those that would be returned by this
-                call of the field construct's `weights` method:
-                ``f.weights(weights, axes=axes, measure=measure,
-                scale=scale, radius=radius, great_circle=great_circle,
-                components=True)``. See the *axes*, *measure*,
-                *scale*, *radius* and *great_circle* parameters and
-                `cf.Field.weights` for details, and note that the
-                value of *scale* may be modified depending on the
-                value of *measure*.
+                are created internally as the output of this call of
+                the field construct's `weights` method:
+                ``f.weights(weights, components=True, axes=axes,
+                measure=measure, scale=scale, radius=radius,
+                great_circle=great_circle)``.
 
-                .. note:: By default *weights* is `None`, resulting in
-                          **unweighted calculations**.
+                See the `cf.Field.weights` and the *axes*, *measure*,
+                *scale*, *radius*, and *great_circle* parameters for
+                details; and note that the value of *scale* may be
+                modified depending on the value of *measure*.
+
+                .. warning:: By default *weights* is `None`, resulting
+                             in **unweighted calculations**.
+
+                .. note:: Setting *weights* to `True` is generally a
+                          good way to ensure that all collapses are
+                          appropriately weighted according to the
+                          field construct's metadata. In this case, if
+                          it is not possible to create weights for any
+                          axis then an exception will be raised.
 
                 .. note:: Unless the *method* is ``'integral'``, the
                           units of the weights are not combined with
                           the field's units in the collapsed field.
 
-                If the alternative form of providing the collapse method
-                and axes combined as a CF cell methods-like string via the
-                *method* parameter has been used, then the *axes*
-                parameter is ignored and the axes are derived from the
-                *method* parameter. For example, if *method* is ``'T:
-                area: minimum'`` then this defines axes of ``['T',
+                .. note:: A pre-calculated weights array or dictionary
+                          may also be provided as the *weights*
+                          parameter. See `cf.Field.weights` for
+                          details
+
+                If the collapse method and axes have been provided as
+                a CF cell methods-like string via the *method*
+                parameter, then the *axes* parameter is ignored and
+                the axes for weights instead inferred from that
+                string. For instance, if *method* is ``'T: area:
+                minimum'`` then this defines axes of ``['T',
                 'area']``. If *method* specifies multiple collapses,
-                e.g. ``'T: minimum area: mean'`` then this implies axes of
-                ``'T'`` for the first collapse, and axes of ``'area'`` for
-                the second collapse.
+                e.g. ``'T: minimum area: mean'`` then this implies
+                axes of ``'T'`` for the first collapse, and axes of
+                ``'area'`` for the second collapse.
 
-                .. note:: Setting *weights* to `True` is generally a good
-                          way to ensure that all collapses are
-                          appropriately weighted according to the field
-                          construct's metadata. In this case, if it is not
-                          possible to create weights for any axis then an
-                          exception will be raised.
-
-                          However, care needs to be taken if *weights* is
-                          `True` when cell volume weights are desired. The
-                          volume weights will be taken from a "volume"
-                          cell measure construct if one exists, otherwise
-                          the cell volumes will be calculated as being
-                          proportional to the sizes of one-dimensional
-                          vertical coordinate cells. In the latter case
-                          **if the vertical dimension coordinates do not
-                          define the actual height or depth thickness of
-                          every cell in the domain then the weights will
-                          be incorrect**.
+                .. warning:: Care needs to be taken if *weights* is
+                             set to `True` when cell volume weights
+                             are desired. The volume weights will be
+                             taken from a "volume" cell measure
+                             construct if one exists, otherwise the
+                             cell volumes will be calculated as being
+                             proportional to the sizes of
+                             one-dimensional vertical coordinate
+                             cells. In the latter case **if the
+                             vertical dimension coordinates do not
+                             define the actual height or depth
+                             thickness of every cell in the domain
+                             then the weights will be incorrect**.
 
                 *Parameter example:*
                   To specify weights based on the field construct's
@@ -8789,13 +8784,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Check that there are no invalid indices for size 1 axes not
         # spanned by the data
         if len(axis_indices) > len(data_axes):
+            import dask.array as da
+
             for axis, index in axis_indices.items():
                 if axis in data_axes or (
                     isinstance(index, slice) and index == slice(None)
                 ):
                     continue
-
-                import dask.array as da
 
                 shape = da.from_array([0])[index].compute_chunk_sizes().shape
                 if 0 in shape:
@@ -9954,12 +9949,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   An unweighted 5-point moving average can be computed
                   with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
-                Note that the `scipy.signal.windows` package has suite
-                of window functions for creating window weights for
-                filtering (see the examples for details).
+                .. note:: The `scipy.signal.windows` package has a
+                          suite of window functions for creating
+                          window weights for filtering (see the
+                          examples for details).
 
-                .. versionadded:: 3.3.0 (replaces the old weights
-                                  parameter)
+                .. versionadded:: 3.3.0
 
             axis:
                 Select the domain axis over which the filter is to be
@@ -12753,6 +12748,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
+        * Multiple criteria may be specified for the same domain axis.
+
         * Subspace criteria may be provided for size 1 domain axes that
           are not spanned by the field construct's data.
 
@@ -12969,6 +12966,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ln_z=None,
         verbose=None,
         return_esmpy_regrid_operator=False,
+        dst_grid_partitions=1,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13213,6 +13211,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.16.2
 
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                The maximum number of partitions, Nmax, depends on the
+                nature of the destination grid: If the Z axis is being
+                regridded, Nmax = the size of the Z axis. For a 2-d
+                structured grid, Nmax = the size of the Y axis. For a
+                UGRID, HEALPix, or DSG grid, Nmax = the size of the
+                horizontal discrete axis.
+
+                .. versionadded:: 3.18.2
+
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
 
@@ -13306,11 +13315,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
     def regridc(
         self,
         dst,
@@ -13330,6 +13341,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         z=None,
         ln_z=None,
         return_esmpy_regrid_operator=False,
+        dst_grid_partitions=1,
+        verbose=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
@@ -13509,6 +13522,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.16.2
 
+            {{dst_grid_partitions: `int` or `str`, optional}}
+
+                Partitioning is only available for 2-d or 3-d
+                regridding. The maximum number of partitions is the
+                size of the first of the destination grid axes
+                specified by the *axes* parameter.
+
+                .. versionadded:: 3.18.2
+
+            {{verbose: `int` or `str` or `None`, optional}}
+
+                .. versionadded:: 3.18.2
+
             axis_order: sequence, optional
                 Deprecated at version 3.14.0.
 
@@ -13601,6 +13627,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             z=z,
             ln_z=ln_z,
             return_esmpy_regrid_operator=return_esmpy_regrid_operator,
+            dst_grid_partitions=dst_grid_partitions,
             inplace=inplace,
         )
 
@@ -13991,19 +14018,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )  # pragma: no cover
 
     def HDF_chunks(self, *chunksizes):
-        """Deprecated at version 3.0.0.
+        """Get or set HDF chunk sizes.
 
-        Use methods 'Data.nc_hdf5_chunksizes',
-        'Data.nc_set_hdf5_chunksizes', 'Data.nc_clear_hdf5_chunksizes'
-        instead.
+        Deprecated at version 3.0.0 and is no longer available.  Use
+        methods `Data.nc_dataset_chunksizes`,
+        `Data.nc_set_dataset_chunksizes`,
+        `Data.nc_clear_dataset_chunksizes` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
             self,
             "HDF_chunks",
-            "Use methods 'Data.nc_hdf5_chunksizes', "
-            "'Data.nc_set_hdf5_chunksizes', "
-            "'Data.nc_clear_hdf5_chunksizes' instead.",
+            "Use methods 'Data.nc_dataset_chunksizes', "
+            "'Data.nc_set_dataset_chunksizes', "
+            "'Data.nc_clear_dataset_chunksizes' instead.",
             version="3.0.0",
             removed_at="4.0.0",
         )  # pragma: no cover

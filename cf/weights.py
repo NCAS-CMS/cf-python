@@ -1508,7 +1508,7 @@ class Weights(Container, cfdm.Container):
                 return False
 
             raise ValueError(
-                f"Can't find weights: No {measure!r} cell measure"
+                f"Can't find weights for {f!r}: No {measure!r} cell measure"
             )
 
         elif len_m > 1:
@@ -1516,7 +1516,8 @@ class Weights(Container, cfdm.Container):
                 return False
 
             raise ValueError(
-                f"Can't find weights: Multiple {measure!r} cell measures"
+                f"Can't find weights for {f!r}: Multiple {measure!r} cell "
+                "measures"
             )
 
         key, clm = m.popitem()
@@ -1526,9 +1527,11 @@ class Weights(Container, cfdm.Container):
                 return False
 
             raise ValueError(
-                f"Can't find weights: Cell measure {m!r} has no data, "
-                "possibly because it is external. "
-                "Consider setting cell_measures=False"
+                f"Can't find weights for {f!r}: Cell measure {clm!r} has no "
+                "data, possibly because it is in a missing external file. "
+                "Consider setting cell_measures=False or, if applicable, "
+                "re-reading the dataset whilst providing the external "
+                "file (see cf.read for details)."
             )
 
         clm_axes0 = f.get_data_axes(key)
@@ -1543,7 +1546,8 @@ class Weights(Container, cfdm.Container):
                     return False
 
                 raise ValueError(
-                    "Multiple weights specifications for "
+                    f"Can't find weights for {f!r}: Multiple weights "
+                    "specifications for "
                     f"{f.constructs.domain_axis_identity(axis)!r} axis"
                 )
 

@@ -31,21 +31,12 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
-# either for now for backwards compatibility.
-esmpy_imported = False
+esmpy_imported = True
 try:
-    import esmpy
-
-    esmpy_imported = True
+    import esmpy  # noqa: F401
 except ImportError:
-    try:
-        # Take the new name to use in preference to the old one.
-        import ESMF as esmpy
+    esmpy_imported = False
 
-        esmpy_imported = True
-    except ImportError:
-        pass
 
 all_methods = (
     "linear",
@@ -316,6 +307,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_coords(self):
         """Spherical regridding with coords destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst.copy()
         src = self.src.copy()
 
@@ -384,6 +377,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_2d_coords(self):
         """2-d Cartesian regridding with coords destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst.copy()
         src = self.src.copy()
 
@@ -412,6 +407,8 @@ class RegridTest(unittest.TestCase):
 
     def test_Field_regrids_bad_dst(self):
         """Disallowed destination grid types raise an exception."""
+        self.assertFalse(cf.regrid_logging())
+
         with self.assertRaises(TypeError):
             self.src.regrids(999, method="conservative")
 
@@ -424,6 +421,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_domain(self):
         """Spherical regridding with Domain destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst
         src = self.src
 
@@ -446,6 +445,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_domain(self):
         """Spherical regridding with Domain destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst
         src = self.src
 
@@ -470,6 +471,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_field_operator(self):
         """Spherical regridding with operator destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst
         src = self.src
 
@@ -506,6 +509,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_non_coordinates(self):
         """Check setting of non-coordinate metadata."""
+        self.assertFalse(cf.regrid_logging())
+
         dst = cf.example_field(1)
         src = self.src
 
@@ -553,6 +558,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_3d_field(self):
         """3-d Cartesian regridding with Field destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         methods = list(all_methods)
         methods.remove("conservative_2nd")
 
@@ -646,6 +653,8 @@ class RegridTest(unittest.TestCase):
                 self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
 
         # These methods aren't meant to work for 3-d regridding
+        #
+        # Note: This test leaves behind a PET0.ESMF_LogFile
         for method in ("conservative_2nd",):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
@@ -653,6 +662,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_field(self):
         """1-d Cartesian regridding with Field destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         methods = list(all_methods)
         methods.remove("conservative_2nd")
         methods.remove("patch")
@@ -742,6 +753,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_coordinates_z(self):
         """1-d Z Cartesian regridding with coordinates destination grid."""
+        self.assertFalse(cf.regrid_logging())
+
         src = cf.read(self.filename_xyz)[0]
         dst = cf.DimensionCoordinate(
             data=cf.Data([800, 705, 632, 510, 320.0], "hPa")
@@ -753,6 +766,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_chunks(self):
         """Regridding of chunked axes"""
+        self.assertFalse(cf.regrid_logging())
+
         filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
         )
@@ -768,6 +783,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_weights_file(self):
         """Regridding creation/use of weights file"""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst
         src = self.src
 
@@ -780,12 +797,14 @@ class RegridTest(unittest.TestCase):
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertTrue(os.path.isfile(tmpfile))
-        self.assertIsNone(r.weights_file)
+        self.assertEqual(r.weights_file, tmpfile)
+        self.assertIsNone(r.weights)
 
         r = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertEqual(r.weights_file, tmpfile)
+        self.assertIsNone(r.weights)
 
         # Can't provide weights_file when dst is a RegridOperator
         with self.assertRaises(ValueError):
@@ -796,6 +815,8 @@ class RegridTest(unittest.TestCase):
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_return_esmpy_regrid_operator(self):
         """esmpy regrid operator returns esmpy.Regrid in regrids and regridc"""
+        self.assertFalse(cf.regrid_logging())
+
         dst = self.dst
         src = self.src
 

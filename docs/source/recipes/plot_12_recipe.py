@@ -8,7 +8,6 @@ In this recipe, we will make use of a
 to plot the `high-quality` retrieval of Aerosol Optical Depth (AOD) from all other
 retrievals.
 
-isort:skip_file
 """
 
 # %%

@@ -5,36 +5,46 @@
 
 Computation times
 =================
-**14:33.977** total execution time for **recipes** files:
+**00:19.748** total execution time for **recipes** files:
 
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_15_recipe.py` (``plot_15_recipe.py``) | 14:33.977 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_11_recipe.py` (``plot_11_recipe.py``) | 00:17.264 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_01_recipe.py` (``plot_01_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_09_recipe.py` (``plot_09_recipe.py``) | 00:02.395 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_02_recipe.py` (``plot_02_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_04_recipe.py` (``plot_04_recipe.py``) | 00:00.069 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_03_recipe.py` (``plot_03_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_01_recipe.py` (``plot_01_recipe.py``) | 00:00.005 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_04_recipe.py` (``plot_04_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_18_recipe.py` (``plot_18_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_05_recipe.py` (``plot_05_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_07_recipe.py` (``plot_07_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_06_recipe.py` (``plot_06_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_15_recipe.py` (``plot_15_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_07_recipe.py` (``plot_07_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_13_recipe.py` (``plot_13_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_08_recipe.py` (``plot_08_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_20_recipe.py` (``plot_20_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_09_recipe.py` (``plot_09_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_19_recipe.py` (``plot_19_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_10_recipe.py` (``plot_10_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_16_recipe.py` (``plot_16_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_11_recipe.py` (``plot_11_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_02_recipe.py` (``plot_02_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_12_recipe.py` (``plot_12_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_17_recipe.py` (``plot_17_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_13_recipe.py` (``plot_13_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_14_recipe.py` (``plot_14_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_recipes_plot_14_recipe.py` (``plot_14_recipe.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_recipes_plot_06_recipe.py` (``plot_06_recipe.py``) | 00:00.001 | 0.0 MB |
++-------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_recipes_plot_03_recipe.py` (``plot_03_recipe.py``) | 00:00.001 | 0.0 MB |
++-------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_recipes_plot_08_recipe.py` (``plot_08_recipe.py``) | 00:00.001 | 0.0 MB |
++-------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_recipes_plot_12_recipe.py` (``plot_12_recipe.py``) | 00:00.001 | 0.0 MB |
++-------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_recipes_plot_05_recipe.py` (``plot_05_recipe.py``) | 00:00.001 | 0.0 MB |
++-------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_recipes_plot_10_recipe.py` (``plot_10_recipe.py``) | 00:00.001 | 0.0 MB |
 +-------------------------------------------------------------------+-----------+--------+

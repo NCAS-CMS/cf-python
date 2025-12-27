@@ -9,5 +9,6 @@ recursive-exclude cf/data *.rst
 prune cf/test
 recursive-include cf/test __init__.py test_*.py 
 recursive-include cf/test cfa_test.sh run_tests.py setup_create_field.py create_test_files*.py individual_tests.sh
-recursive-include cf/test test_file.nc test_file[2-4].nc file.nc file[1-9].nc ugrid_global_1.nc ugrid_global_2.nc create_test_files.npz create_test_files_2.npz wgdos_packed.pp extra_data.pp file1.pp *.cdl create_test_files.npz create_test_files_2.npz
+recursive-include cf/test test_file.nc test_file[2-4].nc file.nc file[1-9].nc ugrid_global_1.nc ugrid_global_2.nc create_test_files.npz create_test_files_2.npz wgdos_packed.pp extra_data.pp file1.pp *.cdl create_test_files.npz create_test_files_2.npz example_field_0.nc
+recursive-include cf/test/example_field_0.zarr[23] *
 prune cf/test/dir

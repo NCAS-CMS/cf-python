@@ -102,6 +102,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Count.to_units
    ~cf.Count.override_units
    ~cf.Count.override_calendar
 
@@ -232,6 +233,19 @@ Data
    ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
    ~cf.Count.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.get_quantization
+   ~cf.Count.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -411,9 +425,9 @@ NetCDF
    ~cf.Count.nc_get_sample_dimension
    ~cf.Count.nc_has_sample_dimension
    ~cf.Count.nc_set_sample_dimension
-   ~cf.Count.nc_clear_hdf5_chunksizes
-   ~cf.Count.nc_hdf5_chunksizes
-   ~cf.Count.nc_set_hdf5_chunksizes
+   ~cf.Count.nc_clear_dataset_chunksizes
+   ~cf.Count.nc_dataset_chunksizes
+   ~cf.Count.nc_set_dataset_chunksizes
    
 Aggregation
 -----------
@@ -660,3 +674,6 @@ Deprecated
    ~cf.Count.select
    ~cf.Count.setprop
    ~cf.Count.unsafe_array
+   ~cf.Count.nc_clear_hdf5_chunksizes
+   ~cf.Count.nc_hdf5_chunksizes      
+   ~cf.Count.nc_set_hdf5_chunksizes  

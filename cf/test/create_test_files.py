@@ -2229,11 +2229,11 @@ def _make_ugrid_2(filename):
 
 
 def _make_aggregation_value(filename):
-    """Create an aggregation variable with a 'value' fragment array."""
+    """Create an aggregation variable with 'unique_values'."""
     n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = f"CF-{VN}"
-    n.comment = "A netCDF file with a 'value' aggregation variable."
+    n.comment = "A netCDF file with a 'unique_values' aggregation variable."
 
     n.createDimension("time", 12)
     n.createDimension("level", 1)
@@ -2253,13 +2253,13 @@ def _make_aggregation_value(filename):
     temperature.cell_methods = "time: mean"
     temperature.ancillary_variables = "uid"
     temperature.aggregated_dimensions = "time level latitude longitude"
-    temperature.aggregated_data = "location: fragment_location variable: fragment_variable map: fragment_map"
+    temperature.aggregated_data = "uris: fragment_uris identifiers: fragment_identifiers map: fragment_map"
 
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
     uid.aggregated_dimensions = "time"
     uid.aggregated_data = (
-        "unique_value: fragment_value_uid map: fragment_map_uid"
+        "unique_values: fragment_value_uid map: fragment_map_uid"
     )
 
     time = n.createVariable("time", "f4", ("time",))
@@ -2280,16 +2280,16 @@ def _make_aggregation_value(filename):
     longitude.units = "degrees_east"
 
     # Fragment array variables
-    fragment_location = n.createVariable(
-        "fragment_location",
+    fragment_uris = n.createVariable(
+        "fragment_uris",
         str,
         ("a_time", "a_level", "a_latitude", "a_longitude"),
     )
-    fragment_location[0, 0, 0, 0] = "January-March.nc"
-    fragment_location[1, 0, 0, 0] = "April-December.nc"
+    fragment_uris[0, 0, 0, 0] = "January-March.nc"
+    fragment_uris[1, 0, 0, 0] = "April-December.nc"
 
-    fragment_variable = n.createVariable("fragment_variable", str, ())
-    fragment_variable[...] = "temperature"
+    fragment_identifiers = n.createVariable("fragment_identifiers", str, ())
+    fragment_identifiers[...] = "temperature"
 
     fragment_map = n.createVariable(
         "fragment_map", "i4", ("a_map_j4", "a_map_i2")

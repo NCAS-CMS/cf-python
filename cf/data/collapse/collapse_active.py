@@ -1,19 +1,13 @@
-import datetime
 import logging
-import time
 from functools import wraps
 from numbers import Integral
 
-try:
-    from activestorage import Active
-except ModuleNotFoundError:
-    pass
+from cfdm import is_log_level_info
 
-from ...functions import (
+from cf.functions import (
     active_storage,
     active_storage_max_requests,
     active_storage_url,
-    is_log_level_info,
 )
 
 logger = logging.getLogger(__name__)
@@ -127,7 +121,7 @@ def active_chunk_function(method, *args, **kwargs):
 
     """
     x = args[0]
-        
+
     # Dask reduction machinery
     if kwargs.get("computing_meta"):
         return x
@@ -184,21 +178,33 @@ def active_chunk_function(method, *args, **kwargs):
     # reason, then this will trigger (inside `actify`) a local
     # reduction being carried out instead.
     # ----------------------------------------------------------------
+    import datetime
+    import time
+
+    # Note: We know that the optional `activestorage` pacakge exists
+    #       because this was checked when active storage was enabled
+    #       with `cf.active_storage(True)`
+    from activestorage import Active
+
+    dataset = x.get_filename()
+    address = x.get_address()
+    max_requests = active_storage_max_requests().value
     active_kwargs = {
+        "dataset": "/".join(dataset.split("/")[3:]),
+        "ncvar": address,
+        "axis": None,
         "storage_options": x.get_storage_options(),
         "active_storage_url": url,
-        "storage_type": "s3",
-        "max_threads": active_storage_max_requests().value,
+        "max_threads": max_requests,
     }
     dataset = x.get_variable(None)
     if dataset is None:
         dataset = x.get_filename()
-        active_kwargs['ncvar'] = x.get_address()
+        active_kwargs["ncvar"] = x.get_address()
     else:
-        print ('Using variable :-)')
-        
-    active_kwargs['dataset'] = dataset
-#    print (active_kwargs)
+        print("Using variable :-)")
+
+    active_kwargs["dataset"] = dataset
 
     # WARNING: The "uri", "storage_options", and "storage_type" keys
     #          of the `active_kwargs` dictionary are currently
@@ -210,8 +216,7 @@ def active_chunk_function(method, *args, **kwargs):
     index = x.index()
 
     details = (
-        f"{method!r} (dataset={dataset}, url={url}, "
-        f"Dask chunk={index})"
+        f"{method!r} (dataset={dataset}, ncvar={address}, Dask chunk={index})"
     )
 
     info = is_log_level_info(logger)
@@ -223,16 +228,16 @@ def active_chunk_function(method, *args, **kwargs):
         )  # pragma: no cover
 
     active = Active(**active_kwargs)
-    active = getattr(active, method)
+    active.method = method
     active.components = True
 
     # Instruct the `Active` class to attempt an active storage
     # reduction on the remote server
     #
-#    # WARNING: The `_version` API of `Active` is likely to change from
-#    #          the current version (i.e. the pyfive branch of
-#    #          PyActiveStorage)
-#    active._version = 2
+    # WARNING: The `_version` API of `Active` is likely to change from
+    #          the current version (i.e. the pyfive branch of
+    #          PyActiveStorage)
+    active._version = 2
 
     # ----------------------------------------------------------------
     # Execute the active storage operation by indexing the Active
@@ -249,7 +254,6 @@ def active_chunk_function(method, *args, **kwargs):
             f"FAILED in active storage {details} ({error}))"
         )
     else:
-        print ('Did active!!')
         # Active storage reduction was successful
         if info:
             # Do some detailed logging

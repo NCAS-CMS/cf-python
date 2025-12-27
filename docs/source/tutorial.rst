@@ -130,6 +130,14 @@ The following file types can be read:
   with or without the data array values.
 
 ..
+  
+* Datasets in `Zarr v2 (xarray-style)
+  <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
+  and `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
+  formats.
+
+..
 
 * `CFA-netCDF
   <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
@@ -193,7 +201,7 @@ replacing any file name with a directory name. An attempt will be made
 to read all files in the directory, which will result in an error if
 any have a non-supported format. Non-supported files may be ignored
 by being more specific about the file type intended for reading in
-using the *file_type* keyword:
+using the *dataset_type* keyword:
 
 .. code-block:: python
    :caption: *Read all of the files in the current working directory.*
@@ -202,7 +210,7 @@ using the *file_type* keyword:
    Traceback (most recent call last):
        ...
    Exception: Can't determine format of file cf_tutorial_files.zip
-   >>> y = cf.read('$PWD', file_type='netCDF')
+   >>> y = cf.read('$PWD', dataset_type='netCDF')
    >>> len(y)
    15
 
@@ -539,12 +547,12 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/cfplot_example.png
+.. figure:: images/new_gallery_view.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Examples gallery of plots made with the cf-plot library.*
 
 See the `cf-plot gallery
-<https://ncas-cms.github.io/cf-plot/build/gallery.html>`_ for the wide
+<https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide
 range of plotting possibilities, with example code. These include, but are
 not limited to:
 
@@ -1145,7 +1153,7 @@ Manipulating dimensions
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included
+one dimensions removed and have new size one dimensions included
 by using the following field construct methods:
 
 =========================  ===========================================
@@ -1215,7 +1223,7 @@ Data mask
 	     
 There is always a data mask, which may be thought of as a separate
 data array of Booleans with the same shape as the original data. The
-data mask is `False` where the the data has values, and `True` where
+data mask is `False` where the data has values, and `True` where
 the data is missing. The data mask may be inspected with the
 `~Field.mask` attribute of the field construct, which returns the data
 mask in a field construct with the same metadata constructs as the
@@ -1586,7 +1594,7 @@ Masked values
 ^^^^^^^^^^^^^
  
 Data array elements may be set to masked values by assigning them to
-the `cf.masked` constant, thereby updating the the :ref:`data mask
+the `cf.masked` constant, thereby updating the :ref:`data mask
 <Data-mask>`.
 
 .. code-block:: python
@@ -2319,7 +2327,7 @@ date-time objects of the `cftime package
 attribute of the construct, or its `cf.Data` instance.
 
 .. code-block:: python
-   :caption: *Inspect the the values of a "time" construct as elapsed
+   :caption: *Inspect the values of a "time" construct as elapsed
              times and as date-times.*
 
    >>> time = q.construct('time')
@@ -2537,7 +2545,7 @@ grid point location for each cell. The cell bounds are stored in a
 `~Coordinate.bounds` attribute, or `~Coordinate.get_bounds` method, of
 the coordinate construct.
 
-A `cf.Bounds` instance shares the :ref:`the same API as the field
+A `cf.Bounds` instance shares :ref:`the same API as the field
 construct <Data>` for accessing its data.
 
 .. code-block:: python
@@ -6684,16 +6692,201 @@ The content of the new file is:
      4, 0, 5 ;
    }
 
-----
-   
 .. _Coordinate-subampling:
 
 Coordinate subsampling
 ^^^^^^^^^^^^^^^^^^^^^^
 
 `Lossy compression by coordinate subsampling`_ was introduced into the
-CF conventions at CF-1.9, but is not yet available in cfdm. It will be
-ready in a future 3.x.0 release.
+CF conventions at CF-1.10 for applications for which the coordinates
+can require considerably more storage than the data itself. Space may
+be saved in the netCDF file by storing a subsample of the coordinates
+that describe the data, and the uncompressed coordinate and auxiliary
+coordinate variables are reconstituted by interpolation, from the
+subsampled coordinate values to the domain of the data
+
+This is illustrated with the file ``subsampled.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+
+.. code-block:: console
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
+      
+   $ ncdump -h subsampled.nc 
+   netcdf subsampled {
+   dimensions:
+   	time = 2 ;
+   	lat = 18 ;
+   	lon = 12 ;
+   	tp_lat = 4 ;
+   	tp_lon = 5 ;
+   variables:
+   	float time(time) ;
+   		time:standard_name = "time" ;
+   		time:units = "days since 2000-01-01" ;
+   	float lat(tp_lat, tp_lon) ;
+   		lat:standard_name = "latitude" ;
+   		lat:units = "degrees_north" ;
+   		lat:bounds_tie_points = "lat_bounds" ;
+   	float lon(tp_lat, tp_lon) ;
+   		lon:standard_name = "longitude" ;
+   		lon:units = "degrees_east" ;
+   		lon:bounds_tie_points = "lon_bounds" ;
+   	float lat_bounds(tp_lat, tp_lon) ;
+   	float lon_bounds(tp_lat, tp_lon) ;
+   	int lat_indices(tp_lat) ;
+   		lat_indices:long_name = "Tie point indices for latitude dimension" ;
+   	int lon_indices(tp_lon) ;
+   		lon_indices:long_name = "Tie point indices for longitude dimension" ;
+   	int bilinear ;
+   		bilinear:interpolation_name = "bi_linear" ;
+   		bilinear:computational_precision = "64" ;
+   		bilinear:tie_point_mapping =
+		    "lat: lat_indices tp_lat lon: lon_indices tp_lon" ;
+   	float q(time, lat, lon) ;
+   		q:standard_name = "specific_humidity" ;
+   		q:units = "1" ;
+   		q:coordinate_interpolation = "lat: lon: bilinear" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.11" ;
+   }
+
+
+Reading and inspecting this file shows the latitude and longitude
+coordinates in uncompressed form, whilst their underlying arrays are
+still in subsampled representation described in the file:
+   
+.. code-block:: python
+   :caption: *Read a field construct from a dataset that has been
+             compressed by corodinate subsampling, and inspect
+             coordinates.*
+
+   >>> f = cf.read('subsampled.nc')[0]
+   >>> print(f)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(2), ncdim%lat(18), ncdim%lon(12)) 1
+   Dimension coords: time(2) = [2000-01-01 00:00:00, 2000-02-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(18), ncdim%lon(12)) = [[-85.0, ..., 85.0]] degrees_north
+                : longitude(ncdim%lat(18), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> lon = f.construct('longitude')
+   >>> lon
+   <AuxiliaryCoordinate: longitude(18, 12) degrees_east>
+   >>> lon.data.source()
+   <SubsampledArray(18, 12): >
+   >>> print(lon.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+   >>> lon.data.source().source()
+   <Data(4, 5): [[15.0, ..., 345.0]]>
+   >>> print(lon.data.source().source().array)
+   [[ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]]
+
+As with all other forms of compression, the field may be treated as if
+were not compressed:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> g = f[0, 6, :]
+   >>> print(g)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(1), ncdim%lat(1), ncdim%lon(12)) 1
+   Dimension coords: time(1) = [2000-01-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(1), ncdim%lon(12)) = [[-25.0, ..., -25.0]] degrees_north
+                   : longitude(ncdim%lat(1), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> print(g.construct('longitude').array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+
+
+The metadata that define the subsampling are contained within the
+coordinate's `Data` object:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> lon = f.construct('longitude')
+   >>> d = lon.data.source()
+   >>> d.get_tie_point_indices()
+   {0: <TiePointIndex: long_name=Tie point indices for latitude dimension(4) >,
+    1: <TiePointIndex: long_name=Tie point indices for longitude dimension(5) >}
+   >>> d.get_computational_precision()
+   '64'
+
+It is not yet, as of version 1.10.0.0, possible to write to disk a
+field construct with compression by coordinate subsampling.
+
+.. _Lossy-compression-via-quantization:
+
+Lossy compression via quantization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression via quantization`_ eliminates false precision,
+usually by rounding the least significant bits of floating-point
+mantissas to zeros, so that a subsequent compression on disk is more
+efficient. Quantization is described by the following parameters:
+
+* The ``algorithm`` parameter names a specific quantization algorithm.
+
+* The ``implementation`` parameter contains unstandardised text that
+  concisely conveys the algorithm provenance including the name of the
+  library or client that performed the quantization, the software
+  version, and any other information required to disambiguate the
+  source of the algorithm employed. The text must take the form
+  ``software-name version version-string [(optional-information)]``.
+
+* The retained precision of the algorithm is defined with either the
+  ``quantization_nsb`` or ``quantization_nsd`` parameter.
+
+If quantization has been applied to the data, then it may be described
+with in a `Quantization` object, accessed via the construct's
+`!get_quantization` method. To apply quantization at the time of
+writing the data to disk, use the construct's `!set_quantize_on_write`
+method:
+
+.. code-block:: python
+   :caption: *Lossy compression via quantization.*
+
+   >>> q, t = cf.read('file.nc')
+   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
+   >>> cf.write(t, 'quantized.nc')
+   >>> quantized = cf.read('quantized.nc')[0]
+   >>> c = quantized.get_quantization()
+   >>> c
+   <CF Quantization: _QuantizeBitGroomNumberOfSignificantDigits=1, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=1>
+   >>> c.parameters()
+   {'algorithm': 'bitgroom',
+    'implementation': 'libnetcdf version 4.9.4-development',
+    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(1),
+    'quantization_nsd': np.int64(1)}
+   >>> t[0, 0, 0].array
+   array([[[262.8]]])
+   >>> quantized[0, 0, 0].array
+   array([[[256.]]])
 
 ----
 
@@ -6709,7 +6902,7 @@ their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
-keyword of `cf.read` allows the format to be specified. The the UM
+keyword of `cf.read` allows the format to be specified. The UM
 version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the *um* keyword.
@@ -6871,7 +7064,7 @@ adding new ones, is straight forward with the
 Note that some STASH codes have multiple standard name mappings. This
 could be due to the standard name being a function of other parts of
 the header (as is the case for ``(1, 2)``) and ``(1, 152)``), or the
-the STASH code only being valid for particular UM versions (as is the
+STASH code only being valid for particular UM versions (as is the
 case for ``(1, 152)``).
      
 ----

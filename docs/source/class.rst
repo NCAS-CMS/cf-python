@@ -83,6 +83,7 @@ Data classes
    cf.NetCDF4Array
    cf.FullArray
    cf.UMArray
+   cf.ZarrArray
    
 Data compression classes
 ------------------------
@@ -101,6 +102,7 @@ Classes that support the creation and storage of compressed arrays.
    cf.RaggedIndexedArray
    cf.RaggedIndexedContiguousArray
    cf.SubsampledArray
+   cf.Quantization
 
 Data UGRID classes
 ------------------

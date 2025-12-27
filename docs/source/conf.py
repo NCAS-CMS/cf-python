@@ -78,7 +78,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "2.3.1"
+needs_sphinx = "7.0.0"
 
 # rst_prolog = """
 # .. |CF| replace:: """+_get_cf_version()+"""
@@ -113,10 +113,11 @@ spelling_lang = "en_GB"
 tokenizer_lang = "en_GB"
 spelling_word_list_filename = "spelling_false_positives.txt"
 
-# Boolean indicating whether to scan all found documents for
-# autosummary directives, and to generate stub pages for each
-# (http://sphinx-doc.org/latest/ext/autosummary.html)
-autosummary_generate = True
+# SLB, DH NOTE: we don't want to generate these stubs as they use templates
+# from _templates/autosummary which override our custom sub-section lists
+# in our class/*.rst reference files, which we want to use directly! So this
+# flag setting is crucial.
+autosummary_generate = False
 
 # Both the class’ and the __init__ method’s docstring are concatenated
 # and inserted.
@@ -144,19 +145,20 @@ autodoc_default_flags = [
 
 intersphinx_cache_limit = 5  # days to keep the cached inventories
 intersphinx_mapping = {
-    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master", None),
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
     #   'netCDF4': ("https://unidata.github.io/netcdf4-python", None),
     "cftime": ("https://unidata.github.io/cftime", None),
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
-    "cfplot": ("https://ncas-cms.github.io/cf-plot/build/", None),
+    "cfplot": ("https://ncas-cms.github.io/cf-plot", None),
     "dask": ("https://docs.dask.org/en/latest", None),
-    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
     # REVIEW: h5: new intersphinx mapping
     "h5netcdf": ("https://h5netcdf.org", None),
+    "zarr": ("https://zarr.readthedocs.io/en/stable", None),
 }
 
 # This extension is meant to help with the common pattern of having
@@ -385,16 +387,18 @@ sphinx_gallery_conf = {
     "examples_dirs": "recipes",  # path to recipe files
     "gallery_dirs": "recipes",  # path to save gallery generated output
     "run_stale_examples": False,
-    "reference_url": {"cf": None},
+    # Below setting can be buggy: see:
+    # https://github.com/sphinx-gallery/sphinx-gallery/issues/967
+    # "reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf",),
     "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
-    "default_thumb_file": "_static/logo.svg",
+    "default_thumb_file": "_static/cf-recipe-placeholder-squarecrop.png",
     "image_scrapers": (
         "matplotlib",
     ),  # Ensures Matplotlib images are captured
-    "plot_gallery": "True",  # Enables plot rendering
+    "plot_gallery": True,  # Enables plot rendering
     "reset_modules": ("matplotlib",),  # Helps with memory management
     "capture_repr": (),
 }
@@ -471,8 +475,6 @@ from os.path import dirname, relpath
 
 import cf
 
-link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
-
 
 def linkcode_resolve(domain, info):
     # =================================================================
@@ -481,7 +483,6 @@ def linkcode_resolve(domain, info):
     #
     # >> rm -fr build/.doctrees build/*/.doctrees build/*/*/.doctrees
     # =================================================================
-
     online_source_code = True
 
     if domain != "py":
@@ -545,6 +546,8 @@ def linkcode_resolve(domain, info):
                 cfdm_version, fn, linespec
             )
         else:
+            link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
+
             # Point to on-line cf
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
             url = "https://github.com/NCAS-CMS/cf-python/blob/v{0}/cf/{1}{2}".format(

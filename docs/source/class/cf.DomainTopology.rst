@@ -130,6 +130,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainTopology.to_units
    ~cf.DomainTopology.override_units
    ~cf.DomainTopology.override_calendar
 
@@ -261,6 +262,19 @@ Data
    ~cf.DomainTopology.get_original_filenames
    ~cf.DomainTopology.has_bounds
    ~cf.DomainTopology.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainTopology.get_quantization
+   ~cf.DomainTopology.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -432,9 +446,9 @@ NetCDF
    ~cf.DomainTopology.nc_get_variable
    ~cf.DomainTopology.nc_has_variable
    ~cf.DomainTopology.nc_set_variable 
-   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
-   ~cf.DomainTopology.nc_hdf5_chunksizes
-   ~cf.DomainTopology.nc_set_hdf5_chunksizes
+   ~cf.DomainTopology.nc_clear_dataset_chunksizes
+   ~cf.DomainTopology.nc_dataset_chunksizes
+   ~cf.DomainTopology.nc_set_dataset_chunksizes
 
 Aggregation
 -----------
@@ -478,8 +492,8 @@ Groups
    ~cf.DomainTopology.nc_clear_variable_groups
    ~cf.DomainTopology.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -488,9 +502,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DomainTopology.nc_hdf5_chunksizes
-   ~cf.DomainTopology.nc_set_hdf5_chunksizes
-   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cf.DomainTopology.nc_dataset_chunksizes
+   ~cf.DomainTopology.nc_set_dataset_chunksizes
+   ~cf.DomainTopology.nc_clear_dataset_chunksizes
 
 Aliases
 -------
@@ -584,3 +598,6 @@ Deprecated
    ~cf.DomainTopology.select
    ~cf.DomainTopology.setprop
    ~cf.DomainTopology.unsafe_array
+   ~cf.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cf.DomainTopology.nc_hdf5_chunksizes
+   ~cf.DomainTopology.nc_set_hdf5_chunksizes

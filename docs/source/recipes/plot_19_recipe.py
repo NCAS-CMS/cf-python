@@ -7,8 +7,6 @@ temperature per month and, because it is very difficult to
 interpret for trends when in a monthly form, we calculate and plot
 on top of this the mean across each season for both the minima and the
 maxima.
-
-isort:skip_file
 """
 
 # %%

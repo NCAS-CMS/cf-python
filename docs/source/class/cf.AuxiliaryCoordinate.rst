@@ -192,6 +192,7 @@ Units
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.to_units
    ~cf.AuxiliaryCoordinate.override_units
    ~cf.AuxiliaryCoordinate.override_calendar
 
@@ -341,6 +342,19 @@ Cyclicity
    ~cf.AuxiliaryCoordinate.period
    ~cf.AuxiliaryCoordinate.get_original_filenames
    ~cf.AuxiliaryCoordinate.persist
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.get_quantization
+   ~cf.AuxiliaryCoordinate.get_quantize_on_write
 
 Miscellaneous
 -------------
@@ -502,9 +516,9 @@ NetCDF
    ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable
    ~cf.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
    ~cf.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups
-   ~cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
-   ~cf.AuxiliaryCoordinate.nc_hdf5_chunksizes
-   ~cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_clear_dataset_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_dataset_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_set_dataset_chunksizes
    
 Groups
 ^^^^^^
@@ -731,6 +745,9 @@ Deprecated
    ~cf.AuxiliaryCoordinate.remove_data
    ~cf.AuxiliaryCoordinate.select
    ~cf.AuxiliaryCoordinate.setprop
+   ~cf.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cf.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
 
 .. rubric:: Attributes
 

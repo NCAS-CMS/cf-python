@@ -55,6 +55,9 @@ Click on the keywords below to filter the recipes according to their function:
        <button data-filter="regrid">Regrid</button>
        <button data-filter="subspace">Subspace</button>
        <button data-filter="mask">Mask</button>
+       <button data-filter="vectorplot">Vectorplot</button>
+       <button data-filter="subplot">Subplot</button>
+       <button data-filter="stats">Statistical Operations</button>
    </div>
 
 .. raw:: html

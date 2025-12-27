@@ -5,29 +5,24 @@ from datetime import datetime
 from uuid import uuid4
 
 import cfdm
-import cftime
-import dask.array as da
 import numpy as np
 from cfdm import Constructs, is_log_level_info
 from cfdm.read_write.exceptions import DatasetTypeError
-from dask.array.core import getter, normalize_chunks
-from dask.base import tokenize
-from netCDF4 import date2num as netCDF4_date2num
 
-from ... import __Conventions__, __version__
-from ...constants import _stash2standard_name
-from ...data import Data
-from ...data.array import UMArray
-from ...decorators import (
+from cf import __Conventions__, __version__
+from cf.constants import _stash2standard_name
+from cf.data import Data
+from cf.data.array import UMArray
+from cf.decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
 )
-from ...functions import abspath
-from ...functions import atol as cf_atol
-from ...functions import load_stash2standard_name
-from ...functions import rtol as cf_rtol
-from ...umread_lib.umfile import File
-from ...units import Units
+from cf.functions import abspath
+from cf.functions import atol as cf_atol
+from cf.functions import load_stash2standard_name
+from cf.functions import rtol as cf_rtol
+from cf.umread_lib.umfile import File
+from cf.units import Units
 
 logger = logging.getLogger(__name__)
 
@@ -1869,6 +1864,8 @@ class UMField:
     def ctime(self, rec):
         """Return elapsed time since the clock time of the given
         record."""
+        import cftime
+
         reftime = self.refUnits
         LBVTIME = tuple(self.header_vtime(rec))
         LBDTIME = tuple(self.header_dtime(rec))
@@ -2005,6 +2002,10 @@ class UMField:
             `Data`
 
         """
+        import dask.array as da
+        from dask.array.core import getter, normalize_chunks
+        from dask.base import tokenize
+
         if self.info:
             logger.info("Creating data:")  # pragma: no cover
 
@@ -2286,6 +2287,8 @@ class UMField:
         key = (LBDTIME, units, calendar)
         time = _cached_date2num.get(key, None)
         if time is None:
+            from netCDF4 import date2num as netCDF4_date2num
+
             # It is important to use the same time_units as vtime
             try:
                 if self.calendar == "gregorian":
@@ -2293,6 +2296,8 @@ class UMField:
                         datetime(*LBDTIME), units, calendar
                     )
                 else:
+                    import cftime
+
                     time = netCDF4_date2num(
                         cftime.datetime(*LBDTIME, calendar=self.calendar),
                         units,
@@ -2948,6 +2953,8 @@ class UMField:
 
         time = _cached_date2num.get(key, None)
         if time is None:
+            import cftime
+
             # It is important to use the same time_units as dtime
             try:
                 time = cftime.date2num(
@@ -3243,6 +3250,8 @@ class UMField:
                 An independent copy of the new data.
 
         """
+        from dask.base import tokenize
+
         token = tokenize(array, units)
         data = _cached_data.get(token)
         if data is None:
@@ -3256,11 +3265,13 @@ class UMField:
                     values = (v0, v0)
                 else:
                     indices = (0, 1, -1)
-                    v2 = array[ (slice(-1, None, 1),) * ndim]
+                    v2 = array[(slice(-1, None, 1),) * ndim]
                     if size == 2:
                         values = (v0, v2, v2)
                     else:
-                        v1 = array[(slice(0, 1),) * (ndim-1) + (slice(1,2),)]
+                        v1 = array[
+                            (slice(0, 1),) * (ndim - 1) + (slice(1, 2),)
+                        ]
                         values = (v0, v1, v2)
             else:
                 # Bounds
@@ -3274,10 +3285,10 @@ class UMField:
                     v2 = array[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)]
                     v3 = array[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)]
                     values = (v0, v1, v2, v3)
-                
+
             elements = {index: value for index, value in zip(indices, values)}
             data._set_cached_elements(elements)
-            
+
             _cached_data[token] = data
 
         return data.copy()
@@ -3416,7 +3427,7 @@ class UMRead(cfdm.read_write.IORead):
         squeeze=False,
         unsqueeze=False,
         domain=False,
-        file_type=None,
+        dataset_type=None,
         ignore_unknown_type=False,
         unpack=True,
     ):
@@ -3564,14 +3575,14 @@ class UMRead(cfdm.read_write.IORead):
             byte_ordering = None
 
         # ------------------------------------------------------------
-        # Parse the 'file_type' keyword parameter
+        # Parse the 'dataset_type' keyword parameter
         # ------------------------------------------------------------
-        if file_type is not None:
-            if isinstance(file_type, str):
-                file_type = (file_type,)
+        if dataset_type is not None:
+            if isinstance(dataset_type, str):
+                dataset_type = (dataset_type,)
 
-            file_type = set(file_type)
-            if not file_type.intersection(("UM",)):
+            dataset_type = set(dataset_type)
+            if not dataset_type.intersection(("UM",)):
                 # Return now if there are valid file types
                 return []
 

@@ -11,7 +11,6 @@ The Niño 3.4 index typically uses a 5-month running mean, and El Niño or La
 Niña events are defined when the Niño 3.4 SSTs exceed +/- 0.4 degrees Celsius for a
 period of six months or more.
 
-isort:skip_file
 """
 
 # %%

@@ -24,6 +24,15 @@ Field list class
 
    cf.FieldList
 
+Domain class
+------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.Domain
+   
 Metadata component classes
 --------------------------
 
@@ -32,12 +41,14 @@ Metadata component classes
    :toctree: class/
 
    cf.AuxiliaryCoordinate
+   cf.CellConnectivity
    cf.CellMeasure
    cf.CellMethod
    cf.CoordinateReference
    cf.DimensionCoordinate
    cf.DomainAncillary
    cf.DomainAxis
+   cf.DomainTopology
    cf.FieldAncillary
 
 Constructs class
@@ -60,15 +71,6 @@ Coordinate component classes
    cf.CoordinateConversion
    cf.Datum
       
-Domain class
-------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: class/
-
-   cf.Domain
-   
 Data classes
 ------------
 
@@ -77,24 +79,12 @@ Data classes
    :toctree: class/
 
    cf.Data
-   cf.NetCDFArray
-
-Miscellaneous classes
----------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: class/
-
-   cf.Flags
-   cf.Query
-   cf.TimeDuration
-   cf.Units
-   cf.RegridOperator
-   cf.Constant
-   cf.Configuration
-  
-
+   cf.H5netcdfArray
+   cf.NetCDF4Array
+   cf.FullArray
+   cf.UMArray
+   cf.ZarrArray
+   
 Data compression classes
 ------------------------
 
@@ -111,3 +101,34 @@ Classes that support the creation and storage of compressed arrays.
    cf.RaggedContiguousArray
    cf.RaggedIndexedArray
    cf.RaggedIndexedContiguousArray
+   cf.SubsampledArray
+   cf.Quantization
+
+Data UGRID classes
+------------------
+
+Classes that support the creation and storage of UGRID-related arrays.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.BoundsFromNodesArray
+   cf.CellConnectivityArray
+   cf.PointTopologyArray
+   
+Miscellaneous classes
+---------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.Flags
+   cf.Query
+   cf.TimeDuration
+   cf.Units
+   cf.RegridOperator
+   cf.Constant
+   cf.Configuration
+  
