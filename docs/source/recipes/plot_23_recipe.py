@@ -18,12 +18,12 @@ new subplots.
 # sphinx_gallery_thumbnail_number = 2
 # sphinx_gallery_end_ignore
 
-import matplotlib.pyplot as plt
 import cfplot as cfp
-import cf
-
-import numpy as np
 import dask.array as da
+import matplotlib.pyplot as plt
+import numpy as np
+
+import cf
 
 # %%
 # 2. Read example data field constructs, and set region for our plots:

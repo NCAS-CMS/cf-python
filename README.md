@@ -87,7 +87,8 @@ of its array manipulation and can:
 * read field constructs from netCDF, CDL, Zarr, PP and UM datasets with a
   choice of netCDF backends,and in local, http, and s3 locations,
 * create new field constructs in memory,
-* write and append field and domain constructs to netCDF datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr v3
+  datasets on disk,
 * read, create, and manipulate UGRID mesh topologies,
 * read, write, and create coordinates defined by geometry cells,
 * read netCDF and CDL datasets containing hierarchical groups,
