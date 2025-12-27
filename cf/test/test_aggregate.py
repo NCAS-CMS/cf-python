@@ -109,9 +109,9 @@ class aggregateTest(unittest.TestCase):
 
         self.assertEqual(i[0].shape, (10, 9))
 
-        print (self.file)
-        print (self.file2)
-        
+        print(self.file)
+        print(self.file2)
+
         q, t = cf.read(self.file)
         c = cf.read(self.file2)[0]
 

@@ -186,43 +186,36 @@ def active_chunk_function(method, *args, **kwargs):
     #       with `cf.active_storage(True)`
     from activestorage import Active
 
-    dataset = x.get_filename()
-    address = x.get_address()
+    info = is_log_level_info(logger)
+
+    storage_options = None
+    address = None
+    dataset = x.get_variable(None)
+    if dataset is None:
+        # Dateaset is a string, not a variable object.
+        storage_options = x.get_storage_options()
+        address = x.get_address()
+        dataset = x.get_filename()
+
     max_requests = active_storage_max_requests().value
+
     active_kwargs = {
-        "dataset": "/".join(dataset.split("/")[3:]),
+        "dataset": dataset,  # "/".join(dataset.split("/")[3:]),
         "ncvar": address,
-        "axis": None,
-        "storage_options": x.get_storage_options(),
+        "axis": axis,
+        "storage_options": storage_options,
         "active_storage_url": url,
         "max_threads": max_requests,
     }
-    dataset = x.get_variable(None)
-    if dataset is None:
-        dataset = x.get_filename()
-        active_kwargs["ncvar"] = x.get_address()
-    else:
-        print("Using variable :-)")
-
-    active_kwargs["dataset"] = dataset
-
-    # WARNING: The "uri", "storage_options", and "storage_type" keys
-    #          of the `active_kwargs` dictionary are currently
-    #          formatted according to the whims of the `Active` class
-    #          (i.e. the pyfive branch of PyActiveStorage). Future
-    #          versions of `Active` will have a better API, that will
-    #          require improvements to `active_kwargs`.
 
     index = x.index()
-
-    details = (
-        f"{method!r} (dataset={dataset}, ncvar={address}, Dask chunk={index})"
-    )
-
-    info = is_log_level_info(logger)
     if info:
         # Do some detailed logging
         start = time.time()
+        details = (
+            f"{method!r} (dataset={dataset!r}, ncvar={address}, "
+            f"Dask chunk={index})"
+        )
         logger.info(
             f"STARTED  active storage {details}: {datetime.datetime.now()}"
         )  # pragma: no cover
@@ -235,8 +228,7 @@ def active_chunk_function(method, *args, **kwargs):
     # reduction on the remote server
     #
     # WARNING: The `_version` API of `Active` is likely to change from
-    #          the current version (i.e. the pyfive branch of
-    #          PyActiveStorage)
+    #          the current version
     active._version = 2
 
     # ----------------------------------------------------------------
