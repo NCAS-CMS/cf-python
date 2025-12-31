@@ -70,13 +70,15 @@ class build_umread(build):
         )
 
         cmd = ["make", "-C", build_dir]
+        cmd_clean = ["make", "-C", build_dir, "clean"]
 
         def compile():
             print("*" * 80)
             print("Running:", " ".join(cmd), "\n")
 
             try:
-                rc = subprocess.call(cmd)
+                # if compile returns 0, clean will also be run
+                rc = subprocess.call(cmd) or subprocess.call(cmd_clean)
             except Exception as error:
                 print(error)
                 rc = 40
@@ -97,7 +99,6 @@ class build_umread(build):
                     "         In particular, netCDF file processing is "
                     "unaffected."
                 )
-
             print("-" * 80)
             print("\n", "*" * 80)
             print()
