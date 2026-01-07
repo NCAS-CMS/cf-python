@@ -3659,7 +3659,7 @@ class UMRead(cfdm.read_write.IORead):
                 pass
 
             raise DatasetTypeError(
-                f"Can't interpret {filename} as a PP or UM dataset"
+                f"\nCan't interpret {filename} as a PP or UM dataset"
             )
 
         self._um_file = f
