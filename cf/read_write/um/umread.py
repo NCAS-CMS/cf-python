@@ -3575,7 +3575,7 @@ class UMRead(cfdm.read_write.IORead):
                 # Return now if there are valid file types
                 return []
 
-        f = self.file_open(filename, parse=True)
+        f = self.dataset_open(filename, parse=True)
 
         info = is_log_level_info(logger)
 
@@ -3598,7 +3598,7 @@ class UMRead(cfdm.read_write.IORead):
             for var in f.vars
         ]
 
-        self.file_close()
+        self.dataset_close()
 
         return [field for x in um for field in x.fields if field]
 
@@ -3632,7 +3632,7 @@ class UMRead(cfdm.read_write.IORead):
                 The open PP or FF file object.
 
         """
-        self.file_close()
+        self.dataset_close()
         try:
             f = File(
                 filename,
@@ -3678,15 +3678,15 @@ class UMRead(cfdm.read_write.IORead):
         try:
             # Note: No need to completely parse the file to ascertain
             #       if it's PP or FF.
-            self.file_open(filename, parse=False)
+            self.dataset_open(filename, parse=False)
         except Exception:
-            self.file_close()
+            self.dataset_close()
             return False
         else:
-            self.file_close()
+            self.dataset_close()
             return True
 
-    def file_close(self):
+    def dataset_close(self):
         """Close the file that has been read.
 
         :Returns:
@@ -3700,7 +3700,7 @@ class UMRead(cfdm.read_write.IORead):
 
         self._um_file = None
 
-    def file_open(self, filename, parse=True):
+    def dataset_open(self, filename, parse=True):
         """Open the file for reading.
 
         :Paramters:

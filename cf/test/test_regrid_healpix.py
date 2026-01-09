@@ -56,7 +56,7 @@ class RegridMeshTest(unittest.TestCase):
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
     def test_Field_regrid_mesh_to_healpix(self):
-        # Check that UGRID -> healpix is the same as UGRID -> UGRUD
+        # Check that UGRID -> healpix is the same as UGRID -> UGRID
         self.assertFalse(cf.regrid_logging())
 
         dst = cf.Domain.create_healpix(3)  # 768 cells
@@ -85,7 +85,7 @@ class RegridMeshTest(unittest.TestCase):
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
     def test_Field_regrid_healpix_to_mesh(self):
-        # Check that healpix -> UGRID is the same as UGRID -> UGRUD
+        # Check that healpix -> UGRID is the same as UGRID -> UGRID
         self.assertFalse(cf.regrid_logging())
 
         src = cf.Field(source=cf.Domain.create_healpix(3))  # 768 cells

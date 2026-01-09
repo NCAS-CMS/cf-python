@@ -1,7 +1,7 @@
 Version NEXTVERSION
 --------------
 
-**2025-??-??**
+**2026-??-??**
 
 * Support for HEALPix grids
   (https://github.com/NCAS-CMS/cf-python/issues/909)
@@ -17,10 +17,22 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
-* Reduce the time taken to import `cf`
-  (https://github.com/NCAS-CMS/cf-python/issues/902)
 * New optional dependency: ``healpix>=2025.1``
 * Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
+
+Version 3.18.3
+--------------
+
+**2026-01-??**
+
+* Write Zarr v3 datasets with `cf.write`, and allow the reading of
+  grouped Zarr v2 and v3 datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/895)
+* Read Zarr v2 and v3 datasets that contain a group hierarchy with
+  `cf.read` (https://github.com/NCAS-CMS/cf-python/issues/894)
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
+* New optional dependency: ``zarr>=3.1.3``
 
 ----
 

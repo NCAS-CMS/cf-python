@@ -2328,7 +2328,7 @@ class FieldDomain:
             )
 
         # Create the UGRID Domain Topology construct, by creating a
-        # unique integer identifer for each unique node location.
+        # unique integer identifier for each unique node location.
         bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
         bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
 
@@ -2466,7 +2466,7 @@ class FieldDomain:
         # See if any lat/lon coordinates could be created
         # ------------------------------------------------------------
 
-        # See if there are any existing latitude/longutude coordinates
+        # See if there are any existing latitude/longitude coordinates
         latlon_coordinates = {
             key: c
             for key, c in f.coordinates(todict=True).items()
@@ -2474,7 +2474,7 @@ class FieldDomain:
         }
         if latlon_coordinates:
             if overwrite:
-                # Remove existing latitude/longutude coordinates
+                # Remove existing latitude/longitude coordinates
                 # before carrying on
                 for key in latlon_coordinates:
                     f.del_construct(key)
@@ -2542,7 +2542,7 @@ class FieldDomain:
         # coordinates.
         # ------------------------------------------------------------
 
-        # Initialize the flag that tells us if any new coordinates
+        # Initialise the flag that tells us if any new coordinates
         # have been created
         coords_created = False
 

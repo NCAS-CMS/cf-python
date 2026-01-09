@@ -5166,7 +5166,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         # ------------------------------------------------------------
-        # Chenge the refinement level of the Field's data
+        # Change the refinement level of the Field's data
         # ------------------------------------------------------------
 
         # Note: Using 'Data.coarsen' works because a) the HEALPix

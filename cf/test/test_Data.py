@@ -4717,12 +4717,12 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.shape, (2, 2))
         self.assertTrue((e.array == [[0, 3], [12, 15]]).all())
 
-        # Non-full caorsening neighbourhood with trim_excess=True
+        # Non-full coarsening neighbourhood with trim_excess=True
         e = d.coarsen(np.max, {-1: 5}, trim_excess=True)
         self.assertEqual(e.shape, (4, 1))
         self.assertTrue((e.array == [[4], [10], [16], [22]]).all())
 
-        # Non-full caorsening neighbourhood with trim_excess=False
+        # Non-full coarsening neighbourhood with trim_excess=False
         with self.assertRaises(ValueError):
             d.coarsen(np.max, {-1: 5})
 

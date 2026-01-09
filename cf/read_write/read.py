@@ -316,6 +316,10 @@ class read(cfdm.read):
 
             .. versionadded:: 3.17.0
 
+        {{read store_dataset_shards: `bool`, optional}}
+
+            .. versionadded:: NEXTVERSION
+
         {{read cfa: `dict`, optional}}
 
             .. versionadded:: 3.15.0
@@ -327,6 +331,10 @@ class read(cfdm.read):
         {{read to_memory: (sequence of) `str`, optional}}
 
             .. versionadded:: 3.17.0
+
+        {{read group_dimension_search: `str`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
@@ -434,6 +442,7 @@ class read(cfdm.read):
         warn_valid=False,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
+        store_dataset_shards=True,
         domain=False,
         cfa=None,
         cfa_write=None,
@@ -445,6 +454,7 @@ class read(cfdm.read):
         ignore_read_error=False,
         fmt=None,
         file_type=None,
+        group_dimension_search="closest_ancestor",
     ):
         """Read field or domain constructs from a dataset."""
         kwargs = locals()
