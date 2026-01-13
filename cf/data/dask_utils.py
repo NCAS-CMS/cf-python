@@ -14,6 +14,88 @@ from ..cfdatetime import dt, dt2rt, rt2dt
 from ..units import Units
 
 
+def _zuniq2pix(a, nest=True):
+    """https://github.com/cds-astro/cds-healpix-rust/blob/master/src/nested/mod.rs#L190-L196
+
+    """
+    from healpix import nside2order
+
+    if not nest:
+        raise NotImplementedError("asdasdasdsTODO")
+    
+    n_trailing_zeros = np.bitwise_count((a & -a) - 1)
+    n_trailing_zeros = n_trailing_zero.astype('int8', copy=False)
+
+    delta_depth = n_trailing_zero >> 1
+
+    depth_max = nside2order(healpix._chp.NSIDE_MAX)
+    depth = depth_max - delta_depth
+
+    a = a >> (n_trailing_zeros + 1)
+    
+    return depth, a
+    
+def _zuniq2uniq(a):
+    """ppp
+
+    """
+    order, a = _zuniq2pix(a, nest=True)
+
+    order = 2**order  # This is NSIDE
+    order **= 2
+    order *= 4
+    
+    a += order
+
+    return a
+    
+def _uniq2zuniq(a):
+    """ppp
+
+    """
+    from healpix import uniq2pix
+
+    order, a = uniq2pix(a, nest=True)
+
+    order = 4 ** (29- order)
+
+    a *= 2
+    a += 1
+    a *= order
+
+    return a
+    
+def _pix2zuniq(a, refinement_level, nest):
+    """Convert RING or NEST to ZUNIQ pixel scheme.
+
+    This function emulates the as-yet-nonexistent function
+    `healpix.pix2zuniq. It is a (fairly horrible) hack in numpy with
+    decimal arithmetic.
+    4 * nside**2
+    For nested index i at refinment level r, zuniq index z is
+    
+       z = (2i + 1)4^(29-r)
+
+    .. versionadded:: NEXTVERSION
+
+    """
+    if not nest:
+        # Convert ring to nest
+        from healpix import order2nside
+
+        nside = healpix.order2nside(refinement_level)
+        a = healpix.ring2nest(nside, a)
+    else:
+        a = a.astype('int64', copy=True)
+
+    # Convert nest to zuniq        
+    a *= 2
+    a += 1
+    a *= 4**(29-refinement_level)
+    
+    return a
+
+
 def cf_contains(a, value):
     """Whether or not an array contains a value.
 
@@ -62,7 +144,7 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
 
         origin: `int`, optional
             Controls the placement of the filter on the input array’s
-            pixels. A value of 0 (the default) centers the filter over
+            pixels. A value of 0 (the default) centres the filter over
             the pixel, with positive values shifting the filter to the
             left, and negative ones to the right.
 
@@ -165,7 +247,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     if np.ma.isMA(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
-        # remask later.
+        # re-mask later.
         # ------------------------------------------------------------
         if a.dtype != float:
             # Can't assign NaNs to integer arrays
@@ -481,15 +563,8 @@ def cf_healpix_bounds(
     in an anticlockwise direction, as seen from above, starting with
     the northern-most vertex.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    M. Reinecke and E. Hivon: Efficient data structures for masks on
-    2D grids. A&A, 580 (2015)
-    A132. https://doi.org/10.1051/0004-6361/201526549
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -502,15 +577,15 @@ def cf_healpix_bounds(
 
         indexing_scheme: `str`
             The HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nuniq'``.
+            ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nuniq'``, in which case *refinement_level* may be
-            `None`.
+            ``'nuniq'`` or ``'zuniq'``, in which case
+            *refinement_level* may be `None`.
 
         latitude: `bool`, optional
             If True then return the bounds' latitudes.
@@ -589,6 +664,11 @@ def cf_healpix_bounds(
             bounds_func = healpix._chp.ring2ang_uv
         case "nested" | "nuniq":
             bounds_func = healpix._chp.nest2ang_uv
+        case "zuniq":
+            raise NotImplementedError(
+                "Can't yet calculate HEALPix cell bounds from indices "
+                f"defined by the {indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover
         case _:
             raise ValueError(
                 "Can't calculate HEALPix cell bounds: Unknown "
@@ -630,6 +710,12 @@ def cf_healpix_bounds(
                 thetaphi = bounds_func(nside, a, u, v)
                 b[:, j] = healpix.lonlat_from_thetaphi(*thetaphi)[pos]
 
+        case "zuniq":
+            raise NotImplementedError(
+                "Can't yet calculate HEALPix cell bounds from indices "
+                f"defined by the {indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover
+
     del thetaphi, a
 
     if longitude:
@@ -665,15 +751,8 @@ def cf_healpix_coordinates(
 ):
     """Calculate HEALPix cell centre coordinates.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    M. Reinecke and E. Hivon: Efficient data structures for masks on
-    2D grids. A&A, 580 (2015)
-    A132. https://doi.org/10.1051/0004-6361/201526549
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -686,15 +765,15 @@ def cf_healpix_coordinates(
 
         indexing_scheme: `str`
             The HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nuniq'``.
+            ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
 
         refinement_level: `int` or `None`, optional
             The refinement level of the grid within the HEALPix
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nuniq'``, in which case *refinement_level* may be
-            `None`.
+            ``'nuniq'`` or ``'zuniq'``, in which case
+            *refinement_level* may be `None`.
 
         latitude: `bool`, optional
             If True then return the coordinate latitudes.
@@ -747,6 +826,10 @@ def cf_healpix_coordinates(
     elif longitude:
         pos = 0
 
+    if indexing_scheme == "zuniq":
+        a = _zuniq2uniq(a)
+        indexing_scheme = "nuniq"
+        
     match indexing_scheme:
         case "nuniq":
             # Create coordinates for 'nuniq' indices
@@ -772,6 +855,12 @@ def cf_healpix_coordinates(
                 lonlat=True,
             )[pos]
 
+#        case "zuniq":
+#            raise NotImplementedError(
+#                "Can't yet calculate HEALPix cell coordinates from indices "
+#                f"defined by the {indexing_scheme!r} indexing scheme"
+#            )  # pragma: no cover
+
         case _:
             raise ValueError(
                 "Can't calculate HEALPix cell coordinates: Unknown "
@@ -790,15 +879,8 @@ def cf_healpix_indexing_scheme(
 ):
     """Change the indexing scheme of HEALPix indices.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    M. Reinecke and E. Hivon: Efficient data structures for masks on
-    2D grids. A&A, 580 (2015)
-    A132. https://doi.org/10.1051/0004-6361/201526549
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -811,11 +893,11 @@ def cf_healpix_indexing_scheme(
 
         indexing_scheme: `str`
             The original HEALPix indexing scheme. One of ``'nested'``,
-            ``'ring'``, or ``'nuniq'``.
+            ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
 
         new_indexing_scheme: `str`
             The new HEALPix indexing scheme to change to. One of
-            ``'nested'``, ``'ring'``, or ``'nuniq'``.
+            ``'nested'``, ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
 
         healpix_index_dtype: `str` or `numpy.dtype`
             Typecode or data-type to which the new indices will be
@@ -828,8 +910,8 @@ def cf_healpix_indexing_scheme(
             hierarchy, starting at 0 for the base tessellation with 12
             cells. Must be an `int` for *indexing_scheme* ``'nested'``
             or ``'ring'``, but is ignored for *indexing_scheme*
-            ``'nuniq'`` (in which case *refinement_level* may be
-            `None`).
+            ``'nuniq'`` or ``'zuniq'`` (in which case
+            *refinement_level* may be `None`).
 
     :Returns:
 
@@ -847,7 +929,7 @@ def cf_healpix_indexing_scheme(
     )
     array([16, 17, 18, 19])
     >>> cf.data.dask_utils.cf_healpix_indexing_scheme(
-    ...     [16, 17, 18, 19], 'nuniq', 'nested', None
+    ...     [16, 17, 18, 19], 'nuniq', 'nested'
     )
     array([0, 1, 2, 3])
 
@@ -885,6 +967,18 @@ def cf_healpix_indexing_scheme(
                 case "nuniq":
                     a = healpix.pix2uniq(refinement_level, a, nest=True)
 
+                case "zuniq":
+                    a = _pix2zuniq(a,  refinement_level,  nest=True)
+                    
+                case "nest":
+                    pass
+                
+                case _:
+                    raise NotImplementedError(
+                        "Can't change HEALPix indexing scheme from "
+                        f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                    )  # pragma: no cover
+
         case "ring":
             match new_indexing_scheme:
                 case "nested":
@@ -894,27 +988,88 @@ def cf_healpix_indexing_scheme(
                 case "nuniq":
                     a = healpix.pix2uniq(refinement_level, a, nest=False)
 
+                case "zuniq":
+                    a = _pix2zuniq(a,  refinement_level,  nest=False)
+
+                case "ring":
+                    pass
+                
+                case _:
+                    raise NotImplementedError(
+                        "Can't change HEALPix indexing scheme from "
+                        f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                    )  # pragma: no cover
+
         case "nuniq":
             match new_indexing_scheme:
                 case "nested" | "ring":
-                    nest = new_indexing_scheme == "nested"
-                    order, a = healpix.uniq2pix(a, nest=nest)
+                    nested = new_indexing_scheme == "nested"
+                    order, a = healpix.uniq2pix(a, nest=nested)
 
                     order = np.unique(order)
                     if order.size > 1:
                         raise ValueError(
                             "Can't change HEALPix indexing scheme from "
-                            f"'nuniq' to {new_indexing_scheme!r}: "
+                            f"{indexing_scheme!r} to {new_indexing_scheme!r}: "
                             "HEALPix indices span multiple refinement levels "
                             f"(at least levels {order.tolist()})"
                         )
 
-        case _:
-            raise ValueError(
-                "Can't change HEALPix indexing scheme: Unknown "
-                f"'indexing_scheme' in cf_healpix_indexing_scheme: "
-                f"{indexing_scheme!r}"
-            )
+                case "zuniq":
+                    a = _uniq2zuniq(a)
+
+                case "nuniq":
+                    pass
+
+                case _:                
+                    raise NotImplementedError(
+                        "Can't change HEALPix indexing scheme from "
+                        f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                    )  # pragma: no cover
+                
+        case "zuniq":
+            match new_indexing_scheme:
+                case "nested" | "ring":
+                    # Convert to zuniq to nested
+                    order, a = _zuniq2pix(a, nest=True)
+
+                    order = np.unique(order)
+                    if order.size > 1:
+                        raise ValueError(
+                            "Can't change HEALPix indexing scheme from "
+                            f"{indexing_scheme!r} to {new_indexing_scheme!r}: "
+                            "HEALPix indices span multiple refinement levels "
+                            f"(at least levels {order.tolist()})"
+                        )
+
+                    if new_indexing_scheme == "ring":
+                        # Convert to nested to ring
+                        nside = healpix.order2nside(order.item())
+                        a = healpix.nest2ring(nside, a)
+
+                case "nuniq":
+                    a = _zuniq2uniq(a)
+
+                case "zuniq":                
+                    pass
+
+                case _:                
+                    raise NotImplementedError(
+                        "Can't change HEALPix indexing scheme from "
+                        f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                    )  # pragma: no cover
+                
+        case _:  
+            raise NotImplementedError(
+                "Can't change HEALPix indexing scheme from "
+                f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+            )  # pragma: no cover
+        #
+        #    raise ValueError(
+        #        "Can't change HEALPix indexing scheme: Unknown "
+        #        f"'indexing_scheme' in cf_healpix_indexing_scheme: "
+        #        f"{indexing_scheme!r}"
+        #    )
 
     # Cast the new indices to the given data type
     a = a.astype(healpix_index_dtype, copy=False)
@@ -924,15 +1079,8 @@ def cf_healpix_indexing_scheme(
 def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     """Calculate HEALPix cell area weights.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    M. Reinecke and E. Hivon: Efficient data structures for masks on
-    2D grids. A&A, 580 (2015)
-    A132. https://doi.org/10.1051/0004-6361/201526549
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -941,10 +1089,11 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     :Parameters:
 
         a: `numpy.ndarray`
-            The array of HEALPix 'nuniq' indices.
+            The array of HEALPix indices.
 
         indexing_scheme: `str`
-            The HEALPix indexing scheme. Must be ``'nuniq'``.
+            The HEALPix indexing scheme. Must be ``'nuniq'`` or
+            ``'zuniq'``.
 
         measure: `bool`, optional
             If True then create weights that are actual cell areas, in
@@ -973,11 +1122,17 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
            1.06263432e+13, 1.06263432e+13])
 
     """
-    if indexing_scheme != "nuniq":
+    if indexing_scheme not in ("nuniq", "zuniq"):
         raise ValueError(
-            "cf_healpix_weights: Can only calulate weights for the "
-            "'nuniq' indexing scheme"
+            "cf_healpix_weights: Can only calculate HEALPix weights for the "
+            "'nuniq' or 'zuniq' indexing scheme"
         )
+
+    if indexing_scheme == "zuniq":
+        raise NotImplementedError(
+            "Can't yet calculate HEALPix weights for the "
+            f"{indexing_scheme!r} indexing scheme"
+        )  # pragma: no cover
 
     try:
         import healpix

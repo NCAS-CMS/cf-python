@@ -520,9 +520,9 @@ cell_methods = set(
 
 
 # --------------------------------------------------------------------
-# CF HEALPix indexing schemes supported by cf
+# CF HEALPix indexing schemes
 # --------------------------------------------------------------------
-healpix_indexing_schemes = ("nested", "ring", "nuniq")
+healpix_indexing_schemes = ("nested", "ring", "nuniq", "zuniq")
 
 
 # --------------------------------------------------------------------

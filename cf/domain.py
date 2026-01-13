@@ -272,15 +272,18 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         The HEALPix axis of the new Domain is ordered so that the
         HEALPix indices are monotonically increasing.
 
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
         **Performance**
 
-        Very high refinement levels may require the setting of a very
-        large Dask chunksize, to prevent a possible run-time failure
+        High refinement levels may require the setting of a very large
+        Dask chunksize, to prevent a possible run-time failure
         resulting from an attempt to create an excessive amount of
         chunks for the healpix_index coordinates. For instance,
         healpix_index coordinates at refinement level 29 would need
-        ~206 billion chunks with the default chunksize of 128 MiB, but
-        with a chunksize of 1 pebibyte only 24576 chunks are
+        ~206 billion chunks with the default Dask chunksize of 128
+        MiB, but with a chunksize of 1 pebibyte only 24576 chunks are
         required::
 
            >>> cf.chunksize()
@@ -292,10 +295,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            >>> with cf.chunksize('1 PiB'):
            ...     d = cf.Domain.create_healpix(29)
            ...     assert d.coord('healpix_index').data.npartitions == 24576
-
-        **References**
-
-        {{HEALPix references}}
 
         .. versionadded:: NEXTVERSION
 
@@ -313,7 +312,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             indexing_scheme: `str`
                 The HEALPix indexing scheme. One of ``'nested'`` (the
-                default), ``'ring'``, or ``'nuniq'``.
+                default), ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
 
                 {{HEALPix indexing schemes}}
 
@@ -410,8 +409,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
             )
 
-        nuniq = indexing_scheme == "nuniq"
-
         domain = Domain()
         ncells = 12 * (4**refinement_level)
 
@@ -426,10 +423,15 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         c.nc_set_variable("healpix_index")
 
         # Create the healpix_index data
-        if nuniq:
+        if indexing_scheme in ("nested", "ring"):
+            start = 0
+        elif indexing_scheme in ("nuniq", "zuniq"):
             start = 4 ** (refinement_level + 1)
         else:
-            start = 0
+            raise NotImplementedError(
+                "Can't yet Can't create a HEALPix Domain with the "
+                f"{indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover
 
         stop = start + ncells
         dtype = cfdm.integer_dtype(stop - 1)
@@ -456,13 +458,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 "indexing_scheme": indexing_scheme,
             }
         )
-        if not nuniq:
+        if indexing_scheme in ("nested", "ring"):
             cr.coordinate_conversion.set_parameter(
                 "refinement_level", refinement_level
             )
 
         domain.set_construct(cr)
 
+        if indexing_scheme == "zuniq":
+            domain = domain.healpix_indexing_scheme("zuniq", sort=False)
+            
         return domain
 
     @_inplace_enabled(default=False)

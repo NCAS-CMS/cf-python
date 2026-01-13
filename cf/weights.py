@@ -1928,6 +1928,9 @@ class Weights(Container, cfdm.Container):
     ):
         """Creates area weights for HEALPix cells.
 
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
         .. versionadded:: NEXTVERSION
 
         :Parameters:
@@ -2003,9 +2006,11 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
+        from .constants import healpix_indexing_schemes
+
         parameters = cr.coordinate_conversion.parameters()
         indexing_scheme = parameters.get("indexing_scheme")
-        if indexing_scheme not in ("nested", "ring", "nuniq"):
+        if indexing_scheme not in healpix_indexing_schemes:
             if auto:
                 return False
 
@@ -2015,8 +2020,19 @@ class Weights(Container, cfdm.Container):
                 f"{indexing_scheme!r}"
             )
 
+        if indexing_scheme == "zuniq":
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: HEALPix indexing_scheme "
+                f"{indexing_scheme!r} "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis has  "
+                f"not yet been implemented"
+            )
+
         refinement_level = parameters.get("refinement_level")
-        if refinement_level is None and indexing_scheme != "nuniq":
+        if refinement_level is None and indexing_scheme in ("nested", "ring"):
             # No refinement_level
             if auto:
                 return False
@@ -2029,8 +2045,8 @@ class Weights(Container, cfdm.Container):
         if measure and not methods and radius is not None:
             radius = f.radius(default=radius)
 
-        # Create weights for 'nuniq' indexed cells
-        if indexing_scheme == "nuniq":
+        if indexing_scheme in ("nuniq", "zuniq"):
+            # Create weights for 'nuniq' or 'zuniq' indexed cells
             if methods:
                 weights[(axis,)] = "HEALPix Multi-Order Coverage"
                 return True
@@ -2062,7 +2078,7 @@ class Weights(Container, cfdm.Container):
             dx = dx.map_blocks(
                 cf_healpix_weights,
                 meta=np.array((), dtype="float64"),
-                indexing_scheme="nuniq",
+                indexing_scheme=indexing_scheme,
                 measure=measure,
                 radius=r,
             )
@@ -2075,28 +2091,34 @@ class Weights(Container, cfdm.Container):
             weights_axes.add(axis)
             return True
 
-        # Still here? Then create weights for 'nested' or 'ring'
-        # indexed cells.
-        if methods:
-            if measure:
-                weights[(axis,)] = "HEALPix equal area"
+        elif indexing_scheme in ("nested", "ring"):
+            # Create weights for 'nested' or 'ring' indexed cells
+            if methods:
+                if measure:
+                    weights[(axis,)] = "HEALPix equal area"
 
+                return True
+
+            if not measure:
+                # Weights are all equal, so no need to create any.
+                return True
+
+            r2 = radius**2
+            area = f._Data.full(
+                (f.domain_axis(axis).get_size(),),
+                np.pi * float(r2) / (3.0 * (4**refinement_level)),
+                units=r2.Units,
+            )
+
+            if return_areas:
+                return area
+
+            weights[(axis,)] = area
+            weights_axes.add(axis)
             return True
 
-        if not measure:
-            # Weights are all equal, so no need to create any.
-            return True
-
-        r2 = radius**2
-        area = f._Data.full(
-            (f.domain_axis(axis).get_size(),),
-            np.pi * float(r2) / (3.0 * (4**refinement_level)),
-            units=r2.Units,
-        )
-
-        if return_areas:
-            return area
-
-        weights[(axis,)] = area
-        weights_axes.add(axis)
-        return True
+        else:
+            raise NotImplementedError(
+                "Can't yet calculate HEALPix weights for the "
+                f"{indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover

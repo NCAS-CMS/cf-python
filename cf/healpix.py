@@ -15,11 +15,8 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     coordinates, the reason why will be reported if the log level is
     at ``2``/``'INFO'`` or higher.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -78,12 +75,13 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
         return (None, None)
 
     refinement_level = hp.get("refinement_level")
-    if refinement_level is None and indexing_scheme != "nuniq":
+    if refinement_level is None and indexing_scheme in ("nested", "ring"):
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
-                f"{f!r}: refinement_level has not been set in the healpix "
-                "grid mapping coordinate reference"
+                f"{f!r}: Indexing scheme is {indexing_scheme!r}, but the "
+                "refinement_level has not been set in the healpix grid "
+                "mapping coordinate reference"
             )  # pragma: no cover
 
         return (None, None)
@@ -221,11 +219,8 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
 def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
     """Increase the HEALPix refinement level in-place.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -310,11 +305,8 @@ def _healpix_increase_refinement_level_indices(
 ):
     """Increase the refinement level of HEALPix indices in-place.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -409,15 +401,8 @@ def _healpix_increase_refinement_level_indices(
 def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     """Change the indexing scheme of HEALPix indices in-place.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
-
-    M. Reinecke and E. Hivon: Efficient data structures for masks on
-    2D grids. A&A, 580 (2015)
-    A132. https://doi.org/10.1051/0004-6361/201526549
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -449,6 +434,8 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     indexing_scheme = hp["indexing_scheme"]
     refinement_level = hp.get("refinement_level")
 
+    old_cache = healpix_index.data._get_cached_elements()
+    
     # Change the HEALPix indices
     #
     # `cf_healpix_indexing_scheme` has its own call to
@@ -463,10 +450,18 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
         # The largest possible "nuniq" index at refinement level N is
         # 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
         dtype = integer_dtype(16 * (4**refinement_level) - 1)
-    else:
+    elif new_indexing_scheme in ("nested", "ring"):
         # The largest possible "nested" or "ring" index at refinement
         # level N is 12*(4**N) - 1
         dtype = integer_dtype(12 * (4**refinement_level) - 1)
+    elif new_indexing_scheme == "zuniq":
+        dtype = np.dtype('int64')
+    else:
+        raise NotImplementedError(
+            "Can't yet change HEALPix indexing scheme from "
+            f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+        )  # pragma: no cover
+    
 
     dx = dx.map_blocks(
         cf_healpix_indexing_scheme,
@@ -486,7 +481,20 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     ) != set(("nested", "nuniq")):
         f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
-
+    # Create new cached elements
+    if old_cache:
+        new_cache = {}
+        for i, value in old_cache.items():
+            new_cache[i] = cf_healpix_indexing_scheme(
+                np.array(value),
+                indexing_scheme,
+                new_indexing_scheme,
+                healpix_index_dtype,
+                refinement_level=refinement_level
+            )
+            
+        healpix_index.data._set_cached_elements(new_cache)
+        
 def _healpix_locate(lat, lon, f):
     """Locate HEALPix cells containing latitude-longitude locations.
 
@@ -501,11 +509,8 @@ def _healpix_locate(lat, lon, f):
     If a cell contains more than one of the given latitude-longitude
     locations then that cell's index appears only once in the output.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -767,11 +772,8 @@ def healpix_max_refinement_level():
     which all of HEALPix indices from any indexing scheme are
     representable as double precision integers.
 
-    K. Gorski, Eric Hivon, A. Banday, B. Wandelt, M. Bartelmann, et
-    al.. HEALPix: A Framework for High-Resolution Discretization and
-    Fast Analysis of Data Distributed on the Sphere. The Astrophysical
-    Journal, 2005, 622 (2), pp.759-771.
-    https://dx.doi.org/10.1086/427976
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
 
@@ -782,11 +784,11 @@ def healpix_max_refinement_level():
 
     """
     try:
-        import healpix
+        from healpix import nside2order
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
             "to find the maximum HEALPix refinement level"
         )
 
-    return healpix.nside2order(healpix._chp.NSIDE_MAX)
+    return nside2order(healpix._chp.NSIDE_MAX)

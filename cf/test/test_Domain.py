@@ -539,6 +539,9 @@ class DomainTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 cf.Domain.create_healpix(level)
 
+        # Bad indexing scheme
+        with self.assertRaises(NotImplementedError):
+            cf.Domain.create_healpix(0, 'zuniq')
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

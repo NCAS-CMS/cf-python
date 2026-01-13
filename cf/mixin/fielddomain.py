@@ -1985,9 +1985,8 @@ class FieldDomain:
         coordinate values are changed, along with the corresponding
         "healpix" grid mapping Coordinate Reference.
 
-        **References**
-
-        {{HEALPix references}}
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
 
         .. versionadded:: NEXTVERSION
 
@@ -1997,8 +1996,8 @@ class FieldDomain:
 
             new_indexing_scheme: `str` or `None`
                 The new HEALPix indexing scheme. One of ``'nested'``,
-                ``'ring'``, ``'nuniq'``, or `None`. If `None` then the
-                indexing scheme is unchanged.
+                ``'ring'``, ``'nuniq'``, ``'zuniq'``, or `None`. If
+                `None` then the indexing scheme is unchanged.
 
                 {{HEALPix indexing schemes}}
 
@@ -2101,10 +2100,16 @@ class FieldDomain:
             new_indexing_scheme is not None
             and new_indexing_scheme != indexing_scheme
         ):
+            if indexing_scheme == "zuniq" or new_indexing_scheme == "zuniq":
+                raise NotImplementedError(
+                    "Can't yet change HEALPix indexing scheme from "
+                    f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                )  # pragma: no cover
+
             refinement_level = hp.get("refinement_level")
             if (
-                indexing_scheme in ("nested", "ring")
-                and refinement_level is None
+                refinement_level is None
+                and indexing_scheme in ("nested", "ring")
             ):
                 raise ValueError(
                     f"Can't change HEALPix indexing scheme of {f!r} from "
@@ -2118,9 +2123,9 @@ class FieldDomain:
             cr.coordinate_conversion.set_parameter(
                 "indexing_scheme", new_indexing_scheme
             )
-            if new_indexing_scheme == "nuniq":
-                cr.coordinate_conversion.del_parameter("refinement_level")
-            elif indexing_scheme == "nuniq":
+            if new_indexing_scheme in ("nuniq", "zuniq"):
+                cr.coordinate_conversion.del_parameter("refinement_level")# TODO ", None"?
+            elif indexing_scheme in ("nuniq", "zuniq"):
                 raise ValueError(
                     f"Can't change HEALPix indexing scheme of {f!r} from "
                     f"{indexing_scheme!r} to {new_indexing_scheme!r}"
@@ -2149,9 +2154,8 @@ class FieldDomain:
     def healpix_info(self):
         """Get information about the HEALPix grid, if there is one.
 
-        **References**
-
-        {{HEALPix references}}
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
 
         .. versionadded:: NEXTVERSION
 
@@ -2209,9 +2213,8 @@ class FieldDomain:
     def healpix_to_ugrid(self, cache=True, inplace=False):
         """Convert a HEALPix domain to a UGRID domain.
 
-        **References**
-
-        {{HEALPix references}}
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
 
         .. versionadded:: NEXTVERSION
 
@@ -2220,7 +2223,6 @@ class FieldDomain:
         :Parameters:
 
             cache: `bool`, optional
-
                 If True (the default) then cache in memory the first
                 and last of any newly-created UGRID coordinates and
                 bounds. This may slightly slow down the coordinate
@@ -2414,14 +2416,13 @@ class FieldDomain:
             cache: `bool`, optional
                 If True (the default) then cache in memory the first
                 and last of any newly-created coordinates and
-                bounds. This may slightly slow down the coordinate
-                creation process, but may greatly speed up, and reduce
-                the memory requirement of, a future inspection of the
+                bounds. This may greatly speed up, and reduce the
+                memory requirement of, a future inspection of the
                 coordinates and bounds. Even when *cache* is True, new
                 cached values can only be created if the existing
                 source coordinates (from which the newly-created
-                coordinates are calculated) themselves have cached
-                first and last values.
+                latitude and longitude coordinates are calculated)
+                have cached first and last values.
 
             {{inplace: `bool`, optional}}
 

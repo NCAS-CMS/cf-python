@@ -4839,9 +4839,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         exception is raised (assuming that *check_healpix_index* is
         True).
 
-        **References**
-
-        {{HEALPix references}}
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
 
         .. versionadded:: NEXTVERSION
 
@@ -4922,7 +4921,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             check_healpix_index: `bool`, optional
                 If True (the default) then the following conditions
                 will be checked before the creation of the new Field
-                (and after the HEALPix grid has been conformed, when
+                (but after the HEALPix grid has been conformed, when
                 *conform* is True):
 
                 1. The nested HEALPix indices are strictly
@@ -5170,9 +5169,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
 
         # Note: Using 'Data.coarsen' works because a) the HEALPix
-        #       indexing scheme is "nested", and b) each new coarser
-        #       cell contains the maximum possible number
-        #       (i.e. 'ncells') of original cells.
+        #       indexing scheme is now "nested", and b) we know that
+        #       each new coarser cell contains the maximum possible
+        #       number (i.e. 'ncells') of original cells.
         f.data.coarsen(
             reduction, axes={iaxis: ncells}, trim_excess=False, inplace=True
         )
@@ -5271,9 +5270,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         areas (by dividing them by the number of new cells per
         original cell).
 
-        **References**
-
-        {{HEALPix references}}
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
 
         .. versionadded:: NEXTVERSION
 
