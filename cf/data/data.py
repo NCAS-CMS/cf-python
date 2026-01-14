@@ -2761,7 +2761,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
 
             # Adjust cached values for the new units
-            cache = self._get_cached_elements()
+            cache = self.get_cached_elements()
             if cache:
                 self._set_cached_elements(
                     {index: cf_func(value) for index, value in cache.items()}
