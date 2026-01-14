@@ -156,6 +156,7 @@ def configuration(
     tempdir=None,
     chunksize=None,
     log_level=None,
+    display_data=None,
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
@@ -177,6 +178,7 @@ def configuration(
     * `tempdir`
     * `chunksize`
     * `log_level`
+    * `display_data`
     * `regrid_logging`
     * `relaxed_identities`
     * `bounds_combination_mode`
@@ -200,10 +202,10 @@ def configuration(
     .. versionadded:: 3.6.0
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
-                 `total_memory`, `log_level`, `regrid_logging`,
-                 `relaxed_identities`, `bounds_combination_mode`,
-                 `active_storage`, `active_storage_url`,
-                 `active_storage_max_requests`
+                 `total_memory`, `log_level`, `display_data`,
+                 `regrid_logging`, `relaxed_identities`,
+                 `bounds_combination_mode`, `active_storage`,
+                 `active_storage_url`, `active_storage_max_requests`
 
     :Parameters:
 
@@ -244,6 +246,12 @@ def configuration(
             * ``'INFO'`` (``2``);
             * ``'DETAIL'`` (``3``);
             * ``'DEBUG'`` (``-1``).
+
+        display_data `bool` or `Constant`, optional
+            The new display data option. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: NEXTVERSION
 
         regrid_logging: `bool` or `Constant`, optional
             The new value (either True to enable logging or False to
@@ -303,6 +311,7 @@ def configuration(
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001,
+     'display_data': True,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -320,6 +329,7 @@ def configuration(
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
+     'display_data': True,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -347,6 +357,7 @@ def configuration(
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
+     'display_data': True,
      'active_storage': False,
      'active_storage_url': None}
     >>> with cf.configuration(atol=9, rtol=10):
@@ -360,6 +371,7 @@ def configuration(
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
+     'display_data': True,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -372,6 +384,7 @@ def configuration(
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
+     'display_data': True,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -402,6 +415,7 @@ def configuration(
         new_tempdir=tempdir,
         new_chunksize=chunksize,
         new_log_level=log_level,
+        new_display_data=display_data,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
@@ -445,6 +459,7 @@ def _configuration(_Configuration, **kwargs):
         "new_tempdir": tempdir,
         "new_chunksize": chunksize,
         "new_log_level": log_level,
+        "new_display_data": display_data,
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
@@ -458,10 +473,6 @@ def _configuration(_Configuration, **kwargs):
         func()
 
     old = ConstantAccess.constants(copy=True)
-
-    #    old = {name.lower(): val for name, val in CONSTANTS.items()}
-    #
-    #    old.pop("total_memory", None)
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -552,7 +563,6 @@ _is_valid_log_level_int = cfdm._is_valid_log_level_int
 # Functions inherited from cfdm
 # --------------------------------------------------------------------
 class ConstantAccess(cfdm.ConstantAccess):
-    _constants = {}
     _Constant = Constant
 
     def __docstring_substitutions__(self):
@@ -574,6 +584,10 @@ class rtol(ConstantAccess, cfdm.rtol):
 class log_level(ConstantAccess, cfdm.log_level):
     _is_valid_log_level_int = _is_valid_log_level_int
     _reset_log_emergence_level = _reset_log_emergence_level
+
+
+class display_data(ConstantAccess, cfdm.display_data):
+    pass
 
 
 class regrid_logging(ConstantAccess):

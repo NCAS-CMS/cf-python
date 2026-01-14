@@ -184,7 +184,7 @@ The ``cf`` package can:
 
 * create new field constructs in memory,
 
-* write and append field constructs and domain to netCDF and Zarr v3 datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
 
 * read, create, and manipulate UGRID mesh topologies,
 

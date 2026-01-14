@@ -25,14 +25,27 @@ Version 3.18.3
 
 **2026-01-??**
 
-* Write Zarr v3 datasets with `cf.write`, and allow the reading of
-  grouped Zarr v2 and v3 datasets with `cf.read`
+* Write Zarr v3 datasets with `cf.write`
   (https://github.com/NCAS-CMS/cf-python/issues/895)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cf.read` (https://github.com/NCAS-CMS/cf-python/issues/894)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
 * New optional dependency: ``zarr>=3.1.3``
+* New function to control the creation of cached elements during data
+  display: `cf.display_data`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* New methods: `cf.Data.get_cached_elements`,
+  `cf.Data.cache_elements`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* Set cached elements during `cf.Data.__init__`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* Removed the `cf.constants.CONSTANTS` dictionary, replacing it
+  with `cf.ConstantAccess.constants`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
+* Changed dependency: ``cfdm>=1.12.4.0, <1.12.5.0``
 
 ----
 

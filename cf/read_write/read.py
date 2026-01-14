@@ -334,7 +334,7 @@ class read(cfdm.read):
 
         {{read group_dimension_search: `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: NEXTVERSION
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
