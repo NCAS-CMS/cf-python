@@ -726,6 +726,11 @@ def cf_healpix_bounds(
 
     a = cfdm_to_memory(a)
 
+    scalar = not a.ndim
+    if scalar:
+        # Turn a 0-d array into a 1-d array, for convenience.
+        a = np.atleast_1d(a)
+
     # Keep an eye on https://github.com/ntessore/healpix/issues/66
     if a.ndim > 1:
         raise ValueError(
@@ -884,6 +889,12 @@ def cf_healpix_coordinates(
 
     a = cfdm_to_memory(a)
 
+    scalar = not a.ndim
+    if scalar:
+        # Turn a 0-d array into a 1-d array, for convenience (we'll
+        # turn the result back to 0-d at the end).
+        a = np.atleast_1d(a)
+
     if a.ndim > 1:
         raise ValueError(
             "Can only calculate HEALPix cell coordinates when the "
@@ -910,7 +921,6 @@ def cf_healpix_coordinates(
         case "nuniq":
             # Create coordinates for 'nuniq' indices
             c = np.empty(a.shape, dtype="float64")
-
             nest = True
             orders, a = healpix.uniq2pix(a, nest=nest)
             for order in np.unique(orders):
@@ -937,6 +947,9 @@ def cf_healpix_coordinates(
                 "'indexing_scheme' in cf_healpix_coordinates: "
                 f"{indexing_scheme!r}"
             )  # pragma: no cover
+
+    if scalar:
+        c = np.squeeze(c)
 
     return c
 
