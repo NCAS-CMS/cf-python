@@ -11,11 +11,10 @@ create a wind rose representing wind vectors in the given area.
 # %%
 # 1. Import cf-python, Dask.array, NumPy, and Matplotlib:
 
-import dask.array as da
-import matplotlib.pyplot as plt
-import numpy as np
-
 import cf
+import dask.array as da
+import numpy as np
+import matplotlib.pyplot as plt
 
 # %%
 # 2. Read the field constructs and load the wind speed component fields:

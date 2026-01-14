@@ -165,7 +165,7 @@ class DimensionCoordinate(
         if data is not None:
             # Infer the direction from the data
             if data.size > 1:
-                c = data._get_cached_elements()
+                c = data.get_cached_elements()
                 if c:
                     try:
                         return bool(c.get(0) <= c.get(1))
@@ -179,7 +179,7 @@ class DimensionCoordinate(
         data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
-            c = data._get_cached_elements()
+            c = data.get_cached_elements()
             if c:
                 try:
                     return bool(c.get(0) <= c.get(1))

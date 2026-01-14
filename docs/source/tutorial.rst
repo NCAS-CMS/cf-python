@@ -5348,7 +5348,7 @@ By default the output file will be for CF-|version|.
    
 The `cf.write` function has optional parameters to
 
-* set the output netCDF format (all netCDF3 and netCDF4 formats, as
+* set the output format (all netCDF3 and netCDF4 formats, as
   well as Zarr v3 are possible);
 
 * append to the netCDF file rather than over-writing it by default;

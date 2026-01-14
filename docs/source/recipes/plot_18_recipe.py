@@ -10,14 +10,14 @@ between them.
 
 """
 
-import cfplot as cfp
-
 # %%
 # 1. Import cf-python, cf-plot and other required packages:
 import matplotlib.pyplot as plt
 import scipy.stats.mstats as mstats
+import cfplot as cfp
 
 import cf
+
 
 # %%
 # 2. Read the data in and unpack the Fields from FieldLists using indexing.

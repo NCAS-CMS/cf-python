@@ -4112,7 +4112,7 @@ def _get_hfl(
         # Record the bounds of the first and last (sorted) cells
         first, last = hfl_cache.flb.get(hash_value, (None, None))
         if first is None:
-            cached_elements = d._get_cached_elements()
+            cached_elements = d.get_cached_elements()
             x = []
             for i in (0, 1, -2, -1):
                 value = cached_elements.get(i)

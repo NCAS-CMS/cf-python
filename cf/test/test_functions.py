@@ -55,7 +55,7 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 12)  # update expected len if add new key(s)
 
         # Types expected:
         self.assertIsInstance(org["atol"], float)
@@ -70,6 +70,7 @@ class functionTest(unittest.TestCase):
         # Log level may be input as an int but always given as
         # equiv. string
         self.assertIsInstance(org["log_level"], str)
+        self.assertIsInstance(org["display_data"], bool)
 
         # Store some sensible values to reset items to for testing, ensuring:
         # 1) they are kept different to the defaults (i.e. org values); and
