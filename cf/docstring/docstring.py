@@ -571,25 +571,25 @@ _docstring_substitution_definitions = {
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
     # HEALPix indexing schemes
-    "{{HEALPix indexing schemes}}": """The "nested" scheme indexes the pixels inside a single
+    "{{HEALPix indexing schemes}}": """The nested scheme indexes the pixels inside a single
                 coarser refinement level cell with consecutive
-                indices. The "ring" scheme indexes the pixels moving
+                indices. The ring scheme indexes the pixels moving
                 down from the north to the south pole along each
                 isolatitude ring. When the HEALPix axis is ordered
                 with monotonically increasing indices, each type of
                 indexing scheme is optimised for different types of
-                operation. For instance, the "ring" scheme is
-                optimised for Fourier transforms with spherical
-                harmonics; and the "nested" scheme is optimised for
-                geographical nearest-neighbour operations such as
-                decreasing the refinement level.
+                operation. For instance, the ring scheme is optimised
+                for Fourier transforxms with spherical harmonics; and
+                the nested scheme is optimised for geographical
+                nearest-neighbour operations such as decreasing the
+                refinement level.
 
                 A Multi-Order Coverage (MOC) has pixels with different
                 refinement levels stored in the same array. An
                 indexing scheme for an MOC has a unique index for each
                 cell at each refinement level.
 
-                The "nuniq" scheme defines MOC indices such that all
+                The nuniq scheme defines MOC indices such that all
                 cells within a particular refinement level form a
                 sequence of consecutive integers. E.g. for refinement
                 level 0 the indices are 4, ..., 15, for refinement
@@ -599,7 +599,7 @@ _docstring_substitution_definitions = {
                 when the indices are sorted monotonically, for
                 within-refinement level data retrievals.
 
-                The "zuniq" scheme defines MOC indices such that, for
+                The zuniq scheme defines MOC indices such that, for
                 similar refinement levels, cells in the proximity of a
                 particular geographical location have similar index
                 values. This means that, unlike the nuniq case, the

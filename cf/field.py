@@ -4824,7 +4824,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         refinement level either
 
         * contains no original cells, in which case that larger cell
-          is not included in the output,
+          is not included in the output;
 
         or
 
@@ -4868,20 +4868,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``'root_mean_square'``, ``'standard_deviation'``,
                 ``'sum'``, ``'sum_of_squares'``, ``'variance'``.
 
-                The method should be appropriate to nature of the
-                Field quantity, which is either intensive (i.e. that
-                does not depend on the size of the cells, such as
-                "sea_ice_amount" with units of kg m-2), or extensive
-                (i.e. that depends on the size of the cells, such as
-                "sea_ice_mass" with units of kg).
+                .. note:: The method should be appropriate to nature
+                          of the Field quantity, which is either
+                          intensive (i.e. that does not depend on the
+                          size of the cells, such as "sea_ice_amount"
+                          with units of kg m-2), or extensive
+                          (i.e. that depends on the size of the cells,
+                          such as "sea_ice_mass" with units of kg).
 
             reduction: function or `None`, optional
                 The function used to calculate the values in the new
                 larger cells, from the data on the original cells. The
-                function must i) calculate the quantity defined by the
-                *method* parameter, ii) take an array of values as its
-                first argument, and iii) have an *axis* keyword that
-                specifies which of the array axes is the HEALPix axis.
+                function must:
+
+                * calculate the quantity defined by the *method*
+                  parameter,
+                * take an array of values as its first argument,
+                * have an *axis* keyword that specifies which of the
+                  array axes is the HEALPix axis.
 
                 For some methods there are default *reduction*
                 functions, which are only used when *reduction* is
@@ -4907,11 +4911,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 If True (the default) then the HEALPix grid is
                 automatically converted to a form suitable for having
                 its refinement level changed, i.e. the indexing scheme
-                is changed to 'nested' and the HEALPix axis is sorted
-                so that the nested HEALPix indices are monotonically
-                increasing. If False then either an exception is
-                raised if the HEALPix indexing scheme is not already
-                'nested', or else the HEALPix axis is not sorted.
+                is changed to nested and the HEALPix axis is sorted so
+                that the nested HEALPix indices are monotonically
+                increasing. If False then an exception is raised if
+                the HEALPix indexing scheme is not already nested and
+                the HEALPix axis is not sorted.
 
                 .. note:: Setting to False will speed up the operation
                           when the HEALPix indexing scheme is already
@@ -4924,12 +4928,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 (but after the HEALPix grid has been conformed, when
                 *conform* is True):
 
-                1. The nested HEALPix indices are strictly
-                   monotonically increasing.
+                * The nested HEALPix indices are strictly
+                  monotonically increasing.
 
-                2. Every cell at the new lower refinement level
-                   contains zero or the maximum possible number of
-                   cells at the original refinement level.
+                * Every cell at the new lower refinement level
+                  contains zero or the maximum possible number of
+                  cells at the original refinement level.
 
                 If False then these checks are not carried out.
 
@@ -4938,14 +4942,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                              advance that these conditions are
                              satisfied. If set to False and any of the
                              conditions are not met then either an
-                             exception may be raised or, **much
+                             exception will be raised or, **much
                              worse**, the operation could complete and
                              return incorrect data values.
 
         :Returns:
 
             `Field`
-                A new Field with the new HEALPix grid.
+                A new Field with the new HEALPix grid. The HEALPix
+                indices of this field will follow the nested indexing
+                scheme.
 
         **Examples**
 
@@ -5084,6 +5090,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Re-get the HEALPix info
             hp = f.healpix_info()
+
         elif indexing_scheme != "nested":
             raise ValueError(
                 f"Can't decrease HEALPix refinement level of {f!r}: "
@@ -5149,7 +5156,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Get the HEALPix axis
         axis = hp["domain_axis_key"]
-        iaxis = f.get_data_axes().index(axis)
+        try:
+            iaxis = f.get_data_axes().index(axis)
+        except ValueError:
+            # The Field data doesn't span the size 1 HEALPix axis, so
+            # insert it on the left hand side.
+            f.insert_dimmension(axis, -1, inplace=True)
+            iaxis = f.ndim - 1
 
         # Whether or not to create lat/lon coordinates for the new
         # refinement level. Only do so if the original grid has
@@ -5169,7 +5182,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
 
         # Note: Using 'Data.coarsen' works because a) the HEALPix
-        #       indexing scheme is now "nested", and b) we know that
+        #       indexing scheme is now nested, and b) we know that
         #       each new coarser cell contains the maximum possible
         #       number (i.e. 'ncells') of original cells.
         f.data.coarsen(
@@ -5263,7 +5276,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         extensive or intensive quantity. An intensive quantity does
         not depend on the size of the cells (such as "sea_ice_amount"
         with units of kg m-2, or "air_temperature" with units of K),
-        and an extensive quantity depends on the size of the cells
+        and an extensive quantity does depend on the size of the cells
         (such as "sea_ice_mass" with units of kg, or "cell_area" with
         units of m2). For an extensive quantity only, the broadcast
         values are reduced to be consistent with the new smaller cell
@@ -5294,7 +5307,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field`
-                A new Field with the new HEALPix grid.
+                A new Field with the new HEALPix grid. The HEALPix
+                indices of this field will follow the nested indexing
+                scheme.
 
         **Examples**
 

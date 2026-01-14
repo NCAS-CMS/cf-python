@@ -1977,13 +1977,24 @@ class FieldDomain:
 
         return set(axes)
 
-    def healpix_indexing_scheme(self, new_indexing_scheme, sort=False):
+    def healpix_indexing_scheme(
+        self, new_indexing_scheme, sort=False, moc_refinement_level=None
+    ):
         r"""Change the indexing scheme of HEALPix indices.
 
         Note that the Field data values are not changed, nor is the
         Field Data array reordered. Only the "healpix_index"
         coordinate values are changed, along with the corresponding
         "healpix" grid mapping Coordinate Reference.
+
+        In general, changing from nuniq or zuniq to ring or nested
+        indexing schemes is not allowed, because
+        `healpix_indexing_scheme` is a lzay operation and so whether
+        or not the original nuniq or zuniq indices represent a single
+        refinement level is currently unknown.
+
+        * nuniq or zuniq -> ring or nested
+        *
 
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
@@ -2006,6 +2017,23 @@ class FieldDomain:
                 so that its HEALPix indices are monotonically
                 increasing, including when the indexing scheme is
                 unchanged. If False (the default) then don't do this.
+
+            moc_refinement_level: `int` or `None`, optional
+                By default, or if *moc_refinement_level* is `None`,
+                changing from an nuniq or zuniq MOC indexing scheme to
+                a ring or nested indexing scheme is not allowed,
+                because the original MOC indices are not inspected to
+                ascertain whether or not they represent a single
+                refinement level. However, if it is otherwise known
+                that they do represent a single refinement level, then
+                this level may be provided with the
+                *moc_refinement_level* parameter and the change will
+                be allowed.
+
+                When the new indices are computed, if the original MOC
+                indices do in fact include a refinement level other
+                than *moc_refinement_level* then an exception is
+                raised.
 
         :Returns:
 
@@ -2100,16 +2128,10 @@ class FieldDomain:
             new_indexing_scheme is not None
             and new_indexing_scheme != indexing_scheme
         ):
-            if indexing_scheme == "zuniq" or new_indexing_scheme == "zuniq":
-                raise NotImplementedError(
-                    "Can't yet change HEALPix indexing scheme from "
-                    f"{indexing_scheme!r} to {new_indexing_scheme!r}"
-                )  # pragma: no cover
-
             refinement_level = hp.get("refinement_level")
-            if (
-                refinement_level is None
-                and indexing_scheme in ("nested", "ring")
+            if refinement_level is None and indexing_scheme in (
+                "nested",
+                "ring",
             ):
                 raise ValueError(
                     f"Can't change HEALPix indexing scheme of {f!r} from "
@@ -2118,23 +2140,39 @@ class FieldDomain:
                     "mapping coordinate reference"
                 )
 
+            if moc_refinement_level is None:
+                if indexing_scheme in (
+                    "nuniq",
+                    "zuniq",
+                ) and new_indexing_scheme in ("nested", "ring"):
+                    raise ValueError("TODOHEALPIX")
+
+            elif not (
+                indexing_scheme in ("nuniq", "zuniq")
+                and new_indexing_scheme in ("nested", "ring")
+            ):
+                raise ValueError("TODOHEALPIX")
+
             # Update the Coordinate Reference
             cr = hp["grid_mapping_name:healpix"]
             cr.coordinate_conversion.set_parameter(
                 "indexing_scheme", new_indexing_scheme
             )
             if new_indexing_scheme in ("nuniq", "zuniq"):
-                cr.coordinate_conversion.del_parameter("refinement_level")# TODO ", None"?
-            elif indexing_scheme in ("nuniq", "zuniq"):
-                raise ValueError(
-                    f"Can't change HEALPix indexing scheme of {f!r} from "
-                    f"{indexing_scheme!r} to {new_indexing_scheme!r}"
+                cr.coordinate_conversion.del_parameter(
+                    "refinement_level", None
+                )
+            elif moc_refinement_level is not None:
+                cr.coordinate_conversion.set_parameter(
+                    "refinement_level", moc_refinement_level
                 )
 
             # Change the HEALPix indices
             from ..healpix import _healpix_indexing_scheme
 
-            _healpix_indexing_scheme(f, hp, new_indexing_scheme)
+            _healpix_indexing_scheme(
+                f, hp, new_indexing_scheme, moc_refinement_level
+            )
 
         if sort:
             # Sort the HEALPix axis so that the HEALPix indices are
@@ -2400,26 +2438,29 @@ class FieldDomain:
                 bounds that lie exactly on the north or south pole. If
                 `None` (the default) then the longitudes of such
                 points are determined by whichever algorithm was used
-                to create the coordinates, which will likely result in
+                to create the coordinates, which will could result in
                 different points on a pole having different
                 longitudes. If set to a number, then the longitudes of
                 all points on the north or south pole will be given
-                the value *pole_longitude*.
+                that value.
 
             overwrite: `bool`, optional
                 If True then remove any existing latitude and
                 longitude coordinates, prior to attempting to create
                 new ones. If False (the default) then if any latitude
                 or longitude coordinates already exist, new ones will
-                not be created.
+                not be created. Note that when *overwrite* is True and
+                no new coordinates could be created, the returned
+                field will not have any latitude and longitude
+                coordinates.
 
             cache: `bool`, optional
                 If True (the default) then cache in memory the first
-                and last of any newly-created coordinates and
+                and last values of any newly-created coordinates and
                 bounds. This may greatly speed up, and reduce the
                 memory requirement of, a future inspection of the
                 coordinates and bounds. Even when *cache* is True, new
-                cached values can only be created if the existing
+                cached values will only be created if the existing
                 source coordinates (from which the newly-created
                 latitude and longitude coordinates are calculated)
                 have cached first and last values.
@@ -2464,7 +2505,9 @@ class FieldDomain:
         f = _inplace_enabled_define_and_cleanup(self)
 
         # ------------------------------------------------------------
-        # See if any lat/lon coordinates could be created
+        # See if any lat/lon coordinates could be created, by
+        # inspecting the coordinate and coordinate reference
+        # constructs.
         # ------------------------------------------------------------
 
         # See if there are any existing latitude/longitude coordinates

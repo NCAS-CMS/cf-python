@@ -527,6 +527,24 @@ class DomainTest(unittest.TestCase):
             )
         )
 
+        d = cf.Domain.create_healpix(0, "zuniq")
+        a = [(2 * i + 1) * 4**29 for i in range(12)]
+        self.assertTrue(np.array_equal(d.dimension_coordinate(), a))
+        self.assertIsNone(
+            d.coordinate_reference().datum.get_parameter("earth_radius", None)
+        )
+        self.assertIsNone(
+            d.coordinate_reference().coordinate_conversion.get_parameter(
+                "refinement_level", None
+            )
+        )
+        self.assertEqual(
+            d.coordinate_reference().coordinate_conversion.get_parameter(
+                "indexing_scheme"
+            ),
+            "zuniq",
+        )
+
         for radius in (1000, cf.Data(1, "km")):
             d = cf.Domain.create_healpix(0, "ring", radius=radius)
             self.assertEqual(
@@ -539,9 +557,6 @@ class DomainTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 cf.Domain.create_healpix(level)
 
-        # Bad indexing scheme
-        with self.assertRaises(NotImplementedError):
-            cf.Domain.create_healpix(0, 'zuniq')
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

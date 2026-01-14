@@ -3117,7 +3117,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_healpix_indexing_scheme(self):
         """Test Field.healpix_indexing_scheme."""
         # HEALPix field
-        f = self.f12
+        f = self.f12  # nested
 
         # Null change
         g = f.healpix_indexing_scheme(None)
@@ -3163,6 +3163,41 @@ class FieldTest(unittest.TestCase):
         # Can't change from 'nuniq' to 'nested'
         with self.assertRaises(ValueError):
             self.f13.healpix_indexing_scheme("nested")
+
+        # Can't change from 'nuniq' to 'ring'
+        with self.assertRaises(ValueError):
+            self.f13.healpix_indexing_scheme("ring")
+
+        # zuniq
+        nested = self.f12
+        ring = nested.healpix_indexing_scheme("ring")
+        nuniq = nested.healpix_indexing_scheme("nuniq")
+        zuniq = nested.healpix_indexing_scheme("zuniq")
+
+        f = zuniq.healpix_indexing_scheme("nuniq")
+        self.assertTrue(f.equals(nuniq, ignore_data_type=True))
+
+        f = nuniq.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq))
+
+        f = zuniq.healpix_indexing_scheme("nested", moc_refinement_level=1)
+        self.assertTrue(f.equals(nested, ignore_data_type=True))
+
+        f = nested.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq))
+
+        f = zuniq.healpix_indexing_scheme("ring", moc_refinement_level=1)
+        self.assertTrue(f.equals(ring, ignore_data_type=True))
+
+        zuniq = ring.healpix_indexing_scheme("zuniq")
+        f = ring.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq, verbose=-1))
+
+        # Must set moc_refinement_level for some changes
+        for f in (nuniq, zuniq):
+            for indexing_scheme in ("nested", "ring"):
+                with self.assertRaises(ValueError):
+                    f.healpix_indexing_scheme(indexing_scheme)
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):

@@ -316,7 +316,7 @@ def _healpix_increase_refinement_level_indices(
 
         healpix_index: `Coordinate`
             The HEALPix indices to be changed. They must use the
-            "nested" indexing scheme.
+            nested indexing scheme, but this is not checked.
 
         ncells: `int`
             The number of cells at the new higher refinement level
@@ -398,8 +398,12 @@ def _healpix_increase_refinement_level_indices(
         data._set_cached_elements({-1: x})
 
 
-def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
+def _healpix_indexing_scheme(
+    f, hp, new_indexing_scheme, moc_refinement_level=None
+):
     """Change the indexing scheme of HEALPix indices in-place.
+
+    The
 
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
@@ -419,7 +423,11 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
             The HEALPix info dictionary for *f*.
 
         new_indexing_scheme: `str`
-            The new indexing scheme.
+            The new indexing scheme. It is assumed to be different to
+            the original indexing scheme of *f*.
+
+        moc_refinement_level: `int` or `None`, optional
+            The unique refinement level of MOC indices of *f*.
 
     :Returns:
 
@@ -435,7 +443,7 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     refinement_level = hp.get("refinement_level")
 
     old_cache = healpix_index.data._get_cached_elements()
-    
+
     # Change the HEALPix indices
     #
     # `cf_healpix_indexing_scheme` has its own call to
@@ -447,21 +455,31 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
     # Find the datatype for the largest possible index at this
     # refinement level
     if new_indexing_scheme == "nuniq":
-        # The largest possible "nuniq" index at refinement level N is
-        # 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
-        dtype = integer_dtype(16 * (4**refinement_level) - 1)
+        if indexing_scheme in ("nested", "ring"):
+            # The largest possible nested or ring index at refinement
+            # level N is 12*(4**N) - 1
+            dtype = integer_dtype(16 * (4**refinement_level) - 1)
+        elif indexing_scheme == "zuniq":
+            dtype = np.dtype("int64")
+
     elif new_indexing_scheme in ("nested", "ring"):
-        # The largest possible "nested" or "ring" index at refinement
-        # level N is 12*(4**N) - 1
-        dtype = integer_dtype(12 * (4**refinement_level) - 1)
+        if indexing_scheme == "nuniq":
+            # The largest possible nuniq index at refinement level N
+            # is 16*(4**N) - 1 = 4*(4**N) + 12*(4**N) - 1
+            dtype = integer_dtype(16 * (4**moc_refinement_level) - 1)
+        elif indexing_scheme in ("nested", "ring"):
+            dtype = healpix_index.dtype
+        elif indexing_scheme == "zuniq":
+            dtype = np.dtype("int64")
+
     elif new_indexing_scheme == "zuniq":
-        dtype = np.dtype('int64')
+        dtype = np.dtype("int64")
+
     else:
         raise NotImplementedError(
-            "Can't yet change HEALPix indexing scheme from "
+            "Can't change HEALPix indexing scheme from "
             f"{indexing_scheme!r} to {new_indexing_scheme!r}"
         )  # pragma: no cover
-    
 
     dx = dx.map_blocks(
         cf_healpix_indexing_scheme,
@@ -471,30 +489,34 @@ def _healpix_indexing_scheme(f, hp, new_indexing_scheme):
         new_indexing_scheme=new_indexing_scheme,
         healpix_index_dtype=dtype,
         refinement_level=refinement_level,
+        moc_refinement_level=moc_refinement_level,
     )
     healpix_index.set_data(dx, copy=False)
 
     # If a Dimension Coordinate is now not monotonically ordered,
     # convert it to an Auxiliary Coordinate
-    if healpix_index.construct_type == "dimension_coordinate" and set(
-        (indexing_scheme, new_indexing_scheme)
-    ) != set(("nested", "nuniq")):
+    if (
+        healpix_index.construct_type == "dimension_coordinate"
+        and "ring" in set((indexing_scheme, new_indexing_scheme))
+    ):
         f.dimension_to_auxiliary(hp["coordinate_key"], inplace=True)
 
     # Create new cached elements
-    if old_cache:
+    if old_cache and moc_refinement_level is None:
         new_cache = {}
         for i, value in old_cache.items():
             new_cache[i] = cf_healpix_indexing_scheme(
                 np.array(value),
-                indexing_scheme,
-                new_indexing_scheme,
-                healpix_index_dtype,
-                refinement_level=refinement_level
+                indexing_scheme=indexing_scheme,
+                new_indexing_scheme=new_indexing_scheme,
+                healpix_index_dtype=dtype,
+                refinement_level=refinement_level,
+                moc_refinement_level=moc_refinement_level,
             )
-            
+
         healpix_index.data._set_cached_elements(new_cache)
-        
+
+
 def _healpix_locate(lat, lon, f):
     """Locate HEALPix cells containing latitude-longitude locations.
 
@@ -784,11 +806,11 @@ def healpix_max_refinement_level():
 
     """
     try:
-        from healpix import nside2order
+        import healpix
     except ImportError as e:
         raise ImportError(
             f"{e}. Must install healpix (https://pypi.org/project/healpix) "
             "to find the maximum HEALPix refinement level"
         )
 
-    return nside2order(healpix._chp.NSIDE_MAX)
+    return healpix.nside2order(healpix._chp.NSIDE_MAX)
