@@ -67,8 +67,8 @@ may nonetheless be modified in memory.
 The `cf` package can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF, CDL, PP and UM datasets
-  with a choice of netCDF backends,
+  constructs <domain construct>` from netCDF, CDL, Zarr, PP and UM
+  datasets with a choice of netCDF backends,
 
 * read files from OPeNDAP servers and S3 object stores,
 
@@ -76,7 +76,8 @@ The `cf` package can:
 
 * create new field constructs in memory,
 
-* write and append field constructs to netCDF datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr
+  datasets on disk,
 
 * read, write, and manipulate UGRID mesh topologies,
 

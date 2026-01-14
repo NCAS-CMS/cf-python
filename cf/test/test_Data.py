@@ -4457,28 +4457,30 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
-    def test_Data__str__(self):
-        """Test `Data.__str__`"""
-        elements0 = (0, -1, 1)
-        for array in ([1], [1, 2], [1, 2, 3]):
-            d = cf.Data(array)
-            d[0] = 1
-            self.assertEqual(str(d), str(array))
-            d += 0
-            self.assertEqual(str(d), str(array))
+    def test_Data__repr__str(self):
+        """Test all means of Data inspection."""
+        for d in [
+            cf.Data(9, units="km"),
+            cf.Data([9], units="km"),
+            cf.Data([[9]], units="km"),
+            cf.Data([8, 9], units="km"),
+            cf.Data([[8, 9]], units="km"),
+            cf.Data([7, 8, 9], units="km"),
+            cf.Data([[7, 8, 9]], units="km"),
+            cf.Data([6, 7, 8, 9], units="km"),
+            cf.Data([[6, 7, 8, 9]], units="km"),
+            cf.Data([[6, 7], [8, 9]], units="km"),
+            cf.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units="km"),
+        ]:
+            _ = repr(d)
+            _ = str(d)
 
-        # Test when size > 3, i.e. second element is not there.
-        d = cf.Data([1, 2, 3, 4])
-
-        self.assertEqual(str(d), "[1, ..., 4]")
-        cache = d.get_cached_elements()
-        self.assertNotIn(1, cache)
-        for element in elements0[:2]:
-            self.assertIn(element, cache)
-
-        d[0] = 1
-        for element in elements0:
-            self.assertNotIn(element, d.get_cached_elements())
+        # Test when the data contains date-times with the first
+        # element masked
+        dt = np.ma.array([10, 20], mask=[True, False])
+        d = cf.Data(dt, units="days since 2000-01-01")
+        self.assertTrue(str(d) == "[--, 2000-01-21 00:00:00]")
+        self.assertTrue(repr(d) == "<CF Data(2): [--, 2000-01-21 00:00:00]>")
 
     def test_Data_cull_graph(self):
         """Test Data.cull_graph."""

@@ -1,8 +1,15 @@
 Version NEXTVERSION
--------------------
+--------------
 
 **2026-01-??**
 
+* Write Zarr v3 datasets with `cf.write`
+  (https://github.com/NCAS-CMS/cf-python/issues/895)
+* Read Zarr v2 and v3 datasets that contain a group hierarchy with
+  `cf.read` (https://github.com/NCAS-CMS/cf-python/issues/894)
+* Reduce the time taken to import `cf`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
+* New optional dependency: ``zarr>=3.1.3``
 * New function to control the creation of cached elements during data
   display: `cf.display_data`
   (https://github.com/NCAS-CMS/cf-python/issues/913)
