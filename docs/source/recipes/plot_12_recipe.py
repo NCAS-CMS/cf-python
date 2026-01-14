@@ -13,8 +13,8 @@ retrievals.
 # %%
 # 1. Import cf-python, cf-plot and matplotlib.pyplot:
 
-import cfplot as cfp
 import matplotlib.pyplot as plt
+import cfplot as cfp
 
 import cf
 

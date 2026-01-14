@@ -9,10 +9,11 @@ In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0
 # 1. Import cf-python, cf-plot, numpy and scipy.stats:
 
 import cfplot as cfp
+import cf
+
 import numpy as np
 import scipy.stats as stats
 
-import cf
 
 # %%
 # 2. Three functions are defined:

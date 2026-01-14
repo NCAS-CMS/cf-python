@@ -18,10 +18,12 @@ period of six months or more.
 # in next steps.
 
 import cartopy.crs as ccrs
-import cfplot as cfp
 import matplotlib.patches as mpatches
 
+import cfplot as cfp
+
 import cf
+
 
 # %%
 # 2. Read and select the SST by index and look at its contents:
