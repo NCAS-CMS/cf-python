@@ -1709,6 +1709,12 @@ class DataTest(unittest.TestCase):
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.array, 2.5)
 
+        # Cached values
+        d = cf.Data([1, 2])
+        d._del_cached_elements()
+        d.array
+        self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
+
     def test_Data_binary_mask(self):
         """Test the `binary_mask` Data property."""
         d = cf.Data([[0, 1, 2, 3.0]], "m")
@@ -3221,6 +3227,12 @@ class DataTest(unittest.TestCase):
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.compute(), 2.5)
 
+        # Cached values
+        d = cf.Data([1, 2])
+        d._del_cached_elements()
+        d.compute()
+        self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
+
     def test_Data_persist(self):
         """Test Data.persist."""
         d = cf.Data(9, "km")
@@ -4376,7 +4388,6 @@ class DataTest(unittest.TestCase):
 
         # Adjusted cached values
         d = cf.Data([1000, 2000, 3000], "m")
-        repr(d)
         d.Units = cf.Units("km")
         self.assertEqual(d.get_cached_elements(), {0: 1.0, 1: 2.0, -1: 3.0})
 
@@ -4675,6 +4686,135 @@ class DataTest(unittest.TestCase):
         # Non-equivalent units
         with self.assertRaises(ValueError):
             e.to_units("degC")
+
+    def test_Data_cache_elements(self):
+        """Test setting of cached elements."""
+        d = cf.Data(1)
+        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 1})
+        self.assertIsNone(d._del_cached_elements())
+        self.assertFalse(d.get_cached_elements())
+
+        # Test via __init__, which calls `cache_elements`
+        for array in (np.ma.masked, True, "x"):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(
+                    d.get_cached_elements(), {0: array, -1: array}
+                )
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (
+            1,
+            1.0,
+            np.array(1),
+            np.array([1]),
+            [1],
+            (1,),
+        ):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(d.get_cached_elements(), {0: 1, -1: 1})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([1, 2]), [1, 2]):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([1, 2, 3]), (1, 2, 3)):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([1, 2, 3, 4]), (1, 2, 3, 4)):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(d.get_cached_elements(), {0: 1, -1: 4})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([[1, 2]]), [[1, 2]]):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(
+                    d.get_cached_elements(), {0: 1, 1: 2, -2: 1, -1: 2}
+                )
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (
+            np.array([[1, 2], [7, 8]]),
+            ([1, 2], [7, 8]),
+            np.array([[1, 2], [3, 4], [7, 8]]),
+            [[1, 2], [3, 4], [5, 6], [7, 8]],
+        ):
+            d = cf.Data(array)
+            for i in range(2):
+                self.assertEqual(
+                    d.get_cached_elements(), {0: 1, 1: 2, -2: 7, -1: 8}
+                )
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        # Sparse array
+        from scipy.sparse import csr_array
+
+        indptr = np.array([0, 2, 3, 6])
+        indices = np.array([0, 2, 2, 0, 1, 2])
+        data = np.array([1, 2, 3, 4, 5, 6])
+        array = csr_array((data, indices, indptr), shape=(3, 3))
+        d = cf.Data(array)
+        for i in range(2):
+            self.assertEqual(d.get_cached_elements(), {0: 1, -1: 6})
+            # Check that getting the array doesn't change the
+            # cached elements
+            if i:
+                d.array
+
+        # Check set_cached_elements
+        for array in ([1, 2, 3], [[1, 2, 3]]):
+            d = cf.Data(array)
+            d._del_cached_elements()
+            d.cache_elements()
+            self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
+
+        # Check that __str__ sets missing cached elements
+        d = cf.Data([[1, 2, 3]])
+        d._del_cached_elements()
+        str(d)
+        self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
+
+        # Interaction with `cf.display_data`
+        d = cf.Data([[1, 2, 3]])
+        d._del_cached_elements()
+        with cf.display_data(False):
+            self.assertEqual(repr(d), "<CF Data(1, 3): [[...]]>")
+
+        with cf.display_data(True):
+            self.assertEqual(repr(d), "<CF Data(1, 3): [[1, 2, 3]]>")
+
+        with cf.display_data(False):
+            self.assertEqual(repr(d), "<CF Data(1, 3): [[1, 2, 3]]>")
 
 
 if __name__ == "__main__":
