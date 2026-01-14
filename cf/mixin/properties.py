@@ -7,8 +7,6 @@ from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
 )
-from ..functions import atol as cf_atol
-from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..query import Query
 from ..units import Units
@@ -34,32 +32,6 @@ class Properties(Container):
         instance._Data = Data
         return instance
 
-    # ----------------------------------------------------------------
-    # Private attributes
-    # ----------------------------------------------------------------
-    @property
-    def _atol(self):
-        """Return the tolerance on absolute differences between real
-        numbers, as returned by the `cf.atol` function.
-
-        This is used by, for example, the `_equals` method.
-
-        """
-        return cf_atol().value
-
-    @property
-    def _rtol(self):
-        """Return the tolerance on relative differences between real
-        numbers, as returned by the `cf.rtol` function.
-
-        This is used by, for example, the `_equals` method.
-
-        """
-        return cf_rtol().value
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _matching_values(self, value0, value1, units=False, basic=False):
         """Whether two values match.
 
@@ -100,9 +72,6 @@ class Properties(Container):
 
             return self._equals(value1, value0, basic=basic)
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def id(self):
         """An identity for the {{class}} object.
@@ -150,9 +119,6 @@ class Properties(Container):
                 f"{self.__class__.__name__} doesn't have attribute 'id'"
             )
 
-    # ----------------------------------------------------------------
-    # CF properties
-    # ----------------------------------------------------------------
     @property
     def calendar(self):
         """The calendar CF property.
@@ -554,9 +520,6 @@ class Properties(Container):
     def valid_range(self):
         self.del_property("valid_range", default=AttributeError())
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def get_property(self, prop, default=ValueError()):
         """Get a CF property.
 

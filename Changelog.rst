@@ -1,10 +1,22 @@
 Version NEXTVERSION
 -------------------
 
-**2025-12-??**
+**2026-01-??**
 
+* New function to control the creation of cached elements during data
+  display: `cf.display_data`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* New methods: `cf.Data.get_cached_elements`,
+  `cf.Data.cache_elements`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* Set cached elements during `cf.Data.__init__`
+  (https://github.com/NCAS-CMS/cf-python/issues/913)
+* Removed the `cf.constants.CONSTANTS` dictionary, replacing it
+  with `cf.ConstantAccess.constants`
+  (https://github.com/NCAS-CMS/cf-python/issues/902)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
+* Changed dependency: ``cfdm>=1.12.4.0, <1.12.5.0``
 
 ----
 
