@@ -726,8 +726,7 @@ def cf_healpix_bounds(
 
     a = cfdm_to_memory(a)
 
-    scalar = not a.ndim
-    if scalar:
+    if not a.ndim:
         # Turn a 0-d array into a 1-d array, for convenience.
         a = np.atleast_1d(a)
 
