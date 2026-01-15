@@ -62,7 +62,7 @@ repos:
   # compatible with 'black' with the lines set to ensure so in the repo's
   # pyproject.toml. Other than that and the below, no extra config is required.
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 7.0.0
     hooks:
       - id: isort
         name: isort (python)
