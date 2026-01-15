@@ -1,15 +1,19 @@
 from math import prod
+from numbers import Integral
 
 import cfdm
 import numpy as np
 
 from . import mixin
 from .auxiliarycoordinate import AuxiliaryCoordinate
+from .bounds import Bounds
 from .constructs import Constructs
+from .coordinatereference import CoordinateReference
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 from .dimensioncoordinate import DimensionCoordinate
 from .domainaxis import DomainAxis
+from .domaintopology import DomainTopology
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
@@ -78,11 +82,14 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def __new__(cls, *args, **kwargs):
         """Creates a new Domain instance."""
         instance = super().__new__(cls)
+        instance._Bounds = Bounds
         instance._Constructs = Constructs
+        instance._CoordinateReference = CoordinateReference
         instance._Data = Data
         instance._DomainAxis = DomainAxis
         instance._DimensionCoordinate = DimensionCoordinate
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._DomainTopology = DomainTopology
         return instance
 
     @property
@@ -151,12 +158,12 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
     @classmethod
     def create_regular(cls, x_args, y_args, bounds=True):
-        """
-        Create a new domain with the regular longitudes and latitudes.
+        """Create a new domain with the regular longitudes and latitudes.
 
         .. versionadded:: 3.15.1
 
-        .. seealso:: `cf.DimensionCoordinate.create_regular`
+        .. seealso:: `cf.DimensionCoordinate.create_regular`,
+                     `cf.Domain.create_healpix`
 
         :Parameters:
 
@@ -180,7 +187,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples**
 
-        >>> import cf
         >>> domain = cf.Domain.create_regular((-180, 180, 1), (-90, 90, 1))
         >>> domain.dump()
         --------
@@ -254,6 +260,219 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             longitude, axes=[domain_axis_longitude], copy=False
         )
         domain.set_construct(latitude, axes=[domain_axis_latitude], copy=False)
+
+        return domain
+
+    @classmethod
+    def create_healpix(
+        cls, refinement_level, indexing_scheme="nested", radius=None
+    ):
+        r"""Create a new global HEALPix grid.
+
+        The HEALPix axis of the new Domain is ordered so that the
+        HEALPix indices are monotonically increasing.
+
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
+        **Performance**
+
+        High refinement levels may require the setting of a very large
+        Dask chunksize, to prevent a possible run-time failure
+        resulting from an attempt to create an excessive amount of
+        chunks for the healpix_index coordinates. For instance,
+        healpix_index coordinates at refinement level 29 would need
+        ~206 billion chunks with the default Dask chunksize of 128 MiB
+        - almost certainly more than enough to cause a crash - but
+        with a chunksize of 1 pebibyte only 24576 chunks are
+        required, a much more manageable amount::
+
+           >>> cf.chunksize()
+           >>> 134217728
+           >>> d = cf.Domain.create_healpix(10)
+           >>> assert d.coord('healpix_index').data.npartitions == 1
+           >>> d = cf.Domain.create_healpix(15)
+           >>> assert d.coord('healpix_index').data.npartitions == 768
+           >>> with cf.chunksize('1 PiB'):
+           ...     d = cf.Domain.create_healpix(29)
+           ...     assert d.coord('healpix_index').data.npartitions == 24576
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `cf.Domain.create_regular`,
+                     `cf.Domain.create_latlon_coordinates`
+
+        :Parameters:
+
+            refinement_level: `int`
+                The refinement level of the grid within the HEALPix
+                hierarchy, starting at 0 for the base tessellation
+                with 12 cells. The number of cells in the global
+                HEALPix grid for refinement level *n* is
+                :math:`12\times 4^n`.
+
+            indexing_scheme: `str`
+                The HEALPix indexing scheme. One of ``'nested'`` (the
+                default), ``'ring'``, ``'nuniq'``, or ``'zuniq'``.
+
+                {{HEALPix indexing schemes}}
+
+            radius: optional
+                Specify the radius of the latitude-longitude plane
+                defined in spherical polar coordinates. May be set to
+                any numeric scalar object, including `numpy` and
+                `Data` objects. The units of the radius are assumed to
+                be metres, unless specified by a `Data` object. If the
+                special value ``'earth'`` is given then the radius
+                taken as 6371229 metres. If `None` (the default) then
+                no radius is set.
+
+                *Example:*
+                  Equivalent ways to set a radius of 6371229 metres:
+                  ``6371229``, ``numpy.array(6371229)``,
+                  ``cf.Data(6371229)``, ``cf.Data(6371229, 'm')``,
+                  ``cf.Data(6371.229, 'km')``, ``'earth'``.
+
+        :Returns:
+
+            `Domain`
+                The newly created HEALPix domain.
+
+        **Examples**
+
+        .. code-block:: python
+
+           >>> d = cf.Domain.create_healpix(4)
+           >>> d.dump()
+           --------
+           Domain:
+           --------
+           Domain Axis: healpix_index(3072)
+
+           Dimension coordinate: healpix_index
+               standard_name = 'healpix_index'
+               Data(healpix_index(3072)) = [0, ..., 3071]
+
+           Coordinate reference: grid_mapping_name:healpix
+               Coordinate conversion:grid_mapping_name = healpix
+               Coordinate conversion:indexing_scheme = nested
+               Coordinate conversion:refinement_level = 4
+               Dimension Coordinate: healpix_index
+
+        .. code-block:: python
+
+           >>> d = cf.Domain.create_healpix(4, "nuniq", radius=6371000)
+           >>> d.dump()
+           --------
+           Domain:
+           --------
+           Domain Axis: healpix_index(3072)
+
+           Dimension coordinate: healpix_index
+               standard_name = 'healpix_index'
+               Data(healpix_index(3072)) = [1024, ..., 4095]
+
+           Coordinate reference: grid_mapping_name:healpix
+               Coordinate conversion:grid_mapping_name = healpix
+               Coordinate conversion:indexing_scheme = nuniq
+               Datum:earth_radius = 6371000.0
+               Dimension Coordinate: healpix_index
+
+        .. code-block:: python
+
+           >>> d.create_latlon_coordinates(inplace=True)
+           >>> print(d)
+           Dimension coords: healpix_index(3072) = [1024, ..., 4095]
+           Auxiliary coords: latitude(healpix_index(3072)) = [2.388015463268772, ..., -2.388015463268786] degrees_north
+                           : longitude(healpix_index(3072)) = [45.0, ..., 315.0] degrees_east
+           Coord references: grid_mapping_name:healpix
+
+        """
+        import dask.array as da
+
+        from .constants import healpix_indexing_schemes
+        from .healpix import healpix_max_refinement_level
+
+        if (
+            not isinstance(refinement_level, Integral)
+            or refinement_level < 0
+            or refinement_level > healpix_max_refinement_level()
+        ):
+            raise ValueError(
+                "Can't create HEALPix Domain: 'refinement_level' must be a "
+                "non-negative integer less than or equal to "
+                f"{healpix_max_refinement_level()}. Got {refinement_level!r}"
+            )
+
+        if indexing_scheme not in healpix_indexing_schemes:
+            raise ValueError(
+                "Can't create HEALPix Domain: 'indexing_scheme' must be one "
+                f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
+            )
+
+        indexing_scheme0 = indexing_scheme
+
+        if indexing_scheme == "zuniq":
+            indexing_scheme = "nuniq"
+
+        domain = Domain()
+        ncells = 12 * (4**refinement_level)
+
+        # domain_axis: ncdim%cell
+        d = domain._DomainAxis(ncells)
+        d.nc_set_dimension("cell")
+        axis = domain.set_construct(d, copy=False)
+
+        # dimension_coordinate: healpix_index
+        c = domain._DimensionCoordinate()
+        c.set_properties({"standard_name": "healpix_index"})
+        c.nc_set_variable("healpix_index")
+
+        # Create the healpix_index data
+        if indexing_scheme in ("nested", "ring"):
+            start = 0
+        elif indexing_scheme in ("nuniq", "zuniq"):
+            start = 4 ** (refinement_level + 1)
+        else:
+            raise NotImplementedError(
+                "Can't yet Can't create a HEALPix Domain with the "
+                f"{indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover
+
+        stop = start + ncells
+        dtype = cfdm.integer_dtype(stop - 1)
+        data = Data(da.arange(start, stop, dtype=dtype))
+
+        # Set cached data elements
+        data._set_cached_elements({0: start, 1: start + 1, -1: stop - 1})
+
+        c.set_data(data, copy=False)
+        key = domain.set_construct(c, axes=axis, copy=False)
+
+        # coordinate_reference: grid_mapping_name:healpix
+        cr = domain._CoordinateReference()
+        cr.nc_set_variable("healpix")
+        cr.set_coordinates({key})
+
+        if radius is not None:
+            radius = domain.radius(default=radius)
+            cr.datum.set_parameter("earth_radius", radius.datum())
+
+        cr.coordinate_conversion.set_parameters(
+            {
+                "grid_mapping_name": "healpix",
+                "indexing_scheme": indexing_scheme,
+            }
+        )
+        if indexing_scheme in ("nested", "ring"):
+            cr.coordinate_conversion.set_parameter(
+                "refinement_level", refinement_level
+            )
+
+        domain.set_construct(cr)
+
+        if indexing_scheme0 == "zuniq":
+            domain = domain.healpix_indexing_scheme("zuniq", sort=False)
 
         return domain
 
@@ -546,7 +765,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Metadata constructs are selected conditions are specified on
         their data. Indices for subspacing are then automatically
-        inferred from where the conditions are met.
+        inferred from where the conditions are met. If a condition is
+        a callable function then if is automateically replaced with
+        the result of calling that function with the Domain as its
+        only argument.
 
         Metadata constructs and the conditions on their data are
         defined by keyword parameters.
@@ -901,7 +1123,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         Subspacing by metadata selects metadata constructs and
         specifies conditions on their data. Indices for subspacing are
-        then automatically inferred from where the conditions are met.
+        then automatically inferred from where the conditions are
+        met. If a condition is a callable function then if is
+        automateically replaced with the result of calling that
+        function with the Domain as its only argument.
 
         Metadata constructs and the conditions on their data are defined
         by keyword parameters.

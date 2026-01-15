@@ -217,6 +217,15 @@ class WeightsTest(unittest.TestCase):
         self.assertTrue((w.array == correct_weights).all())
         self.assertEqual(w.Units, cf.Units("m2"))
 
+        # For a UGRID derived from a global HEALPix grid, check that
+        # the global sum of cell areas is correct
+        u = cf.example_field(12).healpix_to_ugrid()
+        u_weights = u.weights(
+            measure=True, components=True, great_circle=True
+        )[(1,)]
+        global_area = 4 * np.pi * (u.radius() ** 2)
+        self.assertTrue(np.allclose(u_weights.sum(), global_area))
+
     def test_weights_line_length_geometry(self):
         # Spherical line geometry
         gls = gps.copy()
@@ -335,6 +344,23 @@ class WeightsTest(unittest.TestCase):
             ValueError, "Can't create weights: Unable to find cell areas"
         ):
             f.weights("area")
+
+    def test_weights_healpix(self):
+        """Test HEALPix weights."""
+        # HEALPix grid with Multi-Order Coverage (a combination of
+        # refinement level 1 and 2 cells)
+        f = cf.example_field(13)
+
+        w = f.weights(components=True)[(1,)].array
+        self.assertTrue(np.allclose(w[:16], 1 / (4**2)))
+        self.assertTrue(np.allclose(w[16:], 1 / (4**1)))
+
+        w = f.weights(measure=True, components=True)[(1,)].array
+        x = 4 * np.pi * (f.radius() ** 2) / 12
+        self.assertTrue(np.allclose(w[:16], x / (4**2)))
+        self.assertTrue(np.allclose(w[16:], x / (4**1)))
+        # Total global area
+        self.assertTrue(np.allclose(w.sum(), x * 12))
 
 
 if __name__ == "__main__":

@@ -79,6 +79,8 @@ class FieldTest(unittest.TestCase):
 
     f0 = cf.example_field(0)
     f1 = cf.example_field(1)
+    f12 = cf.example_field(12)
+    f13 = cf.example_field(13)
 
     def test_Field_creation_commands(self):
         for f in cf.example_fields():
@@ -965,10 +967,11 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.radius()
 
-        for default in ("earth", cf.field._earth_radius):
+        earth_radius = cf.Data(6371229, "m")
+        for default in ("earth", earth_radius):
             r = f.radius(default=default)
             self.assertEqual(r.Units, cf.Units("m"))
-            self.assertEqual(r, cf.field._earth_radius)
+            self.assertEqual(r, earth_radius)
 
         a = cf.Data(1234, "m")
         for default in (
@@ -2969,6 +2972,12 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.dimension_to_auxiliary("Y", inplace=True))
         self.assertIsNone(g.auxiliary_to_dimension("Y", inplace=True))
 
+        f = self.f12.copy()
+        g = f.dimension_to_auxiliary("healpix_index")
+        h = g.auxiliary_to_dimension("healpix_index")
+        self.assertFalse(f.equals(g))
+        self.assertTrue(f.equals(h))
+
         f = cf.read("geometry_1.nc")[0]
 
         with self.assertRaises(ValueError):
@@ -3104,6 +3113,390 @@ class FieldTest(unittest.TestCase):
         # Non-equivalent units
         with self.assertRaises(ValueError):
             g.to_units("degC")
+
+    def test_Field_healpix_indexing_scheme(self):
+        """Test Field.healpix_indexing_scheme."""
+        # HEALPix field
+        f = self.f12  # nested
+
+        # Null change
+        g = f.healpix_indexing_scheme(None)
+        self.assertTrue(g.equals(f))
+
+        # Null change
+        g = f.healpix_indexing_scheme("nested")
+        self.assertTrue(g.equals(f))
+
+        g = f.healpix_indexing_scheme("ring")
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index")[:4], [13, 5, 4, 0])
+        )
+        h = g.healpix_indexing_scheme("nested")
+        self.assertTrue(
+            np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
+        )
+        h = g.healpix_indexing_scheme("nuniq")
+        self.assertTrue(
+            np.array_equal(h.coordinate("healpix_index")[:4], [16, 17, 18, 19])
+        )
+
+        g = f.healpix_indexing_scheme("ring", sort=True)
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index")[:4], [0, 1, 2, 3])
+        )
+        h = g.healpix_indexing_scheme("nested", sort=False)
+        self.assertTrue(
+            np.array_equal(h.coordinate("healpix_index")[:4], [3, 7, 11, 15])
+        )
+        h = g.healpix_indexing_scheme("nested", sort=True)
+        self.assertTrue(
+            np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
+        )
+
+        g = f.healpix_indexing_scheme("nuniq")
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index")[:4], [16, 17, 18, 19])
+        )
+        h = g.healpix_indexing_scheme("nuniq")
+        self.assertTrue(h.equals(g))
+
+        # Can't change from 'nuniq' to 'nested'
+        with self.assertRaises(ValueError):
+            self.f13.healpix_indexing_scheme("nested")
+
+        # Can't change from 'nuniq' to 'ring'
+        with self.assertRaises(ValueError):
+            self.f13.healpix_indexing_scheme("ring")
+
+        # zuniq
+        nested = self.f12
+        ring = nested.healpix_indexing_scheme("ring")
+        nuniq = nested.healpix_indexing_scheme("nuniq")
+        zuniq = nested.healpix_indexing_scheme("zuniq")
+
+        f = zuniq.healpix_indexing_scheme("nuniq")
+        self.assertTrue(f.equals(nuniq, ignore_data_type=True))
+
+        f = nuniq.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq))
+
+        f = zuniq.healpix_indexing_scheme("nested", moc_refinement_level=1)
+        self.assertTrue(f.equals(nested, ignore_data_type=True))
+
+        f = nested.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq))
+
+        f = zuniq.healpix_indexing_scheme("ring", moc_refinement_level=1)
+        self.assertTrue(f.equals(ring, ignore_data_type=True))
+
+        zuniq = ring.healpix_indexing_scheme("zuniq")
+        f = ring.healpix_indexing_scheme("zuniq")
+        self.assertTrue(f.equals(zuniq, verbose=-1))
+
+        # Must set moc_refinement_level for some changes
+        for f in (nuniq, zuniq):
+            for indexing_scheme in ("nested", "ring"):
+                with self.assertRaises(ValueError):
+                    f.healpix_indexing_scheme(indexing_scheme)
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_indexing_scheme("ring")
+
+    def test_Field_healpix_to_ugrid(self):
+        """Test Field.healpix_to_ugrid."""
+        # HEALPix field
+        f = self.f12.copy()
+
+        u = f.healpix_to_ugrid()
+        self.assertEqual(len(u.domain_topologies()), 1)
+        self.assertEqual(len(u.auxiliary_coordinates()), 2)
+
+        topology = u.domain_topology().normalise()
+        self.assertEqual(np.unique(topology).size, 53)
+        self.assertTrue(
+            np.array_equal(
+                topology[:4],
+                [
+                    [14, 11, 13, 16],
+                    [21, 14, 16, 20],
+                    [8, 7, 11, 14],
+                    [9, 8, 14, 21],
+                ],
+            )
+        )
+
+        # North pole
+        self.assertTrue(np.allclose(topology[3:16:4, 0], 9))
+
+        # South pole
+        self.assertTrue(np.allclose(topology[32:48:4, 2], 3))
+
+        self.assertIsNone(f.healpix_to_ugrid(inplace=True))
+        self.assertEqual(len(f.domain_topologies()), 1)
+
+        self.assertEqual(len(u.coordinate_references()), 1)
+        cr = u.coordinate_reference()
+        self.assertEqual(cr.identity(), "grid_mapping_name:latitude_longitude")
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_to_ugrid()
+
+    def test_Field_create_latlon_coordinates(self):
+        """Test Field.create_latlon_coordinates."""
+        # ------------------------------------------------------------
+        # HEALPix field
+        # ------------------------------------------------------------
+        f = self.f12.copy()
+        self.assertEqual(len(f.auxiliary_coordinates()), 0)
+        self.assertEqual(len(f.dimension_coordinates("healpix_index")), 1)
+
+        g = f.create_latlon_coordinates()
+        self.assertEqual(len(g.auxiliary_coordinates("X", "Y")), 2)
+        self.assertIsNone(f.create_latlon_coordinates(inplace=True))
+        self.assertTrue(f.equals(g))
+
+        g = self.f12.healpix_indexing_scheme("nuniq")
+        g.create_latlon_coordinates(inplace=True)
+        for c in ("latitude", "longitude"):
+            self.assertTrue(
+                g.auxiliary_coordinate(c).equals(f.auxiliary_coordinate(c))
+            )
+
+        # pole_longitude. Note that bounds index 0 is the
+        # northern-most vertex, and bounds index 2 is the
+        # southern-most vertex.
+        f = self.f12
+        g = f.create_latlon_coordinates()
+        longitude = g.auxiliary_coordinate("X").bounds.array
+        # North pole
+        self.assertTrue(
+            np.allclose(longitude[3:16:4, 0], longitude[3:16:4, 2])
+        )
+        # South pole
+        self.assertTrue(
+            np.allclose(longitude[32:48:4, 2], longitude[32:48:4, 0])
+        )
+
+        g = f.create_latlon_coordinates(pole_longitude=3.14)
+        longitude = g.auxiliary_coordinate("X").bounds.array
+        # North pole
+        self.assertTrue(np.allclose(longitude[3:16:4, 0], 3.14))
+        # South pole
+        self.assertTrue(np.allclose(longitude[32:48:4, 2], 3.14))
+
+        # Multi-Order Coverage (MOC) grid with refinement levels 1 and
+        # 2
+        m = self.f13
+        m = m.create_latlon_coordinates()
+
+        l1 = cf.Domain.create_healpix(1)
+        l2 = cf.Domain.create_healpix(2)
+        l1.create_latlon_coordinates(inplace=True)
+        l2.create_latlon_coordinates(inplace=True)
+
+        for c in ("latitude", "longitude"):
+            mc = m.auxiliary_coordinate(c)
+            self.assertTrue(mc[:16].equals(l2.auxiliary_coordinate(c)[:16]))
+            self.assertTrue(mc[16:].equals(l1.auxiliary_coordinate(c)[4:]))
+
+    def test_Field_healpix_subspace(self):
+        """Test Field.subspace for HEALPix grids"""
+        f = self.f12
+
+        index = [47, 3, 2, 0]
+        g = f.subspace(healpix_index=index)
+        self.assertTrue(np.array_equal(g.coordinate("healpix_index"), index))
+
+        g = f.subspace(X=cf.wi(40, 70), Y=cf.wi(-20, 30))
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index"), [0, 22, 35])
+        )
+        g.create_latlon_coordinates(inplace=True)
+        self.assertTrue(np.allclose(g.coordinate("X"), [45.0, 67.5, 45.0]))
+        self.assertTrue(
+            np.allclose(
+                g.coordinate("Y"), [19.47122063449069, 0.0, -19.47122063449069]
+            )
+        )
+
+        g = f.subspace(healpix_index=cf.locate(20, 46))
+        self.assertEqual(g.coordinate("healpix_index").array, 0)
+
+        g = f.subspace(healpix_index=cf.locate(20, 1))
+        self.assertEqual(g.coordinate("healpix_index").array, 19)
+
+        g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
+        self.assertTrue(np.array_equal(g.coordinate("healpix_index"), [0, 19]))
+
+        f = f.healpix_indexing_scheme("ring")
+        g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
+        self.assertTrue(
+            np.array_equal(g.coordinate("healpix_index"), [13, 12])
+        )
+
+    def test_Field_healpix_decrease_refinement_level(self):
+        """Test Field.healpix_decrease_refinement_level."""
+        f = self.f12
+
+        # No change
+        for level in (None, 1):
+            g = f.healpix_decrease_refinement_level(level, "mean")
+            self.assertTrue(g.equals(f))
+
+        # Can't change refinement level when a larger cell is only
+        # partially covered by original cells
+        with self.assertRaises(ValueError):
+            f[:, 1:].healpix_decrease_refinement_level(0, "mean")
+
+        g = f.healpix_decrease_refinement_level(0, "mean")
+        self.assertTrue(
+            np.array_equal(g.coord("healpix_index"), np.arange(12))
+        )
+
+        for method, first_value in zip(
+            (
+                "maximum",
+                "mean",
+                "minimum",
+                "standard_deviation",
+                "variance",
+                "sum",
+                "median",
+            ),
+            (293.5, 289.15, 285.3, 3.44201976, 11.8475, 1156.6, 288.9),
+        ):
+            g = f.healpix_decrease_refinement_level(0, method)
+            self.assertTrue(np.isclose(g[0, 0], first_value))
+
+        # Bad methods
+        for method in ("point", "range", "bad method", 3.14):
+            with self.assertRaises(ValueError):
+                f.healpix_decrease_refinement_level(0, method)
+
+        def range_func(a, axis=None):
+            return np.max(a, axis=axis) - np.min(a, axis=axis)
+
+        g = f.healpix_decrease_refinement_level(0, "range", range_func)
+        self.assertTrue(np.isclose(g[0, 0], 8.2))
+
+        def my_mean(a, axis=None):
+            return np.mean(a, axis=axis)
+
+        g = f.healpix_decrease_refinement_level(0, "mean", my_mean)
+        self.assertTrue(np.isclose(g[0, 0], 289.15))
+
+        f = f.healpix_indexing_scheme("ring")
+        g = f.healpix_decrease_refinement_level(0, "maximum")
+        self.assertTrue(
+            np.array_equal(g.coord("healpix_index"), np.arange(12))
+        )
+        with self.assertRaises(ValueError):
+            f.healpix_decrease_refinement_level(0, "maximum", conform=False)
+
+        f = f.healpix_indexing_scheme("ring", sort=True)
+        f = f.healpix_indexing_scheme("nested")
+
+        g = f.healpix_decrease_refinement_level(0, "mean", conform=True)
+        self.assertTrue(
+            np.array_equal(g.coord("healpix_index"), np.arange(12))
+        )
+
+        # Check that lat/lon coords get created when they're present
+        # in the original field
+        f = f.create_latlon_coordinates()
+        g = f.healpix_decrease_refinement_level(0, "mean")
+        self.assertEqual(g.auxiliary_coordinate("latitude"), (12,))
+        self.assertEqual(g.auxiliary_coordinate("longitude"), (12,))
+
+        # Can't change refinement level when the HEALPix indices are
+        # not strictly monotonically increasing
+        with self.assertRaises(ValueError):
+            f.healpix_decrease_refinement_level(0, "mean", conform=False)
+
+        # Bad results when check_healpix_index=False
+        h = f.healpix_decrease_refinement_level(
+            0, "mean", conform=False, check_healpix_index=False
+        )
+        self.assertFalse(
+            np.array_equal(h.coord("healpix_index"), np.arange(12))
+        )
+
+        # Bad 'level' parameter
+        for level in (-1, 0.785, np.array(1), 2, "string"):
+            with self.assertRaises(ValueError):
+                f.healpix_decrease_refinement_level(level, "mean")
+
+        # Can't change refinement level for a 'nuniq' field
+        # TODOHEALPIX
+        with self.assertRaises(ValueError):
+            self.f13.healpix_decrease_refinement_level(0, "mean")
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_decrease_refinement_level(0, "mean")
+
+    def test_Field_healpix_increase_refinement_level(self):
+        """Test Field.healpix_increase_refinement_level."""
+        f = self.f12
+        f = f.rechunk((None, 17))
+        f.coordinate("healpix_index").rechunk(13, inplace=True)
+
+        g = f.healpix_increase_refinement_level(2, "intensive")
+        self.assertTrue(
+            np.array_equal(g.coord("healpix_index"), np.arange(192))
+        )
+
+        self.assertEqual(g.shape, (2, 192))
+        self.assertEqual(g.array.shape, (2, 192))
+
+        # Check selected data values for intensive and extensive
+        # quantities
+        n = 4 ** (2 - 1)
+        for i in (0, 1, 24, 46, 47):
+            self.assertTrue(
+                np.allclose(g[:, i * n : (i + 1) * n], f[:, i : i + 1])
+            )
+
+        g = f.healpix_increase_refinement_level(2, "extensive")
+        for i in (0, 1, 24, 46, 47):
+            self.assertTrue(
+                np.allclose(g[:, i * n : (i + 1) * n], f[:, i : i + 1] / n)
+            )
+
+        # Cached values
+        f.coordinate("healpix_index").data._del_cached_elements()
+        with cf.chunksize(256 * (2**30)):
+            g = f.healpix_increase_refinement_level(16, "intensive")
+            self.assertEqual(g.data.npartitions, 6)
+            self.assertEqual(
+                g.coordinate("healpix_index").data._get_cached_elements(), {}
+            )
+            # Create cached elements
+            _ = str(f.coordinate("healpix_index").data)
+            g = f.healpix_increase_refinement_level(16, "intensive")
+            self.assertEqual(
+                g.coordinate("healpix_index").data._get_cached_elements(),
+                {0: 0, 1: 1, -1: 51539607551},
+            )
+
+        # Bad 'quantity' parameter
+        with self.assertRaises(ValueError):
+            f.healpix_increase_refinement_level(2, "bad quantity")
+
+        # Bad 'level' parameter
+        for level in (-1, 0, np.array(2), 3.14, 30, "string"):
+            with self.assertRaises(ValueError):
+                f.healpix_increase_refinement_level(level, "intensive")
+
+        # Can't change refinement level for a 'nuniq' field
+        with self.assertRaises(ValueError):
+            self.f13.healpix_increase_refinement_level(2, "intensive")
+
+        # Non-HEALPix field
+        with self.assertRaises(ValueError):
+            self.f0.healpix_increase_refinement_level(2, "intensive")
 
 
 if __name__ == "__main__":

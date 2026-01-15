@@ -493,6 +493,37 @@ formula_terms_units = {
     },
 }
 
+# --------------------------------------------------------------------
+# CF cell methods
+# --------------------------------------------------------------------
+cell_methods = set(
+    (
+        "point",
+        "sum",
+        "maximum",
+        "maximum_absolute_value",
+        "median",
+        "mid_range",
+        "minimum",
+        "minimum_absolute_value",
+        "mean",
+        "mean_absolute_value",
+        "mean_of_upper_decile",
+        "mode",
+        "range",
+        "root_mean_square",
+        "standard_deviation",
+        "sum_of_squares",
+        "variance",
+    )
+)
+
+
+# --------------------------------------------------------------------
+# CF HEALPix indexing schemes
+# --------------------------------------------------------------------
+healpix_indexing_schemes = ("nested", "ring", "nuniq", "zuniq")
+
 
 # --------------------------------------------------------------------
 # Logging level setup

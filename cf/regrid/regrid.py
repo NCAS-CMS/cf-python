@@ -88,7 +88,9 @@ class Grid:
     dummy_size_2_dimension: bool = False
     # Whether or not the grid is a structured grid.
     is_grid: bool = False
-    # Whether or not the grid is a UGRID mesh.
+    # Whether or not the grid is a UGRID mesh (after any
+    # transformations are applied, such as converting HEALPix to
+    # UGRID).
     is_mesh: bool = False
     # Whether or not the grid is a location stream.
     is_locstream: bool = False
@@ -120,6 +122,9 @@ class Grid:
     # The integer position in *coords* of a vertical coordinate. If
     # `None` then there are no vertical coordinates.
     z_index: Any = None
+    # The original field/domain before any transformations are applied
+    # (such as creating lat/lon coordinates, or converting to UGRID).
+    domain: Any = None
 
 
 def regrid(
@@ -515,8 +520,10 @@ def regrid(
     )
 
     if debug:
+        from pprint import pformat
+
         logger.debug(
-            f"Source Grid:\n{src_grid}\n\nDestination Grid:\n{dst_grid}\n"
+            f"\n{pformat(src_grid)}\n\n{pformat(dst_grid)}\n"
         )  # pragma: no cover
 
     conform_coordinates(src_grid, dst_grid)
@@ -526,6 +533,7 @@ def regrid(
             raise ValueError(
                 f"{method!r} regridding is not available for 1-d regridding"
             )
+
     elif method in ("nearest_dtos", "nearest_stod"):
         if not has_coordinate_arrays(src_grid) and not has_coordinate_arrays(
             dst_grid
@@ -693,7 +701,7 @@ def regrid(
             start_index=start_index,
             src_axes=src_axes,
             dst_axes=dst_axes,
-            dst=dst,
+            dst=dst_grid.domain,
             weights_file=weights_file if from_file else None,
             src_mesh_location=src_grid.mesh_location,
             dst_mesh_location=dst_grid.mesh_location,
@@ -770,14 +778,16 @@ def regrid(
     # ----------------------------------------------------------------
     # Update the regridded metadata
     # ----------------------------------------------------------------
-    update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator)
+    cr_map = update_non_coordinates(
+        src, dst, src_grid, dst_grid, regrid_operator
+    )
 
-    update_coordinates(src, dst, src_grid, dst_grid)
+    update_coordinates(src, dst, src_grid, dst_grid, cr_map)
 
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
-    update_data(src, regridded_data, src_grid)
+    update_data(src, regridded_data, src_grid, dst_grid)
 
     if coord_sys == "spherical" and dst_grid.is_grid:
         # Set the cyclicity of the longitude axis of the new field
@@ -903,7 +913,7 @@ def spherical_coords_to_domain(
     elif coords["lat"].ndim == 2:
         message = (
             "When 'dst' is a sequence containing 2-d latitude and longitude "
-            "coordinate constructs, 'dst_axes' must be dictionary with at "
+            "coordinate constructs, 'dst_axes' must be a dictionary with at "
             "least the keys {'X': 0, 'Y': 1} or {'X': 1, 'Y': 0}. "
             f"Got: {dst_axes!r}"
         )
@@ -1077,6 +1087,8 @@ def get_grid(
 
     .. versionadded:: 3.14.0
 
+    :Parameters:
+
         coord_sys: `str`
             The coordinate system of the source and destination grids.
 
@@ -1088,6 +1100,11 @@ def get_grid(
             `cf.Field.regridc` (for Cartesian regridding) for details.
 
             .. versionadded:: 3.16.2
+
+    :Returns:
+
+        `Grid`
+            The grid definition.
 
     """
     if coord_sys == "spherical":
@@ -1181,6 +1198,16 @@ def spherical_grid(
             The grid definition.
 
     """
+    domain = f.copy()
+
+    # Create any implied lat/lon coordinates in-place
+    try:
+        # Try to convert a HEALPix grid to a UGRID grid (which will
+        # create 1-d lat/lon coordinates)
+        f.healpix_to_ugrid(inplace=True)
+    except ValueError:
+        f.create_latlon_coordinates(cache=False, inplace=True)
+
     data_axes = f.constructs.data_axes()
 
     dim_coords_1d = False
@@ -1324,7 +1351,7 @@ def spherical_grid(
         and (x_size == 1 or y_size == 1)
     ):
         raise ValueError(
-            f"Neither the X nor Y dimensions of the {name} field"
+            f"Neither the X nor Y dimensions of the {name} field "
             f"{f!r} can be of size 1 for spherical {method!r} regridding."
         )
 
@@ -1484,6 +1511,7 @@ def spherical_grid(
         z=z,
         ln_z=ln_z,
         z_index=z_index,
+        domain=domain,
     )
 
     set_grid_type(grid)
@@ -1501,8 +1529,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
     :Parameters:
 
         f: `Field` or `Domain`
-           The field or domain construct from which to get the
-           coordinates.
+            The field or domain construct from which to get the
+            coordinates.
 
         name: `str`
             A name to identify the grid.
@@ -1529,6 +1557,8 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
             The grid definition.
 
     """
+    domain = f.copy()
+
     if not axes:
         if name == "source":
             raise ValueError(
@@ -1718,6 +1748,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None, z=None, ln_z=None):
         z=z,
         ln_z=ln_z,
         z_index=z_index,
+        domain=domain,
     )
 
     set_grid_type(grid)
@@ -3092,7 +3123,7 @@ def get_mask(f, grid):
     return mask
 
 
-def update_coordinates(src, dst, src_grid, dst_grid):
+def update_coordinates(src, dst, src_grid, dst_grid, cr_map):
     """Update the regrid axis coordinates.
 
     Replace the existing coordinate constructs that span the regridding
@@ -3113,17 +3144,24 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         dst: `Field` or `Domain`
             The field or domain containing the destination grid.
 
-        src_grid: `Grid` or `Mesh`
+        src_grid: `Grid`
             The definition of the source grid.
 
-        dst_grid: `Grid` or `Mesh`
+        dst_grid: `Grid`
             The definition of the destination grid.
+
+        cr_map `dict`
+            The mapping of destination coordinate reference identities
+            to source coordinate reference identities, as output by
+            `update_non_coordinates`.
 
     :Returns:
 
         `None`
 
     """
+    dst = dst_grid.domain
+
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
@@ -3178,19 +3216,25 @@ def update_coordinates(src, dst, src_grid, dst_grid):
         filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
     ).items():
         axes = [axis_map[axis] for axis in dst_data_axes[key]]
-        src.set_construct(coord, axes=axes)
+        coord_key = src.set_construct(coord, axes=axes)
+
+        # Update the coordinates in new source coordinate references
+        for dst_cr_key, src_cr_key in cr_map.items():
+            dst_cr = dst.coordinate_reference(dst_cr_key)
+            if key in dst_cr.coordinates():
+                src_cr = src.coordinate_reference(src_cr_key)
+                src_cr.set_coordinate(coord_key)
 
     # Copy domain topology and cell connectivity constructs from the
     # destination grid
-    if dst_grid.is_mesh:
-        for key, topology in dst.constructs(
-            filter_by_type=("domain_topology", "cell_connectivity"),
-            filter_by_axis=dst_axis_keys,
-            axis_mode="exact",
-            todict=True,
-        ).items():
-            axes = [axis_map[axis] for axis in dst_data_axes[key]]
-            src.set_construct(topology, axes=axes)
+    for key, topology in dst.constructs(
+        filter_by_type=("domain_topology", "cell_connectivity"),
+        filter_by_axis=dst_axis_keys,
+        axis_mode="exact",
+        todict=True,
+    ).items():
+        axes = [axis_map[axis] for axis in dst_data_axes[key]]
+        src.set_construct(topology, axes=axes)
 
 
 def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
@@ -3217,9 +3261,13 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
 
     :Returns:
 
-        `None`
+        `dict`
+            The mapping of destination coordinate reference identities
+            to source coordinate reference identities.
 
     """
+    dst = dst_grid.domain
+
     src_axis_keys = src_grid.axis_keys
     dst_axis_keys = dst_grid.axis_keys
 
@@ -3312,19 +3360,28 @@ def update_non_coordinates(src, dst, src_grid, dst_grid, regrid_operator):
 
     # ----------------------------------------------------------------
     # Copy selected coordinate references from the destination grid
+    #
+    # Define the mapping of destination coordinate references to
+    # source coordinate references
     # ----------------------------------------------------------------
-    dst_data_axes = dst.constructs.data_axes()
+    cr_map = {}
 
-    for ref in dst.coordinate_references(todict=True).values():
+    dst_data_axes = dst.constructs.data_axes()
+    for dst_key, ref in dst.coordinate_references(todict=True).items():
         axes = set()
         for c_key in ref.coordinates():
             axes.update(dst_data_axes[c_key])
 
         if axes and set(axes).issubset(dst_axis_keys):
-            src.set_coordinate_reference(ref, parent=dst, strict=True)
+            src_cr = ref.copy()
+            src_cr.clear_coordinates()
+            src_key = src.set_construct(src_cr)
+            cr_map[dst_key] = src_key
+
+    return cr_map
 
 
-def update_data(src, regridded_data, src_grid):
+def update_data(src, regridded_data, src_grid, dst_grid):
     """Insert the regridded field data.
 
     .. versionadded:: 3.16.0
@@ -3343,6 +3400,11 @@ def update_data(src, regridded_data, src_grid):
         src_grid: `Grid`
             The definition of the source grid.
 
+        dst_grid: `Grid`
+            The definition of the destination grid.
+
+            .. versionadded:: NEXTVERSION
+
     :Returns:
 
         `None`
@@ -3358,6 +3420,20 @@ def update_data(src, regridded_data, src_grid):
         index = data_axes.index(src_grid.axis_keys[0])
         for axis in src_grid.axis_keys:
             data_axes.remove(axis)
+            for key, cm in src.cell_methods(todict=True).items():
+                if axis in cm.axes:
+                    # When regridding from one axis to two axes, we
+                    # can safely rename cell method's axis to 'area',
+                    # otherwise we have to delete the cell method to
+                    # allow the domain axis itself to be deleted.
+                    if (
+                        len(src_grid.axis_keys) == 1
+                        and len(dst_grid.axis_keys) == 2
+                    ):
+                        cm.change_axes({axis: "area"}, inplace=True)
+                    else:
+                        src.del_construct(key)
+
             src.del_construct(axis)
 
         data_axes[index:index] = src_grid.new_axis_keys

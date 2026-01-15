@@ -29,8 +29,9 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
-    "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
-    Appendix D "Parametric Vertical Coordinates" for details.""",
+    "{{formula terms links}}": """See CF section 4.3.3: Parametric Vertical Coordinate and
+    CF Appendix D: Parametric Vertical Coordinates.
+    https://doi.org/10.5281/zenodo.14274886""",
     # ----------------------------------------------------------------
     # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
@@ -569,6 +570,47 @@ _docstring_substitution_definitions = {
                 If True then do not perform the regridding, rather
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
+    # HEALPix indexing schemes
+    "{{HEALPix indexing schemes}}": """The nested scheme indexes the pixels inside a single
+                coarser refinement level cell with consecutive
+                indices. The ring scheme indexes the pixels moving
+                down from the north to the south pole along each
+                isolatitude ring. When the HEALPix axis is ordered
+                with monotonically increasing indices, each type of
+                indexing scheme is optimised for different types of
+                operation. For instance, the ring scheme is optimised
+                for Fourier transforxms with spherical harmonics; and
+                the nested scheme is optimised for geographical
+                nearest-neighbour operations such as decreasing the
+                refinement level.
+
+                A Multi-Order Coverage (MOC) has pixels with different
+                refinement levels stored in the same array. An
+                indexing scheme for an MOC has a unique index for each
+                cell at each refinement level.
+
+                The nuniq scheme defines MOC indices such that all
+                cells within a particular refinement level form a
+                sequence of consecutive integers. E.g. for refinement
+                level 0 the indices are 4, ..., 15, for refinement
+                level 1 the indices are 16, ..., 63, for refinement
+                level 2 the indices are 64, ..., 255, etc. This is
+                called a "breadth-first" scheme which is optimised,
+                when the indices are sorted monotonically, for
+                within-refinement level data retrievals.
+
+                The zuniq scheme defines MOC indices such that, for
+                similar refinement levels, cells in the proximity of a
+                particular geographical location have similar index
+                values. This means that, unlike the nuniq case, the
+                indices for a particular refinement level do not form
+                a sequence of consecutive integers. In fact the
+                difference between the smallest and largest indices
+                within any given refinement level is
+                :math:`O(10^19)`. This is called a "depth-first"
+                scheme which is optimised, when the indices are sorted
+                monotonically, for across-refinement level data
+                retrievals.""",
     # dst_grid_partitions
     "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional
             Calculating the weights matrix for grids with a very large

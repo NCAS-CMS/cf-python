@@ -119,7 +119,6 @@ from .quantization import Quantization
 from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
-from .domain import Domain
 from .datum import Datum
 from .coordinateconversion import CoordinateConversion
 
@@ -138,6 +137,7 @@ from .coordinatereference import CoordinateReference
 from .cellconnectivity import CellConnectivity
 from .cellmethod import CellMethod
 from .cellmeasure import CellMeasure
+from .domain import Domain
 from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .domaintopology import DomainTopology

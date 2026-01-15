@@ -431,6 +431,32 @@ class functionTest(unittest.TestCase):
             with self.assertRaises(IndexError):
                 cf.normalize_slice(index, 8, cyclic=True)
 
+    def test_locate(self):
+        """Test cf.locate"""
+        # HEALPix
+        f = cf.example_field(12)
+        self.assertEqual(cf.locate(20, 90, f), 23)
+        self.assertEqual(cf.locate(-70, 90, f), 36)
+        self.assertEqual(cf.locate(20, [280, 280.001], f), 31)
+
+        self.assertTrue(np.array_equal(cf.locate([-70, 20], 90, f), [23, 36]))
+        self.assertTrue(
+            np.array_equal(cf.locate([-70, 20], [90, 280], f), [31, 36])
+        )
+        self.assertTrue(
+            np.array_equal(cf.locate([-70, 20], [90, 280])(f), [31, 36])
+        )
+
+        # Bad latitudes
+        for lat in (-91, 91):
+            with self.assertRaises(ValueError):
+                cf.locate(lat, 30, f)
+
+        # Invalid grid types (regular lat/lon, geometry, UGRID)
+        for f in cf.example_fields(0, 6, 8):
+            with self.assertRaises(ValueError):
+                cf.locate(60, 30, f)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

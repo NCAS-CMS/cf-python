@@ -296,6 +296,15 @@ environments for which these features are not required.
   must use a copy of the ``pyfive`` branch of the
   https://github.com/NCAS-CMS/PyActiveStorage repository.
 
+.. rubric:: HEALPix manipulations
+
+* `healpix <https://pypi.org/project/healpix>`_, version 2025.1 or
+  newer. This package is not required to read and write HEALPix
+  datasets, but may be needed for particular manipulations with
+  HEALPix grids, such as creating latitude and longitude coordinates,
+  regridding, some changes to the refinement level, and some
+  collapses.
+
 ----
 
 .. _Tests:

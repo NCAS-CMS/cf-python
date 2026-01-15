@@ -134,6 +134,7 @@ Changing data shape
 
    ~cf.Data.flatten
    ~cf.Data.reshape
+   ~cf.Data.coarsen
 
 Transpose-like operations
 ^^^^^^^^^^^^^^^^^^^^^^^^^

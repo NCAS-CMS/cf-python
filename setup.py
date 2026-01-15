@@ -186,6 +186,10 @@ The ``cf`` package can:
 
 * write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
 
+* read, create, and manipulate UGRID mesh topologies,
+
+* read, write, and manipulate HEALPix grids,
+
 * read, write, and create coordinates defined by geometry cells,
 
 * read netCDF and CDL datasets containing hierarchical groups,
@@ -217,8 +221,8 @@ The ``cf`` package can:
 * perform histogram, percentile and binning operations on field
   constructs,
 
-* regrid structured grid, mesh and DSG field constructs with
-  (multi-)linear, nearest neighbour, first- and second-order
+* regrid structured grid, UGRID, HEALPix, and DSG field constructs
+  with (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including 3-d
   regridding, and large-grid support,
 

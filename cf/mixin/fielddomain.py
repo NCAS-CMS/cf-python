@@ -21,6 +21,7 @@ from ..units import Units
 
 logger = logging.getLogger(__name__)
 
+_earth_radius = 6371229.0
 
 _units_degrees = Units("degrees")
 
@@ -296,6 +297,16 @@ class FieldDomain:
                     f"non-negative integer. Got {halo!r}"
                 )
 
+        # Create any latitude and longitude coordinates (e.g. as
+        # implied by a non-latitude_longitude grid mapping coordinate
+        # reference). This is so that latitude and longitude kwarg
+        # selections can work, even if the actual latitude and
+        # longitude coordinates are not currently part of the
+        # metadata.
+        #
+        # Do not do this in-place.
+        self = self.create_latlon_coordinates(cache=False)
+
         domain_axes = self.domain_axes(todict=True)
 
         # Initialise the index for each axis
@@ -321,6 +332,18 @@ class FieldDomain:
                     raise ValueError(
                         f"Can't find indices. Ambiguous axis or axes "
                         f"defined by {identity!r}"
+                    )
+
+            # If the condition is a callable function, then call it
+            # with 'self' as the only argument and replace the
+            # condition with the result.
+            if callable(value):
+                try:
+                    value = value(self)
+                except Exception as e:
+                    raise RuntimeError(
+                        f"Error encountered when calling condition "
+                        f"{identity}={value}: {e}"
                     )
 
             if axes in parsed:
@@ -1611,8 +1634,15 @@ class FieldDomain:
 
         axis = f.get_data_axes(key)
         dim = f._DimensionCoordinate(source=aux)
-        f.set_construct(dim, axes=axis)
+        dim_key = f.set_construct(dim, axes=axis, copy=False)
+
+        # Update Coordinates listed in Coordinate References
+        for cr in f.coordinate_references().values():
+            if key in cr.coordinates():
+                cr.set_coordinate(dim_key)
+
         f.del_construct(key)
+
         return f
 
     def del_coordinate_reference(
@@ -1621,66 +1651,66 @@ class FieldDomain:
         """Remove a coordinate reference construct and all of its domain
         ancillary constructs.
 
-                .. versionadded:: 3.0.0
+        .. versionadded:: 3.0.0
 
-                .. seealso:: `del_construct`
+        .. seealso:: `del_construct`
 
-                :Parameters:
+        :Parameters:
 
-                    identity: optional
-                        Select the coordinate reference construct by one of:
+            identity: optional
+                Select the coordinate reference construct by one of:
 
-                        * The identity of a coordinate reference construct.
+                * The identity of a coordinate reference construct.
 
-                          {{construct selection identity}}
+                  {{construct selection identity}}
 
-                        * The key of a coordinate reference construct
+                * The key of a coordinate reference construct
 
-                        * `None`. This is the default, which selects the
-                          coordinate reference construct when there is only
-                          one of them.
+                * `None`. This is the default, which selects the
+                  coordinate reference construct when there is only
+                  one of them.
 
-                        *Parameter example:*
-                          ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+                *Parameter example:*
+                  ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
 
-                        *Parameter example:*
-                          ``identity='grid_mapping_name:rotated_latitude_longitude'``
+                *Parameter example:*
+                  ``identity='grid_mapping_name:rotated_latitude_longitude'``
 
-                        *Parameter example:*
-                          ``identity='transverse_mercator'``
+                *Parameter example:*
+                  ``identity='transverse_mercator'``
 
-                        *Parameter example:*
-                          ``identity='coordinatereference1'``
+                *Parameter example:*
+                  ``identity='coordinatereference1'``
 
-                        *Parameter example:*
-                          ``identity='key%coordinatereference1'``
+                *Parameter example:*
+                  ``identity='key%coordinatereference1'``
 
-                        *Parameter example:*
-                          ``identity='ncvar%lat_lon'``
+                *Parameter example:*
+                  ``identity='ncvar%lat_lon'``
 
-                        *Parameter example:*
-                          ``identity=cf.eq('rotated_pole')'``
+                *Parameter example:*
+                  ``identity=cf.eq('rotated_pole')'``
 
-                        *Parameter example:*
-                          ``identity=re.compile('^rotated')``
+                *Parameter example:*
+                  ``identity=re.compile('^rotated')``
 
-                    construct: optional
-                        TODO
+            construct: optional
+                TODO
 
-                    default: optional
-                        Return the value of the *default* parameter if the
-                        construct can not be removed, or does not exist.
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
 
-                        {{default Exception}}
+                {{default Exception}}
 
-                :Returns:
+        :Returns:
 
-                        The removed coordinate reference construct.
+                The removed coordinate reference construct.
 
-                **Examples**
+        **Examples**
 
-                >>> f.del_coordinate_reference('rotated_latitude_longitude')
-                <CF CoordinateReference: rotated_latitude_longitude>
+        >>> f.del_coordinate_reference('rotated_latitude_longitude')
+        <CF CoordinateReference: rotated_latitude_longitude>
 
         """
         if construct is None:
@@ -1947,6 +1977,655 @@ class FieldDomain:
 
         return set(axes)
 
+    def healpix_indexing_scheme(
+        self, new_indexing_scheme, sort=False, moc_refinement_level=None
+    ):
+        r"""Change the indexing scheme of HEALPix indices.
+
+        Note that the Field data values are not changed, nor is the
+        Field Data array reordered. Only the "healpix_index"
+        coordinate values are changed, along with the corresponding
+        "healpix" grid mapping Coordinate Reference.
+
+        In general, changing from nuniq or zuniq to ring or nested
+        indexing schemes is not allowed, because
+        `healpix_indexing_scheme` is a lzay operation and so whether
+        or not the original nuniq or zuniq indices represent a single
+        refinement level is currently unknown.
+
+        * nuniq or zuniq -> ring or nested
+        *
+
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_info`, `healpix_to_ugrid`
+
+        :Parameters:
+
+            new_indexing_scheme: `str` or `None`
+                The new HEALPix indexing scheme. One of ``'nested'``,
+                ``'ring'``, ``'nuniq'``, ``'zuniq'``, or `None`. If
+                `None` then the indexing scheme is unchanged.
+
+                {{HEALPix indexing schemes}}
+
+            sort: `bool`, optional
+                If True then re-order the HEALPix axis of the output
+                so that its HEALPix indices are monotonically
+                increasing, including when the indexing scheme is
+                unchanged. If False (the default) then don't do this.
+
+            moc_refinement_level: `int` or `None`, optional
+                By default, or if *moc_refinement_level* is `None`,
+                changing from an nuniq or zuniq MOC indexing scheme to
+                a ring or nested indexing scheme is not allowed,
+                because the original MOC indices are not inspected to
+                ascertain whether or not they represent a single
+                refinement level. However, if it is otherwise known
+                that they do represent a single refinement level, then
+                this level may be provided with the
+                *moc_refinement_level* parameter and the change will
+                be allowed.
+
+                When the new indices are computed, if the original MOC
+                indices do in fact include a refinement level other
+                than *moc_refinement_level* then an exception is
+                raised.
+
+        :Returns:
+
+            `{{class}}`
+                The {{class}} with the HEALPix indices redefined for
+                the new scheme.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Coord references: grid_mapping_name:healpix
+        >>> f.healpix_info()['indexing_scheme']
+        'nested'
+        >>> print(f.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
+
+        >>> g = f.healpix_indexing_scheme('nuniq')
+        >>> g.healpix_info()['indexing_scheme']
+        'nuniq'
+        >>> print(g.coordinate('healpix_index').array)
+        [16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
+         40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63]
+
+        >>> g = f.healpix_indexing_scheme('ring')
+        >>> g.healpix_info()['indexing_scheme']
+        'ring'
+        >>> print(g.coordinate('healpix_index').array)
+        [13  5  4  0 15  7  6  1 17  9  8  2 19 11 10  3 28 20 27 12 30 22 21 14
+         32 24 23 16 34 26 25 18 44 37 36 29 45 39 38 31 46 41 40 33 47 43 42 35]
+
+        >>> g = f.healpix_indexing_scheme('ring', sort=True)
+        >>> print(g.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
+        >>> h = g.healpix_indexing_scheme('nested')
+        >>> print(h.coordinate('healpix_index').array)
+        [ 3  7 11 15  2  1  6  5 10  9 14 13 19  0 23  4 27  8 31 12 17 22 21 26
+         25 30 29 18 16 35 20 39 24 43 28 47 34 33 38 37 42 41 46 45 32 36 40 44]
+        >>> h = g.healpix_indexing_scheme(None, sort=True)
+        >>> print(h.coordinate('healpix_index').array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+         24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
+
+        """
+        from ..constants import healpix_indexing_schemes
+
+        f = self.copy()
+
+        hp = f.healpix_info()
+
+        if new_indexing_scheme not in healpix_indexing_schemes + (None,):
+            raise ValueError(
+                f"Can't change HEALPix index scheme of {f!r}: "
+                "new_indexing_scheme keyword must be None or one of "
+                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+            )
+
+        # Get the healpix_index coordinates
+        healpix_index = hp.get("healpix_index")
+        if healpix_index is None:
+            raise ValueError(
+                f"Can't change HEALPix index scheme of {f!r}: There are no "
+                "healpix_index coordinates"
+            )
+
+        indexing_scheme = hp.get("indexing_scheme")
+        if indexing_scheme is None:
+            raise ValueError(
+                f"Can't change HEALPix indexing scheme of {f!r}: "
+                "indexing_scheme has not been set in the healpix grid "
+                "mapping coordinate reference"
+            )
+
+        if indexing_scheme not in healpix_indexing_schemes:
+            raise ValueError(
+                f"Can't change HEALPix indexing scheme of {f!r}: "
+                "indexing_scheme in the healpix grid mapping coordinate "
+                "reference must be one of "
+                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+            )
+
+        if (
+            new_indexing_scheme is not None
+            and new_indexing_scheme != indexing_scheme
+        ):
+            refinement_level = hp.get("refinement_level")
+            if refinement_level is None and indexing_scheme in (
+                "nested",
+                "ring",
+            ):
+                raise ValueError(
+                    f"Can't change HEALPix indexing scheme of {f!r} from "
+                    f"{indexing_scheme!r} to {new_indexing_scheme!r} when "
+                    "refinement_level has not been set in the healpix grid "
+                    "mapping coordinate reference"
+                )
+
+            if moc_refinement_level is None:
+                if indexing_scheme in (
+                    "nuniq",
+                    "zuniq",
+                ) and new_indexing_scheme in ("nested", "ring"):
+                    raise ValueError("TODOHEALPIX")
+
+            elif not (
+                indexing_scheme in ("nuniq", "zuniq")
+                and new_indexing_scheme in ("nested", "ring")
+            ):
+                raise ValueError("TODOHEALPIX")
+
+            # Update the Coordinate Reference
+            cr = hp["grid_mapping_name:healpix"]
+            cr.coordinate_conversion.set_parameter(
+                "indexing_scheme", new_indexing_scheme
+            )
+            if new_indexing_scheme in ("nuniq", "zuniq"):
+                cr.coordinate_conversion.del_parameter(
+                    "refinement_level", None
+                )
+            elif moc_refinement_level is not None:
+                cr.coordinate_conversion.set_parameter(
+                    "refinement_level", moc_refinement_level
+                )
+
+            # Change the HEALPix indices
+            from ..healpix import _healpix_indexing_scheme
+
+            _healpix_indexing_scheme(
+                f, hp, new_indexing_scheme, moc_refinement_level
+            )
+
+        if sort:
+            # Sort the HEALPix axis so that the HEALPix indices are
+            # monotonically increasing.
+            d = healpix_index.data
+            if (d.diff() < 0).any():
+                index = d.compute()
+                f = f.subspace(**{hp["domain_axis_key"]: np.argsort(index)})
+
+            # Now that the HEALPix indices are ordered, store them in
+            # a Dimension Coordinate.
+            if healpix_index.construct_type == "auxiliary_coordinate":
+                f.auxiliary_to_dimension(hp["coordinate_key"], inplace=True)
+
+        return f
+
+    def healpix_info(self):
+        """Get information about the HEALPix grid, if there is one.
+
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
+        .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `dict`
+
+                The information about the HEALPix axis, with some or
+                all of the following dictionary keys:
+
+                * ``'coordinate_reference_key'``: The construct key of
+                  the healpix coordinate reference construct.
+
+                * ``'grid_mapping_name:healpix'``: The healpix
+                  coordinate reference construct.
+
+                * ``'indexing_scheme'``: The HEALPix indexing scheme.
+
+                * ``'refinement_level'``: The refinement level of the
+                  HEALPix grid.
+
+                * ``'domain_axis_key'``: The construct key of the
+                  HEALPix domain axis construct.
+
+                * ``'coordinate_key'``: The construct key of the
+                  healpix_index coordinate construct.
+
+                * ``'healpix_index'``: The healpix_index coordinate
+                  construct.
+
+                The dictionary will be empty if there is no HEALPix axis.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> f.healpix_info()
+        {'coordinate_reference_key': 'coordinatereference0',
+         'grid_mapping_name:healpix': <CF CoordinateReference: grid_mapping_name:healpix>,
+         'indexing_scheme': 'nested',
+         'refinement_level': 1,
+         'domain_axis_key': 'domainaxis1',
+         'coordinate_key': 'auxiliarycoordinate0',
+         'healpix_index': <CF DimensionCoordinate: healpix_index(48)>}
+
+        >>> f = cf.example_field(0)
+        >>> healpix_info(f)
+        {}
+
+        """
+        from ..healpix import healpix_info
+
+        return healpix_info(self)
+
+    @_inplace_enabled(default=False)
+    def healpix_to_ugrid(self, cache=True, inplace=False):
+        """Convert a HEALPix domain to a UGRID domain.
+
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_info`, `create_latlon_coordinates`
+
+        :Parameters:
+
+            cache: `bool`, optional
+                If True (the default) then cache in memory the first
+                and last of any newly-created UGRID coordinates and
+                bounds. This may slightly slow down the coordinate
+                creation process, but may greatly speed up, and reduce
+                the memory requirement of, a future inspection of the
+                coordinates and bounds. Even when *cache* is True, new
+                cached coordinate values can only be created if the
+                existing healpix_index coordinates themselves have
+                cached first and last values.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The `{{class}}` converted to UGRID, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Coord references: grid_mapping_name:healpix
+        >>> print(f.healpix_to_ugrid())
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), ncdim%cell(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : height(1) = [1.5] m
+        Auxiliary coords: latitude(ncdim%cell(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
+                        : longitude(ncdim%cell(48)) = [45.0, ..., 315.0] degrees_east
+        Coord references: grid_mapping_name:latitude_longitude
+        Topologies      : cell:face(ncdim%cell(48), 4) = [[774, ..., 3267]]
+
+        """
+        from ..healpix import del_healpix_coordinate_reference
+
+        hp = self.healpix_info()
+
+        axis = hp.get("domain_axis_key")
+        if axis is None:
+            raise ValueError(
+                f"Can't convert {self!r} from HEALPix to UGRID: There is no "
+                "HEALPix domain axis"
+            )
+
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        # If 1-d lat/lon coordinates do not exist, then derive them
+        # from the HEALPix indices. Setting the pole_longitude to
+        # something other than None - it doesn't matter what - ensures
+        # that the north (south) polar vertex comes out as a single
+        # node in the domain topology.
+        f.create_latlon_coordinates(
+            two_d=False, pole_longitude=0, cache=cache, inplace=True
+        )
+
+        # Get the lat/lon coordinates
+        x_key, x = f.auxiliary_coordinate(
+            "Y",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            item=True,
+            default=(None, None),
+        )
+        y_key, y = f.auxiliary_coordinate(
+            "X",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            item=True,
+            default=(None, None),
+        )
+        if x is None:
+            raise ValueError(
+                f"Can't convert {f!r} from HEALPix to UGRID: Not able to "
+                "find (nor create) longitude coordinates"
+            )
+
+        if y is None:
+            raise ValueError(
+                f"Can't convert {f!r} from HEALPix to UGRID: Not able to "
+                "find (or create) latitude coordinates"
+            )
+
+        bounds_y = y.get_bounds(None)
+        bounds_x = x.get_bounds(None)
+        if bounds_y is None:
+            raise ValueError(
+                f"Can't convert {f!r} from HEALPix to UGRID: No latitude "
+                "coordinate bounds"
+            )
+
+        if bounds_x is None:
+            raise ValueError(
+                f"Can't convert {f!r} from HEALPix to UGRID: No longitude "
+                "coordinate bounds"
+            )
+
+        # Create the UGRID Domain Topology construct, by creating a
+        # unique integer identifier for each unique node location.
+        bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
+        bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
+
+        _, y_indices = np.unique(bounds_y, return_inverse=True)
+        _, x_indices = np.unique(bounds_x, return_inverse=True)
+
+        nodes = y_indices * y_indices.size + x_indices
+
+        domain_topology = f._DomainTopology(data=f._Data(nodes))
+        domain_topology.set_cell("face")
+        domain_topology.set_property(
+            "long_name", "UGRID domain topology derived from HEALPix"
+        )
+        f.set_construct(domain_topology, axes=axis, copy=False)
+
+        # Remove the HEALPix index coordinates
+        f.del_construct(hp["coordinate_key"])
+
+        # Remove the HEALPix coordinate reference
+        del_healpix_coordinate_reference(f)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    @_manage_log_level_via_verbosity
+    def create_latlon_coordinates(
+        self,
+        one_d=True,
+        two_d=True,
+        pole_longitude=None,
+        overwrite=False,
+        cache=True,
+        inplace=False,
+        verbose=None,
+    ):
+        """Create latitude and longitude coordinates.
+
+        Creates 1-d or 2-d latitude and longitude coordinate
+        constructs that are implied by the {{class}} coordinate
+        reference constructs. By default (or if *overwrite* is False),
+        new coordinates are only created if the {{class}} doesn't
+        already include any latitude or longitude coordinates.
+
+        When it is not possible to create latitude and longitude
+        coordinates, the reason why will be reported if the log level
+        is at ``2``/``'INFO'`` or higher (as set by `cf.log_level` or
+        the *verbose* parameter).
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `healpix_to_ugrid`
+
+        :Parameters:
+
+            one_d: `bool`, optional`
+                If True (the default) then consider creating 1-d
+                latitude and longitude coordinates. If False then 1-d
+                coordinates will not be created.
+
+            two_d: `bool`, optional`
+                If True (the default) then consider creating 2-d
+                latitude and longitude coordinates. If False then 2-d
+                coordinates will not be created.
+
+            pole_longitude: `None` or number
+                Define the longitudes of coordinates or coordinate
+                bounds that lie exactly on the north or south pole. If
+                `None` (the default) then the longitudes of such
+                points are determined by whichever algorithm was used
+                to create the coordinates, which will could result in
+                different points on a pole having different
+                longitudes. If set to a number, then the longitudes of
+                all points on the north or south pole will be given
+                that value.
+
+            overwrite: `bool`, optional
+                If True then remove any existing latitude and
+                longitude coordinates, prior to attempting to create
+                new ones. If False (the default) then if any latitude
+                or longitude coordinates already exist, new ones will
+                not be created. Note that when *overwrite* is True and
+                no new coordinates could be created, the returned
+                field will not have any latitude and longitude
+                coordinates.
+
+            cache: `bool`, optional
+                If True (the default) then cache in memory the first
+                and last values of any newly-created coordinates and
+                bounds. This may greatly speed up, and reduce the
+                memory requirement of, a future inspection of the
+                coordinates and bounds. Even when *cache* is True, new
+                cached values will only be created if the existing
+                source coordinates (from which the newly-created
+                latitude and longitude coordinates are calculated)
+                have cached first and last values.
+
+            {{inplace: `bool`, optional}}
+
+            {{verbose: `int` or `str` or `None`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                A new {{class}}, with new latitude and longitude
+                constructs if any could be created. If the operation
+                was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> f = cf.example_field(12)
+        >>> print(f)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(healpix_index(48)) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Coord references: grid_mapping_name:healpix
+        >>> g = f.create_latlon_coordinates()
+        >>> print(g)
+        Field: air_temperature (ncvar%tas)
+        ----------------------------------
+        Data            : air_temperature(time(2), healpix_index(48)) K
+        Cell methods    : time(2): mean area: mean
+        Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                        : healpix_index(48) = [0, ..., 47]
+                        : height(1) = [1.5] m
+        Auxiliary coords: latitude(healpix_index(48)) = [19.47122063449069, ..., -19.47122063449069] degrees_north
+                        : longitude(healpix_index(48)) = [45.0, ..., 315.0] degrees_east
+        Coord references: grid_mapping_name:healpix
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        # ------------------------------------------------------------
+        # See if any lat/lon coordinates could be created, by
+        # inspecting the coordinate and coordinate reference
+        # constructs.
+        # ------------------------------------------------------------
+
+        # See if there are any existing latitude/longitude coordinates
+        latlon_coordinates = {
+            key: c
+            for key, c in f.coordinates(todict=True).items()
+            if c.Units.islatitude or c.Units.islongitude
+        }
+        if latlon_coordinates:
+            if overwrite:
+                # Remove existing latitude/longitude coordinates
+                # before carrying on
+                for key in latlon_coordinates:
+                    f.del_construct(key)
+            else:
+                if is_log_level_info(logger):
+                    logger.info(
+                        "Can't create latitude and longitude coordinates: "
+                        "overwrite=False and latitude and/or longitude "
+                        "coordinates already exist: "
+                        f"{', '.join(map(repr, latlon_coordinates.values()))}"
+                    )  # pragma: no cover
+
+                return f
+
+        # Store all of the grid mapping Coordinate References in a
+        # dictionary
+        coordinate_references = {
+            cr.identity(None): cr
+            for cr in f.coordinate_references(todict=True).values()
+        }
+        coordinate_references.pop(None, None)
+        if not coordinate_references:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: "
+                    "There are no grid mapping coordinate references"
+                )  # pragma: no cover
+
+            return f
+
+        coordinate_references = {
+            identity: cr
+            for identity, cr in coordinate_references.items()
+            if identity.startswith("grid_mapping_name:")
+        }
+
+        # Remove a 'latitude_longitude' grid mapping (if there is one)
+        # from the dictionary, saving it for later.
+        latlon_cr = coordinate_references.pop(
+            "grid_mapping_name:latitude_longitude", None
+        )
+        if not coordinate_references:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: There "
+                    "is no non-latitude_longitude grid mapping coordinate "
+                    "reference"
+                )  # pragma: no cover
+
+            return f
+
+        if len(coordinate_references) > 1:
+            if is_log_level_info(logger):
+                logger.info(
+                    "Can't create latitude and longitude coordinates: There "
+                    "is more than one non-latitude_longitude grid mapping "
+                    "coordinate reference: "
+                    f"{', '.join(map(repr, coordinate_references.values()))}"
+                )  # pragma: no cover
+
+            return f
+
+        # ------------------------------------------------------------
+        # Still here? Then we might be able to create some lat/lon
+        # coordinates.
+        # ------------------------------------------------------------
+
+        # Initialise the flag that tells us if any new coordinates
+        # have been created
+        coords_created = False
+
+        # Get the unique non-latitude_longitude grid mapping
+        identity, cr = coordinate_references.popitem()
+
+        if one_d and not coords_created:
+            # --------------------------------------------------------
+            # 1-d lat/lon coordinates
+            # --------------------------------------------------------
+            if identity == "grid_mapping_name:healpix":
+                # ----------------------------------------------------
+                # HEALPix
+                # ----------------------------------------------------
+                from ..healpix import _healpix_create_latlon_coordinates
+
+                lat_key, lon_key = _healpix_create_latlon_coordinates(
+                    f, pole_longitude, cache
+                )
+                coords_created = lat_key is not None
+
+        if two_d and not coords_created:
+            # --------------------------------------------------------
+            # 2-d lat/lon coordinates
+            # --------------------------------------------------------
+            pass  # For now ...
+
+        # ------------------------------------------------------------
+        # Update the appropriate coordinate reference with any new
+        # coordinate keys
+        # ------------------------------------------------------------
+        if coords_created:
+            if latlon_cr is not None:
+                latlon_cr.set_coordinates((lat_key, lon_key))
+            else:
+                cr.set_coordinates((lat_key, lon_key))
+
+        return f
+
     def cyclic(
         self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
     ):
@@ -2147,8 +2826,15 @@ class FieldDomain:
 
         axis = f.get_data_axes(key)
         aux = f._AuxiliaryCoordinate(source=dim)
-        f.set_construct(aux, axes=axis)
+        aux_key = f.set_construct(aux, axes=axis, copy=False)
+
+        # Update Coordinates listed in Coordinate References
+        for cr in f.coordinate_references().values():
+            if key in cr.coordinates():
+                cr.set_coordinate(aux_key)
+
         f.del_construct(key)
+
         return f
 
     @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")
@@ -2413,6 +3099,8 @@ class FieldDomain:
         * An axis spanned by the domain topology construct of an
           unstructured grid.
 
+        * A HEALPix axis.
+
         * The axis with geometry cells.
 
         .. versionaddedd:: 3.16.3
@@ -2479,6 +3167,15 @@ class FieldDomain:
         # UGRID
         if self.domain_topologies(
             filter_by_axis=(axis,), axis_mode="exact", todict=True
+        ):
+            return True
+
+        # HEALPix
+        if self.coordinates(
+            "healpix_index",
+            filter_by_axis=(axis,),
+            axis_mode="exact",
+            todict=True,
         ):
             return True
 
@@ -2577,6 +3274,112 @@ class FieldDomain:
                 axes = (axes,)
 
         return [self.domain_axis(x, key=True) for x in axes]
+
+    def radius(self, default=None):
+        """Return the radius of a latitude-longitude plane defined in
+        spherical polar coordinates.
+
+        The radius is taken from the datums of any coordinate
+        reference constructs, but if and only if this is not possible
+        then a default value may be used instead.
+
+        .. versionadded:: 3.0.2
+
+        .. seealso:: `bin`, `cell_area`, `collapse`
+
+        :Parameters:
+
+            default: optional
+                The radius is taken from the datums of any coordinate
+                reference constructs, but if and only if this is not
+                possible then the value set by the *default* parameter
+                is used. May be set to any numeric scalar object,
+                including `numpy` and `Data` objects. The units of the
+                radius are assumed to be metres, unless specified by a
+                `Data` object. If the special value ``'earth'`` is
+                given then the default radius taken as 6371229
+                metres. If *default* is `None` an exception will be
+                raised if no unique datum can be found in the
+                coordinate reference constructs.
+
+                *Parameter example:*
+                  Five equivalent ways to set a default radius of
+                  6371200 metres: ``6371200``,
+                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
+                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
+                  'km')``.
+
+        :Returns:
+
+            `Data`
+                The radius of the sphere, in units of metres.
+
+        **Examples**
+
+        >>> f.radius()
+        <CF Data(): 6371178.98 m>
+
+        >>> g.radius()
+        ValueError: No radius found in coordinate reference constructs and no default provided
+        >>> g.radius('earth')
+        <CF Data(): 6371229.0 m>
+        >>> g.radius(1234)
+        <CF Data(): 1234.0 m>
+
+        """
+        radii = []
+        for cr in self.coordinate_references(todict=True).values():
+            r = cr.datum.get_parameter("earth_radius", None)
+            if r is not None:
+                r = self._Data.asdata(r)
+                if not r.Units:
+                    r.override_units("m", inplace=True)
+
+                if r.size != 1:
+                    radii.append(r)
+                    continue
+
+                got = False
+                for _ in radii:
+                    if r == _:
+                        got = True
+                        break
+
+                if not got:
+                    radii.append(r)
+
+        if len(radii) > 1:
+            raise ValueError(
+                "Multiple radii found from coordinate reference "
+                f"constructs: {radii!r}"
+            )
+
+        if not radii:
+            if default is None:
+                raise ValueError(
+                    "No radius found from coordinate reference constructs "
+                    "and no default provided"
+                )
+
+            if isinstance(default, str):
+                if default != "earth":
+                    raise ValueError(
+                        "The default radius must be numeric, 'earth', "
+                        "or None"
+                    )
+
+                return self._Data(_earth_radius, "m")
+
+            r = self._Data.asdata(default).squeeze()
+        else:
+            r = self._Data.asdata(radii[0]).squeeze()
+
+        if r.size != 1:
+            raise ValueError(f"Multiple radii: {r!r}")
+
+        r.Units = Units("m")
+        r.dtype = float
+        return r
 
     def replace_construct(
         self, *identity, new=None, copy=True, **filter_kwargs
@@ -2992,10 +3795,13 @@ class FieldDomain:
         for value in coordinate_reference.coordinates():
             if value in coordinates:
                 identity = coordinates[value].identity(strict=strict)
-                ckeys.append(self.coordinate(identity, key=True, default=None))
+                ckey = self.coordinate(identity, key=True, default=None)
+                if ckey is not None:
+                    ckeys.append(ckey)
 
         ref.clear_coordinates()
-        ref.set_coordinates(ckeys)
+        if ckeys:
+            ref.set_coordinates(ckeys)
 
         coordinate_conversion = coordinate_reference.coordinate_conversion
 

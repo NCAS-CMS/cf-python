@@ -1395,7 +1395,7 @@ on the surface of the sphere, rather than in :ref:`Euclidean space
 Spherical regridding can occur between source and destination grids
 that comprise any pairing of `Latitude-longitude`_, `Rotated
 latitude-longitude`_, `Plane projection`_, `Tripolar`_, `UGRID mesh`_,
-and `DSG feature type`_ coordinate systems.
+`HEALPix_`, and `DSG feature type`_ coordinate systems.
 
 The most convenient usage is when the destination domain exists
 in another field construct. In this case, all you need to specify is the

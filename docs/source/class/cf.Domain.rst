@@ -180,7 +180,9 @@ Miscellaneous
    ~cf.Domain.apply_masking
    ~cf.Domain.climatological_time_axes
    ~cf.Domain.copy
+   ~cf.Domain.create_latlon_coordinates
    ~cf.Domain.create_regular   
+   ~cf.Domain.create_healpix   
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
@@ -191,7 +193,14 @@ Miscellaneous
    ~cf.Domain.get_original_filenames
    ~cf.Domain.close
    ~cf.Domain.persist
-   ~cf.Domain.uncompress
+   ~cf.Domain.uncompresshas_bounds
+   ~cf.Domain.has_data
+   ~cf.Domain.has_geometry
+   ~cf.Domain.apply_masking   
+   ~cf.Domain.get_original_filenames
+   ~cf.Domain.close
+   ~cf.Domain.persist
+   ~cf.Domain.radius
 
 Domain axes
 -----------
@@ -220,6 +229,19 @@ Subspacing
 
    ~cf.Domain.indices
    ~cf.Domain.subspace
+
+HEALPix grids
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.healpix_info
+   ~cf.Domain.healpix_indexing_scheme
+   ~cf.Domain.healpix_to_ugrid
+   ~cf.Domain.create_healpix
 
 NetCDF
 ------

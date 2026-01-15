@@ -440,8 +440,7 @@ class DimensionCoordinate(
 
     @classmethod
     def create_regular(cls, args, units=None, standard_name=None, bounds=True):
-        """
-        Create a new `DimensionCoordinate` with the given range and cellsize.
+        """Create a new `DimensionCoordinate` with the given range and cellsize.
 
         .. versionadded:: 3.15.0
 
@@ -455,9 +454,9 @@ class DimensionCoordinate(
 
             bounds: `bool`, optional
                 If True (the default) then the given range represents
-                the bounds, and the coordinate points will be the midpoints of
-                the bounds. If False, the range represents the coordinate points
-                directly.
+                the bounds, and the coordinate points will be the
+                midpoints of the bounds. If False, the range
+                represents the coordinate points directly.
 
             units: str or `Units`, optional
                 The units of the new `DimensionCoordinate` object.
@@ -492,31 +491,34 @@ class DimensionCoordinate(
                 f"Expected a sequence of three numbers, got {args}."
             )
 
-        range = (args[0], args[1])
+        r = (args[0], args[1])
         cellsize = args[2]
 
-        range_diff = range[1] - range[0]
+        range_diff = r[1] - r[0]
         if cellsize > 0 and range_diff <= 0:
             raise ValueError(
-                f"Range ({range[0], range[1]}) must be increasing for a "
+                f"Range {r} must be increasing for a "
                 f"positive cellsize ({cellsize})"
             )
         elif cellsize < 0 and range_diff >= 0:
             raise ValueError(
-                f"Range ({range[0], range[1]}) must be decreasing for a "
+                f"Range {r} must be decreasing for a "
                 f"negative cellsize ({cellsize})"
+            )
+        elif cellsize > abs(range_diff):
+            raise ValueError(
+                f"cellsize ({cellsize}) can not exceed the range {r}"
             )
 
         if standard_name is not None and not isinstance(standard_name, str):
             raise ValueError("standard_name must be either None or a string.")
 
+        start = r[0]
+        end = r[1]
         if bounds:
             cellsize2 = cellsize / 2
-            start = range[0] + cellsize2
-            end = range[1] - cellsize2
-        else:
-            start = range[0]
-            end = range[1]
+            start += cellsize2
+            end -= cellsize2
 
         points = np.arange(start, end + cellsize, cellsize)
 
@@ -527,8 +529,11 @@ class DimensionCoordinate(
         )
 
         if bounds:
-            b = coordinate.create_bounds()
-            coordinate.set_bounds(b, copy=False)
+            if points.size > 1:
+                coordinate.create_bounds(inplace=True)
+            else:
+                b = Bounds(data=Data([r]))
+                coordinate.set_bounds(b, copy=False)
 
         return coordinate
 

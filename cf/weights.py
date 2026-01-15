@@ -1,4 +1,5 @@
 import cfdm
+import numpy as np
 
 from .mixin_container import Container
 
@@ -635,8 +636,6 @@ class Weights(Container, cfdm.Container):
                 square metres.
 
         """
-        import numpy as np
-
         x_units = x.Units
         y_units = y.Units
 
@@ -798,8 +797,6 @@ class Weights(Container, cfdm.Container):
                 metres.
 
         """
-        import numpy as np
-
         y_units = y.Units
 
         n_nodes0 = n_nodes.item(0)
@@ -1259,7 +1256,6 @@ class Weights(Container, cfdm.Container):
                 units of radians.
 
         """
-        import numpy as np
 
         from .query import lt
 
@@ -1916,3 +1912,213 @@ class Weights(Container, cfdm.Container):
         areas = interior_angles.sum(-1, squeeze=True) - (N - 2) * pi
         areas.override_units(Units("m2"), inplace=True)
         return areas
+
+    @classmethod
+    def healpix_area(
+        cls,
+        f,
+        domain_axis,
+        weights,
+        weights_axes,
+        auto=False,
+        measure=False,
+        radius=None,
+        return_areas=False,
+        methods=False,
+    ):
+        """Creates area weights for HEALPix cells.
+
+        See CF Appendix F: Grid Mappings.
+        https://doi.org/10.5281/zenodo.14274886
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            f: `Field`
+                The field for which the weights are being created.
+
+            domain_axis: `str` or `None`
+                If set to a domain axis identifier
+                (e.g. ``'domainaxis1'``) then only accept cells that
+                recognise the given axis. If `None` then the cells may
+                span any axis.
+
+            {{weights weights: `dict`}}
+
+            {{weights weights_axes: `set`}}
+
+            {{weights auto: `bool`, optional}}
+
+            {{weights measure: `bool`, optional}}
+
+            {{radius: optional}}
+
+            {{weights methods: `bool`, optional}}
+
+        :Returns:
+
+            `bool` or `Data`
+                `True` if weights were created, otherwise `False`. If
+                *return_areas* is True and weights were created, then
+                the weights are returned.
+
+        """
+        axis = f.domain_axis("healpix_index", key=True, default=None)
+        if axis is None:
+            if auto:
+                return False
+
+            if domain_axis is None:
+                raise ValueError("No HEALPix axis")
+
+            raise ValueError(
+                "No HEALPix cells for "
+                f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
+            )
+
+        if domain_axis is not None and domain_axis != axis:
+            if auto:
+                return False
+
+            raise ValueError(
+                "No HEALPix cells for "
+                f"{f.constructs.domain_axis_identity(domain_axis)!r} axis"
+            )
+
+        if axis in weights_axes:
+            if auto:
+                return False
+
+            raise ValueError(
+                "Multiple weights specifications for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
+            )
+
+        cr = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+        if cr is None:
+            # No healpix grid mapping
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: No HEALPix grid mapping for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
+            )
+
+        from .constants import healpix_indexing_schemes
+
+        parameters = cr.coordinate_conversion.parameters()
+        indexing_scheme = parameters.get("indexing_scheme")
+        if indexing_scheme not in healpix_indexing_schemes:
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: Invalid HEALPix indexing_scheme for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis: "
+                f"{indexing_scheme!r}"
+            )
+
+        if indexing_scheme == "zuniq":
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: HEALPix indexing_scheme "
+                f"{indexing_scheme!r} "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis has  "
+                f"not yet been implemented"
+            )
+
+        refinement_level = parameters.get("refinement_level")
+        if refinement_level is None and indexing_scheme in ("nested", "ring"):
+            # No refinement_level
+            if auto:
+                return False
+
+            raise ValueError(
+                "Can't create weights: No HEALPix refinement_level for "
+                f"{f.constructs.domain_axis_identity(axis)!r} axis"
+            )
+
+        if measure and not methods and radius is not None:
+            radius = f.radius(default=radius)
+
+        if indexing_scheme in ("nuniq", "zuniq"):
+            # Create weights for 'nuniq' or 'zuniq' indexed cells
+            if methods:
+                weights[(axis,)] = "HEALPix Multi-Order Coverage"
+                return True
+
+            healpix_index = f.coordinate(
+                "healpix_index",
+                filter_by_axis=(axis,),
+                axis_mode="exact",
+                default=None,
+            )
+            if healpix_index is None:
+                if auto:
+                    return False
+
+                raise ValueError(
+                    "Can't create weights: Missing healpix_index coordinates"
+                )
+
+            if measure:
+                units = radius.Units**2
+                r = radius.array
+            else:
+                units = "1"
+                r = None
+
+            from .data.dask_utils import cf_healpix_weights
+
+            dx = healpix_index.to_dask_array()
+            dx = dx.map_blocks(
+                cf_healpix_weights,
+                meta=np.array((), dtype="float64"),
+                indexing_scheme=indexing_scheme,
+                measure=measure,
+                radius=r,
+            )
+            area = f._Data(dx, units=units, copy=False)
+
+            if return_areas:
+                return area
+
+            weights[(axis,)] = area
+            weights_axes.add(axis)
+            return True
+
+        elif indexing_scheme in ("nested", "ring"):
+            # Create weights for 'nested' or 'ring' indexed cells
+            if methods:
+                if measure:
+                    weights[(axis,)] = "HEALPix equal area"
+
+                return True
+
+            if not measure:
+                # Weights are all equal, so no need to create any.
+                return True
+
+            r2 = radius**2
+            area = f._Data.full(
+                (f.domain_axis(axis).get_size(),),
+                np.pi * float(r2) / (3.0 * (4**refinement_level)),
+                units=r2.Units,
+            )
+
+            if return_areas:
+                return area
+
+            weights[(axis,)] = area
+            weights_axes.add(axis)
+            return True
+
+        else:
+            raise NotImplementedError(
+                "Can't yet calculate HEALPix weights for the "
+                f"{indexing_scheme!r} indexing scheme"
+            )  # pragma: no cover

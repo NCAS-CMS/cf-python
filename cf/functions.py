@@ -3354,6 +3354,136 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
+def locate(lat, lon, f=None):
+    """Locate cells containing latitude-longitude locations.
+
+    The cells must be defined by a discrete axis that has 1-d latitude
+    and longitude coordinate, or for which it is possible to create
+    1-d latitude and longitude coordinates from other metadata (as is
+    the case for a HEALPix axis). At present, only a HEALPix axis is
+    supported.
+
+    Returns the indices of the discrete axis for the cells containing
+    the latitude-longitude locations.
+
+    If a single latitude is given then it is paired with each
+    longitude, and if a single longitude is given then it is paired
+    with each latitude. If multiple latitudes and multiple longitudes
+    are provided then they are paired element-wise.
+
+    If a cell contains more than one of the latitude-longitude
+    locations, then that cell's index appears only once in the output.
+
+    .. versionadded:: NEXTVERSION
+
+    .. seealso:: `cf.contains`, `cf.Field.subspace`,
+                 `cf.Field.indices`
+
+    :Parameters:
+
+        lat: (sequence of) number
+            The latitude(s), in degrees north, for which to find the
+            cell indices. Must be in the range [-90, 90].
+
+        lon: (sequence of) number
+            The longitude(s), in degrees east, for which to find the
+            cell indices.
+
+        f: `Field` or `Domain` or `None`, optional
+            The Field or Domain containing the UGRID or HEALPix
+            grid.
+
+            If `None` (the default) then a callable function is
+            returned, which when called with A Field as its argument
+            returns the indices for that field, i.e ``cf.contains(lat,
+            lon, f)`` is equivalent to ``cf.contains(lat,
+            lon)(f)``. This returned function may be used as a
+            condition in a Field's `subspace` and `indices` methods,
+            since, for instance, ``f.subspace(X=cf.locate(0, 45))`` is
+            equivalent to ``f.subspace(X=cf.locate(0, 45, f))``.
+
+        `numpy.ndarray` or function
+            Indices for the discrete axis that contain the
+            latitude-longitude locations, or if *f* is `None`, a
+            function that will return those indices.
+
+    **Examples**
+
+    >>> f = cf.example_field(12)
+    >>> print(f)
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(48)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+    Coord references: grid_mapping_name:healpix
+    >>> cf.locate(20, 90, f)
+    array([23])
+    >>> cf.locate(-70, 90, f)
+    array([36])
+    >>> cf.locate([-70, 20], 90, f)
+    array([23, 36])
+    >>> cf.locate([-70, 20], [90, 280], f)
+    array([31, 36])
+    >>> cf.locate([-70, 20], [90, 280])(f)
+    array([31, 36])
+    >>> cf.locate(20, [280, 280.001], f)
+    array([31])
+    >>> func = cf.locate(20, [280, 280.001])
+    >>> func(f)
+    array([31])
+
+    """
+
+    def _locate(lat, lon, f):
+        healpix = f.coordinate(
+            "healpix_index", filter_by_naxes=(1,), default=None
+        )
+        if healpix:
+            # HEALPix
+            from .healpix import _healpix_locate
+
+            return _healpix_locate(lat, lon, f)
+
+        raise ValueError(
+            f"Can't find cell locations for {f!r}: Can only find locations "
+            "for HEALPix cells (at present)"
+        )
+
+        ugrid = f.domain_topologies(todict=True)
+        if ugrid:
+            # UGRID - not coded up, yet.
+            pass
+
+        geometry = any(
+            aux.get_geometry(False)
+            for aux in f.auxiliary_coordinates(
+                filter_by_naxes=(1,), todict=True
+            ).values()
+        )
+        if geometry:
+            # Geometries - not coded up, yet.
+            pass
+
+        raise ValueError(
+            f"Can't find cell locations for {f!r}: Can only find locations "
+            "for UGRID, HEALPix, or geometry cells"
+        )
+
+    if np.abs(lat).max() > 90:
+        raise ValueError(
+            f"Can't find cell locations for {f!r}: Latitudes must be in "
+            f"the range [-90, 90]. Got: {lat}"
+        )
+
+    if f is None:
+        return partial(_locate, lat, lon)
+
+    return _locate(lat, lon, f)
+
+
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
