@@ -1,0 +1,837 @@
+{
+ "cf.read": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write.read",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.read",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract.readwrite",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm.read_write",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  }
+ ],
+ "model": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.fieldlist",
+   "module_short": "cf",
+   "name": "FieldList"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldList"
+  }
+ ],
+ "model_temp": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "obs": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.fieldlist",
+   "module_short": "cf",
+   "name": "FieldList"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldList"
+  }
+ ],
+ "obs.select_field": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.fieldlist",
+   "module_short": "cf",
+   "name": "FieldList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomainlist",
+   "module_short": "cf.mixin.fielddomainlist",
+   "name": "FieldDomainList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomainList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomainList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.constructlist",
+   "module_short": "cf.constructlist",
+   "name": "ConstructList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "ConstructList.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.abstract.container",
+   "module_short": "cfdm.abstract.container",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.abstract",
+   "module_short": "cfdm.abstract",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.select_field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.select_field"
+  }
+ ],
+ "obs_temp": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "obs_temp.regrids": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin.propertiesdata",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm.field",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.regrids"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.regrids"
+  }
+ ],
+ "obs_temp_regrid": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ]
+}
