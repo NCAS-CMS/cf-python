@@ -37,3 +37,7 @@ sphinx_gallery_conf = {
     "reset_modules": ("matplotlib",),  # Helps with memory management
     "capture_repr": (),
 }
+
+html_static_path = ["../../docs/source/_static"]
+html_logo = "../../docs/source/images/logo.svg"
+html_favicon = "../../docs/source/_static/favicon.ico"
