@@ -1,0 +1,333 @@
+{
+ "cf.read": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write.read",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.read",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract.readwrite",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm.read_write",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  }
+ ],
+ "cf.wi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "wi"
+  }
+ ],
+ "cfp.gopen": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfplot",
+   "module_short": "cfplot",
+   "name": "gopen"
+  }
+ ],
+ "cfp.gpos": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfplot",
+   "module_short": "cfplot",
+   "name": "gpos"
+  }
+ ],
+ "cfp.mapset": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfplot",
+   "module_short": "cfplot",
+   "name": "mapset"
+  }
+ ],
+ "cfp.plotvars.master_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "NoneType"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfplot.plotvars",
+   "module_short": "cfplot.plotvars",
+   "name": "master_plot"
+  }
+ ],
+ "cfp.vect": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfplot",
+   "module_short": "cfplot",
+   "name": "vect"
+  }
+ ],
+ "da.arctan2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.ufunc",
+   "module_short": "dask.array.ufunc",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "arctan2"
+  }
+ ],
+ "da.hypot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.ufunc",
+   "module_short": "dask.array.ufunc",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "hypot"
+  }
+ ],
+ "da.ravel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ravel"
+  }
+ ],
+ "np.linspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "_ArrayFunctionDispatcher"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "linspace"
+  }
+ ],
+ "np.pi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "pi"
+  }
+ ],
+ "np.sin": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "sin"
+  }
+ ],
+ "plt.close": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "close"
+  }
+ ],
+ "plt.figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "figure"
+  }
+ ]
+}

@@ -1,0 +1,5477 @@
+{
+ "U": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "U.subspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  }
+ ],
+ "U_region": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "U_region.subspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  }
+ ],
+ "U_sub": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "U_sub.data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.data"
+  }
+ ],
+ "U_sub.squeeze": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin.propertiesdata",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.squeeze"
+  }
+ ],
+ "V": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "V.subspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  }
+ ],
+ "V_region": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "V_region.subspace": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.subspace"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.subspace"
+  }
+ ],
+ "V_sub": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field"
+  }
+ ],
+ "V_sub.data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin.propertiesdata",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.data"
+  }
+ ],
+ "V_sub.squeeze": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.field",
+   "module_short": "cf",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.fielddomain",
+   "module_short": "cf.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.propertiesdata",
+   "module_short": "cf.mixin.propertiesdata",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.field",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin.properties",
+   "module_short": "cf.mixin.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin",
+   "module_short": "cf.mixin",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.quantizationmixin",
+   "module_short": "cfdm.mixin.quantizationmixin",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "QuantizationMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFVariable.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGeometry.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGlobalAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupAttributes.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFComponents.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFUnreferenced.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.fielddomain",
+   "module_short": "cfdm.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.propertiesdata",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.files",
+   "module_short": "cfdm.mixin.files",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Files.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.field",
+   "module_short": "cfdm.core.field",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Field.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.mixin_container",
+   "module_short": "cf.mixin_container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.netcdf",
+   "module_short": "cfdm.mixin.netcdf",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "NetCDFGroupsMixin.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.properties",
+   "module_short": "cfdm.mixin.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin.fielddomain",
+   "module_short": "cfdm.core.mixin.fielddomain",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.mixin",
+   "module_short": "cfdm.core.mixin",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "FieldDomain.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.propertiesdata",
+   "module_short": "cfdm.core.abstract.propertiesdata",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "PropertiesData.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin.container",
+   "module_short": "cfdm.mixin.container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.mixin",
+   "module_short": "cfdm.mixin",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.properties",
+   "module_short": "cfdm.core.abstract.properties",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Properties.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract.container",
+   "module_short": "cfdm.core.abstract.container",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core.abstract",
+   "module_short": "cfdm.core.abstract",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm.core",
+   "module_short": "cfdm.core",
+   "name": "Container.squeeze"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "Container.squeeze"
+  }
+ ],
+ "ax": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes"
+  }
+ ],
+ "ax.scatter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.scatter"
+  }
+ ],
+ "ax.set_rlabel_position": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes._axes",
+   "name": "Axes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_rlabel_position"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_rlabel_position"
+  }
+ ],
+ "ax.set_theta_direction": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes._axes",
+   "name": "Axes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_theta_direction"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_theta_direction"
+  }
+ ],
+ "ax.set_theta_zero_location": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes._axes",
+   "name": "Axes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_theta_zero_location"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_theta_zero_location"
+  }
+ ],
+ "ax.set_xlabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_xlabel"
+  }
+ ],
+ "ax.set_ylabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "PolarAxes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "PolarAxes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_ylabel"
+  }
+ ],
+ "ax.yaxis.set_label_coords": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections.polar",
+   "name": "RadialAxis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "RadialAxis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "RadialAxis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axis",
+   "module_short": "matplotlib.axis",
+   "name": "YAxis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "YAxis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axis",
+   "module_short": "matplotlib.axis",
+   "name": "Axis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axis.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_label_coords"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_label_coords"
+  }
+ ],
+ "ax.yaxis.set_tick_params": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections.polar",
+   "module_short": "matplotlib.projections.polar",
+   "name": "RadialAxis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.projections",
+   "module_short": "matplotlib.projections",
+   "name": "RadialAxis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "RadialAxis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axis",
+   "module_short": "matplotlib.axis",
+   "name": "YAxis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "YAxis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axis",
+   "module_short": "matplotlib.axis",
+   "name": "Axis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axis.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_tick_params"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_tick_params"
+  }
+ ],
+ "azimuths": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "bearings": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "bearings_flattened": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.core",
+   "module_short": "dask.array",
+   "name": "Array"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "Array"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "Array"
+  }
+ ],
+ "bearings_flattened.compute": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.core",
+   "module_short": "dask.array",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.base",
+   "module_short": "dask.base",
+   "name": "DaskMethodsMixin.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "DaskMethodsMixin.compute"
+  }
+ ],
+ "br": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "cf.read": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write.read",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf.read_write",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.read",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "read"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract.readwrite",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write.abstract",
+   "module_short": "cfdm.read_write.abstract",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm.read_write",
+   "module_short": "cfdm.read_write",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "cfdm",
+   "module_short": "cfdm",
+   "name": "ReadWrite"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "read"
+  }
+ ],
+ "cf.wi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "wi"
+  }
+ ],
+ "da.arctan2": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.ufunc",
+   "module_short": "dask.array.ufunc",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "arctan2"
+  }
+ ],
+ "da.hypot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.ufunc",
+   "module_short": "dask.array.ufunc",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "ufunc"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "hypot"
+  }
+ ],
+ "da.ravel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "ravel"
+  }
+ ],
+ "f": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf.fieldlist",
+   "module_short": "cf",
+   "name": "FieldList"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "cf",
+   "module_short": "cf",
+   "name": "FieldList"
+  }
+ ],
+ "fig": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure"
+  }
+ ],
+ "magnitudes": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "magnitudes_flattened": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.core",
+   "module_short": "dask.array",
+   "name": "Array"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "Array"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "Array"
+  }
+ ],
+ "magnitudes_flattened.compute": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array.core",
+   "module_short": "dask.array",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.array",
+   "module_short": "dask.array",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "Array.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask.base",
+   "module_short": "dask.base",
+   "name": "DaskMethodsMixin.compute"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "dask",
+   "module_short": "dask",
+   "name": "DaskMethodsMixin.compute"
+  }
+ ],
+ "np.pi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "pi"
+  }
+ ],
+ "plt.close": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "close"
+  }
+ ],
+ "plt.figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "figure"
+  }
+ ],
+ "plt.gcf": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "gcf"
+  }
+ ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
+ "plt.subplot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplot"
+  }
+ ],
+ "plt.title": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "title"
+  }
+ ],
+ "tl": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ]
+}
