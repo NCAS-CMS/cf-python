@@ -18,7 +18,6 @@ import re
 import sys
 
 import cfdm
-from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
 
@@ -102,11 +101,6 @@ extensions = [
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
 ]
-
-CF_DOCS_MODE = os.environ.get("CF_DOCS_MODE", "none")
-
-if CF_DOCS_MODE in ["dev-recipes", "dev-recipes-scrub", "latest", "archive"]:
-    extensions.append("sphinx_gallery.gen_gallery")
 
 # Spelling extension configuration: set British English and false positives
 spelling_lang = "en_GB"
@@ -382,26 +376,6 @@ html_show_sourcelink = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = "cfdoc"
 
-# sphinx-gallery configuration
-sphinx_gallery_conf = {
-    "examples_dirs": "recipes",  # path to recipe files
-    "gallery_dirs": "recipes",  # path to save gallery generated output
-    "run_stale_examples": False,
-    # Below setting can be buggy: see:
-    # https://github.com/sphinx-gallery/sphinx-gallery/issues/967
-    # "reference_url": {"cf": None},
-    "backreferences_dir": "gen_modules/backreferences",
-    "doc_module": ("cf",),
-    "inspect_global_variables": True,
-    "within_subsection_order": FileNameSortKey,
-    "default_thumb_file": "_static/cf-recipe-placeholder-squarecrop.png",
-    "image_scrapers": (
-        "matplotlib",
-    ),  # Ensures Matplotlib images are captured
-    "plot_gallery": True,  # Enables plot rendering
-    "reset_modules": ("matplotlib",),  # Helps with memory management
-    "capture_repr": (),
-}
 
 import warnings
 
