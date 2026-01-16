@@ -318,7 +318,7 @@ class read(cfdm.read):
 
         {{read store_dataset_shards: `bool`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.19.0
 
         {{read cfa: `dict`, optional}}
 
@@ -334,7 +334,7 @@ class read(cfdm.read):
 
         {{read group_dimension_search: `str`, optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.19.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
