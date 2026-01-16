@@ -19,4 +19,5 @@ line_length=79
 # cause errors due to bad or circular importing across the modules.
 extend_skip_glob = [
   "**/__init__.py",
+  "recipes-docs/source/recipes/**",
 ]
