@@ -23,7 +23,7 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/902)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
-* Changed dependency: ``cfdm>=1.12.4.0, <1.12.5.0``
+* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
 
 ----
 
