@@ -13,10 +13,15 @@ Documentation for all versions of cf.
    :local:
    :backlinks: entry
 
+**CF-1.13**
+-----------
+
+* `Version 3.19.0 <https://ncas-cms.github.io/cf-python-docs/3.19.0>`_ (2026-01-16)
+
 **CF-1.12**
 -----------
 
-* `Version 3.18.2 <https://ncas-cms.github.io/cf-python-docs/3.18.1>`_ (2025-10-16)
+* `Version 3.18.2 <https://ncas-cms.github.io/cf-python-docs/3.18.2>`_ (2025-10-16)
 * `Version 3.18.1 <https://ncas-cms.github.io/cf-python-docs/3.18.1>`_ (2025-08-20)
 * `Version 3.18.0 <https://ncas-cms.github.io/cf-python-docs/3.18.0>`_ (2025-06-05)
 * `Version 3.17.0 <https://ncas-cms.github.io/cf-python-docs/3.17.0>`_ (2025-04-02)
