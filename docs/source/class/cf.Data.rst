@@ -659,6 +659,11 @@ Performance
    ~cf.Data.fits_in_memory
    ~cf.Data.section
    ~cf.Data.persist
+   ~cf.Data.cache_elements
+   ~cf.Data.get_cached_elements
+   ~cf.Data.nc_clear_dataset_shards
+   ~cf.Data.nc_dataset_shards
+   ~cf.Data.nc_set_dataset_shards
 
 .. rubric:: Attributes
 
