@@ -146,8 +146,11 @@ jobs:
       # Also, it means code coverage is only generated if the test suite is
       # passing at least for that job, avoiding useless coverage reports.
       uses: codecov/codecov-action@v3
+      # Warning: GitHub Actions expressions require single-quoted strings.
+      # Double quotes will break workflow validation (even though YAML allows
+      # them). So don't change the quoting below.
       if: |
-        matrix.os == "ubuntu-latest" && matrix.python-version == "3.10"
+        matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
       with:
         file: |
           ${{ github.workspace }}/main/cf/test/cf_coverage_reports/coverage.xml
