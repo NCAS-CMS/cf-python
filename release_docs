@@ -19,37 +19,32 @@ if [[ $1 = "latest" ]] ; then
   dir=$PWD/docs
 elif [[ $1 = "archive" ]] ; then
   dir=$PWD/docs/$version
-elif [[ $1 = "dev" ]] ; then
-  # For testing: creates separate dir and does not (git) commit. DOES
-  # NOT delete an existing .doctrees subdirectory, meaning that
-  # untouched source files (.py or .rst) might not get rebuilt, even
-  # if conf.py or other styling files have been modified.
-  dir=$PWD/docs/dev
-elif [[ $1 = "dev-clean" ]] ; then
-  # For testing: creates separate dir and does not (git) commit and
-  # also deletes an existing .doctrees subdirectory
+elif [[ $1 = "dev" || $1 = "dev-clean" ]]; then
+  # dev:
+  #   For testing: creates separate dir and does not (git) commit. DOES
+  #   NOT delete an existing .doctrees subdirectory, meaning that
+  #   untouched source files (.py or .rst) might not get rebuilt, even
+  #   if conf.py or other styling files have been modified.
+  # vs.
+  # dev-clean:
+  #   For testing: creates separate dir and does not (git) commit and
+  #   also deletes an existing .doctrees subdirectory
   dir=$PWD/docs/dev
 elif [[ $1 = "dev-scrub" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also completely deletes the new target directory.
   dir=$PWD/docs/dev
   rm -fr $dir
-# Recipes docs cases (5 in total, equivalent to main docs options)
+# Recipes docs cases (five in total, equivalent to main docs options) -
+# see comments above for main docs cases for clarifications of intent
 elif [[ $1 = "latest-recipes" ]] ; then
-  # For testing: similar to dev, but specifically for generating recipes.
-    dir=$PWD/recipes-docs
+  dir=$PWD/recipes-docs
 elif [[ $1 = "archive-recipes" ]] ; then
-  # For testing: similar to dev, but specifically for generating recipes.
   dir=$PWD/recipes-docs/$version
-elif [[ $1 = "dev-recipes" ]] ; then
-  # For testing: similar to dev, but specifically for generating recipes.
-  dir=$PWD/recipes-docs/dev
-elif [[ $1 = "dev-clean-recipes" ]] ; then
+elif [[ $1 = "dev-recipes" || $1 = "dev-clean-recipes" ]]; then
   # For testing: similar to dev, but specifically for generating recipes.
   dir=$PWD/recipes-docs/dev
 elif [[ $1 = "dev-scrub-recipes" ]] ; then
-  # For testing: similar to dev, but specifically for generating recipes,
-  # but cleaning any generated recipe files and gen'd dev dir first.
   dir=$PWD/recipes-docs/dev
   rm -fr $dir
 else
