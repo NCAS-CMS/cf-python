@@ -15,8 +15,12 @@ profile = "black"
 # ... and since we set this against the black default line length:
 line_length=79
 # Prevent isort from auto-formatting '__init__.py' file imports because
-# they require a specific non-aphabetical (etc.) ordering else they will
-# cause errors due to bad or circular importing across the modules.
+# they require a specific non-alphabetical (etc.) ordering else they will
+# cause errors due to bad or circular importing across the modules. Also
+# skip the recipes, since we have a certain import order there for clarity
+# and to avoid incompatibilities with some matplotlib and esmpy versions
+# which can cause a seg fault if cf-plot/matplotlib is imported first.
 extend_skip_glob = [
   "**/__init__.py",
+  "docs/source/recipes/**",
 ]
