@@ -2,10 +2,13 @@
 
 set -x
 
-if [[ $2 ]] ; then
-  set +x
-  echo -e "You no longer need to set the version. Just do: ./release_docs $2"
-  exit 1
+# Note: $2 will now be interpreted as a 'do not commit' flag - SLB doesn't
+# use the final commiting logic since she needs to push to upstream not
+# origin and also does some checks
+if [[ -n $2 && $2 != "no-commit" ]]; then
+    set +x
+    echo "Error: second argument can only be 'no-commit'" >&2
+    exit 1
 fi
 
 version=`python -c "import cf; print(cf.__version__)"`
@@ -181,19 +184,18 @@ fi
 # --------------------------------------------------------------------
 # Process styles and templates
 # --------------------------------------------------------------------
-# Copy over our custom stylesheet. It is referenced in the HTML docs
-# files but Sphinx with alabaster theme doesn't seem to (?) provide a
-# means to transfer it to the created _static dir via the build itself
-# *when* the output dir is the top-level one (hence copy works for
-# 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
-# build warning:
-#   WARNING: html_static_path entry '_static' is placed inside outdir
-if [[ $1 = "latest" ]] ; then
-  cp source/_static/customise-alabaster.css _static/customise-alabaster.css
-fi
 
-# Copy the templates to the target directory
-if [[ $1 != "latest" ]] ; then
+if [[ $1 = "latest" ]] ; then
+  # Copy over our custom stylesheet. It is referenced in the HTML docs
+  # files but Sphinx with alabaster theme doesn't seem to (?) provide a
+  # means to transfer it to the created _static dir via the build itself
+  # *when* the output dir is the top-level one (hence copy works for
+  # 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
+  # build warning:
+  #   WARNING: html_static_path entry '_static' is placed inside outdir
+  cp source/_static/customise-alabaster.css _static/customise-alabaster.css
+else
+  # For all other cases, copy the templates to the target directory
   rm -fr $dir/_templates
   cp -pr _templates $dir
 fi
@@ -201,7 +203,7 @@ fi
 # --------------------------------------------------------------------
 # Add and commit the latest
 # --------------------------------------------------------------------
-if [[ $1 = "Xlatest" ]] ; then
+if [[ $1 = "latest" && $2 != "no-commit" ]] ; then
   cd $dir
   git add \
           *.html \
