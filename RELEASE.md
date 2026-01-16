@@ -26,8 +26,7 @@
 - [ ] Ensure that the requirements on dependencies & their versions
   are up-to-date and consistent in both the `requirements.txt` and in
   `docs/source/installation.rst` (paying particular attention to
-  `cfdm`); and in the `_requires` list and `Version` checks in
-  `cf/__init__.py`.
+  `cfdm`); and in the cfdm-only `Version` checks in `cf/__init__.py`.
 
 - [ ] Make sure that `README.md` is up to date.
 
@@ -40,7 +39,7 @@
   deprecated methods and keyword arguments that can be completely
   removed, i.e. those with a ``removed_at`` version that is at or
   before the version being released. Remove any reference to them in
-  the method, class, or fucntion (including, if appropriate, the
+  the method, class, or function (including, if appropriate, the
   ``@_deprecated_kwarg_check`` decorator), and remove them from the
   relevant documentation ``.rst`` files.
 
@@ -67,10 +66,6 @@
   ./test_tutorial_code
   ```
 
-- [ ] **Follow all of the steps outlined externally in [`RECIPES.md`](./RECIPES.md)**,
-  notably so that the correct Sphinx-related environment is prepared for
-  documentation building.
-  
 - [ ] Ensure that the [PDF for Cheat Sheet](docs/_downloads/cheatsheet.pdf) 
   is updated to include any API changes. The PDF is created using Canva 
   keeping in mind the colours and fonts of the website. The same could 
