@@ -449,8 +449,9 @@ seterr
 setitem
 setmask
 setprop
-Signell
 shapefiles
+sharding
+Signell
 sinh
 spacings
 spatiotemporal

@@ -85,16 +85,16 @@ import cfdm
 from packaging.version import Version
 
 
-__date__ = "2025-10-16"
-__version__ = "3.18.2"
+__date__ = "2026-01-16"
+__version__ = "3.19.0"
 __cf_version__ = cfdm.__cf_version__
 __Conventions__ = f"CF-{__cf_version__}"
 
 # Check the version of cfdm (this is worth doing because of the very
 # tight coupling between cf and cfdm, and the risk of bad things
 # happening at run time if the versions are mismatched).
-_minimum_vn = "1.12.3.1"
-_maximum_vn = "1.12.4.0"
+_minimum_vn = "1.13.0.0"
+_maximum_vn = "1.13.1.0"
 _cfdm_vn = Version(cfdm.__version__)
 if _cfdm_vn < Version(_minimum_vn) or _cfdm_vn >= Version(_maximum_vn):
     raise RuntimeError(
