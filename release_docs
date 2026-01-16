@@ -76,7 +76,17 @@ cd -
 # --------------------------------------------------------------------
 # Make the latest docs    
 # --------------------------------------------------------------------
-cd docs
+if [[ $1 == *-recipes ]]; then
+  # Any of: dev-recipes, dev-clean-recipes, dev-scrub-recipes,
+  # latest-recipes, archive-recipes
+    is_recipes=true
+    cd recipes-docs
+else
+  # Non-recipes variants: dev, dev-clean, dev-scrub, latest, archive
+    is_recipes=false
+    cd docs
+fi
+
 #if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; the#n
 #  rm -fr $dir/.doctrees
 #fi
@@ -86,12 +96,14 @@ mkdir -p $dir/_downloads
 #  # Force recreation of recipes
 #  rm source/recipes/*.md5
 #fi
+
+recipes_source=source/recipes
 if [[ $1 = "dev-recipes-scrub" ]] ; then
   # Force recreation of recipes
-  rm source/recipes/*.md5
-  rm source/recipes/*.ipynb
-  rm source/recipes/*_codeobj.pickle
-  rm source/recipes/*_recipe.rst
+  rm $recipes_source/*.md5
+  rm $recipes_source/*.ipynb
+  rm $recipes_source/*_codeobj.pickle
+  rm $recipes_source/*_recipe.rst
 fi
 
 export CF_DOCS_MODE=$1
@@ -103,62 +115,68 @@ if [[ $rc != 0 ]]; then
     exit $rc
 fi
 
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
-for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py cheatsheet.pdf
-do
-  # Remove the hash string component added by GitHub to the link
-  # where the resources are hosted (GH changes it to something like
-  # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
-  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
-    $dir/tutorial.html \
-    $dir/analysis.html \
-    $dir/cheat_sheet.html
-    # all pages referencing these resources must be added to this list
-done
+if [[ ! $is_recipes ]]; then
+  echo "Processing download files."
+  cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
+
+  for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py cheatsheet.pdf
+  do
+    # Remove the hash string component added by GitHub to the link
+    # where the resources are hosted (GH changes it to something like
+    # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
+    sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
+      $dir/tutorial.html \
+      $dir/analysis.html \
+      $dir/cheat_sheet.html
+      # all pages referencing these resources must be added to this list
+  done
+fi
 
 # --------------------------------------------------------------------
 # Process recipes
 # --------------------------------------------------------------------
-recipes_dir="source/recipes"
-recipes_files=( "${recipes_dir}"/*_{recipe,helper}.{ipynb,py} )
+if [[ $is_recipes ]]; then
+  echo "Setting up for the recipes docs build."
+  recipes_source="source/recipes"
+  recipes_files=( "${recipes_source}"/*_{recipe,helper}.{ipynb,py} )
 
-files_to_copy=(
-    "${recipes_dir}/recipes_jupyter.zip"
-    "${recipes_dir}/recipes_python.zip"
-    "${recipes_files[@]}"
-)
+  files_to_copy=(
+      "${recipes_source}/recipes_jupyter.zip"
+      "${recipes_source}/recipes_python.zip"
+      "${recipes_files[@]}"
+  )
 
-destination_dir="$dir/_downloads"
+  destination_dir="$dir/_downloads"
 
-cp -pv "${files_to_copy[@]}" "$destination_dir"
+  cp -pv "${files_to_copy[@]}" "$destination_dir"
 
-html_files=(
-    "$dir/recipes/index.html"
-    "$dir/recipes/"*.html
-)
+  html_files=(
+      "$dir/recipes/index.html"
+      "$dir/recipes/"*.html
+  )
 
-for html_file in "${html_files[@]}"; do
-    for recipe_file in "${files_to_copy[@]}"; do
-        sed -i "s|href=\".*\/${recipe_file##*/}\"|href=\"../_downloads/${recipe_file##*/}\"|g" "$html_file"
-    done
-done
+  for html_file in "${html_files[@]}"; do
+      for recipe_file in "${files_to_copy[@]}"; do
+          sed -i "s|href=\".*\/${recipe_file##*/}\"|href=\"../_downloads/${recipe_file##*/}\"|g" "$html_file"
+      done
+  done
 
-# Recipe filters
-while IFS= read -r href; do
-  IFS= read -r div
-  awk -v href="$href" -v div="$div" '
-  {
-    if ($0 ~ href) {
-      gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+  # Recipe filters
+  while IFS= read -r href; do
+    IFS= read -r div
+    awk -v href="$href" -v div="$div" '
+    {
+      if ($0 ~ href) {
+        gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+      }
+      print prev
+      prev = $0
     }
-    print prev
-    prev = $0
-  }
-  END {print prev}
-  ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
-done < source/recipes/recipe_list.txt
-
+    END {print prev}
+    ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
+  done < source/recipes/recipe_list.txt
+fi
 
 # --------------------------------------------------------------------
 # Process styles and templates
