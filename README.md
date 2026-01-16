@@ -96,7 +96,6 @@ of its array manipulation and can:
 * test whether two field constructs are the same,
 * modify field construct metadata and data,
 * create subspaces of field constructs,
-* write field constructs to netCDF datasets on disk,
 * incorporate, and create, metadata stored in external files,
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed by
