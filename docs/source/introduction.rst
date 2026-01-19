@@ -93,8 +93,6 @@ The `cf` package can:
 
 * create subspaces of field constructs,
 
-* write field constructs to netCDF datasets on disk,
-
 * incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention

@@ -6,8 +6,6 @@
 **Aggregation rules**
 =====================
 
-----
-
 Version |release| for version |version| of the CF conventions.
 
 *David Hassell and Jonathan Gregory (2012)*
