@@ -22,7 +22,7 @@
    introduction
    installation
    cheat_sheet
-   recipes/index
+   recipes
    tutorial
    api_reference
    aggregation_rules
