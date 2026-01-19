@@ -7,6 +7,8 @@
 **Cheat Sheet**
 ===============
 
+----
+
 Version |release| for version |version| of the CF conventions.
 
 This cheat sheet provides a summary of some key functions and methods in 
