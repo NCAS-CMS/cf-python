@@ -1,7 +1,7 @@
 Version 3.19.0
 --------------
 
-**2026-01-16**
+**2026-01-19**
 
 * Write Zarr v3 datasets with `cf.write`
   (https://github.com/NCAS-CMS/cf-python/issues/895)
