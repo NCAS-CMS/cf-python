@@ -822,7 +822,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(cf.functions._numpy_allclose(g.array, b))
 
     def test_Field_flip(self):
-        f = cf.read(self.filename, netcdf_backend="netCDF4")[0]
+        f = self.f.copy()
 
         kwargs = {
             axis: slice(None, None, -1) for axis in f.domain_axes(todict=True)

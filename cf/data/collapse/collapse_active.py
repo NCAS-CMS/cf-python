@@ -188,6 +188,7 @@ def active_chunk_function(method, *args, **kwargs):
 
     info = is_log_level_info(logger)
 
+    max_requests = active_storage_max_requests().value
     storage_options = None
     address = None
     dataset = x.get_variable(None)
@@ -197,10 +198,8 @@ def active_chunk_function(method, *args, **kwargs):
         address = x.get_address()
         dataset = x.get_filename()
 
-    max_requests = active_storage_max_requests().value
-
     active_kwargs = {
-        "dataset": dataset,  # "/".join(dataset.split("/")[3:]),
+        "dataset": dataset,
         "ncvar": address,
         "axis": axis,
         "storage_options": storage_options,

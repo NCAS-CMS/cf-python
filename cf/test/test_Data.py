@@ -1457,7 +1457,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(f))
 
         # Chained subspaces reading from disk
-        f = cf.read(self.filename, netcdf_backend="netCDF4")[0]
+        f = cf.read(self.filename)[0]
         d = f.data
 
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
