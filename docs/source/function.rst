@@ -20,7 +20,6 @@ Reading and writing
 
    cf.read 
    cf.write
-   cf.netcdf_lock
 
 Aggregation
 -----------
@@ -158,7 +157,6 @@ Active storage reductions
    cf.active_storage
    cf.active_storage_url
    cf.active_storage_max_requests
-   cf.netcdf_lock
 
 Miscellaneous
 -------------

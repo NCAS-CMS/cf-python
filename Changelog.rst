@@ -20,10 +20,12 @@ Version NEXTVERSION
 * New optional dependency: ``healpix>=2025.1``
 * Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
 
-Version 3.18.3
+----
+  
+Version 3.19.0
 --------------
 
-**2026-01-??**
+**2026-01-19**
 
 * Write Zarr v3 datasets with `cf.write`
   (https://github.com/NCAS-CMS/cf-python/issues/895)
@@ -31,7 +33,6 @@ Version 3.18.3
   `cf.read` (https://github.com/NCAS-CMS/cf-python/issues/894)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
-* New optional dependency: ``zarr>=3.1.3``
 * New function to control the creation of cached elements during data
   display: `cf.display_data`
   (https://github.com/NCAS-CMS/cf-python/issues/913)
@@ -45,7 +46,8 @@ Version 3.18.3
   (https://github.com/NCAS-CMS/cf-python/issues/902)
 * Reduce the time taken to import `cf`
   (https://github.com/NCAS-CMS/cf-python/issues/902)
-* Changed dependency: ``cfdm>=1.12.4.0, <1.12.5.0``
+* New optional dependency: ``zarr>=3.1.3``
+* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
 
 ----
 
@@ -1236,7 +1238,6 @@ version 2.2.4
 	
 version 2.2.3
 --------------
-----
 
 **2018-06-21**
 
@@ -1275,7 +1276,6 @@ version 2.2.1
 			
 version 2.2.0
 -------------
-----
 
 **2018-06-04**
 
@@ -1342,7 +1342,6 @@ version 2.1.3
 	
 version 2.1.2
 -------------
-----
 
 **2017-11-28**
 
@@ -1375,7 +1374,6 @@ version 2.1
 
 version 2.0.6
 -------------
-----
 
 **2017-09-28**
 

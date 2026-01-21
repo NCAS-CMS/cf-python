@@ -251,7 +251,7 @@ def configuration(
             The new display data option. The default is to not change
             the current behaviour.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.19.0
 
         regrid_logging: `bool` or `Constant`, optional
             The new value (either True to enable logging or False to
@@ -1504,7 +1504,7 @@ def total_memory():
 def is_log_level_info(logger):
     """Return True if and only if log level is at least as verbose as INFO.
 
-    Deprecated at version NEXTVERSION and is no longer available. Use
+    Deprecated at version 3.19.0 and is no longer available. Use
     `cfdm.is_log_level_info` instead.
 
     .. versionadded:: 3.16.3
@@ -1525,7 +1525,7 @@ def is_log_level_info(logger):
     _DEPRECATION_ERROR_FUNCTION(
         "is_log_level_info",
         message="Use cfdm.is_log_level_info instead",
-        version="NEXTVERSION",
+        version="3.19.0",
         removed_at="5.0.0",
     )  # pragma: no cover
 

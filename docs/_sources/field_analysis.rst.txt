@@ -2221,7 +2221,7 @@ cell sizes (or custom weights) may applied to the calculation.
 
 .. code-block:: python
    :caption: *Calculate a 3-point weighted mean of the 'X' axis. Since
-             the the 'X' axis is cyclic, the mean wraps by default.*
+             the 'X' axis is cyclic, the mean wraps by default.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q)
@@ -2292,7 +2292,7 @@ filter. Convolution filters are carried with the
 
 .. code-block:: python
    :caption: *Calculate a 5-point mean of the 'X' axis with a
-             non-uniform window function. Since the the 'X' axis is
+             non-uniform window function. Since the 'X' axis is
              cyclic, the convolution wraps by default.*
 
    >>> print(q)
