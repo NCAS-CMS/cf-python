@@ -10,12 +10,8 @@
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a5d0ad34" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=5318ce95"></script>
+    <script src="_static/documentation_options.js?v=b14d8abf"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -43,7 +39,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.18.2</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.19.0</a></h1>
 
 
 
@@ -107,11 +103,11 @@ by <a href="https://nerc.ukri.org/">NERC</a> through
 and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <br>
 <br>
-<img src="_templates/logo_EC.png" height="40">
-<img src="_templates/logo_ERC.png" height="40">
-<img src="_templates/logo_NERC.png" height="40">
+<img src="_static/logo_EC.png" height="40">
+<img src="_static/logo_ERC.png" height="40">
+<img src="_static/logo_NERC.png" height="40">
 <br>
-<img src="_templates/logo_NCAS.png" height="40">
+<img src="_static/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -1925,16 +1921,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -2475,7 +2471,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.16.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id78">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2502,7 +2498,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.16.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2654,7 +2650,7 @@ azimuthal angle.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-10-29.
+      &#169;2026, NCAS | Page built on 2026-01-19.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

@@ -2,10 +2,13 @@
 
 set -x
 
-if [[ $2 ]] ; then
-  set +x
-  echo -e "You no longer need to set the version. Just do: ./release_docs $2"
-  exit 1
+# Note: $2 will now be interpreted as a 'do not commit' flag - SLB doesn't
+# use the final commiting logic since she needs to push to upstream not
+# origin and also does some checks
+if [[ -n $2 && $2 != "no-commit" ]]; then
+    set +x
+    echo "Error: second argument can only be 'no-commit'" >&2
+    exit 1
 fi
 
 version=`python -c "import cf; print(cf.__version__)"`
@@ -14,37 +17,44 @@ version=`python -c "import cf; print(cf.__version__)"`
 sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
 echo "NOTE: Using sphinx version: $sphinx_version"
 
+# Main docs cases, where 'main docs' means all docs except the recipes pages
 if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
 elif [[ $1 = "archive" ]] ; then
   dir=$PWD/docs/$version
-elif [[ $1 = "dev" ]] ; then
-  # For testing: creates separate dir and does not (git) commit. DOES
-  # NOT delete an existing .doctrees subdirectory, meaning that
-  # untouched source files (.py or .rst) might not get rebuilt, even
-  # if conf.py or other styling files have been modified.
-  dir=$PWD/docs/dev
-elif [[ $1 = "dev-clean" ]] ; then
-  # For testing: creates separate dir and does not (git) commit and
-  # also deletes an existing .doctrees subdirectory
+elif [[ $1 = "dev" || $1 = "dev-clean" ]]; then
+  # dev:
+  #   For testing: creates separate dir and does not (git) commit. DOES
+  #   NOT delete an existing .doctrees subdirectory, meaning that
+  #   untouched source files (.py or .rst) might not get rebuilt, even
+  #   if conf.py or other styling files have been modified.
+  # vs.
+  # dev-clean:
+  #   For testing: creates separate dir and does not (git) commit and
+  #   also deletes an existing .doctrees subdirectory
   dir=$PWD/docs/dev
 elif [[ $1 = "dev-scrub" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also completely deletes the new target directory.
   dir=$PWD/docs/dev
   rm -fr $dir
-elif [[ $1 = "dev-recipes" ]] ; then
+# Recipes docs cases (five in total, equivalent to main docs options) -
+# see comments above for main docs cases for clarifications of intent
+elif [[ $1 = "latest-recipes" ]] ; then
+  dir=$PWD/recipes-docs
+elif [[ $1 = "archive-recipes" ]] ; then
+  dir=$PWD/recipes-docs/$version
+elif [[ $1 = "dev-recipes" || $1 = "dev-clean-recipes" ]]; then
   # For testing: similar to dev, but specifically for generating recipes.
-  dir=$PWD/docs/dev
-elif [[ $1 = "dev-recipes-scrub" ]] ; then
-  # For testing: similar to dev, but specifically for generating recipes,
-  # but cleaning any generated recipe files and gen'd dev dir first.
-  dir=$PWD/docs/dev
+  dir=$PWD/recipes-docs/dev
+elif [[ $1 = "dev-scrub-recipes" ]] ; then
+  dir=$PWD/recipes-docs/dev
   rm -fr $dir
 else
   set +x
   echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', 'archive',
-  'dev-recipes' or 'dev-recipes-scrub'"
+  'dev-recipes', 'dev-clean-recipes', 'dev-scrub-recipes', 'latest-recipes',
+  or 'archive-recipes'"
   exit 2
 fi
 
@@ -69,7 +79,17 @@ cd -
 # --------------------------------------------------------------------
 # Make the latest docs    
 # --------------------------------------------------------------------
-cd docs
+if [[ $1 == *-recipes ]]; then
+  # Any of: dev-recipes, dev-clean-recipes, dev-scrub-recipes,
+  # latest-recipes, archive-recipes
+    is_recipes=true
+    cd recipes-docs
+else
+  # Non-recipes variants: dev, dev-clean, dev-scrub, latest, archive
+    is_recipes=false
+    cd docs
+fi
+
 #if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; the#n
 #  rm -fr $dir/.doctrees
 #fi
@@ -79,12 +99,14 @@ mkdir -p $dir/_downloads
 #  # Force recreation of recipes
 #  rm source/recipes/*.md5
 #fi
+
+recipes_source=source/recipes
 if [[ $1 = "dev-recipes-scrub" ]] ; then
   # Force recreation of recipes
-  rm source/recipes/*.md5
-  rm source/recipes/*.ipynb
-  rm source/recipes/*_codeobj.pickle
-  rm source/recipes/*_recipe.rst
+  rm $recipes_source/*.md5
+  rm $recipes_source/*.ipynb
+  rm $recipes_source/*_codeobj.pickle
+  rm $recipes_source/*_recipe.rst
 fi
 
 export CF_DOCS_MODE=$1
@@ -96,79 +118,84 @@ if [[ $rc != 0 ]]; then
     exit $rc
 fi
 
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
-for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py cheatsheet.pdf
-do
-  # Remove the hash string component added by GitHub to the link
-  # where the resources are hosted (GH changes it to something like
-  # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
-  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
-    $dir/tutorial.html \
-    $dir/analysis.html \
-    $dir/cheat_sheet.html
-    # all pages referencing these resources must be added to this list
-done
+if [[ ! $is_recipes ]]; then
+  echo "Processing download files."
+  cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
+
+  for download_file in cf_tutorial_files.zip tutorial.py field_analysis.py cheatsheet.pdf
+  do
+    # Remove the hash string component added by GitHub to the link
+    # where the resources are hosted (GH changes it to something like
+    # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
+    sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
+      $dir/tutorial.html \
+      $dir/analysis.html \
+      $dir/cheat_sheet.html
+      # all pages referencing these resources must be added to this list
+  done
+fi
 
 # --------------------------------------------------------------------
 # Process recipes
 # --------------------------------------------------------------------
-recipes_dir="source/recipes"
-recipes_files=( "${recipes_dir}"/*_{recipe,helper}.{ipynb,py} )
+if [[ $is_recipes ]]; then
+  echo "Setting up for the recipes docs build."
+  recipes_source="source/recipes"
+  recipes_files=( "${recipes_source}"/*_{recipe,helper}.{ipynb,py} )
 
-files_to_copy=(
-    "${recipes_dir}/recipes_jupyter.zip"
-    "${recipes_dir}/recipes_python.zip"
-    "${recipes_files[@]}"
-)
+  files_to_copy=(
+      "${recipes_source}/recipes_jupyter.zip"
+      "${recipes_source}/recipes_python.zip"
+      "${recipes_files[@]}"
+  )
 
-destination_dir="$dir/_downloads"
+  destination_dir="$dir/_downloads"
 
-cp -pv "${files_to_copy[@]}" "$destination_dir"
+  cp -pv "${files_to_copy[@]}" "$destination_dir"
 
-html_files=(
-    "$dir/recipes/index.html"
-    "$dir/recipes/"*.html
-)
+  html_files=(
+      "$dir/recipes/index.html"
+      "$dir/recipes/"*.html
+  )
 
-for html_file in "${html_files[@]}"; do
-    for recipe_file in "${files_to_copy[@]}"; do
-        sed -i "s|href=\".*\/${recipe_file##*/}\"|href=\"../_downloads/${recipe_file##*/}\"|g" "$html_file"
-    done
-done
+  for html_file in "${html_files[@]}"; do
+      for recipe_file in "${files_to_copy[@]}"; do
+          sed -i "s|href=\".*\/${recipe_file##*/}\"|href=\"../_downloads/${recipe_file##*/}\"|g" "$html_file"
+      done
+  done
 
-# Recipe filters
-while IFS= read -r href; do
-  IFS= read -r div
-  awk -v href="$href" -v div="$div" '
-  {
-    if ($0 ~ href) {
-      gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+  # Recipe filters
+  while IFS= read -r href; do
+    IFS= read -r div
+    awk -v href="$href" -v div="$div" '
+    {
+      if ($0 ~ href) {
+        gsub("<div class=\"sphx-glr-thumbcontainer\"[^>]*>", div, prev)
+      }
+      print prev
+      prev = $0
     }
-    print prev
-    prev = $0
-  }
-  END {print prev}
-  ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
-done < source/recipes/recipe_list.txt
-
+    END {print prev}
+    ' $dir/recipes/index.html > temp && mv temp $dir/recipes/index.html
+  done < source/recipes/recipe_list.txt
+fi
 
 # --------------------------------------------------------------------
 # Process styles and templates
 # --------------------------------------------------------------------
-# Copy over our custom stylesheet. It is referenced in the HTML docs
-# files but Sphinx with alabaster theme doesn't seem to (?) provide a
-# means to transfer it to the created _static dir via the build itself
-# *when* the output dir is the top-level one (hence copy works for
-# 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
-# build warning:
-#   WARNING: html_static_path entry '_static' is placed inside outdir
-if [[ $1 = "latest" ]] ; then
-  cp source/_static/customise-alabaster.css _static/customise-alabaster.css
-fi
 
-# Copy the templates to the target directory
-if [[ $1 != "latest" ]] ; then
+if [[ $1 = "latest" ]] ; then
+  # Copy over our custom stylesheet. It is referenced in the HTML docs
+  # files but Sphinx with alabaster theme doesn't seem to (?) provide a
+  # means to transfer it to the created _static dir via the build itself
+  # *when* the output dir is the top-level one (hence copy works for
+  # 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
+  # build warning:
+  #   WARNING: html_static_path entry '_static' is placed inside outdir
+  cp source/_static/customise-alabaster.css _static/customise-alabaster.css
+else
+  # For all other cases, copy the templates to the target directory
   rm -fr $dir/_templates
   cp -pr _templates $dir
 fi
@@ -176,7 +203,7 @@ fi
 # --------------------------------------------------------------------
 # Add and commit the latest
 # --------------------------------------------------------------------
-if [[ $1 = "Xlatest" ]] ; then
+if [[ $1 = "latest" && $2 != "no-commit" ]] ; then
   cd $dir
   git add \
           *.html \

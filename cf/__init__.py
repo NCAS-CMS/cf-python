@@ -85,8 +85,8 @@ import cfdm
 from packaging.version import Version
 
 
-__date__ = "2025-10-16"
-__version__ = "3.18.2"
+__date__ = "2026-01-19"
+__version__ = "3.19.0"
 __cf_version__ = cfdm.__cf_version__
 __Conventions__ = f"CF-{__cf_version__}"
 

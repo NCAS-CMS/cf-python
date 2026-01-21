@@ -6,16 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf.write &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=5318ce95"></script>
+    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -29,21 +25,22 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/logo.svg" alt="Logo of Python cf package"/>
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
             </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.18.2</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
 
 
 
@@ -113,11 +110,11 @@ by <a href="https://nerc.ukri.org/">NERC</a> through
 and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <br>
 <br>
-<img src="../_templates/logo_EC.png" height="40">
-<img src="../_templates/logo_ERC.png" height="40">
-<img src="../_templates/logo_NERC.png" height="40">
+<img src="../_static/logo_EC.png" height="40">
+<img src="../_static/logo_ERC.png" height="40">
+<img src="../_static/logo_NERC.png" height="40">
 <br>
-<img src="../_templates/logo_NCAS.png" height="40">
+<img src="../_static/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -130,18 +127,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.write">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_descriptors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Conventions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">least_significant_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'native'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fletcher32</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'4</span> <span class="pre">MiB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_write_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.18.2/cf/read_write/write.py#L6-L7"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.write" title="Link to this definition">¶</a></dt>
-<dd><p>Write field and domain constructs to a netCDF file.</p>
-<p><strong>File format</strong></p>
-<p>See the <em>fmt</em> parameter for details on which output netCDF file
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_descriptors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Conventions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">least_significant_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'native'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fletcher32</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'4</span> <span class="pre">MiB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_write_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/read_write/write.py#L6-L7"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.write" title="Link to this definition">¶</a></dt>
+<dd><p>Write field and domain constructs to a dataset.</p>
+<p>The following dataset formats are supported: netCDF and Zarr.</p>
+<p><strong>Dataset format</strong></p>
+<p>See the <em>fmt</em> parameter for details on which output dataset
 formats are supported.</p>
-<p><strong>NetCDF variable and dimension names</strong></p>
-<p>These names are stored within constructs read a from dataset, or
-may be set manually. They are used when writing a field construct
-to the file. If a name has not been set then one will be
-constructed (usually based on the standard name if it exists). The
-names may be modified internally to prevent duplication in the
-file.</p>
+<p><strong>Dataset variable and dimension names</strong></p>
+<p>These names are stored within constructs and are either read
+from another dataset or may be set manually. They are used when
+writing a field construct to the dataset. If a name has not been
+set then one will be constructed (usually based on the standard
+name if it exists). The names may be modified internally to
+prevent duplication in the dataset.</p>
 <p>Each construct, or construct component, that corresponds to a
 netCDF variable has the following methods to get, set and remove a
 netCDF variable name: <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and
@@ -151,16 +149,16 @@ and remove a netCDF dimension name:
 <a class="reference internal" href="../method/cf.DomainAxis.nc_get_dimension.html#cf.DomainAxis.nc_get_dimension" title="cf.DomainAxis.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>,
 <a class="reference internal" href="../method/cf.DomainAxis.nc_set_dimension.html#cf.DomainAxis.nc_set_dimension" title="cf.DomainAxis.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a> and
 <a class="reference internal" href="../method/cf.DomainAxis.nc_del_dimension.html#cf.DomainAxis.nc_del_dimension" title="cf.DomainAxis.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a>.</p>
-<p><strong>NetCDF attributes</strong></p>
-<p>Field construct properties may be written as netCDF global
-attributes and/or netCDF data variable attributes. See the
-<em>file_descriptors</em>, <em>global_attributes</em> and <em>variable_attributes</em>
-parameters for details.</p>
+<p><strong>Dataset attributes</strong></p>
+<p>Field construct properties may be written as global attributes
+(i.e. attributes of the root group) and/or data variable
+attributes. See the <em>file_descriptors</em>, <em>global_attributes</em> and
+<em>variable_attributes</em> parameters for details.</p>
 <p><strong>External variables</strong></p>
-<p>Metadata constructs marked as external are omitted from the file
-and referred to via the netCDF <code class="docutils literal notranslate"><span class="pre">external_variables</span></code> global
-attribute. However, omitted constructs may be written to an
-external file (see the <em>external</em> parameter for details).</p>
+<p>Metadata constructs marked as external are omitted from the
+dataset and referred to via the CF <code class="docutils literal notranslate"><span class="pre">external_variables</span></code> global
+attribute. However, the omitted constructs may be written to an
+external dataset (see the <em>external</em> parameter for details).</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p>Domain axis constructs that correspond to NetCDF unlimited
 dimensions may be accessed with the
@@ -193,12 +191,11 @@ any data that defines its own chunking strategy. See
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><blockquote>
 <div><dl>
-<dt>fields: (sequence of) <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field and domain constructs to write to the file.</p>
+<dt>fields: (sequence of) <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field and domain constructs to write to the dataset.</p>
 </dd>
-<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The output netCDF file name. Various type of expansion are
-applied to the file names.</p>
-<p>Relative paths are allowed, and standard tilde and shell
-parameter expansions are applied to the string.</p>
+<dt>dataset_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The output dataset name. Relative paths are allowed, and
+standard tilde and shell parameter expansions are applied
+to the string.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could
 be described by any of the following:
@@ -207,11 +204,11 @@ be described by any of the following:
 </dd>
 </dl>
 </dd>
-<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output file. One of:</p>
+<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output dataset. One of:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p><em>fmt</em></p></th>
-<th class="head"><p>Output file type</p></th>
+<th class="head"><p>Output dataset type</p></th>
 </tr>
 </thead>
 <tbody>
@@ -241,11 +238,14 @@ file</p></td>
 file with extensions (see
 below)</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'ZARR3'</span></code></p></td>
+<td><p>Zarr v3 dataset</p></td>
+</tr>
 </tbody>
 </table>
 <p>By default the format is <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>.</p>
-<p>All formats support large files (i.e. those greater than
-2GB) except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
+<p>All NETCDF formats support large files (i.e. those greater
+than 2GB), except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
 4.4.0 or newer of the C library (use
 <a class="reference internal" href="cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a> to see which version of the
@@ -261,7 +261,8 @@ against the netCDF4 library.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code> files use the version 4 disk format (HDF5)
 and use the new features of the version 4 API.</p>
 </dd>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output file. One of:</p>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output
+dataset. One of:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p><em>mode</em></p></th>
@@ -270,22 +271,22 @@ and use the new features of the version 4 API.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'w'</span></code></p></td>
-<td><p>Open a new file for writing to. If it exists and
-<em>overwrite</em> is True then the file is deleted
-prior to being recreated.</p></td>
+<td><p>Open a new dataset for writing to. If it exists
+and <em>overwrite</em> is True then the dataset is
+deleted prior to being recreated.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'a'</span></code></p></td>
-<td><p>Open an existing file for appending new
+<td><p>Open an existing dataset for appending new
 information to. The new information will be
 incorporated whilst the original contents of the
-file will be preserved.</p>
+dataset will be preserved.</p>
 <p>In practice this means that new fields will be
 created, whilst the original fields will not be
 edited at all. Coordinates on the fields, where
 equal, will be shared as standard.</p>
 <p>For append mode, note the following:</p>
 <ul class="simple">
-<li><p>Global attributes on the file
+<li><p>Global attributes on the dataset
 will remain the same as they were originally,
 so will become inaccurate where appended fields
 have incompatible attributes. To rectify this,
@@ -294,7 +295,7 @@ after the append operation using methods such as
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code> and
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code>.</p></li>
 <li><p>Fields with incompatible <code class="docutils literal notranslate"><span class="pre">featureType</span></code> to
-the original file cannot be appended.</p></li>
+the original dataset cannot be appended.</p></li>
 <li><p>At present fields with groups cannot be
 appended, but this will be possible in a future
 version. Groups can however be cleared, the
@@ -315,11 +316,11 @@ and similar methods if required.</p></li>
 </tr>
 </tbody>
 </table>
-<p>By default the file is opened with write access mode
+<p>By default the dataset is opened with write access mode
 <code class="docutils literal notranslate"><span class="pre">'w'</span></code>.</p>
 </dd>
-<dt>overwrite: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then raise an error if the output file
-pre-exists. By default a pre-existing output file is
+<dt>overwrite: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then raise an error if the output dataset
+pre-exists. By default a pre-existing output dataset is
 overwritten.</p>
 </dd>
 <dt>Conventions: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify conventions to be recorded by the netCDF global
@@ -368,8 +369,8 @@ attributes.</p>
 construct properties, which are created as netCDF global
 attributes by default:</p>
 <ul class="simple">
-<li><p>the description of file contents properties (as defined
-by the CF conventions), and</p></li>
+<li><p>the description of dataset contents properties (as
+defined by the CF conventions), and</p></li>
 <li><p>properties flagged as global on any of the field
 constructs being written (see
 <a class="reference internal" href="../method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_global_attributes</span></code></a> for details).</p></li>
@@ -383,7 +384,7 @@ attribute, even if it has been specified by the
 properties, but will appear as an attribute on the netCDF
 data variable corresponding to each field construct that
 contains the property.</p>
-<p>Any global attributes that are also specified as file
+<p>Any global attributes that are also specified as dataset
 descriptors will not be written as netCDF global
 variables, but as netCDF data variable attributes
 instead.</p>
@@ -415,8 +416,8 @@ a netCDF data variable attribute</p>
 </dl>
 </dd>
 <dt>external: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Write metadata constructs that have data and are marked as
-external to the named external file. Ignored if there are
-no such constructs.</p>
+external to the named external dataset. Ignored if there
+are no such constructs.</p>
 </dd>
 <dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify data type conversions to be applied prior to
 writing data to disk. This may be useful as a means of
@@ -426,7 +427,7 @@ do not support 64-bit integers). By default, input data
 types are preserved. Any data type conversion is only
 applied to the arrays on disk, and not to the input field
 constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
 objects in a dictionary whose keys are input data types
 with values of output data types.</p>
 <dl class="simple">
@@ -436,10 +437,10 @@ with values of output data types.</p>
 </dd>
 </dl>
 </dd>
-<dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The endian-ness of the output file. Valid values are
+<dt>endian: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The endian-ness of the output dataset. Valid values are
 <code class="docutils literal notranslate"><span class="pre">'little'</span></code>, <code class="docutils literal notranslate"><span class="pre">'big'</span></code> or <code class="docutils literal notranslate"><span class="pre">'native'</span></code>. By default the
 output is native endian. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more
-details.</p>
+details. Ignored for Zarr datasets.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">endian='big'</span></code></p>
 </dd>
@@ -469,8 +470,8 @@ details.</p>
 </dd>
 </dl>
 </dd>
-<dt>chunk_cache: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The amount of memory (in bytes) used in each variable’s
-chunk cache at the HDF5 level.</p>
+<dt>chunk_cache: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The amount of memory (in bytes) used in each HDF5
+variable’s chunk cache.</p>
 <p>Ignored when not writing to a netCDF-4 format. By default,
 or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default netCDF-C chunk cache size of
 16777216 bytes (i.e. 16 MiB) is used. Changing this has no
@@ -508,14 +509,14 @@ parameter is <code class="docutils literal notranslate"><span class="pre">0</spa
 details.</p>
 </dd>
 <dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default string-valued construct data are written as
-netCDF arrays of type string if the output file format is
-<code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>, or of type char with an extra dimension
-denoting the maximum string length for any other output
-file format (see the <em>fmt</em> parameter). If <em>string</em> is False
-then string-valued construct data are written as netCDF
-arrays of type char with an extra dimension denoting the
-maximum string length, regardless of the selected output
-file format.</p>
+netCDF arrays of type string if the output dataset format
+is <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code> or <code class="docutils literal notranslate"><span class="pre">'ZARR3'</span></code>, or of type char with an
+extra dimension denoting the maximum string length for any
+other output dataset format (see the <em>fmt</em> parameter). If
+<em>string</em> is False then string-valued construct data are
+written as netCDF arrays of type char with an extra
+dimension denoting the maximum string length, regardless
+of the selected output dataset format.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.8.0</p>
 </div>
@@ -557,7 +558,7 @@ constructs that have data. If False the warning
 is not printed.</p>
 <p>The consequence of writing out-of-range data values is
 that, by default, these values will be masked when the
-file is subsequently read.</p>
+dataset is subsequently read.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>If a construct has <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> property with value
 <code class="docutils literal notranslate"><span class="pre">100</span></code> and data with maximum value <code class="docutils literal notranslate"><span class="pre">999</span></code>, then the
@@ -570,11 +571,11 @@ resulting warning may be suppressed by setting
 </div>
 </div></blockquote>
 <dl>
-<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” netCDF file, i.e. one with
-only the root group, regardless of any group structure
+<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” dataset, i.e. one with only
+the root group, regardless of any group structure
 specified by the field constructs. By default any groups
-defined by the netCDF interface of the field constructs and
-its components will be created and populated.</p>
+defined by the netCDF interface of the field constructs
+and its components will be created and populated.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.8.6</p>
 </div>
@@ -589,11 +590,11 @@ variables are included.</p>
 </dd>
 <dt>omit_data: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Do not write the data of the named construct types.</p>
 <p>This does not affect the amount of netCDF variables and
-dimensions that are written to the file, nor the netCDF
+dimensions that are written to the dataset, nor the netCDF
 variables’ attributes, but does not create data on disk
-for the requested variables. The resulting file will be
+for the requested variables. The resulting dataset will be
 smaller than it otherwise would have been, and when the
-new file is read the data of these variables will be
+new dataset is read the data of these variables will be
 represented by an array of all missing data.</p>
 <p>The <em>omit_data</em> parameter may be one, or a sequence, of:</p>
 <table class="docutils align-default">
@@ -645,8 +646,8 @@ constructs: <code class="docutils literal notranslate"><span class="pre">omit_da
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.10.0.1</p>
 </div>
 </dd>
-<dt>dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The dataset chunking strategy for data arrays being written
-to the file.</p>
+<dt>dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt><dd><p>The dataset chunking strategy for data arrays being
+written to the dataset.</p>
 <p>By default, <em>dataset_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'4</span> <span class="pre">MiB'</span></code>, i.e. 4194304
 bytes.</p>
 <p>If any <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> being written already stores its own dataset
@@ -660,20 +661,23 @@ always written out contiguously.</p>
 <p class="admonition-title">Note</p>
 <p>By default, a data array returned by
 <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> stores its dataset chunking
-strategy from the file being read. When this
+strategy from the dataset being read. When this
 happens that same dataset chunking strategy will
 be used when the data is written to a new
-netCDF4 file, unless the strategy was modified
-or removed prior to writing. To prevent the
-dataset chunking strategy from the original file
-being stored, see the <em>store_dataset_chunks</em>
-parameter to <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
+netCDF4 or Zarr dataset, unless the strategy was
+modified or removed prior to writing. To prevent
+the dataset chunking strategy from the original
+dataset being stored, see the
+<em>store_dataset_chunks</em> parameter to
+<a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>.</p>
 </div>
 <p>The <em>dataset_chunks</em> parameter may be one of:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'contiguous'</span></code></p>
-<p>The data will written to the file contiguously, i.e. no
-chunking.</p>
+<p>The data will be written to the dataset contiguously,
+i.e. no chunking. For a Zarr dataset, this is
+implemented as a single dataset chunk for the entire
+array.</p>
 </li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
 <p>The size in bytes of the dataset chunks. A floating
@@ -696,7 +700,7 @@ are (case insensitive): <code class="docutils literal notranslate"><span class="
 number of bytes (taken either from the
 <em>dataset_chunks</em> parameter, or as stored by the
 data itself), “square-like” dataset chunk shapes
-are preferred that maximise the amount of chunks
+are preferred that maximise the number of chunks
 that are completely filled with data values. For
 example, with <em>dataset_chunks</em> of <code class="docutils literal notranslate"><span class="pre">'4</span> <span class="pre">MiB'</span></code>, a
 data array of 64-bit floats with shape (400,
@@ -721,6 +725,43 @@ size.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
+</dd>
+<dt>dataset_shards: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>When writing to a Zarr dataset, sharding provides a
+mechanism to store multiple dataset chunks in a single
+storage object or file. Without sharding, each dataset
+chunk is written to its own file. Traditional file systems
+and object storage systems may have performance issues
+storing and accessing large number of files, and small
+files can be inefficient to store if they are smaller than
+the block size of the file system. Sharding can improve
+performance by creating fewer, and larger, files for
+storing the dataset chunks.</p>
+<p>The <em>dataset_shards</em> parameter is ignored when writing to
+a non-Zarr dataset.</p>
+<p>If any <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> being written already stores its own dataset
+sharding strategy (i.e. its <a class="reference internal" href="../method/cf.Data.nc_dataset_shards.html#cf.Data.nc_dataset_shards" title="cf.Data.nc_dataset_shards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data.nc_dataset_shards</span></code></a>
+method returns something other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) then, for that
+data array alone, it is used in preference to the strategy
+defined by the <em>dataset_shards</em> parameter.</p>
+<p>The <em>dataset_shards</em> parameter may be one of:</p>
+<ul>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<blockquote>
+<div><p>No sharding.</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<p>The integer number of dataset chunks to be stored in a
+single shard, favouring an equal number of dataset
+chunks along each shard dimension.</p>
+</li>
+</ul>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>For two-dimensional data, <code class="docutils literal notranslate"><span class="pre">dataset_shards=9</span></code> will
+result in shards that span 3 chunks along each
+dimension.</p>
+</dd>
+</dl>
 </dd>
 <dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Specify which netCDF variables, if any, should be written
 as CF-netCDF aggregation variables.</p>
@@ -839,17 +880,17 @@ CF-netCDF aggregation variable: <code class="docutils literal notranslate"><span
 </dl>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'uri'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
-<p>Specify the URI format of the fragment file names.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">'default'</span></code> (the default) then the fragment file
+<p>Specify the URI format of the fragment dataset names.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">'default'</span></code> (the default) then the fragment dataset
 names will be written with the same URI formats that
-they had when read from input files (for file names
-originating from the reading of normal non-aggregation
-variables, this will result in absolute URIs). If
-<code class="docutils literal notranslate"><span class="pre">'absolute'</span></code> then all fragment file names will be
-written as absolute URIs. If <code class="docutils literal notranslate"><span class="pre">'relative'</span></code> then all
-fragment file names will be written as relative-path URI
-references URIs, relative to the location of the
-aggregation file.</p>
+they had when read from input datasets (for dataset
+names originating from the reading of normal
+non-aggregation variables, this will result in absolute
+URIs). If <code class="docutils literal notranslate"><span class="pre">'absolute'</span></code> then all fragment dataset names
+will be written as absolute URIs. If <code class="docutils literal notranslate"><span class="pre">'relative'</span></code> then
+all fragment dataset names will be written as
+relative-path URI references, relative to the
+location of the aggregation dataset.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'strict'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 <p>If True (the default if this key is missing) then an
@@ -865,6 +906,8 @@ non-aggregation variable will be written in this case.</p>
 </dd>
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that defines field
 and metadata constructs and their components.</p>
+</dd>
+<dt>filename: Deprecated at version 1.13.0.0</dt><dd><p>Use <em>dataset_name</em> instead.</p>
 </dd>
 </dl>
 </dd>
@@ -899,11 +942,11 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-10-16.
+      &#169;2026, NCAS | Page built on 2026-01-19.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

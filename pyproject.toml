@@ -22,5 +22,5 @@ line_length=79
 # which can cause a seg fault if cf-plot/matplotlib is imported first.
 extend_skip_glob = [
   "**/__init__.py",
-  "docs/source/recipes/**",
+  "recipes-docs/source/recipes/**",
 ]
