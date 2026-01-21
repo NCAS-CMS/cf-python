@@ -726,7 +726,7 @@ HEALPix grids
    :template: method.rst
 
    ~cf.Field.healpix_info
-   ~cf.Field.healpix_indexing_scheme
+   ~cf.Field.healpix_change_indexing_scheme
    ~cf.Field.healpix_to_ugrid
    ~cf.Field.healpix_decrease_refinement_level
    ~cf.Field.healpix_increase_refinement_level

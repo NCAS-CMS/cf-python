@@ -182,14 +182,14 @@ Miscellaneous
    ~cf.Domain.copy
    ~cf.Domain.create_latlon_coordinates
    ~cf.Domain.create_regular   
-   ~cf.Domain.create_healpix   
+   ~cf.Domain.create_healpix
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
    ~cf.Domain.has_bounds
    ~cf.Domain.has_data
    ~cf.Domain.has_geometry
-   ~cf.Domain.apply_masking   
+   ~cf.Domain.apply_masking
    ~cf.Domain.get_original_filenames
    ~cf.Domain.close
    ~cf.Domain.persist
@@ -239,7 +239,7 @@ HEALPix grids
    :template: method.rst
 
    ~cf.Domain.healpix_info
-   ~cf.Domain.healpix_indexing_scheme
+   ~cf.Domain.healpix_change_indexing_scheme
    ~cf.Domain.healpix_to_ugrid
    ~cf.Domain.create_healpix
 

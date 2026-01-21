@@ -4845,7 +4845,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_increase_refinement_level`,
-                     `healpix_info`, `healpix_indexing_scheme`,
+                     `healpix_info`, `healpix_change_indexing_scheme`,
                      `healpix_to_ugrid`, `collapse`
 
         :Parameters:
@@ -5082,7 +5082,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # scheme with ordered HEALPix indices
         if conform:
             try:
-                f = f.healpix_indexing_scheme("nested", sort=True)
+                f = f.healpix_change_indexing_scheme("nested", sort=True)
             except ValueError as e:
                 raise ValueError(
                     f"Can't decrease HEALPix refinement level of {f!r}: {e}"
@@ -5289,7 +5289,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_decrease_refinement_level`,
-                     `healpix_info`, `healpix_indexing_scheme`,
+                     `healpix_info`, `healpix_change_indexing_scheme`,
                      `healpix_to_ugrid`
 
         :Parameters:
@@ -5372,7 +5372,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Increasing the refinement level requires the nested indexing
         # scheme
         try:
-            f = self.healpix_indexing_scheme("nested", sort=False)
+            f = self.healpix_change_indexing_scheme("nested", sort=False)
         except ValueError as e:
             raise ValueError(
                 f"Can't increase HEALPix refinement level of {self!r}: {e}"

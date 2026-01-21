@@ -3447,9 +3447,9 @@ def locate(lat, lon, f=None):
 
             return _healpix_locate(lat, lon, f)
 
-        raise ValueError(
+        raise NotImplementedError(
             f"Can't find cell locations for {f!r}: Can only find locations "
-            "for HEALPix cells (at present)"
+            "for HEALPix cells"
         )
 
         ugrid = f.domain_topologies(todict=True)
@@ -3467,7 +3467,7 @@ def locate(lat, lon, f=None):
             # Geometries - not coded up, yet.
             pass
 
-        raise ValueError(
+        raise NotImplementedError(
             f"Can't find cell locations for {f!r}: Can only find locations "
             "for UGRID, HEALPix, or geometry cells"
         )

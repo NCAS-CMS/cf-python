@@ -2072,7 +2072,7 @@ class Weights(Container, cfdm.Container):
                 units = "1"
                 r = None
 
-            from .data.dask_utils import cf_healpix_weights
+            from .data.dask_utils_healpix import cf_healpix_weights
 
             dx = healpix_index.to_dask_array()
             dx = dx.map_blocks(

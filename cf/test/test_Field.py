@@ -3114,94 +3114,98 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             g.to_units("degC")
 
-    def test_Field_healpix_indexing_scheme(self):
-        """Test Field.healpix_indexing_scheme."""
+    def test_Field_healpix_change_indexing_scheme(self):
+        """Test Field.healpix_change_indexing_scheme."""
         # HEALPix field
         f = self.f12  # nested
 
         # Null change
-        g = f.healpix_indexing_scheme(None)
+        g = f.healpix_change_indexing_scheme(None)
         self.assertTrue(g.equals(f))
 
         # Null change
-        g = f.healpix_indexing_scheme("nested")
+        g = f.healpix_change_indexing_scheme("nested")
         self.assertTrue(g.equals(f))
 
-        g = f.healpix_indexing_scheme("ring")
+        g = f.healpix_change_indexing_scheme("ring")
         self.assertTrue(
             np.array_equal(g.coordinate("healpix_index")[:4], [13, 5, 4, 0])
         )
-        h = g.healpix_indexing_scheme("nested")
+        h = g.healpix_change_indexing_scheme("nested")
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
-        h = g.healpix_indexing_scheme("nuniq")
+        h = g.healpix_change_indexing_scheme("nuniq")
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
 
-        g = f.healpix_indexing_scheme("ring", sort=True)
+        g = f.healpix_change_indexing_scheme("ring", sort=True)
         self.assertTrue(
             np.array_equal(g.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
-        h = g.healpix_indexing_scheme("nested", sort=False)
+        h = g.healpix_change_indexing_scheme("nested", sort=False)
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [3, 7, 11, 15])
         )
-        h = g.healpix_indexing_scheme("nested", sort=True)
+        h = g.healpix_change_indexing_scheme("nested", sort=True)
         self.assertTrue(
             np.array_equal(h.coordinate("healpix_index")[:4], [0, 1, 2, 3])
         )
 
-        g = f.healpix_indexing_scheme("nuniq")
+        g = f.healpix_change_indexing_scheme("nuniq")
         self.assertTrue(
             np.array_equal(g.coordinate("healpix_index")[:4], [16, 17, 18, 19])
         )
-        h = g.healpix_indexing_scheme("nuniq")
+        h = g.healpix_change_indexing_scheme("nuniq")
         self.assertTrue(h.equals(g))
 
         # Can't change from 'nuniq' to 'nested'
         with self.assertRaises(ValueError):
-            self.f13.healpix_indexing_scheme("nested")
+            self.f13.healpix_change_indexing_scheme("nested")
 
         # Can't change from 'nuniq' to 'ring'
         with self.assertRaises(ValueError):
-            self.f13.healpix_indexing_scheme("ring")
+            self.f13.healpix_change_indexing_scheme("ring")
 
         # zuniq
         nested = self.f12
-        ring = nested.healpix_indexing_scheme("ring")
-        nuniq = nested.healpix_indexing_scheme("nuniq")
-        zuniq = nested.healpix_indexing_scheme("zuniq")
+        ring = nested.healpix_change_indexing_scheme("ring")
+        nuniq = nested.healpix_change_indexing_scheme("nuniq")
+        zuniq = nested.healpix_change_indexing_scheme("zuniq")
 
-        f = zuniq.healpix_indexing_scheme("nuniq")
+        f = zuniq.healpix_change_indexing_scheme("nuniq")
         self.assertTrue(f.equals(nuniq, ignore_data_type=True))
 
-        f = nuniq.healpix_indexing_scheme("zuniq")
+        f = nuniq.healpix_change_indexing_scheme("zuniq")
         self.assertTrue(f.equals(zuniq))
 
-        f = zuniq.healpix_indexing_scheme("nested", moc_refinement_level=1)
+        f = zuniq.healpix_change_indexing_scheme(
+            "nested", moc_refinement_level=1
+        )
         self.assertTrue(f.equals(nested, ignore_data_type=True))
 
-        f = nested.healpix_indexing_scheme("zuniq")
+        f = nested.healpix_change_indexing_scheme("zuniq")
         self.assertTrue(f.equals(zuniq))
 
-        f = zuniq.healpix_indexing_scheme("ring", moc_refinement_level=1)
+        f = zuniq.healpix_change_indexing_scheme(
+            "ring", moc_refinement_level=1
+        )
         self.assertTrue(f.equals(ring, ignore_data_type=True))
 
-        zuniq = ring.healpix_indexing_scheme("zuniq")
-        f = ring.healpix_indexing_scheme("zuniq")
+        zuniq = ring.healpix_change_indexing_scheme("zuniq")
+        f = ring.healpix_change_indexing_scheme("zuniq")
         self.assertTrue(f.equals(zuniq, verbose=-1))
 
         # Must set moc_refinement_level for some changes
         for f in (nuniq, zuniq):
             for indexing_scheme in ("nested", "ring"):
                 with self.assertRaises(ValueError):
-                    f.healpix_indexing_scheme(indexing_scheme)
+                    f.healpix_change_indexing_scheme(indexing_scheme)
 
         # Non-HEALPix field
         with self.assertRaises(ValueError):
-            self.f0.healpix_indexing_scheme("ring")
+            self.f0.healpix_change_indexing_scheme("ring")
 
     def test_Field_healpix_to_ugrid(self):
         """Test Field.healpix_to_ugrid."""
@@ -3257,7 +3261,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(f.create_latlon_coordinates(inplace=True))
         self.assertTrue(f.equals(g))
 
-        g = self.f12.healpix_indexing_scheme("nuniq")
+        g = self.f12.healpix_change_indexing_scheme("nuniq")
         g.create_latlon_coordinates(inplace=True)
         for c in ("latitude", "longitude"):
             self.assertTrue(
@@ -3330,7 +3334,7 @@ class FieldTest(unittest.TestCase):
         g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
         self.assertTrue(np.array_equal(g.coordinate("healpix_index"), [0, 19]))
 
-        f = f.healpix_indexing_scheme("ring")
+        f = f.healpix_change_indexing_scheme("ring")
         g = f.subspace(healpix_index=cf.locate(20, [1, 46]))
         self.assertTrue(
             np.array_equal(g.coordinate("healpix_index"), [13, 12])
@@ -3387,7 +3391,7 @@ class FieldTest(unittest.TestCase):
         g = f.healpix_decrease_refinement_level(0, "mean", my_mean)
         self.assertTrue(np.isclose(g[0, 0], 289.15))
 
-        f = f.healpix_indexing_scheme("ring")
+        f = f.healpix_change_indexing_scheme("ring")
         g = f.healpix_decrease_refinement_level(0, "maximum")
         self.assertTrue(
             np.array_equal(g.coord("healpix_index"), np.arange(12))
@@ -3395,8 +3399,8 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.healpix_decrease_refinement_level(0, "maximum", conform=False)
 
-        f = f.healpix_indexing_scheme("ring", sort=True)
-        f = f.healpix_indexing_scheme("nested")
+        f = f.healpix_change_indexing_scheme("ring", sort=True)
+        f = f.healpix_change_indexing_scheme("nested")
 
         g = f.healpix_decrease_refinement_level(0, "mean", conform=True)
         self.assertTrue(

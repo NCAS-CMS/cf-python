@@ -2,6 +2,8 @@
 
 import logging
 
+from functools import lru_cache
+
 import numpy as np
 from cfdm import is_log_level_info
 
@@ -19,9 +21,6 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.create_latlon_coordinates`,
-                 `cf.Field.healpix_to_ugrid`
 
     :Parameters:
 
@@ -58,7 +57,10 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     import dask.array as da
 
     from .constants import healpix_indexing_schemes
-    from .data.dask_utils import cf_healpix_bounds, cf_healpix_coordinates
+    from .data.dask_utils_healpix import (
+        cf_healpix_bounds,
+        cf_healpix_coordinates,
+    )
 
     hp = f.healpix_info()
 
@@ -224,8 +226,6 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cf.Field.healpix_increase_refinement_level`
-
     :Parameters:
 
         x: construct
@@ -309,8 +309,6 @@ def _healpix_increase_refinement_level_indices(
     https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.healpix_increase_refinement_level`
 
     :Parameters:
 
@@ -398,7 +396,7 @@ def _healpix_increase_refinement_level_indices(
         data._set_cached_elements({-1: x})
 
 
-def _healpix_indexing_scheme(
+def _healpix_change_indexing_scheme(
     f, hp, new_indexing_scheme, moc_refinement_level=None
 ):
     """Change the indexing scheme of HEALPix indices in-place.
@@ -409,8 +407,6 @@ def _healpix_indexing_scheme(
     https://doi.org/10.5281/zenodo.14274886
 
     .. versionadded:: NEXTVERSION
-
-    .. seealso:: `cf.Field.healpix_indexing_scheme`
 
     :Parameters:
 
@@ -436,7 +432,7 @@ def _healpix_indexing_scheme(
     """
     from cfdm import integer_dtype
 
-    from .data.dask_utils import cf_healpix_indexing_scheme
+    from .data.dask_utils_healpix import cf_healpix_change_indexing_scheme
 
     healpix_index = hp["healpix_index"]
     indexing_scheme = hp["indexing_scheme"]
@@ -444,16 +440,8 @@ def _healpix_indexing_scheme(
 
     old_cache = healpix_index.data._get_cached_elements()
 
-    # Change the HEALPix indices
-    #
-    # `cf_healpix_indexing_scheme` has its own call to
-    # `cfdm_to_memory`, so we can set _force_to_memory=False.
-    dx = healpix_index.data.to_dask_array(
-        _force_mask_hardness=False, _force_to_memory=False
-    )
-
-    # Find the datatype for the largest possible index at this
-    # refinement level
+    # Find a data type that is sufficient for storing the indices in
+    # the new indexing scheme
     if new_indexing_scheme == "nuniq":
         if indexing_scheme in ("nested", "ring"):
             # The largest possible nested or ring index at refinement
@@ -481,8 +469,16 @@ def _healpix_indexing_scheme(
             f"{indexing_scheme!r} to {new_indexing_scheme!r}"
         )  # pragma: no cover
 
+    # Change the HEALPix indices
+    #
+    # `cf_healpix_change_indexing_scheme` has its own call to
+    # `cfdm_to_memory`, so we can set _force_to_memory=False.
+    dx = healpix_index.data.to_dask_array(
+        _force_mask_hardness=False, _force_to_memory=False
+    )
+
     dx = dx.map_blocks(
-        cf_healpix_indexing_scheme,
+        cf_healpix_change_indexing_scheme,
         dtype=dtype,
         meta=np.array((), dtype=dtype),
         indexing_scheme=indexing_scheme,
@@ -505,7 +501,7 @@ def _healpix_indexing_scheme(
     if old_cache and moc_refinement_level is None:
         new_cache = {}
         for i, value in old_cache.items():
-            new_cache[i] = cf_healpix_indexing_scheme(
+            new_cache[i] = cf_healpix_change_indexing_scheme(
                 np.array(value),
                 indexing_scheme=indexing_scheme,
                 new_indexing_scheme=new_indexing_scheme,
@@ -786,7 +782,7 @@ def healpix_info(f):
 
     return info
 
-
+@lru_cache(maxsize=1)
 def healpix_max_refinement_level():
     """Return the maximum permitted HEALPix refinement level.
 

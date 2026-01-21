@@ -282,10 +282,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         resulting from an attempt to create an excessive amount of
         chunks for the healpix_index coordinates. For instance,
         healpix_index coordinates at refinement level 29 would need
-        ~206 billion chunks with the default Dask chunksize of 128 MiB
-        - almost certainly more than enough to cause a crash - but
-        with a chunksize of 1 pebibyte only 24576 chunks are
-        required, a much more manageable amount::
+        ~206 billion chunks with the default Dask chunksize of 128
+        MiB, which is almost certainly more than enough to cause a
+        crash. In this case, a chunksize of 1 pebibyte results in only
+        24576 chunks, a much more manageable amount::
 
            >>> cf.chunksize()
            >>> 134217728
@@ -413,6 +413,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         indexing_scheme0 = indexing_scheme
 
         if indexing_scheme == "zuniq":
+            # For zuniq, create nuniq first and then convert to zuniq.
             indexing_scheme = "nuniq"
 
         domain = Domain()
@@ -431,7 +432,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         # Create the healpix_index data
         if indexing_scheme in ("nested", "ring"):
             start = 0
-        elif indexing_scheme in ("nuniq", "zuniq"):
+        elif indexing_scheme == "nuniq":
             start = 4 ** (refinement_level + 1)
         else:
             raise NotImplementedError(
@@ -472,7 +473,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         domain.set_construct(cr)
 
         if indexing_scheme0 == "zuniq":
-            domain = domain.healpix_indexing_scheme("zuniq", sort=False)
+            domain = domain.healpix_change_indexing_scheme("zuniq", sort=False)
 
         return domain
 

@@ -89,7 +89,7 @@ class Grid:
     # Whether or not the grid is a structured grid.
     is_grid: bool = False
     # Whether or not the grid is a UGRID mesh (after any
-    # transformations are applied, such as converting HEALPix to
+    # transformations are applied, such as converting from HEALPix to
     # UGRID).
     is_mesh: bool = False
     # Whether or not the grid is a location stream.
@@ -123,7 +123,8 @@ class Grid:
     # `None` then there are no vertical coordinates.
     z_index: Any = None
     # The original field/domain before any transformations are applied
-    # (such as creating lat/lon coordinates, or converting to UGRID).
+    # (such as creating lat/lon coordinates, or converting to from
+    # HEALPix to UGRID).
     domain: Any = None
 
 

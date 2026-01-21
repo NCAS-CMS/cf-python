@@ -8,8 +8,8 @@ Version NEXTVERSION
 * New HEALPix methods: `cf.Field.healpix_info`,
   `cf.Field.healpix_decrease_refinement_level`,
   `cf.Field.healpix_increase_refinement_level`,
-  `cf.Field.healpix_indexing_scheme`, `cf.Field.healpix_to_ugrid`,
-  `cf.Domain.create_healpix`
+  `cf.Field.healpix_change_indexing_scheme`,
+  `cf.Field.healpix_to_ugrid`, `cf.Domain.create_healpix`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New method: `cf.Field.create_latlon_coordinates`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
@@ -18,10 +18,10 @@ Version NEXTVERSION
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New optional dependency: ``healpix>=2025.1``
-* Changed dependency: ``cfdm>=1.13.0.0, <1.13.1.0``
+* Changed dependency: ``cfdm>=1.13.?.?, <1.13.?.0``
 
 ----
-  
+
 Version 3.19.0
 --------------
 
