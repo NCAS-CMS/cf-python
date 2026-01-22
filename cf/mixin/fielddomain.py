@@ -1987,15 +1987,6 @@ class FieldDomain:
         coordinate values are changed, along with the corresponding
         "healpix" grid mapping Coordinate Reference.
 
-        In general, changing from nuniq or zuniq to ring or nested
-        indexing schemes is not allowed, because
-        `healpix_change_indexing_scheme` is a lzay operation and so
-        whether or not the original nuniq or zuniq indices represent a
-        single refinement level is currently unknown.
-
-        * nuniq or zuniq -> ring or nested
-        *
-
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
@@ -2021,19 +2012,15 @@ class FieldDomain:
             moc_refinement_level: `int` or `None`, optional
                 By default, or if *moc_refinement_level* is `None`,
                 changing from an nuniq or zuniq MOC indexing scheme to
-                a ring or nested indexing scheme is not allowed,
-                because the original MOC indices are not inspected to
-                ascertain whether or not they represent a single
-                refinement level. However, if it is otherwise known
-                that they do represent a single refinement level, then
-                this level may be provided with the
-                *moc_refinement_level* parameter and the change will
-                be allowed.
-
-                When the new indices are computed, if the original MOC
-                indices do in fact include a refinement level other
-                than *moc_refinement_level* then an exception is
-                raised.
+                a ring or nested indexing scheme is not allowed.
+                However, if it is known that the nuniq or zuniq
+                indices represent a single refinement level, then this
+                integer level may be provided with the
+                *moc_refinement_level* parameter, and then changing to
+                nested or ring will be allowed. When the new indices
+                are actually computed, an exception is raised if the
+                original MOC indices do in fact include a refinement
+                level other than *moc_refinement_level*.
 
         :Returns:
 

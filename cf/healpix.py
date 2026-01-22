@@ -2,10 +2,12 @@
 
 import logging
 
-from functools import lru_cache
-
 import numpy as np
 from cfdm import is_log_level_info
+
+# Import `healpix_max_refinement_level` as a convenience, so that all
+# healpix-related functions can be imported from this module.
+from cf.functions import healpix_max_refinement_level  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -781,32 +783,3 @@ def healpix_info(f):
         info["healpix_index"] = healpix_index
 
     return info
-
-@lru_cache(maxsize=1)
-def healpix_max_refinement_level():
-    """Return the maximum permitted HEALPix refinement level.
-
-    The maximum refinement level is the highest refinement level for
-    which all of HEALPix indices from any indexing scheme are
-    representable as double precision integers.
-
-    See CF Appendix F: Grid Mappings.
-    https://doi.org/10.5281/zenodo.14274886
-
-    .. versionadded:: NEXTVERSION
-
-    :Returns:
-
-        `int`
-            The maximum permitted HEALPix refinement level.
-
-    """
-    try:
-        import healpix
-    except ImportError as e:
-        raise ImportError(
-            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
-            "to find the maximum HEALPix refinement level"
-        )
-
-    return healpix.nside2order(healpix._chp.NSIDE_MAX)

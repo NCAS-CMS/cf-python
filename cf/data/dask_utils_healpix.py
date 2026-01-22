@@ -8,6 +8,8 @@ instance, as would be passed to `dask.array.map_blocks`.
 import numpy as np
 from cfdm.data.dask_utils import cfdm_to_memory
 
+from cf.functions import healpix_max_refinement_level
+
 
 def _zuniq2pix(a, nest=False):
     """Convert from the zuniq to ring or nested pixel scheme.
@@ -19,7 +21,7 @@ def _zuniq2pix(a, nest=False):
 
     See
     https://github.com/cds-astro/cds-healpix-rust/blob/v0.7.3/src/nested/mod.rs#L188-L194
-    for details.
+    for the algorithm definition.
 
     .. versionadded:: NEXTVERSION
 
@@ -41,11 +43,10 @@ def _zuniq2pix(a, nest=False):
             is True, otherwise the ring indexing scheme.
 
     """
-    import healpix
-
     if not nest:
         raise NotImplementedError(
-            "Can't yet convert from zuniq to ring indices"
+            "Can't yet convert from zuniq to ring indices "
+            "(consider doing zuniq -> nuniq -> ring instead)"
         )
 
     if isinstance(a, np.ndarray):
@@ -53,13 +54,11 @@ def _zuniq2pix(a, nest=False):
     else:
         a = np.array(a, dtype="int64")
 
-    depth_max = healpix.nside2order(healpix._chp.NSIDE_MAX)
-
     n_trailing_zeros = np.bitwise_count((a & -a) - 1)
     n_trailing_zeros = n_trailing_zeros.astype("int8", copy=False)
 
     delta_depth = n_trailing_zeros >> 1
-    depth = depth_max - delta_depth
+    depth = healpix_max_refinement_level() - delta_depth
 
     a = a >> (n_trailing_zeros + 1)
 
@@ -121,12 +120,10 @@ def _uniq2zuniq(a):
     """
     import healpix
 
-    depth_max = healpix.nside2order(healpix._chp.NSIDE_MAX)
-
     order, a = healpix.uniq2pix(a, nest=True)
     order = order.astype("int64", copy=False)
 
-    order = 4 ** (depth_max - order)
+    order = 4 ** (healpix_max_refinement_level() - order)
     a *= 2
     a += 1
     a *= order
@@ -164,10 +161,10 @@ def _pix2zuniq(refinement_level, a, nest=False):
             the zuniq indexing scheme.
 
     """
-    import healpix
-
     if not nest:
         # Convert ring to nested
+        import healpix
+
         nside = healpix.order2nside(refinement_level)
         a = healpix.ring2nest(nside, a)
     elif isinstance(a, np.ndarray):
@@ -176,11 +173,9 @@ def _pix2zuniq(refinement_level, a, nest=False):
         a = np.array(a, dtype="int64")
 
     # Convert nested to zuniq
-    depth_max = healpix.nside2order(healpix._chp.NSIDE_MAX)
-
     a *= 2
     a += 1
-    a *= 4 ** (depth_max - refinement_level)
+    a *= 4 ** (healpix_max_refinement_level() - refinement_level)
 
     return a
 
@@ -588,7 +583,7 @@ def cf_healpix_change_indexing_scheme(
         # Null operation
         return a
 
-    from ..constants import healpix_indexing_schemes
+    from cf.constants import healpix_indexing_schemes
 
     if new_indexing_scheme not in healpix_indexing_schemes:
         raise ValueError(

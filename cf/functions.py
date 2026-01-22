@@ -3,7 +3,7 @@ import os
 import platform
 import warnings
 from collections.abc import Iterable
-from functools import partial
+from functools import lru_cache, partial
 from importlib.util import find_spec
 from itertools import product
 from os import mkdir
@@ -3482,6 +3482,36 @@ def locate(lat, lon, f=None):
         return partial(_locate, lat, lon)
 
     return _locate(lat, lon, f)
+
+
+@lru_cache(maxsize=1)
+def healpix_max_refinement_level():
+    """Return the maximum permitted HEALPix refinement level.
+
+    The maximum refinement level is the highest refinement level for
+    which all of HEALPix indices from any indexing scheme are
+    representable as double precision integers.
+
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
+
+    .. versionadded:: NEXTVERSION
+
+    :Returns:
+
+        `int`
+            The maximum permitted HEALPix refinement level.
+
+    """
+    try:
+        import healpix
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install healpix (https://pypi.org/project/healpix) "
+            "to find the maximum HEALPix refinement level"
+        )
+
+    return healpix.nside2order(healpix._chp.NSIDE_MAX)
 
 
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):

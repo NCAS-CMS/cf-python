@@ -454,7 +454,7 @@ class functionTest(unittest.TestCase):
 
         # Invalid grid types (regular lat/lon, geometry, UGRID)
         for f in cf.example_fields(0, 6, 8):
-            with self.assertRaises(ValueError):
+            with self.assertRaises(NotImplementedError):
                 cf.locate(60, 30, f)
 
 

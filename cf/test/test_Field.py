@@ -3195,7 +3195,7 @@ class FieldTest(unittest.TestCase):
 
         zuniq = ring.healpix_change_indexing_scheme("zuniq")
         f = ring.healpix_change_indexing_scheme("zuniq")
-        self.assertTrue(f.equals(zuniq, verbose=-1))
+        self.assertTrue(f.equals(zuniq))
 
         # Must set moc_refinement_level for some changes
         for f in (nuniq, zuniq):
