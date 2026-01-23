@@ -583,9 +583,9 @@ def cf_healpix_change_indexing_scheme(
         # Null operation
         return a
 
-    from cf.constants import healpix_indexing_schemes
+    from cf.functions import healpix_indexing_schemes
 
-    if new_indexing_scheme not in healpix_indexing_schemes:
+    if new_indexing_scheme not in healpix_indexing_schemes():
         raise ValueError(
             "Can't change HEALPix indexing scheme: Unknown "
             "'new_indexing_scheme' in cf_healpix_change_indexing_scheme: "

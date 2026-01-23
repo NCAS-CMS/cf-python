@@ -280,12 +280,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         High refinement levels may require the setting of a very large
         Dask chunksize, to prevent a possible run-time failure
         resulting from an attempt to create an excessive amount of
-        chunks for the healpix_index coordinates. For instance,
-        healpix_index coordinates at refinement level 29 would need
-        ~206 billion chunks with the default Dask chunksize of 128
-        MiB, which is almost certainly more than enough to cause a
-        crash. In this case, a chunksize of 1 pebibyte results in only
-        24576 chunks, a much more manageable amount::
+        chunks for the healpix_index coordinates. For instance, with
+        the default Dask chunksize of 128 MiB, healpix_index
+        coordinates at refinement level 29 would need ~206 billion
+        Dask chunks, which is almost certainly more than enough to
+        cause a crash. In this case, a Dask chunksize of 1 pebibyte
+        results in only 24576 Dask chunks, a much more manageable
+        amount::
 
            >>> cf.chunksize()
            >>> 134217728
@@ -390,8 +391,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         import dask.array as da
 
-        from .constants import healpix_indexing_schemes
-        from .healpix import healpix_max_refinement_level
+        from cf.healpix import (
+            healpix_indexing_schemes,
+            healpix_max_refinement_level,
+        )
 
         if (
             not isinstance(refinement_level, Integral)
@@ -404,10 +407,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 f"{healpix_max_refinement_level()}. Got {refinement_level!r}"
             )
 
-        if indexing_scheme not in healpix_indexing_schemes:
+        if indexing_scheme not in healpix_indexing_schemes():
             raise ValueError(
                 "Can't create HEALPix Domain: 'indexing_scheme' must be one "
-                f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"of {healpix_indexing_schemes()!r}. Got {indexing_scheme!r}"
             )
 
         indexing_scheme0 = indexing_scheme
@@ -767,9 +770,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         Metadata constructs are selected conditions are specified on
         their data. Indices for subspacing are then automatically
         inferred from where the conditions are met. If a condition is
-        a callable function then if is automateically replaced with
-        the result of calling that function with the Domain as its
-        only argument.
+        a callable function then if is automatically replaced with the
+        result of calling that function with the Domain as its only
+        argument.
 
         Metadata constructs and the conditions on their data are
         defined by keyword parameters.

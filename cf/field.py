@@ -4971,7 +4971,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Set the refinement level to 0, showing that every 4 cells
         (i.e. the number of cells at the original refinement level
         that lie in one cell of the lower refinement leve1) in the
-        orginal field correspond to one cell at the lower level:
+        original field correspond to one cell at the lower level:
 
         >>> g = f.healpix_decrease_refinement_level(0, 'maximum')
         >>> print(g)
@@ -5161,7 +5161,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         except ValueError:
             # The Field data doesn't span the size 1 HEALPix axis, so
             # insert it on the left hand side.
-            f.insert_dimmension(axis, -1, inplace=True)
+            f.insert_dimension(axis, -1, inplace=True)
             iaxis = f.ndim - 1
 
         # Whether or not to create lat/lon coordinates for the new
@@ -13432,7 +13432,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         * If a condition is a given as a callable function, then it is
           replaced with the output of it being called with the field
-          as its ony argument. For instance,
+          as its only argument. For instance,
           ``f.subspace(X=cf.locate(30, 180))`` is equivalent to
           ``f.subspace(X=cf.locate(30, 180)(f))``.
 

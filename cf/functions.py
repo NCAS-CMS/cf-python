@@ -3514,6 +3514,25 @@ def healpix_max_refinement_level():
     return healpix.nside2order(healpix._chp.NSIDE_MAX)
 
 
+@lru_cache(maxsize=1)
+def healpix_indexing_schemes():
+    """The valid CF HEALPix indexing schemes.
+
+    See CF Appendix F: Grid Mappings.
+    https://doi.org/10.5281/zenodo.14274886
+
+    .. versionadded:: NEXTVERSION
+
+    :Returns:
+
+        `tuple`
+            The valid CF HEALPix indexing schemes, described with the
+            CF controlled vocabulary.
+
+    """
+    return ("nested", "ring", "nuniq", "zuniq")
+
+
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"

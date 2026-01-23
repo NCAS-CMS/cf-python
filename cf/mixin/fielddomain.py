@@ -2074,17 +2074,20 @@ class FieldDomain:
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
-        from ..constants import healpix_indexing_schemes
+        from cf.healpix import (
+            healpix_indexing_schemes,
+            healpix_max_refinement_level,
+        )
 
         f = self.copy()
 
         hp = f.healpix_info()
 
-        if new_indexing_scheme not in healpix_indexing_schemes + (None,):
+        if new_indexing_scheme not in healpix_indexing_schemes() + (None,):
             raise ValueError(
                 f"Can't change HEALPix index scheme of {f!r}: "
                 "new_indexing_scheme keyword must be None or one of "
-                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+                f"{healpix_indexing_schemes()!r}. Got {new_indexing_scheme!r}"
             )
 
         # Get the healpix_index coordinates
@@ -2103,12 +2106,27 @@ class FieldDomain:
                 "mapping coordinate reference"
             )
 
-        if indexing_scheme not in healpix_indexing_schemes:
+        if indexing_scheme not in healpix_indexing_schemes():
             raise ValueError(
                 f"Can't change HEALPix indexing scheme of {f!r}: "
                 "indexing_scheme in the healpix grid mapping coordinate "
                 "reference must be one of "
-                f"{healpix_indexing_schemes!r}. Got {new_indexing_scheme!r}"
+                f"{healpix_indexing_schemes()!r}. Got {new_indexing_scheme!r}"
+            )
+
+        if not (
+            moc_refinement_level is None
+            or (
+                isinstance(moc_refinement_level, Integral)
+                and 0 <= moc_refinement_level <= healpix_max_refinement_level()
+            )
+        ):
+            raise ValueError(
+                f"Can't change HEALPix indexing scheme of {f!r} from "
+                f"{indexing_scheme!r} to {new_indexing_scheme!r}: "
+                "'moc_refinement_level' must be None or an integer in the "
+                f"range [0, {healpix_max_refinement_level()}]. "
+                f"Got: {moc_refinement_level!r}"
             )
 
         if (
@@ -2132,13 +2150,23 @@ class FieldDomain:
                     "nuniq",
                     "zuniq",
                 ) and new_indexing_scheme in ("nested", "ring"):
-                    raise ValueError("TODOHEALPIX")
+                    raise ValueError(
+                        f"Can't change HEALPix indexing scheme of {f!r} from "
+                        f"{indexing_scheme!r} to {new_indexing_scheme!r} "
+                        "unless the 'moc_refinement_level' parameter has "
+                        "been set to an integer"
+                    )
 
             elif not (
                 indexing_scheme in ("nuniq", "zuniq")
                 and new_indexing_scheme in ("nested", "ring")
             ):
-                raise ValueError("TODOHEALPIX")
+                raise ValueError(
+                    f"Can't change HEALPix indexing scheme of {f!r} from "
+                    f"{indexing_scheme!r} to {new_indexing_scheme!r} when "
+                    "the 'moc_refinement_level' parameter has been set to "
+                    "an integer"
+                )
 
             # Update the Coordinate Reference
             cr = hp["grid_mapping_name:healpix"]

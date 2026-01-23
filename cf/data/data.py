@@ -1360,7 +1360,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Coarsen the data.
 
         Coarsen the data by applying the *reduction* function to
-        combine the elements within fixed-size neighborhoods.
+        combine the elements within fixed-size neighbourhoods.
 
         .. versionadded:: NEXTVERSION
 
@@ -1372,10 +1372,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             axes: `dict`
                 Define how to coarsening neighbourhood for each
                 axis. A dictionary key is an integer axis position,
-                with correponding value giving the integer size of the
-                coarsening neighbourhood for that axis. Unspecified
-                axes are not coarsened, which is equivalent to
-                providing a coarsening neighbourhood of ``1``.
+                with corresponding value giving the integer size of
+                the coarsening neighbourhood for that
+                axis. Unspecified axes are not coarsened, which is
+                equivalent to providing a coarsening neighbourhood of
+                ``1``.
 
                 *Example:*
                   Coarsen the axis in position 1 by combining every 4
@@ -3590,7 +3591,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Performance**
 
         For conversions which do not require a change in the
-        date-times implied by the data orginal values, this method
+        date-times implied by the data original values, this method
         will be considerably slower than a simple reassignment of the
         units. For example, if the original units are ``'days since
         2000-12-1'`` then ``d.Units = cf.Units('days since

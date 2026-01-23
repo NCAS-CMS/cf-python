@@ -2006,11 +2006,11 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
-        from .constants import healpix_indexing_schemes
+        from cf.healpix import healpix_indexing_schemes
 
         parameters = cr.coordinate_conversion.parameters()
         indexing_scheme = parameters.get("indexing_scheme")
-        if indexing_scheme not in healpix_indexing_schemes:
+        if indexing_scheme not in healpix_indexing_schemes():
             if auto:
                 return False
 

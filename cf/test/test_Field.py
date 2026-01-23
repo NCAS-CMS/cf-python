@@ -3197,6 +3197,12 @@ class FieldTest(unittest.TestCase):
         f = ring.healpix_change_indexing_scheme("zuniq")
         self.assertTrue(f.equals(zuniq))
 
+        # Bad moc_refinement_level values
+        for moc in (-1, 30, 3.14, "string"):
+            with self.assertRaises(ValueError):
+                zuniq.healpix_change_indexing_scheme(
+                    "ring", moc_refinement_level=moc
+                )
         # Must set moc_refinement_level for some changes
         for f in (nuniq, zuniq):
             for indexing_scheme in ("nested", "ring"):

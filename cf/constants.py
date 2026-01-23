@@ -520,12 +520,6 @@ cell_methods = set(
 
 
 # --------------------------------------------------------------------
-# CF HEALPix indexing schemes
-# --------------------------------------------------------------------
-healpix_indexing_schemes = ("nested", "ring", "nuniq", "zuniq")
-
-
-# --------------------------------------------------------------------
 # Logging level setup
 # --------------------------------------------------------------------
 # For explicitness, define here rather than importing identical Enum

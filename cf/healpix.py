@@ -5,9 +5,12 @@ import logging
 import numpy as np
 from cfdm import is_log_level_info
 
-# Import `healpix_max_refinement_level` as a convenience, so that all
-# healpix-related functions can be imported from this module.
-from cf.functions import healpix_max_refinement_level  # noqa: F401
+# Import HEALPix functions as a convenience, so that all
+# HEALPix-related functions can be imported from this module.
+from cf.functions import (  # noqa: F401
+    healpix_indexing_schemes,
+    healpix_max_refinement_level,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +61,6 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     """
     import dask.array as da
 
-    from .constants import healpix_indexing_schemes
     from .data.dask_utils_healpix import (
         cf_healpix_bounds,
         cf_healpix_coordinates,
@@ -67,13 +69,13 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     hp = f.healpix_info()
 
     indexing_scheme = hp.get("indexing_scheme")
-    if indexing_scheme not in healpix_indexing_schemes:
+    if indexing_scheme not in healpix_indexing_schemes():
         if is_log_level_info(logger):
             logger.info(
                 "Can't create 1-d latitude and longitude coordinates for "
                 f"{f!r}: indexing_scheme in the healpix grid mapping "
                 "coordinate reference must be one of "
-                f"{healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"{healpix_indexing_schemes()!r}. Got {indexing_scheme!r}"
             )  # pragma: no cover
 
         return (None, None)
@@ -631,12 +633,10 @@ def _healpix_locate(lat, lon, f):
             )
 
         case _:
-            from .constants import healpix_indexing_schemes
-
             raise ValueError(
                 f"Can't locate HEALPix cells for {f!r}: indexing_scheme in "
                 "the healpix grid mapping coordinate reference must be one "
-                f"of {healpix_indexing_schemes!r}. Got {indexing_scheme!r}"
+                f"of {healpix_indexing_schemes()!r}. Got {indexing_scheme!r}"
             )
 
     # Return the cell locations as a numpy array of element indices
