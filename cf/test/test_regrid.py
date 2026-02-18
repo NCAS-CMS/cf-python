@@ -793,23 +793,27 @@ class RegridTest(unittest.TestCase):
         except OSError:
             pass
 
-        r = src.regrids(
+        r0 = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertTrue(os.path.isfile(tmpfile))
-        self.assertEqual(r.weights_file, tmpfile)
-        self.assertIsNone(r.weights)
+        self.assertEqual(r0.weights_file, tmpfile)
+        self.assertIsNone(r0.weights)
 
-        r = src.regrids(
+        r1 = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
-        self.assertEqual(r.weights_file, tmpfile)
-        self.assertIsNone(r.weights)
+        self.assertEqual(r1.weights_file, tmpfile)
+        self.assertIsNone(r1.weights)
+        
+        r0.tosparse()
+        r1.tosparse()
+        self.assertTrue((r1.weights - r0.weights).nnz == 0)
 
         # Can't provide weights_file when dst is a RegridOperator
         with self.assertRaises(ValueError):
             self.assertEqual(
-                src.regrids(r, method="linear", weights_file=tmpfile)
+                src.regrids(r1, method="linear", weights_file=tmpfile)
             )
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
