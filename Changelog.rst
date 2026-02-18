@@ -8,7 +8,7 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cf.read` that allows parallel
   reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cf-python/issues/912)
-* Changed dependency: ``cfdm>=1.13.?.?, <1.13.?.0``
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
 
 ----
 
