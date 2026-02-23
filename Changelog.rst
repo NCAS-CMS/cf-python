@@ -1,3 +1,13 @@
+Version NEXTVERSION
+--------------
+
+**2026-??-??**
+
+* Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
+  (https://github.com/NCAS-CMS/cf-python/issues/887)
+
+----
+
 Version 3.19.0
 --------------
 
