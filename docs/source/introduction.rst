@@ -77,7 +77,7 @@ The `cf` package can:
 * create new field constructs in memory,
 
 * write and append field and domain constructs to netCDF and Zarr
-  datasets on disk,
+  datasets on disk, with control over HDF5 internal file metadata,
 
 * read, write, and manipulate UGRID mesh topologies,
 

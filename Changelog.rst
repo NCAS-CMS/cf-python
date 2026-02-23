@@ -3,6 +3,10 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New default backend for netCDF-4 in `cf.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cf-python/issues/924)
 * New default backend for netCDF-4 in `cf.read` that allows parallel
   reading: (https://github.com/NCAS-CMS/cf-python/issues/912)
 * New optional backend for netCDF-3 in `cf.read` that allows parallel

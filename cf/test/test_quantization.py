@@ -63,7 +63,7 @@ class quantizationTest(unittest.TestCase):
         f.set_quantize_on_write(q0)
 
         # Write the field and read it back in
-        cf.write(f, tmpfile1)
+        cf.write(f, tmpfile1, netcdf_backend="netCDF4")
         g = cf.read(tmpfile1)[0]
 
         # Check that f and g have different data (i.e. that
@@ -174,7 +174,7 @@ class quantizationTest(unittest.TestCase):
         # digit_round
         f.set_quantize_on_write(algorithm="digitround", quantization_nsd=2)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # NetCDF3 formats
         for fmt in self.netcdf3_fmts:
@@ -184,29 +184,29 @@ class quantizationTest(unittest.TestCase):
         # Integer data type
         f.data.dtype = int
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # Out-of-range quantization_nsd
         f.data.dtype = "float32"
         f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=8)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         f.data.dtype = "float64"
         f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=16)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # Out-of-range quantization_nsb
         f.data.dtype = "float32"
         f.set_quantize_on_write(algorithm="bitround", quantization_nsb=24)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         f.data.dtype = "float64"
         f.set_quantize_on_write(algorithm="bitround", quantization_nsb=53)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
     def test_quantization_copy(self):
         """Test that quantization information gets copied."""
