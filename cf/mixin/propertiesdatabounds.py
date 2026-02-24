@@ -18,7 +18,9 @@ from ..functions import (
 )
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
-from ..functions import parse_indices
+from ..functions import (
+    parse_indices,
+)
 from ..functions import size as cf_size
 from ..query import Query
 from ..units import Units
