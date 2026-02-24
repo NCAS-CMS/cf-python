@@ -220,6 +220,8 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.7.2 only.
 
+* `pyive <https://pypi.org/project/pyfive>`_, version 1.1.0 or newer.
+
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).
 
@@ -273,9 +275,8 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
-  named `ESMF` with the old module name also being accepted for import,
-  version 8.7.0 or newer. This is easily installed via conda with
+* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, version 8.7.0 or
+  newer. This is easily installed via conda with
 
   .. code-block:: console
 
