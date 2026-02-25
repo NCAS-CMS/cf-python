@@ -2323,7 +2323,6 @@ def create_esmpy_mesh(grid, mask=None, grid_partitions=1):
             grid_bounds = [b[partition] for b in grid_bounds]
             domain_topology = domain_topology[partition]
 
-        print('DDDDDDDDDDDDD', domain_topology.data.shape, domain_topology.data.chunks)
         element_conn = domain_topology.normalise(start_index=0).array
         element_count = element_conn.shape[0]
         element_types = np.ma.count(element_conn, axis=1)
