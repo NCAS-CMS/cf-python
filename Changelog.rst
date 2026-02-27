@@ -10,6 +10,8 @@ Version NEXTVERSION
   reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cf-python/issues/912)
 * Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+* Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
+  (https://github.com/NCAS-CMS/cf-python/issues/887)
 
 ----
 
