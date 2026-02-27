@@ -3,9 +3,9 @@ import cfdm
 from ...mixin_container import Container
 
 
-class Netcdf_fileArray(
+class ScipyNetcdfFileArray(
     Container,
-    cfdm.Netcdf_fileArray,
+    cfdm.ScipyNetcdfFileArray,
 ):
     """A netCDF-3 array accessed with `scipy.io.netcdf_file`.
 
