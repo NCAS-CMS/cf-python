@@ -619,23 +619,29 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_write_unlimited(self):
-        for fmt in ("NETCDF4", "NETCDF3_CLASSIC"):
-            f = self.f1.copy()
+        f = cf.read(self.filename)[0]
+        for fmt in self.netcdf_fmts:
             domain_axes = f.domain_axes()
 
             domain_axes["domainaxis0"].nc_set_unlimited(True)
-            cf.write(f, tmpfile, fmt=fmt)
+            cf.write(f, tmpfile, fmt=fmt, cfa=None)
 
-            f = cf.read(tmpfile)[0]
-            domain_axes = f.domain_axes()
-            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
+            if fmt in self.netcdf3_fmts:
+                # Note: netcdf_file backend does not support unlimited
+                #       dimensions
+                backend = "netCDF4"
+            else:
+                backend = None
 
-        fmt = "NETCDF4"
-        f = self.f1.copy()
+            g = cf.read(tmpfile, netcdf_backend=backend)[0]
+            domain_axes = g.domain_axes()
+            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited(), fmt)
+
         domain_axes = f.domain_axes()
+
         domain_axes["domainaxis0"].nc_set_unlimited(True)
         domain_axes["domainaxis2"].nc_set_unlimited(True)
-        cf.write(f, tmpfile, fmt=fmt)
+        cf.write(f, tmpfile, fmt="NETCDF4", cfa=None)
 
         f = cf.read(tmpfile)[0]
         domain_axes = f.domain_axes()
@@ -875,11 +881,10 @@ class read_writeTest(unittest.TestCase):
     #        True, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
     #    )
     def test_read_url(self):
-        """Test reading urls."""
+        """Test reading remote url."""
         for scheme in ("http", "https"):
             remote = f"{scheme}:///psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-            # Check that cf can access it
-            f = cf.read(remote)
+            f = cf.read(remote, netcdf_backend="netCDF4")
             self.assertEqual(len(f), 1)
 
     @unittest.skipUnless(
@@ -950,6 +955,15 @@ class read_writeTest(unittest.TestCase):
 
             z = cf.read(zarr_dataset, dataset_type="Zarr")
             self.assertEqual(len(z), 1)
+
+    def test_read_netcdf_file(self):
+        """Test cf.read for differing the netcdf_file backend."""
+        f = self.f0
+
+        cf.write(f, tmpfile, fmt="NETCDF3_CLASSIC")
+        g = cf.read(tmpfile, netcdf_backend="netcdf_file")[0]
+
+        self.assertTrue(g.equals(f))
 
 
 if __name__ == "__main__":

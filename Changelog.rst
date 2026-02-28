@@ -3,6 +3,13 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New default backend for netCDF-4 in `cf.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* New optional backend for netCDF-3 in `cf.read` that allows parallel
+  reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
 * Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
   (https://github.com/NCAS-CMS/cf-python/issues/887)
 
