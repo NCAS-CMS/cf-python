@@ -1025,19 +1025,28 @@ class read_writeTest(unittest.TestCase):
 
         cf.write(
             f,
-            tmpfile0,
+            tmpfile1,
             netcdf_backend="h5netcdf-h5py",
             h5py_options=h5py_options,
         )
-        self.assertTrue(os.path.getsize(tmpfile0) > size)
-
-        cf.write(
-            f, tmpfile1, netcdf_backend="netCDF4", h5py_options=h5py_options
-        )
+        self.assertTrue(os.path.getsize(tmpfile1) > size)
 
         f0 = cf.read(tmpfile0)[0]
         f1 = cf.read(tmpfile1)[0]
         self.assertTrue(f1.equals(f0))
+
+        with self.assertRaises(ValueError):
+            cf.write(
+                f,
+                tmpfile0,
+                netcdf_backend="netCDF4",
+                h5py_options=h5py_options,
+            )
+
+        with self.assertRaises(ValueError):
+            cf.write(
+                f, tmpfile0, fmt="NETCDF3_CLASSIC", h5py_options=h5py_options
+            )
 
     def test_read_netcdf_file(self):
         """Test cf.read for differing the netcdf_file backend."""
