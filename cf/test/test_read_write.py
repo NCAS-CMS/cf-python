@@ -352,7 +352,13 @@ class read_writeTest(unittest.TestCase):
                 if ex_field_n in (8, 9, 10):
                     continue
 
-                cf.write(ex_field, tmpfile, fmt=fmt, mode="a")
+                cf.write(
+                    ex_field,
+                    tmpfile,
+                    fmt=fmt,
+                    mode="a",
+                    netcdf_backend="netCDF4",
+                )
                 f = cf.read(tmpfile)
 
                 if ex_field_n == 5:  # another special case
@@ -433,15 +439,25 @@ class read_writeTest(unittest.TestCase):
             # field n=5 which aggregates to one with n=2] => + 1 - 1 = + 0:
             overall_length = len(append_ex_fields)
             cf.write(
-                append_ex_fields, tmpfile, fmt=fmt, mode="a"
+                append_ex_fields,
+                tmpfile,
+                fmt=fmt,
+                mode="a",
+                netcdf_backend="netCDF4",
             )  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), overall_length)
 
             # Also test the mode="r+" alias for mode="a".
-            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             cf.write(
-                append_ex_fields, tmpfile, fmt=fmt, mode="r+"
+                g, tmpfile, fmt=fmt, mode="w", netcdf_backend="netCDF4"
+            )  # 1. overwrite to wipe
+            cf.write(
+                append_ex_fields,
+                tmpfile,
+                fmt=fmt,
+                mode="r+",
+                netcdf_backend="netCDF4",
             )  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), overall_length)
@@ -543,8 +559,12 @@ class read_writeTest(unittest.TestCase):
             #     )
 
             # Check behaviour when append identical fields, as an edge case:
-            cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
-            cf.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
+            cf.write(
+                g, tmpfile, fmt=fmt, mode="w", netcdf_backend="netCDF4"
+            )  # 1. overwrite to wipe
+            cf.write(
+                g_copy, tmpfile, fmt=fmt, mode="a", netcdf_backend="netCDF4"
+            )  # 2. now append
             f = cf.read(tmpfile)
             self.assertEqual(len(f), 2)
             self.assertTrue(
@@ -849,7 +869,7 @@ class read_writeTest(unittest.TestCase):
         f = self.f1
         cf.write(f, tmpfile)
 
-        cf.write(f, tmpfile, omit_data="all")
+        cf.write(f, tmpfile, omit_data="all", netcdf_backend="netCDF4")
         g = cf.read(tmpfile)
         self.assertEqual(len(g), 1)
         g = g[0]
@@ -861,7 +881,12 @@ class read_writeTest(unittest.TestCase):
         # Check that a dump works
         g.dump(display=False)
 
-        cf.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
+        cf.write(
+            f,
+            tmpfile,
+            omit_data=("field", "dimension_coordinate"),
+            netcdf_backend="netCDF4",
+        )
         g = cf.read(tmpfile)[0]
 
         # Check that only the field and dimension coordinate data are
@@ -870,7 +895,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
         self.assertTrue(np.ma.count(g.construct("latitude").array))
 
-        cf.write(f, tmpfile, omit_data="field")
+        cf.write(f, tmpfile, omit_data="field", netcdf_backend="netCDF4")
         g = cf.read(tmpfile)[0]
 
         # Check that only the field data are missing
@@ -955,6 +980,73 @@ class read_writeTest(unittest.TestCase):
 
             z = cf.read(zarr_dataset, dataset_type="Zarr")
             self.assertEqual(len(z), 1)
+
+    def test_write_netcdf_backend(self):
+        """Test cf.write with different netCDF backends."""
+        f = self.f0
+
+        cf.write(f, tmpfile0, netcdf_backend="h5netcdf-h5py")
+        cf.write(f, tmpfile1, netcdf_backend="netCDF4")
+        f0 = cf.read(tmpfile0)[0]
+        f1 = cf.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
+
+        f = cf.read(filename)
+        cf.write(f, tmpfile0, netcdf_backend="h5netcdf-h5py")
+        cf.write(f, tmpfile1, netcdf_backend="netCDF4")
+        f0 = cf.read(tmpfile0)[0]
+        f1 = cf.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
+
+        # Bad fmt/backend combinations
+        for backend in ("netCDF4", "h5netcdf-h5py"):
+            with self.assertRaises(ValueError):
+                cf.write(f, tmpfile, fmt="ZARR3", netcdf_backend=backend)
+
+        for backend in ("zarr", "h5netcdf-h5py"):
+            with self.assertRaises(ValueError):
+                cf.write(
+                    f, tmpfile, fmt="NETCDF3_CLASSIC", netcdf_backend=backend
+                )
+
+        for backend in ("zarr",):
+            with self.assertRaises(ValueError):
+                cf.write(f, tmpfile, fmt="NETCDF4", netcdf_backend=backend)
+
+    def test_write_h5py_options(self):
+        """Test cf.write with h5py_options."""
+        f = self.f0
+        h5py_options = dict(
+            fs_strategy="page", fs_page_size=2**20, meta_block_size=500000
+        )
+
+        cf.write(f, tmpfile0, h5py_options=None)
+        size = os.path.getsize(tmpfile0)
+
+        cf.write(
+            f,
+            tmpfile1,
+            netcdf_backend="h5netcdf-h5py",
+            h5py_options=h5py_options,
+        )
+        self.assertTrue(os.path.getsize(tmpfile1) > size)
+
+        f0 = cf.read(tmpfile0)[0]
+        f1 = cf.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
+
+        with self.assertRaises(ValueError):
+            cf.write(
+                f,
+                tmpfile0,
+                netcdf_backend="netCDF4",
+                h5py_options=h5py_options,
+            )
+
+        with self.assertRaises(ValueError):
+            cf.write(
+                f, tmpfile0, fmt="NETCDF3_CLASSIC", h5py_options=h5py_options
+            )
 
     def test_read_netcdf_file(self):
         """Test cf.read for differing the netcdf_file backend."""
