@@ -2,6 +2,7 @@ import atexit
 import datetime
 import faulthandler
 import os
+import shutil
 import tempfile
 import unittest
 
@@ -20,12 +21,26 @@ tmpfiles = [
 ]
 [tmpfile1, tmpfile2] = tmpfiles
 
+# Set up temporary directories
+tmpdirs = [
+    tempfile.mkdtemp("_test_quantization.zarr", dir=os.getcwd())
+    for i in range(1)
+]
+[tmpdir] = tmpdirs
+
 
 def _remove_tmpfiles():
     """Remove temporary files created during tests."""
     for f in tmpfiles:
         try:
             os.remove(f)
+        except OSError:
+            pass
+
+    for d in tmpdirs:
+        try:
+            shutil.rmtree(d)
+            os.rmdir(d)
         except OSError:
             pass
 
@@ -63,7 +78,7 @@ class quantizationTest(unittest.TestCase):
         f.set_quantize_on_write(q0)
 
         # Write the field and read it back in
-        cf.write(f, tmpfile1)
+        cf.write(f, tmpfile1, netcdf_backend="netCDF4")
         g = cf.read(tmpfile1)[0]
 
         # Check that f and g have different data (i.e. that
@@ -174,7 +189,7 @@ class quantizationTest(unittest.TestCase):
         # digit_round
         f.set_quantize_on_write(algorithm="digitround", quantization_nsd=2)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # NetCDF3 formats
         for fmt in self.netcdf3_fmts:
@@ -184,29 +199,29 @@ class quantizationTest(unittest.TestCase):
         # Integer data type
         f.data.dtype = int
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # Out-of-range quantization_nsd
         f.data.dtype = "float32"
         f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=8)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         f.data.dtype = "float64"
         f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=16)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         # Out-of-range quantization_nsb
         f.data.dtype = "float32"
         f.set_quantize_on_write(algorithm="bitround", quantization_nsb=24)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
         f.data.dtype = "float64"
         f.set_quantize_on_write(algorithm="bitround", quantization_nsb=53)
         with self.assertRaises(ValueError):
-            cf.write(f, tmpfile1)
+            cf.write(f, tmpfile1, netcdf_backend="netCDF4")
 
     def test_quantization_copy(self):
         """Test that quantization information gets copied."""
@@ -221,6 +236,24 @@ class quantizationTest(unittest.TestCase):
         f._set_quantization(q)
         g = f.copy()
         self.assertTrue(g.get_quantization().equals(q))
+
+    def test_quantization_backends(self):
+        """Test that quantization-on-write with different backends."""
+        f = self.f1.copy()
+        f.set_quantize_on_write(
+            algorithm="granular_bitround", quantization_nsd=8
+        )
+
+        # Backends that allow quantisation-on-write
+        for backend in ("netCDF4",):
+            cf.write(f, tmpfile1, netcdf_backend=backend)
+
+        # Backends that do not allow quantisation-on-write
+        with self.assertRaises(NotImplementedError):
+            cf.write(f, tmpdir, fmt="ZARR3", netcdf_backend="zarr")
+
+        with self.assertRaises(NotImplementedError):
+            cf.write(f, tmpfile1, netcdf_backend="h5netcdf-h5py")
 
 
 if __name__ == "__main__":

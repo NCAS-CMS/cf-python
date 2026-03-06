@@ -16,7 +16,7 @@ from ..functions import (
     bounds_combination_mode,
     normalize_slice,
 )
-from ..query import Query, wi
+from ..query import Query, wi, wo
 from ..units import Units
 
 logger = logging.getLogger(__name__)
@@ -246,8 +246,8 @@ class FieldDomain:
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
                  ancillary mask to apply to those domain axes
-                 immediately after the subspace has been created
-                 by the ``'indices'``. This dictionary will always be
+                 immediately after the subspace has been created by
+                 the ``'indices'``. This dictionary will always be
                  empty if the *ancillary_mask* parameter is False.
 
         """
@@ -478,6 +478,30 @@ class FieldDomain:
                         #             'without' Query instance
                         if debug:
                             logger.debug("  1-d CASE 2:")  # pragma: no cover
+
+                        arg0, arg1 = value.value
+                        if arg0 > arg1:
+                            # Query has swapped operands (i.e. arg0 >
+                            # arg1) => Create a new equivalant Query
+                            # that has arg0 < arg1, for a new
+                            # arg1. E.g. for a period of 360,
+                            # cf.wi(355, 5) is transformed to
+                            # cf.wi(355, 365).
+                            #
+                            # This is done (effectively) by repeatedly
+                            # adding the cyclic period to arg1 until
+                            # it is greater than arg0, taking into
+                            # account any units that have been set.
+                            period = item.period()
+                            value = value.copy()
+                            value.set_condition_units(period.Units)
+                            arg0, arg1 = value.value
+                            n = ((arg0 - arg1) / period).ceil()
+                            arg1 = arg1 + n * period
+                            if value.operator == "wi":
+                                value = wi(arg0, arg1)
+                            else:
+                                value = wo(arg0, arg1)
 
                         size = item.size
                         if item.increasing:
@@ -2714,12 +2738,18 @@ class FieldDomain:
 
             # Check for axes that are currently marked as non-cyclic,
             # but are in fact cyclic.
-            if (
-                len(cyclic) < len(self.domain_axes(todict=True))
-                and self.autocyclic()
-            ):
-                cyclic.update(self._cyclic)
-                self._cyclic = cyclic
+            #
+            # Note: We have to do a "dry run" on the 'autocyclic' call
+            #       in the if test in order to prevent corrupting
+            #       self._cyclic in the case that an axis tested by
+            #       autocyclic is already marked as cylcic, but
+            #       nonetheless autocyclic returns False (sounds
+            #       niche, but this really happens!).
+            if len(cyclic) < len(
+                self.domain_axes(todict=True)
+            ) and self.autocyclic(config={"dry_run": True}):
+                self.autocyclic()
+                cyclic = self._cyclic.copy()
 
             return cyclic
 

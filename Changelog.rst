@@ -17,8 +17,21 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New default backend for netCDF-4 in `cf.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cf-python/issues/924)
+* New default backend for netCDF-4 in `cf.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* New optional backend for netCDF-3 in `cf.read` that allows parallel
+  reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+* Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
+  (https://github.com/NCAS-CMS/cf-python/issues/887)
 * New optional dependency: ``healpix>=2025.1``
-* New dependency: ``pyfive>=1.1.0``
+* New dependency: ``pyfive>=1.1.1``
 * Changed dependency: ``cfdm>=1.13.?.?, <1.13.?.0``
 
 ----

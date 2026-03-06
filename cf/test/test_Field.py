@@ -1293,6 +1293,14 @@ class FieldTest(unittest.TestCase):
         a[..., [0, 1, 6, 7, 8]] = np.ma.masked
         self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
 
+        # Cyclic cf.wi with swapped operands (increasing coords)
+        for q in (cf.wi(315, 45), cf.wi(-45, -675)):
+            indices = f.indices(grid_longitude=q)
+            g = f[indices]
+            self.assertEqual(g.shape, (1, 10, 3))
+            x = g.dimension_coordinate("X").array
+            self.assertTrue((x == [-40, 0, 40]).all())
+
         # wi (decreasing)
         f.flip("X", inplace=True)
 
@@ -1348,6 +1356,14 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(
             (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all()
         )
+
+        # Cyclic cf.wi with swapped operands (decreasing coords)
+        for q in (cf.wi(315, 45), cf.wi(-45, -675)):
+            indices = f.indices(grid_longitude=q)
+            g = f[indices]
+            self.assertEqual(g.shape, (1, 10, 3))
+            x = g.dimension_coordinate("X").array
+            self.assertTrue((x == [40, 0, -40]).all())
 
         # wo
         f = f0.copy()
@@ -3062,6 +3078,13 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f2.cyclic(), set(("domainaxis2",)))
 
         f2.cyclic("X", iscyclic=False)
+        self.assertTrue(f2.iscyclic("X"))
+
+        # In the case that autocyclic thinks the axis is not cyclic,
+        # check that calling iscylcic (which calls cyclic) doesn't
+        # change the cyclicity!
+        f2.dimension_coordinate("X").del_bounds()
+        self.assertTrue(f2.iscyclic("X"))
         self.assertTrue(f2.iscyclic("X"))
 
     def test_Field_is_discrete_axis(self):
