@@ -2408,8 +2408,18 @@ class FieldDomain:
 
         # Create the UGRID Domain Topology construct, by creating a
         # unique integer identifier for each unique node location.
-        bounds_y = bounds_y.data.to_dask_array(_force_mask_hardness=False)
-        bounds_x = bounds_x.data.to_dask_array(_force_mask_hardness=False)
+        #
+        # We have to do this calcuation in numpy, as opposed to Dask,
+        # because da.unique(..., return_inverse=True) is incredibly
+        # memory inefficent ("... some formatting is done to stuff all
+        # of the resulting arrays into one big NumPy structured array
+        # ..." from `dask.dask.array.routines._unique_interal`). For
+        # instance, when 'bounds_y' and 'bounds_x' both have shape
+        # (196608, 4), `dask.dask.array.routines._unique_interal`
+        # wants to make a 121 GiB array in memory, whereas the
+        # equivalent nnumpy operation uses 0.1 GiB.
+        bounds_y = bounds_y.array
+        bounds_x = bounds_x.array
 
         _, y_indices = np.unique(bounds_y, return_inverse=True)
         _, x_indices = np.unique(bounds_x, return_inverse=True)

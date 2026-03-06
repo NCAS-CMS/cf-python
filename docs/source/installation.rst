@@ -220,7 +220,7 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.7.2 only.
 
-* `pyive <https://pypi.org/project/pyfive>`_, version 1.1.0 or newer.
+* `pyive <https://pypi.org/project/pyfive>`_, version 1.1.1 or newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).

@@ -805,7 +805,7 @@ class RegridTest(unittest.TestCase):
         )
         self.assertEqual(r1.weights_file, tmpfile)
         self.assertIsNone(r1.weights)
-        
+
         r0.tosparse()
         r1.tosparse()
         self.assertTrue((r1.weights - r0.weights).nnz == 0)
