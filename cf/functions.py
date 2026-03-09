@@ -157,6 +157,7 @@ def configuration(
     chunksize=None,
     log_level=None,
     display_data=None,
+    persist_data=None,
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
@@ -179,6 +180,7 @@ def configuration(
     * `chunksize`
     * `log_level`
     * `display_data`
+    * `persist_data`
     * `regrid_logging`
     * `relaxed_identities`
     * `bounds_combination_mode`
@@ -203,9 +205,10 @@ def configuration(
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
                  `total_memory`, `log_level`, `display_data`,
-                 `regrid_logging`, `relaxed_identities`,
-                 `bounds_combination_mode`, `active_storage`,
-                 `active_storage_url`, `active_storage_max_requests`
+                 `persist_data`, `regrid_logging`,
+                 `relaxed_identities`, `bounds_combination_mode`,
+                 `active_storage`, `active_storage_url`,
+                 `active_storage_max_requests`
 
     :Parameters:
 
@@ -247,11 +250,17 @@ def configuration(
             * ``'DETAIL'`` (``3``);
             * ``'DEBUG'`` (``-1``).
 
-        display_data `bool` or `Constant`, optional
+        display_data: `bool` or `Constant`, optional
             The new display data option. The default is to not change
             the current behaviour.
 
             .. versionadded:: 3.19.0
+
+        persist_data: `bool` or `Constant`, optional
+            The new persist data option. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: NEXTVERSION
 
         regrid_logging: `bool` or `Constant`, optional
             The new value (either True to enable logging or False to
@@ -312,6 +321,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 82873466.88000001,
      'display_data': True,
+     'persist_data': False,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -330,6 +340,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'display_data': True,
+     'persist_data': False,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -358,6 +369,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'display_data': True,
+     'persist_data': False,
      'active_storage': False,
      'active_storage_url': None}
     >>> with cf.configuration(atol=9, rtol=10):
@@ -372,6 +384,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'display_data': True,
+     'persist_data': False,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -385,6 +398,7 @@ def configuration(
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0,
      'display_data': True,
+     'persist_data': False,
      'active_storage': False,
      'active_storage_url': None,
      'active_storage_max_requests': 100}
@@ -416,6 +430,7 @@ def configuration(
         new_chunksize=chunksize,
         new_log_level=log_level,
         new_display_data=display_data,
+        new_persist_data=persist_data,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
@@ -460,6 +475,7 @@ def _configuration(_Configuration, **kwargs):
         "new_chunksize": chunksize,
         "new_log_level": log_level,
         "new_display_data": display_data,
+        "new_persist_data": persist_data,
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
@@ -587,6 +603,10 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class display_data(ConstantAccess, cfdm.display_data):
+    pass
+
+
+class persist_data(ConstantAccess, cfdm.persist_data):
     pass
 
 
