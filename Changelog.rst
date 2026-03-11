@@ -17,9 +17,12 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cf.read` that allows parallel
   reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cf-python/issues/912)
-* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+* Fix bug in `cf.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
 * Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
   (https://github.com/NCAS-CMS/cf-python/issues/887)
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
 
 Version 3.19.0
 --------------
