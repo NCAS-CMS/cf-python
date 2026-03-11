@@ -1918,9 +1918,9 @@ def contains(value, units=None):
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `cf.Query.iscontains`, `cf.cellsize`, `cf.cellge`,
-                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
-                 `cf.cellwi`, `cf.cellwo`
+    .. seealso:: `cf.locate`, `cf.cellsize`, `cf.cellge`, `cf.cellgt`,
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
+                 `cf.cellwo`, `cf.Query.iscontains`
 
     :Parameters:
 

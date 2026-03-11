@@ -36,7 +36,8 @@ class Quantization(cfdm.Quantization):
         'quantization_nsb': 6,
         'implementation': 'libnetcdf version 4.9.4'}
 
-    See CF section 8.4. "Lossy Compression via Quantization".
+    See CF section 8.4: Lossy Compression via Quantization.
+    https://doi.org/10.5281/zenodo.14274886
 
     **NetCDF interface**
 
