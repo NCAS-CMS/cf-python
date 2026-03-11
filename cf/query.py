@@ -1581,7 +1581,7 @@ def eq(value, units=None, attr=None, exact=True):
 
 
 def ne(value, units=None, attr=None, exact=True):
-    """A condition for "not equalto a value".
+    """A condition for "not equal to a value".
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`, `cf.isclose`
@@ -2258,7 +2258,8 @@ def cellsize(value, units=None):
 def cell_overlaps(value0, value1, units=None):
     """A condition for "part of cell overlaps with a range".
 
-    The range is closed, meaning that is inclusive of its end points.
+    The range is closed, meaning that it is inclusive of its end
+    points.
 
     .. versionadded:: NEXTVERSION
 
@@ -2312,7 +2313,8 @@ def cell_overlaps(value0, value1, units=None):
 def cellwi(value0, value1, units=None):
     """A condition for "cell lies completely within a range".
 
-    The range is closed, meaning that is inclusive of its end points.
+    The range is closed, meaning that it is inclusive of its end
+    points.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
@@ -2359,7 +2361,8 @@ def cellwi(value0, value1, units=None):
 def cellwo(value0, value1, units=None):
     """A condition for "cell lies completely outside a range".
 
-    The range is closed, meaning that is inclusive of its end points.
+    The range is closed, meaning that it is inclusive of its end
+    points.
 
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
