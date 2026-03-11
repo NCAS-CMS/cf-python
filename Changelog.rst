@@ -17,6 +17,10 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New keyword parameter to `cf.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cf-python/issues/929)
+* New function to control the persistence of computed data:
+  `cf.persist_data` (https://github.com/NCAS-CMS/cf-python/issues/929)
 * New default backend for netCDF-4 in `cf.write`: ``h5netcdf-h5py``,
   that allows control of the internal file metadata via the new
   ``h5py_options`` parameter

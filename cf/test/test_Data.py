@@ -17,6 +17,8 @@ from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import cfdm
+
 import cf
 
 n_tmpfiles = 2
@@ -3050,8 +3052,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data__init__compression(self):
         """Test Data initialised from compressed data sources."""
-        import cfdm
-
         # Ragged
         for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
             f = f.data
@@ -3199,6 +3199,59 @@ class DataTest(unittest.TestCase):
         d._del_cached_elements()
         d.compute()
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
+
+        # Persist
+        f = cf.read(self.filename, dask_chunks=3)[0]
+        d0 = f.data
+        npartitions = d0.npartitions
+        self.assertGreater(npartitions, 1)
+
+        with cf.persist_data(False):
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
+            self.assertEqual(d.npartitions, npartitions)
+            self.assertTrue(np.allclose(a, b))
+
+        with cf.persist_data(True):
+            d = d0.copy()
+            d.compute()
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+
+            d = d0.copy()
+            d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
 
     def test_Data_persist(self):
         """Test Data.persist."""
@@ -4149,8 +4202,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_uncompress(self):
         """Test the `uncompress` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         a = f.data.array
         d = cf.Data(cf.RaggedContiguousArray(source=f.data.source()))
@@ -4274,8 +4325,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_compressed_array(self):
         """Test the `compressed_array` Data property."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
@@ -4305,8 +4354,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_compressed(self):
         """Test the Data methods which get compression properties."""
-        import cfdm
-
         # Compressed
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
@@ -4365,8 +4412,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_count(self):
         """Test the `get_count` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
@@ -4378,8 +4423,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_index(self):
         """Test the `get_index` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
@@ -4391,8 +4434,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_list(self):
         """Test the `get_list` Data method."""
-        import cfdm
-
         f = cfdm.read("gathered.nc")[0]
         f = f.data
         d = cf.Data(cf.GatheredArray(source=f.source()))
