@@ -331,3 +331,29 @@ class FieldDomainList:
         """
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
+
+    def to_xarray(self):
+        """Convert the list elements to an `xarray` Dataset.
+
+        If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
+        is installed then the `cf_xarray` accessors will be present on
+        the returned `xarray` objects (`xarray.DataArray.cf` and
+        `xarray.Dataset.cf`) that allow some interpretation of CF
+        attributes.
+
+        Note that ``ds = fl.to_xarray()`` is identical to ``ds =
+        cf.write(fl, fmt='XARRAY')``
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `cf.write`
+
+        :Returns:
+
+            `xarray.Dataset`
+                The equivalent `xarray` Dataset.
+
+        """
+        from cf.read_write import write
+
+        return write(self, fmt="XARRAY")
