@@ -56,6 +56,56 @@ class xarrayTest(unittest.TestCase):
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
 
+    def test_FieldList_to_xarray(self):
+        """Test Field.to_xarray."""
+        fields = cf.example_fields()
+        ds = fields.to_xarray()
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
+
+    def test_DomainList_to_xarray(self):
+        """Test DomainList.to_xarray."""
+        domains = cf.DomainList([f.domain for f in cf.example_fields()])
+        ds = domains.to_xarray()
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
+
+    def test_FieldList_to_xarray_from_dataset(self):
+        """Test FieldList.to_xarray from datasets read from disk."""
+        for dataset in (
+            "example_field_0.nc",
+            "example_field_0.zarr2",
+            "example_field_0.zarr3",
+            "gathered.nc",
+            "DSG_timeSeries_contiguous.nc",
+            "DSG_timeSeries_indexed.nc",
+            "DSG_timeSeriesProfile_indexed_contiguous.nc",
+            "parent.nc",
+            "external.nc",
+            "external_missing.nc",
+            "combined.nc",
+            "geometry_1.nc",
+            "geometry_2.nc",
+            "geometry_3.nc",
+            "geometry_4.nc",
+            "geometry_interior_ring.nc",
+            "geometry_interior_ring_2.nc",
+            "string_char.nc",
+            "subsampled_2.nc",
+            "ugrid_1.nc",
+            "ugrid_2.nc",
+            "ugrid_3.nc",
+            "test_file.nc",
+            "extra_data.pp",
+            "file1.pp",
+            "umfile.pp",
+            "wgdos_packed.pp",
+        ):
+            f = cf.read(dataset, netcdf_backend="netCDF4")
+            ds = f.to_xarray()
+            self.assertIsInstance(ds, xr.Dataset)
+            str(ds)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

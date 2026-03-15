@@ -18,13 +18,12 @@ new subplots.
 # sphinx_gallery_thumbnail_number = 2
 # sphinx_gallery_end_ignore
 
+import cfplot as cfp
+import dask.array as da
 import matplotlib.pyplot as plt
 import numpy as np
-import dask.array as da
 
-import cfplot as cfp
 import cf
-
 
 # %%
 # 2. Read example data field constructs, and set region for our plots:
@@ -171,4 +170,3 @@ fig.show()
 # create your figure with cf-plot with placeholders for your other plots,
 # then add subplots by accessing the ``cfp.plotvars.master_plot`` object,
 # and finally redraw the figure containing the new plots.
-

@@ -3020,16 +3020,19 @@ class FieldDomain:
         If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
         is installed then the `cf_xarray` accessors will be present on
         the returned `xarray` objects (`xarray.DataArray.cf` and
-        `xarray.Dataset.cf`) that allow some interpretation of CF
-        attributes.
+        `xarray.Dataset.cf`) that allow some extra interpretation of
+        CF attributes.
 
-        Note that multiple fields and domains may be written to the
-        same `xarray` dataset with `cf.write`, e.g. `ds = cf.write([x,
-        y], fmt='XARRAY')`
+        Note that `f.to_xarray()` is identical to ``ds = cf.write(f,
+        'fmt='XARRAY')``; and multiple fields and domains may be
+        written to the same `xarray` dataset from a `cf.{{class}}List`
+        (e.g. ``ds = fl.to_xarray()``) or with `cf.write` (e.g.``ds =
+        cf.write([f, g], fmt='XARRAY')`` or ``ds = cf.write(fl,
+        fmt='XARRAY')``).
 
         .. versionadded:: NEXTVERSION
 
-        .. seealso:: `cf.write`
+        .. seealso:: `cf.{{class}}List.to_xarray`, `cf.write`
 
         :Returns:
 
