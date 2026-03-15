@@ -439,6 +439,20 @@ NetCDF
    ~cf.Field.nc_dataset_chunksizes
    ~cf.Field.nc_set_dataset_chunksizes
 
+.. _Field-xarray:
+   
+xarray
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.to_xarray
+
 Groups
 ^^^^^^
 

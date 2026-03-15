@@ -271,6 +271,12 @@ environments for which these features are not required.
 
   For reading and writing Zarr datasets.
 
+.. rubric:: xarray
+
+* `xarray <https://pypi.org/project/xarray>`_, version 2026.2.0 or newer.
+
+  For converting fields and domains to `xarray` datasets in memory.
+
 .. rubric:: Regridding
 
 * `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
