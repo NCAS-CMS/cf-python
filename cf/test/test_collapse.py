@@ -1,6 +1,8 @@
+import atexit
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 
 import numpy
@@ -8,6 +10,25 @@ import numpy
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_collapse.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+[tmpfile] = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
 
 
 class Field_collapseTest(unittest.TestCase):
@@ -790,6 +811,19 @@ class Field_collapseTest(unittest.TestCase):
                     # The check for non-positive weights occurs at
                     # compute time
                     g.array
+
+    def test_Field_collapse_ugrid(self):
+        """Check that UGRID constructs are removed after collapsing."""
+        f = cf.example_field(8)
+        self.assertTrue(f.domain_topologies())
+        self.assertTrue(f.cell_connectivities())
+
+        f = f.collapse("area: mean")
+        self.assertFalse(f.domain_topologies())
+        self.assertFalse(f.cell_connectivities())
+
+        # Check the collpsed fields writes
+        cf.write(f, tmpfile)
 
 
 if __name__ == "__main__":
