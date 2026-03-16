@@ -686,4 +686,19 @@ _docstring_substitution_definitions = {
                      The subspace is the smallest hyperrectangular
                      subspace that contains all of the selected
                      locations.""",
+    # read filesystem
+    "{{read filesystem: optional}}": """filesystem: optional
+            A pre-authenticated filesystem object (for example an
+            ``fsspec`` filesystem instance) to use for opening the
+            dataset. When provided, *datasets* values are treated as
+            paths understood by *filesystem*, and local string
+            pre-processing (tilde/variable expansion, globbing and
+            directory walking) is bypassed. The file is opened by
+            calling ``filesystem.open(dataset, "rb")``, which returns
+            a file-like object that is passed to the netCDF backend.
+
+            If `None` (the default) then the existing file-opening
+            logic is used.
+
+            .. versionadded:: NEXTVERSION""",
 }
