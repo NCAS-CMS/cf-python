@@ -454,5 +454,5 @@ class Flags:
 
         for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
-                array = getattr(self, attr).view()
-                array[...] = array[indices]
+                array = getattr(self, attr)[indices]
+                setattr(self, attr, array)

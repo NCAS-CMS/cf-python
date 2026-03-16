@@ -34,7 +34,6 @@ _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
 _cached_regular_array = {}
 _cached_regular_bounds = {}
-_cached_data = {}
 
 # --------------------------------------------------------------------
 # Constants
@@ -1138,7 +1137,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": self.get_data(np.array(360.0), xc.Units),
+                        "period": Data(360.0, xc.Units),
                     },
                 )
 
@@ -1798,11 +1797,11 @@ class UMField:
 
         """
         if array is not None:
-            data = self.get_data(array, units, fill_value)
+            data = Data(array, units, fill_value=fill_value)
             self.implementation.set_data(c, data, copy=False)
 
         if bounds is not None:
-            data = self.get_data(bounds, units, fill_value, bounds=True)
+            data = Data(bounds, units, fill_value=fill_value)
             bounds = self.implementation.initialise_Bounds()
             self.implementation.set_data(bounds, data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
@@ -3215,7 +3214,7 @@ class UMField:
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = self.get_data(np.array(360.0), units)
+            autocyclic["period"] = Data(360.0, units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
 
@@ -3224,63 +3223,6 @@ class UMField:
         )
 
         return key, dc, axis_key
-
-    def get_data(self, array, units, fill_value=None, bounds=False):
-        """Create data, or get it from the cache.
-
-        .. versionadded:: 3.15.0
-
-        :Parameters:
-
-            array: `np.ndarray`
-                The data.
-
-            units: `Units
-                The units.
-
-            fill_value: scalar
-                The fill value.
-
-            bounds: `bool`
-                Whether or not the data are bounds of 1-d coordinates.
-
-        :Returns:
-
-            `Data`
-                An independent copy of the new data.
-
-        """
-        from dask.base import tokenize
-
-        token = tokenize(array, units)
-        data = _cached_data.get(token)
-        if data is None:
-            data = Data(array, units=units, fill_value=fill_value)
-            if not bounds:
-                if array.size == 1:
-                    value = array.item(0)
-                    data._set_cached_elements({0: value, -1: value})
-                else:
-                    data._set_cached_elements(
-                        {
-                            0: array.item(0),
-                            1: array.item(1),
-                            -1: array.item(-1),
-                        }
-                    )
-            else:
-                data._set_cached_elements(
-                    {
-                        0: array.item(0),
-                        1: array.item(1),
-                        -2: array.item(-2),
-                        -1: array.item(-1),
-                    }
-                )
-
-            _cached_data[token] = data
-
-        return data.copy()
 
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
@@ -3648,7 +3590,7 @@ class UMRead(cfdm.read_write.IORead):
                 pass
 
             raise DatasetTypeError(
-                f"Can't interpret {filename} as a PP or UM dataset"
+                f"\nCan't interpret {filename} as a PP or UM dataset"
             )
 
         self._um_file = f

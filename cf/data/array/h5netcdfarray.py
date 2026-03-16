@@ -9,7 +9,7 @@ class H5netcdfArray(
     Container,
     cfdm.H5netcdfArray,
 ):
-    """A netCDF array accessed with `h5netcdf`.
+    """A netCDF array accessed with `h5netcdf` using the `h5py` backend.
 
     .. versionadded:: 3.16.3
 

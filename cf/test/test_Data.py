@@ -17,6 +17,8 @@ from scipy.ndimage import convolve1d
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import cfdm
+
 import cf
 
 n_tmpfiles = 2
@@ -171,14 +173,7 @@ class DataTest(unittest.TestCase):
         # for strict equality, including equality of data type.
         d2 = cf.Data(a.astype(np.float32), "m", chunks=chunksize)
         self.assertTrue(d2.equals(d2.copy()))
-        with self.assertLogs(level=-1) as catch:
-            self.assertFalse(d2.equals(d, verbose=2))
-            self.assertTrue(
-                any(
-                    "Data: Different data types: float32 != int64" in log_msg
-                    for log_msg in catch.output
-                )
-            )
+        self.assertFalse(d2.equals(d))
 
         e = cf.Data(a, "s", chunks=chunksize)  # different units to d
         self.assertTrue(e.equals(e.copy()))
@@ -387,14 +382,8 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
-        with self.assertLogs(level=-1) as catch:
-            self.assertFalse(s1.equals(s3, verbose=2))
-            self.assertTrue(
-                any(
-                    "Data: Different data types: int64 != <U8" in log_msg
-                    for log_msg in catch.output
-                )
-            )
+        self.assertFalse(s1.equals(s3))
+
         # 2. only one is a scalar
         with self.assertLogs(level=-1) as catch:
             self.assertFalse(s1.equals(d, verbose=2))
@@ -440,27 +429,7 @@ class DataTest(unittest.TestCase):
             )
             self.assertTrue(m1.equals(m2, ignore_fill_value=True))
 
-        # Test verbose parameter: 1/'INFO' level is behaviour change boundary
-        for checks in [(1, False), (2, True)]:
-            verbosity_level, expect_to_see_msg = checks
-            with self.assertLogs(level=-1) as catch:
-                # Logging note: want to assert in the former case (verbosity=1)
-                # that nothing is logged, but need to use workaround to prevent
-                # AssertionError on fact that nothing is logged here. When at
-                # Python =>3.10 this can be replaced by 'assertNoLogs' method.
-                logger.warning(
-                    "Log warning to prevent test error on empty log."
-                )
-
-                self.assertFalse(d2.equals(d, verbose=verbosity_level))
-                self.assertIs(
-                    any(
-                        "Data: Different data types: float32 != int64"
-                        in log_msg
-                        for log_msg in catch.output
-                    ),
-                    expect_to_see_msg,
-                )
+        self.assertFalse(d2.equals(d))
 
         # Test ignore_data_type parameter
         self.assertTrue(d2.equals(d, ignore_data_type=True))
@@ -1490,7 +1459,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(f))
 
         # Chained subspaces reading from disk
-        f = cf.read(self.filename, netcdf_backend="h5netcdf")[0]
+        f = cf.read(self.filename)[0]
         d = f.data
 
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
@@ -3083,8 +3052,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data__init__compression(self):
         """Test Data initialised from compressed data sources."""
-        import cfdm
-
         # Ragged
         for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
             f = f.data
@@ -3232,6 +3199,59 @@ class DataTest(unittest.TestCase):
         d._del_cached_elements()
         d.compute()
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
+
+        # Persist
+        f = cf.read(self.filename, dask_chunks=3)[0]
+        d0 = f.data
+        npartitions = d0.npartitions
+        self.assertGreater(npartitions, 1)
+
+        with cf.persist_data(False):
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
+            self.assertEqual(d.npartitions, npartitions)
+            self.assertTrue(np.allclose(a, b))
+
+        with cf.persist_data(True):
+            d = d0.copy()
+            d.compute()
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+
+            d = d0.copy()
+            d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
 
     def test_Data_persist(self):
         """Test Data.persist."""
@@ -4182,8 +4202,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_uncompress(self):
         """Test the `uncompress` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         a = f.data.array
         d = cf.Data(cf.RaggedContiguousArray(source=f.data.source()))
@@ -4307,8 +4325,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_compressed_array(self):
         """Test the `compressed_array` Data property."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
@@ -4338,8 +4354,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_compressed(self):
         """Test the Data methods which get compression properties."""
-        import cfdm
-
         # Compressed
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
@@ -4398,8 +4412,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_count(self):
         """Test the `get_count` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
@@ -4411,8 +4423,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_index(self):
         """Test the `get_index` Data method."""
-        import cfdm
-
         f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
         f = f.data
         d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
@@ -4424,8 +4434,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_list(self):
         """Test the `get_list` Data method."""
-        import cfdm
-
         f = cfdm.read("gathered.nc")[0]
         f = f.data
         d = cf.Data(cf.GatheredArray(source=f.source()))

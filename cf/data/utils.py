@@ -423,10 +423,12 @@ def collapse(
         kwargs["ddof"] = ddof
 
     # The applicable chunk function will have its own call to
-    # 'cfdm_to_memory', so we can set '_force_to_memory=False'. Also,
-    # setting _force_to_memory=False will ensure that any active
-    # storage operations are not compromised.
-    dx = d.to_dask_array(_force_to_memory=False)
+    # 'cfdm_to_memory', so we can set '_force_to_memory=False'.
+    # Setting _force_to_memory=False will also ensure that any active
+    # storage operations are not compromised. We can set
+    # _force_mask_hardness=False because collapse operations do not
+    # need to ever unset masked values.
+    dx = d.to_dask_array(_force_mask_hardness=False, _force_to_memory=False)
     dx = func(dx, **kwargs)
     d._set_dask(dx)
 

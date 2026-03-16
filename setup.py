@@ -184,7 +184,7 @@ The ``cf`` package can:
 
 * create new field constructs in memory,
 
-* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk, with control over HDF5 internal file metadata,
 
 * read, write, and create coordinates defined by geometry cells,
 
