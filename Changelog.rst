@@ -3,6 +3,13 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New methods to convert to `xarray`: `cf.Field.to_xarray`,
+  `cf.FieldList.to_xarray`, `cf.Domain.to_xarray`, and
+  `cf.DomainList.to_xarray`
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
+* New output format for `cf.write` that creates an `xarray` dataset in
+  memory: ``'XARRAY'``
+  (https://github.com/NCAS-CMS/cf-python/issues/???)
 * New keyword parameter to `cf.Data.compute`: ``persist``
   (https://github.com/NCAS-CMS/cf-python/issues/929)
 * New function to control the persistence of computed data:
@@ -22,7 +29,10 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/391)
 * Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
   (https://github.com/NCAS-CMS/cf-python/issues/887)
+* New optional dependency: ``xarray>=2026.2.0``
 * Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+
+----
 
 Version 3.19.0
 --------------
