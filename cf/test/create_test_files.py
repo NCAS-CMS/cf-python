@@ -2228,6 +2228,150 @@ def _make_ugrid_2(filename):
     return filename
 
 
+def _make_ugrid_3(filename):
+    """Create a UGRID mesh topology and no fields/domains."""
+    n = netCDF4.Dataset(filename, "w")
+
+    n.Conventions = f"CF-{VN}"
+
+    n.createDimension("nMesh3_node", 7)
+    n.createDimension("nMesh3_edge", 9)
+    n.createDimension("nMesh3_face", 3)
+    n.createDimension("connectivity2", 2)
+    n.createDimension("connectivity4", 4)
+    n.createDimension("connectivity5", 5)
+
+    Mesh3 = n.createVariable("Mesh3", "i4", ())
+    Mesh3.cf_role = "mesh_topology"
+    Mesh3.topology_dimension = 2
+    Mesh3.node_coordinates = "Mesh3_node_x Mesh3_node_y"
+    Mesh3.face_node_connectivity = "Mesh3_face_nodes"
+    Mesh3.edge_node_connectivity = "Mesh3_edge_nodes"
+    Mesh3.face_dimension = "nMesh3_face"
+    Mesh3.edge_dimension = "nMesh3_edge"
+    Mesh3.face_face_connectivity = "Mesh3_face_links"
+    Mesh3.edge_edge_connectivity = "Mesh3_edge_links"
+
+    # Node
+    Mesh3_node_x = n.createVariable("Mesh3_node_x", "f4", ("nMesh3_node",))
+    Mesh3_node_x.standard_name = "longitude"
+    Mesh3_node_x.units = "degrees_east"
+    Mesh3_node_x[...] = [-45, -43, -45, -43, -45, -43, -40]
+
+    Mesh3_node_y = n.createVariable("Mesh3_node_y", "f4", ("nMesh3_node",))
+    Mesh3_node_y.standard_name = "latitude"
+    Mesh3_node_y.units = "degrees_north"
+    Mesh3_node_y[...] = [35, 35, 33, 33, 31, 31, 34]
+
+    Mesh3_edge_nodes = n.createVariable(
+        "Mesh3_edge_nodes", "i4", ("nMesh3_edge", "connectivity2")
+    )
+    Mesh3_edge_nodes.long_name = "Maps every edge to its two nodes"
+    Mesh3_edge_nodes[...] = [
+        [1, 6],
+        [3, 6],
+        [3, 1],
+        [0, 1],
+        [2, 0],
+        [2, 3],
+        [2, 4],
+        [5, 4],
+        [3, 5],
+    ]
+
+    # Face
+    Mesh3_face_x = n.createVariable(
+        "Mesh3_face_x", "f8", ("nMesh3_face",), fill_value=-99
+    )
+    Mesh3_face_x.standard_name = "longitude"
+    Mesh3_face_x.units = "degrees_east"
+    Mesh3_face_x[...] = [-44, -44, -42]
+
+    Mesh3_face_y = n.createVariable(
+        "Mesh3_face_y", "f8", ("nMesh3_face",), fill_value=-99
+    )
+    Mesh3_face_y.standard_name = "latitude"
+    Mesh3_face_y.units = "degrees_north"
+    Mesh3_face_y[...] = [34, 32, 34]
+
+    Mesh3_face_nodes = n.createVariable(
+        "Mesh3_face_nodes",
+        "i4",
+        ("nMesh3_face", "connectivity4"),
+        fill_value=-99,
+    )
+    Mesh3_face_nodes.long_name = "Maps every face to its corner nodes"
+    Mesh3_face_nodes[...] = [[2, 3, 1, 0], [4, 5, 3, 2], [6, 1, 3, -99]]
+
+    Mesh3_face_links = n.createVariable(
+        "Mesh3_face_links",
+        "i4",
+        ("nMesh3_face", "connectivity4"),
+        fill_value=-99,
+    )
+    Mesh3_face_links.long_name = "neighbour faces for faces"
+    Mesh3_face_links[...] = [
+        [1, 2, -99, -99],
+        [0, -99, -99, -99],
+        [0, -99, -99, -99],
+    ]
+
+    # Edge
+    Mesh3_edge_x = n.createVariable(
+        "Mesh3_edge_x", "f8", ("nMesh3_edge",), fill_value=-99
+    )
+    Mesh3_edge_x.standard_name = "longitude"
+    Mesh3_edge_x.units = "degrees_east"
+    Mesh3_edge_x[...] = [-41.5, -41.5, -43, -44, -45, -44, -45, -44, -43]
+
+    Mesh3_edge_y = n.createVariable(
+        "Mesh3_edge_y", "f8", ("nMesh3_edge",), fill_value=-99
+    )
+    Mesh3_edge_y.standard_name = "latitude"
+    Mesh3_edge_y.units = "degrees_north"
+    Mesh3_edge_y[...] = [34.5, 33.5, 34, 35, 34, 33, 32, 31, 32]
+
+    Mesh3_edge_links = n.createVariable(
+        "Mesh3_edge_links",
+        "i4",
+        ("nMesh3_edge", "connectivity5"),
+        fill_value=-99,
+    )
+    Mesh3_edge_links.long_name = "neighbour edges for edges"
+    Mesh3_edge_links[...] = [
+        [1, 2, 3, -99, -99],
+        [0, 2, 5, 8, -99],
+        [3, 0, 1, 5, 8],
+        [4, 2, 0, -99, -99],
+        [
+            3,
+            5,
+            6,
+            -99,
+            -99,
+        ],
+        [4, 6, 2, 1, 8],
+        [
+            4,
+            5,
+            7,
+            -99,
+            -99,
+        ],
+        [
+            6,
+            8,
+            -99,
+            -99,
+            -99,
+        ],
+        [7, 5, 2, 1, -99],
+    ]
+
+    n.close()
+    return filename
+
+
 def _make_aggregation_value(filename):
     """Create an aggregation variable with 'unique_values'."""
     n = netCDF4.Dataset(filename, "w")
@@ -2341,6 +2485,7 @@ subsampled_file_1 = _make_subsampled_2("subsampled_2.nc")
 
 ugrid_1 = _make_ugrid_1("ugrid_1.nc")
 ugrid_2 = _make_ugrid_2("ugrid_2.nc")
+ugrid_3 = _make_ugrid_3("ugrid_3.nc")
 
 aggregation_value = _make_aggregation_value("aggregation_value.nc")
 
