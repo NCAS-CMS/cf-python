@@ -42,12 +42,12 @@ Comparison
    ~cf.FieldList.equals
 
 .. _FieldList-xarray:
-   
+
 xarray
 ------
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

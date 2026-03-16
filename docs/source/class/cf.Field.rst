@@ -440,12 +440,12 @@ NetCDF
    ~cf.Field.nc_set_dataset_chunksizes
 
 .. _Field-xarray:
-   
+
 xarray
 ------
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

@@ -70,7 +70,7 @@ class xarrayTest(unittest.TestCase):
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
 
-    def test_FieldList_to_xarray_from_dataset(self):
+    def test_FieldList_to_xarray_from_disk(self):
         """Test FieldList.to_xarray from datasets read from disk."""
         for dataset in (
             "example_field_0.nc",
@@ -101,10 +101,41 @@ class xarrayTest(unittest.TestCase):
             "umfile.pp",
             "wgdos_packed.pp",
         ):
-            f = cf.read(dataset, netcdf_backend="netCDF4")
+            f = cf.read(dataset)
             ds = f.to_xarray()
             self.assertIsInstance(ds, xr.Dataset)
             str(ds)
+
+    def test_Field_to_xarray_groups(self):
+        """Test Field.to_xarray with groups."""
+        f = cf.example_field(0)
+        g = f.copy()
+
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.Dataset)
+
+        f.nc_set_variable("/forecast/model/q2")
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.DataTree)
+        str(ds)
+
+        ds = cf.write([f, g], fmt="XARRAY")
+        self.assertIsInstance(ds, xr.DataTree)
+        str(ds)
+
+        self.assertIn("q", ds)
+        self.assertIn("q2", ds["/forecast/model"])
+
+    def test_Field_to_xarray_aggregation(self):
+        """Test Field.to_xarray with aggregated data."""
+        f = cf.read("example_field_0.nc")[0]
+        dsf = f.to_xarray()
+
+        self.assertEqual(f.shape[0], 5)
+        g = cf.aggregate([f[:3], f[3:]])[0]
+        dsg = g.to_xarray()
+
+        self.assertTrue(dsg.equals(dsf))
 
 
 if __name__ == "__main__":

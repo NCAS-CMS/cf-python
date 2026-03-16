@@ -6,7 +6,9 @@ from .gatheredarray import GatheredArray
 from .h5netcdfarray import H5netcdfArray
 from .netcdfarray import NetCDFArray
 from .netcdf4array import NetCDF4Array
+from .scipynetcdffilearray import ScipyNetcdfFileArray
 from .pointtopologyarray import PointTopologyArray
+from .pyfivearray import PyfiveArray
 from .raggedcontiguousarray import RaggedContiguousArray
 from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray

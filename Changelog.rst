@@ -1,3 +1,29 @@
+Version NEXTVERSION
+--------------
+
+**2026-??-??**
+
+* New keyword parameter to `cf.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cf-python/issues/929)
+* New function to control the persistence of computed data:
+  `cf.persist_data` (https://github.com/NCAS-CMS/cf-python/issues/929)
+* New default backend for netCDF-4 in `cf.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cf-python/issues/924)
+* New default backend for netCDF-4 in `cf.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* New optional backend for netCDF-3 in `cf.read` that allows parallel
+  reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cf-python/issues/912)
+* Fix bug in `cf.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
+* Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
+  (https://github.com/NCAS-CMS/cf-python/issues/887)
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+
 Version 3.19.0
 --------------
 

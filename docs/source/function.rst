@@ -135,6 +135,8 @@ Resource management
 
    cf.configuration
    cf.chunksize
+   cf.display_data
+   cf.persist_data
    cf.free_memory
    cf.regrid_logging
    cf.tempdir

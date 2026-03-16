@@ -16,7 +16,7 @@ from ..functions import (
     bounds_combination_mode,
     normalize_slice,
 )
-from ..query import Query, wi
+from ..query import Query, wi, wo
 from ..units import Units
 
 logger = logging.getLogger(__name__)
@@ -245,8 +245,8 @@ class FieldDomain:
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
                  ancillary mask to apply to those domain axes
-                 immediately after the subspace has been created
-                 by the ``'indices'``. This dictionary will always be
+                 immediately after the subspace has been created by
+                 the ``'indices'``. This dictionary will always be
                  empty if the *ancillary_mask* parameter is False.
 
         """
@@ -455,6 +455,30 @@ class FieldDomain:
                         #             'without' Query instance
                         if debug:
                             logger.debug("  1-d CASE 2:")  # pragma: no cover
+
+                        arg0, arg1 = value.value
+                        if arg0 > arg1:
+                            # Query has swapped operands (i.e. arg0 >
+                            # arg1) => Create a new equivalant Query
+                            # that has arg0 < arg1, for a new
+                            # arg1. E.g. for a period of 360,
+                            # cf.wi(355, 5) is transformed to
+                            # cf.wi(355, 365).
+                            #
+                            # This is done (effectively) by repeatedly
+                            # adding the cyclic period to arg1 until
+                            # it is greater than arg0, taking into
+                            # account any units that have been set.
+                            period = item.period()
+                            value = value.copy()
+                            value.set_condition_units(period.Units)
+                            arg0, arg1 = value.value
+                            n = ((arg0 - arg1) / period).ceil()
+                            arg1 = arg1 + n * period
+                            if value.operator == "wi":
+                                value = wi(arg0, arg1)
+                            else:
+                                value = wo(arg0, arg1)
 
                         size = item.size
                         if item.increasing:
@@ -2020,12 +2044,18 @@ class FieldDomain:
 
             # Check for axes that are currently marked as non-cyclic,
             # but are in fact cyclic.
-            if (
-                len(cyclic) < len(self.domain_axes(todict=True))
-                and self.autocyclic()
-            ):
-                cyclic.update(self._cyclic)
-                self._cyclic = cyclic
+            #
+            # Note: We have to do a "dry run" on the 'autocyclic' call
+            #       in the if test in order to prevent corrupting
+            #       self._cyclic in the case that an axis tested by
+            #       autocyclic is already marked as cylcic, but
+            #       nonetheless autocyclic returns False (sounds
+            #       niche, but this really happens!).
+            if len(cyclic) < len(
+                self.domain_axes(todict=True)
+            ) and self.autocyclic(config={"dry_run": True}):
+                self.autocyclic()
+                cyclic = self._cyclic.copy()
 
             return cyclic
 
@@ -3018,13 +3048,13 @@ class FieldDomain:
         """Convert the {{class}} to an `xarray` Dataset.
 
         If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
-        is installed then the `cf_xarray` accessors will be present on
-        the returned `xarray` objects (`xarray.DataArray.cf` and
-        `xarray.Dataset.cf`) that allow some extra interpretation of
-        CF attributes.
+        is installed then the `cf_xarray` accessors that allow some
+        interpretation of CF attributes will bxe present on the
+        returned `xarray` objects (`xarray.DataArray.cf` and
+        `xarray.Dataset.cf`, but not `xarray.DataTree`).
 
-        Note that `f.to_xarray()` is identical to ``ds = cf.write(f,
-        'fmt='XARRAY')``; and multiple fields and domains may be
+        Note that ``f.to_xarray()`` is identical to ``ds = cf.write(f,
+        fmt='XARRAY')``; and multiple fields and domains may be
         written to the same `xarray` dataset from a `cf.{{class}}List`
         (e.g. ``ds = fl.to_xarray()``) or with `cf.write` (e.g.``ds =
         cf.write([f, g], fmt='XARRAY')`` or ``ds = cf.write(fl,
@@ -3036,8 +3066,11 @@ class FieldDomain:
 
         :Returns:
 
-            `xarray.Dataset`
-                The equivalent `xarray` Dataset.
+            `xarray.Dataset` or `xarray.DataTree`
+                The equivalent `xarray` dataset. If there are no
+                sub-groups of the root group then an `xarray.Dataset`
+                is returned, oterwise an `xarray.DataTree` is
+                returned.
 
         """
         from cf.read_write import write
