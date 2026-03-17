@@ -6,10 +6,10 @@ Version NEXTVERSION
 * New methods to convert to `xarray`: `cf.Field.to_xarray`,
   `cf.FieldList.to_xarray`, `cf.Domain.to_xarray`, and
   `cf.DomainList.to_xarray`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/933)
 * New output format for `cf.write` that creates an `xarray` dataset in
   memory: ``'XARRAY'``
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/933)
 * New keyword parameter to `cf.Data.compute`: ``persist``
   (https://github.com/NCAS-CMS/cf-python/issues/929)
 * New function to control the persistence of computed data:

@@ -3050,10 +3050,12 @@ class FieldDomain:
         {{cf_xarray description}}
 
         Note that ``ds = f.to_xarray()`` is identical to ``ds =
-        cf.write(f, fmt='XARRAY')``; and multiple {{clasfields and domains
-        may be written to the same `xarray` dataset from a
-        `cf.{{class}}List` (e.g. ``ds = fl.to_xarray()``) or with
-        `cf.write`, e.g. ``ds = cf.write([f, g], fmt='XARRAY')``.
+        cf.write(f, fmt='XARRAY')``; and multiple {{class_lower}}s may
+        be written to the same `xarray` dataset with
+        `cf.{{class}}List.to_xarray`, or with `cf.write` (e.g. ``ds =
+        cf.write([f, g], fmt='XARRAY')``). Also, `cf.write` allows a
+        mixture a mixture of fields and domains to be written to the
+        same `xarray` dataset.
 
         .. versionadded:: NEXTVERSION
 
@@ -3062,12 +3064,13 @@ class FieldDomain:
         :Parameter:
 
             group: `bool`, optional
+
                 If False then create a "flat" dataset, i.e. one with
                 only the root group, regardless of any group structure
-                specified by the field constructs. If True (the
-                default) then any sub-groups defined by the netCDF
-                interface of the {{class}} constructs and its
-                components will be created and populated.
+                specified by the netCDF interfaces of the
+                {{class_lower}} and its components. If True (the
+                default) then any sub-groups will be created and
+                populated.
 
         :Returns:
 

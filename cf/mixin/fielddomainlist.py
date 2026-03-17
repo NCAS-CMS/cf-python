@@ -338,7 +338,9 @@ class FieldDomainList:
         {{cf_xarray description}}
 
         Note that ``ds = fl.to_xarray()`` is identical to ``ds =
-        cf.write(fl, fmt='XARRAY')``.
+        cf.write(fl, fmt='XARRAY')``. Also, `cfdm.write` allows a
+        mixture a mixture of fields and domains to be written to the
+        same `xarray` dataset.
 
         .. versionadded:: NEXTVERSION
 
@@ -349,10 +351,9 @@ class FieldDomainList:
             group: `bool`, optional
                 If False then create a "flat" dataset, i.e. one with
                 only the root group, regardless of any group structure
-                specified by the field constructs. If True (the
-                default) then any sub-groups defined by the netCDF
-                interface of the constructs and their components will
-                be created and populated.
+                specified by the netCDF interfaces of the list
+                elements and their components. If True (the default)
+                then any sub-groups will be created and populated.
 
         :Returns:
 
