@@ -3050,7 +3050,7 @@ class FieldDomain:
         {{cf_xarray description}}
 
         Note that ``ds = f.to_xarray()`` is identical to ``ds =
-        cf.write(f, fmt='XARRAY')``; and multiple fields and domains
+        cf.write(f, fmt='XARRAY')``; and multiple {{clasfields and domains
         may be written to the same `xarray` dataset from a
         `cf.{{class}}List` (e.g. ``ds = fl.to_xarray()``) or with
         `cf.write`, e.g. ``ds = cf.write([f, g], fmt='XARRAY')``.
