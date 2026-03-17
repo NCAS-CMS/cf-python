@@ -332,31 +332,33 @@ class FieldDomainList:
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
 
-    def to_xarray(self):
+    def to_xarray(self, group=True):
         """Convert the list elements to an `xarray` Dataset.
 
-        If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
-        is installed then the `cf_xarray` accessors that allow some
-        interpretation of CF attributes will bxe present on the
-        returned `xarray` objects (`xarray.DataArray.cf` and
-        `xarray.Dataset.cf`, but not `xarray.DataTree`).
+        {{cf_xarray description}}
 
         Note that ``ds = fl.to_xarray()`` is identical to ``ds =
-        cf.write(fl, fmt='XARRAY')``
+        cf.write(fl, fmt='XARRAY')``.
 
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `cf.write`
 
+        :Parameter:
+
+            group: `bool`, optional
+                If False then create a "flat" dataset, i.e. one with
+                only the root group, regardless of any group structure
+                specified by the field constructs. If True (the
+                default) then any sub-groups defined by the netCDF
+                interface of the constructs and their components will
+                be created and populated.
+
         :Returns:
 
-            `xarray.Dataset` or `xarray.DataTree`
-                The equivalent `xarray` dataset. If there are no
-                sub-groups of the root group then an `xarray.Dataset`
-                is returned, oterwise an `xarray.DataTree` is
-                returned.
+            {{Returns xarray}}
 
         """
         from cf.read_write import write
 
-        return write(self, fmt="XARRAY")
+        return write(self, fmt="XARRAY", group=group)

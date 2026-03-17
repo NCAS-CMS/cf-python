@@ -117,14 +117,47 @@ class xarrayTest(unittest.TestCase):
         f.nc_set_variable("/forecast/model/q2")
         ds = f.to_xarray()
         self.assertIsInstance(ds, xr.DataTree)
+        self.assertIn("q2", ds["/forecast/model"])
         str(ds)
 
+        # group=True
         ds = cf.write([f, g], fmt="XARRAY")
         self.assertIsInstance(ds, xr.DataTree)
         str(ds)
 
         self.assertIn("q", ds)
         self.assertIn("q2", ds["/forecast/model"])
+
+        # group=False
+        ds = f.to_xarray(group=False)
+        self.assertIsInstance(ds, xr.Dataset)
+        self.assertIn("q2", ds)
+        str(ds)
+
+        ds = cf.write([f, g], fmt="XARRAY", group=False)
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
+
+        self.assertIn("q", ds)
+        self.assertIn("q2", ds)
+
+    def test_FieldList_to_xarray_groups(self):
+        """Test Field.to_xarray with groups."""
+        f = cf.example_fields(0)
+
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.Dataset)
+
+        f[0].nc_set_variable("/forecast/model/q2")
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.DataTree)
+        self.assertIn("q2", ds["/forecast/model"])
+        str(ds)
+
+        ds = f.to_xarray(group=False)
+        self.assertIsInstance(ds, xr.Dataset)
+        self.assertIn("q2", ds)
+        str(ds)
 
     def test_Field_to_xarray_aggregation(self):
         """Test Field.to_xarray with aggregated data."""
