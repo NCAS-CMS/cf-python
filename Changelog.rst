@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New keyword to `cf.read`: ``filesystem``
+  (https://github.com/NCAS-CMS/cf-python/issues/931)
 * New keyword parameter to `cf.Data.compute`: ``persist``
   (https://github.com/NCAS-CMS/cf-python/issues/929)
 * New function to control the persistence of computed data:
