@@ -220,6 +220,8 @@ Required
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.7.2 only.
 
+* `pyive <https://pypi.org/project/pyfive>`_, version 1.1.1 or newer.
+
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.4 or newer
   (note that this package may be installed with netCDF4).
 
@@ -273,9 +275,8 @@ environments for which these features are not required.
 
 .. rubric:: Regridding
 
-* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, previously
-  named `ESMF` with the old module name also being accepted for import,
-  version 8.7.0 or newer. This is easily installed via conda with
+* `esmpy <https://earthsystemmodeling.org/esmpy/>`_, version 8.7.0 or
+  newer. This is easily installed via conda with
 
   .. code-block:: console
 
@@ -295,6 +296,15 @@ environments for which these features are not required.
   library is not yet in PyPi (it will be soon), so in the interim you
   must use a copy of the ``pyfive`` branch of the
   https://github.com/NCAS-CMS/PyActiveStorage repository.
+
+.. rubric:: HEALPix manipulations
+
+* `healpix <https://pypi.org/project/healpix>`_, version 2025.1 or
+  newer. This package is not required to read and write HEALPix
+  datasets, but may be needed for particular manipulations with
+  HEALPix grids, such as creating latitude and longitude coordinates,
+  regridding, some changes to the refinement level, and some
+  collapses.
 
 ----
 
