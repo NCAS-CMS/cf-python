@@ -709,6 +709,8 @@ class read(cfdm.read):
                         "dataset_type",
                         "unpack",
                         "verbose",
+                        "filesystem",
+                        "storage_options",
                     )
                 }
                 um_kwargs["set_standard_name"] = False

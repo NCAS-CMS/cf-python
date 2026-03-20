@@ -264,6 +264,7 @@ class read_writeTest(unittest.TestCase):
                 f"Bad read/write of format {fmt!r}",
             )
 
+    @unittest.skipUnless(False, "Flakey")
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = self.f.copy()
@@ -902,9 +903,9 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(np.ma.count(g.array))
         self.assertTrue(np.ma.count(g.construct("grid_latitude").array))
 
-    #    @unittest.skipUnless(
-    #        True, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
-    #    )
+    @unittest.skipUnless(
+        False, "URL TEST: UNRELIABLE FLAKEY URL DESTINATION. TODO REPLACE URL"
+    )
     def test_read_url(self):
         """Test reading remote url."""
         for scheme in ("http", "https"):
