@@ -26,6 +26,7 @@ class UMArray(
         mask=True,
         unpack=True,
         attributes=None,
+        storage_protocol=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -71,6 +72,14 @@ class UMArray(
 
                 .. versionadded:: 3.16.3
 
+            {{init storage_protocol: `None` or `str`, optional}}
+
+                .. versionadded:: NEXTVERSION
+
+            {{init storage_options: `dict` or `None`, optional}}
+
+                .. versionadded:: NEXTVERSION
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -108,6 +117,7 @@ class UMArray(
             mask=mask,
             unpack=unpack,
             attributes=attributes,
+            storage_protocol=storage_protocol,
             storage_options=storage_options,
             source=source,
             copy=copy,

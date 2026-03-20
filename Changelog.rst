@@ -17,6 +17,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New function: `cf.locate`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New keyword to `cf.read`: ``filesystem``
+  (https://github.com/NCAS-CMS/cf-python/issues/931)
 * New keyword parameter to `cf.Data.compute`: ``persist``
   (https://github.com/NCAS-CMS/cf-python/issues/929)
 * New function to control the persistence of computed data:
@@ -31,7 +33,9 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cf.read` that allows parallel
   reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cf-python/issues/912)
-* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
+* Fix bug in `cf.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
 * Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
   (https://github.com/NCAS-CMS/cf-python/issues/887)
 * New optional dependency: ``healpix>=2025.1``
