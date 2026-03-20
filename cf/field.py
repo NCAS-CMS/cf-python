@@ -6903,7 +6903,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,
-            # cell measures and domain ancillaries
+            # cell measures, domain ancillaries, domain_topologies,
+            # and cell connectivities.
             # ---------------------------------------------------------
             for axis, domain_axis in collapse_axes.items():
                 # Ignore axes which are already size 1
@@ -6911,10 +6912,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if size == 1:
                     continue
 
-                # REMOVE all cell measures and domain ancillaries
-                # which span this axis
+                # REMOVE all cell measures, domain ancillaries,
+                # domain_topologies, and cell connectivities which
+                # span this axis
                 c = f.constructs.filter(
-                    filter_by_type=("cell_measure", "domain_ancillary"),
+                    filter_by_type=(
+                        "cell_measure",
+                        "domain_ancillary",
+                        "domain_topology",
+                        "cell_connectivity",
+                    ),
                     filter_by_axis=(axis,),
                     axis_mode="or",
                     todict=True,
