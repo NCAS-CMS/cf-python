@@ -336,6 +336,10 @@ class read(cfdm.read):
 
             .. versionadded:: 3.19.0
 
+        {{read filesystem: optional}}
+
+            .. versionadded:: NEXTVERSION
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -455,6 +459,7 @@ class read(cfdm.read):
         fmt=None,
         file_type=None,
         group_dimension_search="closest_ancestor",
+        filesystem=None,
     ):
         """Read field or domain constructs from a dataset."""
         kwargs = locals()
@@ -704,6 +709,8 @@ class read(cfdm.read):
                         "dataset_type",
                         "unpack",
                         "verbose",
+                        "filesystem",
+                        "storage_options",
                     )
                 }
                 um_kwargs["set_standard_name"] = False
