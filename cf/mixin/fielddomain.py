@@ -3044,6 +3044,43 @@ class FieldDomain:
 
         return self.set_construct(ref, key=key, copy=False)
 
+    def to_xarray(self, group=True):
+        """Convert the {{class}} to an `xarray` dataset.
+
+        {{cf_xarray description}}
+
+        Note that ``ds = f.to_xarray()`` is identical to ``ds =
+        cf.write(f, fmt='XARRAY')``; and multiple {{class_lower}}s may
+        be written to the same `xarray` dataset with
+        `cf.{{class}}List.to_xarray`, or with `cf.write` (e.g. ``ds =
+        cf.write([f, g], fmt='XARRAY')``). Also, `cf.write` allows a
+        mixture a mixture of fields and domains to be written to the
+        same `xarray` dataset.
+
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `cf.{{class}}List.to_xarray`, `cf.write`
+
+        :Parameter:
+
+            group: `bool`, optional
+
+                If False then create a "flat" dataset, i.e. one with
+                only the root group, regardless of any group structure
+                specified by the netCDF interfaces of the
+                {{class_lower}} and its components. If True (the
+                default) then any sub-groups will be created and
+                populated.
+
+        :Returns:
+
+            {{Returns xarray}}
+
+        """
+        from cf.read_write import write
+
+        return write(self, fmt="XARRAY", group=group)
+
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------

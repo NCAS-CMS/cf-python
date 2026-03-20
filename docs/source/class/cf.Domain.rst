@@ -240,6 +240,20 @@ NetCDF
    ~cf.Domain.nc_set_global_attribute
    ~cf.Domain.nc_set_global_attributes
 
+.. _Domain-xarray:
+
+xarray
+------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.to_xarray
+
 Groups
 ^^^^^^
 
