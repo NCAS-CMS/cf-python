@@ -289,10 +289,14 @@ def cf_healpix_bounds(
             f"healpix_index array has one dimension. Got shape: {a.shape}"
         )
 
-    if latitude:
+    if latitude and longitude:
+        raise ValueError("Only one of 'latitude' and 'longitude' must be True.")
+    elif latitude:
         pos = 1
     elif longitude:
         pos = 0
+    else:
+        raise ValueError("One of 'latitude' and 'longitude' must be True.")
 
     # Convert zuniq to nuniq
     if indexing_scheme == "zuniq":
