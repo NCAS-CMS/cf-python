@@ -240,21 +240,21 @@ def cf_healpix_bounds(
 
     **Examples**
 
-    >>> cf.data.dask_utils.cf_healpix_bounds(
+    >>> cf_healpix_bounds(
     ...     np.array([0, 1, 2, 3]), 'nested', 1, latitude=True
     )
     array([[41.8103149 , 19.47122063,  0.        , 19.47122063],
            [66.44353569, 41.8103149 , 19.47122063, 41.8103149 ],
            [66.44353569, 41.8103149 , 19.47122063, 41.8103149 ],
            [90.        , 66.44353569, 41.8103149 , 66.44353569]])
-    >>> cf.data.dask_utils.cf_healpix_bounds(
+    >>> cf_healpix_bounds(
     ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True
     )
     array([[45. , 22.5, 45. , 67.5],
            [90. , 45. , 67.5, 90. ],
            [ 0. ,  0. , 22.5, 45. ],
            [45. ,  0. , 45. , 90. ]])
-    >>> cf.data.dask_utils.cf_healpix_bounds(
+    >>> cf_healpix_bounds(
     ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True,
     ...     pole_longitude=3.14159
     )
@@ -421,11 +421,11 @@ def cf_healpix_coordinates(
 
     **Examples**
 
-    >>> cf.data.dask_utils.cf_healpix_coordinates(
+    >>> cf_healpix_coordinates(
     ...     np.array([0, 1, 2, 3]), 'nested', 1, latitude=True
     )
     array([19.47122063, 41.8103149 , 41.8103149 , 66.44353569])
-    >>> cf.data.dask_utils.cf_healpix_coordinates(
+    >>> cf_healpix_coordinates(
     ...     np.array([0, 1, 2, 3]), 'nested', 1, longitude=True
     )
     array([45. , 67.5, 22.5, 45. ])
@@ -569,15 +569,15 @@ def cf_healpix_change_indexing_scheme(
 
     **Examples**
 
-    >>> cf.data.dask_utils.cf_healpix_change_indexing_scheme(
+    >>> cf_healpix_change_indexing_scheme(
     ...     [0, 1, 2, 3], 'nested', 'ring', 1
     ... )
     array([13,  5,  4,  0])
-    >>> cf.data.dask_utils.cf_healpix_change_indexing_scheme(
+    >>> cf_healpix_change_indexing_scheme(
     ...     [0, 1, 2, 3], 'nested', 'nuniq', 1
     )
     array([16, 17, 18, 19])
-    >>> cf.data.dask_utils.cf_healpix_change_indexing_scheme(
+    >>> cf_healpix_change_indexing_scheme(
     ...     [16, 17, 18, 19], 'nuniq', 'nested'
     )
     array([0, 1, 2, 3])
@@ -738,11 +738,11 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
 
     **Examples**
 
-    >>> cf.data.dask_utils.cf_healpix_weights(
+    >>> cf_healpix_weights(
     ...     [76, 77, 78, 79, 20, 21], 'nuniq'
     )
     array([0.0625, 0.0625, 0.0625, 0.0625, 0.25  , 0.25  ])
-    >>> cf.data.dask_utils.cf_healpix_weights(
+    >>> cf_healpix_weights(
     ...     [76, 77, 78, 79, 20, 21], 'nuniq',
     ...     measure=True, radius=6371000
     )
