@@ -2496,7 +2496,7 @@ class FieldDomain:
                 bounds that lie exactly on the north or south pole. If
                 `None` (the default) then the longitudes of such
                 points are determined by whichever algorithm was used
-                to create the coordinates, which will could result in
+                to create the coordinates, which could result in
                 different points on a pole having different
                 longitudes. If set to a number, then the longitudes of
                 all points on the north or south pole will be given
