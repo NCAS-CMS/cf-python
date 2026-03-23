@@ -2135,7 +2135,7 @@ class FieldDomain:
                 f"Can't change HEALPix indexing scheme of {f!r}: "
                 "indexing_scheme in the healpix grid mapping coordinate "
                 "reference must be one of "
-                f"{healpix_indexing_schemes()!r}. Got {new_indexing_scheme!r}"
+                f"{healpix_indexing_schemes()!r}. Got {indexing_scheme!r}"
             )
 
         if not (
