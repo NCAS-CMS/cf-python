@@ -8,15 +8,12 @@ import cf
 
 # Create matching lists of selected nested, ring, nuniq and zuniq
 # indices for every refinement level.
-refinement_levels = [r for r in range(30) for i in (0, 7, (12 * 4**r) - 1)]
-
-nested_indices = [i for r in range(30) for i in (0, 7, (12 * 4**r) - 1)]
-
-ring_indices = [
-    healpix.nest2ring(healpix.order2nside(r), i)
+indices = [
+    (r, i, healpix.nest2ring(healpix.order2nside(r), i))
     for r in range(30)
     for i in (0, 7, (12 * 4**r) - 1)
 ]
+refinement_levels, nested_indices, ring_indices = map(list, zip(*indices))
 
 nuniq_indices = [
     i + 4 ** (1 + r) for r, i in zip(refinement_levels, nested_indices)
