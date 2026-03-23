@@ -1954,6 +1954,8 @@ class Weights(Container, cfdm.Container):
 
             {{radius: optional}}
 
+            return_areas: `bool`, optional
+        
             {{weights methods: `bool`, optional}}
 
         :Returns:
