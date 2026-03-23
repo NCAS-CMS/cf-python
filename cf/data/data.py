@@ -1370,8 +1370,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The function with which to coarsen the data.
 
             axes: `dict`
-                Define how to coarsening neighbourhood for each
-                axis. A dictionary key is an integer axis position,
+                Define how large to set the coarsening neighbourhood for
+                each axis. A dictionary key is an integer axis position,
                 with corresponding value giving the integer size of
                 the coarsening neighbourhood for that
                 axis. Unspecified axes are not coarsened, which is
