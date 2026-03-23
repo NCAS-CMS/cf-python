@@ -439,7 +439,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             start = 4 ** (refinement_level + 1)
         else:
             raise NotImplementedError(
-                "Can't yet Can't create a HEALPix Domain with the "
+                "Can't yet create a HEALPix Domain with the "
                 f"{indexing_scheme!r} indexing scheme"
             )  # pragma: no cover
 
@@ -770,7 +770,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         Metadata constructs are selected conditions are specified on
         their data. Indices for subspacing are then automatically
         inferred from where the conditions are met. If a condition is
-        a callable function then if is automatically replaced with the
+        a callable function then it is automatically replaced with the
         result of calling that function with the Domain as its only
         argument.
 
@@ -1128,8 +1128,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         Subspacing by metadata selects metadata constructs and
         specifies conditions on their data. Indices for subspacing are
         then automatically inferred from where the conditions are
-        met. If a condition is a callable function then if is
-        automateically replaced with the result of calling that
+        met. If a condition is a callable function then it is
+        automatically replaced with the result of calling that
         function with the Domain as its only argument.
 
         Metadata constructs and the conditions on their data are defined

@@ -1370,8 +1370,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The function with which to coarsen the data.
 
             axes: `dict`
-                Define how to coarsening neighbourhood for each
-                axis. A dictionary key is an integer axis position,
+                Define how large to set the coarsening neighbourhood for
+                each axis. A dictionary key is an integer axis position,
                 with corresponding value giving the integer size of
                 the coarsening neighbourhood for that
                 axis. Unspecified axes are not coarsened, which is
@@ -1432,7 +1432,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         ndim = self.ndim
         for k in axes:
             if k < -ndim or k > ndim:
-                raise ValueError("axis {k} is out of bounds for {ndim}-d data")
+                raise ValueError(f"Axis {k} is out of bounds for {ndim}-d data")
 
         axes = {(k + ndim if k < 0 else k): v for k, v in axes.items()}
 

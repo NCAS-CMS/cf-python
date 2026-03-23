@@ -123,7 +123,7 @@ class Grid:
     # `None` then there are no vertical coordinates.
     z_index: Any = None
     # The original field/domain before any transformations are applied
-    # (such as creating lat/lon coordinates, or converting to from
+    # (such as creating lat/lon coordinates, or converting from
     # HEALPix to UGRID).
     domain: Any = None
 

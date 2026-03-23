@@ -2030,7 +2030,7 @@ class Weights(Container, cfdm.Container):
                 "Can't create weights: HEALPix indexing_scheme "
                 f"{indexing_scheme!r} "
                 f"{f.constructs.domain_axis_identity(axis)!r} axis has  "
-                f"not yet been implemented"
+                "not yet been implemented"
             )
 
         refinement_level = parameters.get("refinement_level")

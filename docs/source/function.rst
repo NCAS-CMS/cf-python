@@ -178,7 +178,7 @@ Miscellaneous
    cf.example_domain
    cf.flat
    cf.healpix_indexing_schemes
-   cf.healpix_max_refinment_level
+   cf.healpix_max_refinement_level
    cf.implementation
    cf.indices_shape
    cf.inspect

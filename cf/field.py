@@ -4821,7 +4821,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         reduction.
 
         The operation requires that a new larger cell at the lower
-        refinement level either
+        refinement level either:
 
         * contains no original cells, in which case that larger cell
           is not included in the output;
@@ -5160,7 +5160,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             iaxis = f.get_data_axes().index(axis)
         except ValueError:
             # The Field data doesn't span the size 1 HEALPix axis, so
-            # insert it on the left hand side.
+            # insert it on the right hand side.
             f.insert_dimension(axis, -1, inplace=True)
             iaxis = f.ndim - 1
 
@@ -5337,7 +5337,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Set the refinement level to 2, showing that, for an intensive
         quantity, every 4 cells at the higher refinement level
         (i.e. the number of cells at the higher refinement level that
-        lie in one cell of the original refinement leve1) have the
+        lie in one cell of the original refinement level) have the
         same value as a single cell at the original refinement level:
 
         >>> g = f.healpix_increase_refinement_level(2, 'intensive')
@@ -5350,7 +5350,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(g[0, :8] .array)
         [[291.5 291.5 291.5 291.5 293.5 293.5 293.5 293.5]]
 
-        For an extensive quantity (which the ``f`` is this example is
+        For an extensive quantity (which the ``f`` in this example is
         not, but we can assume that it is for demonstration purposes),
         each output cell has the value of the original cell in which
         it lies, divided by the ratio of the cells' areas (4 in this
@@ -9208,7 +9208,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Metadata constructs are selected by conditions specified on
         their data. Indices for subspacing are then automatically
         inferred from where the conditions are met. If a condition is
-        a callable function then if is automateically replaced with
+        a callable function then it is automatically replaced with
         the result of calling that function with the Field as its only
         argument.
 
@@ -13399,7 +13399,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         brackets, selects metadata constructs and specifies conditions
         on their data. Indices for subspacing are then automatically
         inferred from where the conditions are met. If a condition is
-        a callable function then if is automateically replaced with
+        a callable function then it is automatically replaced with
         the result of calling that function with the Field as its only
         argument.
 

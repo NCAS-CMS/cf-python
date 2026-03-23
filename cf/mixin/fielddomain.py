@@ -2135,7 +2135,7 @@ class FieldDomain:
                 f"Can't change HEALPix indexing scheme of {f!r}: "
                 "indexing_scheme in the healpix grid mapping coordinate "
                 "reference must be one of "
-                f"{healpix_indexing_schemes()!r}. Got {new_indexing_scheme!r}"
+                f"{healpix_indexing_schemes()!r}. Got {indexing_scheme!r}"
             )
 
         if not (
@@ -2367,14 +2367,14 @@ class FieldDomain:
 
         # Get the lat/lon coordinates
         x_key, x = f.auxiliary_coordinate(
-            "Y",
+            "X",
             filter_by_axis=(axis,),
             axis_mode="exact",
             item=True,
             default=(None, None),
         )
         y_key, y = f.auxiliary_coordinate(
-            "X",
+            "Y",
             filter_by_axis=(axis,),
             axis_mode="exact",
             item=True,
@@ -2496,7 +2496,7 @@ class FieldDomain:
                 bounds that lie exactly on the north or south pole. If
                 `None` (the default) then the longitudes of such
                 points are determined by whichever algorithm was used
-                to create the coordinates, which will could result in
+                to create the coordinates, which could result in
                 different points on a pole having different
                 longitudes. If set to a number, then the longitudes of
                 all points on the north or south pole will be given
