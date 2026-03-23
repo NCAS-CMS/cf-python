@@ -2367,14 +2367,14 @@ class FieldDomain:
 
         # Get the lat/lon coordinates
         x_key, x = f.auxiliary_coordinate(
-            "Y",
+            "X",
             filter_by_axis=(axis,),
             axis_mode="exact",
             item=True,
             default=(None, None),
         )
         y_key, y = f.auxiliary_coordinate(
-            "X",
+            "Y",
             filter_by_axis=(axis,),
             axis_mode="exact",
             item=True,
