@@ -3324,7 +3324,7 @@ def locate(lat, lon, f=None):
     """Locate cells containing latitude-longitude locations.
 
     The cells must be defined by a discrete axis that has 1-d latitude
-    and longitude coordinate, or for which it is possible to create
+    and longitude coordinates, or for which it is possible to create
     1-d latitude and longitude coordinates from other metadata (as is
     the case for a HEALPix axis). At present, only a HEALPix axis is
     supported.
@@ -3367,6 +3367,8 @@ def locate(lat, lon, f=None):
             condition in a Field's `subspace` and `indices` methods,
             since, for instance, ``f.subspace(X=cf.locate(0, 45))`` is
             equivalent to ``f.subspace(X=cf.locate(0, 45, f))``.
+
+    :Returns:
 
         `numpy.ndarray` or function
             Indices for the discrete axis that contain the

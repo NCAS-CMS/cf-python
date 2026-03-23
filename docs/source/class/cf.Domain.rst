@@ -193,7 +193,7 @@ Miscellaneous
    ~cf.Domain.get_original_filenames
    ~cf.Domain.close
    ~cf.Domain.persist
-   ~cf.Domain.uncompresshas_bounds
+   ~cf.Domain.uncompress
    ~cf.Domain.has_data
    ~cf.Domain.has_geometry
    ~cf.Domain.apply_masking   
