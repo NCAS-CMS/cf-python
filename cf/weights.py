@@ -1955,6 +1955,9 @@ class Weights(Container, cfdm.Container):
             {{radius: optional}}
 
             return_areas: `bool`, optional
+                If True and weights were created, then the weights are
+                returned, as opposed to a Boolean indiciating if
+                weights were created.
         
             {{weights methods: `bool`, optional}}
 
