@@ -81,7 +81,7 @@ class RegridMeshTest(unittest.TestCase):
                     self.assertTrue((b.mask == a.mask).all())
 
                 # Check that the result is a HEALPix grid
-                self.assertTrue(cf.healpix.healpix_info(x))
+                self.assertTrue(cf.healpix_utils.healpix_info(x))
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
     def test_Field_regrid_healpix_to_mesh(self):
