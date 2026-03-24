@@ -289,7 +289,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         amount::
 
            >>> cf.chunksize()
-           >>> 134217728
+           <CF Constant: 134217728>
            >>> d = cf.Domain.create_healpix(10)
            >>> assert d.coord('healpix_index').data.npartitions == 1
            >>> d = cf.Domain.create_healpix(15)
