@@ -3251,19 +3251,19 @@ class FieldTest(unittest.TestCase):
             np.array_equal(
                 topology[:4],
                 [
-                    [14, 11, 13, 16],
-                    [21, 14, 16, 20],
-                    [8, 7, 11, 14],
-                    [9, 8, 14, 21],
+                    [41, 32, 24, 33],
+                    [49, 41, 33, 42],
+                    [48, 40, 32, 41],
+                    [52, 48, 41, 49],
                 ],
             )
         )
 
         # North pole
-        self.assertTrue(np.allclose(topology[3:16:4, 0], 9))
+        self.assertTrue(np.allclose(topology[3:16:4, 0], 52))
 
         # South pole
-        self.assertTrue(np.allclose(topology[32:48:4, 2], 3))
+        self.assertTrue(np.allclose(topology[32:48:4, 2], 0))
 
         self.assertIsNone(f.healpix_to_ugrid(inplace=True))
         self.assertEqual(len(f.domain_topologies()), 1)
