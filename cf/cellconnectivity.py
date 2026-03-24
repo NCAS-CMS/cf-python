@@ -49,7 +49,8 @@ class CellConnectivity(mixin.PropertiesData, cfdm.CellConnectivity):
     from any other sources, but is consistent with UGRID encoding
     within CF-netCDF.
 
-    See CF Appendix I "The CF Data Model".
+    See CF Appendix I: The CF Data Model.
+    https://doi.org/10.5281/zenodo.14274886
 
     **NetCDF interface**
 
