@@ -276,7 +276,7 @@ environments for which these features are not required.
 .. rubric:: Regridding
 
 * `esmpy <https://earthsystemmodeling.org/esmpy/>`_, version 8.7.0 or
-  newer. This is easily installed via conda with
+  newer. This can be installed via conda with
 
   .. code-block:: console
 
