@@ -3549,6 +3549,13 @@ class UMRead(cfdm.read_write.IORead):
                 "(only Field constructs)"
             )
 
+        representation = self.dataset_representation(dataset)
+        if representation != "path":
+            raise NotImplementedError(
+                "Can't yet read Field constructs from a UM or PP "
+                f"{representation!r} dataset: {dataset!r}"
+            )
+
         if not _stash2standard_name:
             # --------------------------------------------------------
             # Create the STASH code to standard_name conversion
@@ -3834,6 +3841,41 @@ class UMRead(cfdm.read_write.IORead):
             fmt=g.get("fmt"),
             parse=parse,
         )
+
+    @classmethod
+    def dataset_representation(cls, dataset):
+        """Return the logical representation type of the input dataset.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            dataset:
+                The dataset. May be a string-valued path or a
+                file-like object.
+
+        :Returns:
+
+            `str`
+                The dataset representation:
+
+                * ``'path'``: A string-valued path.
+
+                * ``'file_handle'``: An open file handle (such as
+                  returned by `fsspec.filesystem.open`)
+
+                * ``'unknown'``: Anything else.
+
+        """
+        # Strings (Paths)
+        if isinstance(dataset, str):
+            return "path"
+
+        # Check for a "binary stream" (file handle)
+        if hasattr(dataset, "read") and hasattr(dataset, "seek"):
+            return "file_handle"
+
+        return "unknown"
 
 
 """

@@ -145,6 +145,15 @@ class ppTest(unittest.TestCase):
         f = cf.read(self.ppfile, um={"version": "6.6.3"})[0]
         self.assertEqual(f.get_property("um_version"), "6.6.3")
 
+    def test_PP_file_object(self):
+        # Can't yet read PP/UM from file-like objects
+        with open(self.ppfile, "rb") as fh:
+            with self.assertRaises(NotImplementedError):
+                cf.read(fh)
+
+            # Check that the file has been rewound
+            self.assertEqual(fh.tell(), 0)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
