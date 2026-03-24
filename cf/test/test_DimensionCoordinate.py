@@ -712,6 +712,12 @@ class DimensionCoordinateTest(unittest.TestCase):
         )
         self.assertEqual(longitude_decreasing_no_bounds.units, "degrees_east")
 
+        # Size 1 with bounds
+        d = cf.DimensionCoordinate.create_regular((-180, 180, 360))
+        self.assertEqual(d.size, 1)
+        self.assertTrue(np.allclose(d, 0))
+        self.assertTrue(np.allclose(d.bounds, [-180, 180]))
+
     def test_DimensionCoordinate_cell_characteristics(self):
         """Test the `cell_characteristic` DimensionCoordinate methods."""
         d = self.dim.copy()
