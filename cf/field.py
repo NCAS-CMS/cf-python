@@ -5363,7 +5363,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         [[72.875 72.875 72.875 72.875 73.375 73.375 73.375 73.375]]
 
         """
-        from .healpix import (
+        from .healpix_utils import (
             _healpix_increase_refinement_level,
             _healpix_increase_refinement_level_indices,
             healpix_max_refinement_level,
@@ -7550,7 +7550,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
             domain_axis = collapse_axes.get(healpix_axis)
             if domain_axis is not None and domain_axis.get_size() > 1:
-                from .healpix import del_healpix_coordinate_reference
+                from .healpix_utils import del_healpix_coordinate_reference
 
                 del_healpix_coordinate_reference(f)
 

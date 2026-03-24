@@ -1958,7 +1958,7 @@ class Weights(Container, cfdm.Container):
                 If True and weights were created, then the weights are
                 returned, as opposed to a Boolean indiciating if
                 weights were created.
-        
+
             {{weights methods: `bool`, optional}}
 
         :Returns:
@@ -2011,7 +2011,7 @@ class Weights(Container, cfdm.Container):
                 f"{f.constructs.domain_axis_identity(axis)!r} axis"
             )
 
-        from cf.healpix import healpix_indexing_schemes
+        from cf.healpix_utils import healpix_indexing_schemes
 
         parameters = cr.coordinate_conversion.parameters()
         indexing_scheme = parameters.get("indexing_scheme")

@@ -1432,7 +1432,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         ndim = self.ndim
         for k in axes:
             if k < -ndim or k > ndim:
-                raise ValueError(f"Axis {k} is out of bounds for {ndim}-d data")
+                raise ValueError(
+                    f"Axis {k} is out of bounds for {ndim}-d data"
+                )
 
         axes = {(k + ndim if k < 0 else k): v for k, v in axes.items()}
 

@@ -391,7 +391,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """
         import dask.array as da
 
-        from cf.healpix import (
+        from cf.healpix_utils import (
             healpix_indexing_schemes,
             healpix_max_refinement_level,
         )

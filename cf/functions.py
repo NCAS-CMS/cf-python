@@ -3411,7 +3411,7 @@ def locate(lat, lon, f=None):
         )
         if healpix:
             # HEALPix
-            from .healpix import _healpix_locate
+            from .healpix_utils import _healpix_locate
 
             return _healpix_locate(lat, lon, f)
 

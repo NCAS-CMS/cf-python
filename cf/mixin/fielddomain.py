@@ -2098,7 +2098,7 @@ class FieldDomain:
          24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47]
 
         """
-        from cf.healpix import (
+        from cf.healpix_utils import (
             healpix_indexing_schemes,
             healpix_max_refinement_level,
         )
@@ -2207,7 +2207,7 @@ class FieldDomain:
                 )
 
             # Change the HEALPix indices
-            from ..healpix import _healpix_change_indexing_scheme
+            from ..healpix_utils import _healpix_change_indexing_scheme
 
             _healpix_change_indexing_scheme(
                 f, hp, new_indexing_scheme, moc_refinement_level
@@ -2282,7 +2282,7 @@ class FieldDomain:
         {}
 
         """
-        from ..healpix import healpix_info
+        from ..healpix_utils import healpix_info
 
         return healpix_info(self)
 
@@ -2343,7 +2343,7 @@ class FieldDomain:
         Topologies      : cell:face(ncdim%cell(48), 4) = [[774, ..., 3267]]
 
         """
-        from ..healpix import del_healpix_coordinate_reference
+        from ..healpix_utils import del_healpix_coordinate_reference
 
         hp = self.healpix_info()
 
@@ -2659,7 +2659,7 @@ class FieldDomain:
                 # ----------------------------------------------------
                 # HEALPix
                 # ----------------------------------------------------
-                from ..healpix import _healpix_create_latlon_coordinates
+                from ..healpix_utils import _healpix_create_latlon_coordinates
 
                 lat_key, lon_key = _healpix_create_latlon_coordinates(
                     f, pole_longitude, cache
