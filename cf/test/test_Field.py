@@ -3462,7 +3462,6 @@ class FieldTest(unittest.TestCase):
                 f.healpix_decrease_refinement_level(level, "mean")
 
         # Can't change refinement level for a 'nuniq' field
-        # TODOHEALPIX
         with self.assertRaises(ValueError):
             self.f13.healpix_decrease_refinement_level(0, "mean")
 

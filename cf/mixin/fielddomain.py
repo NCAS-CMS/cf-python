@@ -3361,7 +3361,7 @@ class FieldDomain:
                 including `numpy` and `Data` objects. The units of the
                 radius are assumed to be metres, unless specified by a
                 `Data` object. If the special value ``'earth'`` is
-                given then the default radius taken as 6371229
+                given then the default radius is taken as 6371229
                 metres. If *default* is `None` an exception will be
                 raised if no unique datum can be found in the
                 coordinate reference constructs.
