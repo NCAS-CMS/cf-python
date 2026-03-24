@@ -823,26 +823,23 @@ class RegridOperator(mixin_Container, Container):
                 weights_file = self.weights_file
                 if weights_file is not None:
                     # Read the weights from the weights file
-                    from cfdm.data.locks import netcdf_lock
-                    from netCDF4 import Dataset
+                    import pyfive
 
-                    with netcdf_lock:
-                        nc = Dataset(weights_file, "r")
-                        weights = nc.variables["S"][...]
-                        row = nc.variables["row"][...]
-                        col = nc.variables["col"][...]
+                    nc = pyfive.File(weights_file)
+                    weights = nc["S"][...]
+                    row = nc["row"][...]
+                    col = nc["col"][...]
 
-                        try:
-                            col_start_index = nc.variables["col"].start_index
-                        except AttributeError:
-                            col_start_index = 1
+                    try:
+                        col_start_index = nc.variables["col"].start_index
+                    except AttributeError:
+                        col_start_index = 1
 
-                        try:
-                            row_start_index = nc.variables["row"].start_index
-                        except AttributeError:
-                            row_start_index = 1
+                    try:
+                        row_start_index = nc.variables["row"].start_index
+                    except AttributeError:
+                        row_start_index = 1
 
-                        nc.close()
                 else:
                     raise ValueError(
                         "Conversion to sparse array format requires at least "
