@@ -15,7 +15,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New method: `cf.Data.coarsen`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
-* New function: `cf.locate`
+* New functions: `cf.locate`, `cf.healpix_max_refinement_level`,
+  `cf.healpix_indexing_schemes`
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New keyword to `cf.read`: ``filesystem``
   (https://github.com/NCAS-CMS/cf-python/issues/931)
