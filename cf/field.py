@@ -5286,6 +5286,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
+        **Performance**
+
+        High refinement levels may require the setting of a very large
+        Dask chunksize, to prevent a possible run-time failure
+        resulting from an attempt to create an excessive amount of
+        chunks for the healpix_index coordinates. For instance, with
+        the default Dask chunksize of 128 MiB, healpix_index
+        coordinates at refinement level 29 would need ~206 billion
+        Dask chunks, which is almost certainly more than enough to
+        cause a crash. In this case, a Dask chunksize of 1 pebibyte
+        results in only 24576 Dask chunks, a much more manageable
+        amount::
+
+           >>> cf.chunksize()
+           <CF Constant: 134217728>
+           >>> f = cf.example_field(12)
+           >>> g = f.healpix_increase_refinement_level(10, 'intensive')
+           >>> assert g.coord('healpix_index').data.npartitions == 1
+           >>> g = f.healpix_increase_refinement_level(15, 'intensive')
+           >>> assert g.coord('healpix_index').data.npartitions == 816
+           >>> with cf.chunksize('1 PiB'):
+           ...     g = f.healpix_increase_refinement_level(29, 'intensive')
+           ...     assert g.coord('healpix_index').data.npartitions == 24576
+
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `healpix_decrease_refinement_level`,
