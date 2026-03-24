@@ -3437,7 +3437,7 @@ def locate(lat, lon, f=None):
 
         raise NotImplementedError(
             f"Can't find cell locations for {f!r}: Can only find locations "
-            "for UGRID, HEALPix, or geometry cells"
+            "for HEALPix cells"
         )
 
     if np.abs(lat).max() > 90:
