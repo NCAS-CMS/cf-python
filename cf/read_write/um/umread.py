@@ -3612,75 +3612,17 @@ class UMRead(cfdm.read_write.IORead):
                 # Return now if there are valid file types
                 return []
 
-        # Parse the 'storage_options' keyword parameter
-        if storage_options is None:
-            storage_options = {}
-        elif filesystem is not None:
-            raise ValueError(
-                "Can't set both storage_options and filesystem keywords"
+        if storage_options is not None:
+            raise NotImplementedError(
+                "Can't yet open PP/UM files with file system storage options"
+            )
+
+        if filesystem is not None:
+            raise NotImplementedError(
+                "Can't yet open PP/UM files from a pre-defined file system"
             )
 
         storage_protocol = None
-
-        if filesystem is not None:
-            # --------------------------------------------------------
-            # A pre-authenticated filesystem was provided: open the
-            # dataset as a file-like object and pass it to the backend.
-            # --------------------------------------------------------
-            raise NotImplementedError(
-                "Can't yet open PP/UM files from a remote file system"
-            )
-
-            try:
-                dataset = filesystem.open(dataset, "rb")
-            except AttributeError:
-                raise AttributeError(
-                    f"The 'filesystem' object {filesystem!r} does not have "
-                    "an 'open' method. Please provide a valid filesystem "
-                    "object (e.g. an fsspec filesystem instance)."
-                )
-            except Exception as exc:
-                raise OSError(
-                    f"Failed to open {dataset!r} using the provided "
-                    f"'filesystem' object {filesystem!r}: {exc}"
-                ) from exc
-
-        else:
-            from uritools import urisplit
-
-            u = urisplit(dataset)
-            if u.scheme == "s3":
-                # ----------------------------------------------------
-                # Dataset is an s3://... string.
-                # ----------------------------------------------------
-                raise NotImplementedError(
-                    "Can't yet open PP/UM files from an s3 object store"
-                )
-
-                import fsspec
-
-                client_kwargs = storage_options.get("client_kwargs", {})
-                if (
-                    "endpoint_url" not in storage_options
-                    and "endpoint_url" not in client_kwargs
-                ):
-                    authority = u.authority
-                    if not authority:
-                        authority = ""
-
-                    storage_options["endpoint_url"] = f"https://{authority}"
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
-                dataset = filesystem.open(u.path[1:], "rb")
-
-        if not storage_options:
-            storage_options = None
-
-        if filesystem is not None:
-            storage_protocol = filesystem.protocol
-            storage_options = filesystem.storage_options
 
         f = self.dataset_open(dataset, parse=True)
 
