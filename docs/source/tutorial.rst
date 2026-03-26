@@ -139,14 +139,14 @@ The following file types can be read:
 
 ..
 
-* `CFA-netCDF
-  <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
-  files at version 0.6 or later.
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
 
 ..
 
 * :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
   contents are mapped into field constructs.
+
+..
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is saved via the

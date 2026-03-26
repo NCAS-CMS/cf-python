@@ -67,8 +67,8 @@ may nonetheless be modified in memory.
 The `cf` package can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF, CDL, Zarr, PP and UM
-  datasets with a choice of netCDF backends,
+  constructs <domain construct>` from netCDF, CDL, Zarr, Kerchunk, PP
+  and UM datasets with a choice of netCDF backends,
 
 * read files from OPeNDAP servers and S3 object stores,
 

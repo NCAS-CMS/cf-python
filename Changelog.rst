@@ -3,6 +3,10 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* Read Kerchunk datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/936)
+* Read open file handle datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/937)
 * Support for HEALPix grids
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New HEALPix methods: `cf.Field.healpix_info`,
