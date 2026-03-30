@@ -5,7 +5,7 @@ import os
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -371,7 +371,7 @@ class Field_collapseTest(unittest.TestCase):
         self.assertEqual(g.shape, (12, 4, 5))
 
         for m in range(1, 13):
-            a = numpy.empty((5, 4, 5))
+            a = np.empty((5, 4, 5))
             for i, year in enumerate(
                 f.subspace(T=cf.month(m)).coord("T").year.unique()
             ):
@@ -381,7 +381,7 @@ class Field_collapseTest(unittest.TestCase):
                 a[i] = x.array
 
             a = a.min(axis=0)
-            self.assertTrue(numpy.allclose(a, g.array[m % 12]))
+            self.assertTrue(np.allclose(a, g.array[m % 12]))
 
         g = f.collapse("T: mean", group=360)
 
@@ -824,6 +824,30 @@ class Field_collapseTest(unittest.TestCase):
 
         # Check the collpsed fields writes
         cf.write(f, tmpfile)
+        
+    def test_Field_collapse_HEALPix(self):
+        """Test HEALPix collapses."""
+        f0 = cf.example_field(12)
+        f1 = cf.example_field(13)
+
+        g0 = f0.collapse("area: mean", weights=False)
+        g1 = f1.collapse("area: mean", weights=False)
+        self.assertFalse(np.allclose(g0, g1))
+
+        g0 = f0.collapse("area: mean", weights=True)
+        g1 = f1.collapse("area: mean", weights=True)
+        self.assertTrue(g1.equals(g0))
+        self.assertTrue(
+            g0.coordinate_reference("grid_mapping_name:latitude_longitude")
+        )
+
+        g0 = f0[:, 0].collapse("area: mean", weights=True)
+        g1 = f1[:, :4].collapse("area: mean", weights=True)
+        self.assertTrue(np.allclose(g0, g1))
+        self.assertTrue(g0.coordinate_reference("grid_mapping_name:healpix"))
+        self.assertTrue(
+            g1.coordinate_reference("grid_mapping_name:latitude_longitude")
+        )
 
 
 if __name__ == "__main__":
