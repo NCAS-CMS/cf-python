@@ -824,7 +824,7 @@ class Field_collapseTest(unittest.TestCase):
 
         # Check the collpsed fields writes
         cf.write(f, tmpfile)
-        
+
     def test_Field_collapse_HEALPix(self):
         """Test HEALPix collapses."""
         f0 = cf.example_field(12)
