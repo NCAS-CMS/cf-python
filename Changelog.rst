@@ -7,6 +7,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/936)
 * Read open file handle datasets with `cf.read`
   (https://github.com/NCAS-CMS/cf-python/issues/937)
+* Write UGRID datasets with `cf.write`
+  (https://github.com/NCAS-CMS/cf-python/issues/697)
 * Support for HEALPix grids
   (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New HEALPix methods: `cf.Field.healpix_info`,

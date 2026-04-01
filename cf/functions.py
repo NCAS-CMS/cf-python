@@ -3183,8 +3183,7 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
 
 
 def environment(display=True, paths=True):
-    """Return the names and versions of the cf package and its
-    dependencies.
+    """Return the names and versions of cf, cf-plot and their dependencies.
 
     :Parameters:
 
@@ -3216,6 +3215,7 @@ def environment(display=True, paths=True):
         "psutil": _get_module_info("psutil"),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
         "activestorage": _get_module_info("activestorage", try_except=True),
+        "cartopy": _get_module_info("cartopy", try_except=True),
         "cfplot": _get_module_info("cfplot", try_except=True),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
