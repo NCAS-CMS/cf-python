@@ -288,24 +288,79 @@ class functionTest(unittest.TestCase):
         e = cf.environment(display=False)
         ep = cf.environment(display=False, paths=False)
 
+        # Basic structure
         self.assertIsInstance(e, list)
         self.assertIsInstance(ep, list)
+        self.assertEqual(len(e), len(ep))
+        self.assertTrue(all(isinstance(s, str) for s in e))
+        self.assertTrue(all(isinstance(s, str) for s in ep))
 
-        components = ["Platform: ", "netCDF4: ", "numpy: ", "cftime: "]
-        for component in components:
-            self.assertTrue(any(s.startswith(component) for s in e))
-            self.assertTrue(any(s.startswith(component) for s in ep))
-        for component in [
-            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}",
-            f"Python: {platform.python_version()} {sys.executable}",
-        ]:
-            self.assertIn(component, e)
-            self.assertNotIn(component, ep)  # paths shouldn't be present here
-        for component in [
-            f"cf: {cf.__version__}",
-            f"Python: {platform.python_version()}",
-        ]:
-            self.assertIn(component, ep)
+        # Extract component names
+        names_e = [s.split(":")[0] for s in e]
+        names_ep = [s.split(":")[0] for s in ep]
+
+        # Expected full set of components
+        expected = [
+            "Platform",
+            "Python",
+            "packaging",
+            "numpy",
+            "cfdm.core",
+            "udunits2 library",
+            "HDF5 library",
+            "netcdf library",
+            "netCDF4",
+            "h5netcdf",
+            "h5py",
+            "pyfive",
+            "zarr",
+            "fsspec",
+            "scipy",
+            "dask",
+            "distributed",
+            "cftime",
+            "cfunits",
+            "cfdm",
+            "esmpy/ESMF",
+            "psutil",
+            "matplotlib",
+            "activestorage",
+            "cartopy",
+            "cfplot",
+            "cf",
+        ]
+
+        # Ensure all expected components are present
+        self.assertEqual(sorted(names_e), sorted(expected))
+        self.assertEqual(sorted(names_ep), sorted(expected))
+
+        # Specific known entries (sanity checks)
+        self.assertIn(
+            f"Python: {platform.python_version()} {sys.executable}", e
+        )
+        self.assertTrue(
+            any(
+                s.startswith(f"Python: {platform.python_version()}")
+                for s in ep
+            )
+        )
+
+        self.assertIn(
+            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}", e
+        )
+        self.assertIn(f"cf: {cf.__version__}", ep)
+
+        # Each entry without paths should match the start of the
+        # corresponding entry with paths
+        for full, short in zip(e, ep):
+            name_full, val_full = full.split(": ", 1)
+            name_short, val_short = short.split(": ", 1)
+
+            self.assertEqual(name_full, name_short)
+            self.assertTrue(
+                val_full.startswith(val_short),
+                msg=f"Mismatch for {name_full}: '{val_full}' vs '{val_short}'",
+            )
 
     def test_indices_shape(self):
         import dask.array as da
