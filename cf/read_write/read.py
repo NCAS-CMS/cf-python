@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 class read(cfdm.read):
     """Read field or domain constructs from files.
 
-    The following file formats are supported: netCDF, CDL, Zarr, PP,
-    and UM fields file.
+    The following file formats are supported: netCDF, CDL, Zarr,
+    Kerchunk, PP, and UM fields file.
 
     NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
     server, or in an S3 object store.
@@ -144,7 +144,7 @@ class read(cfdm.read):
 
     :Parameters:
 
-        {{read datasets: (arbitrarily nested sequence of) `str`}}
+        {{read datasets:}}
 
         {{read recursive: `bool`, optional}}
 
@@ -162,6 +162,7 @@ class read(cfdm.read):
             ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
             ``'CDL'``       A text CDL file of a netCDF dataset
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Kerchunk'``  A Kerchunked dataset
             ``'UM'``        A UM fields file or PP dataset
             ==============  ==========================================
 
