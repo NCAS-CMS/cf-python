@@ -4,7 +4,7 @@ Version NEXTVERSION
 **2026-??-??**
 
 * Read Kerchunk datasets with `cf.read`
-  (https://github.com/NCAS-CMS/cf-python/936)
+  (https://github.com/NCAS-CMS/cf-python/issues/936)
 * Read open file handle datasets with `cf.read`
   (https://github.com/NCAS-CMS/cf-python/issues/937)
 * Write UGRID datasets with `cf.write`
