@@ -6876,7 +6876,7 @@ method:
 
    >>> q, t = cf.read('file.nc')
    >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-   >>> cf.write(t, 'quantized.nc')
+   >>> cf.write(t, 'quantized.nc', netcdf_backend='netCDF4')
    >>> quantized = cf.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c
