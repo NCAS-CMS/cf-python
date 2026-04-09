@@ -5393,7 +5393,7 @@ in that file:
    >>> h = cf.example_field(0)
    >>> h
    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cf.write(h, 'append-example-file.nc', mode='a')
+   >>> cf.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
    >>> cf.read('append-example-file.nc')
    [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
