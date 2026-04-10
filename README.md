@@ -84,8 +84,9 @@ The `cf` package uses
 [Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
 of its array manipulation and can:
 
-* read field constructs from netCDF, CDL, Zarr, PP and UM datasets with a
-  choice of netCDF backends,and in local, http, and s3 locations,
+* read field constructs from netCDF, CDL, Zarr, Kerchunk, PP and UM
+  datasets with a choice of netCDF backends, and in local, http, and
+  s3 locations,
 * create new field constructs in memory,
 * write and append field and domain constructs to netCDF and Zarr v3
   datasets on disk, with control over HDF5 internal file metadata,
@@ -117,7 +118,7 @@ of its array manipulation and can:
 * apply convolution filters to field constructs,
 * create running means from field constructs,
 * apply differential operators to field constructs,
-* create derived quantities (such as relative vorticity).
+* create derived quantities (such as relative vorticity),
 * read and write data that are quantized to eliminate false
   precision.
 

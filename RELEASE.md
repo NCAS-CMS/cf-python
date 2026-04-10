@@ -32,7 +32,9 @@
 
 - [ ] Make sure that `README.md` is up to date.
 
-- [ ] Make sure that the `long_description` in `setup.py` is up to date.
+- [ ] Make sure that the `long_description` in `setup.py` is up to date
+      and consistent with the descriptions in the `README.md`, the
+      `__init__.py` and the `docs/source/installation.rst` page.
 
 - [ ] Make sure that `Changelog.rst` is up to date (cf version,
       cfdm dependency, date and changes).
