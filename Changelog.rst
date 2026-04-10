@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 3.20.0
 --------------
 
-**2026-??-??**
+**2026-04-10**
 
 * Read Kerchunk datasets with `cf.read`
   (https://github.com/NCAS-CMS/cf-python/issues/936)
