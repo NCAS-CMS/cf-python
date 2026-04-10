@@ -27,6 +27,8 @@
   are up-to-date and consistent in both the `requirements.txt` and in
   `docs/source/installation.rst` (paying particular attention to
   `cfdm`); and in the cfdm-only `Version` checks in `cf/__init__.py`.
+  Cross-reference these with any dependency changes stated in
+  the Changelog, too, to confirm they are consistent.
 
 - [ ] Make sure that `README.md` is up to date.
 
