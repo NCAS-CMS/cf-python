@@ -23,6 +23,7 @@ Inspection
    ~cf.NetCDF4Array.get_compression_type
    ~cf.NetCDF4Array.get_subspace
    ~cf.NetCDF4Array.get_attributes
+   ~cf.NetCDF4Array.get_variable
    ~cf.NetCDF4Array.index
    ~cf.NetCDF4Array.is_subspace
    
@@ -100,8 +101,8 @@ Miscellaneous
    ~cf.NetCDF4Array.copy
    ~cf.NetCDF4Array.to_memory
    
-Active storage
---------------
+Active and remote storage
+-------------------------
 
 .. autosummary::
    :nosignatures:
@@ -109,7 +110,9 @@ Active storage
    :template: method.rst
 
    ~cf.NetCDF4Array.active_storage
-   
+   ~cf.NetCDF4Array.get_storage_protocol
+   ~cf.NetCDF4Array.has_remote_storage_protocol
+
 Special
 -------
 

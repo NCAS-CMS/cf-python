@@ -23,6 +23,7 @@ Inspection
    ~cf.H5netcdfArray.get_compression_type
    ~cf.H5netcdfArray.get_subspace
    ~cf.H5netcdfArray.get_attributes
+   ~cf.H5netcdfArray.get_variable
    ~cf.H5netcdfArray.index
    ~cf.H5netcdfArray.is_subspace
    
@@ -96,9 +97,9 @@ Miscellaneous
    
    ~cf.H5netcdfArray.copy
    ~cf.H5netcdfArray.to_memory
-   
-Active storage
---------------
+
+Active and remote storage
+-------------------------
 
 .. autosummary::
    :nosignatures:
@@ -106,6 +107,8 @@ Active storage
    :template: method.rst
    
    ~cf.H5netcdfArray.active_storage
+   ~cf.H5netcdfArray.get_storage_protocol
+   ~cf.H5netcdfArray.has_remote_storage_protocol
    
 Special
 -------

@@ -28,6 +28,7 @@ Inspection
    ~cf.UMArray.get_word_size
    ~cf.UMArray.get_mask
    ~cf.UMArray.get_unpack
+   ~cf.UMArray.get_variable
    ~cf.UMArray.is_subspace
    ~cf.UMArray.index
 
@@ -107,6 +108,17 @@ Special
    
    ~cf.UMArray.__dask_tokenize__
    ~cf.UMArray.__getitem__
+
+Active and remote storage
+-------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.UMArray.get_storage_protocol
+   ~cf.UMArray.has_remote_storage_protocol
 
 Docstring substitutions
 -----------------------                   
