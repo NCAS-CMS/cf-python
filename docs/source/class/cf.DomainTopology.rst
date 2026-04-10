@@ -449,6 +449,13 @@ NetCDF
    ~cf.DomainTopology.nc_clear_dataset_chunksizes
    ~cf.DomainTopology.nc_dataset_chunksizes
    ~cf.DomainTopology.nc_set_dataset_chunksizes
+   ~cf.DomainTopology.nc_del_connectivity_dimension
+   ~cf.DomainTopology.nc_get_connectivity_dimension
+   ~cf.DomainTopology.nc_has_connectivity_dimension
+   ~cf.DomainTopology.nc_set_connectivity_dimension
+   ~cf.DomainTopology.nc_connectivity_dimension_groups
+   ~cf.DomainTopology.nc_clear_connectivity_dimension_groups
+   ~cf.DomainTopology.nc_set_connectivity_dimension_groups
 
 Aggregation
 -----------

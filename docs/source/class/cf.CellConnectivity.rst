@@ -448,6 +448,13 @@ NetCDF
    ~cf.CellConnectivity.nc_clear_dataset_chunksizes
    ~cf.CellConnectivity.nc_dataset_chunksizes
    ~cf.CellConnectivity.nc_set_dataset_chunksizes
+   ~cf.CellConnectivity.nc_del_connectivity_dimension
+   ~cf.CellConnectivity.nc_get_connectivity_dimension
+   ~cf.CellConnectivity.nc_has_connectivity_dimension
+   ~cf.CellConnectivity.nc_set_connectivity_dimension
+   ~cf.CellConnectivity.nc_connectivity_dimension_groups
+   ~cf.CellConnectivity.nc_clear_connectivity_dimension_groups
+   ~cf.CellConnectivity.nc_set_connectivity_dimension_groups
 
 Aggregation
 -----------
