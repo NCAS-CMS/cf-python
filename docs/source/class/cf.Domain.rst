@@ -279,7 +279,23 @@ Groups
    ~cf.Domain.nc_clear_group_attributes
    ~cf.Domain.nc_set_group_attribute
    ~cf.Domain.nc_set_group_attributes
-  
+
+Mesh related
+^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.nc_del_mesh_variable
+   ~cf.Domain.nc_get_mesh_variable
+   ~cf.Domain.nc_has_mesh_variable
+   ~cf.Domain.nc_set_mesh_variable
+   ~cf.Domain.nc_clear_mesh_variable_groups
+   ~cf.Domain.nc_mesh_variable_groups
+   ~cf.Domain.nc_set_mesh_variable_groups
+
 Aggregation
 -----------
 
@@ -345,7 +361,20 @@ Dataset compliance
    :template: method.rst
 
    ~cf.Domain.dataset_compliance
-   
+
+UGRID
+-----
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.node_coordinates
+
 Aliases
 -------
 
