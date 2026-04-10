@@ -339,7 +339,7 @@ class read(cfdm.read):
 
         {{read filesystem: optional}}
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.20.0
 
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.

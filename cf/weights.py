@@ -1931,7 +1931,7 @@ class Weights(Container, cfdm.Container):
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         :Parameters:
 

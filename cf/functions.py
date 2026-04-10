@@ -260,7 +260,7 @@ def configuration(
             The new persist data option. The default is to not change
             the current behaviour.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.20.0
 
         regrid_logging: `bool` or `Constant`, optional
             The new value (either True to enable logging or False to
@@ -3340,7 +3340,7 @@ def locate(lat, lon, f=None):
     If a cell contains more than one of the latitude-longitude
     locations, then that cell's index appears only once in the output.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     .. seealso:: `cf.contains`, `cf.Field.subspace`,
                  `cf.Field.indices`
@@ -3463,7 +3463,7 @@ def healpix_max_refinement_level():
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Returns:
 
@@ -3489,7 +3489,7 @@ def healpix_indexing_schemes():
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Returns:
 

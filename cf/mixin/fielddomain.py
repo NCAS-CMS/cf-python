@@ -2014,7 +2014,7 @@ class FieldDomain:
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `healpix_info`, `healpix_to_ugrid`
 
@@ -2234,7 +2234,7 @@ class FieldDomain:
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         :Returns:
 
@@ -2293,7 +2293,7 @@ class FieldDomain:
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `healpix_info`, `create_latlon_coordinates`
 
@@ -2475,7 +2475,7 @@ class FieldDomain:
         is at ``2``/``'INFO'`` or higher (as set by `cf.log_level` or
         the *verbose* parameter).
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `healpix_to_ugrid`
 

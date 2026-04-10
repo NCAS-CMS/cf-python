@@ -3404,7 +3404,7 @@ def update_data(src, regridded_data, src_grid, dst_grid):
         dst_grid: `Grid`
             The definition of the destination grid.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.20.0
 
     :Returns:
 

@@ -298,7 +298,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
            ...     d = cf.Domain.create_healpix(29)
            ...     assert d.coord('healpix_index').data.npartitions == 24576
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `cf.Domain.create_regular`,
                      `cf.Domain.create_latlon_coordinates`

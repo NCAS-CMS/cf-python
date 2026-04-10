@@ -11,6 +11,6 @@ class PyfiveArray(
 ):
     """A netCDF array accessed with `pyfive`.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     """

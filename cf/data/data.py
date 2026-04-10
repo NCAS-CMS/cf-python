@@ -1362,7 +1362,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Coarsen the data by applying the *reduction* function to
         combine the elements within fixed-size neighbourhoods.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         :Parameters:
 

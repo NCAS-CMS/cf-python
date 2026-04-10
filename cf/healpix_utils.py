@@ -25,7 +25,7 @@ def _healpix_create_latlon_coordinates(f, pole_longitude, cache=True):
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -228,7 +228,7 @@ def _healpix_increase_refinement_level(x, ncells, iaxis, quantity):
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -312,7 +312,7 @@ def _healpix_increase_refinement_level_indices(
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -410,7 +410,7 @@ def _healpix_change_indexing_scheme(
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -534,7 +534,7 @@ def _healpix_locate(lat, lon, f):
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     .. seealso:: `cf.locate`
 
@@ -651,7 +651,7 @@ def del_healpix_coordinate_reference(f):
     conversion or datum parameters found in the healpix grid mapping
     coordinate reference.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -703,7 +703,7 @@ def del_healpix_coordinate_reference(f):
 def healpix_info(f):
     """Get information about the HEALPix grid, if there is one.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 

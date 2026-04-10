@@ -498,7 +498,7 @@ class UMField:
             filename: `str`
                 The name of the PP/UM file.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             var: `umfile.Var`
 
@@ -578,7 +578,7 @@ class UMField:
                 ``'s3'``, ``'http'``). If `None` (the default) then a
                 local file system is assumed.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -612,7 +612,7 @@ class UMField:
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
@@ -3496,7 +3496,7 @@ class UMRead(cfdm.read_write.IORead):
                 ``'s3'``, ``'http'``). If `None` (the default) then a
                 local file system is assumed.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -3530,7 +3530,7 @@ class UMRead(cfdm.read_write.IORead):
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
         :Returns:
 
@@ -3788,7 +3788,7 @@ class UMRead(cfdm.read_write.IORead):
     def dataset_representation(cls, dataset):
         """Return the logical representation type of the input dataset.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         :Parameters:
 

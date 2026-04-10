@@ -4842,7 +4842,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         See CF Appendix F: Grid Mappings.
         https://doi.org/10.5281/zenodo.14274886
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `healpix_increase_refinement_level`,
                      `healpix_info`, `healpix_change_indexing_scheme`,
@@ -5310,7 +5310,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
            ...     g = f.healpix_increase_refinement_level(29, 'intensive')
            ...     assert g.coord('healpix_index').data.npartitions == 24576
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 3.20.0
 
         .. seealso:: `healpix_decrease_refinement_level`,
                      `healpix_info`, `healpix_change_indexing_scheme`,

@@ -23,7 +23,7 @@ def _zuniq2pix(a, nest=False):
     https://github.com/cds-astro/cds-healpix-rust/blob/v0.7.3/src/nested/mod.rs#L188-L194
     for the algorithm definition.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -73,7 +73,7 @@ def _zuniq2uniq(a):
     function ever come into existence (see
     https://github.com/ntessore/healpix/issues/94).
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -104,7 +104,7 @@ def _uniq2zuniq(a):
     should be replaced should that function ever come into existence
     (see https://github.com/ntessore/healpix/issues/94).
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -139,7 +139,7 @@ def _pix2zuniq(refinement_level, a, nest=False):
     should be replaced should that function ever come into existence
     (see https://github.com/ntessore/healpix/issues/94).
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -198,7 +198,7 @@ def cf_healpix_bounds(
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -392,7 +392,7 @@ def cf_healpix_coordinates(
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -527,7 +527,7 @@ def cf_healpix_change_indexing_scheme(
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
@@ -716,7 +716,7 @@ def cf_healpix_weights(a, indexing_scheme, measure=False, radius=None):
     See CF Appendix F: Grid Mappings.
     https://doi.org/10.5281/zenodo.14274886
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     :Parameters:
 
