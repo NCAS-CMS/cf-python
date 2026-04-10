@@ -431,31 +431,6 @@ Logic functions
 
    ~cf.CellConnectivity.unique
 
-NetCDF
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.CellConnectivity.nc_del_variable
-   ~cf.CellConnectivity.nc_get_variable
-   ~cf.CellConnectivity.nc_has_variable
-   ~cf.CellConnectivity.nc_set_variable 
-   ~cf.CellConnectivity.nc_clear_dataset_chunksizes
-   ~cf.CellConnectivity.nc_dataset_chunksizes
-   ~cf.CellConnectivity.nc_set_dataset_chunksizes
-   ~cf.CellConnectivity.nc_del_connectivity_dimension
-   ~cf.CellConnectivity.nc_get_connectivity_dimension
-   ~cf.CellConnectivity.nc_has_connectivity_dimension
-   ~cf.CellConnectivity.nc_set_connectivity_dimension
-   ~cf.CellConnectivity.nc_connectivity_dimension_groups
-   ~cf.CellConnectivity.nc_clear_connectivity_dimension_groups
-   ~cf.CellConnectivity.nc_set_connectivity_dimension_groups
-
 Aggregation
 -----------
 
@@ -483,6 +458,13 @@ NetCDF
    ~cf.CellConnectivity.nc_get_variable
    ~cf.CellConnectivity.nc_has_variable
    ~cf.CellConnectivity.nc_set_variable
+   ~cf.CellConnectivity.nc_clear_dataset_chunksizes
+   ~cf.CellConnectivity.nc_dataset_chunksizes
+   ~cf.CellConnectivity.nc_set_dataset_chunksizes
+   ~cf.CellConnectivity.nc_del_connectivity_dimension
+   ~cf.CellConnectivity.nc_get_connectivity_dimension
+   ~cf.CellConnectivity.nc_has_connectivity_dimension
+   ~cf.CellConnectivity.nc_set_connectivity_dimension
 
 Groups
 ^^^^^^
@@ -497,6 +479,9 @@ Groups
    ~cf.CellConnectivity.nc_variable_groups
    ~cf.CellConnectivity.nc_clear_variable_groups
    ~cf.CellConnectivity.nc_set_variable_groups
+   ~cf.CellConnectivity.nc_connectivity_dimension_groups
+   ~cf.CellConnectivity.nc_clear_connectivity_dimension_groups
+   ~cf.CellConnectivity.nc_set_connectivity_dimension_groups
 
 Dataset chunks
 ^^^^^^^^^^^^^^

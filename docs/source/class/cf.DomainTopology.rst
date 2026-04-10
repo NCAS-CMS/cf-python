@@ -262,6 +262,8 @@ Data
    ~cf.DomainTopology.get_original_filenames
    ~cf.DomainTopology.has_bounds
    ~cf.DomainTopology.persist
+   ~cf.DomainTopology.sort
+   ~cf.DomainTopology.to_edge
 
 Quantization
 ^^^^^^^^^^^^
@@ -432,31 +434,6 @@ Logic functions
 
    ~cf.DomainTopology.unique
 
-NetCDF
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DomainTopology.nc_del_variable
-   ~cf.DomainTopology.nc_get_variable
-   ~cf.DomainTopology.nc_has_variable
-   ~cf.DomainTopology.nc_set_variable 
-   ~cf.DomainTopology.nc_clear_dataset_chunksizes
-   ~cf.DomainTopology.nc_dataset_chunksizes
-   ~cf.DomainTopology.nc_set_dataset_chunksizes
-   ~cf.DomainTopology.nc_del_connectivity_dimension
-   ~cf.DomainTopology.nc_get_connectivity_dimension
-   ~cf.DomainTopology.nc_has_connectivity_dimension
-   ~cf.DomainTopology.nc_set_connectivity_dimension
-   ~cf.DomainTopology.nc_connectivity_dimension_groups
-   ~cf.DomainTopology.nc_clear_connectivity_dimension_groups
-   ~cf.DomainTopology.nc_set_connectivity_dimension_groups
-
 Aggregation
 -----------
 
@@ -484,6 +461,13 @@ NetCDF
    ~cf.DomainTopology.nc_get_variable
    ~cf.DomainTopology.nc_has_variable
    ~cf.DomainTopology.nc_set_variable
+   ~cf.DomainTopology.nc_clear_dataset_chunksizes
+   ~cf.DomainTopology.nc_dataset_chunksizes
+   ~cf.DomainTopology.nc_set_dataset_chunksizes
+   ~cf.DomainTopology.nc_del_connectivity_dimension
+   ~cf.DomainTopology.nc_get_connectivity_dimension
+   ~cf.DomainTopology.nc_has_connectivity_dimension
+   ~cf.DomainTopology.nc_set_connectivity_dimension
 
 Groups
 ^^^^^^
@@ -498,6 +482,9 @@ Groups
    ~cf.DomainTopology.nc_variable_groups
    ~cf.DomainTopology.nc_clear_variable_groups
    ~cf.DomainTopology.nc_set_variable_groups
+   ~cf.DomainTopology.nc_connectivity_dimension_groups
+   ~cf.DomainTopology.nc_clear_connectivity_dimension_groups
+   ~cf.DomainTopology.nc_set_connectivity_dimension_groups
 
 Dataset chunks
 ^^^^^^^^^^^^^^
