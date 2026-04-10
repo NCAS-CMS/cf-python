@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cf.CellConnectivity.to_units &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.CellConnectivity.override_units" href="cf.CellConnectivity.override_units.html" />
+    <link rel="prev" title="cf.CellConnectivity.valid_range" href="../attribute/cf.CellConnectivity.valid_range.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.CellConnectivity.html">cf.CellConnectivity</a><ul>
+      <li>Previous: <a href="../attribute/cf.CellConnectivity.valid_range.html" title="previous chapter">cf.CellConnectivity.valid_range</a></li>
+      <li>Next: <a href="cf.CellConnectivity.override_units.html" title="next chapter">cf.CellConnectivity.override_units</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_static/logo_EC.png" height="40">
+<img src="../_static/logo_ERC.png" height="40">
+<img src="../_static/logo_NERC.png" height="40">
+<br>
+<img src="../_static/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-cellconnectivity-to-units">
+<h1>cf.CellConnectivity.to_units<a class="headerlink" href="#cf-cellconnectivity-to-units" title="Link to this heading">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="cf.CellConnectivity.to_units">
+<span class="sig-prename descclassname"><span class="pre">CellConnectivity.</span></span><span class="sig-name descname"><span class="pre">to_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity.to_units" title="Link to this definition">¶</a></dt>
+<dd><p>Change the data array units.</p>
+<p>Changing the units causes the data values to be changed
+to match the new units, therefore the new units must be
+equivalent to the existing ones.</p>
+<p>Not to be confused with overriding the units with
+<a class="reference internal" href="cf.CellConnectivity.override_units.html#cf.CellConnectivity.override_units" title="cf.CellConnectivity.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.18.1.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.CellConnectivity.override_units.html#cf.CellConnectivity.override_units" title="cf.CellConnectivity.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a>, <a class="reference internal" href="cf.CellConnectivity.override_calendar.html#cf.CellConnectivity.override_calendar" title="cf.CellConnectivity.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a>, <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>,
+<a class="reference internal" href="../attribute/cf.CellConnectivity.units.html#cf.CellConnectivity.units" title="cf.CellConnectivity.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, <a class="reference internal" href="../attribute/cf.CellConnectivity.calendar.html#cf.CellConnectivity.calendar" title="cf.CellConnectivity.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></dt><dd><p>The new units for the data array.</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.CellConnectivity.html#cf.CellConnectivity" title="cf.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The construct with data converted to the new units, or
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">Units</span><span class="p">)</span>
+<span class="go">&#39;km&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[1 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">to_units</span><span class="p">(</span><span class="s1">&#39;metre&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">Units</span><span class="p">)</span>
+<span class="go">&#39;metre&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[1000. 2000.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">to_units</span><span class="p">(</span><span class="s1">&#39;miles&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[0.62137119 1.24274238]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">to_units</span><span class="p">(</span><span class="s1">&#39;degC&#39;</span><span class="p">)</span>
+<span class="go">Traceback (most recent call last)</span>
+<span class="go">    ...</span>
+<span class="go">ValueError: Can&#39;t set Units to &lt;Units: degC&gt; that are not equivalent to the current units &lt;Units: miles&gt;. Consider using the override_units method instead.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-04-10.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

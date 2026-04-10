@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="_static/documentation_options.js?v=cf9ada82"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.20.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cf-functions">
 <span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.19.0 for version 1.13 of the CF conventions.</p>
+<p>Version 3.20.0 for version 1.13 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -332,6 +332,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a></p></td>
 <td><p>Return a <a class="reference internal" href="class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance during class creation.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.display_data.html#cf.display_data" title="cf.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.display_data</span></code></a></p></td>
+<td><p>Control the display of data elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></p></td>
+<td><p>Control the persistence of computed data.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.free_memory.html#cf.free_memory" title="cf.free_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.free_memory</span></code></a></p></td>
 <td><p>The available physical memory.</p></td>
 </tr>
@@ -395,7 +401,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <td><p>Print a description of an object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a></p></td>
-<td><p>Return the names and versions of the cf package and its dependencies.</p></td>
+<td><p>Return the names and versions of cf, cf-plot and their dependencies.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p></td>
 <td><p>Return an example field construct.</p></td>
@@ -408,6 +414,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cf.flat.html#cf.flat" title="cf.flat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.flat</span></code></a></p></td>
 <td><p>Return an iterator over an arbitrarily nested sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.healpix_indexing_schemes</span></code></p></td>
+<td><p>The valid CF HEALPix indexing schemes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.healpix_max_refinement_level</span></code></p></td>
+<td><p>Return the maximum permitted HEALPix refinement level.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.implementation.html#cf.implementation" title="cf.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.implementation</span></code></a></p></td>
 <td><p>Return a container for the CF data model implementation.</p></td>
@@ -519,7 +531,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

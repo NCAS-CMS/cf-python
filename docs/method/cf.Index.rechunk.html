@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Index.rechunk<a class="headerlink" href="#cf-index-rechunk" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Index.rechunk">
-<span class="sig-prename descclassname"><span class="pre">Index.</span></span><span class="sig-name descname"><span class="pre">rechunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Index.rechunk" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Index.</span></span><span class="sig-name descname"><span class="pre">rechunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Index.rechunk" title="Link to this definition">¶</a></dt>
 <dd><p>Change the chunk structure of the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.14.0.</span></p>
@@ -184,6 +184,9 @@ leftover chunks, so using <code class="docutils literal notranslate"><span class
 <span class="pre">N,</span> <span class="pre">balance=True)</span></code> will almost certainly result in
 <code class="docutils literal notranslate"><span class="pre">N</span></code> chunks.</p>
 </dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -208,7 +211,7 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

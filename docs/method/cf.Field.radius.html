@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.radius<a class="headerlink" href="#cf-field-radius" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Field.radius">
-<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/field.py#L2611-L2715"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.radius" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/mixin/fielddomain.py#L3342-L3446"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.radius" title="Link to this definition">¶</a></dt>
 <dd><p>Return the radius of a latitude-longitude plane defined in
 spherical polar coordinates.</p>
 <p>The radius is taken from the datums of any coordinate
@@ -140,7 +140,7 @@ then a default value may be used instead.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a></p>
+<p><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -152,7 +152,7 @@ is used. May be set to any numeric scalar object,
 including <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the
 radius are assumed to be metres, unless specified by a
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. If the special value <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> is
-given then the default radius taken as 6371229
+given then the default radius is taken as 6371229
 metres. If <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> an exception will be
 raised if no unique datum can be found in the
 coordinate reference constructs.</p>
@@ -199,7 +199,7 @@ coordinate reference constructs.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

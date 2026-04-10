@@ -139,14 +139,14 @@ The following file types can be read:
 
 ..
 
-* `CFA-netCDF
-  <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
-  files at version 0.6 or later.
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
 
 ..
 
 * :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
   contents are mapped into field constructs.
+
+..
 
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is saved via the
@@ -5393,7 +5393,7 @@ in that file:
    >>> h = cf.example_field(0)
    >>> h
    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cf.write(h, 'append-example-file.nc', mode='a')
+   >>> cf.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
    >>> cf.read('append-example-file.nc')
    [<CF Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
@@ -6876,7 +6876,7 @@ method:
 
    >>> q, t = cf.read('file.nc')
    >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-   >>> cf.write(t, 'quantized.nc')
+   >>> cf.write(t, 'quantized.nc', netcdf_backend='netCDF4')
    >>> quantized = cf.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c

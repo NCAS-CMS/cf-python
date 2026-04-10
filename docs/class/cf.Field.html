@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cf.Field">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">Field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/field.py#L217-L14429"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">Field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/field.py#L217-L15144"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field" title="Link to this definition">¶</a></dt>
 <dd><p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
 all the other constructs. A field corresponds to a CF-netCDF data
@@ -848,37 +848,40 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.copy.html#cf.Field.copy" title="cf.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.compute_vertical_coordinates.html#cf.Field.compute_vertical_coordinates" title="cf.Field.compute_vertical_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_vertical_coordinates</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_latlon_coordinates</span></code></p></td>
+<td><p>Create latitude and longitude coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.compute_vertical_coordinates.html#cf.Field.compute_vertical_coordinates" title="cf.Field.compute_vertical_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_vertical_coordinates</span></code></a></p></td>
 <td><p>Compute non-parametric vertical coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></p></td>
 <td><p>Return the dataset compliance report.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two instances are the same.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.compress.html#cf.Field.compress" title="cf.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.compress.html#cf.Field.compress" title="cf.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a></p></td>
 <td><p>Compress the field construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></p></td>
 <td><p>Convert a metadata construct into a new field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the field construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p></td>
 <td><p>Return the radius of a latitude-longitude plane defined in spherical polar coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.to_memory.html#cf.Field.to_memory" title="cf.Field.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.to_memory.html#cf.Field.to_memory" title="cf.Field.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
 <td><p>Join together a sequence of Field constructs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.section.html#cf.Field.section" title="cf.Field.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.section.html#cf.Field.section" title="cf.Field.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a></p></td>
 <td><p>Return a FieldList of m dimensional sections of a Field of n dimensions, where M &lt;= N.</p></td>
 </tr>
 </tbody>
@@ -982,6 +985,34 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+<section id="mesh-related">
+<h3>Mesh related<a class="headerlink" href="#mesh-related" title="Link to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_mesh_variable</span></code></p></td>
+<td><p>Remove the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_mesh_variable</span></code></p></td>
+<td><p>Return the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_mesh_variable</span></code></p></td>
+<td><p>Whether the netCDF mesh variable name is set.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable</span></code></p></td>
+<td><p>Set the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_mesh_variable_groups</span></code></p></td>
+<td><p>Remove the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_mesh_variable_groups</span></code></p></td>
+<td><p>Return the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable_groups</span></code></p></td>
+<td><p>Set the netCDF mesh_variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="aggregation">
 <h3>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h3>
 <p class="rubric">Methods</p>
@@ -1069,6 +1100,17 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+</section>
+<section id="ugrid">
+<h2>UGRID<a class="headerlink" href="#ugrid" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_coordinates</span></code></p></td>
+<td><p>Create the node coordinates for a UGRID mesh topology.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="domain-axes">
 <span id="field-methods"></span><h2>Domain axes<a class="headerlink" href="#domain-axes" title="Link to this heading">¶</a></h2>
@@ -1363,6 +1405,34 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a></p></td>
 <td><p>Regrid the field to a new latitude and longitude grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_decrease_refinement_level</span></code></p></td>
+<td><p>Decrease the refinement level of a HEALPix grid.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_increase_refinement_level</span></code></p></td>
+<td><p>Increase the refinement level of a HEALPix grid.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="healpix-grids">
+<h2>HEALPix grids<a class="headerlink" href="#healpix-grids" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_info</span></code></p></td>
+<td><p>Get information about the HEALPix grid, if there is one.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_change_indexing_scheme</span></code></p></td>
+<td><p>Change the indexing scheme of HEALPix indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_to_ugrid</span></code></p></td>
+<td><p>Convert a HEALPix domain to a UGRID domain.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_decrease_refinement_level</span></code></p></td>
+<td><p>Decrease the refinement level of a HEALPix grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_increase_refinement_level</span></code></p></td>
+<td><p>Increase the refinement level of a HEALPix grid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1965,7 +2035,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

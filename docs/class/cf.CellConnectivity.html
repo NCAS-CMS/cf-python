@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -128,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cf.CellConnectivity">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">CellConnectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/cellconnectivity.py#L6-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">CellConnectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/cellconnectivity.py#L6-L191"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity" title="Link to this definition">¶</a></dt>
 <dd><p>A cell connectivity construct of the CF data model.</p>
 <p>A cell connectivity construct defines explicitly how cells
 arranged in two or three dimensions in real space but indexed by a
@@ -168,7 +168,8 @@ are the same as others.</p>
 geospatial topology of the cells precludes connectivity derived
 from any other sources, but is consistent with UGRID encoding
 within CF-netCDF.</p>
-<p>See CF Appendix I “The CF Data Model”.</p>
+<p>See CF Appendix I: The CF Data Model.
+<a class="reference external" href="https://doi.org/10.5281/zenodo.14274886">https://doi.org/10.5281/zenodo.14274886</a></p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name may be accessed with the
 <a class="reference internal" href="../method/cf.CellConnectivity.nc_set_variable.html#cf.CellConnectivity.nc_set_variable" title="cf.CellConnectivity.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.CellConnectivity.nc_get_variable.html#cf.CellConnectivity.nc_get_variable" title="cf.CellConnectivity.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.CellConnectivity.nc_del_variable.html#cf.CellConnectivity.nc_del_variable" title="cf.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
@@ -864,6 +865,20 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.file_directories.html#cf.CellConnectivity.file_directories" title="cf.CellConnectivity.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.replace_directory.html#cf.CellConnectivity.replace_directory" title="cf.CellConnectivity.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
@@ -890,39 +905,17 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_set_dataset_chunksizes.html#cf.CellConnectivity.nc_set_dataset_chunksizes" title="cf.CellConnectivity.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
 <td><p>Set the dataset chunking strategy.</p></td>
 </tr>
-</tbody>
-</table>
-</section>
-<section id="aggregation">
-<h2>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h2>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.file_directories.html#cf.CellConnectivity.file_directories" title="cf.CellConnectivity.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
-<td><p>The directories of files containing parts of the data.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_connectivity_dimension</span></code></p></td>
+<td><p>Remove the netCDF connectivity dimension name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.replace_directory.html#cf.CellConnectivity.replace_directory" title="cf.CellConnectivity.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
-<td><p>Replace a file directory in-place.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_connectivity_dimension</span></code></p></td>
+<td><p>Return the netCDF connectivity dimension name.</p></td>
 </tr>
-</tbody>
-</table>
-</section>
-<section id="id2">
-<h2>NetCDF<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_del_variable.html#cf.CellConnectivity.nc_del_variable" title="cf.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
-<td><p>Remove the netCDF variable name.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_connectivity_dimension</span></code></p></td>
+<td><p>Whether the netCDF connectivity dimension name has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_get_variable.html#cf.CellConnectivity.nc_get_variable" title="cf.CellConnectivity.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
-<td><p>Return the netCDF variable name.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_has_variable.html#cf.CellConnectivity.nc_has_variable" title="cf.CellConnectivity.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
-<td><p>Whether the netCDF variable name has been set.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_set_variable.html#cf.CellConnectivity.nc_set_variable" title="cf.CellConnectivity.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
-<td><p>Set the netCDF variable name.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_connectivity_dimension</span></code></p></td>
+<td><p>Set the netCDF connectivity dimension name.</p></td>
 </tr>
 </tbody>
 </table>
@@ -939,6 +932,15 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellConnectivity.nc_set_variable_groups.html#cf.CellConnectivity.nc_set_variable_groups" title="cf.CellConnectivity.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
 <td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_connectivity_dimension_groups</span></code></p></td>
+<td><p>Return the netCDF connectivity dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_connectivity_dimension_groups</span></code></p></td>
+<td><p>Remove the netCDF connectivity dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_connectivity_dimension_groups</span></code></p></td>
+<td><p>Set the netCDF connectivity dimension group hierarchy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1119,7 +1121,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

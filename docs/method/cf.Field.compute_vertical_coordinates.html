@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.compute_vertical_coordinates<a class="headerlink" href="#cf-field-compute-vertical-coordinates" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Field.compute_vertical_coordinates">
-<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">compute_vertical_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_to_zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/field.py#L9094-L9310"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.compute_vertical_coordinates" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">compute_vertical_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_to_zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/field.py#L9785-L10001"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.compute_vertical_coordinates" title="Link to this definition">¶</a></dt>
 <dd><p>Compute non-parametric vertical coordinates.</p>
 <blockquote>
 <div><p>When vertical coordinates are a function of horizontal location as
@@ -138,9 +138,10 @@ be stored in a vertical dimension coordinate construct. In such
 cases a parametric vertical dimension coordinate construct is
 stored and a coordinate reference construct contains the formula
 for computing the required non-parametric vertical coordinates.</p>
-<p>See CF section 4.3.3 “Parametric Vertical Coordinate” and CF</p>
+<p>See CF section 4.3.3: Parametric Vertical Coordinate and</p>
 </div></blockquote>
-<p>Appendix D “Parametric Vertical Coordinates” for details.</p>
+<p>CF Appendix D: Parametric Vertical Coordinates.
+<a class="reference external" href="https://doi.org/10.5281/zenodo.14274886">https://doi.org/10.5281/zenodo.14274886</a></p>
 <blockquote>
 <div><p>For example, multi-dimensional non-parametric parametric ocean
 altitude coordinates can be computed from one-dimensional
@@ -307,7 +308,7 @@ was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

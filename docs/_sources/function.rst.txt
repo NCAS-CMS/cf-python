@@ -100,6 +100,7 @@ Condition constructors
    :template: function.rst
 
    cf.contains
+   cf.contains_latlon
    cf.cellsize
    cf.cellgt
    cf.cellge
@@ -135,6 +136,8 @@ Resource management
 
    cf.configuration
    cf.chunksize
+   cf.display_data
+   cf.persist_data
    cf.free_memory
    cf.regrid_logging
    cf.tempdir
@@ -174,6 +177,8 @@ Miscellaneous
    cf.example_fields
    cf.example_domain
    cf.flat
+   cf.healpix_indexing_schemes
+   cf.healpix_max_refinement_level
    cf.implementation
    cf.indices_shape
    cf.inspect

@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -127,10 +127,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.read">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">um</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_at_top_of_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_read_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/read_write/read.py#L20-L766"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.read" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">um</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_at_top_of_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_read_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filesystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/read_write/read.py#L20-L774"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from files.</p>
-<p>The following file formats are supported: netCDF, CDL, Zarr, PP,
-and UM fields file.</p>
+<p>The following file formats are supported: netCDF, CDL, Zarr,
+Kerchunk, PP, and UM fields file.</p>
 <p>NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
 server, or in an S3 object store.</p>
 <p>CDL, PP, and UM fields files must be on local disk.</p>
@@ -235,9 +235,19 @@ compared non-lazily to ascertain if aggregation is possible.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>dataset: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string, or arbitrarily nested sequence of strings,
-giving the dataset names, or directory names, from which
-to read field or domain constructs.</p>
+<dt>datasets:</dt><dd><p>The dataset, or datasets, from which to read field or
+domain constructs.</p>
+<p>May be a string-valued path, a file-like object (such as
+<a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedReader" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">io.BufferedReader</span></code></a>), or a directory-like object (such as
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec.mapping.FSMap</span></code>); or a sequence of any combination
+of these types.</p>
+<p>Note that a Kerchunk dataset may be only read from a
+directory-like object. For instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fs</span> <span class="o">=</span> <span class="n">fsspec</span><span class="o">.</span><span class="n">filesystem</span><span class="p">(</span><span class="s1">&#39;reference&#39;</span><span class="p">,</span> <span class="n">fo</span><span class="o">=</span><span class="s1">&#39;kerchunk.json&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kerchunk</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">get_mapper</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">kerchunk</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Local names may be relative paths and will have tilde and
 shell environment variables expansions applied to them,
 followed by the replacement of any UNIX wildcards (such as
@@ -311,7 +321,10 @@ raised for any invalid dataset type.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'Zarr'</span></code></p></td>
 <td><p>A Zarr v2 (xarray) or Zarr v3 dataset</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'UM'</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'Kerchunk'</span></code></p></td>
+<td><p>A Kerchunked dataset</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'UM'</span></code></p></td>
 <td><p>A UM fields file or PP dataset</p></td>
 </tr>
 </tbody>
@@ -575,14 +588,75 @@ function. For example:</p>
 <p><span class="versionmodified added">Added in version 3.11.0.</span></p>
 </div>
 </dd>
+<dt>netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library or libraries to use for opening and reading
+netCDF-3, netCDF-4, and CDL datasets (the latter after
+they have been internally converted to netCDF-4).</p>
+<p>Any one or more of the following backends may be
+specified, and an attempt to open each netCDF-3 or
+netCDF-4 dataset is made by the given backends in the
+order given, stopping after the first successful read.
+Note that a Zarr dataset is always opened with the <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/#zarr" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a>
+library.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'h5netcdf-pyfive'</span></code></p>
+<ul>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> library using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive</span></code> as its backend.</p></li>
+<li><p>Reads local and remote (http and s3) netCDF-4
+datasets.</p></li>
+<li><p>Allows parallelised reading.</p></li>
+<li><p>Improves the performance of active storage reductions
+(by storing the a dataset variable’s B-tree at read
+time so that it doesn’t have to be re-retrieved at
+compute time).</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code></p>
+<ul>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> library.</p></li>
+<li><p>Reads local and remote (http) netCDF-3 and netCDF-4
+datasets.</p></li>
+<li><p>Parallelised reading is not possible.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'h5netcdf-h5py'</span></code></p>
+<ul>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> library using <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py</span></code> as its backend.</p></li>
+<li><p>Reads local and remote (http and s3) netCDF-4
+datasets.</p></li>
+<li><p>Parallelised reading is not possible.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'netcdf_file'</span></code></p>
+<ul>
+<li><p>The <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.netcdf_file.html#scipy.io.netcdf_file" title="(in SciPy v1.17.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.io.netcdf_file</span></code></a> library.</p></li>
+<li><p>Reads local netCDF-3 datasets.</p></li>
+<li><p>Allows parallelised reading.</p></li>
+<li><p>Treats unlimited dimensions in the dataset as not
+unlimited.</p></li>
+</ul>
+</li>
+</ul>
+<p>By default <em>netcdf_backend</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent
+to providing the ordered sequence:</p>
+<p><code class="docutils literal notranslate"><span class="pre">('h5netcdf-pyfive',</span> <span class="pre">'h5netcdf-h5py',</span> <span class="pre">'netCDF4',</span> <span class="pre">'netcdf_file')</span></code></p>
+<p>which means that by default, reading a netCDF dataset is
+first attempted with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> library using <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive</span></code>
+backend.</p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code>: <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">['netCDF4']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or <code class="docutils literal notranslate"><span class="pre">'h5netcdf-h5py'</span></code>, in
+that order: <code class="docutils literal notranslate"><span class="pre">('netCDF4',</span> <span class="pre">'h5netcdf-h5py')</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">('netCDF4',</span> <span class="pre">'h5netcdf-pyfive',</span> <span class="pre">'netcdf_file',</span>
+<span class="pre">'h5netcdf-h5py')</span></code></p>
+</dd>
 </dl>
-<p>{{read netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
-<blockquote>
-<div><div class="versionadded">
+<div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
-</div></blockquote>
-<dl>
+</dd>
 <dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Pass parameters to the backend file system driver, such as
 username, password, server, port, etc. How the storage
 options are interpreted depends on the location of the
@@ -590,8 +664,14 @@ file:</p>
 <ul>
 <li><p><strong>Local File System</strong>: Storage options are ignored for
 local files.</p></li>
-<li><p><strong>HTTP(S)</strong>: Storage options are ignored for files
-available across the network via OPeNDAP.</p></li>
+<li><p><strong>HTTP(S)</strong>: Storage options are passed to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec.filesystem</span></code>. If the file cannot be opened via
+this file system, then OpenDAP is attempted.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'cache_type':</span> <span class="pre">'readahead',</span> <span class="pre">'block_size':</span> <span class="pre">1048576}</span></code></p>
+</dd>
+</dl>
+</li>
 <li><p><strong>S3-compatible services</strong>: The backend used is <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs</span></code>,
 and the storage options are used to initialise an
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> file system object. By default, or
@@ -734,7 +814,7 @@ lies entirely within one Dask chunk.</p>
 </dd>
 </dl>
 </li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 <p>There is no Dask chunking, i.e. every data array has one
 Dask chunk regardless of its size. In this case each
 storage chunk is guaranteed to lie entirely within the
@@ -756,12 +836,8 @@ a value that defines the Dask chunking for that
 dimension whenever it is spanned by a data array. A file
 dimension is identified in one of three ways:</p>
 <ol class="arabic simple">
-<li><p>the netCDF dimension name, preceded by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code></p></li>
-</ol>
-<blockquote>
-<div><p>(e.g. <code class="docutils literal notranslate"><span class="pre">'ncdim%lat'</span></code>);</p>
-</div></blockquote>
-<ol class="arabic simple" start="2">
+<li><p>the netCDF dimension name, preceded by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>
+(e.g. <code class="docutils literal notranslate"><span class="pre">'ncdim%lat'</span></code>);</p></li>
 <li><p>the value of the “standard name” attribute of a
 CF-netCDF coordinate variable that spans the
 dimension (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>);</p></li>
@@ -852,7 +928,7 @@ information read from the file:</p>
 to be applied to the directories of the fragment file
 locations. The dictionary comprises keyword arguments to
 the cf.Data.replace_directory` method, which is
-used to make the the changes. The aggregation file being
+used to make the changes. The aggregation file being
 read is unaltered. An empty dictionary results in no
 modifications.</p>
 <dl class="simple">
@@ -979,7 +1055,7 @@ any with the same name and size in all ancestor groups.</p>
 <p>For a netCDF dataset, for which it is always
 well-defined in which group a dimension is
 defined, <em>group_dimension_search</em> may only take
-the default value of <a href="#id1"><span class="problematic" id="id2">``</span></a>’closest_ancestor’<a href="#id3"><span class="problematic" id="id4">`</span></a>,
+the default value of <code class="docutils literal notranslate"><span class="pre">'closest_ancestor'</span></code>,
 which applies the behaviour defined by the CF
 conventions (section 2.7 Groups).</p>
 <p>For a Zarr dataset, for which there is no means
@@ -994,6 +1070,25 @@ Groups).</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.19.0.</span></p>
+</div>
+</dd>
+<dt>filesystem: optional</dt><dd><p>A pre-authenticated filesystem object (for example an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem instance) to use for opening the
+dataset. When provided, <em>datasets</em> values are treated as
+paths understood by <em>filesystem</em>, and local string
+pre-processing (tilde/variable expansion, globbing and
+directory walking) is bypassed. The file is opened by
+calling <code class="docutils literal notranslate"><span class="pre">filesystem.open(dataset,</span> <span class="pre">'rb')</span></code>, which returns
+a file-like object that is passed to the netCDF backend.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then files are opened using
+built-in local file system access; or via OPeNDAP access
+for <code class="docutils literal notranslate"><span class="pre">http://</span></code> and <code class="docutils literal notranslate"><span class="pre">https://</span></code> URIs; or via
+S3-compatible object store access for <code class="docutils literal notranslate"><span class="pre">s3://</span></code> URIs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.20.0.</span></p>
 </div>
 </dd>
 <dt>umversion: deprecated at version 3.0.0</dt><dd><p>Use the <em>um</em> parameter instead.</p>
@@ -1082,7 +1177,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

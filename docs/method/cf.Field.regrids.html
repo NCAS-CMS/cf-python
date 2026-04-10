@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Field.regrids">
-<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">regrids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_cyclic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_cyclic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_src_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_dst_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fracfield</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_degenerate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_esmpy_regrid_operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_grid_partitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_compute_field_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/field.py#L12943-L13320"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.regrids" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">regrids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_cyclic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_cyclic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_src_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_dst_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fracfield</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_degenerate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_esmpy_regrid_operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_grid_partitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_compute_field_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/field.py#L13643-L14035"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.regrids" title="Link to this definition">¶</a></dt>
 <dd><p>Regrid the field to a new latitude and longitude grid.</p>
 <p>Regridding is the process of interpolating the field data
 values while preserving the qualities of the original data,
@@ -164,7 +164,20 @@ the case for NEMO model outputs).</p>
 <p><strong>UGRID meshes</strong></p>
 <p>Data defined on UGRID face or node cells may be regridded to
 any other latitude-longitude grid, including other UGRID
-meshes and DSG feature types.</p>
+meshes and DSG feature types. Note that for conservative
+regridding, a cell edge is assumed to be the great circle arc
+that connects its two vertices.</p>
+<p><strong>HEALPix grids</strong></p>
+<p>Data on HEALPix grids may be regridded to any other
+latitude-longitude grid, including other HEALPix grids, UGRID
+meshes and DSG feature types. This is done internally by
+converting HEALPix grids to UGRID meshes and carrying out a
+UGRID regridding. This means that for conservative regridding,
+a cell edge is assumed to be the great circle arc that
+connects its two vertices, which is certainly not true for
+HEALPix cells. However, the errors are likely to be small,
+particularly at higher resolutions. See also
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_decrease_refinement_level</span></code>.</p>
 <p><strong>DSG feature types</strong></p>
 <p>Data on any latitude-longitude grid (including tripolar and
 UGRID meshes) may be regridded to any DSG feature type.</p>
@@ -211,7 +224,7 @@ after every call. By default logging is disabled.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a></p>
+<p><a class="reference internal" href="cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_decrease_refinement_level</span></code></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -589,44 +602,41 @@ regridding operation.</p>
 <p><span class="versionmodified added">Added in version 3.16.2.</span></p>
 </div>
 </dd>
-</dl>
-<p>dst_grid_partitions: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional
-Calculating the weights matrix for grids with a very large
-number of source and/or destination grid points can
-potentially require more memory than is
-available. However, the memory requirement can be greatly
-reduced by calculating weights separately for
-non-overlapping partitions of the destination grid, and
-then combining the weights from each partition to create
-the final weights matrix. The more partitions there are,
-the smaller the memory requirement for the weights
-calculations, at the expense of the weights calculations
-taking longer.</p>
+<dt>dst_grid_partitions: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Calculating the weights matrix for grids with a very
+large number of source and/or destination grid points
+can potentially require more memory than is
+available. However, the memory requirement can be
+greatly reduced by calculating weights separately for
+non-overlapping partitions of the destination grid,
+and then combining the weights from each partition to
+create the final weights matrix. The more partitions
+there are, the smaller the memory requirement for the
+weights calculations, at the expense of the weights
+calculations taking longer.</p>
 <p>The <em>dst_grid_partitions</em> parameter sets the number of
 destination grid partitions for the weights
 calculations. The default value is <code class="docutils literal notranslate"><span class="pre">1</span></code>, i.e. one
 partition for the entire destination grid, maximising
-memory usage and minimising the calculation time. If the
-string <code class="docutils literal notranslate"><span class="pre">'maximum'</span></code> is given then the largest possible
-number of partitions of the destination grid will be used,
-minimising memory usage and maximising the calculation
-time. A positive integer specifies the exact number of
-partitions, capped by the maximum allowed, allowing the
-balance between memory usage and calculation time to be
-adjusted.</p>
-<p>The actual number of destination grid partitions and each
-partition’s shape, and weights calculation time and memory
-requirement are displayed when <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> logging is
-activated. See <em>verbose</em> for details.</p>
+memory usage and minimising the calculation time. If
+the string <code class="docutils literal notranslate"><span class="pre">'maximum'</span></code> is given then the largest
+possible number of partitions of the destination grid
+will be used, minimising memory usage and maximising
+the calculation time. A positive integer specifies the
+exact number of partitions, capped by the maximum
+allowed, allowing the balance between memory usage and
+calculation time to be adjusted.</p>
+<p>The actual number of destination grid partitions and
+each partition’s shape, and weights calculation time
+and memory requirement are displayed when <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>
+logging is activated. See <em>verbose</em> for details.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<dl class="simple">
-<dt>If setting <em>dst_grid_partitions</em> is required for</dt><dd><p>the regridding to work, then it is worth
-considering storing the weights in a file for
-fast future access, via the <em>weights_file</em>
-parameter.</p>
-</dd>
-</dl>
+<p>If setting <em>dst_grid_partitions</em> is required
+for the regridding to work, then it is worth
+considering storing the weights in a file
+for fast future access, via the
+<em>weights_file</em> parameter.</p>
+</div>
 <p>The maximum number of partitions, Nmax, depends on the
 nature of the destination grid: If the Z axis is being
 regridded, Nmax = the size of the Z axis. For a 2-d
@@ -636,8 +646,7 @@ horizontal discrete axis.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.18.2.</span></p>
 </div>
-</div>
-<dl class="simple">
+</dd>
 <dt>axis_order: sequence, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
 </dd>
 <dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
@@ -721,7 +730,7 @@ object if <em>return_esmpy_regrid_operator</em> is True.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
