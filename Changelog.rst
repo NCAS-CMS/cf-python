@@ -47,7 +47,7 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cf-python/issues/887)
 * New optional dependency: ``healpix>=2025.1``
 * New dependency: ``pyfive>=1.1.1``
-* Changed dependency: ``cfdm>=1.13.?.?, <1.13.?.0``
+* Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
 
 ----
 
