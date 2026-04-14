@@ -55,6 +55,7 @@ class RegridOperatorTest(unittest.TestCase):
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_RegridOperator_equal_weights(self):
         r0 = self.r
         r1 = r0.copy()
@@ -62,6 +63,7 @@ class RegridOperatorTest(unittest.TestCase):
         r1.weights.data += 0.1
         self.assertFalse(r0.equal_weights(r1))
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_RegridOperator_equal_dst_mask(self):
         r0 = self.r.copy()
         r1 = r0.copy()
