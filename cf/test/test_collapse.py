@@ -4,12 +4,19 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from importlib.util import find_spec
 
 import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -825,6 +832,7 @@ class Field_collapseTest(unittest.TestCase):
         # Check the collpsed fields writes
         cf.write(f, tmpfile)
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_collapse_HEALPix(self):
         """Test HEALPix collapses."""
         f0 = cf.example_field(12)
