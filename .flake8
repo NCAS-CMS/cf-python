@@ -30,3 +30,6 @@ per-file-ignores =
     # https://stackoverflow.com/questions/59167405/)
     __init__.py: F401
     */__init__.py: F401
+    # Whole-module test skip means exit before reach undefined vars where need
+    # given (healpix) module for defining those. Is cleanest way but needs:
+    cf/test/test_HEALPix_utils.py: F821

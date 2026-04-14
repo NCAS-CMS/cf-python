@@ -1,32 +1,48 @@
 import datetime
 import unittest
 
-import healpix
 import numpy as np
 
 import cf
 
-# Create matching lists of selected nested, ring, nuniq and zuniq
-# indices for every refinement level.
-indices = [
-    (r, i, healpix.nest2ring(healpix.order2nside(r), i))
-    for r in range(30)
-    for i in (0, 7, (12 * 4**r) - 1)
-]
-refinement_levels, nested_indices, ring_indices = map(list, zip(*indices))
-
-nuniq_indices = [
-    i + 4 ** (1 + r) for r, i in zip(refinement_levels, nested_indices)
-]
-
-zuniq_indices = [
-    (2 * i + 1) * 4 ** (29 - r)
-    for r, i in zip(refinement_levels, nested_indices)
-]
+healpix_imported = True
+try:
+    import healpix  # noqa: F401
+except ImportError:
+    healpix_imported = False
 
 
 class DataTest(unittest.TestCase):
     """Unit tests for HEALPix utilities."""
+
+    def setUp(self):
+        """Preparations called immediately before each test method."""
+        # Skip all if healpix module not available!
+        if not healpix_imported:
+            self.skipTest(
+                "Test module requires 'healpix' package. Install it to run all."
+            )
+        else:
+            # Create matching lists of selected nested, ring, nuniq and zuniq
+            # indices for every refinement level.
+            indices = [
+                (r, i, healpix.nest2ring(healpix.order2nside(r), i))
+                for r in range(30)
+                for i in (0, 7, (12 * 4**r) - 1)
+            ]
+            refinement_levels, nested_indices, ring_indices = map(
+                list, zip(*indices)
+            )
+
+            nuniq_indices = [  # noqa: F841
+                i + 4 ** (1 + r)
+                for r, i in zip(refinement_levels, nested_indices)
+            ]
+
+            zuniq_indices = [  # noqa: F841
+                (2 * i + 1) * 4 ** (29 - r)
+                for r, i in zip(refinement_levels, nested_indices)
+            ]
 
     def test_HEALPix_uniq2zuniq(self):
         """Test _uniq2zuniq"""
