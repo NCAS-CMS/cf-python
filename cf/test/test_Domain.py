@@ -1,10 +1,17 @@
 import datetime
 import re
 import unittest
+from importlib.util import find_spec
 
 import numpy as np
 
 import cf
+
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
 
 
 class DomainTest(unittest.TestCase):
@@ -494,6 +501,7 @@ class DomainTest(unittest.TestCase):
         d2.cyclic("X", iscyclic=False)
         self.assertTrue(d2.iscyclic("X"))
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Domain_create_healpix(self):
         """Test Domain.create_healpix."""
         d = cf.Domain.create_healpix(0)
