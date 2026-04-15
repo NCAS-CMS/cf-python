@@ -13,12 +13,6 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
-healpix_available = False
-# Note: here only need healpix for cf under-the-hood code, not in test
-# directly, so no need to actually import healpix, just test it is there.
-if find_spec("healpix"):
-    healpix_available = True
-
 
 class functionTest(unittest.TestCase):
     def setUp(self):
@@ -494,7 +488,9 @@ class functionTest(unittest.TestCase):
             with self.assertRaises(IndexError):
                 cf.normalize_slice(index, 8, cyclic=True)
 
-    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
+    # Note: here only need healpix for cf under-the-hood code, not in test
+    # directly, so no need to actually import healpix, just test it is there.
+    @unittest.skipUnless(find_spec("healpix"), "Requires 'healpix' package.")
     def test_locate(self):
         """Test cf.locate"""
         # HEALPix

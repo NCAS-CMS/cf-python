@@ -32,5 +32,5 @@ per-file-ignores =
     */__init__.py: F401
     # Whole-module test skips (via setUp method) for these cases means exit
     # before reach undefined vars where need given module for defining those.
-    # This is the cleanest way but sets off F821 so skip those:
+    # This is the cleanest way but sets off F821 code en-masse so ignore that.
     cf/test/test_HEALPix_utils.py: F821
