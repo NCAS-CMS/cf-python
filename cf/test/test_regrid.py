@@ -11,6 +11,12 @@ import numpy as np
 
 import cf
 
+esmpy_imported = True
+try:
+    import esmpy  # noqa: F401
+except ImportError:
+    esmpy_imported = False
+
 n_tmpfiles = 1
 tmpfiles = [
     tempfile.mkstemp("_test_regrid.nc", dir=os.getcwd())[1]
@@ -29,14 +35,6 @@ def _remove_tmpfiles():
 
 
 atexit.register(_remove_tmpfiles)
-
-
-esmpy_imported = True
-try:
-    import esmpy  # noqa: F401
-except ImportError:
-    esmpy_imported = False
-
 
 all_methods = (
     "linear",
@@ -405,6 +403,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_bad_dst(self):
         """Disallowed destination grid types raise an exception."""
         self.assertFalse(cf.regrid_logging())
