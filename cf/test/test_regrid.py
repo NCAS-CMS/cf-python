@@ -141,7 +141,7 @@ class RegridTest(unittest.TestCase):
 
     def setUp(self):
         """Preparations called immediately before each test method."""
-        # Skip all if healpix module not available!
+        # Skip all if esmpy module not available!
         if not esmpy_imported:
             self.skipTest(
                 "Test module requires 'esmpy' package. Install it to run all."
