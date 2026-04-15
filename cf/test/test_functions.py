@@ -4,6 +4,7 @@ import os
 import platform
 import sys
 import unittest
+from importlib.util import find_spec
 
 import dask.array as da
 import numpy as np
@@ -11,6 +12,12 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
 
 
 class functionTest(unittest.TestCase):
@@ -487,6 +494,7 @@ class functionTest(unittest.TestCase):
             with self.assertRaises(IndexError):
                 cf.normalize_slice(index, 8, cyclic=True)
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_locate(self):
         """Test cf.locate"""
         # HEALPix
