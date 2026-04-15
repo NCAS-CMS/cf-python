@@ -4,6 +4,7 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from importlib.util import find_spec
 
 import numpy as np
 
@@ -825,6 +826,9 @@ class Field_collapseTest(unittest.TestCase):
         # Check the collpsed fields writes
         cf.write(f, tmpfile)
 
+    # Note: here only need healpix for cf under-the-hood code, not in test
+    # directly, so no need to actually import healpix, just test it is there.
+    @unittest.skipUnless(find_spec("healpix"), "Requires 'healpix' package.")
     def test_Field_collapse_HEALPix(self):
         """Test HEALPix collapses."""
         f0 = cf.example_field(12)

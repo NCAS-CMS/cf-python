@@ -16,6 +16,12 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
+
 n_tmpfiles = 1
 tmpfiles = [
     tempfile.mkstemp("_test_Field.nc", dir=os.getcwd())[1]
@@ -3137,6 +3143,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             g.to_units("degC")
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_healpix_change_indexing_scheme(self):
         """Test Field.healpix_change_indexing_scheme."""
         # HEALPix field
@@ -3236,6 +3243,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.f0.healpix_change_indexing_scheme("ring")
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_healpix_to_ugrid(self):
         """Test Field.healpix_to_ugrid."""
         # HEALPix field
@@ -3276,6 +3284,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.f0.healpix_to_ugrid()
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_create_latlon_coordinates(self):
         """Test Field.create_latlon_coordinates."""
         # ------------------------------------------------------------
@@ -3334,6 +3343,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(mc[:16].equals(l2.auxiliary_coordinate(c)[:16]))
             self.assertTrue(mc[16:].equals(l1.auxiliary_coordinate(c)[4:]))
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_healpix_subspace(self):
         """Test Field.subspace for HEALPix grids"""
         f = self.f12
@@ -3369,6 +3379,7 @@ class FieldTest(unittest.TestCase):
             np.array_equal(g.coordinate("healpix_index"), [13, 12])
         )
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_healpix_decrease_refinement_level(self):
         """Test Field.healpix_decrease_refinement_level."""
         f = self.f12
@@ -3469,6 +3480,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.f0.healpix_decrease_refinement_level(0, "mean")
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_Field_healpix_increase_refinement_level(self):
         """Test Field.healpix_increase_refinement_level."""
         f = self.f12

@@ -4,6 +4,7 @@ import os
 import platform
 import sys
 import unittest
+from importlib.util import find_spec
 
 import dask.array as da
 import numpy as np
@@ -487,6 +488,9 @@ class functionTest(unittest.TestCase):
             with self.assertRaises(IndexError):
                 cf.normalize_slice(index, 8, cyclic=True)
 
+    # Note: here only need healpix for cf under-the-hood code, not in test
+    # directly, so no need to actually import healpix, just test it is there.
+    @unittest.skipUnless(find_spec("healpix"), "Requires 'healpix' package.")
     def test_locate(self):
         """Test cf.locate"""
         # HEALPix
