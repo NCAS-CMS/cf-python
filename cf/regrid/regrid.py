@@ -148,6 +148,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     min_weight=None,
+    max_masked=0,
     weights_file=None,
     return_esmpy_regrid_operator=False,
     dst_grid_partitions=1,
@@ -260,6 +261,57 @@ def regrid(
             If False then only the computationally cheap tests are
             performed (checking that the coordinate system, cyclicity
             and grid shape are the same).
+
+        min_weight: float, optional
+            A very small non-negative number. By default *min_weight*
+            is ``2.5 * np.finfo("float64").eps``,
+            i.e. ``5.551115123125783e-16`. It is used during linear
+            and first-order conservative regridding when adjusting the
+            weights matrix to account for the data mask. It is ignored
+            for all other regrid methods, or if data being regridded
+            has no missing values.
+
+            In some cases (described below) for which weights might
+            only be non-zero as a result of rounding errors, the
+            *min_weight* parameter controls whether or a not cell in
+            the regridded field is masked.
+
+            The default value has been chosen empirically as the
+            smallest value that produces the same masks as esmpy for
+            the use cases defined in the cf test suite.
+
+            **Linear regridding**
+
+            Destination grid cell j will only be masked if a) it is
+            masked in the destination grid definition; or b) the
+            number of ``w_ji >= min_weight`` for those masked source
+            grid cells i for which ``w_ji > 0`` exceeds the
+            *max_masked* parameter.
+
+            **Conservative first-order regridding**
+
+            Destination grid cell j will only be masked if a) it is
+            masked in the destination grid definition; or b) the sum
+            of ``w_ji`` for all non-masked source grid cells i is
+            strictly less than *min_weight*.
+
+        max_masked, `int`, optional
+            For linear regridding only. Ignored for all other
+            regridding methods.
+
+            The maximum allow number of masked source cells which are
+            allowed to be ignored when calculating a non-masked
+            destination cell. When masked source cells are ignored,
+            the weights w_ij of non-masked source cells i are adjusted
+            so that they sum to 1.
+
+            By default it is ``0``, meaning that destination grid cell
+            j will be masked if source cell i is masked and ``w_ji >=
+            min_weight``. If set to ``N``, then destination grid cell
+            j will be masked if more than ``N`` source cells i are
+            masked with ``w_ji >= min_weight``.
+
+            .. versionadded:: NEXTVERSION
 
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.
@@ -774,6 +826,7 @@ def regrid(
         regrid_axes=src_grid.axis_indices,
         regridded_sizes=regridded_axis_sizes,
         min_weight=min_weight,
+        max_masked=max_masked,
     )
 
     # ----------------------------------------------------------------

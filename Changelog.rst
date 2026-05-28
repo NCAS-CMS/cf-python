@@ -1,3 +1,13 @@
+Version NEXTVERSION
+--------------
+
+**2026-06-??**
+
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``max_masked`` (https://github.com/NCAS-CMS/cf-python/issues/???)
+
+----  
+
 Version 3.20.0
 --------------
 

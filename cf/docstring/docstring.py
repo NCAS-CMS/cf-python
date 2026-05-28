@@ -394,7 +394,8 @@ _docstring_substitution_definitions = {
                 Destination grid cell ``j`` will only be masked if a)
                 it is masked in the destination grid definition; or b)
                 ``w_ji >= min_weight`` for those masked source grid
-                cells ``i`` for which ``w_ji > 0``.
+                cells ``i`` for which ``w_ji > 0`` exceeds the
+                *max_masked* parameter.
 
                 **Conservative first-order regridding**
 
@@ -402,6 +403,30 @@ _docstring_substitution_definitions = {
                 it is masked in the destination grid definition; or b)
                 the sum of ``w_ji`` for all non-masked source grid
                 cells ``i`` is strictly less than *min_weight*.""",
+    # max_masked
+    "{{max_masked: `int`, optional}}": """max_masked: `int`, optional
+                For linear regridding only. Ignored for all other
+                regridding methods.
+
+                The maximum allow number of masked source cells which
+                are allowed to be ignored when calculating a
+                non-masked destination cell. When masked source cells
+                are ignored, the weights of non-masked source cells i
+                are adjusted so that they sum to 1.
+
+                Define ``w_ji`` as the multiplicative weight that
+                defines how much of ``Vs_i`` (the value in source grid
+                cell ``i``) contributes to ``Vd_j`` (the value in
+                destination grid cell ``j``).
+
+                By default *max_masked* is ``0``, meaning that
+                destination grid cell j will be masked if source cell
+                i is masked and ``w_ji >= min_weight``. If set to
+                ``N``, then destination grid cell j will be masked if
+                more than ``N`` source cells i are masked with ``w_ji
+                >= min_weight``.
+
+                .. versionadded:: NEXTVERSION""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
                 Provide a netCDF file that contains, or will contain,

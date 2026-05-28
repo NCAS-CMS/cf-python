@@ -13,164 +13,185 @@ def regrid(
     axis_order=None,
     ref_src_mask=None,
     min_weight=None,
+    max_masked=0,
 ):
     """Regrid an array.
 
-    .. versionadded:: 3.14.0
+        .. versionadded:: 3.14.0
 
-    .. seealso:: `regrid_weights`, `_regrid`, `cf.Data._regrid`
+        .. seealso:: `regrid_weights`, `_regrid`, `cf.Data._regrid`
 
-    :Parameters:
+        :Parameters:
 
-        a: `numpy.ndarray`
-            The array to be regridded.
+            a: `numpy.ndarray`
+                The array to be regridded.
 
-        weights_dst_mask: 2-`tuple`
-            The sparse weights matrix that defines the regridding
-            operation; and the mask to be applied to the regridded
-            data (as yet unmodified for the source grid mask).
+            weights_dst_mask: 2-`tuple`
+                The sparse weights matrix that defines the regridding
+                operation; and the mask to be applied to the regridded
+                data (as yet unmodified for the source grid mask).
 
-            **weights**
+                **weights**
 
-            The dense weights matrix has J rows and I columns, where J
-            and I are the total number of cells in the destination and
-            source grids respectively.
+                The dense weights matrix has J rows and I columns, where J
+                and I are the total number of cells in the destination and
+                source grids respectively.
 
-            The weights matrix only describes cells defined by the
-            regridding dimensions. If the array *a* includes
-            non-regridding dimensions then, in essence, the regrid
-            operation is carried out separately for each slice of the
-            regridding dimensions. For instance, if *a* represents T,
-            Z, Y, X dimensions with shape ``(12, 20, 73, 96)`` and is
-            to have its Y and X dimension regridded, then the result
-            may be thought of as the concatenation of the 240
-            individual regrids arising from all of the T and Z
-            dimension combinations.
+                The weights matrix only describes cells defined by the
+                regridding dimensions. If the array *a* includes
+                non-regridding dimensions then, in essence, the regrid
+                operation is carried out separately for each slice of the
+                regridding dimensions. For instance, if *a* represents T,
+                Z, Y, X dimensions with shape ``(12, 20, 73, 96)`` and is
+                to have its Y and X dimension regridded, then the result
+                may be thought of as the concatenation of the 240
+                individual regrids arising from all of the T and Z
+                dimension combinations.
 
-            Each element w_ji is the multiplicative weight that
-            defines how much of Vs_i (the value in source grid cell i)
-            contributes to Vd_j (the value in destination grid cell
-            j).
+                Each element w_ji is the multiplicative weight that
+                defines how much of Vs_i (the value in source grid cell i)
+                contributes to Vd_j (the value in destination grid cell
+                j).
 
-            The final value of Vd_j is the sum of w_ji * Vs_i for all
-            source grid cells i. Note that it is typical that for a
-            given j most w_ji will be zero, reflecting the fact only a
-            few source grid cells intersect a particular destination
-            grid cell. I.e. *weights* is usually a very sparse matrix.
+                The final value of Vd_j is the sum of w_ji * Vs_i for all
+                source grid cells i. Note that it is typical that for a
+                given j most w_ji will be zero, reflecting the fact only a
+                few source grid cells intersect a particular destination
+                grid cell. I.e. *weights* is usually a very sparse matrix.
 
-            If the destination grid has masked cells, either because
-            it spans areas outside of the source grid, or by selection
-            (such as ocean cells for land-only data), then the
-            corresponding rows in the weights matrix must be be
-            entirely missing data.
+                If the destination grid has masked cells, either because
+                it spans areas outside of the source grid, or by selection
+                (such as ocean cells for land-only data), then the
+                corresponding rows in the weights matrix must be be
+                entirely missing data.
 
-            For the patch recovery and second-order conservative
-            regridding methods, the weights matrix will have been
-            constructed taking into account the mask of the source
-            grid, which must match the mask of *a* for its regridding
-            dimensions.
+                For the patch recovery and second-order conservative
+                regridding methods, the weights matrix will have been
+                constructed taking into account the mask of the source
+                grid, which must match the mask of *a* for its regridding
+                dimensions.
 
-            For all other regridding methods, the weights matrix will
-            have been constructed assuming that no source grid cells
-            are masked, and the weights matrix will be modified
-            on-the-fly to account for any masked elements of *a* in
-            each regridding slice.
+                For all other regridding methods, the weights matrix will
+                have been constructed assuming that no source grid cells
+                are masked, and the weights matrix will be modified
+                on-the-fly to account for any masked elements of *a* in
+                each regridding slice.
 
-            It is assumed that data-type of the weights matrix is same
-            as the desired data-type of the regridded data.
+                It is assumed that data-type of the weights matrix is same
+                as the desired data-type of the regridded data.
 
-            See section 12.3 "Regridding Methods" of
-            https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node1.html
+                See section 12.3 "Regridding Methods" of
+                https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node1.html
 
-            **dst_mask**
+                **dst_mask**
 
-            If a `numpy.ndarray` with shape ``(J,)`` then this is the
-            reference destination grid mask that was used during the
-            creation of the weights. If `None` then there are no
-            reference destination grid masked points.
+                If a `numpy.ndarray` with shape ``(J,)`` then this is the
+                reference destination grid mask that was used during the
+                creation of the weights. If `None` then there are no
+                reference destination grid masked points.
 
-            In either case the reference destination grid mask may get
-            updated (not in-place) to account for source grid masked
-            points.
+                In either case the reference destination grid mask may get
+                updated (not in-place) to account for source grid masked
+                points.
 
-        method: `str`
-            The name of the regridding method.
+            method: `str`
+                The name of the regridding method.
 
-        src_shape: sequence of `int`
-            The shape of the source grid.
+            src_shape: sequence of `int`
+                The shape of the source grid.
 
-        dst_shape: sequence of `int`
-            The shape of the destination grid.
+            dst_shape: sequence of `int`
+                The shape of the destination grid.
 
-        axis_order: sequence of `int`
-            The axis order that transposes *a* so that the regrid axes
-            become the trailing dimensions, ordered consistently with
-            the order used to create the weights matrix; and the
-            non-regrid axes become the leading dimensions.
+            axis_order: sequence of `int`
+                The axis order that transposes *a* so that the regrid axes
+                become the trailing dimensions, ordered consistently with
+                the order used to create the weights matrix; and the
+    `            non-regrid axes become the leading dimensions.
 
-            *Parameter example:*
-              If the regrid axes are in positions 2 and 1 for 4-d
-              data: ``[0, 3, 2, 1]``
+                *Parameter example:*
+                  If the regrid axes are in positions 2 and 1 for 4-d
+                  data: ``[0, 3, 2, 1]``
 
-            *Parameter example:*
-              If the regrid axes are in positions 0 and 3 for 4-d
-              data: ``[1, 2, 0, 3]``
+                *Parameter example:*
+                  If the regrid axes are in positions 0 and 3 for 4-d
+                  data: ``[1, 2, 0, 3]``
 
-            *Parameter example:*
-              If the regrid axis is in position 0 for 3-d data: ``[1,
-              2, 0]``
+                *Parameter example:*
+                  If the regrid axis is in position 0 for 3-d data: ``[1,
+                  2, 0]``
 
-        ref_src_mask: `numpy.ndarray` or `None`
-            If a `numpy.ndarray` with shape *src_shape* then this is
-            the reference source grid mask that was used during the
-            creation of the weights matrix given by *weights*, and the
-            mask of each regrid slice of *a* must therefore be
-            identical to *ref_src_mask*. If *ref_src_mask* is a scalar
-            array with value `False`, then this is equivalent to a
-            reference source grid mask with shape *src_shape* entirely
-            populated with `False`.
+            ref_src_mask: `numpy.ndarray` or `None`
+                If a `numpy.ndarray` with shape *src_shape* then this is
+                the reference source grid mask that was used during the
+                creation of the weights matrix given by *weights*, and the
+                mask of each regrid slice of *a* must therefore be
+                identical to *ref_src_mask*. If *ref_src_mask* is a scalar
+                array with value `False`, then this is equivalent to a
+                reference source grid mask with shape *src_shape* entirely
+                populated with `False`.
 
-            If `None` (the default), then the weights matrix will have
-            been created assuming no source grid mask, and the mask of
-            each regrid slice of *a* is automatically applied to
-            *weights* prior to the regridding calculation.
+                If `None` (the default), then the weights matrix will have
+                been created assuming no source grid mask, and the mask of
+                each regrid slice of *a* is automatically applied to
+                *weights* prior to the regridding calculation.
 
-        min_weight: float, optional
-            A very small non-negative number. By default *min_weight*
-            is ``2.5 * np.finfo("float64").eps``,
-            i.e. ``5.551115123125783e-16`. It is used during linear
-            and first-order conservative regridding when adjusting the
-            weights matrix to account for the data mask. It is ignored
-            for all other regrid methods, or if data being regridded
-            has no missing values.
+            min_weight: float, optional
+                A very small non-negative number. By default *min_weight*
+                is ``2.5 * np.finfo("float64").eps``,
+                i.e. ``5.551115123125783e-16`. It is used during linear
+                and first-order conservative regridding when adjusting the
+                weights matrix to account for the data mask. It is ignored
+                for all other regrid methods, or if data being regridded
+                has no missing values.
 
-            In some cases (described below) for which weights might
-            only be non-zero as a result of rounding errors, the
-            *min_weight* parameter controls whether or a not cell in
-            the regridded field is masked.
+                In some cases (described below) for which weights might
+                only be non-zero as a result of rounding errors, the
+                *min_weight* parameter controls whether or a not cell in
+                the regridded field is masked.
 
-            The default value has been chosen empirically as the
-            smallest value that produces the same masks as esmpy for
-            the use cases defined in the cf test suite.
+                The default value has been chosen empirically as the
+                smallest value that produces the same masks as esmpy for
+                the use cases defined in the cf test suite.
 
-            **Linear regridding**
+                **Linear regridding**
 
-            Destination grid cell j will only be masked if a) it is
-            masked in the destination grid definition; or b) ``w_ji >=
-            min_weight`` for those masked source grid cells i for
-            which ``w_ji > 0``.
+                Destination grid cell j will only be masked if a) it is
+                masked in the destination grid definition; or b) the
+                number of ``w_ji >= min_weight`` for those masked source
+                grid cells i for which ``w_ji > 0`` exceeds the
+                *max_masked* parameter.
 
-            **Conservative first-order regridding**
+                **Conservative first-order regridding**
 
-            Destination grid cell j will only be masked if a) it is
-            masked in the destination grid definition; or b) the sum
-            of ``w_ji`` for all non-masked source grid cells i is
-            strictly less than *min_weight*.
+                Destination grid cell j will only be masked if a) it is
+                masked in the destination grid definition; or b) the sum
+                of ``w_ji`` for all non-masked source grid cells i is
+                strictly less than *min_weight*.
 
-    :Returns:
+            max_masked, `int`, optional
+                For linear regridding only. Ignored for all other
+                regridding methods.
 
-        `numpy.ndarray`
-            The regridded data.
+                The maximum allow number of masked source cells which are
+                allowed to be ignored when calculating a non-masked
+                destination cell. When masked source cells are ignored,
+                the weights w_ji of non-masked source cells i are adjusted
+                so that they sum to 1.
+
+                By default *max_masked* is ``0``, meaning that
+                destination grid cell j will be masked if source cell
+                i is masked and ``w_ji >= min_weight``. If set to
+                ``N``, then destination grid cell j will be masked if
+                more than ``N`` source cells i are masked with ``w_ji
+                >= min_weight``.
+
+                .. versionadded:: NEXTVERSION
+
+        :Returns:
+
+            `numpy.ndarray`
+                The regridded data.
 
     """
     weights, dst_mask = weights_dst_mask
@@ -290,7 +311,13 @@ def regrid(
         # for all slices => all slices can be regridded
         # simultaneously.
         a, _, _, _ = _regrid(
-            a, src_mask, dst_mask, weights, method, min_weight=min_weight
+            a,
+            src_mask,
+            dst_mask,
+            weights,
+            method,
+            min_weight=min_weight,
+            max_masked=max_masked,
         )
         del _
 
@@ -366,6 +393,7 @@ def _regrid(
     prev_dst_mask=None,
     prev_weights=None,
     min_weight=None,
+    max_masked=0,
 ):
     """Worker function for `regrid`.
 
@@ -420,6 +448,16 @@ def _regrid(
             has no missing values.
 
             See `regrid` for details.
+
+        max_masked: `int`, optional
+            For linear regridding only. Ignored for all other
+            regridding methods. The maximum allow number of masked
+            source cells which are allowed to be ignored when
+            calculating a non-masked destination cell.
+
+            See `regrid` for details.
+
+            .. versionadded:: NEXTVERSION
 
         method: `str`
             The name of the regridding method.
@@ -543,6 +581,8 @@ def _regrid(
             else:
                 dst_mask = dst_mask.copy()
 
+            weights = weights.copy()
+
             # Note: It is much more efficient to access
             #       'weights.indptr', 'weights.indices', and
             #       'weights.data' directly, rather than iterating
@@ -556,11 +596,45 @@ def _regrid(
             data = weights.data
             for j, (i0, i1) in enumerate(zip(indptr[:-1], indptr[1:])):
                 mask = src_mask[indices[i0:i1]]
-                if not count_nonzero(mask):
+                n_masked = count_nonzero(mask)
+                if not n_masked:
+                    # There are no masked src cells
                     continue
 
-                if where(data[i0:i1][mask] >= min_weight)[0].size:
+                if n_masked == mask.size:
+                    # There are no non-masked src cells
                     dst_mask[j] = True
+                    continue
+
+                w = data[i0:i1]
+                print(j, where(w[mask] >= min_weight)[0], w, mask, max_masked)
+                if where(w[mask] >= min_weight)[0].size > max_masked:
+                    print(j, "> mm")
+                    # There are more masked src cells than allowed
+                    dst_mask[j] = True
+                else:
+                    # The number of masked src cells does not exceed
+                    # the minimum masked-cells threshold
+                    non_masked_indices = where((~mask) & (w >= min_weight))[0]
+                    print(non_masked_indices)
+                    if non_masked_indices.size == 1:
+                        # There areis exactly one non-masked src cell
+                        # with weight above the minimum weights
+                        # threshold
+                        w[:] = 0
+                        w[non_masked_indices] = 1
+                        data[i0:i1] = w
+                    elif non_masked_indices.size:
+                        # There are some non-masked src cells with
+                        # weights above the minimum weights threshold
+                        D_j = w[non_masked_indices].sum()
+                        w = w / D_j
+                        w[mask] = 0
+                        data[i0:i1] = w
+                    else:
+                        # There are no non-masked src cells with
+                        # weights above the minimum weights threshold
+                        dst_mask[j] = True
 
         elif method == "nearest_dtos":
             # 3) Nearest neighbour dtos method:
