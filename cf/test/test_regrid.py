@@ -837,6 +837,195 @@ class RegridTest(unittest.TestCase):
         self.assertIsInstance(opers, esmpy.api.regrid.Regrid)
         self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_regrids_max_masked(self):
+        """Test max_masked keyword to regrids."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=0)
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [True, True, True, True, True, True, True, True],
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=1)
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                    [True, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=2)
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=3)
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                    [False, False, False, False, False, True, True, True],
+                ],
+            )
+        )
+
+    def test_regridc_max_masked(self):
+        """Test max_masked keyword to regridc."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        axes = ["Y", "X"]
+
+        x = s.regridc(
+            d, axes=axes, method="linear", use_dst_mask=False, max_masked=0
+        )
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [True, True, True, True, True, True, True, True],
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regridc(
+            d, axes=axes, method="linear", use_dst_mask=False, max_masked=1
+        )
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                    [True, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regridc(
+            d, axes=axes, method="linear", use_dst_mask=False, max_masked=2
+        )
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                    [True, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        x = s.regridc(
+            d, axes=axes, method="linear", use_dst_mask=False, max_masked=3
+        )
+        self.assertTrue(
+            np.array_equal(
+                x.data.mask,
+                [
+                    [True, False, True, True, True, True, True, True],
+                    [True, False, False, True, True, True, True, True],
+                    [True, False, False, False, True, True, True, True],
+                    [True, False, False, False, False, True, True, True],
+                ],
+            )
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

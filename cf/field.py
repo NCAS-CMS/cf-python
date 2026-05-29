@@ -13864,7 +13864,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            {{max_masked, `int`, optional}}
+            {{max_masked: `int`, optional}}
 
                 .. versionadded:: NEXTVERSION
 
@@ -14198,7 +14198,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            {{max_masked, `int`, optional}}
+            {{max_masked: `int`, optional}}
 
                 .. versionadded:: NEXTVERSION
 
@@ -14347,7 +14347,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
-            max_masked=0,
+            max_masked=max_masked,
             weights_file=weights_file,
             src_z=src_z,
             dst_z=dst_z,

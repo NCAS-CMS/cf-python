@@ -295,7 +295,7 @@ def regrid(
             of ``w_ji`` for all non-masked source grid cells i is
             strictly less than *min_weight*.
 
-        max_masked, `int`, optional
+        max_masked: `int`, optional
             For linear regridding only. Ignored for all other
             regridding methods.
 

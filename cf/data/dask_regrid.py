@@ -169,7 +169,7 @@ def regrid(
                 of ``w_ji`` for all non-masked source grid cells i is
                 strictly less than *min_weight*.
 
-            max_masked, `int`, optional
+            max_masked: `int`, optional
                 For linear regridding only. Ignored for all other
                 regridding methods.
 
@@ -607,16 +607,13 @@ def _regrid(
                     continue
 
                 w = data[i0:i1]
-                print(j, where(w[mask] >= min_weight)[0], w, mask, max_masked)
                 if where(w[mask] >= min_weight)[0].size > max_masked:
-                    print(j, "> mm")
                     # There are more masked src cells than allowed
                     dst_mask[j] = True
                 else:
                     # The number of masked src cells does not exceed
                     # the minimum masked-cells threshold
                     non_masked_indices = where((~mask) & (w >= min_weight))[0]
-                    print(non_masked_indices)
                     if non_masked_indices.size == 1:
                         # There areis exactly one non-masked src cell
                         # with weight above the minimum weights
