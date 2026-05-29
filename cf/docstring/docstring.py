@@ -411,8 +411,8 @@ _docstring_substitution_definitions = {
                 The maximum allow number of masked source cells which
                 are allowed to be ignored when calculating a
                 non-masked destination cell. When masked source cells
-                are ignored, the weights of non-masked source cells i
-                are adjusted so that they sum to 1.
+                are ignored, the weights of the non-masked source
+                cells are adjusted so that they sum to 1.
 
                 Define ``w_ji`` as the multiplicative weight that
                 defines how much of ``Vs_i`` (the value in source grid
@@ -424,9 +424,7 @@ _docstring_substitution_definitions = {
                 i is masked and ``w_ji >= min_weight``. If set to
                 ``N``, then destination grid cell j will be masked if
                 more than ``N`` source cells i are masked with ``w_ji
-                >= min_weight``.
-
-                .. versionadded:: NEXTVERSION""",
+                >= min_weight``.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
                 Provide a netCDF file that contains, or will contain,

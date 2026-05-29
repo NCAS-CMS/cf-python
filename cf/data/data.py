@@ -2383,6 +2383,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{max_masked: `int`, optional}}
 
+                .. versionadded:: NEXVERSION
+
         :Returns:
 
             `Data`

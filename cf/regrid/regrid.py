@@ -399,6 +399,12 @@ def regrid(
     """
     debug = is_log_level_debug(logger)
 
+    if not isinstance(max_masked, int) or max_masked < 0:
+        raise ValueError(
+            "The max_masked keyword must be a non-negative integer. "
+            f"Got: {max_masked!r}"
+        )
+
     if not inplace:
         src = src.copy()
 
