@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2026-06-??**
+
+* Fix bug in `cf.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cf-python/issues/948)
+
+----
+
 Version 3.20.0
 --------------
 
