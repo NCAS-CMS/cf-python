@@ -152,8 +152,8 @@ class RegridTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
         )
         dst_src = cf.read(filename)
-        self.dst = dst_src[0]  # noqa: F841
-        self.src = dst_src[1]  # noqa: F841
+        self.dst = dst_src[0]
+        self.src = dst_src[1]
 
         self.filename_xyz = os.path.join(  # noqa: F841
             os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
@@ -626,7 +626,7 @@ class RegridTest(unittest.TestCase):
                 #    # effectively) 1-d regridding
                 #    continue
 
-                if method in ("nearest_dtos"):
+                if method in ("nearest_dtos",):
                     continue
 
                 x = src.regridc(
