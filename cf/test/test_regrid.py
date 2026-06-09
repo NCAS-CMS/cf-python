@@ -146,18 +146,18 @@ class RegridTest(unittest.TestCase):
             self.skipTest(
                 "Test module requires 'esmpy' package. Install it to run all."
             )
-        else:
-            # Get the test source and destination fields
-            filename = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
-            )
-            dst_src = cf.read(filename)
-            dst = dst_src[0]  # noqa: F841
-            src = dst_src[1]  # noqa: F841
 
-            filename_xyz = os.path.join(  # noqa: F841
-                os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
-            )
+        # Get the test source and destination fields
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
+        )
+        dst_src = cf.read(filename)
+        self.dst = dst_src[0]  # noqa: F841
+        self.src = dst_src[1]  # noqa: F841
+
+        self.filename_xyz = os.path.join(  # noqa: F841
+            os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
+        )
 
     def test_Field_regrid_2d_field(self):
         """2-d regridding with Field destination grid."""
