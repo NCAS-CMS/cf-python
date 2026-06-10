@@ -1,9 +1,16 @@
 import datetime
 import unittest
+from importlib.util import find_spec
 
 import numpy as np
 
 import cf
+
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
 
 # A radius greater than 1. Used since weights based on the unit
 # sphere and non-spheres are tested separately.
@@ -152,6 +159,7 @@ class WeightsTest(unittest.TestCase):
         self.assertTrue((w.array == correct_weights).all())
         self.assertEqual(w.Units, cf.Units("m2"))
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_weights_polygon_area_ugrid(self):
         f = cf.example_field(8)
         f = f[..., [0, 2]]
@@ -345,6 +353,7 @@ class WeightsTest(unittest.TestCase):
         ):
             f.weights("area")
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_weights_healpix(self):
         """Test HEALPix weights."""
         # HEALPix grid with Multi-Order Coverage (a combination of
