@@ -1551,14 +1551,6 @@ class Weights(Container, cfdm.Container):
 
         # Squeeze out size 1 axes
         clm.squeeze(inplace=True)
-        #if clm_axes != clm_axes0:
-        #    # Squeeze out size1 axes
-        #    iaxes = [
-        #        clm_axes0.index(axis)
-        #        for axis in clm_axes0
-        #        if axis not in clm_axes
-        #    ]
-        #    clm.squeeze(iaxes, inplace=True)
 
         if methods:
             weights[tuple(clm_axes)] = measure + " cell measure"
