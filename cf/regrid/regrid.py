@@ -302,7 +302,7 @@ def regrid(
             The maximum allow number of masked source cells which are
             allowed to be ignored when calculating a non-masked
             destination cell. When masked source cells are ignored,
-            the weights w_ij of non-masked source cells i are adjusted
+            the weights w_ji of non-masked source cells i are adjusted
             so that they sum to 1.
 
             By default it is ``0``, meaning that destination grid cell

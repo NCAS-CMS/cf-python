@@ -408,7 +408,7 @@ _docstring_substitution_definitions = {
                 For linear regridding only. Ignored for all other
                 regridding methods.
 
-                The maximum allow number of masked source cells which
+                The maximum number of masked source cells which
                 are allowed to be ignored when calculating a
                 non-masked destination cell. When masked source cells
                 are ignored, the weights of the non-masked source

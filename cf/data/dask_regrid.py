@@ -62,7 +62,7 @@ def regrid(
                 If the destination grid has masked cells, either because
                 it spans areas outside of the source grid, or by selection
                 (such as ocean cells for land-only data), then the
-                corresponding rows in the weights matrix must be be
+                corresponding rows in the weights matrix must be
                 entirely missing data.
 
                 For the patch recovery and second-order conservative
@@ -173,7 +173,7 @@ def regrid(
                 For linear regridding only. Ignored for all other
                 regridding methods.
 
-                The maximum allow number of masked source cells which are
+                The maximum number of masked source cells which are
                 allowed to be ignored when calculating a non-masked
                 destination cell. When masked source cells are ignored,
                 the weights w_ji of non-masked source cells i are adjusted
@@ -451,7 +451,7 @@ def _regrid(
 
         max_masked: `int`, optional
             For linear regridding only. Ignored for all other
-            regridding methods. The maximum allow number of masked
+            regridding methods. The maximum number of masked
             source cells which are allowed to be ignored when
             calculating a non-masked destination cell.
 
@@ -615,7 +615,7 @@ def _regrid(
                     # the minimum masked-cells threshold
                     non_masked_indices = where((~mask) & (w >= min_weight))[0]
                     if non_masked_indices.size == 1:
-                        # There areis exactly one non-masked src cell
+                        # There is exactly one non-masked src cell
                         # with weight above the minimum weights
                         # threshold
                         w[:] = 0
